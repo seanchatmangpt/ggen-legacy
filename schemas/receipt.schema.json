@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ggen.legacy.receipt.v1",
+  "type": "object",
+  "required": ["schema","run_id","project","subject","authority_digest","toolchain","inputs","outputs","checks","standing"],
+  "properties": {
+    "schema": {"const":"ggen.legacy.receipt.v1"},
+    "run_id": {"type":"string","minLength":1},
+    "project": {"type":"string"},
+    "subject": {"type":"object","required":["revision","tree_digest"]},
+    "authority_digest": {"type":"string"},
+    "toolchain": {"type":"object"},
+    "inputs": {"type":"array"},
+    "outputs": {"type":"array"},
+    "checks": {"type":"array"},
+    "standing": {"enum":["PARTIAL_ALIVE","ALIVE","BLOCKED","BUILD_BROKEN","UNKNOWN","UNSUPPORTED"]}
+  },
+  "additionalProperties": true
+}

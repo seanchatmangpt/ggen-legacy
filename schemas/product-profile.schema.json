@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "required": ["schema","product","release","category","project","documentation_standing","implementation_standing","external_production_standing","direct_actuation_allowed","source_phase_admitted","nonclaims"],
+  "properties": {
+    "schema": {"const":"ggen.legacy.product.profile.v1"},
+    "product": {"const":"ggen-legacy"},
+    "release": {"const":"v26.8.1"},
+    "category": {"type":"string"},
+    "project": {"type":"string"},
+    "documentation_standing": {"enum":["PARTIAL_ALIVE","ALIVE","BLOCKED","BUILD_BROKEN","UNKNOWN","UNSUPPORTED"]},
+    "implementation_standing": {"enum":["PARTIAL_ALIVE","ALIVE","BLOCKED","BUILD_BROKEN","UNKNOWN","UNSUPPORTED"]},
+    "external_production_standing": {"enum":["PARTIAL_ALIVE","ALIVE","BLOCKED","BUILD_BROKEN","UNKNOWN","UNSUPPORTED"]},
+    "direct_actuation_allowed": {"type":"boolean"},
+    "source_phase_admitted": {"type":"boolean"},
+    "nonclaims": {"type":"array","items":{"type":"string"}}
+  },
+  "additionalProperties": true
+}

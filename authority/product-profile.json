@@ -1,0 +1,21 @@
+{
+  "$schema": "../schemas/product-profile.schema.json",
+  "schema": "ggen.legacy.product.profile.v1",
+  "product": "ggen-legacy",
+  "release": "v26.8.1",
+  "category": "Verified Repository Reconstitution",
+  "platform": "ggen Repository Manufacturing System",
+  "method": "Evidence-Driven Repository Manufacture",
+  "project": "Project 001 — ggen-legacy Self-Reconstitution",
+  "documentation_standing": "PARTIAL_ALIVE",
+  "implementation_standing": "UNKNOWN",
+  "external_production_standing": "UNKNOWN",
+  "direct_actuation_allowed": false,
+  "source_phase_admitted": false,
+  "nonclaims": [
+    "real Fortune 5 deployment",
+    "SOC 2 compliance",
+    "production ALIVE",
+    "external Sunset Admission"
+  ]
+}

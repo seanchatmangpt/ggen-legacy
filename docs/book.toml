@@ -1,0 +1,18 @@
+[book]
+authors = ["Sean Chatman"]
+language = "en"
+src = "src"
+title = "ggen-legacy v26.8.1 — Enterprise Guide"
+description = "Verified Repository Reconstitution for Fortune 5-scale software estates."
+
+[build]
+build-dir = "book"
+create-missing = false
+
+[output.html]
+default-theme = "dark"
+preferred-dark-theme = "navy"
+additional-css = ["theme/ggen-legacy.css"]
+
+[output.html.print]
+enable = true

@@ -1,0 +1,15 @@
+{
+  "schema": "ggen.legacy.gall.v1",
+  "checkpoints": [
+    {"id":"G0","name":"Orient","purpose":"Resolve tools, permissions, exact base, authority, and constraints.","receipt":"g0-orientation.json"},
+    {"id":"G1","name":"Fence","purpose":"Preserve purpose, dependencies, exclusions, falsifier, and retirement condition.","receipt":"g1-fence.json"},
+    {"id":"G2","name":"Observe","purpose":"Inventory the bounded historical and current contract.","receipt":"g2-observation.json"},
+    {"id":"G3","name":"Admit","purpose":"Validate observations into authority and refuse contradictions.","receipt":"g3-admission.json"},
+    {"id":"G4","name":"Plan","purpose":"Create a deterministic manufacture and verification DAG.","receipt":"g4-plan.json"},
+    {"id":"G5","name":"Manufacture","purpose":"Produce declared artifacts from authority.","receipt":"g5-manufacture.json"},
+    {"id":"G6","name":"Verify","purpose":"Execute witnesses, falsifiers, schemas, and higher-order suites.","receipt":"g6-verifier-report.json"},
+    {"id":"G7","name":"Replay","purpose":"Repeat from clean state and compare admitted results.","receipt":"g7-replay.json"},
+    {"id":"G8","name":"Release Admission","purpose":"Compute whether the replacement may release.","receipt":"g8-release-admission.json"},
+    {"id":"G9","name":"Sunset Admission","purpose":"Compute whether a real predecessor may retire.","receipt":"g9-sunset-admission.json"}
+  ]
+}

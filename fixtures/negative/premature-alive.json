@@ -1,0 +1,13 @@
+{
+  "schema":"ggen.legacy.product.profile.v1",
+  "product":"ggen-legacy",
+  "release":"v26.8.1",
+  "category":"Verified Repository Reconstitution",
+  "project":"Project 001 — ggen-legacy Self-Reconstitution",
+  "documentation_standing":"PARTIAL_ALIVE",
+  "implementation_standing":"ALIVE",
+  "external_production_standing":"UNKNOWN",
+  "direct_actuation_allowed":false,
+  "source_phase_admitted":false,
+  "nonclaims":[]
+}

@@ -1,0 +1,68 @@
+name: Verify ggen-legacy v26.8.1 documentation
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ggen-legacy-v26.8.1-docs-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Check out exact candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Assert exact source coordinate
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          test -s AGENTS.md
+          test -s RELEASE_CONTROL.md
+          test -s product/PRD.md
+          test -s architecture/ARD.md
+          test -s docs/src/SUMMARY.md
+
+      - name: Refuse source-phase leakage
+        shell: bash
+        run: |
+          set -euo pipefail
+          for path in src crates packages cmd internal app lib services runtime; do
+            test ! -e "$path" || { echo "PRODUCTION_SOURCE_PREMATURE: $path"; exit 1; }
+          done
+
+      - name: Verify documentation authority
+        run: python3 scripts/verify_docs.py --strict
+
+      - name: Install pinned mdBook
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo install mdbook --version 0.4.40 --locked
+          mdbook --version
+
+      - name: Build mdBook projection
+        shell: bash
+        run: |
+          set -euo pipefail
+          mdbook build docs
+          test -s docs/book/index.html
+          test -s docs/book/print.html
+
+      - name: Assert verifier did not mutate authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- . ':(exclude)evidence/local-docs-verifier.json'
+          test -s evidence/local-docs-verifier.json

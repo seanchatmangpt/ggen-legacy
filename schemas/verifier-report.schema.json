@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ggen.verifier.report.v1",
+  "type": "object",
+  "required": ["schema","subject","suites","checks","replay","standing","verifier"],
+  "properties": {
+    "schema": {"const":"ggen.verifier.report.v1"},
+    "subject": {"type":"object"},
+    "suites": {"type":"array"},
+    "checks": {"type":"array"},
+    "replay": {"type":"object"},
+    "standing": {"enum":["PARTIAL_ALIVE","ALIVE","BLOCKED","BUILD_BROKEN","UNKNOWN","UNSUPPORTED"]},
+    "verifier": {"type":"object"}
+  },
+  "additionalProperties": true
+}
