@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/seanchatmangpt/ggen-legacy/schemas/workstream-report.schema.json",
+  "title": "ggen Enterprise Architecture Foundry workstream report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "workstream_id",
+    "source_head",
+    "corpus_head",
+    "verifier",
+    "outputs",
+    "predicates"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "ggen.enterprise-architecture-foundry.workstream-report/1"
+    },
+    "workstream_id": {
+      "enum": ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K"]
+    },
+    "source_head": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "corpus_head": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "verifier": {
+      "type": "string",
+      "minLength": 1
+    },
+    "outputs": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/evidenceFile"
+      }
+    },
+    "predicates": {
+      "type": "object",
+      "minProperties": 1
+    }
+  },
+  "$defs": {
+    "evidenceFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "path", "blake3"],
+      "properties": {
+        "repository": {
+          "enum": ["source", "corpus"]
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "not": {
+            "anyOf": [
+              { "pattern": "^/" },
+              { "pattern": "(^|/)\\.\\.(/|$)" },
+              { "pattern": "^[A-Za-z]:" }
+            ]
+          }
+        },
+        "blake3": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      }
+    }
+  }
+}
