@@ -1,94 +1,94 @@
 {
-  "program_id": "ggen-legacy-to-foundry",
   "schema_version": "ggen.enterprise-architecture-foundry.corpus/1",
+  "program_id": "ggen-legacy-to-foundry",
   "workstreams": {
     "A": {
+      "status": "ADMITTED",
       "dependencies": [],
-      "receipt_path": "foundry/receipts/workstream-A.json",
       "report_digest": "bbf90889160759b02c554d70beb7a4617d33298de91f9f0be9a4ceac39781812",
-      "status": "ADMITTED"
+      "receipt_path": "foundry/receipts/workstream-A.json"
     },
     "B": {
+      "status": "ADMITTED",
       "dependencies": [
         "A"
       ],
-      "receipt_path": "foundry/receipts/workstream-B.json",
       "report_digest": "8a99cc0be56967e4b6a7ad84386c8f0b08b60f054cb8f406cceb75dcf0a88ee0",
-      "status": "ADMITTED"
+      "receipt_path": "foundry/receipts/workstream-B.json"
     },
     "C": {
+      "status": "ADMITTED",
       "dependencies": [
         "B"
       ],
-      "receipt_path": "foundry/receipts/workstream-C.json",
       "report_digest": "cadeb4110e7bb1b9aac8e1672a44f9a3c0013b9c508aa615f09c64b2470c1cc2",
-      "status": "ADMITTED"
+      "receipt_path": "foundry/receipts/workstream-C.json"
     },
     "D": {
+      "status": "ADMITTED",
       "dependencies": [
         "C"
       ],
-      "receipt_path": "foundry/receipts/workstream-D.json",
       "report_digest": "f087d5d52baae49051c385815250f7c6b0d0565ecd160e99cdf98e525c7bea1f",
-      "status": "ADMITTED"
+      "receipt_path": "foundry/receipts/workstream-D.json"
     },
     "E": {
+      "status": "ADMITTED",
       "dependencies": [
         "D"
       ],
-      "receipt_path": "foundry/receipts/workstream-E.json",
       "report_digest": "027d630f4a3e801583700b5eb0053fc741911475165cd4461944cc95f2e3afeb",
-      "status": "ADMITTED"
+      "receipt_path": "foundry/receipts/workstream-E.json"
     },
     "F": {
+      "status": "ADMITTED",
       "dependencies": [
         "E"
       ],
-      "receipt_path": null,
-      "report_digest": null,
-      "status": "READY"
+      "report_digest": "54f9bfce2d662657cfabe6780fab932db9742f989d5c98c2ddace6fe6f131a04",
+      "receipt_path": "foundry/receipts/workstream-F.json"
     },
     "G": {
+      "status": "READY",
       "dependencies": [
         "F"
       ],
-      "receipt_path": null,
       "report_digest": null,
-      "status": "BLOCKED"
+      "receipt_path": null
     },
     "H": {
+      "status": "BLOCKED",
       "dependencies": [
         "E",
         "F"
       ],
-      "receipt_path": null,
       "report_digest": null,
-      "status": "BLOCKED"
+      "receipt_path": null
     },
     "I": {
+      "status": "BLOCKED",
       "dependencies": [
         "G",
         "H"
       ],
-      "receipt_path": null,
       "report_digest": null,
-      "status": "BLOCKED"
+      "receipt_path": null
     },
     "J": {
+      "status": "BLOCKED",
       "dependencies": [
         "I"
       ],
-      "receipt_path": null,
       "report_digest": null,
-      "status": "BLOCKED"
+      "receipt_path": null
     },
     "K": {
+      "status": "BLOCKED",
       "dependencies": [
         "J"
       ],
-      "receipt_path": null,
       "report_digest": null,
-      "status": "BLOCKED"
+      "receipt_path": null
     }
   }
 }

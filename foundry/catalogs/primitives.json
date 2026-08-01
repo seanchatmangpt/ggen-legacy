@@ -1,5 +1,366 @@
 {
-  "schema_version": "ggen.enterprise-architecture-foundry.corpus/1",
-  "catalog_type": "PRIMITIVES",
-  "entries": []
+  "catalog_type": "ARCHITECTURE_PRIMITIVES",
+  "entries": [
+    {
+      "authority_references": [
+        "foundry/catalogs/capabilities.json#legacy_ext_template_mode_append"
+      ],
+      "capability_ids": [
+        "legacy_ext_template_mode_append"
+      ],
+      "disposition_family": "ARCHIVED",
+      "implementation_references": [
+        "foundry/corpus/components/engine/legacy_ext_template_mode_append/component-manifest.json"
+      ],
+      "negative_falsifier_code": "PRIMITIVE_WITNESS_DIGEST_MISMATCH",
+      "positive_witness_digest": "20fa85fab0f9b884b1318da240a2c219ef94ed66c3f5a39e366f3d81b83c1b99",
+      "primitive_id": "engine-archived-primitive",
+      "receipt_reference": "foundry/receipts/workstream-F.json",
+      "subsystem": "engine",
+      "verifier": "ggen-foundry-primitive-verifier/v1"
+    },
+    {
+      "authority_references": [
+        "foundry/catalogs/capabilities.json#legacy_ggen_core_pipeline",
+        "foundry/catalogs/capabilities.json#legacy_ggen_toml_dual_schema",
+        "foundry/catalogs/capabilities.json#legacy_ext_template_mode_update",
+        "foundry/catalogs/capabilities.json#legacy_ext2_receipt_v6_ttl_schema",
+        "foundry/catalogs/capabilities.json#legacy_ext2_output_tree_dotggen_receipt_path",
+        "foundry/catalogs/capabilities.json#legacy_ext2_output_tree_src_generated_default"
+      ],
+      "capability_ids": [
+        "legacy_ggen_core_pipeline",
+        "legacy_ggen_toml_dual_schema",
+        "legacy_ext_template_mode_update",
+        "legacy_ext2_receipt_v6_ttl_schema",
+        "legacy_ext2_output_tree_dotggen_receipt_path",
+        "legacy_ext2_output_tree_src_generated_default"
+      ],
+      "disposition_family": "REPLACED",
+      "implementation_references": [
+        "foundry/corpus/components/engine/legacy_ggen_core_pipeline/component-manifest.json",
+        "foundry/corpus/components/engine/legacy_ggen_toml_dual_schema/component-manifest.json",
+        "foundry/corpus/components/engine/legacy_ext_template_mode_update/component-manifest.json",
+        "foundry/corpus/components/engine/legacy_ext2_receipt_v6_ttl_schema/component-manifest.json",
+        "foundry/corpus/components/engine/legacy_ext2_output_tree_dotggen_receipt_path/component-manifest.json",
+        "foundry/corpus/components/engine/legacy_ext2_output_tree_src_generated_default/component-manifest.json"
+      ],
+      "negative_falsifier_code": "PRIMITIVE_WITNESS_DIGEST_MISMATCH",
+      "positive_witness_digest": "34fa1f655d2d63ea3c7b7de3b9eb4c6bc198184a54a1b48344f34e3d2b362365",
+      "primitive_id": "engine-replaced-primitive",
+      "receipt_reference": "foundry/receipts/workstream-F.json",
+      "subsystem": "engine",
+      "verifier": "ggen-foundry-primitive-verifier/v1"
+    },
+    {
+      "authority_references": [
+        "foundry/catalogs/capabilities.json#legacy_process_intelligence_local_analysis",
+        "foundry/catalogs/capabilities.json#legacy_ext2_receipt_record_schema_v1"
+      ],
+      "capability_ids": [
+        "legacy_process_intelligence_local_analysis",
+        "legacy_ext2_receipt_record_schema_v1"
+      ],
+      "disposition_family": "SUBSUMED",
+      "implementation_references": [
+        "foundry/corpus/components/engine/legacy_process_intelligence_local_analysis/component-manifest.json",
+        "foundry/corpus/components/engine/legacy_ext2_receipt_record_schema_v1/component-manifest.json"
+      ],
+      "negative_falsifier_code": "PRIMITIVE_WITNESS_DIGEST_MISMATCH",
+      "positive_witness_digest": "776174265056d0da3cab0a06bf8c4dcfe6b0b868e291c261ccbe0555424de42b",
+      "primitive_id": "engine-subsumed-primitive",
+      "receipt_reference": "foundry/receipts/workstream-F.json",
+      "subsystem": "engine",
+      "verifier": "ggen-foundry-primitive-verifier/v1"
+    },
+    {
+      "authority_references": [
+        "foundry/catalogs/capabilities.json#legacy_ext2_exit_code_mutation_budget_threshold"
+      ],
+      "capability_ids": [
+        "legacy_ext2_exit_code_mutation_budget_threshold"
+      ],
+      "disposition_family": "ARCHIVED",
+      "implementation_references": [
+        "foundry/corpus/components/products/legacy_ext2_exit_code_mutation_budget_threshold/component-manifest.json"
+      ],
+      "negative_falsifier_code": "PRIMITIVE_WITNESS_DIGEST_MISMATCH",
+      "positive_witness_digest": "8fa684d9727fb368c536a531263c9f5aa6b6f3b7f65c56822ad7e1760e4b56f0",
+      "primitive_id": "products-archived-primitive",
+      "receipt_reference": "foundry/receipts/workstream-F.json",
+      "subsystem": "products",
+      "verifier": "ggen-foundry-primitive-verifier/v1"
+    },
+    {
+      "authority_references": [
+        "foundry/catalogs/capabilities.json#legacy_wizard_command",
+        "foundry/catalogs/capabilities.json#legacy_sigma_command",
+        "foundry/catalogs/capabilities.json#legacy_inverse_sync_command",
+        "foundry/catalogs/capabilities.json#legacy_sync_audit_flag"
+      ],
+      "capability_ids": [
+        "legacy_wizard_command",
+        "legacy_sigma_command",
+        "legacy_inverse_sync_command",
+        "legacy_sync_audit_flag"
+      ],
+      "disposition_family": "REFUSED",
+      "implementation_references": [
+        "foundry/corpus/components/products/legacy_wizard_command/component-manifest.json",
+        "foundry/corpus/components/products/legacy_sigma_command/component-manifest.json",
+        "foundry/corpus/components/products/legacy_inverse_sync_command/component-manifest.json",
+        "foundry/corpus/components/products/legacy_sync_audit_flag/component-manifest.json"
+      ],
+      "negative_falsifier_code": "PRIMITIVE_WITNESS_DIGEST_MISMATCH",
+      "positive_witness_digest": "9db49c0f38d70ecb79a184ef367227a6bc790b7fa0d21e363f05ae7c08ffb818",
+      "primitive_id": "products-refused-primitive",
+      "receipt_reference": "foundry/receipts/workstream-F.json",
+      "subsystem": "products",
+      "verifier": "ggen-foundry-primitive-verifier/v1"
+    },
+    {
+      "authority_references": [
+        "foundry/catalogs/capabilities.json#legacy_sync_dry_run_value_flag",
+        "foundry/catalogs/capabilities.json#legacy_ext2_exit_code_cli_main_result_wrapper"
+      ],
+      "capability_ids": [
+        "legacy_sync_dry_run_value_flag",
+        "legacy_ext2_exit_code_cli_main_result_wrapper"
+      ],
+      "disposition_family": "REPLACED",
+      "implementation_references": [
+        "foundry/corpus/components/products/legacy_sync_dry_run_value_flag/component-manifest.json",
+        "foundry/corpus/components/products/legacy_ext2_exit_code_cli_main_result_wrapper/component-manifest.json"
+      ],
+      "negative_falsifier_code": "PRIMITIVE_WITNESS_DIGEST_MISMATCH",
+      "positive_witness_digest": "c1cc1574a80cff5d7f1d4f4b7e568a18b0f76a4a7a51a569035fdab21697cc91",
+      "primitive_id": "products-replaced-primitive",
+      "receipt_reference": "foundry/receipts/workstream-F.json",
+      "subsystem": "products",
+      "verifier": "ggen-foundry-primitive-verifier/v1"
+    },
+    {
+      "authority_references": [
+        "foundry/catalogs/capabilities.json#legacy_ggen_a2a_mcp_server",
+        "foundry/catalogs/capabilities.json#legacy_ggen_lsp_mcp_server",
+        "foundry/catalogs/capabilities.json#legacy_ggen_lsp_a2a_bridge",
+        "foundry/catalogs/capabilities.json#legacy_ext2_pack_toml_schema_v1_no_outputs",
+        "foundry/catalogs/capabilities.json#legacy_ext2_pack_toml_schema_no_registry_provenance"
+      ],
+      "capability_ids": [
+        "legacy_ggen_a2a_mcp_server",
+        "legacy_ggen_lsp_mcp_server",
+        "legacy_ggen_lsp_a2a_bridge",
+        "legacy_ext2_pack_toml_schema_v1_no_outputs",
+        "legacy_ext2_pack_toml_schema_no_registry_provenance"
+      ],
+      "disposition_family": "SUBSUMED",
+      "implementation_references": [
+        "foundry/corpus/components/products/legacy_ggen_a2a_mcp_server/component-manifest.json",
+        "foundry/corpus/components/products/legacy_ggen_lsp_mcp_server/component-manifest.json",
+        "foundry/corpus/components/products/legacy_ggen_lsp_a2a_bridge/component-manifest.json",
+        "foundry/corpus/components/products/legacy_ext2_pack_toml_schema_v1_no_outputs/component-manifest.json",
+        "foundry/corpus/components/products/legacy_ext2_pack_toml_schema_no_registry_provenance/component-manifest.json"
+      ],
+      "negative_falsifier_code": "PRIMITIVE_WITNESS_DIGEST_MISMATCH",
+      "positive_witness_digest": "8b968ff99b1c80e2a7c56b0000e3af8258d98fb7c88ac1280defb3bb6370f260",
+      "primitive_id": "products-subsumed-primitive",
+      "receipt_reference": "foundry/receipts/workstream-F.json",
+      "subsystem": "products",
+      "verifier": "ggen-foundry-primitive-verifier/v1"
+    },
+    {
+      "authority_references": [
+        "foundry/catalogs/capabilities.json#legacy_genesis_core_crate_original",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_doctor",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_graph",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_pipeline",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_docker",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_docker_build",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_docker_run",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_docker_test",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_docker_version",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_build_docker",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_build_image",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_push_image",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_lsp_max_check",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_lsp_check",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_lsp_max_edit",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_lsp_max_sync",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_test_mutation",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_test_bdd",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_test_changed",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_test_marketplace",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_test_marketplace_full",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_run_tests",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_affidavit_seal",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_affidavit_verify",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_evidence_audit",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_evidence_show",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_certification_show",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_workspace_sync",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_status_audit",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_pipeline_status",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_pipeline_validate",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_publish_check",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_target_prune",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_target_show",
+        "foundry/catalogs/capabilities.json#legacy_ext_just_recipe_git_status"
+      ],
+      "capability_ids": [
+        "legacy_genesis_core_crate_original",
+        "legacy_ext_just_recipe_doctor",
+        "legacy_ext_just_recipe_graph",
+        "legacy_ext_just_recipe_pipeline",
+        "legacy_ext_just_recipe_docker",
+        "legacy_ext_just_recipe_docker_build",
+        "legacy_ext_just_recipe_docker_run",
+        "legacy_ext_just_recipe_docker_test",
+        "legacy_ext_just_recipe_docker_version",
+        "legacy_ext_just_recipe_build_docker",
+        "legacy_ext_just_recipe_build_image",
+        "legacy_ext_just_recipe_push_image",
+        "legacy_ext_just_recipe_lsp_max_check",
+        "legacy_ext_just_recipe_lsp_check",
+        "legacy_ext_just_recipe_lsp_max_edit",
+        "legacy_ext_just_recipe_lsp_max_sync",
+        "legacy_ext_just_recipe_test_mutation",
+        "legacy_ext_just_recipe_test_bdd",
+        "legacy_ext_just_recipe_test_changed",
+        "legacy_ext_just_recipe_test_marketplace",
+        "legacy_ext_just_recipe_test_marketplace_full",
+        "legacy_ext_just_recipe_run_tests",
+        "legacy_ext_just_recipe_affidavit_seal",
+        "legacy_ext_just_recipe_affidavit_verify",
+        "legacy_ext_just_recipe_evidence_audit",
+        "legacy_ext_just_recipe_evidence_show",
+        "legacy_ext_just_recipe_certification_show",
+        "legacy_ext_just_recipe_workspace_sync",
+        "legacy_ext_just_recipe_status_audit",
+        "legacy_ext_just_recipe_pipeline_status",
+        "legacy_ext_just_recipe_pipeline_validate",
+        "legacy_ext_just_recipe_publish_check",
+        "legacy_ext_just_recipe_target_prune",
+        "legacy_ext_just_recipe_target_show",
+        "legacy_ext_just_recipe_git_status"
+      ],
+      "disposition_family": "ARCHIVED",
+      "implementation_references": [
+        "foundry/corpus/components/system/legacy_genesis_core_crate_original/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_doctor/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_graph/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_pipeline/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_docker/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_docker_build/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_docker_run/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_docker_test/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_docker_version/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_build_docker/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_build_image/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_push_image/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_lsp_max_check/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_lsp_check/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_lsp_max_edit/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_lsp_max_sync/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_test_mutation/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_test_bdd/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_test_changed/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_test_marketplace/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_test_marketplace_full/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_run_tests/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_affidavit_seal/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_affidavit_verify/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_evidence_audit/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_evidence_show/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_certification_show/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_workspace_sync/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_status_audit/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_pipeline_status/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_pipeline_validate/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_publish_check/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_target_prune/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_target_show/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_just_recipe_git_status/component-manifest.json"
+      ],
+      "negative_falsifier_code": "PRIMITIVE_WITNESS_DIGEST_MISMATCH",
+      "positive_witness_digest": "247df82905bdfabced0da1d01e5be259859b0ea9219fd5f5bdf7c16c62341b9d",
+      "primitive_id": "system-archived-primitive",
+      "receipt_reference": "foundry/receipts/workstream-F.json",
+      "subsystem": "system",
+      "verifier": "ggen-foundry-primitive-verifier/v1"
+    },
+    {
+      "authority_references": [
+        "foundry/catalogs/capabilities.json#legacy_stpnt_crate",
+        "foundry/catalogs/capabilities.json#legacy_ext_genesis_construct8_crate",
+        "foundry/catalogs/capabilities.json#legacy_ext_genesis_lockchain_crate",
+        "foundry/catalogs/capabilities.json#legacy_ext_genesis_wasm_shell_crate",
+        "foundry/catalogs/capabilities.json#legacy_ext_ggen_daemon_crate",
+        "foundry/catalogs/capabilities.json#legacy_ext_ggen_membrane_crate",
+        "foundry/catalogs/capabilities.json#legacy_ext_ggen_projection_crate"
+      ],
+      "capability_ids": [
+        "legacy_stpnt_crate",
+        "legacy_ext_genesis_construct8_crate",
+        "legacy_ext_genesis_lockchain_crate",
+        "legacy_ext_genesis_wasm_shell_crate",
+        "legacy_ext_ggen_daemon_crate",
+        "legacy_ext_ggen_membrane_crate",
+        "legacy_ext_ggen_projection_crate"
+      ],
+      "disposition_family": "REFUSED",
+      "implementation_references": [
+        "foundry/corpus/components/system/legacy_stpnt_crate/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_genesis_construct8_crate/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_genesis_lockchain_crate/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_genesis_wasm_shell_crate/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_ggen_daemon_crate/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_ggen_membrane_crate/component-manifest.json",
+        "foundry/corpus/components/system/legacy_ext_ggen_projection_crate/component-manifest.json"
+      ],
+      "negative_falsifier_code": "PRIMITIVE_WITNESS_DIGEST_MISMATCH",
+      "positive_witness_digest": "48c5426593d892558aa9623e2f33ecc4fe49d954d4b74f6935ae38e1aa295fe9",
+      "primitive_id": "system-refused-primitive",
+      "receipt_reference": "foundry/receipts/workstream-F.json",
+      "subsystem": "system",
+      "verifier": "ggen-foundry-primitive-verifier/v1"
+    },
+    {
+      "authority_references": [
+        "foundry/catalogs/capabilities.json#legacy_star_toml_workspace_member"
+      ],
+      "capability_ids": [
+        "legacy_star_toml_workspace_member"
+      ],
+      "disposition_family": "REPLACED",
+      "implementation_references": [
+        "foundry/corpus/components/system/legacy_star_toml_workspace_member/component-manifest.json"
+      ],
+      "negative_falsifier_code": "PRIMITIVE_WITNESS_DIGEST_MISMATCH",
+      "positive_witness_digest": "6c9a7e4db9295884135ebf59a86412e52a9518c96f2cfac93b238626b78f162c",
+      "primitive_id": "system-replaced-primitive",
+      "receipt_reference": "foundry/receipts/workstream-F.json",
+      "subsystem": "system",
+      "verifier": "ggen-foundry-primitive-verifier/v1"
+    },
+    {
+      "authority_references": [
+        "foundry/catalogs/capabilities.json#legacy_genesis_schema_v2_crate"
+      ],
+      "capability_ids": [
+        "legacy_genesis_schema_v2_crate"
+      ],
+      "disposition_family": "SUBSUMED",
+      "implementation_references": [
+        "foundry/corpus/components/system/legacy_genesis_schema_v2_crate/component-manifest.json"
+      ],
+      "negative_falsifier_code": "PRIMITIVE_WITNESS_DIGEST_MISMATCH",
+      "positive_witness_digest": "cb0884bfb9c245bd459292c2ffb7ac682822b77771d230a06e214d625e15cd8c",
+      "primitive_id": "system-subsumed-primitive",
+      "receipt_reference": "foundry/receipts/workstream-F.json",
+      "subsystem": "system",
+      "verifier": "ggen-foundry-primitive-verifier/v1"
+    }
+  ],
+  "schema_version": "ggen.enterprise-architecture-foundry.products/1"
 }
