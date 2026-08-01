@@ -4,6 +4,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -11,6 +12,7 @@ MODULE_PATH = Path(__file__).parents[1] / "verifiers" / "admit_historical_extrac
 spec = importlib.util.spec_from_file_location("historical_extraction", MODULE_PATH)
 module = importlib.util.module_from_spec(spec)
 assert spec.loader
+sys.modules[spec.name] = module
 spec.loader.exec_module(module)
 
 
