@@ -1,0 +1,377 @@
+name: ggen Ecosystem ALIVE Program
+
+on:
+  pull_request:
+    paths:
+      - "ggen.toml"
+      - "authority/ecosystem-alive/**"
+      - "authority/ecosystem-reconstitution/**"
+      - "reference/ecosystem-reconstitution/**"
+      - "tools/ecosystem-doctor.py"
+      - "verifiers/verify_ecosystem_alive.py"
+      - "witnesses/test_verify_ecosystem_alive.py"
+      - ".github/workflows/ggen-ecosystem-alive.yml"
+  workflow_dispatch:
+    inputs:
+      validation_mode:
+        description: "Repository-native validation depth"
+        type: choice
+        required: true
+        default: fast
+        options:
+          - fast
+          - full
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ggen-ecosystem-alive-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+env:
+  GGEN_SHA: 3b0fc364f586ad0155a937f756238e7bacd94e16
+  VALIDATION_MODE: ${{ inputs.validation_mode || 'fast' }}
+
+jobs:
+  manufacture:
+    name: Manufacture / ggen doctor and plan
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - name: Checkout exact corpus branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          fetch-depth: 0
+
+      - name: Checkout exact ggen manufacturing kernel
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: seanchatmangpt/ggen
+          ref: ${{ env.GGEN_SHA }}
+          path: ggen-runtime
+          fetch-depth: 1
+
+      - name: Install bounded toolchain
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+          python3 -m pip install --disable-pip-version-check rdflib==7.1.4 jsonschema==4.23.0
+
+      - name: Verify authored semantic source
+        run: |
+          python3 - <<'PY'
+          import json
+          import tomllib
+          from pathlib import Path
+          from rdflib import Graph
+
+          tomllib.loads(Path("ggen.toml").read_text())
+          graph = Graph()
+          graph.parse("authority/ecosystem-alive/ontology.ttl", format="turtle")
+          assert len(graph) >= 80, len(graph)
+          json.loads(Path("authority/ecosystem-reconstitution/2026-07-31.repositories.json").read_text())
+          print(f"semantic triples={len(graph)}")
+          PY
+
+      - name: Build exact ggen CLI
+        run: cargo build --manifest-path ggen-runtime/Cargo.toml -p ggen-cli-lib --bin ggen
+
+      - name: Manufacture projections and receipts
+        run: |
+          GGEN="$PWD/ggen-runtime/target/debug/ggen"
+          "$GGEN" graph validate
+          "$GGEN" sync run
+          "$GGEN" receipt verify
+
+          mkdir -p target/ecosystem-alive/manufacture-a target/ecosystem-alive/manufacture-b
+          sha256sum \
+            authority/ecosystem-alive/alive-program.json \
+            tools/ecosystem-doctor.py \
+            reference/ecosystem-reconstitution/DOCTOR.md \
+            > target/ecosystem-alive/manufacture-a/outputs.sha256
+
+          "$GGEN" sync run
+          "$GGEN" receipt verify
+          sha256sum \
+            authority/ecosystem-alive/alive-program.json \
+            tools/ecosystem-doctor.py \
+            reference/ecosystem-reconstitution/DOCTOR.md \
+            > target/ecosystem-alive/manufacture-b/outputs.sha256
+          diff -u target/ecosystem-alive/manufacture-a/outputs.sha256 target/ecosystem-alive/manufacture-b/outputs.sha256
+
+      - name: Execute generated doctor UX
+        run: |
+          python3 -m py_compile tools/ecosystem-doctor.py verifiers/verify_ecosystem_alive.py witnesses/test_verify_ecosystem_alive.py
+          python3 witnesses/test_verify_ecosystem_alive.py
+
+          set +e
+          python3 tools/ecosystem-doctor.py --json doctor > target/ecosystem-alive/doctor.json
+          status=$?
+          set -e
+          test "$status" -eq 0 -o "$status" -eq 2
+          python3 - <<'PY'
+          import json
+          report = json.load(open("target/ecosystem-alive/doctor.json"))
+          assert report["schema"] == "ggen-legacy.ecosystem-alive.doctor/v1"
+          assert report["repository_count"] == 19
+          assert report["product_count"] == 18
+          assert report["promotion_granted"] is False
+          PY
+
+      - name: Prove independent verifier refuses incomplete evidence
+        run: |
+          set +e
+          python3 verifiers/verify_ecosystem_alive.py \
+            --receipts target/ecosystem-alive/receipts \
+            --output target/ecosystem-alive/promotion-candidate.json
+          status=$?
+          set -e
+          test "$status" -eq 2
+          python3 - <<'PY'
+          import json
+          report = json.load(open("target/ecosystem-alive/promotion-candidate.json"))
+          assert report["promotion_granted"] is False
+          assert report["standing"] == "PARTIAL_ALIVE"
+          PY
+
+      - name: Emit validation matrix
+        id: matrix
+        run: |
+          matrix="$(python3 tools/ecosystem-doctor.py matrix --mode "$VALIDATION_MODE")"
+          printf 'matrix=%s\n' "$matrix" >> "$GITHUB_OUTPUT"
+
+      - name: Commit only ggen-owned projections
+        run: |
+          git config user.name "ggen-ecosystem-manufacturer"
+          git config user.email "ggen-ecosystem-manufacturer@users.noreply.github.com"
+          git add \
+            authority/ecosystem-alive/alive-program.json \
+            tools/ecosystem-doctor.py \
+            reference/ecosystem-reconstitution/DOCTOR.md
+          if git diff --cached --quiet; then
+            echo "ggen projections are already byte-identical."
+          else
+            git commit -m "feat(dx): manufacture ecosystem doctor projections"
+            git push origin "HEAD:${{ github.event.pull_request.head.ref || github.ref_name }}"
+          fi
+
+      - name: Publish manufacturing evidence
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ggen-ecosystem-alive-manufacture-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            target/ecosystem-alive/
+            authority/ecosystem-alive/alive-program.json
+            tools/ecosystem-doctor.py
+            reference/ecosystem-reconstitution/DOCTOR.md
+            .ggen-v2/receipts/
+          if-no-files-found: warn
+
+  native-validation:
+    name: Validate / ${{ matrix.repo_name }} / ${{ matrix.mode }}
+    needs: manufacture
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix: ${{ fromJSON(needs.manufacture.outputs.matrix) }}
+    steps:
+      - name: Checkout exact repository source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: ${{ matrix.repository }}
+          ref: ${{ matrix.sha }}
+          path: repo
+          fetch-depth: 1
+
+      - name: Install common doctor toolchains
+        run: |
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+          corepack enable || true
+          corepack prepare pnpm@10.14.0 --activate || npm install --global pnpm@10.14.0
+          python3 -m pip install --disable-pip-version-check uv==0.8.4 pyyaml==6.0.2 jsonschema==4.23.0
+          if printf '%s' '${{ toJSON(matrix.commands) }}' | grep -q 'just '; then
+            cargo install just --locked --version 1.40.0
+          fi
+
+      - name: Execute repository-native validation cell
+        id: validate
+        env:
+          COMMANDS_JSON: ${{ toJSON(matrix.commands) }}
+          REPOSITORY: ${{ matrix.repository }}
+          CANONICAL_SHA: ${{ matrix.sha }}
+          MODE: ${{ matrix.mode }}
+        shell: bash
+        run: |
+          mkdir -p receipts
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import os
+          import subprocess
+          import time
+          from pathlib import Path
+
+          repository = os.environ["REPOSITORY"]
+          canonical_sha = os.environ["CANONICAL_SHA"]
+          commands = json.loads(os.environ["COMMANDS_JSON"])
+          mode = os.environ["MODE"]
+          root = Path("repo")
+          observed_sha = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
+          tree = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD^{tree}"], text=True).strip()
+          status = subprocess.check_output(["git", "-C", str(root), "status", "--porcelain=v1", "--untracked-files=all"], text=True)
+          source = {
+              "schema": "ggen-legacy.source-reconstitution.receipt/v1",
+              "receipt_kind": "source",
+              "repository": repository,
+              "sha": observed_sha,
+              "canonical_sha": canonical_sha,
+              "source_tree": tree,
+              "standing": "ALIVE" if observed_sha == canonical_sha and not status else "BLOCKED",
+              "direct_actuation": False,
+              "promotion_granted": False,
+          }
+          Path("receipts/source.json").write_text(json.dumps(source, sort_keys=True) + "\n")
+
+          results = []
+          for command in commands:
+              started = time.monotonic()
+              completed = subprocess.run(["bash", "-lc", command], cwd=root, text=True, capture_output=True, timeout=4800)
+              results.append({
+                  "command": command,
+                  "exit_code": completed.returncode,
+                  "duration_ms": round((time.monotonic() - started) * 1000),
+                  "stdout_tail": completed.stdout[-8000:],
+                  "stderr_tail": completed.stderr[-8000:],
+              })
+              if completed.returncode != 0:
+                  break
+          standing = "ALIVE" if results and all(item["exit_code"] == 0 for item in results) else "BUILD_BROKEN"
+          validation = {
+              "schema": "ggen-legacy.ecosystem-alive.validation-receipt/v1",
+              "receipt_kind": "validation",
+              "repository": repository,
+              "canonical_sha": canonical_sha,
+              "mode": mode,
+              "commands": commands,
+              "results": results,
+              "standing": standing,
+              "reason": None if standing == "ALIVE" else "repository-native validation command failed",
+              "promotion_granted": False,
+          }
+          subject = json.dumps(validation, sort_keys=True, separators=(",", ":")).encode()
+          validation["receipt_digest"] = "sha256:" + hashlib.sha256(subject).hexdigest()
+          Path("receipts/validation.json").write_text(json.dumps(validation, sort_keys=True) + "\n")
+          Path("receipts/result.txt").write_text(standing + "\n")
+          print(json.dumps(validation, indent=2))
+          PY
+
+      - name: Publish repository receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ecosystem-alive-${{ matrix.repo_name }}-${{ matrix.sha }}
+          path: receipts/
+          if-no-files-found: error
+
+      - name: Enforce validation result
+        if: always()
+        run: test "$(cat receipts/result.txt)" = "ALIVE"
+
+  triage:
+    name: Doctor / aggregate repair queue
+    if: always()
+    needs:
+      - manufacture
+      - native-validation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout latest corpus branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          fetch-depth: 1
+
+      - name: Download all repository receipts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: ecosystem-alive-*
+          path: target/ecosystem-alive/receipts
+
+      - name: Download manufactured doctor projection
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: ggen-ecosystem-alive-manufacture-*
+          path: target/ecosystem-alive/manufacture
+
+      - name: Restore generated doctor when branch update is not yet visible
+        run: |
+          if [[ ! -f tools/ecosystem-doctor.py ]]; then
+            candidate="$(find target/ecosystem-alive/manufacture -path '*/tools/ecosystem-doctor.py' -print -quit)"
+            test -n "$candidate"
+            mkdir -p tools
+            cp "$candidate" tools/ecosystem-doctor.py
+          fi
+
+      - name: Manufacture consolidated repair queue
+        run: |
+          mkdir -p target/ecosystem-alive/triage
+          set +e
+          python3 tools/ecosystem-doctor.py \
+            --receipts target/ecosystem-alive/receipts \
+            --json doctor \
+            > target/ecosystem-alive/triage/doctor.json
+          doctor_status=$?
+          python3 verifiers/verify_ecosystem_alive.py \
+            --receipts target/ecosystem-alive/receipts \
+            --output target/ecosystem-alive/triage/promotion.json
+          promotion_status=$?
+          set -e
+          test "$doctor_status" -eq 0 -o "$doctor_status" -eq 2
+          test "$promotion_status" -eq 0 -o "$promotion_status" -eq 2
+
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          doctor = json.load(open("target/ecosystem-alive/triage/doctor.json"))
+          queue = []
+          for repository in doctor["repositories"]:
+              if not repository["product"] or repository["standing"] == "ALIVE":
+                  continue
+              queue.append({
+                  "repository": repository["repository"],
+                  "standing": repository["standing"],
+                  "blocker": repository["blocker"],
+                  "next": f"python3 tools/ecosystem-doctor.py explain {repository['repository']}",
+                  "execute": f"python3 tools/ecosystem-doctor.py run --repo {repository['repository']} --mode full --execute",
+              })
+          result = {
+              "schema": "ggen-legacy.ecosystem-alive.repair-queue/v1",
+              "candidate": doctor["aggregate_candidate"],
+              "promotion_granted": False,
+              "queue": queue,
+          }
+          Path("target/ecosystem-alive/triage/repair-queue.json").write_text(json.dumps(result, indent=2, sort_keys=True) + "\n")
+          with open(Path("target/ecosystem-alive/triage/status.md"), "w") as out:
+              out.write("# Ecosystem ALIVE repair queue\n\n")
+              out.write(f"Candidate: `{doctor['aggregate_candidate']}`. Promotion remains independently gated.\n\n")
+              out.write("| Repository | Standing | Next blocker |\n|---|---|---|\n")
+              for item in queue:
+                  out.write(f"| `{item['repository']}` | `{item['standing']}` | {item['blocker']} |\n")
+          PY
+
+      - name: Publish doctor and repair queue
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ecosystem-alive-triage-${{ github.event.pull_request.head.sha || github.sha }}
+          path: target/ecosystem-alive/triage/
+          if-no-files-found: error
