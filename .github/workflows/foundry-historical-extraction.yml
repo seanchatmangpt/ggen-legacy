@@ -27,6 +27,7 @@ jobs:
     env:
       RUSTUP_TOOLCHAIN: stable
       RUSTC_WRAPPER: ""
+      PYTHONDONTWRITEBYTECODE: "1"
       SOURCE_AUTHORITY_SHA: 32ff03016b476f5e4a938272a8a54fcd3b877e5a
       RUNTIME_SHA: 5905b24fc62f3ec3eadb93fb36787cdde08f3c82
       BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
@@ -92,12 +93,22 @@ jobs:
         id: extract
         run: |
           mkdir -p evidence
+          set +e
           python3 ggen-legacy/tools/run_historical_extraction_cached.py \
             --program ggen-runtime/docs/architecture-foundry/work-program.yaml \
             --source ggen-source \
             --corpus ggen-legacy \
-            --output evidence/workstream-E.json
+            --output evidence/workstream-E.json \
+            > evidence/workstream-E.stdout.log \
+            2> evidence/workstream-E.stderr.log
+          status=$?
+          set -e
           find ggen-legacy -type d -name __pycache__ -prune -exec rm -rf {} +
+          cat evidence/workstream-E.stdout.log
+          cat evidence/workstream-E.stderr.log >&2
+          if [[ "$status" -ne 0 ]]; then
+            exit "$status"
+          fi
           python3 - <<'PY'
           import json
           report = json.load(open("evidence/workstream-E.json"))
