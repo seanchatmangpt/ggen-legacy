@@ -33,6 +33,19 @@ no-read claim
 
 A no-read claim is falsified when a human must inspect implementation to determine acceptance because the requirement, architecture, behavior, or evidence model is insufficient.
 
+The strategic corpus itself is `ALIVE / REFERENCE_CONFORMANT` when the dedicated exact-head crown verifies all of the following at one revision:
+
+```text
+non-promoting manufacture
+→ two clean mdBook replays
+→ byte-identical replay reports
+→ independent crown re-derivation
+→ negative-control rejection
+→ receipt binding
+```
+
+That promotion is bounded to the doctrine, architecture, authority, review standard, and documentation corpus. It does not promote the complete product implementation or any external no-read customer case.
+
 Read the admitted doctrine:
 
 - [`product/AFTER_CODE_READING.md`](product/AFTER_CODE_READING.md)
@@ -49,13 +62,13 @@ Read the admitted doctrine:
 | Offline application transport | `ALIVE` | Two byte-identical bundles, sidecars, and receipts; extracted bundle verified itself offline. |
 | Foundry runtime candidate | `ALIVE` | Exact candidate `458f0f88…` passed formatting, all targets including real-Git tests, and program validation. It is not the stable dependency. |
 | Complete A–K foundry program | `PARTIAL_ALIVE` | Plan, receiving contract, schemas, and runtime candidate exist; A–K terminal predicates remain open. |
-| After Code Reading strategic corpus | `PARTIAL_ALIVE` | Doctrine, target architecture, review standard, and machine-readable authority are present; exact-head verification and replay remain required. |
+| After Code Reading strategic corpus | `ALIVE` | Dedicated exact-head manufacture, two clean documentary replays, independent crown, negative controls, and evidence receipt. |
 | Complete product implementation | `UNKNOWN` | Repository archaeology, replacement manufacture, equivalence, and real customer retirement are not yet complete. |
 | External production standing | `UNKNOWN` | No real Fortune 5 deployment is claimed. |
 | Compliance/certification | `REFUSED` | Controls and evidence mappings do not establish certification. |
 | Real predecessor Sunset Admission | `UNKNOWN` | Reference Sunset Admission is correctly false; no predecessor retirement is claimed. |
 
-The machine-readable promotion decision is [`authority/project-001-promotion.json`](authority/project-001-promotion.json).
+The Project 001 promotion decision is [`authority/project-001-promotion.json`](authority/project-001-promotion.json). The bounded After Code Reading promotion law is [`authority/after-code-reading.json`](authority/after-code-reading.json), with exact-head evidence emitted as `evidence/after-code-reading-crown.json` by the dedicated crown workflow.
 
 Fortune 5-grade means the repository covers and operationalizes the complete enterprise decision surface—product, architecture, governance, security, privacy, resilience, operations, support, procurement, evidence, release, transport, and retirement. It does not mean a Fortune 5 company has deployed the product.
 
@@ -85,6 +98,16 @@ bash appliance/bin/run-reference-e2e.sh
 mdbook build docs
 ```
 
-The exact-head workflow additionally builds `ggen@0f39227c…`, performs two real `ggen sync run` executions, verifies byte-identical projections, tests the exact foundry runtime candidate, manufactures the offline bundle twice, and publishes immutable evidence.
+The dedicated After Code Reading crown additionally executes:
+
+```bash
+python3 scripts/manufacture_after_code_reading_evidence.py --help
+python3 scripts/measure_after_code_reading_replay.py --help
+python3 scripts/verify_after_code_reading_crown.py --help
+```
+
+GitHub Actions then binds the exact revision, creates two detached clean worktrees, builds the mdBook twice, compares replay evidence byte-for-byte, independently re-derives every material claim, executes sabotage controls, and publishes the crown receipt.
+
+The general exact-head assurance workflow additionally builds `ggen@0f39227c…`, performs two real `ggen sync run` executions, verifies byte-identical projections, tests the exact foundry runtime candidate, manufactures the offline bundle twice, and publishes immutable evidence.
 
 Markdown and machine-readable authority are the source set. HTML, PDF, diagrams, generated coverage, verifier reports, and workflow artifacts are projections or evidence.
