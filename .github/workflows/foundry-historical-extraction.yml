@@ -8,6 +8,7 @@ on:
       - "foundry/catalogs/recovery-plans.json"
       - "foundry/workstreams/state.json"
       - "verifiers/admit_historical_extraction.py"
+      - "tools/run_historical_extraction_cached.py"
       - "witnesses/test_historical_extraction_resolution.py"
       - ".github/workflows/foundry-historical-extraction.yml"
   workflow_dispatch:
@@ -17,7 +18,7 @@ permissions:
 
 concurrency:
   group: foundry-historical-extraction-${{ github.event.pull_request.head.ref || github.ref_name }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   admit-e:
@@ -74,6 +75,7 @@ jobs:
         run: |
           python3 -m py_compile \
             ggen-legacy/verifiers/admit_historical_extraction.py \
+            ggen-legacy/tools/run_historical_extraction_cached.py \
             ggen-legacy/witnesses/test_historical_extraction_resolution.py
           python3 ggen-legacy/witnesses/test_historical_extraction_resolution.py
           find ggen-legacy -type d -name __pycache__ -prune -exec rm -rf {} +
@@ -90,7 +92,7 @@ jobs:
         id: extract
         run: |
           mkdir -p evidence
-          python3 ggen-legacy/verifiers/admit_historical_extraction.py \
+          python3 ggen-legacy/tools/run_historical_extraction_cached.py \
             --program ggen-runtime/docs/architecture-foundry/work-program.yaml \
             --source ggen-source \
             --corpus ggen-legacy \
