@@ -1,0 +1,175 @@
+{
+  "schema": "ggen.legacy.assurance.subsystems.v1",
+  "release": "v26.8.1",
+  "manifest_is_authority": false,
+  "subsystems": [
+    {
+      "id": "bounded-claims",
+      "authority_sources": [
+        "RELEASE_CONTROL.md",
+        "governance/claims-register.md",
+        "appliance/policy/claim-boundary.json"
+      ],
+      "implementation_sources": [
+        "appliance/bin/build-standing-portfolio.py",
+        "appliance/bin/verify-standing-portfolio.py"
+      ],
+      "primary_checks": [
+        "bounded-claim",
+        "document-index"
+      ],
+      "negative_controls": []
+    },
+    {
+      "id": "customer-control",
+      "authority_sources": [
+        "architecture/ARD.md",
+        "security/threat-model.md",
+        "appliance/policy/trust-roots.json"
+      ],
+      "implementation_sources": [
+        "appliance/bin/build-standing-portfolio.py",
+        "tests/fixtures/engagement.reference.json"
+      ],
+      "primary_checks": [
+        "customer-control",
+        "observer-closure"
+      ],
+      "negative_controls": []
+    },
+    {
+      "id": "independent-verification",
+      "authority_sources": [
+        "AGENTS.md",
+        "RELEASE_CONTROL.md",
+        "authority/verifier-appliance-profile.json"
+      ],
+      "implementation_sources": [
+        "appliance/bin/verify-standing-portfolio.py",
+        "appliance/bin/cross-check-portfolio.py"
+      ],
+      "primary_checks": [
+        "independent-verifier",
+        "cross-check"
+      ],
+      "negative_controls": [
+        "self-certification"
+      ]
+    },
+    {
+      "id": "hidden-challenges",
+      "authority_sources": [
+        "product/PRD.md",
+        "docs/src/12-verifier-appliance.md"
+      ],
+      "implementation_sources": [
+        "appliance/bin/run-reference-e2e.sh",
+        "appliance/bin/verify-standing-portfolio.py"
+      ],
+      "primary_checks": [
+        "hidden-challenges"
+      ],
+      "negative_controls": []
+    },
+    {
+      "id": "artifact-bindings",
+      "authority_sources": [
+        "architecture/ARD.md",
+        "schemas/claim-manifest.schema.json",
+        "schemas/receipt.schema.json"
+      ],
+      "implementation_sources": [
+        "appliance/bin/build-standing-portfolio.py",
+        "appliance/bin/verify-standing-portfolio.py"
+      ],
+      "primary_checks": [
+        "evidence-digests",
+        "coordinate-bindings",
+        "receipt-chain"
+      ],
+      "negative_controls": [
+        "evidence-tamper"
+      ]
+    },
+    {
+      "id": "signature-transparency",
+      "authority_sources": [
+        "security/threat-model.md",
+        "schemas/transparency-entry.schema.json"
+      ],
+      "implementation_sources": [
+        "appliance/bin/transparency-log.py",
+        "appliance/bin/verify-standing-portfolio.py"
+      ],
+      "primary_checks": [
+        "signature",
+        "transparency-log"
+      ],
+      "negative_controls": []
+    },
+    {
+      "id": "replay",
+      "authority_sources": [
+        "AGENTS.md",
+        "RELEASE_CONTROL.md",
+        "schemas/replay-report.schema.json"
+      ],
+      "implementation_sources": [
+        "appliance/bin/replay-standing-portfolio.py",
+        "appliance/bin/run-reference-e2e.sh"
+      ],
+      "primary_checks": [
+        "replay-match"
+      ],
+      "negative_controls": []
+    },
+    {
+      "id": "testing-authority",
+      "authority_sources": [
+        "governance/enterprise-maturity-model.md",
+        "procurement/enterprise-due-diligence.md"
+      ],
+      "implementation_sources": [
+        "appliance/bin/verify-standing-portfolio.py",
+        "tests/fixtures/engagement.reference.json"
+      ],
+      "primary_checks": [
+        "testing-authority"
+      ],
+      "negative_controls": []
+    },
+    {
+      "id": "legal-recourse",
+      "authority_sources": [
+        "procurement/enterprise-due-diligence.md",
+        "RELEASE_CONTROL.md"
+      ],
+      "implementation_sources": [
+        "appliance/bin/verify-standing-portfolio.py",
+        "tests/fixtures/engagement.reference.json"
+      ],
+      "primary_checks": [
+        "legal-recourse"
+      ],
+      "negative_controls": []
+    },
+    {
+      "id": "release-sunset",
+      "authority_sources": [
+        "AGENTS.md",
+        "RELEASE_CONTROL.md",
+        "schemas/release-admission.schema.json",
+        "schemas/sunset-admission.schema.json"
+      ],
+      "implementation_sources": [
+        "appliance/bin/decision-engine.py",
+        "appliance/bin/run-reference-e2e.sh"
+      ],
+      "primary_checks": [
+        "release-admitted",
+        "sunset-refused-without-authorization"
+      ],
+      "negative_controls": []
+    }
+  ]
+}

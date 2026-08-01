@@ -1,0 +1,54 @@
+{
+  "schema": "ggen.legacy.verifier.appliance.profile.v1",
+  "product": "ggen-legacy",
+  "release": "v26.8.1",
+  "implementation_phase": "REFERENCE_VERIFIER_APPLIANCE",
+  "standing": "ALIVE",
+  "standing_scope": "customer-controlled reference assurance fixture",
+  "promotion_authority": "authority/project-001-promotion.json",
+  "source_admission_ticket": "projects/001/TICKET-011-admit-verifier-appliance-pack.md",
+  "authority": "ontology/assurance-program.ttl",
+  "pack": "packs/ggen-legacy-assurance-pack",
+  "ggen": {
+    "repository": "seanchatmangpt/ggen",
+    "revision": "0f39227c102e0ac7519f0f27561356227a518653",
+    "command": "ggen sync run"
+  },
+  "verified_foundry_runtime_candidate": {
+    "revision": "458f0f88aee0060cddce3ffdaa7e2172a4f40a25",
+    "standing": "ALIVE",
+    "runtime_dependency_admitted": false
+  },
+  "customer_controls_execution": true,
+  "offline_execution": true,
+  "outbound_network_required": false,
+  "customer_hidden_challenges": true,
+  "independent_verifier_required": true,
+  "implementer_may_certify": false,
+  "direct_production_actuation_allowed": false,
+  "portable_offline_transport_standing": "ALIVE",
+  "required_digest_bindings": [
+    "legacy_head",
+    "replacement_head",
+    "authority_digest",
+    "verifier_digest",
+    "fixture_set_digest",
+    "toolchain_digest",
+    "environment_digest",
+    "evidence_digest"
+  ],
+  "replay_environments": [
+    "customer-vpc",
+    "independent-lab",
+    "recovery-site"
+  ],
+  "nonclaims": [
+    "complete product ALIVE",
+    "complete A-K foundry ALIVE",
+    "unrestricted semantic equivalence",
+    "absence of every hidden behavior",
+    "Fortune 5 production deployment",
+    "regulatory certification",
+    "real predecessor Sunset Admission"
+  ]
+}

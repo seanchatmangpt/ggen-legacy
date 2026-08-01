@@ -1,0 +1,221 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chatmangpt.com/ggen-legacy/schemas/workstream-report.schema.json",
+  "title": "ggen-legacy Workstream Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "workstream",
+    "source_head",
+    "corpus_head",
+    "verifier_role",
+    "checks",
+    "failures",
+    "artifacts",
+    "final_status",
+    "refused"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "ggen.legacy.workstream-report/1"
+    },
+    "workstream": {
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K"
+      ]
+    },
+    "source_head": {
+      "$ref": "#/$defs/sha1"
+    },
+    "corpus_head": {
+      "$ref": "#/$defs/sha1"
+    },
+    "verifier_role": {
+      "enum": [
+        "integration_agent",
+        "observer_agent",
+        "disposition_agent",
+        "extraction_agent",
+        "primitive_generalization_agent",
+        "pack_composition_agent",
+        "equivalence_agent",
+        "independent_verifier_agent"
+      ]
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/check"
+      }
+    },
+    "failures": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/failure"
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/artifact"
+      }
+    },
+    "final_status": {
+      "enum": [
+        "ALIVE",
+        "PARTIAL_ALIVE",
+        "BLOCKED",
+        "BUILD_BROKEN",
+        "REFUSED",
+        "UNKNOWN",
+        "UNSUPPORTED"
+      ]
+    },
+    "refused": {
+      "type": "boolean"
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "final_status": {
+            "const": "REFUSED"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "refused": {
+            "const": true
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "sha1": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "blake3": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "allOf": [
+        {
+          "not": {
+            "pattern": "^/"
+          }
+        },
+        {
+          "not": {
+            "pattern": "(^|/)\\.\\.(/|$)"
+          }
+        }
+      ]
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "command",
+        "exit_code",
+        "stdout_digest",
+        "stderr_digest",
+        "standing"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "command": {
+          "type": "string",
+          "minLength": 1
+        },
+        "exit_code": {
+          "type": "integer"
+        },
+        "stdout_digest": {
+          "$ref": "#/$defs/blake3"
+        },
+        "stderr_digest": {
+          "$ref": "#/$defs/blake3"
+        },
+        "standing": {
+          "enum": [
+            "ALIVE",
+            "PARTIAL_ALIVE",
+            "BLOCKED",
+            "BUILD_BROKEN",
+            "REFUSED",
+            "UNKNOWN",
+            "UNSUPPORTED"
+          ]
+        }
+      }
+    },
+    "failure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "message",
+        "hard_block"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hard_block": {
+          "type": "boolean"
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "repository",
+        "path",
+        "digest"
+      ],
+      "properties": {
+        "repository": {
+          "enum": [
+            "source",
+            "corpus"
+          ]
+        },
+        "path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "digest": {
+          "$ref": "#/$defs/blake3"
+        }
+      }
+    }
+  }
+}

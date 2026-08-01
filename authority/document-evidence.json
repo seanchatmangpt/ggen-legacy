@@ -1,0 +1,111 @@
+{
+  "schema": "ggen.legacy.document.evidence.v1",
+  "release": "v26.8.1",
+  "records": [
+    {
+      "document": "docs/src/00-source-admission.md",
+      "authority_ref": "AGENTS.md",
+      "implementation_ref": "authority/product-profile.json",
+      "verifier_ref": "scripts/verify_docs.py",
+      "legacy_ref": "projects/001/CHARTER.md"
+    },
+    {
+      "document": "docs/src/01-press-release.md",
+      "authority_ref": "strategy/WORKING_BACKWARDS_PRESS_RELEASE.md",
+      "implementation_ref": "product/PRD.md",
+      "verifier_ref": "scripts/verify_docs.py",
+      "legacy_ref": "governance/claims-register.md"
+    },
+    {
+      "document": "docs/src/02-prfaq.md",
+      "authority_ref": "strategy/PRFAQ.md",
+      "implementation_ref": "product/PRD.md",
+      "verifier_ref": "scripts/verify_docs.py",
+      "legacy_ref": "governance/claims-register.md"
+    },
+    {
+      "document": "docs/src/03-vision-2030.md",
+      "authority_ref": "strategy/VISION_2030.md",
+      "implementation_ref": "product/PRD.md",
+      "verifier_ref": "scripts/verify_docs.py",
+      "legacy_ref": "governance/source-ledger.md"
+    },
+    {
+      "document": "docs/src/04-product.md",
+      "authority_ref": "product/PRD.md",
+      "implementation_ref": "authority/product-profile.json",
+      "verifier_ref": "scripts/verify_docs.py",
+      "legacy_ref": "projects/001/CHARTER.md"
+    },
+    {
+      "document": "docs/src/05-architecture.md",
+      "authority_ref": "architecture/ARD.md",
+      "implementation_ref": "ontology/assurance-program.ttl",
+      "verifier_ref": "scripts/verify_docs.py",
+      "legacy_ref": "governance/source-ledger.md"
+    },
+    {
+      "document": "docs/src/06-manufacture.md",
+      "authority_ref": "ontology/assurance-program.ttl",
+      "implementation_ref": "packs/ggen-legacy-assurance-pack/pack.toml",
+      "verifier_ref": "scripts/verify_docs.py",
+      "legacy_ref": "projects/001/SOURCE_ADMISSION_BACKLOG.md"
+    },
+    {
+      "document": "docs/src/07-verification.md",
+      "authority_ref": "RELEASE_CONTROL.md",
+      "implementation_ref": "appliance/bin/verify-standing-portfolio.py",
+      "verifier_ref": "appliance/bin/run-reference-e2e.sh",
+      "legacy_ref": "projects/001/TICKET-011-admit-verifier-appliance-pack.md"
+    },
+    {
+      "document": "docs/src/08-enterprise-governance.md",
+      "authority_ref": "governance/enterprise-maturity-model.md",
+      "implementation_ref": "authority/gall-checkpoints.json",
+      "verifier_ref": "scripts/verify_docs.py",
+      "legacy_ref": "governance/source-ledger.md"
+    },
+    {
+      "document": "docs/src/09-security-operations.md",
+      "authority_ref": "security/threat-model.md",
+      "implementation_ref": "appliance/policy/trust-roots.json",
+      "verifier_ref": "appliance/bin/verify-standing-portfolio.py",
+      "legacy_ref": "operations/enterprise-operations.md"
+    },
+    {
+      "document": "docs/src/10-procurement.md",
+      "authority_ref": "procurement/enterprise-due-diligence.md",
+      "implementation_ref": "appliance/policy/claim-boundary.json",
+      "verifier_ref": "appliance/bin/cross-check-portfolio.py",
+      "legacy_ref": "governance/claims-register.md"
+    },
+    {
+      "document": "docs/src/11-roadmap-faq.md",
+      "authority_ref": "projects/001/SOURCE_ADMISSION_BACKLOG.md",
+      "implementation_ref": "authority/product-profile.json",
+      "verifier_ref": "scripts/verify_docs.py",
+      "legacy_ref": "projects/001/CHARTER.md"
+    },
+    {
+      "document": "docs/src/12-verifier-appliance.md",
+      "authority_ref": "authority/verifier-appliance-profile.json",
+      "implementation_ref": "appliance/manifest.json",
+      "verifier_ref": "appliance/bin/run-reference-e2e.sh",
+      "legacy_ref": "projects/001/TICKET-011-admit-verifier-appliance-pack.md"
+    },
+    {
+      "document": "docs/src/13-independent-crown.md",
+      "authority_ref": "authority/assurance-subsystems.json",
+      "implementation_ref": "appliance/bin/verify-subsystem-evidence.py",
+      "verifier_ref": "appliance/bin/verify-crown.py",
+      "legacy_ref": "governance/source-ledger.md"
+    },
+    {
+      "document": "docs/src/14-enterprise-architecture-foundry.md",
+      "authority_ref": "authority/foundry-work-program.json",
+      "implementation_ref": "ggen.toml",
+      "verifier_ref": "scripts/verify_docs.py",
+      "legacy_ref": "governance/source-ledger.md"
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "schema": "ggen.legacy.project-001.promotion.v1",
+  "release": "v26.8.1",
+  "project": "Project 001 — ggen-legacy Self-Reconstitution",
+  "evidence_basis": {
+    "source_head": "8f85f294ef680b7fa597538878fcc827bee19327",
+    "workflow_run": 30679448691,
+    "workflow_job": 91313388008,
+    "artifact_id": 8811824131,
+    "artifact_name": "ggen-legacy-v26.8.1-assurance-8f85f294ef680b7fa597538878fcc827bee19327",
+    "artifact_sha256": "b9cfae614aa023f510bd07330b59cf26d263ec2c3d8f112b8702c03b8bed3225",
+    "stable_ggen_coordinate": "0f39227c102e0ac7519f0f27561356227a518653",
+    "verified_runtime_candidate": "458f0f88aee0060cddce3ffdaa7e2172a4f40a25",
+    "mdbook_version": "0.4.40"
+  },
+  "bounded_rails": {
+    "documentation_and_authority": {
+      "standing": "ALIVE",
+      "scope": "Project 001 Fortune 5 documentary and machine-readable authority corpus",
+      "evidence": [
+        "evidence/local-docs-verifier.json",
+        "docs/book/index.html",
+        "docs/book/print.html"
+      ]
+    },
+    "verifier_appliance_reference": {
+      "standing": "ALIVE",
+      "scope": "customer-controlled reference assurance fixture only",
+      "release_admitted": true,
+      "sunset_admitted": false,
+      "evidence": [
+        "evidence/appliance/crown-report.json",
+        "evidence/appliance/subsystem-verifier-report.json",
+        "evidence/appliance/reference-replay-report.json"
+      ]
+    },
+    "offline_application_transport": {
+      "standing": "ALIVE",
+      "scope": "deterministic portable application bundle; external Python and OpenSSL prerequisites remain",
+      "evidence": [
+        "evidence/offline-transport-provenance.json",
+        "ggen-legacy-verifier-v26.8.1.tar.gz",
+        "ggen-legacy-verifier-v26.8.1.receipt.json"
+      ]
+    },
+    "foundry_runtime_candidate": {
+      "standing": "ALIVE",
+      "scope": "exact candidate verification only; not admitted as the stable manufacturing dependency",
+      "exact_head": "458f0f88aee0060cddce3ffdaa7e2172a4f40a25",
+      "runtime_dependency_admitted": false,
+      "evidence": [
+        "evidence/foundry-runtime-candidate.json"
+      ]
+    }
+  },
+  "project_standing": "PARTIAL_ALIVE",
+  "unpromoted_scopes": {
+    "complete_product_implementation": "UNKNOWN",
+    "complete_A_K_foundry_program": "PARTIAL_ALIVE",
+    "external_production_standing": "UNKNOWN",
+    "compliance_certification": "REFUSED",
+    "real_predecessor_sunset_admission": "UNKNOWN"
+  },
+  "nonclaims": [
+    "complete ggen-legacy product ALIVE",
+    "complete A-K Enterprise Architecture Foundry ALIVE",
+    "Fortune 5 customer deployment",
+    "production performance or availability",
+    "SOC 2 or regulatory compliance",
+    "real predecessor retirement"
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ggen.legacy.replay.report.v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "environment_set",
+    "run_a_sha256",
+    "run_b_sha256",
+    "status"
+  ],
+  "properties": {
+    "schema": {
+      "const": "ggen.legacy.replay.report.v1"
+    },
+    "status": {
+      "enum": [
+        "REPLAY_MATCH",
+        "REPLAY_DIFFERENCE"
+      ]
+    }
+  },
+  "additionalProperties": true
+}

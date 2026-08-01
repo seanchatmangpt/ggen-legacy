@@ -1,0 +1,106 @@
+{
+  "schema_version": "ggen.legacy.foundry.bootstrap/1",
+  "program_id": "ggen-legacy-to-foundry",
+  "repository": "seanchatmangpt/ggen-legacy",
+  "repository_role": "ENTERPRISE_ARCHITECTURE_FOUNDRY_CORPUS",
+  "standing": "PARTIAL_ALIVE",
+  "authority_admitted": true,
+  "runtime_dependency_admitted": false,
+  "source_phase_admitted": true,
+  "provenance": {
+    "pull_request": 2,
+    "head": "eeaa99ef65c1438a3dea100af775aee222aac9c8",
+    "merge_test_head": "7e83360e88b73df4d3b65dceaa8c0b5538cd36a4",
+    "workflow_run": 30678135632,
+    "workflow_conclusion": "success",
+    "standing_transferred": false,
+    "workflow_nonclaims": [
+      "mutable actions are admissible",
+      "floating runtime refs are admissible",
+      "complete foundry ALIVE"
+    ]
+  },
+  "coordinates": {
+    "stable_manufacturing_kernel": "0f39227c102e0ac7519f0f27561356227a518653",
+    "foundry_plan": "999db36647feeb2dfd0bd2250d2db2ef00b887c4",
+    "receiving_runtime_observed": "0175ead9748a7f41018ec037828865ae11cfe267",
+    "current_runtime_candidate": "f831e4d9fa80fe345349ce5d6e0fff41e6eb2a4a",
+    "corpus_base": "3c6480eb8a9d4c84474fd0f99ca21787cb424f2f"
+  },
+  "receiving_evidence": {
+    "rust_toolchain_observed": "1.97.1",
+    "real_git_tests": 4,
+    "real_git_failures": 0,
+    "program_digest": "22ea84cc70f076c7532a5aaae0c15bac28fc8502e6af5b0f5c6706243ad4900c",
+    "runtime_source_head": "0175ead9748a7f41018ec037828865ae11cfe267",
+    "corpus_merge_head": "7e83360e88b73df4d3b65dceaa8c0b5538cd36a4",
+    "replay_match": true,
+    "final_standing": "PARTIAL_ALIVE",
+    "admitted": false
+  },
+  "input_directories": [
+    "authority",
+    "docs",
+    "foundry",
+    "governance",
+    "ontology",
+    "packs",
+    "schemas",
+    "tests"
+  ],
+  "generated_directories": [
+    "foundry/generated",
+    "foundry/reports",
+    "foundry/receipts"
+  ],
+  "workstreams": [
+    {"id": "A", "status": "NOT_STARTED"},
+    {"id": "B", "status": "NOT_STARTED"},
+    {"id": "C", "status": "NOT_STARTED"},
+    {"id": "D", "status": "NOT_STARTED"},
+    {"id": "E", "status": "NOT_STARTED"},
+    {"id": "F", "status": "NOT_STARTED"},
+    {"id": "G", "status": "NOT_STARTED"},
+    {"id": "H", "status": "NOT_STARTED"},
+    {"id": "I", "status": "NOT_STARTED"},
+    {"id": "J", "status": "NOT_STARTED"},
+    {"id": "K", "status": "NOT_STARTED"}
+  ],
+  "allowed_workstream_statuses": [
+    "NOT_STARTED",
+    "IN_PROGRESS",
+    "BLOCKED",
+    "REFUSED",
+    "PARTIAL_ALIVE",
+    "ALIVE"
+  ],
+  "required_schemas": [
+    "schemas/migration-manifest.schema.json",
+    "schemas/workstream-report.schema.json",
+    "schemas/final-evidence.schema.json"
+  ],
+  "refusal_conditions": [
+    "FLOATING_RUNTIME_REFERENCE",
+    "MUTABLE_ACTION_COORDINATE",
+    "SOURCE_HEAD_MISMATCH",
+    "CORPUS_HEAD_MISMATCH",
+    "UNKNOWN_FINAL_DISPOSITION",
+    "SELF_CERTIFICATION",
+    "MISSING_EQUIVALENCE_CASE",
+    "MISSING_RECEIPT",
+    "REPLAY_DIVERGENCE"
+  ],
+  "terminal_condition": {
+    "unknown_capabilities": 0,
+    "unknown_dispositions": 0,
+    "unknown_standings": 0,
+    "unassigned_verifiers": 0,
+    "missing_equivalence_cases": 0,
+    "equivalence_failures": 0,
+    "replay_differences": 0,
+    "cross_repository_receipts_valid": true,
+    "fortune_scale_reference_manufactured": true,
+    "solution_admission": true,
+    "standing": "ALIVE"
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "schema": "ggen.legacy.offline.verifier.transport.v1",
+  "release": "v26.8.1",
+  "transport_class": "PORTABLE_APPLICATION_BUNDLE",
+  "provenance": {
+    "repository": "seanchatmangpt/ggen",
+    "pull_request": 537,
+    "head": "4bd2df69362c2708551f870c3dac36bce97898c2",
+    "status": "OPEN_DRAFT",
+    "dedicated_workflow_run": 30654755433,
+    "dedicated_workflow_conclusion": "success",
+    "branch_ci_conclusion": "failure",
+    "branch_quality_conclusion": "failure",
+    "standing_transferred": false,
+    "dependency_admitted": false
+  },
+  "implementation": {
+    "builder": "appliance/bin/build-offline-bundle.sh",
+    "generator_template": "packs/ggen-legacy-assurance-pack/templates/appliance_bin_build-offline-bundle_sh.tmpl",
+    "archive": "ggen-legacy-verifier-v26.8.1.tar.gz",
+    "manifest_algorithm": "sha256",
+    "archive_algorithm": "sha256",
+    "deterministic_archive": true,
+    "network_required": false,
+    "customer_source_included": false,
+    "runtime_prerequisites": [
+      "python3",
+      "openssl",
+      "sha256sum",
+      "tar",
+      "gzip"
+    ]
+  },
+  "required_properties": [
+    "exact_source_head",
+    "exact_ggen_coordinate",
+    "sorted_file_manifest",
+    "fixed_archive_metadata",
+    "offline_activation",
+    "self_verification",
+    "byte_identical_rebuild",
+    "no_customer_source",
+    "portable_receipt"
+  ],
+  "nonclaims": [
+    "hermetic Python runtime included",
+    "hermetic OpenSSL runtime included",
+    "PR #537 branch-wide standing ALIVE",
+    "customer production standing",
+    "regulatory certification"
+  ]
+}

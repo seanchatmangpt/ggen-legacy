@@ -1,0 +1,5 @@
+{
+  "input": "invalid",
+  "expected": "REFUSED",
+  "observed": "REFUSED"
+}
