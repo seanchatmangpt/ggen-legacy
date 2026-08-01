@@ -2,19 +2,20 @@
 
 ## 0. Claims reconciliation
 
-This PRD is product authority for the v26.8.1 target. It does not assert that the target implementation already exists.
+This PRD is product authority for the v26.8.1 target. It separates the independently replayable strategic corpus from the still-open complete product implementation.
 
 | Claim | Ceiling | Standing |
 |---|---|---|
-| Verified Repository Reconstitution is the product category | `DOCUMENTED` | `PARTIAL_ALIVE` |
-| After Code Reading is the governing engineering boundary | `DOCUMENTED` | `PARTIAL_ALIVE` |
-| Project 001 documentation bootstrap exists | `SCHEMA_VALIDATED` after verifier execution | `PARTIAL_ALIVE` |
+| Verified Repository Reconstitution is the product category | `REFERENCE_CONFORMANT` | `ALIVE` |
+| After Code Reading is the governing engineering boundary for the strategic corpus | `REFERENCE_CONFORMANT` | `ALIVE` |
+| Project 001 documentation bootstrap exists | `REFERENCE_CONFORMANT` | `ALIVE` |
 | Production archaeology, manufacture, equivalence, and admission engines exist | `DOCUMENTED` target | `UNKNOWN` |
-| A complete no-read reference manufacture has been independently replayed | none | `UNKNOWN` |
+| The strategic corpus passes exact-head manufacture, independent crown, and two clean documentary replays | `REFERENCE_CONFORMANT` | `ALIVE` |
+| A complete real replacement has passed no-read admission | none | `UNKNOWN` |
 | Fortune 5 production deployment exists | none | `UNKNOWN` |
 | SOC 2 or regulatory compliance exists | refused claim | `REFUSED` |
 
-`RELEASE_CONTROL.md` governs claim ceilings. The ARD must not widen this PRD.
+`RELEASE_CONTROL.md` governs claim ceilings. The ARD must not widen this PRD. Strategic-corpus `ALIVE` does not promote complete product implementation, A–K closure, external production standing, or a real predecessor Sunset Admission.
 
 ## 1. Product thesis
 
