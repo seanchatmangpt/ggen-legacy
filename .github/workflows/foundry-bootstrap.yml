@@ -8,12 +8,12 @@ permissions:
 
 concurrency:
   group: foundry-bootstrap-${{ github.event.pull_request.head.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   bootstrap:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     env:
       RUSTUP_TOOLCHAIN: stable
       RUSTC_WRAPPER: ""
@@ -92,9 +92,21 @@ jobs:
             git -C ggen-legacy commit -m "feat(foundry): admit exact-head baseline workstream"
           fi
 
+          if [[ ! -f ggen-legacy/foundry/workstreams/B/admission-report.json ]]; then
+            cargo run --manifest-path ggen/tools/architecture-foundry/Cargo.toml \
+              --bin admit_observation -- \
+              --program ggen/docs/architecture-foundry/work-program.yaml \
+              --source ggen \
+              --corpus ggen-legacy \
+              --evidence-ref origin/agent/v26.8.1-remaining-observers
+
+            git -C ggen-legacy add foundry
+            git -C ggen-legacy commit -m "feat(foundry): admit exhaustive capability observation"
+          fi
+
           git -C ggen-legacy push origin HEAD:${{ github.event.pull_request.head.ref }}
 
-      - name: Verify committed A admission state
+      - name: Verify committed A-B admission state
         run: |
           test -z "$(git -C ggen-legacy status --porcelain=v1 --untracked-files=all)"
           python3 - <<'PY'
@@ -103,10 +115,19 @@ jobs:
 
           state = json.loads(Path("ggen-legacy/foundry/workstreams/state.json").read_text())
           assert state["workstreams"]["A"]["status"] == "ADMITTED", state
-          assert state["workstreams"]["B"]["status"] == "READY", state
-          assert Path("ggen-legacy/foundry/receipts/initialization.json").is_file()
-          assert Path("ggen-legacy/foundry/receipts/workstream-A.json").is_file()
-          assert Path("ggen-legacy/foundry/workstreams/A/admission-report.json").is_file()
+          assert state["workstreams"]["B"]["status"] == "ADMITTED", state
+          assert state["workstreams"]["C"]["status"] == "READY", state
+          for path in [
+              "foundry/receipts/initialization.json",
+              "foundry/receipts/workstream-A.json",
+              "foundry/receipts/workstream-B.json",
+              "foundry/workstreams/A/admission-report.json",
+              "foundry/workstreams/B/admission-report.json",
+              "foundry/catalogs/capability-candidates.json",
+              "foundry/evidence/B/legacy-capabilities.ttl",
+              "foundry/evidence/B/observer-class-report.md",
+          ]:
+              assert Path("ggen-legacy", path).is_file(), path
           PY
 
       - name: Replay committed receipts
