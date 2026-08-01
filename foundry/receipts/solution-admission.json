@@ -1,0 +1,21 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.receipt/1",
+  "receipt_type": "SOLUTION_ADMISSION",
+  "subject": "Enterprise Architecture Reconstitution and Manufacture",
+  "subject_digest": "fea3a88708a7b7d7d5f503bff220de326a86fdc84b0d5bbf0d9e87e0c9dbc94b",
+  "source_head": "d04c69b8cbb65ff9b240bc963d56b9a7bce21f17",
+  "corpus_head": "bb69fb099b6cd613b75d6301d75886ab606e14ec",
+  "input_digests": {
+    "corpus-tree": "4116717c955ed1cce3b5cabf2f0642dcab249a1001932dab744be8a7487e3a23",
+    "reference-report": "f0825a555c137d2257a88611d0c0efa1a7bd18f1742153ac9f743fe67fa5d00c",
+    "source-tree": "e050ef5e4f0c7558e8d0f109490772995bda24c2be26eb80632609945372eba9",
+    "subsystem-matrix": "850a638ea9d61b88624761c628890068c59a6b335efb17e9e50e0f32f3adad36",
+    "work-program": "22ea84cc70f076c7532a5aaae0c15bac28fc8502e6af5b0f5c6706243ad4900c"
+  },
+  "output_digests": {
+    "corpus:foundry/evidence/final-evidence.json": "becc37cc1a41d7ef035a0a94b50f5670475fde76cb46885ae111599a10dee357",
+    "corpus:foundry/evidence/terminal-theorem.json": "8761f5ba9cdbc3287638b3343e31559b6ea01df1c8d2c6e5fcf42b2fa2a7a5c7",
+    "corpus:foundry/standing.json": "0546b53f1cbcf20b1d7ba5220cacf8bfb61009175912566a65667b5daa127871"
+  },
+  "run_id": "fea3a88708a7b7d7d5f5"
+}

@@ -1,12 +1,9 @@
 {
   "schema_version": "ggen.enterprise-architecture-foundry.corpus/1",
   "program_id": "ggen-legacy-to-foundry",
-  "standing": "PARTIAL_ALIVE",
-  "admitted": false,
-  "reasons": [
-    "A-K workstream admission is incomplete",
-    "Fortune-scale reference manufacture is not yet admitted"
-  ],
-  "source_head": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
-  "corpus_head": "ab598104078d668ed018b85ad4f859c4ca5a8701"
+  "standing": "ALIVE",
+  "admitted": true,
+  "reasons": [],
+  "source_head": "d04c69b8cbb65ff9b240bc963d56b9a7bce21f17",
+  "corpus_head": "bb69fb099b6cd613b75d6301d75886ab606e14ec"
 }

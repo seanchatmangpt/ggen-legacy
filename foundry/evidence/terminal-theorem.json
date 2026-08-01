@@ -1,0 +1,22 @@
+{
+  "capabilities": 65,
+  "corpus_parent_head": "bb69fb099b6cd613b75d6301d75886ab606e14ec",
+  "cross_repository_receipts_valid": true,
+  "equivalence_failures": 0,
+  "fortune_scale_reference_manufactured": true,
+  "missing_equivalence_cases": 0,
+  "program_digest": "22ea84cc70f076c7532a5aaae0c15bac28fc8502e6af5b0f5c6706243ad4900c",
+  "program_id": "ggen-legacy-to-foundry",
+  "receipts_replayed": 12,
+  "replay_differences": 0,
+  "schema_version": "ggen.enterprise-architecture-foundry.terminal-theorem/1",
+  "solution_admission": true,
+  "source_head": "d04c69b8cbb65ff9b240bc963d56b9a7bce21f17",
+  "standing": "ALIVE",
+  "unassigned_verifiers": 0,
+  "unknown_capabilities": 0,
+  "unknown_dispositions": 0,
+  "unknown_standings": 0,
+  "verifier": "ggen-foundry-final-admission-verifier/v1",
+  "workstreams_admitted": 11
+}
