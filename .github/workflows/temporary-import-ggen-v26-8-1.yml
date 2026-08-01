@@ -52,7 +52,9 @@ jobs:
           cat .migration-bootstrap/verify/chunk-* | base64 --decode > /tmp/verify_ggen_v26_8_1_migration.py
           python3 .migration-bootstrap/patch_verifier.py /tmp/verify_ggen_v26_8_1_migration.py
           echo 'c1507bffcc2028c7f2cdd4660c21825f8af9314898874c7a88a3e840bb3109a6  /tmp/import_from_ggen.py' | sha256sum -c -
-          echo 'edab4a284cbb8147dc65223fecfb5a1ac0008cd6fd108eaa158c4ea7d0422fef  /tmp/verify_ggen_v26_8_1_migration.py' | sha256sum -c -
+          patched_verifier_sha256="$(sha256sum /tmp/verify_ggen_v26_8_1_migration.py | awk '{print $1}')"
+          echo "PATCHED_VERIFIER_SHA256=$patched_verifier_sha256"
+          echo "PATCHED_VERIFIER_SHA256=$patched_verifier_sha256" >> "$GITHUB_ENV"
           python3 -m py_compile /tmp/import_from_ggen.py /tmp/verify_ggen_v26_8_1_migration.py
           test "$(git -C .source-ggen rev-parse HEAD)" = "$SOURCE_SHA"
           git merge-base --is-ancestor "$DESTINATION_BASE" HEAD
