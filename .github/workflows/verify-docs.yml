@@ -33,10 +33,16 @@ jobs:
           test -s ontology/assurance-program.ttl
           test -s authority/assurance-subsystems.json
           test -s authority/document-evidence.json
+          test -s authority/foundry-work-program.json
+          test -s scripts/verify_foundry_provenance.py
           test -s packs/ggen-legacy-assurance-pack/pack.toml
 
-      - name: Verify documentary and projection authority
-        run: python3 scripts/verify_docs.py --strict
+      - name: Verify documentary, projection, and foundry provenance authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/verify_docs.py --strict
+          python3 scripts/verify_foundry_provenance.py
 
       - name: Execute customer-controlled assurance and read-only crown
         shell: bash
@@ -102,6 +108,7 @@ jobs:
           find appliance -type f -print0 | sort -z | xargs -0 sha256sum > /tmp/appliance-b.sha256
           cmp /tmp/appliance-a.sha256 /tmp/appliance-b.sha256
           python3 scripts/verify_docs.py --strict
+          python3 scripts/verify_foundry_provenance.py
           bash appliance/bin/run-reference-e2e.sh
 
       - name: Install pinned mdBook
@@ -125,9 +132,11 @@ jobs:
           set -euo pipefail
           git diff --exit-code -- . \
             ':(exclude)evidence/local-docs-verifier.json' \
+            ':(exclude)evidence/foundry-provenance-verifier.json' \
             ':(exclude)evidence/appliance/**' \
             ':(exclude)docs/book/**'
           test -s evidence/local-docs-verifier.json
+          test -s evidence/foundry-provenance-verifier.json
           test -s evidence/appliance/subsystem-verifier-report.json
           test -s evidence/appliance/subsystem-coverage.json
           test -s evidence/appliance/crown-report.json
@@ -138,6 +147,7 @@ jobs:
           name: ggen-legacy-v26.8.1-assurance-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             evidence/local-docs-verifier.json
+            evidence/foundry-provenance-verifier.json
             evidence/appliance/*.json
             /tmp/appliance-a.sha256
             /tmp/appliance-b.sha256
