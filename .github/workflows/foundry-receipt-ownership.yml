@@ -28,6 +28,7 @@ jobs:
       RUSTC_WRAPPER: ""
       SOURCE_AUTHORITY_SHA: 32ff03016b476f5e4a938272a8a54fcd3b877e5a
       RUNTIME_SHA: 5905b24fc62f3ec3eadb93fb36787cdde08f3c82
+      BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
     steps:
       - name: Checkout exact corpus branch
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
@@ -64,6 +65,12 @@ jobs:
             ggen-legacy/verifiers/normalize_foundry_receipts.py \
             ggen-legacy/witnesses/test_foundry_receipt_ownership.py
           python3 ggen-legacy/witnesses/test_foundry_receipt_ownership.py
+          find ggen-legacy -type d -name __pycache__ -prune -exec rm -rf {} +
+
+      - name: Refresh branch before controller mutation
+        run: |
+          git -C ggen-legacy fetch origin "$BRANCH"
+          git -C ggen-legacy reset --hard "origin/$BRANCH"
 
       - name: Normalize active receipt ownership
         run: |
@@ -74,6 +81,7 @@ jobs:
           python3 ggen-legacy/verifiers/normalize_foundry_receipts.py audit \
             --root ggen-legacy \
             --output evidence/audit.json
+          find ggen-legacy -type d -name __pycache__ -prune -exec rm -rf {} +
           python3 - <<'PY'
           import json
           report = json.load(open("evidence/audit.json"))
@@ -98,17 +106,28 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Replay exact Rust receipt runtime on normalized tree
+      - name: Rebase, replay, and fast-forward safely
         run: |
-          test -z "$(git -C ggen-legacy status --porcelain=v1 --untracked-files=all)"
-          cargo run --manifest-path ggen-runtime/tools/architecture-foundry/Cargo.toml -- \
-            replay --source ggen-source --corpus ggen-legacy
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            git -C ggen-legacy fetch origin "$BRANCH"
+            git -C ggen-legacy rebase "origin/$BRANCH"
+            find ggen-legacy -type d -name __pycache__ -prune -exec rm -rf {} +
+            test -z "$(git -C ggen-legacy status --porcelain=v1 --untracked-files=all)"
 
-      - name: Push normalized receipt consequence
-        if: steps.commit.outputs.changed == 'true'
-        run: |
-          git -C ggen-legacy push origin \
-            "HEAD:${{ github.event.pull_request.head.ref || github.ref_name }}"
+            cargo run --manifest-path ggen-runtime/tools/architecture-foundry/Cargo.toml -- \
+              replay --source ggen-source --corpus ggen-legacy
+
+            if [[ '${{ steps.commit.outputs.changed }}' != 'true' ]]; then
+              exit 0
+            fi
+            if git -C ggen-legacy push origin "HEAD:$BRANCH"; then
+              exit 0
+            fi
+            echo "Remote advanced during replay; retrying exact rebase and replay ($attempt/3)."
+          done
+          echo "Unable to fast-forward normalized receipt consequence after three exact replays." >&2
+          exit 1
 
       - name: Publish ownership and replay evidence
         if: always()
