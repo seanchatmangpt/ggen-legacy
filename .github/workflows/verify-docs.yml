@@ -96,7 +96,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: seanchatmangpt/ggen
-          ref: f831e4d9fa80fe345349ce5d6e0fff41e6eb2a4a
+          ref: 458f0f88aee0060cddce3ffdaa7e2172a4f40a25
           path: .foundry-runtime
           fetch-depth: 1
 
@@ -127,7 +127,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          RUNTIME_HEAD=f831e4d9fa80fe345349ce5d6e0fff41e6eb2a4a
+          RUNTIME_HEAD=458f0f88aee0060cddce3ffdaa7e2172a4f40a25
           test "$(git -C .foundry-runtime rev-parse HEAD)" = "$RUNTIME_HEAD"
           test -z "$(git -C .foundry-runtime status --porcelain)"
           cargo fmt \
@@ -146,7 +146,8 @@ jobs:
           import json
           report={
             "schema":"ggen.legacy.foundry.runtime.candidate.receipt.v1",
-            "exact_head":"f831e4d9fa80fe345349ce5d6e0fff41e6eb2a4a",
+            "exact_head":"458f0f88aee0060cddce3ffdaa7e2172a4f40a25",
+            "upstream_workflow_run":30678718944,
             "manifest":".foundry-runtime/tools/architecture-foundry/Cargo.toml",
             "real_boundary_suite":".foundry-runtime/tools/architecture-foundry/tests/real_git.rs",
             "commands":["cargo fmt --check","cargo test --all-targets","validate-program"],
