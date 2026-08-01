@@ -1,0 +1,30 @@
+{%- set commands = sparql(query='PREFIX alive: <https://ggen.dev/ecosystem-alive#> PREFIX skos: <http://www.w3.org/2004/02/skos/core#> SELECT ?order ?name ?label ?summary WHERE { ?x a alive:Command ; alive:order ?order ; alive:name ?name ; skos:prefLabel ?label ; alive:summary ?summary . } ORDER BY ?order') -%}
+{%- set gates = sparql(query='PREFIX alive: <https://ggen.dev/ecosystem-alive#> SELECT ?order ?name ?receipt WHERE { ?x a alive:Gate ; alive:order ?order ; alive:name ?name ; alive:receiptKind ?receipt . } ORDER BY ?order') -%}
+{%- set modes = sparql(query='PREFIX alive: <https://ggen.dev/ecosystem-alive#> SELECT ?order ?name ?description ?limit WHERE { ?x a alive:Mode ; alive:order ?order ; alive:name ?name ; alive:description ?description ; alive:commandLimit ?limit . } ORDER BY ?order') -%}
+{
+  "schema": "ggen-legacy.ecosystem-alive.program/v1",
+  "name": "{{ title }}",
+  "description": "{{ description }}",
+  "version": "{{ version }}",
+  "manifest": "{{ manifest }}",
+  "foundry_state": "{{ state }}",
+  "default_evidence_dir": "{{ evidence }}",
+  "required_broker": "{{ broker }}",
+  "promotion_owner": "{{ promotion }}",
+  "standing_ceiling": "{{ ceiling }}",
+  "commands": [
+{%- for command in commands %}
+    {"order": {{ command.order }}, "name": "{{ command.name }}", "label": "{{ command.label }}", "summary": "{{ command.summary }}"}{% if not loop.last %},{% endif %}
+{%- endfor %}
+  ],
+  "gates": [
+{%- for gate in gates %}
+    {"order": {{ gate.order }}, "name": "{{ gate.name }}", "receipt_kind": "{{ gate.receipt }}"}{% if not loop.last %},{% endif %}
+{%- endfor %}
+  ],
+  "modes": [
+{%- for mode in modes %}
+    {"order": {{ mode.order }}, "name": "{{ mode.name }}", "description": "{{ mode.description }}", "command_limit": {{ mode.limit }}}{% if not loop.last %},{% endif %}
+{%- endfor %}
+  ]
+}
