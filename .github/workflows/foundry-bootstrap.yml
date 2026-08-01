@@ -17,6 +17,9 @@ jobs:
   bootstrap:
     runs-on: ubuntu-latest
     timeout-minutes: 25
+    env:
+      RUSTUP_TOOLCHAIN: stable
+      RUSTC_WRAPPER: ""
     steps:
       - name: Checkout ggen-legacy exact head
         uses: actions/checkout@v4
@@ -34,6 +37,17 @@ jobs:
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - name: Manufacture normalized runtime in runner checkout
+        run: |
+          python3 ggen/tools/architecture-foundry/normalize_runtime.py
+          cargo fmt --manifest-path ggen/tools/architecture-foundry/Cargo.toml
+          cargo fmt --manifest-path ggen/tools/architecture-foundry/Cargo.toml -- --check
+
+      - name: Test runtime against real Git boundaries
+        run: cargo test --manifest-path ggen/tools/architecture-foundry/Cargo.toml --all-targets
 
       - name: Validate work program
         run: |
