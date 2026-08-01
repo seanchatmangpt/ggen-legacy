@@ -174,7 +174,7 @@ def main() -> int:
     ))
     require(errors, root, "tickets/TICKET-012-after-code-reading-pivot.md", (
         "TICKET-012",
-        "Falsifier",
+        "Negative falsifiers",
         "Replay",
     ))
 
