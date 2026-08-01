@@ -2,18 +2,19 @@
 
 ## 0. Claims reconciliation
 
-This ARD is a target architecture projection of `product/PRD.md`. It does not claim that production components already execute.
+This ARD is a target architecture projection of `product/PRD.md`. It separates the independently replayable architecture corpus from runtime components that remain unimplemented or unproven.
 
 | Architecture claim | Ceiling | Standing |
 |---|---|---|
-| Component, boundary, and data models are documented | `DOCUMENTED` | `PARTIAL_ALIVE` |
-| After Code Reading control architecture is documented | `DOCUMENTED` | `PARTIAL_ALIVE` |
-| Bootstrap JSON authority validates | `SCHEMA_VALIDATED` after verifier execution | `PARTIAL_ALIVE` |
+| Component, boundary, and data models are documented and independently replayable | `REFERENCE_CONFORMANT` | `ALIVE` |
+| After Code Reading control architecture is admitted as the governing strategic architecture | `REFERENCE_CONFORMANT` | `ALIVE` |
+| Bootstrap JSON authority validates | `REFERENCE_CONFORMANT` | `ALIVE` |
 | Production services compile or execute | none | `UNKNOWN` |
-| A no-read reference manufacture has independent replay | none | `UNKNOWN` |
+| The strategic architecture corpus has two clean documentary replays and an independent crown | `REFERENCE_CONFORMANT` | `ALIVE` |
+| A complete real no-read replacement manufacture has independent replay | none | `UNKNOWN` |
 | Production scale, security, and availability are proven | none | `UNKNOWN` |
 
-`AGENTS.md`, `RELEASE_CONTROL.md`, admitted authority, and the PRD take precedence.
+`AGENTS.md`, `RELEASE_CONTROL.md`, admitted authority, and the PRD take precedence. Architecture-corpus `ALIVE` does not claim that every runtime plane executes or that a real replacement has passed no-read admission.
 
 ## 1. Architecture style
 
