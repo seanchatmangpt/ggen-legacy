@@ -1,0 +1,42 @@
+@prefix alive: <https://ggen.dev/ecosystem-alive#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+alive:program a alive:Program ;
+  dcterms:title "ggen Ecosystem ALIVE Program" ;
+  dcterms:description "Manufacture deterministic repository diagnostics, repair plans, validation sessions, receipts, and independent promotion evidence." ;
+  alive:version "1.0.0" ;
+  alive:manifest "authority/ecosystem-reconstitution/2026-07-31.repositories.json" ;
+  alive:state "foundry/workstreams/state.json" ;
+  alive:defaultEvidenceDir "target/ecosystem-alive" ;
+  alive:requiredBroker "BRCE" ;
+  alive:promotionOwner "verifiers/verify_ecosystem_alive.py" ;
+  alive:standingCeiling "PARTIAL_ALIVE" .
+
+alive:doctor a alive:Command ; alive:order 1 ; alive:name "doctor" ;
+  skos:prefLabel "Doctor" ; alive:summary "Inspect toolchains, source receipts, foundry state, and repository validation closure." .
+alive:status a alive:Command ; alive:order 2 ; alive:name "status" ;
+  skos:prefLabel "Status" ; alive:summary "Render a compact repository standing table." .
+alive:plan a alive:Command ; alive:order 3 ; alive:name "plan" ;
+  skos:prefLabel "Plan" ; alive:summary "Manufacture a dependency-ordered validation plan without executing it." .
+alive:explain a alive:Command ; alive:order 4 ; alive:name "explain" ;
+  skos:prefLabel "Explain" ; alive:summary "Explain one repository, its blockers, and the next lawful command." .
+alive:resume a alive:Command ; alive:order 5 ; alive:name "resume" ;
+  skos:prefLabel "Resume" ; alive:summary "Select the first non-ALIVE repository and emit a copy-paste continuation command." .
+alive:run a alive:Command ; alive:order 6 ; alive:name "run" ;
+  skos:prefLabel "Run" ; alive:summary "Execute one repository validation ladder only after explicit --execute authority." .
+alive:verify a alive:Command ; alive:order 7 ; alive:name "verify" ;
+  skos:prefLabel "Verify" ; alive:summary "Recompute receipt and replay closure without granting promotion." .
+alive:matrix a alive:Command ; alive:order 8 ; alive:name "matrix" ;
+  skos:prefLabel "Matrix" ; alive:summary "Emit a GitHub Actions matrix for repository validation cells." .
+
+alive:exactSource a alive:Gate ; alive:order 1 ; alive:name "exact-source" ; alive:required true ; alive:receiptKind "source" .
+alive:nativeValidation a alive:Gate ; alive:order 2 ; alive:name "native-validation" ; alive:required true ; alive:receiptKind "validation" .
+alive:negativeControl a alive:Gate ; alive:order 3 ; alive:name "negative-control" ; alive:required true ; alive:receiptKind "falsifier" .
+alive:ggenReceipt a alive:Gate ; alive:order 4 ; alive:name "ggen-receipt" ; alive:required true ; alive:receiptKind "ggen" .
+alive:cleanReplay a alive:Gate ; alive:order 5 ; alive:name "clean-replay" ; alive:required true ; alive:receiptKind "replay" .
+alive:independentPromotion a alive:Gate ; alive:order 6 ; alive:name "independent-promotion" ; alive:required true ; alive:receiptKind "promotion" .
+
+alive:fast a alive:Mode ; alive:order 1 ; alive:name "fast" ; alive:description "Execute the first bounded repository-native validation command." ; alive:commandLimit 1 .
+alive:full a alive:Mode ; alive:order 2 ; alive:name "full" ; alive:description "Execute the complete repository-native validation ladder." ; alive:commandLimit 999 .
