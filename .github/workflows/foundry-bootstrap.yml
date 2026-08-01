@@ -40,11 +40,13 @@ jobs:
         with:
           components: rustfmt
 
-      - name: Manufacture normalized runtime in runner checkout
+      - name: Verify clean exact-head inputs
         run: |
-          python3 ggen/tools/architecture-foundry/normalize_runtime.py
-          cargo fmt --manifest-path ggen/tools/architecture-foundry/Cargo.toml
-          cargo fmt --manifest-path ggen/tools/architecture-foundry/Cargo.toml -- --check
+          test -z "$(git -C ggen status --porcelain=v1 --untracked-files=all)"
+          test -z "$(git -C ggen-legacy status --porcelain=v1 --untracked-files=all)"
+
+      - name: Verify canonical runtime formatting
+        run: cargo fmt --manifest-path ggen/tools/architecture-foundry/Cargo.toml -- --check
 
       - name: Test runtime against real Git boundaries
         run: cargo test --manifest-path ggen/tools/architecture-foundry/Cargo.toml --all-targets
