@@ -1,0 +1,77 @@
+schema_version: ggen.enterprise-architecture-foundry.bootstrap/1
+repository: seanchatmangpt/ggen-legacy
+role: ENTERPRISE_ARCHITECTURE_FOUNDRY_CORPUS
+standing: NOT_INITIALIZED
+admitted: false
+
+manufacturing_kernel:
+  repository: seanchatmangpt/ggen
+  program_path: docs/architecture-foundry/work-program.yaml
+  program_ref: agent/enterprise-architecture-foundry-plan
+  program_minimum_commit: 999db36647feeb2dfd0bd2250d2db2ef00b887c4
+  runtime_manifest: tools/architecture-foundry/Cargo.toml
+  runtime_ref: agent/architecture-foundry-runtime
+  runtime_minimum_commit: 49b3a63d9272870f8c87593d84c343807659c4df
+  binary: ggen-foundry
+
+first_operations:
+  - validate_program
+  - establish_exact_head_baseline
+  - initialize_corpus
+  - commit_initialization_checkpoint
+  - verify_corpus
+  - replay_initialization_receipt
+
+required_clean_repositories:
+  source: seanchatmangpt/ggen
+  corpus: seanchatmangpt/ggen-legacy
+
+input_directories:
+  migration: migration
+  evidence: evidence
+  authority: authority
+  witnesses: witnesses
+  verifiers: verifiers
+  reference: reference
+
+controller_owned_directories:
+  manifest: foundry/foundry-manifest.json
+  catalogs: foundry/catalogs
+  workstreams: foundry/workstreams
+  lineage: foundry/lineage
+  receipts: foundry/receipts
+  standing: foundry/standing.json
+
+initial_solution_packs:
+  - repository_manufacturing_platform
+  - enterprise_developer_platform
+  - governed_data_lakehouse_platform
+  - event_and_integration_platform
+  - identity_and_policy_enforcement_platform
+  - ai_and_agent_execution_platform
+  - process_evidence_and_observability_platform
+  - regulated_release_and_supply_chain_platform
+
+refusal_conditions:
+  - DIRTY_SOURCE_WORKTREE
+  - DIRTY_CORPUS_WORKTREE
+  - PROGRAM_SCHEMA_INVALID
+  - PROGRAM_DIGEST_DRIFT
+  - SOURCE_HEAD_STALE
+  - CORPUS_HEAD_STALE
+  - UNKNOWN_DISPOSITION
+  - REPLACEMENT_OWNER_MISSING
+  - LINEAGE_DIGEST_MISMATCH
+  - RECEIPT_OUTPUT_DRIFT
+  - WORKSTREAM_DEPENDENCY_NOT_ADMITTED
+  - WORKSTREAM_PREDICATE_FALSE
+  - FINAL_WORKSTREAMS_INCOMPLETE
+  - FINAL_PREDICATE_FALSE
+
+terminal_condition:
+  all_workstreams_admitted: true
+  final_predicates_satisfied: true
+  cross_repository_receipts_valid: true
+  clean_room_replay_match: true
+  fortune_scale_reference_manufactured: true
+  standing: ALIVE
