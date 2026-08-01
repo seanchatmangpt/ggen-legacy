@@ -1,0 +1,103 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/seanchatmangpt/ggen-legacy/schemas/migration-manifest.schema.json",
+  "title": "ggen Enterprise Architecture Foundry migration manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "batch_id",
+    "source_head",
+    "corpus_parent_head",
+    "components"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "ggen.enterprise-architecture-foundry.migration/1"
+    },
+    "batch_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9._-]+$"
+    },
+    "source_head": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "corpus_parent_head": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/component"
+      }
+    }
+  },
+  "$defs": {
+    "component": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "source_path",
+        "destination_path",
+        "disposition",
+        "capability_ids",
+        "replacement_owner",
+        "rationale"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[A-Za-z0-9._-]+$"
+        },
+        "source_path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "destination_path": {
+          "$ref": "#/$defs/relativePath"
+        },
+        "disposition": {
+          "enum": [
+            "PRESERVED",
+            "SUBSUMED",
+            "REPLACED",
+            "ARCHIVED",
+            "REFUSED"
+          ]
+        },
+        "capability_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "replacement_owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "not": {
+        "anyOf": [
+          { "pattern": "^/" },
+          { "pattern": "(^|/)\\.\\.(/|$)" },
+          { "pattern": "^[A-Za-z]:" }
+        ]
+      }
+    }
+  }
+}
