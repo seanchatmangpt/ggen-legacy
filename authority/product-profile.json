@@ -7,18 +7,27 @@
   "platform": "ggen Repository Manufacturing System",
   "method": "Evidence-Driven Repository Manufacture",
   "project": "Project 001 — ggen-legacy Self-Reconstitution",
-  "documentation_standing": "PARTIAL_ALIVE",
+  "documentation_standing": "ALIVE",
   "implementation_standing": "PARTIAL_ALIVE",
-  "verifier_appliance_standing": "PARTIAL_ALIVE",
+  "verifier_appliance_standing": "ALIVE",
+  "offline_transport_standing": "ALIVE",
+  "foundry_runtime_candidate_standing": "ALIVE",
+  "complete_foundry_standing": "PARTIAL_ALIVE",
   "external_production_standing": "UNKNOWN",
   "direct_actuation_allowed": false,
   "source_phase_admitted": true,
   "source_admission_ticket": "projects/001/TICKET-011-admit-verifier-appliance-pack.md",
+  "ggen_source_repository": "seanchatmangpt/ggen",
   "ggen_source_revision": "0f39227c102e0ac7519f0f27561356227a518653",
+  "verified_runtime_candidate": "458f0f88aee0060cddce3ffdaa7e2172a4f40a25",
+  "promotion_authority": "authority/project-001-promotion.json",
+  "bounded_implementation": "customer-controlled verifier appliance reference",
   "nonclaims": [
     "complete product ALIVE",
+    "complete A-K foundry ALIVE",
     "real Fortune 5 deployment",
     "SOC 2 compliance",
-    "external Sunset Admission"
+    "external production standing",
+    "real predecessor Sunset Admission"
   ]
 }
