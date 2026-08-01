@@ -1,0 +1,8 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.execution-attempt/1",
+  "parent_corpus_sha": "8b1e54c786e66b01cc631af4f2d73bbc777941af",
+  "source_authority_sha": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "observation_evidence_sha": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+  "rust_runtime_sha": "5905b24fc62f3ec3eadb93fb36787cdde08f3c82",
+  "purpose": "Execute the bounded C-K manufacturing ladder on an isolated mergeable child branch. This record does not promote standing."
+}
