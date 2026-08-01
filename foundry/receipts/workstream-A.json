@@ -1,0 +1,20 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.receipt/1",
+  "receipt_type": "WORKSTREAM_ADMISSION",
+  "subject": "A",
+  "subject_digest": "48fd7cd6461e827676d68f8eb742bc8cc0648ce45d75ae8201c76a1b364622e5",
+  "source_head": "54ffb5bfe3fb6522118c58c116ac0f3113b849d1",
+  "corpus_head": "cd6f39693be2d22a263d001102dfa839cc0ba6e0",
+  "input_digests": {
+    "corpus-tree": "d063694c9b9d6cabf1ed08902a2fef190729f252bee0735308537061c3820399",
+    "foundry-manifest": "55b3138ac1622f3f9afe80876bac1f415e2bed9685ce10bb11eb65a00d18dbfb",
+    "initialization-receipt": "d13cf0257bf500bb546ab6a979f8402fb579aaab7480fa2690ab6b3699268264",
+    "source-tree": "8ef2e33168bc4d73e8a7440fd6a49dd34d51539974b669f4524ae0abacf4bbd5",
+    "work-program": "22ea84cc70f076c7532a5aaae0c15bac28fc8502e6af5b0f5c6706243ad4900c"
+  },
+  "output_digests": {
+    "corpus:foundry/workstreams/A/admission-report.json": "49fa4246446b0fd0da80c7955faf0379692c42627173c9a94bacad799ae87f47",
+    "projection:foundry/workstreams/state.json": "9f4b901b4f984c7129737421027e77d1589ac1b86406d3427d9504b4b04bd2cf"
+  },
+  "run_id": "48fd7cd6461e827676d6"
+}
