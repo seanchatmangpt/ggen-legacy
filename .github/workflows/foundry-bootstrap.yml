@@ -1,0 +1,74 @@
+name: Enterprise Architecture Foundry Bootstrap
+
+on:
+  pull_request:
+  push:
+    branches:
+      - "agent/bootstrap-enterprise-architecture-foundry"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: foundry-bootstrap-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout ggen-legacy exact head
+        uses: actions/checkout@v4
+        with:
+          path: ggen-legacy
+          fetch-depth: 0
+
+      - name: Checkout ggen manufacturing kernel
+        uses: actions/checkout@v4
+        with:
+          repository: seanchatmangpt/ggen
+          ref: agent/architecture-foundry-runtime
+          path: ggen
+          fetch-depth: 0
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Validate work program
+        run: |
+          cargo run --manifest-path ggen/tools/architecture-foundry/Cargo.toml -- \
+            validate-program \
+            --program ggen/docs/architecture-foundry/work-program.yaml
+
+      - name: Establish exact-head baseline
+        run: |
+          cargo run --manifest-path ggen/tools/architecture-foundry/Cargo.toml -- \
+            baseline \
+            --program ggen/docs/architecture-foundry/work-program.yaml \
+            --source ggen \
+            --corpus ggen-legacy \
+            --out "${RUNNER_TEMP}/foundry-baseline"
+
+      - name: Initialize corpus through Rust controller
+        run: |
+          cargo run --manifest-path ggen/tools/architecture-foundry/Cargo.toml -- \
+            initialize-corpus \
+            --program ggen/docs/architecture-foundry/work-program.yaml \
+            --source ggen \
+            --corpus ggen-legacy
+
+      - name: Replay generated receipts
+        run: |
+          cargo run --manifest-path ggen/tools/architecture-foundry/Cargo.toml -- \
+            replay \
+            --source ggen \
+            --corpus ggen-legacy
+
+      - name: Verify corpus state
+        run: |
+          cargo run --manifest-path ggen/tools/architecture-foundry/Cargo.toml -- \
+            verify \
+            --program ggen/docs/architecture-foundry/work-program.yaml \
+            --source ggen \
+            --corpus ggen-legacy
