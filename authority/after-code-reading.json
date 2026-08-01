@@ -1,0 +1,249 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "schema": "urn:chatman:ggen-legacy:after-code-reading:v1",
+  "release": "v26.8.1",
+  "ticket": "TICKET-012",
+  "exact_base": "8d6428f40c0d30d5983fb0ecdd16cab1c1328a23",
+  "state": "PARTIAL_ALIVE",
+  "claim_ceiling": "DOCUMENTED",
+  "historical_observation": {
+    "event_date": "2026-07-23",
+    "actor": "Robert C. Martin",
+    "public_coordinate": "https://x.com/unclebobmartin/status/2080257779395154409",
+    "observation": "Martin publicly described not reading agent-written implementation in order to preserve agent productivity and substituting an extensive constraint and test gauntlet.",
+    "standing": "DOCUMENTED_EXTERNAL_OBSERVATION",
+    "nonclaims": [
+      "The observation does not prove this doctrine.",
+      "The observation does not establish endorsement of ggen-legacy.",
+      "The observation does not establish market adoption or production standing."
+    ]
+  },
+  "category_stack": [
+    {
+      "term": "After Manual Code",
+      "type": "historical_movement",
+      "definition": "The transition from software production governed by manual implementation construction to machine-scale manufacture."
+    },
+    {
+      "term": "After Code Reading",
+      "type": "engineering_boundary",
+      "definition": "The condition in which mandatory human source inspection is removed from the production critical path and replaced by stronger admitted controls and evidence."
+    },
+    {
+      "term": "Proof-Carrying Software Manufacturing",
+      "type": "engineering_method",
+      "definition": "Manufacture governed by admitted requirements, planning, bounded authority, independent falsification, operational evidence, explicit standing, receipts, and replay."
+    },
+    {
+      "term": "Software Systems Manufacturer",
+      "type": "profession",
+      "definition": "The accountable human who governs mission, architecture, boundaries, risk, acceptance, verifier design, evidence interpretation, and irreversible decisions while machinery performs combinatorial construction and inspection."
+    },
+    {
+      "term": "Verified Repository Reconstitution",
+      "type": "product_category",
+      "definition": "The ggen-legacy contribution that reconstructs a legacy behavioral contract, manufactures a replacement, proves bounded closure, and computes release and predecessor-retirement decisions."
+    }
+  ],
+  "governing_thesis": "The age of software governed primarily by humans reading and writing implementation is ending. Machine-scale production requires admitted specifications, architecture, full planning, bounded actuation, independent verification, operational evidence, explicit standing, receipts, and replay.",
+  "owned_problem": "What replaces human code reading as the basis of software trust when machine implementation throughput exceeds human inspection throughput?",
+  "answer": "Proof-Carrying Software Manufacturing",
+  "control_loop": [
+    "mission",
+    "admitted_requirements",
+    "machine_readable_production_law",
+    "full_planning",
+    "manufacture",
+    "authorized_actuation",
+    "independent_falsification",
+    "operational_evidence",
+    "standing",
+    "receipt",
+    "replay",
+    "kaizen"
+  ],
+  "human_authority": [
+    "mission",
+    "business_consequences",
+    "architecture",
+    "invariants",
+    "security_and_risk_boundaries",
+    "acceptance_criteria",
+    "verifier_design",
+    "evidence_interpretation",
+    "exceptions",
+    "irreversible_decisions"
+  ],
+  "machine_labor": [
+    "candidate_generation",
+    "implementation_construction",
+    "test_and_fixture_generation",
+    "static_and_dynamic_inspection",
+    "bounded_search",
+    "fuzzing_and_mutation",
+    "integration_execution",
+    "evidence_projection",
+    "receipt_binding",
+    "replay"
+  ],
+  "replacement_controls": [
+    {
+      "manual_activity_removed": "manual implementation construction",
+      "replacement": "ontology-owned and template-governed manufacture"
+    },
+    {
+      "manual_activity_removed": "mandatory line-by-line implementation review",
+      "replacement": "admission, architecture conformance, executable specifications, independent falsification, operational evidence, standing, receipts, and replay"
+    },
+    {
+      "manual_activity_removed": "reviewer reconstruction of intent from a diff",
+      "replacement": "admitted requirements and explicit consequence models"
+    },
+    {
+      "manual_activity_removed": "informal trust in a producer",
+      "replacement": "producer-verifier separation and machine-readable evidence"
+    },
+    {
+      "manual_activity_removed": "status by assertion",
+      "replacement": "typed standing computed over bounded evidence"
+    }
+  ],
+  "hard_invariants": [
+    "Code is intermediate manufacturing material, not the product.",
+    "The product is a verified business capability or conforming operational system.",
+    "Selection is not authorization and authorization is not execution.",
+    "The producer cannot certify itself.",
+    "Unknown evidence cannot be promoted into success.",
+    "Generated output cannot become a second authority.",
+    "No material actuation is accepted without a receipt.",
+    "A no-read claim is invalid unless the replacement control and independent verifier are named.",
+    "ALIVE requires exact-head evidence and independent replay."
+  ],
+  "project_mapping": [
+    {
+      "project": "ggen",
+      "role": "software systems manufacturing",
+      "contribution": "Projects admitted semantic authority into applications, services, infrastructure, policies, tests, schemas, documentation, and evidence surfaces."
+    },
+    {
+      "project": "ggen-legacy",
+      "role": "verified repository reconstitution",
+      "contribution": "Reconstructs predecessor contracts and proves whether a manufactured replacement and predecessor retirement have standing."
+    },
+    {
+      "project": "ferroplan",
+      "role": "full planning and consequence selection",
+      "contribution": "Plans lawful deterministic work and probabilistic policies, including refusal, observation, recovery, and risk constraints."
+    },
+    {
+      "project": "BRCE",
+      "role": "actuation authority",
+      "contribution": "Separates selection, authorization, and execution and enforces zero unreceipted actuation."
+    },
+    {
+      "project": "wasm4pm",
+      "role": "runtime evidence court",
+      "contribution": "Establishes what executed, in which order, under which authority, and with which observable consequences."
+    },
+    {
+      "project": "TCPS",
+      "role": "factory operating system",
+      "contribution": "Supplies pull, standardized work, jidoka, andon, poka-yoke, genchi genbutsu, five whys, kaizen, and receipt discipline."
+    },
+    {
+      "project": "Graphlaw and SHACL",
+      "role": "machine-readable production law",
+      "contribution": "Admit semantic authority, reject contradiction, and enforce architecture and policy constraints."
+    },
+    {
+      "project": "mfact and Lean",
+      "role": "proof rail",
+      "contribution": "Kernel-check bounded production laws, authorization invariants, transition properties, and countermodels."
+    },
+    {
+      "project": "MFW, POWL, and planner portfolio",
+      "role": "alternative production policies",
+      "contribution": "Explore deterministic, temporal, workflow, and stochastic routes from requirements to verified consequences."
+    }
+  ],
+  "required_repository_projection": {
+    "readme": [
+      "code_reading_bottleneck",
+      "repository_contribution",
+      "hard_invariant",
+      "evidence_state",
+      "falsifier"
+    ],
+    "prd_ard": [
+      "contribution_to_after_code_reading",
+      "human_responsibility_retained",
+      "manual_inspection_removed",
+      "machine_authority_introduced",
+      "authority_boundary",
+      "independent_verifier",
+      "receipt_and_replay",
+      "claim_ceiling",
+      "falsifier"
+    ],
+    "pull_request": [
+      "human_reading_task_eliminated",
+      "machine_control_replacing_it",
+      "new_risk_introduced",
+      "independent_verifier",
+      "evidence_for_standing",
+      "automatic_stop_condition"
+    ]
+  },
+  "benchmark": {
+    "name": "Post-Reading Throughput",
+    "equation": "verified_engineering_consequences / (human_inspection_time + elapsed_time + compute + coordination)",
+    "dimensions": [
+      "verified_business_consequences",
+      "manual_source_lines_read",
+      "manual_source_lines_written",
+      "human_attention_minutes",
+      "executable_requirements_admitted",
+      "architecture_violations_detected",
+      "mutation_score",
+      "property_and_fuzz_failures",
+      "security_findings",
+      "replay_success",
+      "receipt_completeness",
+      "unsupported_claims_refused",
+      "unnecessary_actions_avoided",
+      "time_from_observation_to_standing",
+      "cost_per_verified_consequence"
+    ],
+    "signature_demonstration": "A bounded capability is manufactured, independently verified, receipted, and replayed while the accountable human reads zero implementation lines."
+  },
+  "falsifiers": [
+    "A human must inspect implementation to determine acceptance because requirements or evidence are insufficient.",
+    "The same agent-generated test suite is the only verifier of agent-generated implementation.",
+    "Architecture can drift without machine detection.",
+    "Successful planning silently authorizes execution.",
+    "Missing evidence or silence is promoted into success.",
+    "Receipts cannot reproduce the production path.",
+    "An artifact receives ALIVE without independent replay.",
+    "The system cannot represent no-change or refusal as a successful outcome."
+  ],
+  "external_references": [
+    {
+      "title": "Robert C. Martin public statement",
+      "url": "https://x.com/unclebobmartin/status/2080257779395154409",
+      "date": "2026-07-23"
+    },
+    {
+      "title": "The End of Code Review: Coding Agents Supersede Human Inspection",
+      "url": "https://arxiv.org/abs/2606.13175",
+      "date": "2026-06-11"
+    }
+  ],
+  "nonclaims": [
+    "This authority does not prove that human source reading is obsolete for every organization or risk class.",
+    "This authority does not establish that tests alone prove correctness.",
+    "This authority does not establish a complete ecosystem implementation.",
+    "This authority does not establish external production adoption.",
+    "This authority does not establish endorsement by any external person.",
+    "This authority does not promote the complete ggen-legacy product above UNKNOWN."
+  ]
+}
