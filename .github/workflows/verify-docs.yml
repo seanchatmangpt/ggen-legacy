@@ -15,7 +15,7 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-24.04
-    timeout-minutes: 75
+    timeout-minutes: 40
     steps:
       - name: Check out exact candidate
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
@@ -31,18 +31,25 @@ jobs:
           test -s AGENTS.md
           test -s ggen.toml
           test -s ontology/assurance-program.ttl
+          test -s authority/assurance-subsystems.json
+          test -s authority/document-evidence.json
           test -s packs/ggen-legacy-assurance-pack/pack.toml
 
       - name: Verify documentary and projection authority
         run: python3 scripts/verify_docs.py --strict
 
-      - name: Execute real customer-controlled reference rail
+      - name: Execute customer-controlled assurance and read-only crown
         shell: bash
         run: |
           set -euo pipefail
           bash appliance/bin/run-reference-e2e.sh
-          test -s evidence/appliance/reference-verifier-report.json
-          test -s evidence/appliance/reference-replay-report.json
+          python3 - <<'PY'
+          import json
+          crown=json.load(open("evidence/appliance/crown-report.json"))
+          assert crown["standing"] == "ALIVE", crown
+          assert crown["release_admitted"] is True, crown
+          assert crown["sunset_admitted"] is False, crown
+          PY
 
       - name: Check out exact ggen manufacturing coordinate
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
@@ -94,12 +101,15 @@ jobs:
           git diff --exit-code -- appliance
           find appliance -type f -print0 | sort -z | xargs -0 sha256sum > /tmp/appliance-b.sha256
           cmp /tmp/appliance-a.sha256 /tmp/appliance-b.sha256
+          python3 scripts/verify_docs.py --strict
+          bash appliance/bin/run-reference-e2e.sh
 
       - name: Install pinned mdBook
         shell: bash
         run: |
           set -euo pipefail
           cargo install mdbook --version 0.4.40 --locked
+          mdbook --version
 
       - name: Build mdBook projection
         shell: bash
@@ -117,6 +127,10 @@ jobs:
             ':(exclude)evidence/local-docs-verifier.json' \
             ':(exclude)evidence/appliance/**' \
             ':(exclude)docs/book/**'
+          test -s evidence/local-docs-verifier.json
+          test -s evidence/appliance/subsystem-verifier-report.json
+          test -s evidence/appliance/subsystem-coverage.json
+          test -s evidence/appliance/crown-report.json
 
       - name: Upload exact-head assurance evidence
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
@@ -125,5 +139,7 @@ jobs:
           path: |
             evidence/local-docs-verifier.json
             evidence/appliance/*.json
-            docs/book/
+            /tmp/appliance-a.sha256
+            /tmp/appliance-b.sha256
           if-no-files-found: error
+          retention-days: 30

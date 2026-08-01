@@ -30,6 +30,8 @@ assert c['standing']=='ALIVE', c
 assert rel['admitted'] is True, rel
 assert sun['admitted'] is False, sun
 PYCHK
+cp "$TMP/portfolio/release-admission.json" "$TMP/reference-release-admission.json"
+cp "$TMP/portfolio/sunset-admission.json" "$TMP/reference-sunset-admission.json"
 cp "$TMP/transparency.jsonl" "$TMP/revoked.jsonl"
 python3 "$ROOT/appliance/bin/transparency-log.py" revoke --log "$TMP/revoked.jsonl" --target-entry-hash "$ENTRY_HASH" --reason superseded --identity customer-release-authority --logical-time 2026-07-31T17:09:00-07:00 >/dev/null
 python3 "$ROOT/appliance/bin/transparency-log.py" verify --log "$TMP/revoked.jsonl" >/dev/null
@@ -55,7 +57,24 @@ if python3 "$ROOT/appliance/bin/verify-standing-portfolio.py" --portfolio "$TMP/
 fi
 mkdir -p "$ROOT/evidence/appliance"
 cp "$TMP/verifier-report.json" "$ROOT/evidence/appliance/reference-verifier-report.json"
+cp "$TMP/cross-check-report.json" "$ROOT/evidence/appliance/reference-cross-check-report.json"
 cp "$TMP/replay-report.json" "$ROOT/evidence/appliance/reference-replay-report.json"
-cp "$TMP/portfolio/release-admission.json" "$ROOT/evidence/appliance/reference-release-admission.json"
-cp "$TMP/portfolio/sunset-admission.json" "$ROOT/evidence/appliance/reference-sunset-admission.json"
+cp "$TMP/reference-release-admission.json" "$ROOT/evidence/appliance/reference-release-admission.json"
+cp "$TMP/reference-sunset-admission.json" "$ROOT/evidence/appliance/reference-sunset-admission.json"
+cp "$TMP/tamper-report.json" "$ROOT/evidence/appliance/reference-tamper-report.json"
+cp "$TMP/independence-report.json" "$ROOT/evidence/appliance/reference-independence-report.json"
+
+python3 "$ROOT/appliance/bin/observe-project.py" --root "$ROOT"
+python3 "$ROOT/appliance/bin/build-document-evidence-index.py" --root "$ROOT"
+python3 "$ROOT/appliance/bin/build-subsystem-evidence.py" --root "$ROOT"
+python3 "$ROOT/appliance/bin/verify-subsystem-evidence.py" --root "$ROOT"
+python3 "$ROOT/appliance/bin/project-subsystem-coverage.py" --root "$ROOT"
+python3 "$ROOT/appliance/bin/verify-crown.py" --root "$ROOT"
+python3 - "$ROOT/evidence/appliance/crown-report.json" <<'PYCROWN'
+import json,sys
+report=json.load(open(sys.argv[1]))
+assert report["standing"]=="ALIVE", report
+assert report["release_admitted"] is True, report
+assert report["sunset_admitted"] is False, report
+PYCROWN
 echo 'GGEN_LEGACY_ASSURANCE_REFERENCE_ALIVE'

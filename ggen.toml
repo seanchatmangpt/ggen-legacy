@@ -13,5 +13,9 @@ skos = "http://www.w3.org/2004/02/skos/core#"
 [packs]
 ggen-legacy-assurance-pack = { path = "packs/ggen-legacy-assurance-pack" }
 
+[templates]
+dir = "templates"
+aggregate_modules = true
+
 [law]
 reflexive = true

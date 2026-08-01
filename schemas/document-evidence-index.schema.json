@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chatmangpt.com/ggen-legacy/v26.8.1/document-evidence-index.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "release",
+    "exact_source_head",
+    "authority_digest",
+    "records",
+    "standing"
+  ],
+  "properties": {
+    "schema": {
+      "const": "ggen.legacy.document.evidence.index.v1"
+    },
+    "release": {
+      "const": "v26.8.1"
+    },
+    "exact_source_head": {
+      "type": "string",
+      "minLength": 7
+    },
+    "authority_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "records": {
+      "type": "array",
+      "minItems": 14,
+      "items": {
+        "$ref": "#/$defs/record"
+      }
+    },
+    "standing": {
+      "enum": [
+        "ALIVE",
+        "PARTIAL_ALIVE",
+        "BLOCKED",
+        "BUILD_BROKEN",
+        "UNKNOWN",
+        "UNSUPPORTED"
+      ]
+    }
+  },
+  "$defs": {
+    "record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "document",
+        "document_sha256",
+        "authority_ref",
+        "implementation_ref",
+        "verifier_ref",
+        "legacy_ref",
+        "missing_refs",
+        "complete"
+      ],
+      "properties": {
+        "document": {
+          "type": "string"
+        },
+        "document_sha256": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "authority_ref": {
+          "type": "string"
+        },
+        "implementation_ref": {
+          "type": "string"
+        },
+        "verifier_ref": {
+          "type": "string"
+        },
+        "legacy_ref": {
+          "type": "string"
+        },
+        "missing_refs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "complete": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

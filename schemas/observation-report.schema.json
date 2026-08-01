@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chatmangpt.com/ggen-legacy/v26.8.1/observation-report.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "release",
+    "exact_source_head",
+    "observers",
+    "standing"
+  ],
+  "properties": {
+    "schema": {
+      "const": "ggen.legacy.observation.report.v1"
+    },
+    "release": {
+      "const": "v26.8.1"
+    },
+    "exact_source_head": {
+      "type": "string",
+      "minLength": 7
+    },
+    "observers": {
+      "type": "array",
+      "minItems": 5,
+      "maxItems": 5,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "attempted",
+          "result_count",
+          "errors"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "attempted": {
+            "type": "boolean"
+          },
+          "result_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "standing": {
+      "enum": [
+        "ALIVE",
+        "PARTIAL_ALIVE",
+        "BLOCKED",
+        "BUILD_BROKEN",
+        "UNKNOWN",
+        "UNSUPPORTED"
+      ]
+    }
+  }
+}

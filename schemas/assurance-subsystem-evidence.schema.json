@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chatmangpt.com/ggen-legacy/v26.8.1/assurance-subsystem-evidence.schema.json",
+  "title": "ggen-legacy Assurance Subsystem Evidence Manifest",
+  "description": "Generated evidence claim. Independent verification must re-derive every field.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "release",
+    "exact_source_head",
+    "generator",
+    "subsystems",
+    "receipt_digest"
+  ],
+  "properties": {
+    "schema": {
+      "const": "ggen.legacy.assurance.subsystem-evidence.v1"
+    },
+    "release": {
+      "const": "v26.8.1"
+    },
+    "exact_source_head": {
+      "type": "string",
+      "minLength": 7
+    },
+    "generator": {
+      "type": "object",
+      "required": [
+        "path",
+        "sha256",
+        "role"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "role": {
+          "const": "manifest-generator"
+        }
+      }
+    },
+    "subsystems": {
+      "type": "array",
+      "minItems": 10,
+      "maxItems": 10,
+      "items": {
+        "$ref": "#/$defs/subsystem"
+      }
+    },
+    "receipt_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "$defs": {
+    "check": {
+      "type": "object",
+      "required": [
+        "id",
+        "passed",
+        "detail"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "detail": {}
+      }
+    },
+    "subsystem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "authority_sources",
+        "authority_digest",
+        "implementation_sources",
+        "implementation_digest",
+        "missing_sources",
+        "primary_checks",
+        "negative_controls",
+        "provisional_standing"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "authority_sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "authority_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "implementation_sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "implementation_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "missing_sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "primary_checks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/check"
+          }
+        },
+        "negative_controls": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/check"
+          }
+        },
+        "provisional_standing": {
+          "enum": [
+            "ALIVE",
+            "PARTIAL_ALIVE",
+            "BLOCKED",
+            "BUILD_BROKEN",
+            "UNKNOWN",
+            "UNSUPPORTED"
+          ]
+        }
+      }
+    }
+  }
+}
