@@ -4,8 +4,26 @@
   "release": "v26.8.1",
   "ticket": "TICKET-012",
   "exact_base": "8d6428f40c0d30d5983fb0ecdd16cab1c1328a23",
-  "state": "PARTIAL_ALIVE",
-  "claim_ceiling": "DOCUMENTED",
+  "state": "ALIVE",
+  "claim_ceiling": "REFERENCE_CONFORMANT",
+  "promotion": {
+    "scope": "after-code-reading-strategic-corpus",
+    "required_workflow": "Crown After Code Reading v26.8.1",
+    "required_verifier": "scripts/verify_after_code_reading_crown.py",
+    "producer_verifier_separation": true,
+    "clean_replay_count": 2,
+    "final_evidence": "evidence/after-code-reading-crown.json",
+    "final_state": "ALIVE",
+    "final_claim_ceiling": "REFERENCE_CONFORMANT",
+    "actuation_performed": false,
+    "human_source_reading_required_for_acceptance": false,
+    "nonclaims": [
+      "This promotion is bounded to the strategic corpus.",
+      "It does not promote the complete product implementation.",
+      "It does not close the complete A-K foundry program.",
+      "It does not establish external production adoption."
+    ]
+  },
   "historical_observation": {
     "event_date": "2026-07-23",
     "actor": "Robert C. Martin",
