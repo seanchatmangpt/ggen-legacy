@@ -1,20 +1,10 @@
 #!/usr/bin/env python3
 """Normalize receipt ownership between mutating foundry phases.
 
-The base normalizer intentionally refuses when an ownership record's active
-output no longer matches the current corpus. Between two admitted phases that
-is too early: the new phase has already written both the new bytes and a new
-receipt, but ownership has not yet transferred.
-
-This controller preserves the same fail-closed rules while allowing exactly
-one lawful transition:
-
-* the previous active receipt remains internally valid;
-* a new active receipt claims the same output path;
-* exactly one claimant matches the current BLAKE3 digest;
-* all historical archives remain byte-identical.
-
-Unexplained single-claim drift still refuses.
+A completed phase may lawfully replace a mutable projection and issue a new
+receipt before ownership has transferred. This verifier admits that transition
+only when exactly one active claimant matches the current BLAKE3 digest. It
+preserves the base normalizer's immutable history and fail-closed replay law.
 """
 from __future__ import annotations
 
@@ -27,13 +17,8 @@ from typing import Any
 import normalize_foundry_receipts as base
 
 
-def validate_existing_ownership_for_transition(root: Path, ownership: dict[str, Any]) -> None:
-    """Validate history and receipt claims, deferring only current-owner drift.
-
-    Current-output agreement is recomputed after all active claimants are
-    observed. This permits a newly admitted exact claimant to supersede the
-    prior owner without permitting an unclaimed mutation.
-    """
+def validate_existing_history(root: Path, ownership: dict[str, Any]) -> None:
+    """Validate receipt claims and archives while deferring owner transfer."""
     for key, record in sorted(ownership.get("outputs", {}).items()):
         if not isinstance(record, dict):
             raise base.Refusal("RECEIPT_OWNERSHIP_RECORD_INVALID", key)
@@ -53,7 +38,7 @@ def validate_existing_ownership_for_transition(root: Path, ownership: dict[str, 
 
 
 def derive_transition_plan(root: Path, existing: dict[str, Any]) -> dict[str, Any]:
-    plan = ORIGINAL_DERIVE_PLAN(root, existing)
+    plan = base.derive_plan(root, existing)
     _receipts, claims, current = base.analyze(root)
     for key, claimants in sorted(claims.items()):
         if len(claimants) == 1 and claimants[0]["expected_digest"] != current[key]:
@@ -64,9 +49,27 @@ def derive_transition_plan(root: Path, existing: dict[str, Any]) -> dict[str, An
     return plan
 
 
-ORIGINAL_DERIVE_PLAN = base.derive_plan
-base.validate_existing_ownership = validate_existing_ownership_for_transition
-base.derive_plan = derive_transition_plan
+def report(root: Path, ownership_path: Path, mode: str) -> dict[str, Any]:
+    existing = base.load_existing_ownership(ownership_path)
+    if ownership_path.exists():
+        validate_existing_history(root, existing)
+    plan = derive_transition_plan(root, existing)
+    if mode == "apply" and plan["filters"]:
+        ownership = base.apply_plan(root, ownership_path, plan)
+        status = "NORMALIZED"
+    else:
+        ownership = existing
+        status = "NORMALIZATION_REQUIRED" if plan["filters"] else "ALIVE"
+    return {
+        "schema": "ggen.enterprise-architecture-foundry.interphase-ownership-report/1",
+        "status": status,
+        "normalization_required": bool(plan["filters"]),
+        "duplicate_outputs_observed": plan["duplicate_output_count"],
+        "receipt_filters": plan["filters"],
+        "ownership_manifest": str(ownership_path),
+        "ownership_records": len(ownership.get("outputs", {})),
+        "direct_actuation": False,
+    }
 
 
 def main() -> int:
@@ -80,7 +83,7 @@ def main() -> int:
     root = args.root.resolve()
     ownership = args.ownership if args.ownership.is_absolute() else root / args.ownership
     try:
-        value = base.report(root, ownership, args.command)
+        value = report(root, ownership, args.command)
     except base.Refusal as refusal:
         print(json.dumps(refusal.payload(), indent=2, sort_keys=True), file=sys.stderr)
         return 2
