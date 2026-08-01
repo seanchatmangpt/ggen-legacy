@@ -1,0 +1,86 @@
+name: Foundry C Diagnostic
+
+on:
+  pull_request:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: foundry-c-diagnostic-${{ github.event.pull_request.head.ref }}
+  cancel-in-progress: true
+
+jobs:
+  diagnose-c:
+    if: ${{ !contains(github.event.pull_request.title, '[skip-c-diagnostic]') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      RUSTUP_TOOLCHAIN: stable
+      RUSTC_WRAPPER: ""
+      SOURCE_AUTHORITY_SHA: 32ff03016b476f5e4a938272a8a54fcd3b877e5a
+    steps:
+      - name: Checkout corpus head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          path: ggen-legacy
+          fetch-depth: 0
+
+      - name: Checkout fixed source authority
+        uses: actions/checkout@v4
+        with:
+          repository: seanchatmangpt/ggen
+          ref: ${{ env.SOURCE_AUTHORITY_SHA }}
+          path: ggen-source
+          fetch-depth: 0
+
+      - name: Checkout verified runtime
+        uses: actions/checkout@v4
+        with:
+          repository: seanchatmangpt/ggen
+          ref: agent/architecture-foundry-runtime
+          path: ggen-runtime
+          fetch-depth: 0
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Execute C and preserve exact refusal
+        shell: bash
+        run: |
+          set +e
+          cargo run --manifest-path ggen-runtime/tools/architecture-foundry/Cargo.toml \
+            --bin admit_capabilities -- \
+            --program ggen-runtime/docs/architecture-foundry/work-program.yaml \
+            --source ggen-source \
+            --corpus ggen-legacy \
+            > /tmp/workstream-c.log 2>&1
+          status=$?
+          set -e
+
+          if [[ $status -eq 0 ]]; then
+            echo "Workstream C succeeded; no diagnostic commit required."
+            exit 0
+          fi
+
+          git -C ggen-legacy reset --hard HEAD
+          git -C ggen-legacy clean -fd
+          mkdir -p ggen-legacy/diagnostics
+          {
+            echo "schema_version: ggen.enterprise-architecture-foundry.refusal-log/1"
+            echo "workstream: C"
+            echo "source_authority_sha: $SOURCE_AUTHORITY_SHA"
+            echo "runtime_sha: $(git -C ggen-runtime rev-parse HEAD)"
+            echo "corpus_parent_sha: $(git -C ggen-legacy rev-parse HEAD)"
+            echo "exit_code: $status"
+            echo "---"
+            cat /tmp/workstream-c.log
+          } > ggen-legacy/diagnostics/workstream-C-refusal.log
+
+          git -C ggen-legacy config user.name "ggen-foundry-diagnostic"
+          git -C ggen-legacy config user.email "ggen-foundry-diagnostic@users.noreply.github.com"
+          git -C ggen-legacy add diagnostics/workstream-C-refusal.log
+          git -C ggen-legacy commit -m "evidence(foundry): capture Workstream C refusal"
+          git -C ggen-legacy push origin HEAD:${{ github.event.pull_request.head.ref }}
+          exit $status
