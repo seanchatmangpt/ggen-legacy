@@ -1,0 +1,46 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.clean-room/1",
+  "workstream_id": "J",
+  "verifier": "ggen-foundry-clean-room-verifier/v1",
+  "source_head": "d04c69b8cbb65ff9b240bc963d56b9a7bce21f17",
+  "corpus_head": "79305dabef2f02192a2069481321eeefaa7ca4d6",
+  "runs": [
+    {
+      "run": 1,
+      "source_head": "d04c69b8cbb65ff9b240bc963d56b9a7bce21f17",
+      "corpus_head": "79305dabef2f02192a2069481321eeefaa7ca4d6",
+      "runtime_tests_passed": true,
+      "receipts_replayed": 10,
+      "verification_valid": true,
+      "verification_digest": "c6f3f0e47fa27e966ff8a1cd7b22965f5d1468c5f50f19980c6d6fa4bc01d5b1",
+      "foundry_tree_digest": "62a401306d449a31f2cd0a74f48b2504651cecc14a46560675ab0255d4f8823b",
+      "clean_after_run": true
+    },
+    {
+      "run": 2,
+      "source_head": "d04c69b8cbb65ff9b240bc963d56b9a7bce21f17",
+      "corpus_head": "79305dabef2f02192a2069481321eeefaa7ca4d6",
+      "runtime_tests_passed": true,
+      "receipts_replayed": 10,
+      "verification_valid": true,
+      "verification_digest": "c6f3f0e47fa27e966ff8a1cd7b22965f5d1468c5f50f19980c6d6fa4bc01d5b1",
+      "foundry_tree_digest": "62a401306d449a31f2cd0a74f48b2504651cecc14a46560675ab0255d4f8823b",
+      "clean_after_run": true
+    }
+  ],
+  "clean_room_build_success": true,
+  "clean_room_verification_success": true,
+  "replay_differences": 0,
+  "generated_drift": 0,
+  "second_run_semantic_result": "NO_SEMANTIC_CHANGE",
+  "predicates": {
+    "cross_repository_lineage_match": true,
+    "no_generated_drift": true,
+    "no_semantic_change": true,
+    "replay_match": true
+  },
+  "metrics": {
+    "clean_clone_count": 2,
+    "runtime_test_runs": 2
+  }
+}
