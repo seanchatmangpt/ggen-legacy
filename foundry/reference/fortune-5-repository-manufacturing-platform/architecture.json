@@ -1,0 +1,52 @@
+{
+  "corpus_parent_head": "e8c6359335dc6e9ab47154cac91b6a5483f76410",
+  "pack": {
+    "authority_reference": "docs/architecture-foundry/work-program.yaml",
+    "capacity_model": {
+      "minimum_replicas": 2,
+      "model": "compositional",
+      "primitive_count": 7
+    },
+    "cost_model": {
+      "base_units": 7,
+      "marginal_projection_cost": 0,
+      "model": "primitive-weighted"
+    },
+    "negative_falsifier_code": "PACK_PRIMITIVE_MISSING",
+    "operating_model": {
+      "deployment_units": 7,
+      "operating_domains": 2,
+      "replay_required": true
+    },
+    "pack_id": "repository_manufacturing_platform",
+    "parameter_schema_path": "foundry/packs/repository_manufacturing_platform/parameters.schema.json",
+    "primitive_ids": [
+      "engine-archived-primitive",
+      "engine-replaced-primitive",
+      "engine-subsumed-primitive",
+      "system-archived-primitive",
+      "system-refused-primitive",
+      "system-replaced-primitive",
+      "system-subsumed-primitive"
+    ],
+    "receipt_reference": "foundry/receipts/workstream-G.json",
+    "replay_command": "ggen-foundry replay-pack --corpus . --pack repository_manufacturing_platform",
+    "verifier_entrypoint": "ggen-foundry verify-pack --corpus . --pack repository_manufacturing_platform"
+  },
+  "parameters": {
+    "availability_slo": 99.999,
+    "compliance_profile": [
+      "SOX",
+      "SOC2",
+      "PCI-DSS",
+      "GDPR",
+      "NIST-800-53"
+    ],
+    "region": "global-multi-region",
+    "scale": "fortune-5"
+  },
+  "reference_id": "fortune-5-repository-manufacturing-platform",
+  "schema_version": "ggen.enterprise-architecture-foundry.fortune-reference/1",
+  "source_head": "d04c69b8cbb65ff9b240bc963d56b9a7bce21f17",
+  "standing": "CANDIDATE"
+}

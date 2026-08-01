@@ -1,0 +1,43 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.fortune-reference/1",
+  "workstream_id": "K",
+  "verifier": "ggen-foundry-fortune-reference-verifier/v1",
+  "source_head": "d04c69b8cbb65ff9b240bc963d56b9a7bce21f17",
+  "corpus_head": "e8c6359335dc6e9ab47154cac91b6a5483f76410",
+  "reference_id": "fortune-5-repository-manufacturing-platform",
+  "pack_id": "repository_manufacturing_platform",
+  "primitive_count": 7,
+  "build_runs": [
+    {
+      "run": 1,
+      "exit_code": 0,
+      "stdout_digest": "3011a1c4a03f9f9b9779b1bbd87729ff9caaf1968fcf4ce4a30dc1b079a6a7ec",
+      "stderr_digest": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "output_tree_digest": "7a31162e4492cd26be82890f9851827fb7b391bccb80228f39383584271def59",
+      "success": true
+    },
+    {
+      "run": 2,
+      "exit_code": 0,
+      "stdout_digest": "3011a1c4a03f9f9b9779b1bbd87729ff9caaf1968fcf4ce4a30dc1b079a6a7ec",
+      "stderr_digest": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "output_tree_digest": "7a31162e4492cd26be82890f9851827fb7b391bccb80228f39383584271def59",
+      "success": true
+    }
+  ],
+  "reference_build_success": true,
+  "verification_success": true,
+  "replay_match": true,
+  "solution_admission": true,
+  "predicates": {
+    "fortune_scale_reference_manufactured": true,
+    "reference_replay_match": true,
+    "reference_solution_admitted": true,
+    "reference_verifiers_pass": true
+  },
+  "metrics": {
+    "build_run_count": 2,
+    "reference_repository_count": 1,
+    "scale": "fortune-5"
+  }
+}

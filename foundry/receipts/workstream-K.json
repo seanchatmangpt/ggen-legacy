@@ -1,0 +1,27 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.receipt/1",
+  "receipt_type": "WORKSTREAM_ADMISSION",
+  "subject": "K",
+  "subject_digest": "ff0ccd73f2b0db2e1566db51fb1c3b7ea6d4048a36d92d6bf6cbcdc4efab3216",
+  "source_head": "d04c69b8cbb65ff9b240bc963d56b9a7bce21f17",
+  "corpus_head": "e8c6359335dc6e9ab47154cac91b6a5483f76410",
+  "input_digests": {
+    "corpus-tree": "cce4c0a15e9a2c59d25f29f0be319745ceb502ddfd9e35d1ed6b876bb60eb742",
+    "pack": "8ab55831ec186a5d8c9dbc53c62d88615752cfdb22c5b298a3f151df328a0d98",
+    "source-tree": "e050ef5e4f0c7558e8d0f109490772995bda24c2be26eb80632609945372eba9",
+    "work-program": "22ea84cc70f076c7532a5aaae0c15bac28fc8502e6af5b0f5c6706243ad4900c"
+  },
+  "output_digests": {
+    "corpus:foundry/reference/fortune-5-repository-manufacturing-platform/Cargo.lock": "4e07f5e3b23a8802c93628eecbbf995f83edec3b6d914fe662338186f32cef00",
+    "corpus:foundry/reference/fortune-5-repository-manufacturing-platform/Cargo.toml": "dc5a815c5c6016baaf44cfae0021df517ae4b3fbc48248181ca8ff20bd2a42bf",
+    "corpus:foundry/reference/fortune-5-repository-manufacturing-platform/README.md": "7bd84c0cf9e7a78a32d2cc5c698570f8e80316512b736e5b3c3ce53f3850a894",
+    "corpus:foundry/reference/fortune-5-repository-manufacturing-platform/architecture.json": "c5300ebbb7fd8f141eecb9c353bc345d3b65a328eba156d6e0a7444e6c8d5a42",
+    "corpus:foundry/reference/fortune-5-repository-manufacturing-platform/controls.json": "91d379efbd97994c6a92ef4ca88303e04be47aa3a536c8fb88bc32df6a054453",
+    "corpus:foundry/reference/fortune-5-repository-manufacturing-platform/replay.json": "9270649e07a57217fb2d35d2ee6d11f3fd8fba546c1c1a10bef8843e4f454d92",
+    "corpus:foundry/reference/fortune-5-repository-manufacturing-platform/src/lib.rs": "caa1477d43028b1718743ffcd25e9c42ae05aae4cbfd59c465d5eda8135d3447",
+    "corpus:foundry/reference/fortune-5-repository-manufacturing-platform/src/main.rs": "95aa68ed3cb1b189a44d4ca9b6766366b52ff2e0ab9f81ac107ee3756ac3dbca",
+    "corpus:foundry/workstreams/K/admission-report.json": "740ed8e5d7fdbcc69e62d4f900a3e9d388c95d303755eccbecd5983774531242",
+    "projection:foundry/workstreams/state.json": "1e19fe22c58cccb3c98e0aa9ba57ff96cb8aaad44df617ebc4ec484f13ce79cc"
+  },
+  "run_id": "ff0ccd73f2b0db2e1566"
+}

@@ -83,12 +83,12 @@
       "receipt_path": "foundry/receipts/workstream-J.json"
     },
     "K": {
-      "status": "READY",
+      "status": "ADMITTED",
       "dependencies": [
         "J"
       ],
-      "report_digest": null,
-      "receipt_path": null
+      "report_digest": "740ed8e5d7fdbcc69e62d4f900a3e9d388c95d303755eccbecd5983774531242",
+      "receipt_path": "foundry/receipts/workstream-K.json"
     }
   }
 }
