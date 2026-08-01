@@ -1,0 +1,163 @@
+name: Foundry Historical Extraction
+
+on:
+  pull_request:
+    paths:
+      - "foundry/catalogs/capabilities.json"
+      - "foundry/catalogs/component-classification.json"
+      - "foundry/catalogs/recovery-plans.json"
+      - "foundry/workstreams/state.json"
+      - "verifiers/admit_historical_extraction.py"
+      - "witnesses/test_historical_extraction_resolution.py"
+      - ".github/workflows/foundry-historical-extraction.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: foundry-historical-extraction-${{ github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  admit-e:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      RUSTUP_TOOLCHAIN: stable
+      RUSTC_WRAPPER: ""
+      SOURCE_AUTHORITY_SHA: 32ff03016b476f5e4a938272a8a54fcd3b877e5a
+      RUNTIME_SHA: 5905b24fc62f3ec3eadb93fb36787cdde08f3c82
+      BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
+    steps:
+      - name: Checkout latest corpus branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          path: ggen-legacy
+          fetch-depth: 0
+
+      - name: Checkout source authority with full reachable history
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: seanchatmangpt/ggen
+          ref: ${{ env.SOURCE_AUTHORITY_SHA }}
+          path: ggen-source
+          fetch-depth: 0
+
+      - name: Checkout exact replay runtime
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: seanchatmangpt/ggen
+          ref: ${{ env.RUNTIME_SHA }}
+          path: ggen-runtime
+          fetch-depth: 1
+
+      - name: Admit all source lineages and dependencies
+        run: |
+          git -C ggen-source fetch --force origin \
+            '+refs/heads/*:refs/remotes/origin/*' \
+            '+refs/tags/*:refs/tags/*'
+          git -C ggen-source fetch --force origin \
+            '+refs/pull/*/head:refs/remotes/pull/*' || true
+          printf 'source_head=%s\n' "$(git -C ggen-source rev-parse HEAD)"
+          printf 'source_objects=%s\n' "$(git -C ggen-source count-objects -v | tr '\n' ' ')"
+
+      - name: Install exact extraction dependencies
+        run: |
+          python3 -m pip install --disable-pip-version-check --only-binary=:all: \
+            blake3==1.0.9 pyyaml==6.0.2
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+
+      - name: Execute resolver positive and negative controls
+        run: |
+          python3 -m py_compile \
+            ggen-legacy/verifiers/admit_historical_extraction.py \
+            ggen-legacy/witnesses/test_historical_extraction_resolution.py
+          python3 ggen-legacy/witnesses/test_historical_extraction_resolution.py
+          find ggen-legacy -type d -name __pycache__ -prune -exec rm -rf {} +
+
+      - name: Refresh branch and prove receipt preconditions
+        run: |
+          git -C ggen-legacy fetch origin "$BRANCH"
+          git -C ggen-legacy reset --hard "origin/$BRANCH"
+          test -z "$(git -C ggen-legacy status --porcelain=v1 --untracked-files=all)"
+          cargo run --manifest-path ggen-runtime/tools/architecture-foundry/Cargo.toml -- \
+            replay --source ggen-source --corpus ggen-legacy
+
+      - name: Resolve and admit Workstream E
+        id: extract
+        run: |
+          mkdir -p evidence
+          python3 ggen-legacy/verifiers/admit_historical_extraction.py \
+            --program ggen-runtime/docs/architecture-foundry/work-program.yaml \
+            --source ggen-source \
+            --corpus ggen-legacy \
+            --output evidence/workstream-E.json
+          find ggen-legacy -type d -name __pycache__ -prune -exec rm -rf {} +
+          python3 - <<'PY'
+          import json
+          report = json.load(open("evidence/workstream-E.json"))
+          status = report.get("status")
+          if status == "ALREADY_ADMITTED":
+              print("changed=false")
+          else:
+              assert report["workstream_id"] == "E", report
+              assert report["unresolved_required_sources"] == 0, report
+              assert report["extracted_components"] == 65, report
+              print("changed=true")
+          PY
+          changed="$(python3 - <<'PY'
+          import json
+          report = json.load(open('evidence/workstream-E.json'))
+          print('false' if report.get('status') == 'ALREADY_ADMITTED' else 'true')
+          PY
+          )"
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
+
+      - name: Commit controller-owned E consequences
+        if: steps.extract.outputs.changed == 'true'
+        run: |
+          git -C ggen-legacy config user.name "ggen-foundry-extraction-controller"
+          git -C ggen-legacy config user.email "ggen-foundry-extraction-controller@users.noreply.github.com"
+          git -C ggen-legacy add \
+            foundry/blobs \
+            foundry/corpus \
+            foundry/lineage \
+            foundry/catalogs/extraction-ledger.json \
+            foundry/workstreams/E/admission-report.json \
+            foundry/receipts/workstream-E.json \
+            foundry/workstreams/state.json
+          git -C ggen-legacy commit -m "feat(foundry): admit exact historical extraction"
+
+      - name: Rebase, replay, and fast-forward E safely
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            git -C ggen-legacy fetch origin "$BRANCH"
+            git -C ggen-legacy rebase "origin/$BRANCH"
+            find ggen-legacy -type d -name __pycache__ -prune -exec rm -rf {} +
+            test -z "$(git -C ggen-legacy status --porcelain=v1 --untracked-files=all)"
+
+            cargo run --manifest-path ggen-runtime/tools/architecture-foundry/Cargo.toml -- \
+              replay --source ggen-source --corpus ggen-legacy
+
+            if [[ '${{ steps.extract.outputs.changed }}' != 'true' ]]; then
+              exit 0
+            fi
+            if git -C ggen-legacy push origin "HEAD:$BRANCH"; then
+              exit 0
+            fi
+            echo "Remote advanced during E replay; retrying exact rebase and replay ($attempt/3)."
+          done
+          echo "Unable to fast-forward Workstream E after three exact replays." >&2
+          exit 1
+
+      - name: Publish historical extraction evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: foundry-historical-extraction-${{ github.event.pull_request.head.sha || github.sha }}
+          path: evidence/
+          if-no-files-found: error
