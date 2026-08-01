@@ -1,0 +1,94 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.corpus/1",
+  "program_id": "ggen-legacy-to-foundry",
+  "workstreams": {
+    "A": {
+      "status": "READY",
+      "dependencies": [],
+      "report_digest": null,
+      "receipt_path": null
+    },
+    "B": {
+      "status": "BLOCKED",
+      "dependencies": [
+        "A"
+      ],
+      "report_digest": null,
+      "receipt_path": null
+    },
+    "C": {
+      "status": "BLOCKED",
+      "dependencies": [
+        "B"
+      ],
+      "report_digest": null,
+      "receipt_path": null
+    },
+    "D": {
+      "status": "BLOCKED",
+      "dependencies": [
+        "C"
+      ],
+      "report_digest": null,
+      "receipt_path": null
+    },
+    "E": {
+      "status": "BLOCKED",
+      "dependencies": [
+        "D"
+      ],
+      "report_digest": null,
+      "receipt_path": null
+    },
+    "F": {
+      "status": "BLOCKED",
+      "dependencies": [
+        "E"
+      ],
+      "report_digest": null,
+      "receipt_path": null
+    },
+    "G": {
+      "status": "BLOCKED",
+      "dependencies": [
+        "F"
+      ],
+      "report_digest": null,
+      "receipt_path": null
+    },
+    "H": {
+      "status": "BLOCKED",
+      "dependencies": [
+        "E",
+        "F"
+      ],
+      "report_digest": null,
+      "receipt_path": null
+    },
+    "I": {
+      "status": "BLOCKED",
+      "dependencies": [
+        "G",
+        "H"
+      ],
+      "report_digest": null,
+      "receipt_path": null
+    },
+    "J": {
+      "status": "BLOCKED",
+      "dependencies": [
+        "I"
+      ],
+      "report_digest": null,
+      "receipt_path": null
+    },
+    "K": {
+      "status": "BLOCKED",
+      "dependencies": [
+        "J"
+      ],
+      "report_digest": null,
+      "receipt_path": null
+    }
+  }
+}
