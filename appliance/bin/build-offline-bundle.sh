@@ -95,7 +95,10 @@ tar --sort=name \
   --pax-option=delete=atime,delete=ctime \
   -C "$TMP" -cf - "$NAME" \
   | gzip -n -9 > "$ARCHIVE"
-sha256sum "$ARCHIVE" > "$ARCHIVE.sha256"
+(
+  cd "$OUT"
+  sha256sum "$NAME.tar.gz" > "$NAME.tar.gz.sha256"
+)
 
 python3 - "$BUNDLE" "$ARCHIVE" "$OUT/$NAME.receipt.json" <<'PY'
 import hashlib,json,pathlib,sys
