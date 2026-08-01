@@ -1,0 +1,441 @@
+name: Ecosystem Five-Receipt Closure
+
+on:
+  pull_request:
+    paths:
+      - "authority/ecosystem-alive/**"
+      - "authority/ecosystem-reconstitution/**"
+      - "foundry/workstreams/state.json"
+      - "tools/ecosystem-doctor.py"
+      - "verifiers/verify_repository_alive_cell.py"
+      - "verifiers/verify_ecosystem_alive.py"
+      - ".github/workflows/ecosystem-five-receipt-closure.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ecosystem-five-receipt-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+env:
+  GGEN_SHA: 3b0fc364f586ad0155a937f756238e7bacd94e16
+  FOUNDRY_RUNTIME_SHA: d04c69b8cbb65ff9b240bc963d56b9a7bce21f17
+  GGEN_TOOLCHAIN: nightly-2026-06-22
+
+jobs:
+  manufacture:
+    name: Manufacture / exact ggen proof
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - name: Checkout exact corpus candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          path: corpus
+
+      - name: Checkout exact ggen manufacturing kernel
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: seanchatmangpt/ggen
+          ref: ${{ env.GGEN_SHA }}
+          fetch-depth: 1
+          path: ggen-runtime
+
+      - name: Install exact manufacture toolchain
+        run: |
+          rustup toolchain install "$GGEN_TOOLCHAIN" --profile minimal
+          rustup default "$GGEN_TOOLCHAIN"
+          python3 -m pip install --disable-pip-version-check rdflib==7.1.4 jsonschema==4.23.0 pyyaml==6.0.2
+
+      - name: Build and execute ggen twice
+        working-directory: corpus
+        run: |
+          cargo +"$GGEN_TOOLCHAIN" build --manifest-path ../ggen-runtime/Cargo.toml -p ggen-cli-lib --bin ggen
+          GGEN="$PWD/../ggen-runtime/target/debug/ggen"
+          "$GGEN" graph validate
+          "$GGEN" sync run
+          "$GGEN" receipt verify
+          mkdir -p target/ecosystem-five-receipt/a target/ecosystem-five-receipt/b
+          sha256sum \
+            authority/ecosystem-alive/alive-program.json \
+            tools/ecosystem-doctor.py \
+            reference/ecosystem-reconstitution/DOCTOR.md \
+            > target/ecosystem-five-receipt/a/outputs.sha256
+          "$GGEN" sync run
+          "$GGEN" receipt verify
+          sha256sum \
+            authority/ecosystem-alive/alive-program.json \
+            tools/ecosystem-doctor.py \
+            reference/ecosystem-reconstitution/DOCTOR.md \
+            > target/ecosystem-five-receipt/b/outputs.sha256
+          diff -u target/ecosystem-five-receipt/a/outputs.sha256 target/ecosystem-five-receipt/b/outputs.sha256
+          python3 -m py_compile verifiers/verify_repository_alive_cell.py verifiers/verify_ecosystem_alive.py tools/ecosystem-doctor.py
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+
+      - name: Emit exact matrix and manufacture receipt
+        id: matrix
+        working-directory: corpus
+        run: |
+          python3 tools/ecosystem-doctor.py matrix --mode fast > target/ecosystem-five-receipt/matrix.json
+          matrix="$(cat target/ecosystem-five-receipt/matrix.json)"
+          printf 'matrix=%s\n' "$matrix" >> "$GITHUB_OUTPUT"
+          python3 - <<'PY'
+          import hashlib, json, subprocess
+          from pathlib import Path
+          def h(path):
+              return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+          receipts = sorted(str(path) for path in Path('.ggen-v2/receipts').rglob('*') if path.is_file())
+          proof = {
+              'schema': 'ggen-legacy.ecosystem-alive.ggen-manufacture/v1',
+              'kernel_sha': '3b0fc364f586ad0155a937f756238e7bacd94e16',
+              'graph_valid': True,
+              'receipt_verified': True,
+              'deterministic_replay': True,
+              'alive_program_sha256': h('authority/ecosystem-alive/alive-program.json'),
+              'doctor_sha256': h('tools/ecosystem-doctor.py'),
+              'matrix_sha256': h('target/ecosystem-five-receipt/matrix.json'),
+              'ggen_receipt_files': receipts,
+              'ggen_receipt_file_count': len(receipts),
+              'direct_actuation': False,
+          }
+          payload = json.dumps(proof, sort_keys=True, separators=(',', ':')).encode()
+          proof['receipt_digest'] = 'sha256:' + hashlib.sha256(payload).hexdigest()
+          Path('target/ecosystem-five-receipt/ggen-proof.json').write_text(json.dumps(proof, indent=2, sort_keys=True) + '\n')
+          PY
+
+      - name: Publish manufacture proof
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ecosystem-five-receipt-manufacture-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            corpus/target/ecosystem-five-receipt/
+            corpus/authority/ecosystem-alive/alive-program.json
+            corpus/tools/ecosystem-doctor.py
+            corpus/.ggen-v2/receipts/
+          if-no-files-found: error
+
+  cell:
+    name: Cell / ${{ matrix.repo_name }}
+    needs: manufacture
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix: ${{ fromJSON(needs.manufacture.outputs.matrix) }}
+    steps:
+      - name: Checkout exact corpus verifier
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 1
+          path: corpus
+
+      - name: Checkout exact source run A
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: ${{ matrix.repository }}
+          ref: ${{ matrix.sha }}
+          fetch-depth: 1
+          path: run-a/repo
+
+      - name: Checkout exact source run B
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: ${{ matrix.repository }}
+          ref: ${{ matrix.sha }}
+          fetch-depth: 1
+          path: run-b/repo
+
+      - name: Checkout foundry sibling for ggen-legacy run A
+        if: matrix.repository == 'seanchatmangpt/ggen-legacy'
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: seanchatmangpt/ggen
+          ref: ${{ env.FOUNDRY_RUNTIME_SHA }}
+          fetch-depth: 1
+          path: run-a/ggen
+
+      - name: Checkout foundry sibling for ggen-legacy run B
+        if: matrix.repository == 'seanchatmangpt/ggen-legacy'
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: seanchatmangpt/ggen
+          ref: ${{ env.FOUNDRY_RUNTIME_SHA }}
+          fetch-depth: 1
+          path: run-b/ggen
+
+      - name: Download exact ggen manufacture proof
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: ecosystem-five-receipt-manufacture-${{ github.event.pull_request.head.sha || github.sha }}
+          path: manufacture
+
+      - name: Install common repository toolchains
+        run: |
+          rustup toolchain install stable --profile minimal --component rustfmt
+          rustup toolchain install nightly-2026-06-22 --profile minimal --component rustfmt
+          rustup default stable
+          corepack enable || true
+          corepack prepare pnpm@10.14.0 --activate || npm install --global pnpm@10.14.0
+          python3 -m pip install --disable-pip-version-check \
+            uv==0.8.4 pyyaml==6.0.2 jsonschema==4.23.0 rdflib==7.1.4 tomli-w==1.2.0
+          cargo install just --locked --version 1.40.0
+
+      - name: Resolve repository Rust contract
+        run: |
+          if [[ -f run-a/repo/rust-toolchain.toml || -f run-a/repo/rust-toolchain ]]; then
+            echo "Repository-owned toolchain files control Cargo."
+          else
+            case '${{ matrix.repository }}' in
+              seanchatmangpt/ggen|seanchatmangpt/wasm4pm|seanchatmangpt/wasm4pm-compat|seanchatmangpt/mfw|seanchatmangpt/ggen-legacy)
+                echo 'RUSTUP_TOOLCHAIN=nightly-2026-06-22' >> "$GITHUB_ENV" ;;
+              *) echo 'RUSTUP_TOOLCHAIN=stable' >> "$GITHUB_ENV" ;;
+            esac
+          fi
+
+      - name: Execute two-run cell and issue five receipts
+        env:
+          REPOSITORY: ${{ matrix.repository }}
+          CANONICAL_SHA: ${{ matrix.sha }}
+          COMMANDS_JSON: ${{ toJSON(matrix.commands) }}
+          REPO_NAME: ${{ matrix.repo_name }}
+        run: |
+          mkdir -p receipts
+          python3 - <<'PY'
+          import hashlib, json, os, subprocess, time
+          from pathlib import Path
+
+          repository = os.environ['REPOSITORY']
+          canonical_sha = os.environ['CANONICAL_SHA']
+          commands = json.loads(os.environ['COMMANDS_JSON'])
+          if len(commands) != 1:
+              raise SystemExit(f'fast cell requires one command, observed {commands}')
+          command = commands[0]
+          roots = [Path('run-a/repo').resolve(), Path('run-b/repo').resolve()]
+
+          def canonical(value):
+              return json.dumps(value, sort_keys=True, separators=(',', ':'), ensure_ascii=False).encode()
+          def sign(value):
+              value['receipt_digest'] = 'sha256:' + hashlib.sha256(canonical(value)).hexdigest()
+              return value
+          def git(root, *args):
+              return subprocess.check_output(['git', '-C', str(root), *args], text=True).strip()
+          def tracked_status(root):
+              return subprocess.check_output(['git', '-C', str(root), 'status', '--porcelain=v1', '--untracked-files=no'], text=True)
+          def execute(root):
+              started = time.monotonic()
+              completed = subprocess.run(['bash', '-lc', command], cwd=root, text=True, capture_output=True, timeout=4800)
+              return {
+                  'command': command,
+                  'exit_code': completed.returncode,
+                  'duration_ms': round((time.monotonic() - started) * 1000),
+                  'stdout_tail': completed.stdout[-8000:],
+                  'stderr_tail': completed.stderr[-8000:],
+              }
+
+          shas = [git(root, 'rev-parse', 'HEAD') for root in roots]
+          trees = [git(root, 'rev-parse', 'HEAD^{tree}') for root in roots]
+          clean_before = [tracked_status(root) == '' for root in roots]
+          source_core = {
+              'schema': 'ggen-legacy.source-reconstitution.receipt/v1',
+              'receipt_kind': 'source',
+              'repository': repository,
+              'sha': shas[0],
+              'canonical_sha': canonical_sha,
+              'source_tree': trees[0],
+              'clean_before_execution': all(clean_before),
+              'standing': 'ALIVE' if shas == [canonical_sha, canonical_sha] and trees[0] == trees[1] and all(clean_before) else 'BLOCKED',
+              'promotion_granted': False,
+              'direct_actuation': False,
+          }
+          source = sign(source_core)
+          Path('receipts/source.json').write_text(json.dumps(source, indent=2, sort_keys=True) + '\n')
+
+          result_a = execute(roots[0])
+          result_b = execute(roots[1])
+          drift = sum(1 for root in roots if tracked_status(root) != '')
+          validation = sign({
+              'schema': 'ggen-legacy.ecosystem-alive.validation-receipt/v1',
+              'receipt_kind': 'validation',
+              'repository': repository,
+              'canonical_sha': canonical_sha,
+              'mode': 'fast',
+              'commands': [command],
+              'results': [result_a],
+              'standing': 'ALIVE' if result_a['exit_code'] == 0 else 'BUILD_BROKEN',
+              'reason': None if result_a['exit_code'] == 0 else 'repository-native fast validation failed',
+              'promotion_granted': False,
+          })
+          Path('receipts/validation.json').write_text(json.dumps(validation, indent=2, sort_keys=True) + '\n')
+
+          proof_path = next(Path('manufacture').rglob('ggen-proof.json'))
+          matrix_path = next(Path('manufacture').rglob('matrix.json'))
+          proof = json.loads(proof_path.read_text())
+          matrix = json.loads(matrix_path.read_text())
+          rows = [row for row in matrix['include'] if row['repository'] == repository]
+          matrix_row_exact = len(rows) == 1 and rows[0]['sha'] == canonical_sha and rows[0]['commands'] == [command]
+          ggen = sign({
+              'schema': 'ggen-legacy.ecosystem-alive.ggen-receipt/v1',
+              'receipt_kind': 'ggen',
+              'repository': repository,
+              'canonical_sha': canonical_sha,
+              'kernel_sha': proof['kernel_sha'],
+              'manufacture_receipt_digest': proof['receipt_digest'],
+              'matrix_row_digest': 'sha256:' + hashlib.sha256(canonical(rows[0] if rows else {})).hexdigest(),
+              'graph_valid': proof['graph_valid'],
+              'receipt_verified': proof['receipt_verified'],
+              'deterministic_manufacture': proof['deterministic_replay'],
+              'matrix_row_exact': matrix_row_exact,
+              'standing': 'ALIVE' if proof['graph_valid'] and proof['receipt_verified'] and proof['deterministic_replay'] and matrix_row_exact else 'BLOCKED',
+              'promotion_granted': False,
+          })
+          Path('receipts/ggen.json').write_text(json.dumps(ggen, indent=2, sort_keys=True) + '\n')
+
+          replay = sign({
+              'schema': 'ggen-legacy.ecosystem-alive.replay-receipt/v1',
+              'receipt_kind': 'replay',
+              'repository': repository,
+              'canonical_sha': canonical_sha,
+              'command': command,
+              'run_count': 2,
+              'run_exit_codes': [result_a['exit_code'], result_b['exit_code']],
+              'source_trees': trees,
+              'tracked_drift': drift,
+              'outcomes_equal': result_a['exit_code'] == result_b['exit_code'] == 0 and trees[0] == trees[1] and drift == 0,
+              'standing': 'ALIVE' if result_a['exit_code'] == result_b['exit_code'] == 0 and trees[0] == trees[1] and drift == 0 else 'BUILD_BROKEN',
+              'promotion_granted': False,
+          })
+          Path('receipts/replay.json').write_text(json.dumps(replay, indent=2, sort_keys=True) + '\n')
+          Path('receipts/run-a.json').write_text(json.dumps(result_a, indent=2, sort_keys=True) + '\n')
+          Path('receipts/run-b.json').write_text(json.dumps(result_b, indent=2, sort_keys=True) + '\n')
+          PY
+
+      - name: Execute source-identity mutation falsifier
+        env:
+          REPOSITORY: ${{ matrix.repository }}
+          CANONICAL_SHA: ${{ matrix.sha }}
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, os, subprocess
+          from pathlib import Path
+          source = json.loads(Path('receipts/source.json').read_text())
+          source['sha'] = '0' * 40
+          source['canonical_sha'] = '0' * 40
+          source.pop('receipt_digest', None)
+          raw = json.dumps(source, sort_keys=True, separators=(',', ':')).encode()
+          source['receipt_digest'] = 'sha256:' + hashlib.sha256(raw).hexdigest()
+          mutated = Path('mutated-source.json')
+          mutated.write_text(json.dumps(source, indent=2, sort_keys=True) + '\n')
+          completed = subprocess.run([
+              'python3', 'corpus/verifiers/verify_repository_alive_cell.py', 'source',
+              '--receipt', str(mutated), '--repository', os.environ['REPOSITORY'], '--sha', os.environ['CANONICAL_SHA'],
+          ], text=True, capture_output=True)
+          if completed.returncode != 2:
+              raise SystemExit(f'mutation was not refused: {completed.returncode} {completed.stdout} {completed.stderr}')
+          refusal = json.loads(completed.stderr)
+          if refusal.get('code') != 'CELL-SOURCE-IDENTITY':
+              raise SystemExit(f'unexpected refusal: {refusal}')
+          receipt = {
+              'schema': 'ggen-legacy.ecosystem-alive.falsifier-receipt/v1',
+              'receipt_kind': 'falsifier',
+              'repository': os.environ['REPOSITORY'],
+              'canonical_sha': os.environ['CANONICAL_SHA'],
+              'mutation': 'source identity replaced with 40 zeroes',
+              'mutation_refused': True,
+              'refusal_code': refusal['code'],
+              'standing': 'ALIVE',
+              'promotion_granted': False,
+          }
+          raw = json.dumps(receipt, sort_keys=True, separators=(',', ':')).encode()
+          receipt['receipt_digest'] = 'sha256:' + hashlib.sha256(raw).hexdigest()
+          Path('receipts/falsifier.json').write_text(json.dumps(receipt, indent=2, sort_keys=True) + '\n')
+          PY
+
+      - name: Independently verify complete cell
+        env:
+          REPOSITORY: ${{ matrix.repository }}
+          CANONICAL_SHA: ${{ matrix.sha }}
+        run: |
+          python3 corpus/verifiers/verify_repository_alive_cell.py cell \
+            --receipts receipts \
+            --repository "$REPOSITORY" \
+            --sha "$CANONICAL_SHA" \
+            --output receipts/cell-report.json
+
+      - name: Publish complete cell evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ecosystem-closure-${{ matrix.repo_name }}-${{ matrix.sha }}
+          path: receipts/
+          if-no-files-found: error
+
+      - name: Enforce ALIVE cell
+        if: always()
+        env:
+          REPOSITORY: ${{ matrix.repository }}
+          CANONICAL_SHA: ${{ matrix.sha }}
+        run: |
+          test -f receipts/cell-report.json
+          python3 - <<'PY'
+          import json
+          report = json.load(open('receipts/cell-report.json'))
+          assert report['standing'] == 'ALIVE', report
+          PY
+
+  promote:
+    name: Promote / 90-cell ecosystem theorem
+    if: always()
+    needs:
+      - manufacture
+      - cell
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact candidate with terminal foundry state
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 1
+
+      - name: Download all five-receipt cells
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          pattern: ecosystem-closure-*
+          path: target/ecosystem-five-receipt/receipts
+
+      - name: Execute independent aggregate verifier
+        run: |
+          mkdir -p target/ecosystem-five-receipt/promotion
+          python3 verifiers/verify_ecosystem_alive.py \
+            --receipts target/ecosystem-five-receipt/receipts \
+            --foundry-state foundry/workstreams/state.json \
+            --output target/ecosystem-five-receipt/promotion/report.json
+          python3 - <<'PY'
+          import json
+          report = json.load(open('target/ecosystem-five-receipt/promotion/report.json'))
+          assert report['product_repository_count'] == 18, report
+          assert len(report['cells']) == 18, report
+          assert all(cell['standing'] == 'ALIVE' for cell in report['cells']), report
+          assert all(value == 'ADMITTED' for value in report['foundry_workstreams'].values()), report
+          assert report['standing'] == 'ALIVE', report
+          assert report['promotion_granted'] is True, report
+          assert report['errors'] == [], report
+          print(json.dumps(report, indent=2, sort_keys=True))
+          PY
+
+      - name: Publish promotion theorem
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ecosystem-five-receipt-promotion-${{ github.event.pull_request.head.sha || github.sha }}
+          path: target/ecosystem-five-receipt/promotion/
+          if-no-files-found: warn
