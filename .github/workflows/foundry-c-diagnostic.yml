@@ -2,51 +2,95 @@ name: Foundry C Diagnostic
 
 on:
   pull_request:
+    paths:
+      - "foundry/**"
+      - "diagnostics/**"
+      - ".github/workflows/foundry-c-diagnostic.yml"
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
-  group: foundry-c-diagnostic-${{ github.event.pull_request.head.ref }}
+  group: foundry-c-diagnostic-${{ github.event.pull_request.number }}-${{ github.event.pull_request.head.sha }}
   cancel-in-progress: true
 
 jobs:
   diagnose-c:
     if: ${{ !contains(github.event.pull_request.title, '[skip-c-diagnostic]') }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     env:
       RUSTUP_TOOLCHAIN: stable
       RUSTC_WRAPPER: ""
       SOURCE_AUTHORITY_SHA: 32ff03016b476f5e4a938272a8a54fcd3b877e5a
+      RUNTIME_SHA: 5905b24fc62f3ec3eadb93fb36787cdde08f3c82
     steps:
-      - name: Checkout corpus head
-        uses: actions/checkout@v4
+      - name: Checkout exact corpus candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
+          ref: ${{ github.event.pull_request.head.sha }}
           path: ggen-legacy
-          fetch-depth: 0
+          fetch-depth: 1
+
+      - name: Resolve idempotent diagnostic state
+        id: state
+        shell: bash
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json
+          from pathlib import Path
+
+          path = Path("ggen-legacy/foundry/workstreams/state.json")
+          if not path.exists():
+              print("needs_diagnostic=true")
+              print("reason=state-missing")
+              raise SystemExit(0)
+
+          state = json.loads(path.read_text())
+          status = state.get("workstreams", {}).get("C", {}).get("status", "UNKNOWN")
+          print(f"status={status}")
+          if status == "ADMITTED":
+              print("needs_diagnostic=false")
+              print("reason=already-admitted")
+          else:
+              print("needs_diagnostic=true")
+              print(f"reason=status-{status.lower()}")
+          PY
+
+      - name: Report converged C state
+        if: steps.state.outputs.needs_diagnostic == 'false'
+        run: |
+          {
+            echo "## Workstream C diagnostic"
+            echo
+            echo "Workstream C is already \`${{ steps.state.outputs.status }}\`."
+            echo "The diagnostic is an idempotent no-op; no source execution or repository write is authorized."
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Checkout fixed source authority
-        uses: actions/checkout@v4
+        if: steps.state.outputs.needs_diagnostic == 'true'
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: seanchatmangpt/ggen
           ref: ${{ env.SOURCE_AUTHORITY_SHA }}
           path: ggen-source
-          fetch-depth: 0
+          fetch-depth: 1
 
-      - name: Checkout verified runtime
-        uses: actions/checkout@v4
+      - name: Checkout exact verified runtime
+        if: steps.state.outputs.needs_diagnostic == 'true'
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: seanchatmangpt/ggen
-          ref: agent/architecture-foundry-runtime
+          ref: ${{ env.RUNTIME_SHA }}
           path: ggen-runtime
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Install Rust
+        if: steps.state.outputs.needs_diagnostic == 'true'
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Execute C and preserve exact refusal
+      - name: Execute bounded C diagnostic
+        if: steps.state.outputs.needs_diagnostic == 'true'
         shell: bash
         run: |
           set +e
@@ -59,28 +103,27 @@ jobs:
           status=$?
           set -e
 
-          if [[ $status -eq 0 ]]; then
-            echo "Workstream C succeeded; no diagnostic commit required."
-            exit 0
-          fi
-
-          git -C ggen-legacy reset --hard HEAD
-          git -C ggen-legacy clean -fd
-          mkdir -p ggen-legacy/diagnostics
+          mkdir -p diagnostics
           {
-            echo "schema_version: ggen.enterprise-architecture-foundry.refusal-log/1"
+            echo "schema_version: ggen.enterprise-architecture-foundry.refusal-log/2"
             echo "workstream: C"
             echo "source_authority_sha: $SOURCE_AUTHORITY_SHA"
-            echo "runtime_sha: $(git -C ggen-runtime rev-parse HEAD)"
-            echo "corpus_parent_sha: $(git -C ggen-legacy rev-parse HEAD)"
+            echo "runtime_sha: $RUNTIME_SHA"
+            echo "corpus_head_sha: ${{ github.event.pull_request.head.sha }}"
+            echo "preflight_status: ${{ steps.state.outputs.status }}"
             echo "exit_code: $status"
+            echo "repository_mutation_authorized: false"
             echo "---"
             cat /tmp/workstream-c.log
-          } > ggen-legacy/diagnostics/workstream-C-refusal.log
+          } > diagnostics/workstream-C-diagnostic.log
 
-          git -C ggen-legacy config user.name "ggen-foundry-diagnostic"
-          git -C ggen-legacy config user.email "ggen-foundry-diagnostic@users.noreply.github.com"
-          git -C ggen-legacy add diagnostics/workstream-C-refusal.log
-          git -C ggen-legacy commit -m "evidence(foundry): capture Workstream C refusal"
-          git -C ggen-legacy push origin HEAD:${{ github.event.pull_request.head.ref }}
-          exit $status
+          cat /tmp/workstream-c.log
+          exit "$status"
+
+      - name: Publish bounded diagnostic evidence
+        if: always() && steps.state.outputs.needs_diagnostic == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: workstream-c-diagnostic-${{ github.event.pull_request.head.sha }}
+          path: diagnostics/workstream-C-diagnostic.log
+          if-no-files-found: error
