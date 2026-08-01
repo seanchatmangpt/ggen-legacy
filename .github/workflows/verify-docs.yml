@@ -130,26 +130,30 @@ jobs:
           RUNTIME_HEAD=458f0f88aee0060cddce3ffdaa7e2172a4f40a25
           test "$(git -C .foundry-runtime rev-parse HEAD)" = "$RUNTIME_HEAD"
           test -z "$(git -C .foundry-runtime status --porcelain)"
+          RUNTIME_COPY="$(mktemp -d)"
+          cp -a .foundry-runtime/. "$RUNTIME_COPY/"
           cargo fmt \
-            --manifest-path .foundry-runtime/tools/architecture-foundry/Cargo.toml \
+            --manifest-path "$RUNTIME_COPY/tools/architecture-foundry/Cargo.toml" \
             --check
           cargo test \
-            --manifest-path .foundry-runtime/tools/architecture-foundry/Cargo.toml \
+            --manifest-path "$RUNTIME_COPY/tools/architecture-foundry/Cargo.toml" \
             --all-targets
           cargo run \
             --quiet \
-            --manifest-path .foundry-runtime/tools/architecture-foundry/Cargo.toml \
+            --manifest-path "$RUNTIME_COPY/tools/architecture-foundry/Cargo.toml" \
             -- validate-program \
-            --program .foundry-runtime/docs/architecture-foundry/work-program.yaml
+            --program "$RUNTIME_COPY/docs/architecture-foundry/work-program.yaml"
           test -z "$(git -C .foundry-runtime status --porcelain)"
+          rm -rf "$RUNTIME_COPY"
           python3 - <<'PY'
           import json
           report={
             "schema":"ggen.legacy.foundry.runtime.candidate.receipt.v1",
             "exact_head":"458f0f88aee0060cddce3ffdaa7e2172a4f40a25",
             "upstream_workflow_run":30678718944,
-            "manifest":".foundry-runtime/tools/architecture-foundry/Cargo.toml",
-            "real_boundary_suite":".foundry-runtime/tools/architecture-foundry/tests/real_git.rs",
+            "manifest":"tools/architecture-foundry/Cargo.toml",
+            "real_boundary_suite":"tools/architecture-foundry/tests/real_git.rs",
+            "execution_mode":"isolated exact-source copy",
             "commands":["cargo fmt --check","cargo test --all-targets","validate-program"],
             "source_clean_before":True,
             "source_clean_after":True,
