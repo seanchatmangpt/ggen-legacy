@@ -36,9 +36,9 @@ jobs:
           test -s authority/foundry-work-program.json
           test -s authority/offline-verifier-transport.json
           test -s foundry/bootstrap.yaml
-          test -s scripts/verify_foundry_provenance.py
-          test -s scripts/verify_foundry_bootstrap.py
-          test -s scripts/verify_offline_transport.py
+          test -s scripts/verify_foundry-provenance.py
+          test -s scripts/verify-foundry-bootstrap.py
+          test -s scripts/verify-offline-transport.py
           test -s packs/ggen-legacy-assurance-pack/pack.toml
 
       - name: Verify documentary, projection, foundry, receiving, and transport authority
@@ -135,16 +135,30 @@ jobs:
           cargo fmt \
             --manifest-path "$RUNTIME_COPY/tools/architecture-foundry/Cargo.toml" \
             --check
+          echo RUNTIME_FMT_OK
           cargo test \
             --manifest-path "$RUNTIME_COPY/tools/architecture-foundry/Cargo.toml" \
             --all-targets
+          echo RUNTIME_TESTS_OK
           cargo run \
             --quiet \
             --manifest-path "$RUNTIME_COPY/tools/architecture-foundry/Cargo.toml" \
             -- validate-program \
             --program "$RUNTIME_COPY/docs/architecture-foundry/work-program.yaml"
-          test -z "$(git -C .foundry-runtime status --porcelain)"
+          echo RUNTIME_VALIDATE_OK
           rm -rf "$RUNTIME_COPY"
+          STATUS="$(git -C .foundry-runtime status --porcelain)"
+          if [ -n "$STATUS" ]; then
+            printf '%s\n' "$STATUS"
+            if [ "$STATUS" = "?? tools/architecture-foundry/Cargo.lock" ]; then
+              rm -f .foundry-runtime/tools/architecture-foundry/Cargo.lock
+            else
+              echo RUNTIME_SOURCE_DRIFT_REFUSED >&2
+              exit 1
+            fi
+          fi
+          test -z "$(git -C .foundry-runtime status --porcelain)"
+          mkdir -p evidence
           python3 - <<'PY'
           import json
           report={
@@ -154,6 +168,7 @@ jobs:
             "manifest":"tools/architecture-foundry/Cargo.toml",
             "real_boundary_suite":"tools/architecture-foundry/tests/real_git.rs",
             "execution_mode":"isolated exact-source copy",
+            "ephemeral_generated_paths":["tools/architecture-foundry/Cargo.lock"],
             "commands":["cargo fmt --check","cargo test --all-targets","validate-program"],
             "source_clean_before":True,
             "source_clean_after":True,
@@ -163,6 +178,7 @@ jobs:
           }
           open("evidence/foundry-runtime-candidate.json","w").write(json.dumps(report,indent=2,sort_keys=True)+"\n")
           PY
+          echo RUNTIME_RECEIPT_WRITTEN
 
       - name: Build exact ggen CLI
         shell: bash
