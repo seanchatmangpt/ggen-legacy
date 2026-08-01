@@ -83,7 +83,7 @@ jobs:
 
           if [[ ! -f ggen-legacy/foundry/workstreams/A/admission-report.json ]]; then
             cargo run --manifest-path ggen/tools/architecture-foundry/Cargo.toml \
-              --bin ggen-foundry-admit-baseline -- \
+              --bin admit_baseline -- \
               --program ggen/docs/architecture-foundry/work-program.yaml \
               --source ggen \
               --corpus ggen-legacy
