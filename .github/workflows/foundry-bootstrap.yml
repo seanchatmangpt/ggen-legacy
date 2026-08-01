@@ -2,28 +2,26 @@ name: Enterprise Architecture Foundry Bootstrap
 
 on:
   pull_request:
-  push:
-    branches:
-      - "agent/bootstrap-enterprise-architecture-foundry"
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
-  group: foundry-bootstrap-${{ github.ref }}
+  group: foundry-bootstrap-${{ github.event.pull_request.head.ref }}
   cancel-in-progress: true
 
 jobs:
   bootstrap:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     env:
       RUSTUP_TOOLCHAIN: stable
       RUSTC_WRAPPER: ""
     steps:
-      - name: Checkout ggen-legacy exact head
+      - name: Checkout ggen-legacy exact PR head
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.event.pull_request.head.ref }}
           path: ggen-legacy
           fetch-depth: 0
 
@@ -66,15 +64,52 @@ jobs:
             --corpus ggen-legacy \
             --out "${RUNNER_TEMP}/foundry-baseline"
 
-      - name: Initialize corpus through Rust controller
+      - name: Manufacture bounded corpus checkpoints
+        shell: bash
         run: |
-          cargo run --manifest-path ggen/tools/architecture-foundry/Cargo.toml -- \
-            initialize-corpus \
-            --program ggen/docs/architecture-foundry/work-program.yaml \
-            --source ggen \
-            --corpus ggen-legacy
+          git -C ggen-legacy config user.name "ggen-foundry-manufacturer"
+          git -C ggen-legacy config user.email "ggen-foundry-manufacturer@users.noreply.github.com"
 
-      - name: Replay generated receipts
+          if [[ ! -f ggen-legacy/foundry/foundry-manifest.json ]]; then
+            cargo run --manifest-path ggen/tools/architecture-foundry/Cargo.toml -- \
+              initialize-corpus \
+              --program ggen/docs/architecture-foundry/work-program.yaml \
+              --source ggen \
+              --corpus ggen-legacy
+
+            git -C ggen-legacy add foundry
+            git -C ggen-legacy commit -m "feat(foundry): initialize executable architecture corpus"
+          fi
+
+          if [[ ! -f ggen-legacy/foundry/workstreams/A/admission-report.json ]]; then
+            cargo run --manifest-path ggen/tools/architecture-foundry/Cargo.toml \
+              --bin ggen-foundry-admit-baseline -- \
+              --program ggen/docs/architecture-foundry/work-program.yaml \
+              --source ggen \
+              --corpus ggen-legacy
+
+            git -C ggen-legacy add foundry
+            git -C ggen-legacy commit -m "feat(foundry): admit exact-head baseline workstream"
+          fi
+
+          git -C ggen-legacy push origin HEAD:${{ github.event.pull_request.head.ref }}
+
+      - name: Verify committed A admission state
+        run: |
+          test -z "$(git -C ggen-legacy status --porcelain=v1 --untracked-files=all)"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          state = json.loads(Path("ggen-legacy/foundry/workstreams/state.json").read_text())
+          assert state["workstreams"]["A"]["status"] == "ADMITTED", state
+          assert state["workstreams"]["B"]["status"] == "READY", state
+          assert Path("ggen-legacy/foundry/receipts/initialization.json").is_file()
+          assert Path("ggen-legacy/foundry/receipts/workstream-A.json").is_file()
+          assert Path("ggen-legacy/foundry/workstreams/A/admission-report.json").is_file()
+          PY
+
+      - name: Replay committed receipts
         run: |
           cargo run --manifest-path ggen/tools/architecture-foundry/Cargo.toml -- \
             replay \
@@ -88,3 +123,6 @@ jobs:
             --program ggen/docs/architecture-foundry/work-program.yaml \
             --source ggen \
             --corpus ggen-legacy
+
+      - name: Verify no post-admission drift
+        run: test -z "$(git -C ggen-legacy status --porcelain=v1 --untracked-files=all)"
