@@ -8,7 +8,10 @@ target
 # Generated projections and local evidence
 docs/book/
 evidence/local-docs-verifier.json
+evidence/foundry-provenance-verifier.json
+evidence/offline-transport-provenance.json
 evidence/appliance/
+evidence/offline-bundle/
 .ggen/
 .ggen-v2/
 .ggen-packs/

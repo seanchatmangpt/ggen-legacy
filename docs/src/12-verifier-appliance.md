@@ -29,3 +29,23 @@ customer owns evidence and decision authority
 ```
 
 The reference E2E crosses real process, filesystem, cryptographic, log, receipt, and replay boundaries. Its `ALIVE` result is bounded to the reference assurance fixture. It does not establish product production standing or authorize legacy retirement.
+
+## Offline verifier transport
+
+`appliance/bin/build-offline-bundle.sh` manufactures a deterministic portable bundle containing the appliance, admitted authority, schemas, ontology, ggen pack, reference fixtures, repository law, and a self-verifying SHA-256 manifest.
+
+The builder:
+
+- binds the exact `ggen-legacy` source head;
+- binds the stable ggen manufacturing coordinate;
+- excludes customer source and credentials;
+- requires no network connection during verification;
+- writes an offline activation script that removes proxy configuration;
+- writes a manifest verifier;
+- normalizes archive time, owner, group, ordering, and gzip metadata;
+- produces a portable bundle receipt;
+- must produce byte-identical archives and receipts on a second build at the same source head.
+
+The bundle class is `PORTABLE_APPLICATION_BUNDLE`. It intentionally does not claim to contain hermetic Python or OpenSSL runtimes. Exact runtime identities remain evidence inputs. A future hermetic transport may extend this boundary without changing the standing contract.
+
+The transport pattern is informed by `seanchatmangpt/ggen` PR #537 at `4bd2df69362c2708551f870c3dac36bce97898c2`. Its dedicated offline-toolchain workflow succeeded, while its broader CI and Quality workflows failed. Project 001 therefore imports the proven deterministic transport pattern without transferring branch-wide standing or admitting that branch as a dependency.
