@@ -1,0 +1,34 @@
+{
+  "schema": "ggen-legacy.ecosystem-alive.program/v1",
+  "name": "ggen Ecosystem ALIVE Program",
+  "description": "Manufacture deterministic repository diagnostics, repair plans, validation sessions, receipts, and independent promotion evidence.",
+  "version": "1.0.0",
+  "manifest": "authority/ecosystem-reconstitution/2026-07-31.repositories.json",
+  "foundry_state": "foundry/workstreams/state.json",
+  "default_evidence_dir": "target/ecosystem-alive",
+  "required_broker": "BRCE",
+  "promotion_owner": "verifiers/verify_ecosystem_alive.py",
+  "standing_ceiling": "PARTIAL_ALIVE",
+  "commands": [
+    {"order": 1, "name": "doctor", "label": "Doctor", "summary": "Inspect toolchains, source receipts, foundry state, and repository validation closure."},
+    {"order": 2, "name": "status", "label": "Status", "summary": "Render a compact repository standing table."},
+    {"order": 3, "name": "plan", "label": "Plan", "summary": "Manufacture a dependency-ordered validation plan without executing it."},
+    {"order": 4, "name": "explain", "label": "Explain", "summary": "Explain one repository, its blockers, and the next lawful command."},
+    {"order": 5, "name": "resume", "label": "Resume", "summary": "Select the first non-ALIVE repository and emit a copy-paste continuation command."},
+    {"order": 6, "name": "run", "label": "Run", "summary": "Execute one repository validation ladder only after explicit --execute authority."},
+    {"order": 7, "name": "verify", "label": "Verify", "summary": "Recompute receipt and replay closure without granting promotion."},
+    {"order": 8, "name": "matrix", "label": "Matrix", "summary": "Emit a GitHub Actions matrix for repository validation cells."}
+  ],
+  "gates": [
+    {"order": 1, "name": "exact-source", "receipt_kind": "source"},
+    {"order": 2, "name": "native-validation", "receipt_kind": "validation"},
+    {"order": 3, "name": "negative-control", "receipt_kind": "falsifier"},
+    {"order": 4, "name": "ggen-receipt", "receipt_kind": "ggen"},
+    {"order": 5, "name": "clean-replay", "receipt_kind": "replay"},
+    {"order": 6, "name": "independent-promotion", "receipt_kind": "promotion"}
+  ],
+  "modes": [
+    {"order": 1, "name": "fast", "description": "Execute the first bounded repository-native validation command.", "command_limit": 1},
+    {"order": 2, "name": "full", "description": "Execute the complete repository-native validation ladder.", "command_limit": 999}
+  ]
+}
