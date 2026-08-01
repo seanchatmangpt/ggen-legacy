@@ -19,6 +19,7 @@ jobs:
       RUSTC_WRAPPER: ""
       SOURCE_AUTHORITY_SHA: 32ff03016b476f5e4a938272a8a54fcd3b877e5a
       OBSERVATION_EVIDENCE_SHA: 598bf9e91f2ae27049cdfd989bcb76e0a3d85abb
+      RUNTIME_SHA: 1af4150fd0a259fd878071286e9c7a66d92f026a
     steps:
       - name: Checkout ggen-legacy exact PR head
         uses: actions/checkout@v4
@@ -35,11 +36,11 @@ jobs:
           path: ggen-source
           fetch-depth: 0
 
-      - name: Checkout latest verified Rust runtime
+      - name: Checkout exact verified Rust runtime
         uses: actions/checkout@v4
         with:
           repository: seanchatmangpt/ggen
-          ref: agent/architecture-foundry-runtime
+          ref: ${{ env.RUNTIME_SHA }}
           path: ggen-runtime
           fetch-depth: 0
 
@@ -58,6 +59,7 @@ jobs:
       - name: Verify exact clean inputs
         run: |
           test "$(git -C ggen-source rev-parse HEAD)" = "$SOURCE_AUTHORITY_SHA"
+          test "$(git -C ggen-runtime rev-parse HEAD)" = "$RUNTIME_SHA"
           test -z "$(git -C ggen-source status --porcelain=v1 --untracked-files=all)"
           test -z "$(git -C ggen-runtime status --porcelain=v1 --untracked-files=all)"
           test -z "$(git -C ggen-legacy status --porcelain=v1 --untracked-files=all)"
