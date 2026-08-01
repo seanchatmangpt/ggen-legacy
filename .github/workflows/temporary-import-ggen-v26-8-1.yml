@@ -69,8 +69,118 @@ jobs:
             --destination-root . \
             --source-commit "$SOURCE_SHA" \
             --destination-base "$DESTINATION_BASE"
-         ÜÝ\Ý™\šYžWÙÙÙ[—ÝŒ—ÎÌWÛZYÜ˜][Û‹œHØÜš\ËÝ™\šYžWÙÙÙ[—ÝŒ—ÎÌWÛZYÜ˜][Û‹œBˆÚ[Ù
-ÞØÜš\ËÝ™\šYžWÙÙÙ[—ÝŒ—ÎÌWÛZYÜ˜][Û‹œB‚ˆH˜[YNˆ[œÝ[\›X[™[^XÝZXY™\šYšY\ˆÛÜšÙ›ÝÂˆÚ[ˆ˜\Úˆ[ŽˆˆÙ]Y][È\Y˜Z[ˆØ]ˆ™Ú]X‹ÝÛÜšÙ›ÝÜËÝ™\šYžKYÙÙ[‹]Œ‹NLK[ZYÜ˜][Û‹ž[[	ÑSÑ‰Âˆ˜[YNˆ™\šYžHÙÙ[ˆŒ‹ŽŒHÛÜœ\ÈZYÜ˜][Û‚‚ˆÛŽ‚ˆ[Ü™\]Y\Ý‚ˆœ˜[˜Ú\ÎˆÛXZ[—BˆÛÜšÙ›Ý×Ù\Ü]Ú‚‚ˆ\›Z\ÜÚ[ÛœÎ‚ˆÛÛ[Îˆ™XY‚ˆÛÛ˜Ý\œ™[˜ÞN‚ˆÜ›Ý\ˆÙÙ[‹]Œ‹ŽŒK[ZYÜ˜][Û‹IÞÈÚ]X‹™]™[œ[Ü™\]Y\ÝšXYœÚHÚ]X‹œÚH_BˆØ[˜Ù[Z[‹\›ÙÜ™\ÜÎˆYB‚ˆ›ØœÎ‚ˆ™\šYžN‚ˆ[œË[ÛŽˆX[KLŒˆ[Y[Ý][Z[]\ÎˆLˆÝ\Î‚ˆH˜[YNˆÚXÚÛÝ]^XÝØ[™Y]Bˆ\Ù\ÎˆXÝ[ÛœËØÚXÚÛÝ]LX™ÌNLX˜™MXŒMŒÌÙYXMÌÙÍNMÌÍÎXYŽÂˆÚ]‚ˆ™YŽˆ	ÞÈÚ]X‹™]™[œ[Ü™\]Y\ÝšXYœÚHÚ]X‹œÚH_Bˆ™]ÚY\ˆˆH˜[YNˆÚXÚÛÝ]^XÝÙÙ[ˆÛÝ\˜ÙBˆ\Ù\ÎˆXÝ[ÛœËØÚXÚÛÝ]LX™ÌNLX˜™MXŒMŒÌÙYXMÌÙÍNMÌÍÎXYŽÂˆÚ]‚ˆ™\ÜÚ]ÜžNˆÙX[˜Ú]X[™ÜÙÙÙ[‚ˆ™YŽˆÍLXYÍX˜˜™Œ™NXXŽMÍÍL˜LMÍŒ˜Í™XMLÂˆ]ˆœÛÝ\˜ÙKYÙÙ[‚ˆ™]ÚY\ˆˆH˜[YNˆ[œÝ[[›™Y\Ýˆ\Ù\ÎˆÛ˜^KÜ\Ý]ÛÛÚZ[ŒØŒØ˜NNNNÌÎY˜ŒŒLÙNŽMXÙØÎLX‚ˆÚ]‚ˆÛÛÚZ[ŽˆšYÚKLŒ‹L‹LŒ‚ˆÛÛ\Û™[Îˆ\Ý›]ˆH˜[YNˆ[œÝ[™\šYšY\ˆ\[™[˜ÚY\Âˆ[Žˆ]ÛŒÈ[H\[œÝ[KY\ØX›K\\]™\œÚ[Û‹XÚXÚÈ›ZÙLÏOLKŒŽHœÛÛœØÚ[XOOMŒ‹Œ\ÚXÛOLŒˆH˜[YNˆ™\šYžH™XÙZ]š[™È[™XYÙK^XÝ][Û‹˜[ÚYšY\œË[™™\^Bˆ[Žˆ]ÛŒÈØÜš\ËÝ™\šYžWÙÙÙ[—ÝŒ—ÎÌWÛZYÜ˜][Û‹œHK\ÛÝ\˜ÙK\›ÛÝœÛÝ\˜ÙKYÙÙ[‚ˆH˜[YNˆ\ØY›Ý[™Y]šY[˜ÙBˆ\Ù\ÎˆXÝ[ÛœËÝ\ØYX\Y˜XÝXÍÍLYYMXÌ™ŽN™NMMYŒŒ˜XÙŒˆÚ]‚ˆ˜[YNˆÙÙ[‹]Œ‹ŽŒK[ZYÜ˜][Û‹IÞÈÚ]X‹™]™[œ[Ü™\]Y\ÝšXYœÚHÚ]X‹œÚH_Bˆ]ˆˆZYÜ˜][ÛœËÙÙÙ[‹]Œ‹ŽŒKÛZYÜ˜][Û‹[X[šY™\ÝšœÛÛ‚ˆZYÜ˜][ÛœËÙÙÙ[‹]Œ‹ŽŒKÙ\]Z]˜[[˜ÙK\™\ÜšœÛÛ‚ˆZYÜ˜][ÛœËÙÙÙ[‹]Œ‹ŽŒKÝ™\šYšY\‹\™\ÜšœÛÛ‚ˆZYÜ˜][ÛœËÙÙÙ[‹]Œ‹ŽŒKÛZYÜ˜][Û‹\™XÙZ\šœÛÛ‚ˆY‹[›ËYš[\ËY›Ý[™ˆ\œ›Ü‚ˆSÑ‚‚ˆH˜[YNˆÛÛ[Z]™XÙZ]™YÛÜœ\ÈÚXÚÜÚ[ˆÚ[ˆ˜\Úˆ[ŽˆˆÙ]Y][È\Y˜Z[ˆš[ˆ	ËËœÛÝ\˜ÙKYÙÙ[—‰Èˆ™Ú]Ú[™›ËÙ^ÛYBˆ›H\™ˆ›ZYÜ˜][Û‹X›ÛÝÝ˜\™Ú]X‹ÝÛÜšÙ›ÝÜËÝ[\Ü˜\žKZ[\ÜYÙÙ[‹]Œ‹NLKž[[ˆÚ]ÛÛ™šYÈ\Ù\‹›˜[YH	ÙÙÙ[ˆZYÜ˜][ÛˆYÙ[	ÂˆÚ]ÛÛ™šYÈ\Ù\‹™[XZ[	ÍNNŽŠÙÚ]X‹XXÝ[ÛœÖØ›ÝP\Ù\œË››Ü™\K™Ú]X‹˜ÛÛIÂˆÚ]YPBˆYˆÚ]ËYš[\ÈK\ÝYÙHœÛÝ\˜ÙKYÙÙ[ˆÜ™\\HŽÈ[‚ˆXÚÈ	ÔÓÕTÑWÐÒPÒÓÕUÔÕQÑQÔ‘Q•TÑQ	È‰Œ‚ˆ^]ÂˆšBˆÚ]ÛÛ[Z][H	Ù™X]
-ÛÜœ\ÊNˆ[\ÜÙÙ[ˆŒ‹ŽŒH™XÛÛœÝXÝ[ÛˆÛÜœ\ÉÂˆXÚÈÓÔ”T×ÐÓÓSRUI
-Ú]™]‹\\œÙHPQ
-Hˆˆ‰ÒUP—ÑS•ˆ‚‚ˆH˜[YNˆš[™[™XYÙHÈHÛÜœ\ÈÚXÚÜÚ[ˆÚ[ˆ˜\Úˆ[ŽˆˆÙ]Y][È\Y˜Z[ˆ]ÛŒÈØÜš\ËÝ™\šYžWÙÙÙ[—ÝŒ—ÎÌWÛZYÜ˜][Û‹œHKZ[‹Ù]‹Û[ˆ]ÛŒÈÝ\Ú[\ÜÙœ›ÛWÙÙÙ[‹œHš[˜[^™HˆK\ÛÝ\˜ÙK\›ÛÝœÛÝ\˜ÙKYÙÙ[ˆˆKY\Ý[˜][Û‹\›ÛÝˆˆK\ÛÝ\˜ÙKXÛÛ[Z]‰ÓÕTÑWÔÒHˆˆKXÛÜœ\ËXÛÛ[Z]‰ÓÔ”T×ÐÓÓSRU‚‚ˆH˜[YNˆ^XÝ]H™XÙZ]š[™È™\šYšY\ˆÚXÙBˆÚ[ˆ˜\Úˆ[ŽˆˆÙ]Y][È\Y˜Z[ˆ]ÛŒÈØÜš\ËÝ™\šYžWÙÙÙ[—ÝŒ—ÎÌWÛZYÜ˜][Û‹œHK\ÛÝ\˜ÙK\›ÛÝœÛÝ\˜ÙKYÙÙ[ˆˆÝ\Ý™\šYžKXKšœÛÛ‚ˆÜZYÜ˜][ÛœËÙÙÙ[‹]Œ‹ŽŒKÝ™\šYšY\‹\™\ÜšœÛÛˆÝ\Ü™\ÜXKšœÛÛ‚ˆÜZYÜ˜][ÛœËÙÙÙ[‹]Œ‹ŽŒKÙ\]Z]˜[[˜ÙK\™\ÜšœÛÛˆÝ\Ù\]Z]˜[[˜ÙKXKšœÛÛ‚ˆ]ÛŒÈØÜš\ËÝ™\šYžWÙÙÙ[—ÝŒ—ÎÌWÛZYÜ˜][Û‹œHK\ÛÝ\˜ÙK\›ÛÝœÛÝ\˜ÙKYÙÙ[ˆˆÝ\Ý™\šYžKX‹šœÛÛ‚ˆÛ\Ý\Ü™\ÜXKšœÛÛˆZYÜ˜][ÛœËÙÙÙ[‹]Œ‹ŽŒKÝ™\šYšY\‹\™\ÜšœÛÛ‚ˆÛ\Ý\Ù\]Z]˜[[˜ÙKXKšœÛÛˆZYÜ˜][ÛœËÙÙÙ[‹]Œ‹ŽŒKÙ\]Z]˜[[˜ÙK\™\ÜšœÛÛ‚‚ˆH˜[YNˆ\ÜÝYHZYÜ˜][Ûˆ™XÙZ\ˆÚ[ˆ˜\Úˆ[ŽˆˆÙ]Y][È\Y˜Z[ˆ]ÛŒÈÝ\Ú[\ÜÙœ›ÛWÙÙÙ[‹œH™XÙZ\ˆK\ÛÝ\˜ÙK\›ÛÝœÛÝ\˜ÙKYÙÙ[ˆˆKY\Ý[˜][Û‹\›ÛÝˆˆK\ÛÝ\˜ÙKXÛÛ[Z]‰ÓÕTÑWÔÒHˆˆKXÛÜœ\ËXÛÛ[Z]‰ÓÔ”T×ÐÓÓSRU‚‚ˆH˜[YNˆÛÛ[Z]]šY[˜ÙH[™X›\Ú\Ý[˜][Ûˆœ˜[˜ÚˆÚ[ˆ˜\Úˆ[ŽˆˆÙ]Y][È\Y˜Z[ˆÚ]YZYÜ˜][ÛœËÙÙÙ[‹]Œ‹ŽŒBˆÚ]ÛÛ[Z][H	ØÚÜ™JZYÜ˜][ÛŠNˆš[™ÙÙ[ˆŒ‹ŽŒH[™XYÙH[™™XÙZ\	ÂˆÚ]\ÚÜšYÚ[ˆPQ˜YÙ[ÛZYÜ˜]KYÙÙ[‹]Œ‹NLKXÛÜœ\Â
+          cp /tmp/verify_ggen_v26_8_1_migration.py scripts/verify_ggen_v26_8_1_migration.py
+          chmod +x scripts/verify_ggen_v26_8_1_migration.py
+
+      - name: Install permanent exact-head verifier workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > .github/workflows/verify-ggen-v26-8-1-migration.yml <<'EOF'
+          name: Verify ggen v26.8.1 corpus migration
+
+          on:
+            pull_request:
+              branches: [main]
+            workflow_dispatch:
+
+          permissions:
+            contents: read
+
+          concurrency:
+            group: ggen-v26.8.1-migration-${{ github.event.pull_request.head.sha || github.sha }}
+            cancel-in-progress: true
+
+          jobs:
+            verify:
+              runs-on: ubuntu-24.04
+              timeout-minutes: 90
+              steps:
+                - name: Checkout exact candidate
+                  uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+                  with:
+                    ref: ${{ github.event.pull_request.head.sha || github.sha }}
+                    fetch-depth: 0
+                - name: Checkout exact ggen source
+                  uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+                  with:
+                    repository: seanchatmangpt/ggen
+                    ref: 8351af4c5bbbf60bd99ab8417752a1762c6ea4e3
+                    path: .source-ggen
+                    fetch-depth: 0
+                - name: Install pinned Rust
+                  uses: dtolnay/rust-toolchain@b3b07ba8b418998c39fb20f53e8b695cdcc8de1b
+                  with:
+                    toolchain: nightly-2026-06-22
+                    components: rustfmt
+                - name: Install verifier dependencies
+                  run: python3 -m pip install --disable-pip-version-check blake3==1.0.9 jsonschema==4.26.0 pyshacl==0.40.0
+                - name: Verify receiving lineage, execution, falsifiers, and replay
+                  run: python3 scripts/verify_ggen_v26_8_1_migration.py --source-root .source-ggen
+                - name: Upload bounded evidence
+                  uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
+                  with:
+                    name: ggen-v26.8.1-migration-${{ github.event.pull_request.head.sha || github.sha }}
+                    path: |
+                      migrations/ggen-v26.8.1/migration-manifest.json
+                      migrations/ggen-v26.8.1/equivalence-report.json
+                      migrations/ggen-v26.8.1/verifier-report.json
+                      migrations/ggen-v26.8.1/migration-receipt.json
+                    if-no-files-found: error
+          EOF
+
+      - name: Commit received corpus checkpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '/.source-ggen\n' >> .git/info/exclude
+          rm -rf .migration-bootstrap .github/workflows/temporary-import-ggen-v26-8-1.yml
+          git config user.name 'ggen migration agent'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git ls-files --stage .source-ggen | grep -q .; then
+            echo 'SOURCE_CHECKOUT_STAGED_REFUSED' >&2
+            exit 3
+          fi
+          git commit -m 'feat(corpus): import ggen v26.8.1 reconstruction corpus'
+          echo "CORPUS_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Bind lineage to the corpus checkpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/verify_ggen_v26_8_1_migration.py --help >/dev/null
+          python3 /tmp/import_from_ggen.py finalize \
+            --source-root .source-ggen \
+            --destination-root . \
+            --source-commit "$SOURCE_SHA" \
+            --corpus-commit "$CORPUS_COMMIT"
+
+      - name: Execute receiving verifier twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/verify_ggen_v26_8_1_migration.py --source-root .source-ggen > /tmp/verify-a.json
+          cp migrations/ggen-v26.8.1/verifier-report.json /tmp/report-a.json
+          cp migrations/ggen-v26.8.1/equivalence-report.json /tmp/equivalence-a.json
+          python3 scripts/verify_ggen_v26_8_1_migration.py --source-root .source-ggen > /tmp/verify-b.json
+          cmp /tmp/report-a.json migrations/ggen-v26.8.1/verifier-report.json
+          cmp /tmp/equivalence-a.json migrations/ggen-v26.8.1/equivalence-report.json
+
+      - name: Issue migration receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 /tmp/import_from_ggen.py receipt \
+            --source-root .source-ggen \
+            --destination-root . \
+            --source-commit "$SOURCE_SHA" \
+            --corpus-commit "$CORPUS_COMMIT"
+
+      - name: Commit evidence and publish destination branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add migrations/ggen-v26.8.1
+          git commit -m 'chore(migration): bind ggen v26.8.1 lineage and receipt'
+          git push origin HEAD:agent/migrate-ggen-v26-8-1-corpus
