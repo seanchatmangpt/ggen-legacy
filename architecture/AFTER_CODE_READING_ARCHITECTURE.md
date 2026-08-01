@@ -2,7 +2,9 @@
 
 ## 0. Claim boundary
 
-This document is a target architecture projection of `product/AFTER_CODE_READING.md`. It does not assert that the complete architecture already executes. The current ceiling is `DOCUMENTED`; exact implementation standing remains governed by `RELEASE_CONTROL.md` and the Claims Register.
+This document is the target control-architecture projection of `product/AFTER_CODE_READING.md` and part of the bounded After Code Reading strategic corpus. The corpus may receive `ALIVE / REFERENCE_CONFORMANT` only when its dedicated exact-head workflow independently re-derives this plane model, executes two clean documentary replays, rejects sabotage controls, and binds the result into a receipt.
+
+That standing proves the architecture corpus is internally admitted, reproducible, and independently verifiable. It does not assert that every runtime plane already executes, that a complete replacement has passed the no-read admission theorem, or that the architecture is production-proven. Runtime implementation standing remains governed by `RELEASE_CONTROL.md` and the Claims Register.
 
 ## 1. Architectural objective
 
