@@ -99,6 +99,13 @@
       "implementation_ref": "appliance/bin/verify-subsystem-evidence.py",
       "verifier_ref": "appliance/bin/verify-crown.py",
       "legacy_ref": "governance/source-ledger.md"
+    },
+    {
+      "document": "docs/src/14-enterprise-architecture-foundry.md",
+      "authority_ref": "authority/foundry-work-program.json",
+      "implementation_ref": "ggen.toml",
+      "verifier_ref": "scripts/verify_docs.py",
+      "legacy_ref": "governance/source-ledger.md"
     }
   ]
 }

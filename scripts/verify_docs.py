@@ -14,12 +14,13 @@ REQUIRED = [
     "AGENTS.md", "README.md", "RELEASE_CONTROL.md", "product/PRD.md",
     "architecture/ARD.md", "strategy/PRFAQ.md", "strategy/VISION_2030.md",
     "docs/book.toml", "docs/src/SUMMARY.md", "docs/src/12-verifier-appliance.md",
-    "docs/src/13-independent-crown.md", "governance/claims-register.md",
-    "governance/enterprise-maturity-model.md", "governance/source-ledger.md",
-    "security/threat-model.md", "operations/enterprise-operations.md",
-    "procurement/enterprise-due-diligence.md", "authority/product-profile.json",
-    "authority/verifier-appliance-profile.json", "authority/gall-checkpoints.json",
-    "authority/assurance-subsystems.json", "authority/document-evidence.json",
+    "docs/src/13-independent-crown.md", "docs/src/14-enterprise-architecture-foundry.md",
+    "governance/claims-register.md", "governance/enterprise-maturity-model.md",
+    "governance/source-ledger.md", "security/threat-model.md",
+    "operations/enterprise-operations.md", "procurement/enterprise-due-diligence.md",
+    "authority/product-profile.json", "authority/verifier-appliance-profile.json",
+    "authority/gall-checkpoints.json", "authority/assurance-subsystems.json",
+    "authority/document-evidence.json", "authority/foundry-work-program.json",
     "ggen.toml", "ontology/assurance-program.ttl",
     "packs/ggen-legacy-assurance-pack/pack.toml",
     "packs/ggen-legacy-assurance-pack/ontology.ttl",
@@ -178,15 +179,28 @@ def main() -> int:
         if isinstance(document_authority, dict)
         else []
     )
-    if len(document_records) != 14:
+    if len(document_records) != 15:
         fail(
             "DOCUMENT_EVIDENCE_CARDINALITY",
-            f"expected 14 records, observed {len(document_records)}",
+            f"expected 15 records, observed {len(document_records)}",
         )
     checks.append({
         "id": "document-evidence-authority",
-        "passed": len(document_records) == 14,
+        "passed": len(document_records) == 15,
         "count": len(document_records),
+    })
+
+    foundry = parsed.get("authority/foundry-work-program.json", {})
+    workstreams = foundry.get("workstreams", []) if isinstance(foundry, dict) else []
+    workstream_ids = [item.get("id") for item in workstreams if isinstance(item, dict)]
+    if workstream_ids != list("ABCDEFGHIJK"):
+        fail("FOUNDRY_WORKSTREAM_CLOSURE", str(workstream_ids))
+    if isinstance(foundry, dict) and foundry.get("provenance", {}).get("standing_transferred") is not False:
+        fail("OPEN_PR_STANDING_TRANSFER_REFUSED", "PR #543 standing must not transfer")
+    checks.append({
+        "id": "foundry-work-program",
+        "passed": workstream_ids == list("ABCDEFGHIJK"),
+        "count": len(workstream_ids),
     })
 
     negative = parsed.get("fixtures/negative/premature-alive.json", {})

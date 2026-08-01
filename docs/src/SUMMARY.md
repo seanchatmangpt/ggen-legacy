@@ -14,3 +14,4 @@
 - [Roadmap, Glossary, and FAQ](11-roadmap-faq.md)
 - [Customer-Controlled Verifier Appliance](12-verifier-appliance.md)
 - [Independent Subsystem Evidence and Read-Only Crown](13-independent-crown.md)
+- [Enterprise Architecture Foundry Program](14-enterprise-architecture-foundry.md)

@@ -1,0 +1,183 @@
+{
+  "schema": "ggen.enterprise-architecture-foundry.work-program/1",
+  "program_id": "ggen-legacy-to-foundry",
+  "program_name": "Enterprise Architecture Reconstitution and Manufacture",
+  "provenance": {
+    "repository": "seanchatmangpt/ggen",
+    "pull_request": 543,
+    "head": "999db36647feeb2dfd0bd2250d2db2ef00b887c4",
+    "base_head": "a35086e7a12e2ff1724f307d2ef47eb165fcae29",
+    "status": "OPEN_DRAFT",
+    "standing_transferred": false
+  },
+  "repositories": {
+    "ggen": {
+      "role": "REPOSITORY_MANUFACTURING_KERNEL",
+      "manufacturing_coordinate": "0f39227c102e0ac7519f0f27561356227a518653"
+    },
+    "ggen_legacy": {
+      "role": "ENTERPRISE_ARCHITECTURE_FOUNDRY_CORPUS"
+    },
+    "manufactured_repositories": {
+      "role": "ADMITTED_SOLUTION_INSTANCES"
+    }
+  },
+  "corpus_layers": [
+    "observed_source",
+    "admitted_evidence",
+    "generalized_primitive",
+    "composed_solution_pack",
+    "executable_reference_witness"
+  ],
+  "invariants": [
+    "ZERO_UNRECEIPTED_ACTUATION",
+    "NO_SELF_CERTIFICATION",
+    "EXACT_HEAD_EVIDENCE",
+    "GENERATED_PROJECTIONS_ARE_NOT_AUTHORITY",
+    "NO_UNKNOWN_CAPABILITY_AT_FINAL_ADMISSION",
+    "NO_UNKNOWN_DISPOSITION_AT_FINAL_ADMISSION",
+    "NO_SOURCE_REMOVAL_BEFORE_DESTINATION_ADMISSION",
+    "CLEAN_ROOM_REPLAY_REQUIRED",
+    "AGENT_COMPLETION_DOES_NOT_PROMOTE_STANDING"
+  ],
+  "agent_roles": [
+    "observer_agent",
+    "disposition_agent",
+    "extraction_agent",
+    "primitive_generalization_agent",
+    "pack_composition_agent",
+    "equivalence_agent",
+    "independent_verifier_agent",
+    "integration_agent"
+  ],
+  "workstreams": [
+    {
+      "id": "A",
+      "name": "Exact-head baseline",
+      "role": "integration_agent",
+      "dependencies": []
+    },
+    {
+      "id": "B",
+      "name": "Exhaustive observation",
+      "role": "observer_agent",
+      "dependencies": [
+        "A"
+      ]
+    },
+    {
+      "id": "C",
+      "name": "Capability admission",
+      "role": "disposition_agent",
+      "dependencies": [
+        "B"
+      ]
+    },
+    {
+      "id": "D",
+      "name": "Kernel-corpus classification",
+      "role": "disposition_agent",
+      "dependencies": [
+        "C"
+      ]
+    },
+    {
+      "id": "E",
+      "name": "Cross-repository extraction",
+      "role": "extraction_agent",
+      "dependencies": [
+        "D"
+      ]
+    },
+    {
+      "id": "F",
+      "name": "Primitive generalization",
+      "role": "primitive_generalization_agent",
+      "dependencies": [
+        "E"
+      ]
+    },
+    {
+      "id": "G",
+      "name": "bblock and solution-pack composition",
+      "role": "pack_composition_agent",
+      "dependencies": [
+        "F"
+      ]
+    },
+    {
+      "id": "H",
+      "name": "Full equivalence closure",
+      "role": "equivalence_agent",
+      "dependencies": [
+        "E",
+        "F"
+      ]
+    },
+    {
+      "id": "I",
+      "name": "Independent verification",
+      "role": "independent_verifier_agent",
+      "dependencies": [
+        "G",
+        "H"
+      ]
+    },
+    {
+      "id": "J",
+      "name": "Clean-room manufacture and replay",
+      "role": "integration_agent",
+      "dependencies": [
+        "I"
+      ]
+    },
+    {
+      "id": "K",
+      "name": "Fortune-scale reference reconstitution",
+      "role": "pack_composition_agent",
+      "dependencies": [
+        "J"
+      ]
+    }
+  ],
+  "initial_solution_packs": [
+    "repository_manufacturing_platform",
+    "enterprise_developer_platform",
+    "governed_data_lakehouse_platform",
+    "event_and_integration_platform",
+    "identity_and_policy_enforcement_platform",
+    "ai_and_agent_execution_platform",
+    "process_evidence_and_observability_platform",
+    "regulated_release_and_supply_chain_platform"
+  ],
+  "final_predicates": {
+    "ggen_kernel_admitted": true,
+    "ggen_legacy_corpus_admitted": true,
+    "unknown_capabilities": 0,
+    "unknown_dispositions": 0,
+    "unknown_standings": 0,
+    "unassigned_verifiers": 0,
+    "missing_equivalence_cases": 0,
+    "equivalence_failures": 0,
+    "replay_differences": 0,
+    "cross_repository_receipts_valid": true,
+    "fortune_scale_reference_manufactured": true,
+    "solution_admission": true,
+    "standing": "ALIVE"
+  },
+  "hard_block_classes": [
+    "inaccessible_required_source",
+    "unavailable_required_credential",
+    "irrecoverable_historical_evidence",
+    "legally_prohibited_transfer",
+    "non_derivable_business_decision"
+  ],
+  "non_blocking_conditions": [
+    "queued_runner",
+    "elapsed_time",
+    "high_task_count",
+    "large_context",
+    "successful_agent_return",
+    "intermediate_refusal"
+  ]
+}

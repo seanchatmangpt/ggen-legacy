@@ -11,5 +11,6 @@
 | APS ggen manufacturing profile | `ggen 26.7.62@68952593c40214ac1a681073d65f3902a9cdfce4` | authority, GBB, CMD, refusal, receipts/replay, release law | admitted standards provenance |
 | Seven-day ggen program | July 23–30, 2026 | combinatorial maximalism, bblocks/packs, verifier constitution | design input; implementation standing bounded |
 | ggen legacy rebuild PR | `seanchatmangpt/ggen#540@a35086e7a12e2ff1724f307d2ef47eb165fcae29` | subsystem evidence manifest, independent re-derivation, observer-attempt law, document evidence index, separate coverage manufacture, read-only crown | open design provenance only; not a manufacturing coordinate and no standing transfer |
+| Enterprise Architecture Foundry PR | `seanchatmangpt/ggen#543@999db36647feeb2dfd0bd2250d2db2ef00b887c4` | repository roles, A–K work program, agent execution contracts, solution-pack families, terminal theorem | open design provenance projected into `authority/foundry-work-program.json`; no standing transfer |
 
 A source may support terminology or requirements without proving local implementation. Adjacency does not transfer standing. Open pull requests are never silently promoted into executable dependencies.
