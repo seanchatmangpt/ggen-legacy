@@ -6,6 +6,19 @@ path = Path(sys.argv[1])
 text = path.read_text(encoding='utf-8')
 replacements = [
     (
+        '    destination.parent.mkdir(parents=True, exist_ok=True)\n'
+        '    shutil.copytree(source, destination, symlinks=True)\n',
+        '    destination.parent.mkdir(parents=True, exist_ok=True)\n'
+        '    if source.is_dir():\n'
+        '        shutil.copytree(source, destination, symlinks=True)\n'
+        '    elif source.is_file():\n'
+        '        shutil.copy2(source, destination)\n'
+        '    else:\n'
+        '        raise MigrationRefusal(\n'
+        '            f"SOURCE_PATH_UNSUPPORTED_REFUSED path={source.as_posix()}"\n'
+        '        )\n',
+    ),
+    (
         ')\nWORKFLOW_COMPONENT_ID = "GGEN-V26.8.1-SOURCE-WORKFLOW-EVIDENCE"\n',
         ')\nCONTEXT_COMPONENTS = (\n'
         '    (\n'
