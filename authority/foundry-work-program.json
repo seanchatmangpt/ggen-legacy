@@ -13,12 +13,41 @@
   "runtime_provenance": {
     "repository": "seanchatmangpt/ggen",
     "pull_request": 544,
-    "head": "7313d60266111bca7ff21257b71f68a6535e7294",
+    "head": "f831e4d9fa80fe345349ce5d6e0fff41e6eb2a4a",
     "base_head": "999db36647feeb2dfd0bd2250d2db2ef00b887c4",
     "path": "tools/architecture-foundry",
     "status": "OPEN_DRAFT",
     "standing_transferred": false,
     "runtime_dependency_admitted": false,
+    "dedicated_runtime_evidence": {
+      "workflow_run": 30678356171,
+      "conclusion": "success",
+      "exact_head": "f831e4d9fa80fe345349ce5d6e0fff41e6eb2a4a"
+    },
+    "prior_failure_evidence": {
+      "workflow_run": 30677969304,
+      "exact_head": "7313d60266111bca7ff21257b71f68a6535e7294",
+      "conclusion": "failure",
+      "typed_reason": "SOURCE_WORKTREE_DIRTY_AFTER_WORKSPACE_FMT",
+      "failed_real_git_tests": 3
+    },
+    "receiving_boundary_evidence": {
+      "repository": "seanchatmangpt/ggen-legacy",
+      "pull_request": 2,
+      "workflow_run": 30678135632,
+      "conclusion": "success",
+      "runtime_head": "0175ead9748a7f41018ec037828865ae11cfe267",
+      "corpus_merge_head": "7e83360e88b73df4d3b65dceaa8c0b5538cd36a4",
+      "real_git_tests": 4,
+      "real_git_failures": 0,
+      "replay_match": true,
+      "final_standing": "PARTIAL_ALIVE",
+      "admitted": false,
+      "workflow_fences": [
+        "MUTABLE_ACTION_COORDINATE",
+        "FLOATING_RUNTIME_REFERENCE"
+      ]
+    },
     "real_boundary_test": "tools/architecture-foundry/tests/real_git.rs",
     "commands": [
       "validate-program",
@@ -72,72 +101,17 @@
     "integration_agent"
   ],
   "workstreams": [
-    {
-      "id": "A",
-      "name": "Exact-head baseline",
-      "role": "integration_agent",
-      "dependencies": []
-    },
-    {
-      "id": "B",
-      "name": "Exhaustive observation",
-      "role": "observer_agent",
-      "dependencies": ["A"]
-    },
-    {
-      "id": "C",
-      "name": "Capability admission",
-      "role": "disposition_agent",
-      "dependencies": ["B"]
-    },
-    {
-      "id": "D",
-      "name": "Kernel-corpus classification",
-      "role": "disposition_agent",
-      "dependencies": ["C"]
-    },
-    {
-      "id": "E",
-      "name": "Cross-repository extraction",
-      "role": "extraction_agent",
-      "dependencies": ["D"]
-    },
-    {
-      "id": "F",
-      "name": "Primitive generalization",
-      "role": "primitive_generalization_agent",
-      "dependencies": ["E"]
-    },
-    {
-      "id": "G",
-      "name": "bblock and solution-pack composition",
-      "role": "pack_composition_agent",
-      "dependencies": ["F"]
-    },
-    {
-      "id": "H",
-      "name": "Full equivalence closure",
-      "role": "equivalence_agent",
-      "dependencies": ["E", "F"]
-    },
-    {
-      "id": "I",
-      "name": "Independent verification",
-      "role": "independent_verifier_agent",
-      "dependencies": ["G", "H"]
-    },
-    {
-      "id": "J",
-      "name": "Clean-room manufacture and replay",
-      "role": "integration_agent",
-      "dependencies": ["I"]
-    },
-    {
-      "id": "K",
-      "name": "Fortune-scale reference reconstitution",
-      "role": "pack_composition_agent",
-      "dependencies": ["J"]
-    }
+    {"id": "A", "name": "Exact-head baseline", "role": "integration_agent", "dependencies": []},
+    {"id": "B", "name": "Exhaustive observation", "role": "observer_agent", "dependencies": ["A"]},
+    {"id": "C", "name": "Capability admission", "role": "disposition_agent", "dependencies": ["B"]},
+    {"id": "D", "name": "Kernel-corpus classification", "role": "disposition_agent", "dependencies": ["C"]},
+    {"id": "E", "name": "Cross-repository extraction", "role": "extraction_agent", "dependencies": ["D"]},
+    {"id": "F", "name": "Primitive generalization", "role": "primitive_generalization_agent", "dependencies": ["E"]},
+    {"id": "G", "name": "bblock and solution-pack composition", "role": "pack_composition_agent", "dependencies": ["F"]},
+    {"id": "H", "name": "Full equivalence closure", "role": "equivalence_agent", "dependencies": ["E", "F"]},
+    {"id": "I", "name": "Independent verification", "role": "independent_verifier_agent", "dependencies": ["G", "H"]},
+    {"id": "J", "name": "Clean-room manufacture and replay", "role": "integration_agent", "dependencies": ["I"]},
+    {"id": "K", "name": "Fortune-scale reference reconstitution", "role": "pack_composition_agent", "dependencies": ["J"]}
   ],
   "initial_solution_packs": [
     "repository_manufacturing_platform",

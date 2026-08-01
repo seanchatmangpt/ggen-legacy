@@ -11,53 +11,95 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REQUIRED = [
-    "AGENTS.md", "README.md", "RELEASE_CONTROL.md", "product/PRD.md",
-    "architecture/ARD.md", "strategy/PRFAQ.md", "strategy/VISION_2030.md",
-    "docs/book.toml", "docs/src/SUMMARY.md", "docs/src/12-verifier-appliance.md",
-    "docs/src/13-independent-crown.md", "docs/src/14-enterprise-architecture-foundry.md",
-    "governance/claims-register.md", "governance/enterprise-maturity-model.md",
-    "governance/source-ledger.md", "security/threat-model.md",
-    "operations/enterprise-operations.md", "procurement/enterprise-due-diligence.md",
-    "authority/product-profile.json", "authority/verifier-appliance-profile.json",
-    "authority/gall-checkpoints.json", "authority/assurance-subsystems.json",
-    "authority/document-evidence.json", "authority/foundry-work-program.json",
-    "ggen.toml", "ontology/assurance-program.ttl",
+    "AGENTS.md",
+    "README.md",
+    "RELEASE_CONTROL.md",
+    "product/PRD.md",
+    "architecture/ARD.md",
+    "strategy/PRFAQ.md",
+    "strategy/VISION_2030.md",
+    "docs/book.toml",
+    "docs/src/SUMMARY.md",
+    "docs/src/12-verifier-appliance.md",
+    "docs/src/13-independent-crown.md",
+    "docs/src/14-enterprise-architecture-foundry.md",
+    "governance/claims-register.md",
+    "governance/enterprise-maturity-model.md",
+    "governance/source-ledger.md",
+    "security/threat-model.md",
+    "operations/enterprise-operations.md",
+    "procurement/enterprise-due-diligence.md",
+    "authority/product-profile.json",
+    "authority/verifier-appliance-profile.json",
+    "authority/gall-checkpoints.json",
+    "authority/assurance-subsystems.json",
+    "authority/document-evidence.json",
+    "authority/foundry-work-program.json",
+    "authority/offline-verifier-transport.json",
+    "foundry/bootstrap.yaml",
+    "ggen.toml",
+    "ontology/assurance-program.ttl",
     "packs/ggen-legacy-assurance-pack/pack.toml",
     "packs/ggen-legacy-assurance-pack/ontology.ttl",
-    "appliance/manifest.json", "appliance/bin/build-standing-portfolio.py",
+    "appliance/manifest.json",
+    "appliance/bin/build-standing-portfolio.py",
     "appliance/bin/verify-standing-portfolio.py",
     "appliance/bin/cross-check-portfolio.py",
     "appliance/bin/transparency-log.py",
     "appliance/bin/replay-standing-portfolio.py",
-    "appliance/bin/decision-engine.py", "appliance/bin/run-reference-e2e.sh",
+    "appliance/bin/decision-engine.py",
+    "appliance/bin/run-reference-e2e.sh",
     "appliance/bin/observe-project.py",
     "appliance/bin/build-document-evidence-index.py",
     "appliance/bin/build-subsystem-evidence.py",
     "appliance/bin/verify-subsystem-evidence.py",
     "appliance/bin/project-subsystem-coverage.py",
     "appliance/bin/verify-crown.py",
+    "appliance/bin/build-offline-bundle.sh",
+    "scripts/verify_foundry_provenance.py",
+    "scripts/verify_foundry_bootstrap.py",
+    "scripts/verify_offline_transport.py",
     "projects/001/TICKET-011-admit-verifier-appliance-pack.md",
-    "schemas/product-profile.schema.json", "schemas/verifier-report.schema.json",
-    "schemas/receipt.schema.json", "schemas/engagement.schema.json",
-    "schemas/claim-manifest.schema.json", "schemas/replay-report.schema.json",
-    "schemas/release-admission.schema.json", "schemas/sunset-admission.schema.json",
+    "schemas/product-profile.schema.json",
+    "schemas/verifier-report.schema.json",
+    "schemas/receipt.schema.json",
+    "schemas/engagement.schema.json",
+    "schemas/claim-manifest.schema.json",
+    "schemas/replay-report.schema.json",
+    "schemas/release-admission.schema.json",
+    "schemas/sunset-admission.schema.json",
     "schemas/transparency-entry.schema.json",
     "schemas/assurance-subsystem-evidence.schema.json",
     "schemas/document-evidence-index.schema.json",
     "schemas/observation-report.schema.json",
+    "schemas/migration-manifest.schema.json",
+    "schemas/workstream-report.schema.json",
+    "schemas/final-evidence.schema.json",
     "fixtures/positive/product-profile.json",
     "fixtures/negative/premature-alive.json",
     "tests/fixtures/engagement.reference.json",
 ]
 FORBIDDEN_DIRS = {
-    "src", "crates", "packages", "cmd", "internal", "app", "lib",
-    "services", "runtime",
+    "src",
+    "crates",
+    "packages",
+    "cmd",
+    "internal",
+    "app",
+    "lib",
+    "services",
+    "runtime",
 }
 STATES = {
-    "PARTIAL_ALIVE", "ALIVE", "BLOCKED", "BUILD_BROKEN", "UNKNOWN",
+    "PARTIAL_ALIVE",
+    "ALIVE",
+    "BLOCKED",
+    "BUILD_BROKEN",
+    "UNKNOWN",
     "UNSUPPORTED",
 }
 EXPECTED_GGEN = "0f39227c102e0ac7519f0f27561356227a518653"
+EXPECTED_RUNTIME = "f831e4d9fa80fe345349ce5d6e0fff41e6eb2a4a"
 
 
 def main() -> int:
@@ -73,19 +115,27 @@ def main() -> int:
     for rel in REQUIRED:
         if not (ROOT / rel).is_file():
             fail("REQUIRED_FILE_MISSING", rel)
-    checks.append({
-        "id": "required-files",
-        "passed": not any(e["code"] == "REQUIRED_FILE_MISSING" for e in errors),
-        "count": len(REQUIRED),
-    })
+    checks.append(
+        {
+            "id": "required-files",
+            "passed": not any(
+                item["code"] == "REQUIRED_FILE_MISSING" for item in errors
+            ),
+            "count": len(REQUIRED),
+        }
+    )
 
     for name in FORBIDDEN_DIRS:
         if (ROOT / name).exists():
             fail("UNADMITTED_TOP_LEVEL_SOURCE", name)
-    checks.append({
-        "id": "source-boundary",
-        "passed": not any(e["code"] == "UNADMITTED_TOP_LEVEL_SOURCE" for e in errors),
-    })
+    checks.append(
+        {
+            "id": "source-boundary",
+            "passed": not any(
+                item["code"] == "UNADMITTED_TOP_LEVEL_SOURCE" for item in errors
+            ),
+        }
+    )
 
     try:
         tomllib.loads((ROOT / "docs/book.toml").read_text())
@@ -94,20 +144,34 @@ def main() -> int:
             (ROOT / "packs/ggen-legacy-assurance-pack/pack.toml").read_text()
         )
         if ggen_config.get("templates", {}).get("dir") != "templates":
-            fail("GGEN_TEMPLATES_CONTRACT_MISSING", "[templates].dir must be templates")
+            fail(
+                "GGEN_TEMPLATES_CONTRACT_MISSING",
+                "[templates].dir must be templates",
+            )
     except Exception as exc:
         fail("TOML_INVALID", str(exc))
+
+    try:
+        bootstrap = json.loads((ROOT / "foundry/bootstrap.yaml").read_text())
+        if bootstrap.get("schema_version") != "ggen.legacy.foundry.bootstrap/1":
+            fail("FOUNDRY_BOOTSTRAP_SCHEMA", str(bootstrap.get("schema_version")))
+        if bootstrap.get("runtime_dependency_admitted") is not False:
+            fail("FOUNDRY_RUNTIME_PREMATURE_ADMISSION", "runtime must remain fenced")
+    except Exception as exc:
+        fail("FOUNDRY_BOOTSTRAP_INVALID", str(exc))
 
     summary = (ROOT / "docs/src/SUMMARY.md").read_text()
     links = re.findall(r"\[[^\]]+\]\(([^)]+\.md)\)", summary)
     for link in links:
         if not (ROOT / "docs/src" / link).is_file():
             fail("BOOK_LINK_BROKEN", link)
-    checks.append({
-        "id": "book-links",
-        "passed": not any(e["code"] == "BOOK_LINK_BROKEN" for e in errors),
-        "count": len(links),
-    })
+    checks.append(
+        {
+            "id": "book-links",
+            "passed": not any(item["code"] == "BOOK_LINK_BROKEN" for item in errors),
+            "count": len(links),
+        }
+    )
 
     json_paths = (
         sorted((ROOT / "authority").glob("*.json"))
@@ -122,29 +186,27 @@ def main() -> int:
             parsed[path.relative_to(ROOT).as_posix()] = json.loads(path.read_text())
         except Exception as exc:
             fail("JSON_INVALID", f"{path}: {exc}")
-    checks.append({
-        "id": "json-parse",
-        "passed": not any(e["code"] == "JSON_INVALID" for e in errors),
-        "count": len(json_paths),
-    })
+    checks.append(
+        {
+            "id": "json-parse",
+            "passed": not any(item["code"] == "JSON_INVALID" for item in errors),
+            "count": len(json_paths),
+        }
+    )
 
     profile = parsed.get("authority/product-profile.json", {})
     if isinstance(profile, dict):
         if profile.get("direct_actuation_allowed") is not False:
-            fail(
-                "DIRECT_ACTUATION_REFUSED",
-                "direct_actuation_allowed must be false",
-            )
+            fail("DIRECT_ACTUATION_REFUSED", "direct_actuation_allowed must be false")
         if profile.get("source_phase_admitted") is not True:
-            fail(
-                "SOURCE_PHASE_NOT_ADMITTED",
-                "TICKET-011 must admit source phase",
-            )
+            fail("SOURCE_PHASE_NOT_ADMITTED", "TICKET-011 must admit source phase")
         if profile.get("ggen_source_revision") != EXPECTED_GGEN:
             fail("GGEN_COORDINATE_DRIFT", str(profile.get("ggen_source_revision")))
         for key in (
-            "documentation_standing", "implementation_standing",
-            "external_production_standing", "verifier_appliance_standing",
+            "documentation_standing",
+            "implementation_standing",
+            "external_production_standing",
+            "verifier_appliance_standing",
         ):
             if profile.get(key) not in STATES:
                 fail("STATE_INVALID", key)
@@ -153,6 +215,32 @@ def main() -> int:
                 "PRODUCT_ALIVE_PREMATURE",
                 "complete product cannot be ALIVE in Project 001",
             )
+
+    foundry = parsed.get("authority/foundry-work-program.json", {})
+    if isinstance(foundry, dict):
+        workstream_ids = [
+            item.get("id")
+            for item in foundry.get("workstreams", [])
+            if isinstance(item, dict)
+        ]
+        if workstream_ids != list("ABCDEFGHIJK"):
+            fail("FOUNDRY_WORKSTREAM_CLOSURE", str(workstream_ids))
+        if foundry.get("provenance", {}).get("standing_transferred") is not False:
+            fail("OPEN_PLAN_STANDING_TRANSFER_REFUSED", "PR #543")
+        runtime = foundry.get("runtime_provenance", {})
+        if runtime.get("head") != EXPECTED_RUNTIME:
+            fail("FOUNDRY_RUNTIME_HEAD_DRIFT", str(runtime.get("head")))
+        if runtime.get("standing_transferred") is not False:
+            fail("OPEN_RUNTIME_STANDING_TRANSFER_REFUSED", "PR #544")
+        if runtime.get("runtime_dependency_admitted") is not False:
+            fail("OPEN_RUNTIME_DEPENDENCY_ADMITTED", "PR #544")
+        checks.append(
+            {
+                "id": "foundry-work-program",
+                "passed": workstream_ids == list("ABCDEFGHIJK"),
+                "count": len(workstream_ids),
+            }
+        )
 
     subsystem_authority = parsed.get("authority/assurance-subsystems.json", {})
     subsystem_ids = []
@@ -167,11 +255,13 @@ def main() -> int:
             "ASSURANCE_SUBSYSTEM_CARDINALITY",
             f"expected 10 unique subsystems, observed {subsystem_ids}",
         )
-    checks.append({
-        "id": "assurance-subsystem-authority",
-        "passed": len(subsystem_ids) == 10 and len(set(subsystem_ids)) == 10,
-        "count": len(subsystem_ids),
-    })
+    checks.append(
+        {
+            "id": "assurance-subsystem-authority",
+            "passed": len(subsystem_ids) == 10 and len(set(subsystem_ids)) == 10,
+            "count": len(subsystem_ids),
+        }
+    )
 
     document_authority = parsed.get("authority/document-evidence.json", {})
     document_records = (
@@ -184,24 +274,13 @@ def main() -> int:
             "DOCUMENT_EVIDENCE_CARDINALITY",
             f"expected 15 records, observed {len(document_records)}",
         )
-    checks.append({
-        "id": "document-evidence-authority",
-        "passed": len(document_records) == 15,
-        "count": len(document_records),
-    })
-
-    foundry = parsed.get("authority/foundry-work-program.json", {})
-    workstreams = foundry.get("workstreams", []) if isinstance(foundry, dict) else []
-    workstream_ids = [item.get("id") for item in workstreams if isinstance(item, dict)]
-    if workstream_ids != list("ABCDEFGHIJK"):
-        fail("FOUNDRY_WORKSTREAM_CLOSURE", str(workstream_ids))
-    if isinstance(foundry, dict) and foundry.get("provenance", {}).get("standing_transferred") is not False:
-        fail("OPEN_PR_STANDING_TRANSFER_REFUSED", "PR #543 standing must not transfer")
-    checks.append({
-        "id": "foundry-work-program",
-        "passed": workstream_ids == list("ABCDEFGHIJK"),
-        "count": len(workstream_ids),
-    })
+    checks.append(
+        {
+            "id": "document-evidence-authority",
+            "passed": len(document_records) == 15,
+            "count": len(document_records),
+        }
+    )
 
     negative = parsed.get("fixtures/negative/premature-alive.json", {})
     if not (
@@ -234,26 +313,21 @@ def main() -> int:
         if not target.is_file() or target.read_text() != body:
             projection_failures.append(match.group(1).strip())
     if projection_failures:
-        fail(
-            "GENERATED_PROJECTION_DRIFT",
-            ",".join(projection_failures),
-        )
-    checks.append({
-        "id": "ggen-projection-identity",
-        "passed": not projection_failures,
-        "templates": len(templates),
-    })
-
-    gates = sorted(
-        (ROOT / "packs/ggen-legacy-assurance-pack/gates").glob("*.rq")
+        fail("GENERATED_PROJECTION_DRIFT", ",".join(projection_failures))
+    checks.append(
+        {
+            "id": "ggen-projection-identity",
+            "passed": not projection_failures,
+            "templates": len(templates),
+        }
     )
+
+    gates = sorted((ROOT / "packs/ggen-legacy-assurance-pack/gates").glob("*.rq"))
     if len(gates) != 10:
         fail("GATE_CARDINALITY", f"expected 10, observed {len(gates)}")
-    checks.append({
-        "id": "assurance-gates",
-        "passed": len(gates) == 10,
-        "count": len(gates),
-    })
+    checks.append(
+        {"id": "assurance-gates", "passed": len(gates) == 10, "count": len(gates)}
+    )
 
     forbidden = [
         r"\bSOC 2-ready\b",
@@ -266,8 +340,12 @@ def main() -> int:
             if any(
                 term in lower
                 for term in (
-                    "does not claim", "not claim", "refused", "forbidden",
-                    "unproven", "no guarantee",
+                    "does not claim",
+                    "not claim",
+                    "refused",
+                    "forbidden",
+                    "unproven",
+                    "no guarantee",
                 )
             ):
                 continue
@@ -277,29 +355,34 @@ def main() -> int:
                         "FORBIDDEN_OVERCLAIM",
                         f"{path.relative_to(ROOT)}:{line_number}: {line.strip()}",
                     )
-    checks.append({
-        "id": "claim-discipline",
-        "passed": not any(e["code"] == "FORBIDDEN_OVERCLAIM" for e in errors),
-    })
+    checks.append(
+        {
+            "id": "claim-discipline",
+            "passed": not any(
+                item["code"] == "FORBIDDEN_OVERCLAIM" for item in errors
+            ),
+        }
+    )
 
     inventory = []
     for path in sorted(ROOT.rglob("*")):
+        path_text = path.as_posix()
         if (
             path.is_file()
             and ".git" not in path.parts
-            and "docs/book" not in path.as_posix()
-            and not path.as_posix().endswith("evidence/local-docs-verifier.json")
-            and "/evidence/appliance/" not in path.as_posix()
+            and "docs/book" not in path_text
+            and not path_text.endswith("evidence/local-docs-verifier.json")
+            and "/evidence/appliance/" not in path_text
         ):
             rel = path.relative_to(ROOT).as_posix()
             digest = hashlib.sha256(path.read_bytes()).hexdigest()
-            inventory.append({
-                "path": rel,
-                "sha256": digest,
-                "bytes": path.stat().st_size,
-            })
+            inventory.append(
+                {"path": rel, "sha256": digest, "bytes": path.stat().st_size}
+            )
     tree_digest = hashlib.sha256(
-        "\n".join(f"{item['path']}:{item['sha256']}" for item in inventory).encode()
+        "\n".join(
+            f"{item['path']}:{item['sha256']}" for item in inventory
+        ).encode()
     ).hexdigest()
     standing = "PARTIAL_ALIVE" if not errors else "BUILD_BROKEN"
     report = {

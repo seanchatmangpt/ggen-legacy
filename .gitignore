@@ -9,15 +9,21 @@ target
 docs/book/
 evidence/local-docs-verifier.json
 evidence/foundry-provenance-verifier.json
+evidence/foundry-bootstrap-verifier.json
+evidence/foundry-runtime-candidate.json
 evidence/offline-transport-provenance.json
 evidence/appliance/
 evidence/offline-bundle/
 .ggen/
 .ggen-v2/
 .ggen-packs/
+foundry/generated/
+foundry/reports/
+foundry/receipts/
 
 # CI-only exact-coordinate tool checkouts
 .ggen-tool/
+.foundry-runtime/
 lsp-max/
 lsp-types-max/
 wasm4pm/

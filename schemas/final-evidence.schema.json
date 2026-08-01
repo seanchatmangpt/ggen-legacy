@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chatmangpt.com/ggen-legacy/schemas/final-evidence.schema.json",
+  "title": "ggen-legacy Final Evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "source_head",
+    "corpus_head",
+    "workstream_reports",
+    "cross_repository_receipt_manifest",
+    "settlement_receipt",
+    "release_decision",
+    "final_predicates"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "ggen.legacy.final-evidence/1"
+    },
+    "source_head": {
+      "$ref": "#/$defs/sha1"
+    },
+    "corpus_head": {
+      "$ref": "#/$defs/sha1"
+    },
+    "workstream_reports": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K"
+      ],
+      "properties": {
+        "A": {"$ref": "#/$defs/relativePath"},
+        "B": {"$ref": "#/$defs/relativePath"},
+        "C": {"$ref": "#/$defs/relativePath"},
+        "D": {"$ref": "#/$defs/relativePath"},
+        "E": {"$ref": "#/$defs/relativePath"},
+        "F": {"$ref": "#/$defs/relativePath"},
+        "G": {"$ref": "#/$defs/relativePath"},
+        "H": {"$ref": "#/$defs/relativePath"},
+        "I": {"$ref": "#/$defs/relativePath"},
+        "J": {"$ref": "#/$defs/relativePath"},
+        "K": {"$ref": "#/$defs/relativePath"}
+      }
+    },
+    "cross_repository_receipt_manifest": {
+      "$ref": "#/$defs/relativePath"
+    },
+    "settlement_receipt": {
+      "$ref": "#/$defs/relativePath"
+    },
+    "release_decision": {
+      "$ref": "#/$defs/relativePath"
+    },
+    "final_predicates": {
+      "$ref": "#/$defs/finalPredicates"
+    }
+  },
+  "$defs": {
+    "sha1": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "relativePath": {
+      "type": "string",
+      "minLength": 1,
+      "allOf": [
+        {
+          "not": {
+            "pattern": "^/"
+          }
+        },
+        {
+          "not": {
+            "pattern": "(^|/)\\.\\.(/|$)"
+          }
+        }
+      ]
+    },
+    "finalPredicates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ggen_kernel_admitted",
+        "ggen_legacy_corpus_admitted",
+        "unknown_capabilities",
+        "unknown_dispositions",
+        "unknown_standings",
+        "unassigned_verifiers",
+        "missing_equivalence_cases",
+        "equivalence_failures",
+        "replay_differences",
+        "cross_repository_receipts_valid",
+        "fortune_scale_reference_manufactured",
+        "solution_admission",
+        "standing"
+      ],
+      "properties": {
+        "ggen_kernel_admitted": {"const": true},
+        "ggen_legacy_corpus_admitted": {"const": true},
+        "unknown_capabilities": {"const": 0},
+        "unknown_dispositions": {"const": 0},
+        "unknown_standings": {"const": 0},
+        "unassigned_verifiers": {"const": 0},
+        "missing_equivalence_cases": {"const": 0},
+        "equivalence_failures": {"const": 0},
+        "replay_differences": {"const": 0},
+        "cross_repository_receipts_valid": {"const": true},
+        "fortune_scale_reference_manufactured": {"const": true},
+        "solution_admission": {"const": true},
+        "standing": {"const": "ALIVE"}
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 # Enterprise Architecture Foundry Program
 
-This chapter admits bounded projections of the Enterprise Architecture Foundry plan and runtime authored in `seanchatmangpt/ggen` PRs #543 and #544.
+This chapter admits bounded projections of the Enterprise Architecture Foundry plan, Rust runtime, and receiving boundary authored today across `seanchatmangpt/ggen` PRs #543 and #544 and `seanchatmangpt/ggen-legacy` PR #2.
 
 The plan source coordinate is:
 
@@ -10,16 +10,27 @@ PR #543
 base: a35086e7a12e2ff1724f307d2ef47eb165fcae29
 ```
 
-The runtime source coordinate is:
+The current runtime candidate coordinate is:
 
 ```text
 PR #544
-7313d60266111bca7ff21257b71f68a6535e7294
+f831e4d9fa80fe345349ce5d6e0fff41e6eb2a4a
 base: 999db36647feeb2dfd0bd2250d2db2ef00b887c4
 path: tools/architecture-foundry
+upstream dedicated runtime workflow: success
 ```
 
-Both pull requests remain open and draft. Their standing is not transferred. The stable manufacturing kernel used by Project 001 remains `ggen@0f39227c102e0ac7519f0f27561356227a518653`.
+The receiving-boundary coordinate is:
+
+```text
+ggen-legacy PR #2
+eeaa99ef65c1438a3dea100af775aee222aac9c8
+workflow run: 30678135632
+observed runtime: 0175ead9748a7f41018ec037828865ae11cfe267
+corpus merge head: 7e83360e88b73df4d3b65dceaa8c0b5538cd36a4
+```
+
+All three pull requests remain open and draft. Their standing is not transferred. The stable manufacturing kernel used by Project 001 remains `ggen@0f39227c102e0ac7519f0f27561356227a518653`.
 
 ## Repository topology
 
@@ -83,13 +94,19 @@ The workstreams are dependency ordered:
 | J | Clean-room manufacture and replay | integration agent |
 | K | Fortune-scale reference reconstitution | pack-composition agent |
 
-The machine-readable projection is `authority/foundry-work-program.json`.
+The machine-readable projections are:
 
-## Rust runtime provenance
+- `authority/foundry-work-program.json`
+- `foundry/bootstrap.yaml`
+- `schemas/migration-manifest.schema.json`
+- `schemas/workstream-report.schema.json`
+- `schemas/final-evidence.schema.json`
 
-PR #544 implements a standalone Rust control plane at `tools/architecture-foundry`. The runtime is designed to validate the A–K graph, bind clean source and corpus heads, initialize typed corpus state, execute non-destructive extraction, issue BLAKE3 lineage receipts, admit workstreams from independently authored evidence, verify lineage, replay receipt-bound outputs, and refuse final `ALIVE` until all final predicates close.
+## Rust runtime evidence
 
-Its declared command surface is:
+PR #544 implements a standalone Rust control plane at `tools/architecture-foundry`. The runtime validates the A–K graph, binds clean source and corpus heads, initializes typed corpus state, executes non-destructive extraction, issues BLAKE3 lineage receipts, admits workstreams from independently authored evidence, verifies lineage, replays receipt-bound outputs, and refuses final `ALIVE` until all final predicates close.
+
+Its command surface is:
 
 ```text
 validate-program
@@ -102,9 +119,31 @@ verify
 replay
 ```
 
-Its real-boundary suite is `tools/architecture-foundry/tests/real_git.rs`. The suite creates real temporary Git repositories, commits checkpoints, extracts a real file, verifies lineage, replays receipts, and exercises workstream-A admission.
+Three same-day evidence rails are preserved:
 
-Project 001 records this as design and implementation provenance only. `runtime_dependency_admitted=false` remains mandatory until the branch is merged or another exact coordinate is independently admitted. The current verifier appliance does not execute code from PR #544.
+1. Runtime head `7313d602…` failed three real-Git tests because its workflow ran workspace-wide formatting before requiring a clean source worktree.
+2. The receiving workflow ran runtime head `0175ead9…` with manifest-scoped formatting; four real-Git tests passed, replay matched, and standing correctly remained `PARTIAL_ALIVE`.
+3. Current runtime head `f831e4d9…` has a successful dedicated runtime workflow and is independently compiled and tested by Project 001 CI at its exact coordinate.
+
+Project 001 still records `runtime_dependency_admitted=false`. Exact candidate verification is evidence, not automatic dependency or product promotion.
+
+## Receiving contract
+
+`foundry/bootstrap.yaml` is canonical JSON-subset YAML so it can be consumed by YAML systems while remaining deterministically parseable with the standard JSON parser.
+
+It binds:
+
+- stable ggen manufacturing head;
+- foundry plan head;
+- receiving runtime head;
+- current runtime candidate head;
+- corpus base;
+- A–K initial states;
+- migration, workstream, and final-evidence schemas;
+- refusal conditions;
+- the terminal theorem.
+
+The migration manifest allows exactly five final dispositions: `PRESERVED`, `SUBSUMED`, `REPLACED`, `ARCHIVED`, and `REFUSED`. The final-evidence schema allows `ALIVE` only when every terminal predicate is structurally closed.
 
 ## Initial solution packs
 
