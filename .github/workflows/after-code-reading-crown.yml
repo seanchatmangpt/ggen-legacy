@@ -1,0 +1,147 @@
+name: Crown After Code Reading v26.8.1
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: after-code-reading-v26.8.1-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  crown:
+    name: exact-head manufacture, replay, and independent crown
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out exact candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Assert exact source and admitted boundary
+        shell: bash
+        run: |
+          set -euo pipefail
+          HEAD_SHA='${{ github.event.pull_request.head.sha || github.sha }}'
+          test "$(git rev-parse HEAD)" = "$HEAD_SHA"
+          test -s authority/after-code-reading.json
+          test -s product/AFTER_CODE_READING.md
+          test -s architecture/AFTER_CODE_READING_ARCHITECTURE.md
+          test -s governance/after-code-reading-review-standard.md
+          test -s tickets/TICKET-012-after-code-reading-pivot.md
+          test -s scripts/manufacture_after_code_reading_evidence.py
+          test -s scripts/measure_after_code_reading_replay.py
+          test -s scripts/verify_after_code_reading_crown.py
+
+      - name: Install pinned mdBook
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo install mdbook --version 0.4.40 --locked
+          test "$(mdbook --version)" = "mdbook v0.4.40"
+
+      - name: Manufacture non-promoting evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          HEAD_SHA='${{ github.event.pull_request.head.sha || github.sha }}'
+          python3 scripts/manufacture_after_code_reading_evidence.py \
+            --root . \
+            --expected-revision "$HEAD_SHA" \
+            --output /tmp/after-code-reading-manufacture.json
+          python3 - <<'PY'
+          import json
+          report=json.load(open('/tmp/after-code-reading-manufacture.json'))
+          assert report['standing'] == 'PARTIAL_ALIVE', report
+          assert report['final_admission_allowed'] is False, report
+          assert report['errors'] == [], report
+          PY
+
+      - name: Execute two clean documentary replays
+        shell: bash
+        run: |
+          set -euo pipefail
+          HEAD_SHA='${{ github.event.pull_request.head.sha || github.sha }}'
+          rm -rf /tmp/after-code-reading-a /tmp/after-code-reading-b
+          git worktree add --detach /tmp/after-code-reading-a "$HEAD_SHA"
+          git worktree add --detach /tmp/after-code-reading-b "$HEAD_SHA"
+
+          for label in a b; do
+            root="/tmp/after-code-reading-$label"
+            (
+              cd "$root"
+              python3 scripts/verify_docs.py --strict
+              mdbook build docs
+              test -s docs/book/index.html
+              test -s docs/book/print.html
+              python3 scripts/measure_after_code_reading_replay.py \
+                --root . \
+                --expected-revision "$HEAD_SHA" \
+                --output "/tmp/after-code-reading-replay-$label.json"
+            )
+          done
+
+          cmp \
+            /tmp/after-code-reading-replay-a.json \
+            /tmp/after-code-reading-replay-b.json
+
+      - name: Independently crown the strategic corpus
+        shell: bash
+        run: |
+          set -euo pipefail
+          HEAD_SHA='${{ github.event.pull_request.head.sha || github.sha }}'
+          mkdir -p evidence
+          python3 scripts/verify_after_code_reading_crown.py \
+            --root . \
+            --expected-revision "$HEAD_SHA" \
+            --manufacture /tmp/after-code-reading-manufacture.json \
+            --replay-a /tmp/after-code-reading-replay-a.json \
+            --replay-b /tmp/after-code-reading-replay-b.json \
+            --output evidence/after-code-reading-crown.json
+          python3 - <<'PY'
+          import json
+          report=json.load(open('evidence/after-code-reading-crown.json'))
+          assert report['standing'] == 'ALIVE', report
+          assert report['release_admitted'] is True, report
+          assert report['claim_ceiling'] == 'REFERENCE_CONFORMANT', report
+          assert report['clean_replay_count'] == 2, report
+          assert report['replay_match'] is True, report
+          assert report['producer_verifier_separated'] is True, report
+          assert report['errors'] == [], report
+          assert all(item['rejected'] for item in report['negative_controls']), report
+          PY
+
+      - name: Assert read-only source and exact evidence identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -z "$(git diff --name-only)"
+          test "$(git rev-parse HEAD)" = '${{ github.event.pull_request.head.sha || github.sha }}'
+          sha256sum \
+            /tmp/after-code-reading-manufacture.json \
+            /tmp/after-code-reading-replay-a.json \
+            /tmp/after-code-reading-replay-b.json \
+            evidence/after-code-reading-crown.json \
+            > /tmp/after-code-reading-evidence.sha256
+          test -s /tmp/after-code-reading-evidence.sha256
+
+      - name: Upload exact-head crown evidence
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
+        with:
+          name: after-code-reading-v26.8.1-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            /tmp/after-code-reading-manufacture.json
+            /tmp/after-code-reading-replay-a.json
+            /tmp/after-code-reading-replay-b.json
+            /tmp/after-code-reading-evidence.sha256
+            evidence/after-code-reading-crown.json
+          if-no-files-found: error
+          retention-days: 30
