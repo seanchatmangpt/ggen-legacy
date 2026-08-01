@@ -1,0 +1,43 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.corpus/1",
+  "program_id": "ggen-legacy-to-foundry",
+  "program_digest": "22ea84cc70f076c7532a5aaae0c15bac28fc8502e6af5b0f5c6706243ad4900c",
+  "source_repository": "seanchatmangpt/ggen",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "source_head": "54ffb5bfe3fb6522118c58c116ac0f3113b849d1",
+  "corpus_parent_head": "ad88d3d9685029517f410708fe57ed376575bee2",
+  "source_tree_digest": "8ef2e33168bc4d73e8a7440fd6a49dd34d51539974b669f4524ae0abacf4bbd5",
+  "corpus_parent_tree_digest": "bae3ee5de99471a62a6b87cef4efc0adf4c785a5de3284a41bd05ead386c5701",
+  "initial_solution_packs": [
+    "repository_manufacturing_platform",
+    "enterprise_developer_platform",
+    "governed_data_lakehouse_platform",
+    "event_and_integration_platform",
+    "identity_and_policy_enforcement_platform",
+    "ai_and_agent_execution_platform",
+    "process_evidence_and_observability_platform",
+    "regulated_release_and_supply_chain_platform"
+  ],
+  "catalog_paths": [
+    "catalogs/architectures.json",
+    "catalogs/capabilities.json",
+    "catalogs/primitives.json",
+    "catalogs/bblocks.json",
+    "catalogs/solution-packs.json",
+    "catalogs/equivalence.json",
+    "catalogs/verifiers.json"
+  ],
+  "workstream_ids": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E",
+    "F",
+    "G",
+    "H",
+    "I",
+    "J",
+    "K"
+  ]
+}

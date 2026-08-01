@@ -1,0 +1,102 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.corpus/1",
+  "catalog_type": "SOLUTION_PACKS",
+  "entries": [
+    {
+      "id": "repository_manufacturing_platform",
+      "standing": "DECLARED",
+      "required_workstreams": [
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K"
+      ]
+    },
+    {
+      "id": "enterprise_developer_platform",
+      "standing": "DECLARED",
+      "required_workstreams": [
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K"
+      ]
+    },
+    {
+      "id": "governed_data_lakehouse_platform",
+      "standing": "DECLARED",
+      "required_workstreams": [
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K"
+      ]
+    },
+    {
+      "id": "event_and_integration_platform",
+      "standing": "DECLARED",
+      "required_workstreams": [
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K"
+      ]
+    },
+    {
+      "id": "identity_and_policy_enforcement_platform",
+      "standing": "DECLARED",
+      "required_workstreams": [
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K"
+      ]
+    },
+    {
+      "id": "ai_and_agent_execution_platform",
+      "standing": "DECLARED",
+      "required_workstreams": [
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K"
+      ]
+    },
+    {
+      "id": "process_evidence_and_observability_platform",
+      "standing": "DECLARED",
+      "required_workstreams": [
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K"
+      ]
+    },
+    {
+      "id": "regulated_release_and_supply_chain_platform",
+      "standing": "DECLARED",
+      "required_workstreams": [
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K"
+      ]
+    }
+  ]
+}
