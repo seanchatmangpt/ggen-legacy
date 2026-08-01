@@ -1,0 +1,155 @@
+name: Ecosystem Repository Reconstitution
+
+on:
+  pull_request:
+    paths:
+      - "authority/ecosystem-reconstitution/**"
+      - "evidence/ecosystem-reconstitution/**"
+      - "reference/ecosystem-reconstitution/**"
+      - "verifiers/verify_ecosystem_reconstitution.py"
+      - "witnesses/reconstitute_exact_source.py"
+      - "witnesses/test_ecosystem_reconstitution.py"
+      - ".github/workflows/ecosystem-reconstitution.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ecosystem-reconstitution-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contract:
+    name: Contract / deterministic plan and falsifiers
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    outputs:
+      matrix: ${{ steps.matrix.outputs.matrix }}
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Install exact BLAKE3 binding
+        run: "python3 -m pip install --disable-pip-version-check --only-binary=:all: blake3==1.0.9"
+
+      - name: Compile verifier and witnesses
+        run: python3 -m compileall -q verifiers witnesses
+
+      - name: Parse authored JSON surfaces
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for path in [
+              Path("authority/ecosystem-reconstitution/2026-07-31.repositories.json"),
+              Path("authority/ecosystem-reconstitution/repository-set.schema.json"),
+              Path("evidence/ecosystem-reconstitution/2026-07-31-source-observation.json"),
+          ]:
+              json.loads(path.read_text())
+              print(f"parsed {path}")
+          PY
+
+      - name: Execute deterministic structural replay and typed refusals
+        run: python3 witnesses/test_ecosystem_reconstitution.py
+
+      - name: Manufacture BLAKE3 plan twice
+        run: |
+          rm -rf target/ecosystem-reconstitution-a target/ecosystem-reconstitution-b
+          python3 verifiers/verify_ecosystem_reconstitution.py verify \
+            --manifest authority/ecosystem-reconstitution/2026-07-31.repositories.json \
+            --output target/ecosystem-reconstitution-a \
+            --digest-mode blake3
+          python3 verifiers/verify_ecosystem_reconstitution.py verify \
+            --manifest authority/ecosystem-reconstitution/2026-07-31.repositories.json \
+            --output target/ecosystem-reconstitution-b \
+            --digest-mode blake3
+          diff -ru target/ecosystem-reconstitution-a target/ecosystem-reconstitution-b
+
+      - name: Emit exact-source matrix
+        id: matrix
+        run: |
+          matrix="$(python3 verifiers/verify_ecosystem_reconstitution.py matrix \
+            --manifest authority/ecosystem-reconstitution/2026-07-31.repositories.json)"
+          printf 'matrix=%s\n' "$matrix" >> "$GITHUB_OUTPUT"
+
+      - name: Publish contract receipt
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ecosystem-reconstitution-contract-${{ github.event.pull_request.head.sha || github.sha }}
+          path: target/ecosystem-reconstitution-a/
+          if-no-files-found: error
+
+  exact-source:
+    name: Source / ${{ matrix.source_id }}
+    needs: contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    continue-on-error: false
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix: ${{ fromJSON(needs.contract.outputs.matrix) }}
+    steps:
+      - name: Checkout exact corpus candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 1
+
+      - name: Install exact BLAKE3 binding
+        run: "python3 -m pip install --disable-pip-version-check --only-binary=:all: blake3==1.0.9"
+
+      - name: Reconstitute exact Git object
+        env:
+          GIT_TERMINAL_PROMPT: "0"
+          GIT_HTTP_LOW_SPEED_LIMIT: "1024"
+          GIT_HTTP_LOW_SPEED_TIME: "60"
+          RECONSTITUTION_READER_TOKEN: ${{ secrets.RECONSTITUTION_READER_TOKEN }}
+        run: |
+          mkdir -p target/source-receipts target/source-workspaces
+          timeout 15m python3 witnesses/reconstitute_exact_source.py \
+            --repository '${{ matrix.repository }}' \
+            --source-id '${{ matrix.source_id }}' \
+            --sha '${{ matrix.sha }}' \
+            --disposition '${{ matrix.disposition }}' \
+            --pull-request '${{ matrix.pull_request }}' \
+            --product-reconstitution '${{ matrix.product_reconstitution }}' \
+            --workspace target/source-workspaces \
+            --output 'target/source-receipts/${{ matrix.source_id }}.json'
+
+      - name: Summarize source receipt
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+          source_id = "${{ matrix.source_id }}"
+          path = Path("target/source-receipts") / f"{source_id}.json"
+          if not path.exists():
+              raise SystemExit(f"missing source receipt: {path}")
+          receipt = json.loads(path.read_text())
+          lines = [
+              f"### {receipt['repository']} / {receipt['source_id']}",
+              f"- standing: `{receipt['standing']}`",
+              f"- source: `{receipt['sha']}`",
+              f"- tree: `{receipt.get('source_tree')}`",
+              f"- tracked paths: `{receipt.get('tracked_paths')}`",
+              f"- receipt: `{receipt['receipt_digest']}`",
+              f"- direct actuation: `{receipt['direct_actuation']}`",
+          ]
+          with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as summary:
+              summary.write("\n".join(lines) + "\n")
+          PY
+
+      - name: Publish exact-source receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ecosystem-source-${{ matrix.source_id }}-${{ github.event.pull_request.head.sha || github.sha }}
+          path: target/source-receipts/${{ matrix.source_id }}.json
+          if-no-files-found: error
