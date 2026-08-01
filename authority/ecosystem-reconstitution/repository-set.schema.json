@@ -1,0 +1,64 @@
+{
+  "$id": "urn:ggen-legacy:ecosystem-reconstitution:1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority": {"const": "AUTHORED_INPUT_ONLY"},
+    "corpus_base_sha": {"pattern": "^[0-9a-f]{40}$", "type": "string"},
+    "corpus_repository": {"const": "seanchatmangpt/ggen-legacy"},
+    "direct_actuation": {"const": false},
+    "expected_repository_count": {"const": 19},
+    "final_admission_allowed": {"const": false},
+    "head_binding": {"const": "EXTERNAL_PR_HEAD"},
+    "observation_day": {"pattern": "^\\d{4}-\\d{2}-\\d{2}$", "type": "string"},
+    "program_id": {"minLength": 1, "type": "string"},
+    "reconstitution_law": {"items": {"minLength": 1, "type": "string"}, "minItems": 7, "type": "array", "uniqueItems": true},
+    "repositories": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "canonical_reconstruction_sha": {"pattern": "^[0-9a-f]{40}$", "type": "string"},
+          "default_branch": {"minLength": 1, "type": "string"},
+          "depends_on": {"items": {"type": "string"}, "type": "array", "uniqueItems": true},
+          "product_reconstitution": {"type": "boolean"},
+          "reconstruction_strategy": {"enum": ["MERGED_CONSEQUENCE", "ACTIVE_CANDIDATE", "ACTIVE_AGGREGATE_CANDIDATE", "LAYERED_EXACT_REFS", "LAYERED_MERGED_CONSEQUENCES", "INTEGRATED_WITH_PRESERVED_CANDIDATE", "EXTERNAL_HEAD_BOUND_CORPUS", "LINEAGE_ONLY"]},
+          "repository": {"pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$", "type": "string"},
+          "role": {"pattern": "^[A-Z0-9_]+$", "type": "string"},
+          "sources": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "disposition": {"enum": ["INTEGRATED", "INTEGRATED_BRANCH", "ACTIVE_CANDIDATE", "PRESERVED_CANDIDATE", "TRANSPORT_ONLY"]},
+                "id": {"pattern": "^[a-z0-9-]+$", "type": "string"},
+                "kind": {"enum": ["HEAD_COMMIT", "MERGE_COMMIT"]},
+                "merged": {"type": "boolean"},
+                "observed_standing": {"enum": ["ALIVE", "PARTIAL_ALIVE", "UNKNOWN", "BLOCKED", "BUILD_BROKEN", "UNSUPPORTED"]},
+                "pr_state": {"enum": ["open", "closed"]},
+                "pull_request": {"minimum": 1, "type": "integer"},
+                "scope": {"minLength": 1, "type": "string"},
+                "sha": {"pattern": "^[0-9a-f]{40}$", "type": "string"}
+              },
+              "required": ["id", "sha", "kind", "disposition", "pull_request", "pr_state", "merged", "observed_standing", "scope"],
+              "type": "object"
+            },
+            "minItems": 1,
+            "type": "array"
+          },
+          "validation_commands": {"items": {"minLength": 1, "type": "string"}, "minItems": 3, "type": "array"}
+        },
+        "required": ["repository", "default_branch", "role", "product_reconstitution", "reconstruction_strategy", "canonical_reconstruction_sha", "depends_on", "sources", "validation_commands"],
+        "type": "object"
+      },
+      "maxItems": 19,
+      "minItems": 19,
+      "type": "array"
+    },
+    "required_broker": {"const": "BRCE"},
+    "required_receipt_obligations": {"items": {"minLength": 1, "type": "string"}, "minItems": 9, "type": "array", "uniqueItems": true},
+    "schema": {"const": "ggen-legacy.ecosystem-reconstitution/1"},
+    "standing": {"const": "UNKNOWN"}
+  },
+  "required": ["schema", "program_id", "observation_day", "corpus_repository", "corpus_base_sha", "head_binding", "authority", "direct_actuation", "final_admission_allowed", "standing", "expected_repository_count", "required_broker", "reconstitution_law", "required_receipt_obligations", "repositories"],
+  "title": "ggen-legacy Ecosystem Reconstitution Manifest",
+  "type": "object"
+}
