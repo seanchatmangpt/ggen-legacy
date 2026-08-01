@@ -53,6 +53,15 @@ def output(argv: Sequence[str], cwd: Path) -> str:
     return run(argv, cwd, capture=True).stdout.strip()
 
 
+def porcelain(root: Path) -> str:
+    """Return Git porcelain without destroying its two-column status prefix."""
+    return run(
+        ["git", "status", "--porcelain=v1", "--untracked-files=all"],
+        root,
+        capture=True,
+    ).stdout.rstrip("\n")
+
+
 def purge_transients(root: Path) -> None:
     for path in root.rglob("__pycache__"):
         if path.is_dir():
@@ -65,7 +74,7 @@ def purge_transients(root: Path) -> None:
 
 def require_clean(root: Path) -> None:
     purge_transients(root)
-    status = output(["git", "status", "--porcelain=v1", "--untracked-files=all"], root)
+    status = porcelain(root)
     if status:
         raise Refusal("FOUNDRY_CORPUS_DIRTY", status)
 
@@ -144,13 +153,16 @@ def commit_publish(
     source: Path,
 ) -> str:
     purge_transients(root)
-    raw = output(["git", "status", "--porcelain=v1", "--untracked-files=all"], root)
+    raw = porcelain(root)
     if not raw:
         replay(runtime, source, root)
         return output(["git", "rev-parse", "HEAD"], root)
 
     unexpected = []
     for line in raw.splitlines():
+        if len(line) < 4 or line[2] != " ":
+            unexpected.append(line)
+            continue
         path = line[3:]
         if " -> " in path:
             path = path.split(" -> ", 1)[1]
