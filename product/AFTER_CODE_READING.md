@@ -2,9 +2,9 @@
 
 ## 0. Claim boundary
 
-This document admits a strategic interpretation and product doctrine for `ggen-legacy v26.8.1`. It does not claim that the complete method already executes, that human source reading is universally obsolete, that tests alone prove correctness, or that any external person endorses this repository.
+This document is part of the bounded `ggen-legacy v26.8.1` After Code Reading strategic corpus. That corpus may receive `ALIVE / REFERENCE_CONFORMANT` only through the dedicated exact-head workflow that executes non-promoting manufacture, two clean documentary replays, producer-verifier separation, negative controls, receipt binding, and an independent read-only crown.
 
-The current ceiling is `DOCUMENTED`. Product implementation and external production standing remain governed by `RELEASE_CONTROL.md` and the Claims Register.
+The promotion is bounded to the doctrine, authority, architecture, review standard, and documentation projections. It does not claim that the complete software-manufacturing method already executes, that a real legacy replacement has been admitted without source reading, that human source reading is universally obsolete, that tests alone prove correctness, or that any external person endorses this repository. Complete product implementation and external production standing remain governed by `RELEASE_CONTROL.md` and the Claims Register.
 
 ## 1. Historical hinge
 
