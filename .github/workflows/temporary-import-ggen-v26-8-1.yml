@@ -50,6 +50,9 @@ jobs:
           set -euo pipefail
           cat .migration-bootstrap/import/chunk-* | base64 --decode > /tmp/import_from_ggen.py
           cat .migration-bootstrap/verify/chunk-* | base64 --decode > /tmp/verify_ggen_v26_8_1_migration.py
+          python3 .migration-bootstrap/patch_verifier.py /tmp/verify_ggen_v26_8_1_migration.py
+          echo 'c1507bffcc2028c7f2cdd4660c21825f8af9314898874c7a88a3e840bb3109a6  /tmp/import_from_ggen.py' | sha256sum -c -
+          echo 'edab4a284cbb8147dc65223fecfb5a1ac0008cd6fd108eaa158c4ea7d0422fef  /tmp/verify_ggen_v26_8_1_migration.py' | sha256sum -c -
           python3 -m py_compile /tmp/import_from_ggen.py /tmp/verify_ggen_v26_8_1_migration.py
           test "$(git -C .source-ggen rev-parse HEAD)" = "$SOURCE_SHA"
           git merge-base --is-ancestor "$DESTINATION_BASE" HEAD
@@ -128,10 +131,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          printf '/.source-ggen\n' >> .git/info/exclude
           rm -rf .migration-bootstrap .github/workflows/temporary-import-ggen-v26-8-1.yml
           git config user.name 'ggen migration agent'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add -A
+          if git ls-files --stage .source-ggen | grep -q .; then
+            echo 'SOURCE_CHECKOUT_STAGED_REFUSED' >&2
+            exit 3
+          fi
           git commit -m 'feat(corpus): import ggen v26.8.1 reconstruction corpus'
           echo "CORPUS_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
 
