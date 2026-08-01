@@ -1,0 +1,35 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.receipt/1",
+  "receipt_type": "WORKSTREAM_ADMISSION",
+  "subject": "G",
+  "subject_digest": "499bc15a177e850f6966e29a5e07361acd2d6fa3cc6783c86e966c6fa97f1b1a",
+  "source_head": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "corpus_head": "34fbed3397fce531363921a81231385bd3941dad",
+  "input_digests": {
+    "corpus-tree": "cbae9169525907c3398209f8c78eb8195ecdbb345772a33129226add11cfd08c",
+    "source-tree": "e4120897981a778d40afe30e0b1ac549fd4afdab25c5c537860213f84d07ca4b",
+    "work-program": "22ea84cc70f076c7532a5aaae0c15bac28fc8502e6af5b0f5c6706243ad4900c"
+  },
+  "output_digests": {
+    "corpus:foundry/catalogs/solution-packs.json": "0be2421396f93a60bce000da8cef0c7981c9cf7632777a10dc07457f50d041c9",
+    "corpus:foundry/packs/ai_and_agent_execution_platform/pack.json": "a46bb8fa56695af84bcb20883a4f5e803c08cb8b76cdf3bb7e2d8ae35f4c367d",
+    "corpus:foundry/packs/ai_and_agent_execution_platform/parameters.schema.json": "4236766d5d899aa3b23041c05598e683fb36a13f377bbe27e14abb65dbafe222",
+    "corpus:foundry/packs/enterprise_developer_platform/pack.json": "8ff4319b61775f5ae7dc7622418dd71974b7ec360782b18df418b6494cfde161",
+    "corpus:foundry/packs/enterprise_developer_platform/parameters.schema.json": "7caa68374c256b95da58e9d812b85d840aa29944def70488ed4e45954df10eab",
+    "corpus:foundry/packs/event_and_integration_platform/pack.json": "85a32a52cda3f9f346c12c3be0a773d488ab6bfa6ff584db8a576e009182781a",
+    "corpus:foundry/packs/event_and_integration_platform/parameters.schema.json": "a873d3ec5638bbde488e8f077d760ec9c62c9b2a65a9428deb8dac5c0f40d78f",
+    "corpus:foundry/packs/governed_data_lakehouse_platform/pack.json": "8b1cfa517e4c41716ab7a32bc64b4dfef4a044c0f7ad7be07c65bb8f49c77518",
+    "corpus:foundry/packs/governed_data_lakehouse_platform/parameters.schema.json": "52612c0951186710f5eba3e20cc0149bb3fc024ea2f47b9fa4a771e67d799d15",
+    "corpus:foundry/packs/identity_and_policy_enforcement_platform/pack.json": "b4535236517473f74cbbced4d44148e4bad3bf692cd787fa16e5073101f39c37",
+    "corpus:foundry/packs/identity_and_policy_enforcement_platform/parameters.schema.json": "57a3fa8c635dca759a650bccd6d60a6f9d2ce4f9ca271487c6af38c05a4c74e4",
+    "corpus:foundry/packs/process_evidence_and_observability_platform/pack.json": "48d79fe0a9950e7ae15c2b4bac1db3a77d8ab0f9cb8fc7c133e68b2cad3e84a6",
+    "corpus:foundry/packs/process_evidence_and_observability_platform/parameters.schema.json": "3c46068dc631d431efe9496f680cade44631ff0ceae21ea5f97c726adfe394b6",
+    "corpus:foundry/packs/regulated_release_and_supply_chain_platform/pack.json": "918e7a43e7f10b1b9cf79e156ba36996460de1141dab48fc18699d9bc2c424b3",
+    "corpus:foundry/packs/regulated_release_and_supply_chain_platform/parameters.schema.json": "54ed18f420ed8c27b2279b5f1c4581c73fd36450faeff9bc84c05027f73ce5ad",
+    "corpus:foundry/packs/repository_manufacturing_platform/pack.json": "8ab55831ec186a5d8c9dbc53c62d88615752cfdb22c5b298a3f151df328a0d98",
+    "corpus:foundry/packs/repository_manufacturing_platform/parameters.schema.json": "15fdd71eb28491ea82ab4e93d8981738876f3e457cff0c11cb2aad5fbaf7e8c1",
+    "corpus:foundry/workstreams/G/admission-report.json": "b99076f2973ea2323e036effb2b7ba27f0cc63c74726d5a694423055758a17fb",
+    "projection:foundry/workstreams/state.json": "ccc1a66dfd2c06445924f49e614e763e04f083f4e01f26a9c6aa7c81da4943ee"
+  },
+  "run_id": "499bc15a177e850f6966"
+}
