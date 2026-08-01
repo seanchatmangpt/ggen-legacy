@@ -31,6 +31,7 @@ concurrency:
 
 env:
   GGEN_SHA: 3b0fc364f586ad0155a937f756238e7bacd94e16
+  GGEN_TOOLCHAIN: nightly-2026-06-22
   VALIDATION_MODE: ${{ inputs.validation_mode || 'fast' }}
 
 jobs:
@@ -55,10 +56,11 @@ jobs:
           path: ggen-runtime
           fetch-depth: 1
 
-      - name: Install bounded toolchain
+      - name: Install exact manufacturing toolchain
         run: |
-          rustup toolchain install stable --profile minimal
-          rustup default stable
+          rustup toolchain install "$GGEN_TOOLCHAIN" --profile minimal
+          rustup default "$GGEN_TOOLCHAIN"
+          test "$(rustc +"$GGEN_TOOLCHAIN" --version)" = "rustc 1.89.0-nightly (a0b5dd1f4 2026-06-21)" || rustc +"$GGEN_TOOLCHAIN" --version
           python3 -m pip install --disable-pip-version-check rdflib==7.1.4 jsonschema==4.23.0
 
       - name: Verify authored semantic source
@@ -78,7 +80,7 @@ jobs:
           PY
 
       - name: Build exact ggen CLI
-        run: cargo build --manifest-path ggen-runtime/Cargo.toml -p ggen-cli-lib --bin ggen
+        run: cargo +"$GGEN_TOOLCHAIN" build --manifest-path ggen-runtime/Cargo.toml -p ggen-cli-lib --bin ggen
 
       - name: Manufacture projections and receipts
         run: |
@@ -193,12 +195,29 @@ jobs:
       - name: Install common doctor toolchains
         run: |
           rustup toolchain install stable --profile minimal
+          rustup toolchain install nightly-2026-06-22 --profile minimal
           rustup default stable
           corepack enable || true
           corepack prepare pnpm@10.14.0 --activate || npm install --global pnpm@10.14.0
           python3 -m pip install --disable-pip-version-check uv==0.8.4 pyyaml==6.0.2 jsonschema==4.23.0
           if printf '%s' '${{ toJSON(matrix.commands) }}' | grep -q 'just '; then
             cargo install just --locked --version 1.40.0
+          fi
+
+      - name: Resolve repository Rust toolchain
+        shell: bash
+        run: |
+          if [[ -f repo/rust-toolchain.toml || -f repo/rust-toolchain ]]; then
+            echo "Repository-owned rust-toolchain file will determine Cargo execution."
+          else
+            case '${{ matrix.repository }}' in
+              seanchatmangpt/ggen|seanchatmangpt/wasm4pm|seanchatmangpt/wasm4pm-compat|seanchatmangpt/mfw)
+                echo 'RUSTUP_TOOLCHAIN=nightly-2026-06-22' >> "$GITHUB_ENV"
+                ;;
+              *)
+                echo 'RUSTUP_TOOLCHAIN=stable' >> "$GITHUB_ENV"
+                ;;
+            esac
           fi
 
       - name: Execute repository-native validation cell
