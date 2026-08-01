@@ -1,0 +1,25 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.receipt/1",
+  "receipt_type": "WORKSTREAM_ADMISSION",
+  "subject": "B",
+  "subject_digest": "8e560a994d6682ab1a469bc55f6a0b6c79cddfb03ea8edeea465a910a216fb52",
+  "source_head": "458f0f88aee0060cddce3ffdaa7e2172a4f40a25",
+  "corpus_head": "b0b13bf4bdb09d3e43ad65da4e38fd20ce5a1f2e",
+  "input_digests": {
+    "corpus-tree": "d57416f6dd62e5510faec09e44776def458fd47d41e742a048ee1765ab929c59",
+    "evidence-observer-report": "fd4025822aef18184a830ac9ef41171facb422c43b7a419109d72126f4d4ef8b",
+    "evidence-ontology": "2b0e7fb1de98d4919ef576703e25e4b507a50047747ff885c3c5306ac6e74853",
+    "source-tree": "41a56e7845effc1e8f12a7f6ffa3b4174d272dcbf6558b9166f0855d5443f3ea",
+    "work-program": "22ea84cc70f076c7532a5aaae0c15bac28fc8502e6af5b0f5c6706243ad4900c"
+  },
+  "output_digests": {
+    "corpus:foundry/catalogs/capability-candidates.json": "71af1f64eb407eb62d096a2439d63e6148659e52fc3cc0ed37aedb15947df8d9",
+    "corpus:foundry/evidence/B/exclusion-records.json": "6fc0a0fb600f61fc9faa187310c97dd3958d691ea6f6417fe7f0c9c31a063093",
+    "corpus:foundry/evidence/B/legacy-capabilities.ttl": "2b0e7fb1de98d4919ef576703e25e4b507a50047747ff885c3c5306ac6e74853",
+    "corpus:foundry/evidence/B/observer-class-report.md": "fd4025822aef18184a830ac9ef41171facb422c43b7a419109d72126f4d4ef8b",
+    "corpus:foundry/evidence/B/observer-reports.json": "9ff73e57c2014dfa6e34e8ed3b71c6bfa52723f6df81a0ff9daed24e266341df",
+    "corpus:foundry/workstreams/B/admission-report.json": "b2abe564f9d2f96f95fa0b538e90d77c2b6fd9423b6c4d1ca6e3b8764ef42074",
+    "projection:foundry/workstreams/state.json": "3b8616296aa275b37c08c74cd7079e3b7f094697b5fb1f64c726a7602f921302"
+  },
+  "run_id": "8e560a994d6682ab1a46"
+}

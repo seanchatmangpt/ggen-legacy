@@ -9,15 +9,15 @@
       "receipt_path": "foundry/receipts/workstream-A.json"
     },
     "B": {
-      "status": "READY",
+      "status": "ADMITTED",
       "dependencies": [
         "A"
       ],
-      "report_digest": null,
-      "receipt_path": null
+      "report_digest": "b2abe564f9d2f96f95fa0b538e90d77c2b6fd9423b6c4d1ca6e3b8764ef42074",
+      "receipt_path": "foundry/receipts/workstream-B.json"
     },
     "C": {
-      "status": "BLOCKED",
+      "status": "READY",
       "dependencies": [
         "B"
       ],
