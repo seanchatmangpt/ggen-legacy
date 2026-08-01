@@ -1,1 +1,189 @@
-bmFtZTogVGVtcG9yYXJ5IGltcG9ydCBnZ2VuIHYyNi44LjEgY29ycHVzCgpvbjoKICBwdXNoOgogICAgYnJhbmNoZXM6IFthZ2VudC9taWdyYXRlLWdnZW4tdjI2LTgtMS1jb3JwdXNdCiAgcHVsbF9yZXF1ZXN0OgogICAgYnJhbmNoZXM6IFttYWluXQogICAgdHlwZXM6IFtvcGVuZWQsIHJlb3BlbmVkLCBzeW5jaHJvbml6ZV0KCmNvbmN1cnJlbmN5OgogIGdyb3VwOiB0ZW1wb3JhcnktaW1wb3J0LWdnZW4tdjI2LTgtMQogIGNhbmNlbC1pbi1wcm9ncmVzczogdHJ1ZQoKcGVybWlzc2lvbnM6CiAgY29udGVudHM6IHdyaXRlCgplbnY6CiAgU09VUkNFX1NIQTogODM1MWFmNGM1YmJiZjYwYmQ5OWFiODQxNzc1MmExNzYyYzZlYTRlMwogIERFU1RJTkFUSU9OX0JBU0U6IDhkNjQyOGY0MGMwZDMwZDU5ODNmYjBlY2RkMTZjYWIxYzEzMjhhMjMKCmpvYnM6CiAgaW1wb3J0OgogICAgcnVucy1vbjogdWJ1bnR1LTI0LjA0CiAgICB0aW1lb3V0LW1pbnV0ZXM6IDkwCiAgICBzdGVwczoKICAgICAgLSBuYW1lOiBDaGVja291dCBkZXN0aW5hdGlvbiBicmFuY2gKICAgICAgICB1c2VzOiBhY3Rpb25zL2NoZWNrb3V0QDExYmQ3MTkwMWJiZTViMTYzMGNlZWE3M2QyNzU5NzM2NGM5YWY2ODMKICAgICAgICB3aXRoOgogICAgICAgICAgcmVmOiBhZ2VudC9taWdyYXRlLWdnZW4tdjI2LTgtMS1jb3JwdXMKICAgICAgICAgIGZldGNoLWRlcHRoOiAwCgogICAgICAtIG5hbWU6IENoZWNrb3V0IGV4YWN0IHNvdXJjZQogICAgICAgIHVzZXM6IGFjdGlvbnMvY2hlY2tvdXRAMTFiZDcxOTAxYmJlNWIxNjMwY2VlYTczZDI3NTk3MzY0YzlhZjY4MwogICAgICAgIHdpdGg6CiAgICAgICAgICByZXBvc2l0b3J5OiBzZWFuY2hhdG1hbmdwdC9nZ2VuCiAgICAgICAgICByZWY6ICR7eyBlbnYuU09VUkNFX1NIQSB9fQogICAgICAgICAgcGF0aDogLnNvdXJjZS1nZW4KICAgICAgICAgIGZldGNoLWRlcHRoOiAwCgogICAgICAtIG5hbWU6IEluc3RhbGwgcGlubmVkIFJ1c3QKICAgICAgICB1c2VzOiBkdG9sbmF5L3J1c3QtdG9vbGNoYWluQGIzYjA3YmE4YjQxODk5OGMzOWZiMjBmNTNlOGI2OTVjZGNjOGRlMWIKICAgICAgICB3aXRoOgogICAgICAgICAgdG9vbGNoYWluOiBuaWdodGx5LTIwMjYtMDYtMjIKICAgICAgICAgIGNvbXBvbmVudHM6IHJ1c3RmbXQKCiAgICAgIC0gbmFtZTogSW5zdGFsbCB2ZXJpZmllciBkZXBlbmRlbmNpZXMKICAgICAgICBydW46IHB5dGhvbjMgLW0gcGlwIGluc3RhbGwgLS1kaXNhYmxlLXBpcC12ZXJzaW9uLWNoZWNrIGJsYWtlMz09MS4wLjkganNvbnNjaGVtYT09NC4yNi4wIHB5c2hhY2w9PTAuNDAuMAoKICAgICAgLSBuYW1lOiBSZWNvbnN0cnVjdCBhZG1pdHRlZCBtaWdyYXRpb24gcHJvZ3JhbXMKICAgICAgICBzaGVsbDogYmFzaAogICAgICAgIHJ1bjogfAogICAgICAgICAgc2V0IC1ldW8gcGlwZWZhaWwKICAgICAgICAgIGNhdCAubWlncmF0aW9uLWJvb3RzdHJhcC9pbXBvcnQvY2h1bmstKiB8IGJhc2U2NCAtLWRlY29kZSA+IC90bXAvaW1wb3J0X2Zyb21fZ2dlbi5weQogICAgICAgICAgY2F0IC5taWdyYXRpb24tYm9vdHN0cmFwL3ZlcmlmeS9jaHVuay0qIHwgYmFzZTY0IC0tZGVjb2RlID4gL3RtcC92ZXJpZnlfZ2dlbl92MjZfOF8xX21pZ3JhdGlvbi5weQogICAgICAgICAgcHl0aG9uMyAubWlncmF0aW9uLWJvb3RzdHJhcC9wYXRjaF9pbXBvcnRlci5weSAvdG1wL2ltcG9ydF9mcm9tX2dnZW4ucHkKICAgICAgICAgIHB5dGhvbjMgLm1pZ3JhdGlvbi1ib290c3RyYXAvcGF0Y2hfdmVyaWZpZXIucHkgL3RtcC92ZXJpZnlfZ2dlbl92MjZfOF8xX21pZ3JhdGlvbi5weQogICAgICAgICAgZWNobyAnY2JmZWJiYjQ1NTUyNjRiMGY5ZmVjZjU5NjFiM2ZjMTMzZjY0NjkyODI0OTY1NTkxMmY1OGVkZjBlZmVmNzQzOCAgL3RtcC9pbXBvcnRfZnJvbV9nZ2VuLnB5JyB8IHNoYTI1NnN1bSAtYyAtCiAgICAgICAgICBwYXRjaGVkX3ZlcmlmaWVyX3NoYTI1Nj0iJChzaGEyNTZzdW0gL3RtcC92ZXJpZnlfZ2dlbl92MjZfOF8xX21pZ3JhdGlvbi5weSB8IGF3ayAne3ByaW50ICQxfScpIgogICAgICAgICAgZWNobyAiUEFUQ0hFRF9WRVJJRklFUl9TSEEyNTY9JHBhdGNoZWRfdmVyaWZpZXJfc2hhMjU2IgogICAgICAgICAgZWNobyAiUEFUQ0hFRF9WRVJJRklFUl9TSEEyNTY9JHBhdGNoZWRfdmVyaWZpZXJfc2hhMjU2IiA+PiAiJEdJVEhVQl9FTlYiCiAgICAgICAgICBweXRob24zIC1tIHB5X2NvbXBpbGUgL3RtcC9pbXBvcnRfZnJvbV9nZ2VuLnB5IC90bXAvdmVyaWZ5X2dnZW5fdjI2XzhfMV9taWdyYXRpb24ucHkKICAgICAgICAgIHRlc3QgIiQoZ2l0IC1DIC5zb3VyY2UtZ2dlbiByZXYtcGFyc2UgSEVBRCkiID0gIiRTT1VSQ0VfU0hBIgogICAgICAgICAgZ2l0IG1lcmdlLWJhc2UgLS1pcy1hbmNlc3RvciAiJERFU1RJTkFUSU9OX0JBU0UiIEhFQUQKCiAgICAgIC0gbmFtZTogSW1wb3J0IGV4YWN0IGNvcnB1cwogICAgICAgIHNoZWxsOiBiYXNoCiAgICAgICAgcnVuOiB8CiAgICAgICAgICBzZXQgLWV1byBwaXBlZmFpbAogICAgICAgICAgcHl0aG9uMyAvdG1wL2ltcG9ydF9mcm9tX2dnZW4ucHkgaW1wb3J0IFwKICAgICAgICAgICAgLS1zb3VyY2Utcm9vdCAuc291cmNlLWdnZW4gXAogICAgICAgICAgICAtLWRlc3RpbmF0aW9uLXJvb3QgLiBcCiAgICAgICAgICAgIC0tc291cmNlLWNvbW1pdCAiJFNPVVJDRV9TSEEiIFwKICAgICAgICAgICAgLS1kZXN0aW5hdGlvbi1iYXNlICIkREVTVElOQVRJT05fQkFTRSIKICAgICAgICAgIGNwIC90bXAvdmVyaWZ5X2dnZW5fdjI2XzhfMV9taWdyYXRpb24ucHkgc2NyaXB0cy92ZXJpZnlfZ2dlbl92MjZfOF8xX21pZ3JhdGlvbi5weQogICAgICAgICAgY2htb2QgK3ggc2NyaXB0cy92ZXJpZnlfZ2dlbl92MjZfOF8xX21pZ3JhdGlvbi5weQoKICAgICAgLSBuYW1lOiBJbnN0YWxsIHBlcm1hbmVudCBleGFjdC1oZWFkIHZlcmlmaWVyIHdvcmtmbG93CiAgICAgICAgc2hlbGw6IGJhc2gKICAgICAgICBydW46IHwKICAgICAgICAgIHNldCAtZXVvIHBpcGVmYWlsCiAgICAgICAgICBjYXQgPiAuZ2l0aHViL3dvcmtmbG93cy92ZXJpZnktZ2dlbi12MjYtOC0xLW1pZ3JhdGlvbi55bWwgPDwnRU9GJwogICAgICAgICAgbmFtZTogVmVyaWZ5IGdnZW4gdjI2LjguMSBjb3JwdXMgbWlncmF0aW9uCgogICAgICAgICAgb246CiAgICAgICAgICAgIHB1bGxfcmVxdWVzdDoKICAgICAgICAgICAgICBicmFuY2hlczogW21haW5dCiAgICAgICAgICAgIHdvcmtmbG93X2Rpc3BhdGNoOgoKICAgICAgICAgIHBlcm1pc3Npb25zOgogICAgICAgICAgICBjb250ZW50czogcmVhZAoKICAgICAgICAgGNvbmN1cnJlbmN5OgogICAgICAgICAgICBncm91cDogZ2dlbi12MjYuOC4xLW1pZ3JhdGlvbi0ke3sgZ2l0aHViLmV2ZW50LnB1bGxfcmVxdWVzdC5oZWFkLnNoYSB8fCBnaXRodWIuc2hhIH19CiAgICAgICAgICAgIGNhbmNlbC1pbi1wcm9ncmVzczogdHJ1ZQoKICAgICAgICAgIGpvYnM6CiAgICAgICAgICAgIHZlcmlmeToKICAgICAgICAgICAgICBydW5zLW9uOiB1YnVudHUtMjQuMDQKICAgICAgICAgICAgICB0aW1lb3V0LW1pbnV0ZXM6IDkwCiAgICAgICAgICAgICAgc3RlcHM6CiAgICAgICAgICAgICAgICAtIG5hbWU6IENoZWNrb3V0IGV4YWN0IGNhbmRpZGF0ZQogICAgICAgICAgICAgICAgICB1c2VzOiBhY3Rpb25zL2NoZWNrb3V0QDExYmQ3MTkwMWJiZTViMTYzMGNlZWE3M2QyNzU5NzM2NGM5YWY2ODMKICAgICAgICAgICAgICAgICAgd2l0aDoKICAgICAgICAgICAgICAgICAgICByZWY6ICR7eyBnaXRodWIuZXZlbnQucHVsbF9yZXF1ZXN0LmhlYWQuc2hhIHx8IGdpdGh1Yi5zaGEgfX0KICAgICAgICAgICAgICAgICAgICBmZXRjaC1kZXB0aDogMAogICAgICAgICAgICAgICAgLSBuYW1lOiBDaGVja291dCBleGFjdCBnZ2VuIHNvdXJjZQogICAgICAgICAgICAgICAgICB1c2VzOiBhY3Rpb25zL2NoZWNrb3V0QDExYmQ3MTkwMWJiZTViMTYzMGNlZWE3M2QyNzU5NzM2NGM5YWY2ODMKICAgICAgICAgICAgICAgICAgd2l0aDoKICAgICAgICAgICAgICAgICAgICByZXBvc2l0b3J5OiBzZWFuY2hhdG1hbmdwdC9nZ2VuCiAgICAgICAgICAgICAgICAgICAgcmVmOiA4MzUxYWY0YzViYmJmNjBiZDk5YWI4NDE3NzUyYTE3NjJjNmVhNGUzCiAgICAgICAgICAgICAgICAgICAgcGF0aDogLnNvdXJjZS1nZ2VuCiAgICAgICAgICAgICAgICAgICAgZmV0Y2gtZGVwdGg6IDAKICAgICAgICAgICAgICAgIC0gbmFtZTogSW5zdGFsbCBwaW5uZWQgUnVzdAogICAgICAgICAgICAgICAgICB1c2VzOiBkdG9sbmF5L3J1c3QtdG9vbGNoYWluQGIzYjA3YmE4YjQxODk5OGMzOWZiMjBmNTNlOGI2OTVjZGNjOGRlMWIKICAgICAgICAgICAgICAgICAgd2l0aDoKICAgICAgICAgICAgICAgICAgICB0b29sY2hhaW46IG5pZ2h0bHktMjAyNi0wNi0yMgogICAgICAgICAgICAgICAgICAgIGNvbXBvbmVudHM6IHJ1c3RmbXQKICAgICAgICAgICAgICAgIC0gbmFtZTogSW5zdGFsbCB2ZXJpZmllciBkZXBlbmRlbmNpZXMKICAgICAgICAgICAgICAgICAgcnVuOiBweXRob24zIC1tIHBpcCBpbnN0YWxsIC0tZGlzYWJsZS1waXAtdmVyc2lvbi1jaGVjayBibGFrZTM9PTEuMC45IGpzb25zY2hlbWE9PTQuMjYuMCBweXNoYWNsPT0wLjQwLjAKICAgICAgICAgICAgICAgIC0gbmFtZTogVmVyaWZ5IHJlY2VpdmluZyBsaW5lYWdlLCBleGVjdXRpb24sIGZhbHNpZmllcnMsIGFuZCByZXBsYXkKICAgICAgICAgICAgICAgICAgcnVuOiBweXRob24zIHNjcmlwdHMvdmVyaWZ5X2dnZW5fdjI2XzhfMV9taWdyYXRpb24ucHkgLS1zb3VyY2Utcm9vdCAuc291cmNlLWdnZW4KICAgICAgICAgICAgICAgIC0gbmFtZTogVXBsb2FkIGJvdW5kZWQgZXZpZGVuY2UKICAgICAgICAgICAgICAgICAgdXNlczogYWN0aW9ucy91cGxvYWQtYXJ0aWZhY3RANjVjNGM0YTFkZGVlNWI3MmY2OThmZGQxOTU0OWYwZjBmYjQ1Y2YwOAogICAgICAgICAgICAgICAgICB3aXRoOgogICAgICAgICAgICAgICAgICAgIG5hbWU6IGdnZW4tdjI2LjguMS1taWdyYXRpb24tJHt7IGdpdGh1Yi5ldmVudC5wdWxsX3JlcXVlc3QuaGVhZC5zaGEgfHwgZ2l0aHViLnNoYSB9fQogICAgICAgICAgICAgICAgICAgIHBhdGg6IHwKICAgICAgICAgICAgICAgICAgICAgIG1pZ3JhdGlvbnMvZ2dlbi12MjYuOC4xL21pZ3JhdGlvbi1tYW5pZmVzdC5qc29uCiAgICAgICAgICAgICAgICAgICAgICBtaWdyYXRpb25zL2dnZW4tdjI2LjguMS9lcXVpdmFsZW5jZS1yZXBvcnQuanNvbgogICAgICAgICAgICAgICAgICAgICAgbWlncmF0aW9ucy9nZW4tdjI2LjguMS92ZXJpZmllci1yZXBvcnQuanNvbgogICAgICAgICAgICAgICAgICAgICAgbWlncmF0aW9ucy9nZW4tdjI2LjguMS9taWdyYXRpb24tcmVjZWlwdC5qc29uCiAgICAgICAgICAgICAgICAgICAgaWYtbm8tZmlsZXMtZm91bmQ6IGVycm9yCiAgICAgICAgICBFT0YKCiAgICAgIC0gbmFtZTogQ29tbWl0IHJlY2VpdmVkIGNvcnB1cyBjaGVja3BvaW50CiAgICAgICAgc2hlbGw6IGJhc2gKICAgICAgICBydW46IHwKICAgICAgICAgIHNldCAtZXVvIHBpcGVmYWlsCiAgICAgICAgICBwcmludGYgJy8uc291cmNlLWdnZW5cbicgPj4gLmdpdC9pbmZvL2V4Y2x1ZGUKICAgICAgICAgIHJtIC1yZiAubWlncmF0aW9uLWJvb3RzdHJhcCAuZ2l0aHViL3dvcmtmbG93cy90ZW1wb3JhcnktaW1wb3J0LWdnZW4tdjI2LTgtMS55bWwKICAgICAgICAgIGdpdCBjaGVja291dCAiJERFU1RJTkFUSU9OX0JBU0UiIC0tIC5naXRodWIvd29ya2Zsb3dzL3ZlcmlmeS1kb2NzLnltbAogICAgICAgICAgZ2l0IGNvbmZpZyB1c2VyLm5hbWUgJ2dnZW4gbWlncmF0aW9uIGFnZW50JwogICAgICAgICAgZ2l0IGNvbmZpZyB1c2VyLmVtYWlsICc0MTg5ODI4MitnaXRodWItYWN0aW9uc1tib3RdQHVzZXJzLm5vcmVwbHkuZ2l0aHViLmNvbScKICAgICAgICAgIGdpdCBhZGQgLUEKICAgICAgICAgIGlmIGdpdCBscy1maWxlcyAtLXN0YWdlIC5zb3VyY2UtZ2dlbiB8IGdyZXAgLXEgLjsgdGhlbgogICAgICAgICAgICBlY2hvICdTT1VSQ0VfQ0hFQ0tPVVRfU1RBR0VEX1JFRlVTRUQnID4mMgogICAgICAgICAgICBleGl0IDMKICAgICAgICAgIGZpCiAgICAgICAgICBnaXQgY29tbWl0IC1tICdmZWF0KGNvcnB1cyk6IGltcG9ydCBnZ2VuIHYyNi44LjEgcmVjb25zdHJ1Y3Rpb24gY29ycHVzJwogICAgICAgICAgZWNobyAiQ09SUFVTX0NPTU1JVD0kKGdpdCByZXYtcGFyc2UgSEVBRCkiID4+ICIkR0lUSFVCX0VOViIKCiAgICAgIC0gbmFtZTogQmluZCBsaW5lYWdlIHRvIHRoZSBjb3JwdXMgY2hlY2twb2ludAogICAgICAgIHNoZWxsOiBiYXNoCiAgICAgICAgcnVuOiB8CiAgICAgICAgICBzZXQgLWV1byBwaXBlZmFpbAogICAgICAgICAgcHl0aG9uMyBzY3JpcHRzL3ZlcmlmeV9nZ2VuX3YyNl84XzFfbWlncmF0aW9uLnB5IC0taGVscCA+L2Rldi9udWxsCiAgICAgICAgICBweXRob24zIC90bXAvaW1wb3J0X2Zyb21fZ2dlbi5weSBmaW5hbGl6ZSBcCiAgICAgICAgICAgIC0tc291cmNlLXJvb3QgLnNvdXJjZS1nZ2VuIFwKICAgICAgICAgICAgLS1kZXN0aW5hdGlvbi1yb290IC4gXAogICAgICAgICAgICAtLXNvdXJjZS1jb21taXQgIiRTT1VSQ0VfU0hBIiBcCiAgICAgICAgICAgIC0tY29ycHVzLWNvbW1pdCAiJENPUlBVU19DT01NSVQiCgogICAgICAtIG5hbWU6IEV4ZWN1dGUgcmVjZWl2aW5nIHZlcmlmaWVyIHR3aWNlCiAgICAgICAgc2hlbGw6IGJhc2gKICAgICAgICBydW46IHwKICAgICAgICAgIHNldCAtZXVvIHBpcGVmYWlsCiAgICAgICAgICBweXRob24zIHNjcmlwdHMvdmVyaWZ5X2dnZW5fdjI2XzhfMV9taWdyYXRpb24ucHkgLS1zb3VyY2Utcm9vdCAuc291cmNlLWdnZW4gPiAvdG1wL3ZlcmlmeS1hLmpzb24KICAgICAgICAgIGNwIG1pZ3JhdGlvbnMvZ2dlbi12MjYuOC4xL3ZlcmlmaWVyLXJlcG9ydC5qc29uIC90bXAvcmVwb3J0LWEuanNvbgogICAgICAgICAgY3AgbWlncmF0aW9ucy9nZW4tdjI2LjguMS9lcXVpdmFsZW5jZS1yZXBvcnQuanNvbiAvdG1wL2VxdWl2YWxlbmNlLWEuanNvbgogICAgICAgICAgcHl0aG9uMyBzY3JpcHRzL3ZlcmlmeV9nZW5fdjI2XzhfMV9taWdyYXRpb24ucHkgLS1zb3VyY2Utcm9vdCAuc291cmNlLWdnZW4gPiAvdG1wL3ZlcmlmeS1iLmpzb24KICAgICAgICAgIGNtcCAvdG1wL3JlcG9ydC1hLmpzb24gbWlncmF0aW9ucy9nZW4tdjI2LjguMS92ZXJpZmllci1yZXBvcnQuanNvbgogICAgICAgICAgY21wIC90bXAvZXF1aXZhbGVuY2UtYS5qc29uIG1pZ3JhdGlvbnMvZ2dlbi12MjYuOC4xL2VxdWl2YWxlbmNlLXJlcG9ydC5qc29uCgogICAgICAtIG5hbWU6IElzc3VlIG1pZ3JhdGlvbiByZWNlaXB0CiAgICAgICAgc2hlbGw6IGJhc2gKICAgICAgICBydW46IHwKICAgICAgICAgIHNldCAtZXVvIHBpcGVmYWlsCiAgICAgICAgICBweXRob24zIC90bXAvaW1wb3J0X2Zyb21fZ2dlbi5weSByZWNlaXB0IFwKICAgICAgICAgICAgLS1zb3VyY2Utcm9vdCAuc291cmNlLWdnZW4gXAogICAgICAgICAgICAtLWRlc3RpbmF0aW9uLXJvb3QgLiBcCiAgICAgICAgICAgIC0tc291cmNlLWNvbW1pdCAiJFNPVVJDRV9TSEEiIFwKICAgICAgICAgICAgLS1jb3JwdXMtY29tbWl0ICIkQ09SUFVTX0NPTU1JVCIKCiAgICAgIC0gbmFtZTogQ29tbWl0IGV2aWRlbmNlIGFuZCBwdWJsaXNoIGRlc3RpbmF0aW9uIGJyYW5jaAogICAgICAgIHNoZWxsOiBiYXNoCiAgICAgICAgcnVuOiB8CiAgICAgICAgICBzZXQgLWV1byBwaXBlZmFpbAogICAgICAgICAgZ2l0IGFkZCBtaWdyYXRpb25zL2dnZW4tdjI2LjguMQogICAgICAgICAgZ2l0IGNvbW1pdCAtbSAnY2hvcmUobWlncmF0aW9uKTogYmluZCBnZ2VuIHYyNi44LjEgbGluZWFnZSBhbmQgcmVjZWlwdCcKICAgICAgICAgIGdpdCBwdXNoIG9yaWdpbiBIRUFEOmFnZW50L21pZ3JhdGUtZ2dlbi12MjYtOC0xLWNvcnB1cwo=
+name: Temporary import ggen v26.8.1 corpus
+
+on:
+  push:
+    branches: [agent/migrate-ggen-v26-8-1-corpus]
+  pull_request:
+    branches: [main]
+    types: [opened, reopened, synchronize]
+
+concurrency:
+  group: temporary-import-ggen-v26-8-1
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+env:
+  SOURCE_SHA: 8351af4c5bbbf60bd99ab8417752a1762c6ea4e3
+  DESTINATION_BASE: 8d6428f40c0d30d5983fb0ecdd16cab1c1328a23
+
+jobs:
+  import:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Checkout destination branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: agent/migrate-ggen-v26-8-1-corpus
+          fetch-depth: 0
+
+      - name: Checkout exact source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: seanchatmangpt/ggen
+          ref: ${{ env.SOURCE_SHA }}
+          path: .source-ggen
+          fetch-depth: 0
+
+      - name: Install pinned Rust
+        uses: dtolnay/rust-toolchain@b3b07ba8b418998c39fb20f53e8b695cdcc8de1b
+        with:
+          toolchain: nightly-2026-06-22
+          components: rustfmt
+
+      - name: Install verifier dependencies
+        run: python3 -m pip install --disable-pip-version-check blake3==1.0.9 jsonschema==4.26.0 pyshacl==0.40.0
+
+      - name: Reconstruct admitted migration programs
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .migration-bootstrap/import/chunk-* | base64 --decode > /tmp/import_from_ggen.py
+          cat .migration-bootstrap/verify/chunk-* | base64 --decode > /tmp/verify_ggen_v26_8_1_migration.py
+          python3 .migration-bootstrap/patch_importer.py /tmp/import_from_ggen.py
+          python3 .migration-bootstrap/patch_verifier.py /tmp/verify_ggen_v26_8_1_migration.py
+          echo 'cbfebbb4555264b0f9fecf5961b3fc133f646928249655912f58edf0efef7438  /tmp/import_from_ggen.py' | sha256sum -c -
+          patched_verifier_sha256="$(sha256sum /tmp/verify_ggen_v26_8_1_migration.py | awk '{print $1}')"
+          echo "PATCHED_VERIFIER_SHA256=$patched_verifier_sha256"
+          echo "PATCHED_VERIFIER_SHA256=$patched_verifier_sha256" >> "$GITHUB_ENV"
+          python3 -m py_compile /tmp/import_from_ggen.py /tmp/verify_ggen_v26_8_1_migration.py
+          test "$(git -C .source-ggen rev-parse HEAD)" = "$SOURCE_SHA"
+          git merge-base --is-ancestor "$DESTINATION_BASE" HEAD
+
+      - name: Import exact corpus
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 /tmp/import_from_ggen.py import \
+            --source-root .source-ggen \
+            --destination-root . \
+            --source-commit "$SOURCE_SHA" \
+            --destination-base "$DESTINATION_BASE"
+          cp /tmp/verify_ggen_v26_8_1_migration.py scripts/verify_ggen_v26_8_1_migration.py
+          chmod +x scripts/verify_ggen_v26_8_1_migration.py
+
+      - name: Install permanent exact-head verifier workflow
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat > .github/workflows/verify-ggen-v26-8-1-migration.yml <<'EOF'
+          name: Verify ggen v26.8.1 corpus migration
+
+          on:
+            pull_request:
+              branches: [main]
+            workflow_dispatch:
+
+          permissions:
+            contents: read
+
+          concurrency:
+            group: ggen-v26.8.1-migration-${{ github.event.pull_request.head.sha || github.sha }}
+            cancel-in-progress: true
+
+          jobs:
+            verify:
+              runs-on: ubuntu-24.04
+              timeout-minutes: 90
+              steps:
+                - name: Checkout exact candidate
+                  uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+                  with:
+                    ref: ${{ github.event.pull_request.head.sha || github.sha }}
+                    fetch-depth: 0
+                - name: Checkout exact ggen source
+                  uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+                  with:
+                    repository: seanchatmangpt/ggen
+                    ref: 8351af4c5bbbf60bd99ab8417752a1762c6ea4e3
+                    path: .source-ggen
+                    fetch-depth: 0
+                - name: Install pinned Rust
+                  uses: dtolnay/rust-toolchain@b3b07ba8b418998c39fb20f53e8b695cdcc8de1b
+                  with:
+                    toolchain: nightly-2026-06-22
+                    components: rustfmt
+                - name: Install verifier dependencies
+                  run: python3 -m pip install --disable-pip-version-check blake3==1.0.9 jsonschema==4.26.0 pyshacl==0.40.0
+                - name: Verify receiving lineage, execution, falsifiers, and replay
+                  run: python3 scripts/verify_ggen_v26_8_1_migration.py --source-root .source-ggen
+                - name: Upload bounded evidence
+                  uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
+                  with:
+                    name: ggen-v26.8.1-migration-${{ github.event.pull_request.head.sha || github.sha }}
+                    path: |
+                      migrations/ggen-v26.8.1/migration-manifest.json
+                      migrations/ggen-v26.8.1/equivalence-report.json
+                      migrations/ggen-v26.8.1/verifier-report.json
+                      migrations/ggen-v26.8.1/migration-receipt.json
+                    if-no-files-found: error
+          EOF
+
+      - name: Commit received corpus checkpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '/.source-ggen\n' >> .git/info/exclude
+          rm -rf .migration-bootstrap .github/workflows/temporary-import-ggen-v26-8-1.yml
+          git checkout "$DESTINATION_BASE" -- .github/workflows/verify-docs.yml
+          git config user.name 'ggen migration agent'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git ls-files --stage .source-ggen | grep -q .; then
+            echo 'SOURCE_CHECKOUT_STAGED_REFUSED' >&2
+            exit 3
+          fi
+          git commit -m 'feat(corpus): import ggen v26.8.1 reconstruction corpus'
+          echo "CORPUS_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Bind lineage to the corpus checkpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/verify_ggen_v26_8_1_migration.py --help >/dev/null
+          python3 /tmp/import_from_ggen.py finalize \
+            --source-root .source-ggen \
+            --destination-root . \
+            --source-commit "$SOURCE_SHA" \
+            --corpus-commit "$CORPUS_COMMIT"
+
+      - name: Execute receiving verifier twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/verify_ggen_v26_8_1_migration.py --source-root .source-ggen > /tmp/verify-a.json
+          cp migrations/ggen-v26.8.1/verifier-report.json /tmp/report-a.json
+          cp migrations/ggen-v26.8.1/equivalence-report.json /tmp/equivalence-a.json
+          python3 scripts/verify_ggen_v26_8_1_migration.py --source-root .source-ggen > /tmp/verify-b.json
+          cmp /tmp/report-a.json migrations/ggen-v26.8.1/verifier-report.json
+          cmp /tmp/equivalence-a.json migrations/ggen-v26.8.1/equivalence-report.json
+
+      - name: Issue migration receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 /tmp/import_from_ggen.py receipt \
+            --source-root .source-ggen \
+            --destination-root . \
+            --source-commit "$SOURCE_SHA" \
+            --corpus-commit "$CORPUS_COMMIT"
+
+      - name: Commit evidence and publish destination branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add migrations/ggen-v26.8.1
+          git commit -m 'chore(migration): bind ggen v26.8.1 lineage and receipt'
+          git push origin HEAD:agent/migrate-ggen-v26-8-1-corpus
