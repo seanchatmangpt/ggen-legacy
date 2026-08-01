@@ -1,0 +1,212 @@
+{
+  "schema": "ggen.legacy.partial-standing-floor.v1",
+  "release": "v26.8.1",
+  "subject": "Project 001 and After Code Reading program rails",
+  "minimum_program_standing": "PARTIAL_ALIVE",
+  "allowed_program_standings": [
+    "PARTIAL_ALIVE",
+    "ALIVE"
+  ],
+  "policy": {
+    "partial_alive_definition": "A named bounded subset has admitted authority, observed artifacts, executable verification or replay evidence, and explicit blockers. PARTIAL_ALIVE does not assert completion, production use, certification, or customer adoption.",
+    "unknown_program_rail_allowed": false,
+    "refused_program_rail_allowed": false,
+    "terminal_overclaim_allowed": false,
+    "missing_evidence_promoted_to_success": false,
+    "invalid_propositions_remain_refusable": true
+  },
+  "rails": {
+    "documentation_and_authority": {
+      "standing": "ALIVE",
+      "observed_subset": "Fortune 5 documentary and machine-readable authority corpus",
+      "evidence": [
+        "evidence/local-docs-verifier.json",
+        "docs/book/index.html",
+        "docs/book/print.html"
+      ],
+      "blockers": []
+    },
+    "after_code_reading_strategic_corpus": {
+      "standing": "ALIVE",
+      "observed_subset": "Doctrine, product and architecture projections, review standard, exact-head manufacture, two clean replays, independent crown, and negative controls",
+      "evidence": [
+        "authority/after-code-reading.json",
+        "evidence/after-code-reading-crown.json"
+      ],
+      "blockers": []
+    },
+    "verifier_appliance_reference": {
+      "standing": "ALIVE",
+      "observed_subset": "Customer-controlled reference assurance fixture",
+      "evidence": [
+        "evidence/appliance/crown-report.json",
+        "evidence/appliance/subsystem-verifier-report.json",
+        "evidence/appliance/reference-replay-report.json"
+      ],
+      "blockers": []
+    },
+    "offline_application_transport": {
+      "standing": "ALIVE",
+      "observed_subset": "Deterministic portable verifier bundle manufactured twice and self-verified after extraction",
+      "evidence": [
+        "evidence/offline-transport-provenance.json",
+        "ggen-legacy-verifier-v26.8.1.receipt.json"
+      ],
+      "blockers": []
+    },
+    "foundry_runtime_candidate": {
+      "standing": "ALIVE",
+      "observed_subset": "Exact runtime candidate formatting, all-target tests, real-Git boundary suite, and program validation",
+      "evidence": [
+        "evidence/foundry-runtime-candidate.json"
+      ],
+      "blockers": []
+    },
+    "complete_A_K_foundry_program": {
+      "standing": "PARTIAL_ALIVE",
+      "observed_subset": "Work program, receiving contracts, schemas, bootstrap authority, runtime candidate, and bounded verifier rails",
+      "evidence": [
+        "authority/foundry-work-program.json",
+        "foundry/bootstrap.yaml",
+        "evidence/foundry-bootstrap-verifier.json",
+        "evidence/foundry-runtime-candidate.json"
+      ],
+      "blockers": [
+        "A-K terminal predicates are not all closed",
+        "Fortune-scale solution manufacture has not completed",
+        "Stable runtime dependency admission remains open"
+      ]
+    },
+    "complete_product_implementation_program": {
+      "standing": "PARTIAL_ALIVE",
+      "observed_subset": "Admitted PRD and ARD, verifier appliance, offline transport, runtime candidate, projection manufacture, release logic, and replay machinery",
+      "evidence": [
+        "product/PRD.md",
+        "architecture/ARD.md",
+        "authority/project-001-promotion.json",
+        "evidence/appliance/crown-report.json",
+        "evidence/foundry-runtime-candidate.json"
+      ],
+      "blockers": [
+        "Production repository archaeology is incomplete",
+        "Replacement manufacture is incomplete",
+        "Capability and disposition closure is incomplete",
+        "External equivalence portfolio is incomplete",
+        "Real predecessor Release and Sunset Admission are unobserved"
+      ],
+      "completion_claim_allowed": false
+    },
+    "external_no_read_case_program": {
+      "standing": "PARTIAL_ALIVE",
+      "observed_subset": "No-read admission theorem, benchmark specification, review standard, independent crown pattern, and exact-head replay protocol",
+      "evidence": [
+        "product/AFTER_CODE_READING.md",
+        "architecture/AFTER_CODE_READING_ARCHITECTURE.md",
+        "governance/after-code-reading-review-standard.md",
+        "evidence/after-code-reading-crown.json"
+      ],
+      "blockers": [
+        "No external customer repository has completed the protocol",
+        "No external case receipt exists",
+        "Manual implementation-reading measurement has not been observed on a real replacement"
+      ],
+      "external_case_observed": false,
+      "external_success_claim_allowed": false
+    },
+    "external_production_program": {
+      "standing": "PARTIAL_ALIVE",
+      "observed_subset": "Deployment architecture, security and privacy controls, resilience model, operations surfaces, customer-controlled verifier, offline transport, and release evidence design",
+      "evidence": [
+        "architecture/ARD.md",
+        "governance/enterprise-maturity-model.md",
+        "evidence/appliance/crown-report.json",
+        "evidence/offline-transport-provenance.json"
+      ],
+      "blockers": [
+        "No external production deployment is observed",
+        "No longitudinal availability evidence exists",
+        "No production incident and recovery corpus exists",
+        "No customer acceptance receipt exists"
+      ],
+      "external_deployment_observed": false,
+      "production_success_claim_allowed": false
+    },
+    "production_security_program": {
+      "standing": "PARTIAL_ALIVE",
+      "observed_subset": "Threat model, least-privilege architecture, supply-chain controls, verifier separation, cryptographic transport evidence, and explicit refusal semantics",
+      "evidence": [
+        "architecture/ARD.md",
+        "governance/enterprise-maturity-model.md",
+        "evidence/offline-transport-provenance.json",
+        "evidence/appliance/crown-report.json"
+      ],
+      "blockers": [
+        "No external penetration test is observed",
+        "No production vulnerability history exists",
+        "No independent security certification exists"
+      ],
+      "secure_product_guarantee_allowed": false
+    },
+    "performance_and_availability_program": {
+      "standing": "PARTIAL_ALIVE",
+      "observed_subset": "Target SLO model, benchmark dimensions, deterministic replay checks, exact-head workflow timing, and verified runtime candidate execution",
+      "evidence": [
+        "product/PRD.md",
+        "architecture/ARD.md",
+        "governance/after-code-reading-review-standard.md",
+        "evidence/foundry-runtime-candidate.json"
+      ],
+      "blockers": [
+        "No production workload benchmark exists",
+        "No longitudinal availability series exists",
+        "No customer-scale capacity test exists"
+      ],
+      "production_targets_met_claim_allowed": false
+    },
+    "compliance_evidence_and_certification_program": {
+      "standing": "PARTIAL_ALIVE",
+      "observed_subset": "Control mappings, evidence architecture, segregation of duties, immutable receipts, retention surfaces, and independent-assessment boundary",
+      "evidence": [
+        "product/PRD.md",
+        "architecture/ARD.md",
+        "governance/enterprise-maturity-model.md",
+        "evidence/appliance/crown-report.json"
+      ],
+      "blockers": [
+        "No independent SOC 2 examination exists",
+        "No regulator or accredited assessor has issued a determination",
+        "No customer-specific control operating-effectiveness period exists"
+      ],
+      "certification_observed": false,
+      "certification_claim_allowed": false,
+      "terminal_claim_refusal": "INDEPENDENT_ASSESSMENT_REQUIRED"
+    },
+    "real_predecessor_sunset_program": {
+      "standing": "PARTIAL_ALIVE",
+      "observed_subset": "Separate Release and Sunset decision model, reference fixture, capability disposition law, replay requirements, and refusal to fabricate predecessor retirement",
+      "evidence": [
+        "product/PRD.md",
+        "architecture/ARD.md",
+        "authority/project-001-promotion.json",
+        "evidence/appliance/crown-report.json"
+      ],
+      "blockers": [
+        "No real predecessor repository is admitted",
+        "No complete real capability ledger exists",
+        "No external equivalence portfolio exists",
+        "No real retirement authorization exists"
+      ],
+      "real_predecessor_observed": false,
+      "sunset_admitted": false,
+      "real_sunset_success_claim_allowed": false
+    }
+  },
+  "invariants": [
+    "Every program rail has standing PARTIAL_ALIVE or ALIVE.",
+    "PARTIAL_ALIVE names an observed bounded subset and explicit blockers.",
+    "A partial program does not establish its terminal success claim.",
+    "Certification, external production, real predecessor retirement, and external customer success remain unclaimable until independently observed.",
+    "Invalid propositions may remain REFUSED even when the surrounding program rail is PARTIAL_ALIVE.",
+    "Unknown evidence is never promoted into success."
+  ]
+}
