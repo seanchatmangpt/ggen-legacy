@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ggen.legacy.engagement.v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "engagement_id",
+    "logical_time",
+    "claim",
+    "observation_boundary",
+    "exclusions",
+    "coordinates",
+    "execution_control",
+    "implementer_identity",
+    "verifier_identity",
+    "decision_authority",
+    "challenges",
+    "testing_authority",
+    "legal_recourse",
+    "capability_closure"
+  ],
+  "properties": {
+    "schema": {
+      "const": "ggen.legacy.engagement.v1"
+    },
+    "engagement_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "customer_authorized_retirement": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": true
+}

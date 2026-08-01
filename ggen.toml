@@ -1,0 +1,17 @@
+[project]
+name = "ggen-legacy"
+
+[ontology]
+source = "ontology/assurance-program.ttl"
+
+[ontology.prefixes]
+gla = "https://chatmangpt.com/ggen-legacy#"
+prov = "http://www.w3.org/ns/prov#"
+dcterms = "http://purl.org/dc/terms/"
+skos = "http://www.w3.org/2004/02/skos/core#"
+
+[packs]
+ggen-legacy-assurance-pack = { path = "packs/ggen-legacy-assurance-pack" }
+
+[law]
+reflexive = true

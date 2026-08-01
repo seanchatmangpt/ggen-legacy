@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ggen.legacy.claim.manifest.v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "engagement_id",
+    "claim",
+    "observation_boundary",
+    "exclusions",
+    "coordinates",
+    "execution_control",
+    "implementer_identity",
+    "verifier_identity",
+    "decision_authority",
+    "hidden_challenge_count",
+    "evidence_inventory",
+    "testing_authority",
+    "legal_recourse",
+    "capability_closure"
+  ],
+  "properties": {
+    "schema": {
+      "const": "ggen.legacy.claim.manifest.v1"
+    },
+    "hidden_challenge_count": {
+      "type": "integer",
+      "minimum": 1
+    }
+  },
+  "additionalProperties": true
+}

@@ -12,3 +12,4 @@
 - [Security, Privacy, Operations, and Resilience](09-security-operations.md)
 - [Procurement and Due Diligence](10-procurement.md)
 - [Roadmap, Glossary, and FAQ](11-roadmap-faq.md)
+- [Customer-Controlled Verifier Appliance](12-verifier-appliance.md)

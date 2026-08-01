@@ -1,4 +1,4 @@
-name: Verify ggen-legacy v26.8.1 documentation
+name: Verify ggen-legacy v26.8.1 assurance
 
 on:
   pull_request:
@@ -9,13 +9,13 @@ permissions:
   contents: read
 
 concurrency:
-  group: ggen-legacy-v26.8.1-docs-${{ github.event.pull_request.head.sha || github.sha }}
+  group: ggen-legacy-v26.8.1-${{ github.event.pull_request.head.sha || github.sha }}
   cancel-in-progress: true
 
 jobs:
   verify:
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 75
     steps:
       - name: Check out exact candidate
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
@@ -29,28 +29,77 @@ jobs:
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
           test -s AGENTS.md
-          test -s RELEASE_CONTROL.md
-          test -s product/PRD.md
-          test -s architecture/ARD.md
-          test -s docs/src/SUMMARY.md
+          test -s ggen.toml
+          test -s ontology/assurance-program.ttl
+          test -s packs/ggen-legacy-assurance-pack/pack.toml
 
-      - name: Refuse source-phase leakage
+      - name: Verify documentary and projection authority
+        run: python3 scripts/verify_docs.py --strict
+
+      - name: Execute real customer-controlled reference rail
         shell: bash
         run: |
           set -euo pipefail
-          for path in src crates packages cmd internal app lib services runtime; do
-            test ! -e "$path" || { echo "PRODUCTION_SOURCE_PREMATURE: $path"; exit 1; }
+          bash appliance/bin/run-reference-e2e.sh
+          test -s evidence/appliance/reference-verifier-report.json
+          test -s evidence/appliance/reference-replay-report.json
+
+      - name: Check out exact ggen manufacturing coordinate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: seanchatmangpt/ggen
+          ref: 0f39227c102e0ac7519f0f27561356227a518653
+          path: .ggen-tool
+          fetch-depth: 1
+
+      - name: Provision ggen sibling coordinates
+        shell: bash
+        run: |
+          set -euo pipefail
+          repos=(lsp-max lsp-types-max wasm4pm wasm4pm-compat)
+          shas=(7bcc1e16dec71ef5fb2cedea2dfd6cb5cde37f59 6773e6017ca83c565785d0ec39d75304f62c3237 0bb134b29245517ac4969a9f1916f5432931c5d0 e46155e209a750fda0218532d96ae17a9e10903e)
+          for i in "${!repos[@]}"; do
+            git init -q "${repos[$i]}"
+            git -C "${repos[$i]}" remote add origin "https://github.com/seanchatmangpt/${repos[$i]}"
+            git -C "${repos[$i]}" fetch -q --depth 1 origin "${shas[$i]}"
+            git -C "${repos[$i]}" checkout -q FETCH_HEAD
           done
 
-      - name: Verify documentation authority
-        run: python3 scripts/verify_docs.py --strict
+      - name: Install pinned ggen toolchain
+        uses: dtolnay/rust-toolchain@b3b07ba8b418998c39fb20f53e8b695cdcc8de1b
+        with:
+          toolchain: nightly-2026-06-22
+
+      - name: Install sccache
+        uses: taiki-e/install-action@81ecf985428d5c2ea81dbf079bceca32bc9604ab
+        with:
+          tool: sccache
+
+      - name: Build exact ggen CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo build --manifest-path .ggen-tool/Cargo.toml -p ggen-cli-lib --bin ggen
+          .ggen-tool/target/debug/ggen --version
+
+      - name: Manufacture and replay appliance projections with ggen
+        shell: bash
+        run: |
+          set -euo pipefail
+          GGEN="$GITHUB_WORKSPACE/.ggen-tool/target/debug/ggen"
+          "$GGEN" sync run
+          git diff --exit-code -- appliance
+          find appliance -type f -print0 | sort -z | xargs -0 sha256sum > /tmp/appliance-a.sha256
+          "$GGEN" sync run
+          git diff --exit-code -- appliance
+          find appliance -type f -print0 | sort -z | xargs -0 sha256sum > /tmp/appliance-b.sha256
+          cmp /tmp/appliance-a.sha256 /tmp/appliance-b.sha256
 
       - name: Install pinned mdBook
         shell: bash
         run: |
           set -euo pipefail
           cargo install mdbook --version 0.4.40 --locked
-          mdbook --version
 
       - name: Build mdBook projection
         shell: bash
@@ -60,9 +109,21 @@ jobs:
           test -s docs/book/index.html
           test -s docs/book/print.html
 
-      - name: Assert verifier did not mutate authority
+      - name: Assert authority remained unchanged
         shell: bash
         run: |
           set -euo pipefail
-          git diff --exit-code -- . ':(exclude)evidence/local-docs-verifier.json'
-          test -s evidence/local-docs-verifier.json
+          git diff --exit-code -- . \
+            ':(exclude)evidence/local-docs-verifier.json' \
+            ':(exclude)evidence/appliance/**' \
+            ':(exclude)docs/book/**'
+
+      - name: Upload exact-head assurance evidence
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
+        with:
+          name: ggen-legacy-v26.8.1-assurance-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            evidence/local-docs-verifier.json
+            evidence/appliance/*.json
+            docs/book/
+          if-no-files-found: error

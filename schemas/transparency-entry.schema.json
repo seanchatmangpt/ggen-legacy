@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ggen.legacy.transparency.entry.v1",
+  "type": "object",
+  "required": [
+    "index",
+    "previous_hash",
+    "entry_type",
+    "identity",
+    "logical_time",
+    "entry_hash"
+  ],
+  "properties": {
+    "entry_type": {
+      "enum": [
+        "attestation",
+        "revocation"
+      ]
+    }
+  },
+  "additionalProperties": true
+}

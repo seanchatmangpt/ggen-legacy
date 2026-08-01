@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "ggen.legacy.sunset.admission.v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "admitted",
+    "state"
+  ],
+  "properties": {
+    "schema": {
+      "const": "ggen.legacy.sunset.admission.v1"
+    },
+    "admitted": {
+      "type": "boolean"
+    }
+  },
+  "additionalProperties": true
+}

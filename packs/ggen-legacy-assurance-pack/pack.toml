@@ -1,0 +1,13 @@
+[pack]
+name = "ggen-legacy-assurance-pack"
+version = "26.8.1"
+description = """
+Ontology-owned verifier appliance and Repository Standing Portfolio compiler.
+Projects customer-controlled execution policy, hidden-challenge contracts,
+cryptographic binding, independent-verifier law, signatures, transparency,
+replay, testing-authority governance, legal recourse, Release Admission, and
+Sunset Admission surfaces. Gates refuse missing layers, vendor-controlled
+execution, self-certification, absent hidden challenges, incomplete digest
+bindings, unsigned evidence, insufficient replay environments, weak assessor
+governance, or missing legal accountability.
+"""

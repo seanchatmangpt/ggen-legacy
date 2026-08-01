@@ -1,0 +1,85 @@
+{
+  "schema": "ggen.legacy.engagement.v1",
+  "engagement_id": "reference-fortune5-assurance-fixture",
+  "logical_time": "2026-07-31T17:08:00-07:00",
+  "claim": "replacement equivalence over admitted observable contract",
+  "observation_boundary": [
+    "cli",
+    "configuration",
+    "diagnostics",
+    "filesystem-effects",
+    "refusal-behavior"
+  ],
+  "exclusions": [
+    "unrestricted program equivalence",
+    "absence of all possible hidden behavior",
+    "future dependency behavior"
+  ],
+  "coordinates": {
+    "legacy_revision": "legacy-sha-aaaaaaaa",
+    "replacement_revision": "replacement-sha-bbbbbbbb",
+    "authority_digest": "sha256:authority",
+    "verifier_digest": "sha256:verifier",
+    "fixture_set_digest": "sha256:fixtures",
+    "environment_digest": "sha256:environment",
+    "toolchain_digest": "sha256:toolchain",
+    "evidence_digest": "sha256:evidence"
+  },
+  "execution_control": {
+    "owner": "customer",
+    "network_egress_allowed": false,
+    "vendor_source_access": false,
+    "customer_managed_keys": true
+  },
+  "implementer_identity": "https://chatmangpt.com/actors/ggen-manufacturer",
+  "verifier_identity": "https://chatmangpt.com/actors/customer-independent-verifier",
+  "decision_authority": "https://chatmangpt.com/actors/customer-release-authority",
+  "challenges": [
+    {
+      "id": "incident-001",
+      "visibility": "customer-hidden",
+      "class": "historical-incident"
+    },
+    {
+      "id": "refusal-001",
+      "visibility": "customer-hidden",
+      "class": "refusal"
+    }
+  ],
+  "testing_authority": {
+    "method_id": "GLA-METHOD-001",
+    "competence_policy": "qualified personnel",
+    "conflict_policy": "implementer cannot certify",
+    "appeals_process": "customer appeal",
+    "revocation_process": "signed revocation"
+  },
+  "legal_recourse": {
+    "audit_rights": "customer audit",
+    "warranty_boundary": "certificate scope",
+    "insurance_reference": "required-policy-reference",
+    "remediation_obligation": "repair retest revoke reissue",
+    "termination_export": "complete export"
+  },
+  "capability_closure": {
+    "unknown_capabilities": 0,
+    "unknown_dispositions": 0,
+    "unknown_standings": 0,
+    "unassigned_verifiers": 0,
+    "missing_equivalence_cases": 0,
+    "equivalence_failures": 0,
+    "replay_differences": 0
+  },
+  "customer_authorized_retirement": false,
+  "capabilities": [
+    {
+      "id": "cli.help",
+      "contract": "exit=0 and stable help surface"
+    }
+  ],
+  "dispositions": [
+    {
+      "capability": "cli.help",
+      "disposition": "PRESERVED"
+    }
+  ]
+}
