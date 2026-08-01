@@ -50,8 +50,9 @@ jobs:
           set -euo pipefail
           cat .migration-bootstrap/import/chunk-* | base64 --decode > /tmp/import_from_ggen.py
           cat .migration-bootstrap/verify/chunk-* | base64 --decode > /tmp/verify_ggen_v26_8_1_migration.py
+          python3 .migration-bootstrap/patch_importer.py /tmp/import_from_ggen.py
           python3 .migration-bootstrap/patch_verifier.py /tmp/verify_ggen_v26_8_1_migration.py
-          echo 'c1507bffcc2028c7f2cdd4660c21825f8af9314898874c7a88a3e840bb3109a6  /tmp/import_from_ggen.py' | sha256sum -c -
+          echo '7991273fc57596b6bf4a9d619144f4177c0323801f07b7dc2d631eafe7615b7c  /tmp/import_from_ggen.py' | sha256sum -c -
           patched_verifier_sha256="$(sha256sum /tmp/verify_ggen_v26_8_1_migration.py | awk '{print $1}')"
           echo "PATCHED_VERIFIER_SHA256=$patched_verifier_sha256"
           echo "PATCHED_VERIFIER_SHA256=$patched_verifier_sha256" >> "$GITHUB_ENV"
