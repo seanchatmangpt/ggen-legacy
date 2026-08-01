@@ -1,0 +1,121 @@
+name: Foundry Receipt Ownership
+
+on:
+  pull_request:
+    paths:
+      - "foundry/catalogs/**"
+      - "foundry/receipts/**"
+      - "foundry/receipt-history/**"
+      - "foundry/receipt-ownership.json"
+      - "verifiers/normalize_foundry_receipts.py"
+      - "witnesses/test_foundry_receipt_ownership.py"
+      - ".github/workflows/foundry-receipt-ownership.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: foundry-receipt-ownership-${{ github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  normalize-and-replay:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      RUSTUP_TOOLCHAIN: stable
+      RUSTC_WRAPPER: ""
+      SOURCE_AUTHORITY_SHA: 32ff03016b476f5e4a938272a8a54fcd3b877e5a
+      RUNTIME_SHA: 5905b24fc62f3ec3eadb93fb36787cdde08f3c82
+    steps:
+      - name: Checkout exact corpus branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          path: ggen-legacy
+          fetch-depth: 0
+
+      - name: Checkout fixed source authority
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: seanchatmangpt/ggen
+          ref: ${{ env.SOURCE_AUTHORITY_SHA }}
+          path: ggen-source
+          fetch-depth: 1
+
+      - name: Checkout exact foundry runtime
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: seanchatmangpt/ggen
+          ref: ${{ env.RUNTIME_SHA }}
+          path: ggen-runtime
+          fetch-depth: 1
+
+      - name: Install receipt and runtime dependencies
+        run: |
+          python3 -m pip install --disable-pip-version-check --only-binary=:all: blake3==1.0.9
+          rustup toolchain install stable --profile minimal
+          rustup default stable
+
+      - name: Execute ownership positive and negative controls
+        run: |
+          python3 -m py_compile \
+            ggen-legacy/verifiers/normalize_foundry_receipts.py \
+            ggen-legacy/witnesses/test_foundry_receipt_ownership.py
+          python3 ggen-legacy/witnesses/test_foundry_receipt_ownership.py
+
+      - name: Normalize active receipt ownership
+        run: |
+          mkdir -p evidence
+          python3 ggen-legacy/verifiers/normalize_foundry_receipts.py apply \
+            --root ggen-legacy \
+            --output evidence/apply.json
+          python3 ggen-legacy/verifiers/normalize_foundry_receipts.py audit \
+            --root ggen-legacy \
+            --output evidence/audit.json
+          python3 - <<'PY'
+          import json
+          report = json.load(open("evidence/audit.json"))
+          assert report["status"] == "ALIVE", report
+          assert report["normalization_required"] is False, report
+          PY
+
+      - name: Commit controller-owned ownership consequences
+        id: commit
+        run: |
+          git -C ggen-legacy config user.name "ggen-foundry-receipt-controller"
+          git -C ggen-legacy config user.email "ggen-foundry-receipt-controller@users.noreply.github.com"
+          git -C ggen-legacy add \
+            foundry/receipts \
+            foundry/receipt-history \
+            foundry/receipt-ownership.json
+          if git -C ggen-legacy diff --cached --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Receipt ownership is already normalized."
+          else
+            git -C ggen-legacy commit -m "fix(foundry): admit explicit active receipt ownership"
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Replay exact Rust receipt runtime on normalized tree
+        run: |
+          test -z "$(git -C ggen-legacy status --porcelain=v1 --untracked-files=all)"
+          cargo run --manifest-path ggen-runtime/tools/architecture-foundry/Cargo.toml -- \
+            replay --source ggen-source --corpus ggen-legacy
+
+      - name: Push normalized receipt consequence
+        if: steps.commit.outputs.changed == 'true'
+        run: |
+          git -C ggen-legacy push origin \
+            "HEAD:${{ github.event.pull_request.head.ref || github.ref_name }}"
+
+      - name: Publish ownership and replay evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: foundry-receipt-ownership-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            evidence/
+            ggen-legacy/foundry/receipt-ownership.json
+          if-no-files-found: error
