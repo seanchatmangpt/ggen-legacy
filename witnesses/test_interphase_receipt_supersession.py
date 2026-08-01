@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "verifiers"))
 
 import normalize_foundry_receipts as base  # noqa: E402
-import normalize_foundry_receipts_interphase as interphase  # noqa: E402,F401
+import normalize_foundry_receipts_interphase as interphase  # noqa: E402
 
 
 def write_json(path: Path, value: dict) -> None:
@@ -76,7 +76,7 @@ def main() -> int:
     with tempfile.TemporaryDirectory(prefix="receipt-supersession-positive-") as directory:
         root = Path(directory)
         ownership_path, old_digest, new_digest = setup_root(root, include_new_claim=True)
-        report = base.report(root, ownership_path, "apply")
+        report = interphase.report(root, ownership_path, "apply")
         assert report["status"] == "NORMALIZED", report
         ownership = json.loads(ownership_path.read_text())
         key = "corpus:foundry/catalogs/mutable.json"
@@ -95,7 +95,7 @@ def main() -> int:
         root = Path(directory)
         ownership_path, _old_digest, _new_digest = setup_root(root, include_new_claim=False)
         try:
-            base.report(root, ownership_path, "audit")
+            interphase.report(root, ownership_path, "audit")
         except base.Refusal as refusal:
             assert refusal.code == "RECEIPT_ACTIVE_OUTPUT_DRIFT", refusal.payload()
         else:
