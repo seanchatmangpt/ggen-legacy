@@ -1,4 +1,4 @@
-name: Enterprise Architecture Foundry Bootstrap
+name: Enterprise Architecture Foundry v1
 
 on:
   pull_request:
@@ -7,16 +7,18 @@ permissions:
   contents: write
 
 concurrency:
-  group: foundry-bootstrap-${{ github.event.pull_request.head.ref }}
-  cancel-in-progress: true
+  group: enterprise-architecture-foundry-v1-${{ github.event.pull_request.head.ref }}
+  cancel-in-progress: false
 
 jobs:
-  bootstrap:
+  manufacture:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 120
     env:
       RUSTUP_TOOLCHAIN: stable
       RUSTC_WRAPPER: ""
+      SOURCE_AUTHORITY_SHA: 32ff03016b476f5e4a938272a8a54fcd3b877e5a
+      OBSERVATION_EVIDENCE_SHA: 598bf9e91f2ae27049cdfd989bcb76e0a3d85abb
     steps:
       - name: Checkout ggen-legacy exact PR head
         uses: actions/checkout@v4
@@ -25,104 +27,186 @@ jobs:
           path: ggen-legacy
           fetch-depth: 0
 
-      - name: Checkout ggen manufacturing kernel
+      - name: Checkout fixed ggen source authority
+        uses: actions/checkout@v4
+        with:
+          repository: seanchatmangpt/ggen
+          ref: ${{ env.SOURCE_AUTHORITY_SHA }}
+          path: ggen-source
+          fetch-depth: 0
+
+      - name: Checkout latest verified Rust runtime
         uses: actions/checkout@v4
         with:
           repository: seanchatmangpt/ggen
           ref: agent/architecture-foundry-runtime
-          path: ggen
+          path: ggen-runtime
           fetch-depth: 0
+
+      - name: Fetch exact observation evidence branch
+        run: |
+          git -C ggen-source fetch --no-tags origin \
+            agent/v26.8.1-remaining-observers:refs/remotes/origin/agent/v26.8.1-remaining-observers
+          test "$(git -C ggen-source rev-parse origin/agent/v26.8.1-remaining-observers)" = \
+            "$OBSERVATION_EVIDENCE_SHA"
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt
 
-      - name: Verify clean exact-head inputs
+      - name: Verify exact clean inputs
         run: |
-          test -z "$(git -C ggen status --porcelain=v1 --untracked-files=all)"
+          test "$(git -C ggen-source rev-parse HEAD)" = "$SOURCE_AUTHORITY_SHA"
+          test -z "$(git -C ggen-source status --porcelain=v1 --untracked-files=all)"
+          test -z "$(git -C ggen-runtime status --porcelain=v1 --untracked-files=all)"
           test -z "$(git -C ggen-legacy status --porcelain=v1 --untracked-files=all)"
 
-      - name: Verify canonical runtime formatting
-        run: cargo fmt --manifest-path ggen/tools/architecture-foundry/Cargo.toml -- --check
-
-      - name: Test runtime against real Git boundaries
-        run: cargo test --manifest-path ggen/tools/architecture-foundry/Cargo.toml --all-targets
-
-      - name: Validate work program
+      - name: Verify Rust runtime before actuation
         run: |
-          cargo run --manifest-path ggen/tools/architecture-foundry/Cargo.toml -- \
+          cargo fmt --manifest-path ggen-runtime/tools/architecture-foundry/Cargo.toml -- --check
+          cargo test --manifest-path ggen-runtime/tools/architecture-foundry/Cargo.toml --all-targets
+          cargo run --manifest-path ggen-runtime/tools/architecture-foundry/Cargo.toml -- \
             validate-program \
-            --program ggen/docs/architecture-foundry/work-program.yaml
+            --program ggen-runtime/docs/architecture-foundry/work-program.yaml
 
-      - name: Establish exact-head baseline
-        run: |
-          cargo run --manifest-path ggen/tools/architecture-foundry/Cargo.toml -- \
-            baseline \
-            --program ggen/docs/architecture-foundry/work-program.yaml \
-            --source ggen \
-            --corpus ggen-legacy \
-            --out "${RUNNER_TEMP}/foundry-baseline"
-
-      - name: Manufacture bounded corpus checkpoints
-        shell: bash
+      - name: Configure bounded checkpoint commits
         run: |
           git -C ggen-legacy config user.name "ggen-foundry-manufacturer"
           git -C ggen-legacy config user.email "ggen-foundry-manufacturer@users.noreply.github.com"
 
-          if [[ ! -f ggen-legacy/foundry/foundry-manifest.json ]]; then
-            cargo run --manifest-path ggen/tools/architecture-foundry/Cargo.toml -- \
-              initialize-corpus \
-              --program ggen/docs/architecture-foundry/work-program.yaml \
-              --source ggen \
-              --corpus ggen-legacy
+      - name: Manufacture and persist A-K plus final admission
+        shell: bash
+        run: |
+          set -euo pipefail
 
-            git -C ggen-legacy add foundry
-            git -C ggen-legacy commit -m "feat(foundry): initialize executable architecture corpus"
+          runtime_manifest="ggen-runtime/tools/architecture-foundry/Cargo.toml"
+          program="ggen-runtime/docs/architecture-foundry/work-program.yaml"
+          source="ggen-source"
+          corpus="ggen-legacy"
+          branch="${{ github.event.pull_request.head.ref }}"
+
+          checkpoint() {
+            local message="$1"
+            git -C "$corpus" add foundry
+            git -C "$corpus" commit -m "$message"
+            git -C "$corpus" push origin "HEAD:$branch"
+            test -z "$(git -C "$corpus" status --porcelain=v1 --untracked-files=all)"
+          }
+
+          if [[ ! -f "$corpus/foundry/foundry-manifest.json" ]]; then
+            cargo run --manifest-path "$runtime_manifest" -- \
+              initialize-corpus --program "$program" --source "$source" --corpus "$corpus"
+            checkpoint "feat(foundry): initialize v1 executable architecture corpus"
           fi
 
-          if [[ ! -f ggen-legacy/foundry/workstreams/A/admission-report.json ]]; then
-            cargo run --manifest-path ggen/tools/architecture-foundry/Cargo.toml \
-              --bin admit_baseline -- \
-              --program ggen/docs/architecture-foundry/work-program.yaml \
-              --source ggen \
-              --corpus ggen-legacy
-
-            git -C ggen-legacy add foundry
-            git -C ggen-legacy commit -m "feat(foundry): admit exact-head baseline workstream"
+          if [[ ! -f "$corpus/foundry/workstreams/A/admission-report.json" ]]; then
+            cargo run --manifest-path "$runtime_manifest" --bin admit_baseline -- \
+              --program "$program" --source "$source" --corpus "$corpus"
+            checkpoint "feat(foundry): admit A exact-head baseline"
           fi
 
-          git -C ggen-legacy push origin HEAD:${{ github.event.pull_request.head.ref }}
+          if [[ ! -f "$corpus/foundry/workstreams/B/admission-report.json" ]]; then
+            cargo run --manifest-path "$runtime_manifest" --bin admit_observation -- \
+              --program "$program" --source "$source" --corpus "$corpus" \
+              --evidence-ref origin/agent/v26.8.1-remaining-observers
+            checkpoint "feat(foundry): admit B exhaustive observation"
+          fi
 
-      - name: Verify committed A admission state
+          if [[ ! -f "$corpus/foundry/workstreams/C/admission-report.json" ]]; then
+            cargo run --manifest-path "$runtime_manifest" --bin admit_capabilities -- \
+              --program "$program" --source "$source" --corpus "$corpus"
+            checkpoint "feat(foundry): admit C capability authority"
+          fi
+
+          if [[ ! -f "$corpus/foundry/workstreams/D/admission-report.json" ]]; then
+            cargo run --manifest-path "$runtime_manifest" --bin admit_classification -- \
+              --program "$program" --source "$source" --corpus "$corpus"
+            checkpoint "feat(foundry): admit D kernel-corpus classification"
+          fi
+
+          if [[ ! -f "$corpus/foundry/workstreams/E/admission-report.json" ]]; then
+            cargo run --manifest-path "$runtime_manifest" --bin admit_extraction -- \
+              --program "$program" --source "$source" --corpus "$corpus"
+            checkpoint "feat(foundry): admit E cross-repository extraction"
+          fi
+
+          if [[ ! -f "$corpus/foundry/workstreams/F/admission-report.json" ]]; then
+            cargo run --manifest-path "$runtime_manifest" --bin admit_products -- \
+              --program "$program" --source "$source" --corpus "$corpus" primitives
+            checkpoint "feat(foundry): admit F architecture primitives"
+          fi
+
+          if [[ ! -f "$corpus/foundry/workstreams/G/admission-report.json" ]]; then
+            cargo run --manifest-path "$runtime_manifest" --bin admit_products -- \
+              --program "$program" --source "$source" --corpus "$corpus" packs
+            checkpoint "feat(foundry): admit G solution architecture packs"
+          fi
+
+          if [[ ! -f "$corpus/foundry/workstreams/H/admission-report.json" ]]; then
+            cargo run --manifest-path "$runtime_manifest" --bin admit_products -- \
+              --program "$program" --source "$source" --corpus "$corpus" equivalence
+            checkpoint "feat(foundry): admit H full equivalence closure"
+          fi
+
+          if [[ ! -f "$corpus/foundry/workstreams/I/admission-report.json" ]]; then
+            cargo run --manifest-path "$runtime_manifest" --bin admit_verification -- \
+              --program "$program" --source "$source" --corpus "$corpus"
+            checkpoint "feat(foundry): admit I external subsystem verification"
+          fi
+
+          if [[ ! -f "$corpus/foundry/workstreams/J/admission-report.json" ]]; then
+            cargo run --manifest-path "$runtime_manifest" --bin admit_clean_room -- \
+              --program "$program" --source "$source" --corpus "$corpus"
+            checkpoint "feat(foundry): admit J clean-room replay"
+          fi
+
+          if [[ ! -f "$corpus/foundry/workstreams/K/admission-report.json" ]]; then
+            cargo run --manifest-path "$runtime_manifest" --bin admit_reference -- \
+              --program "$program" --source "$source" --corpus "$corpus"
+            checkpoint "feat(foundry): admit K Fortune 5 reference manufacture"
+          fi
+
+          if [[ ! -f "$corpus/foundry/evidence/terminal-theorem.json" ]]; then
+            cargo run --manifest-path "$runtime_manifest" --bin admit_final -- \
+              --program "$program" --source "$source" --corpus "$corpus"
+            checkpoint "feat(foundry): admit terminal Enterprise Architecture Foundry theorem"
+          fi
+
+      - name: Verify terminal committed state
         run: |
           test -z "$(git -C ggen-legacy status --porcelain=v1 --untracked-files=all)"
           python3 - <<'PY'
           import json
           from pathlib import Path
 
-          state = json.loads(Path("ggen-legacy/foundry/workstreams/state.json").read_text())
-          assert state["workstreams"]["A"]["status"] == "ADMITTED", state
-          assert state["workstreams"]["B"]["status"] == "READY", state
-          assert Path("ggen-legacy/foundry/receipts/initialization.json").is_file()
-          assert Path("ggen-legacy/foundry/receipts/workstream-A.json").is_file()
-          assert Path("ggen-legacy/foundry/workstreams/A/admission-report.json").is_file()
+          root = Path("ggen-legacy/foundry")
+          state = json.loads((root / "workstreams/state.json").read_text())
+          assert all(state["workstreams"][letter]["status"] == "ADMITTED" for letter in "ABCDEFGHIJK"), state
+          standing = json.loads((root / "standing.json").read_text())
+          assert standing["standing"] == "ALIVE" and standing["admitted"] is True, standing
+          theorem = json.loads((root / "evidence/terminal-theorem.json").read_text())
+          assert theorem["standing"] == "ALIVE", theorem
+          assert theorem["solution_admission"] is True, theorem
+          assert theorem["capabilities"] == 65, theorem
+          assert theorem["fortune_scale_reference_manufactured"] is True, theorem
           PY
 
-      - name: Replay committed receipts
+      - name: Replay all committed receipts
         run: |
-          cargo run --manifest-path ggen/tools/architecture-foundry/Cargo.toml -- \
-            replay \
-            --source ggen \
-            --corpus ggen-legacy
+          cargo run --manifest-path ggen-runtime/tools/architecture-foundry/Cargo.toml -- \
+            replay --source ggen-source --corpus ggen-legacy
 
-      - name: Verify corpus state
+      - name: Verify complete corpus and component lineage
         run: |
-          cargo run --manifest-path ggen/tools/architecture-foundry/Cargo.toml -- \
+          cargo run --manifest-path ggen-runtime/tools/architecture-foundry/Cargo.toml -- \
             verify \
-            --program ggen/docs/architecture-foundry/work-program.yaml \
-            --source ggen \
+            --program ggen-runtime/docs/architecture-foundry/work-program.yaml \
+            --source ggen-source \
             --corpus ggen-legacy
 
-      - name: Verify no post-admission drift
-        run: test -z "$(git -C ggen-legacy status --porcelain=v1 --untracked-files=all)"
+      - name: Verify zero post-admission drift
+        run: |
+          test -z "$(git -C ggen-source status --porcelain=v1 --untracked-files=all)"
+          test -z "$(git -C ggen-runtime status --porcelain=v1 --untracked-files=all)"
+          test -z "$(git -C ggen-legacy status --porcelain=v1 --untracked-files=all)"
