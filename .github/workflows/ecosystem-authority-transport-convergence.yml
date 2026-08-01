@@ -1,0 +1,131 @@
+name: Ecosystem Authority and Transport Convergence
+
+on:
+  pull_request:
+    paths:
+      - "authority/ecosystem-reconstitution/2026-07-31.repositories.json"
+      - ".github/workflows/ecosystem-five-receipt-closure.yml"
+      - ".github/workflows/ecosystem-authority-transport-convergence.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ecosystem-authority-transport-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+env:
+  RUSTC_WRAPPER: ""
+  GGEN_SHA: 3b0fc364f586ad0155a937f756238e7bacd94e16
+  GGEN_TOOLCHAIN: nightly-2026-06-22
+
+jobs:
+  converge:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Checkout exact corpus branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          fetch-depth: 0
+          token: ${{ secrets.RECONSTITUTION_READER_TOKEN || github.token }}
+          path: corpus
+
+      - name: Checkout exact ggen manufacturing kernel
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: seanchatmangpt/ggen
+          ref: ${{ env.GGEN_SHA }}
+          fetch-depth: 1
+          token: ${{ secrets.RECONSTITUTION_READER_TOKEN || github.token }}
+          path: ggen
+
+      - name: Repair authored command authority and checkout transport
+        working-directory: corpus
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          manifest_path = Path('authority/ecosystem-reconstitution/2026-07-31.repositories.json')
+          manifest = json.loads(manifest_path.read_text())
+          matched = 0
+          for repo in manifest['repositories']:
+              if repo['repository'] == 'seanchatmangpt/lsp-max':
+                  if repo['validation_commands'][0] == 'just observe':
+                      repo['validation_commands'][0] = 'cargo test --all'
+                  elif repo['validation_commands'][0] != 'cargo test --all':
+                      raise SystemExit(f"LSP_COMMAND_AUTHORITY_REFUSED: {repo['validation_commands'][0]}")
+                  matched += 1
+          if matched != 1:
+              raise SystemExit(f'LSP_REPOSITORY_CARDINALITY_REFUSED: {matched}')
+          manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + '\n')
+
+          workflow_path = Path('.github/workflows/ecosystem-five-receipt-closure.yml')
+          lines = workflow_path.read_text().splitlines()
+          output = []
+          external_blocks = 0
+          for index, line in enumerate(lines):
+              output.append(line)
+              if line.lstrip().startswith('repository:'):
+                  indent = line[:len(line)-len(line.lstrip())]
+                  following = lines[index + 1:index + 5]
+                  if not any(item.lstrip().startswith('token:') for item in following):
+                      output.append(indent + 'token: ${{ secrets.RECONSTITUTION_READER_TOKEN || github.token }}')
+                      external_blocks += 1
+          text = '\n'.join(output) + '\n'
+          if 'RECONSTITUTION_READER_TOKEN || github.token' not in text:
+              raise SystemExit('PRIVATE_TRANSPORT_TOKEN_MISSING')
+          workflow_path.write_text(text)
+          print({'lsp_command_repaired': True, 'external_checkout_blocks_patched': external_blocks})
+          PY
+
+      - name: Install exact manufacture toolchain
+        run: |
+          rustup toolchain install "$GGEN_TOOLCHAIN" --profile minimal
+          rustup default "$GGEN_TOOLCHAIN"
+          python3 -m pip install --disable-pip-version-check rdflib==7.1.4 jsonschema==4.23.0 pyyaml==6.0.2
+
+      - name: Manufacture and replay ggen projections twice
+        working-directory: corpus
+        run: |
+          cargo +"$GGEN_TOOLCHAIN" build --manifest-path ../ggen/Cargo.toml -p ggen-cli-lib --bin ggen
+          GGEN="$PWD/../ggen/target/debug/ggen"
+          "$GGEN" graph validate
+          "$GGEN" sync run
+          "$GGEN" receipt verify
+          mkdir -p target/authority-convergence/a target/authority-convergence/b
+          sha256sum authority/ecosystem-alive/alive-program.json tools/ecosystem-doctor.py reference/ecosystem-reconstitution/DOCTOR.md > target/authority-convergence/a/sha256
+          "$GGEN" sync run
+          "$GGEN" receipt verify
+          sha256sum authority/ecosystem-alive/alive-program.json tools/ecosystem-doctor.py reference/ecosystem-reconstitution/DOCTOR.md > target/authority-convergence/b/sha256
+          diff -u target/authority-convergence/a/sha256 target/authority-convergence/b/sha256
+          python3 tools/ecosystem-doctor.py matrix --mode fast > target/authority-convergence/matrix.json
+          python3 - <<'PY'
+          import json
+          matrix = json.load(open('target/authority-convergence/matrix.json'))
+          rows = [row for row in matrix['include'] if row['repository'] == 'seanchatmangpt/lsp-max']
+          assert len(rows) == 1, rows
+          assert rows[0]['commands'] == ['cargo test --all'], rows[0]
+          PY
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+
+      - name: Commit exact authority and generated consequences
+        working-directory: corpus
+        run: |
+          git config user.name "ggen-ecosystem-controller"
+          git config user.email "ggen-ecosystem-controller@users.noreply.github.com"
+          git add \
+            authority/ecosystem-reconstitution/2026-07-31.repositories.json \
+            authority/ecosystem-alive/alive-program.json \
+            tools/ecosystem-doctor.py \
+            reference/ecosystem-reconstitution/DOCTOR.md \
+            .github/workflows/ecosystem-five-receipt-closure.yml \
+            .ggen-v2/receipts ggen.lock || true
+          if ! git diff --cached --quiet; then
+            git commit -m "fix(alive): converge command authority and private transport"
+          fi
+          test -z "$(git status --porcelain=v1 --untracked-files=all)"
+          git push origin "HEAD:${{ github.event.pull_request.head.ref || github.ref_name }}"
