@@ -19,7 +19,7 @@ jobs:
       RUSTC_WRAPPER: ""
       SOURCE_AUTHORITY_SHA: 32ff03016b476f5e4a938272a8a54fcd3b877e5a
       OBSERVATION_EVIDENCE_SHA: 598bf9e91f2ae27049cdfd989bcb76e0a3d85abb
-      RUNTIME_SHA: 1af4150fd0a259fd878071286e9c7a66d92f026a
+      RUNTIME_SHA: 5905b24fc62f3ec3eadb93fb36787cdde08f3c82
     steps:
       - name: Checkout ggen-legacy exact PR head
         uses: actions/checkout@v4
