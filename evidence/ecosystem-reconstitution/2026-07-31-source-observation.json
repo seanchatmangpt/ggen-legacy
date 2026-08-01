@@ -1,0 +1,39 @@
+{
+  "authority": "OBSERVATION_ONLY",
+  "disposition_counts": {
+    "ACTIVE_CANDIDATE": 13,
+    "INTEGRATED": 8,
+    "INTEGRATED_BRANCH": 3,
+    "PRESERVED_CANDIDATE": 1,
+    "TRANSPORT_ONLY": 1
+  },
+  "exclusions": [
+    "PR narration is not treated as source authority",
+    "closed-unmerged work remains a preserved candidate",
+    "temporary transport branches are lineage-only",
+    "no controller-owned foundry projection is edited by this change"
+  ],
+  "not_observed": [
+    "complete source bytes for every exact Git object",
+    "repository-native validation execution at every source object",
+    "cross-repository clean-room replay",
+    "final foundry A-K admission",
+    "external production consequences"
+  ],
+  "observation_day": "2026-07-31",
+  "observed_standing_counts": {
+    "ALIVE": 2,
+    "PARTIAL_ALIVE": 20,
+    "UNKNOWN": 3,
+    "UNSUPPORTED": 1
+  },
+  "product_repository_count": 18,
+  "program_id": "EOD-RECONSTITUTE-2026-07-31",
+  "repository_count": 19,
+  "resolved_corpus_base": "be95d8a47e241458f5e6670d79d3932e4107b011",
+  "schema": "ggen-legacy.ecosystem-reconstitution.observation/v1",
+  "source": "GitHub connector plus available conversation context",
+  "source_object_count": 26,
+  "standing": "UNKNOWN",
+  "transport_repository_count": 1
+}
