@@ -1,0 +1,31 @@
+{
+  "blob_digests": [
+    "176351aec176ac887d009542698a5ea60bd878f93485f32c245ea8fe2e7ba3b0",
+    "5f296e7a49b101e6ed2de08fce4e48b1f5b97a0d470252b0eccbad7d3f9802e2",
+    "72c40ace225e1cb2375e8af6f6ed0b4cc74dd27f5d5edc959b1b4d9d93ce46e3",
+    "ad613fceca8d65ccebe5a6ef45a42424f7b6cfb5e72e5235ce58dbce802d36b2"
+  ],
+  "capability_id": "legacy_ext2_receipt_v6_ttl_schema",
+  "classification": "CORPUS_HISTORICAL_IMPLEMENTATION",
+  "corpus_parent_head": "bbebdbcb840cd590e8f0c4141ed318047a6f0966",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "destination_path": "foundry/corpus/components/engine/legacy_ext2_receipt_v6_ttl_schema",
+  "disposition": "REPLACED",
+  "historical_commit": "04fa6074bad941ac7847d05bbe98293de8d7da42 | 8058558cdf993c0ea43ac7910912339f1eb99b3d",
+  "historical_commits": [
+    "04fa6074bad941ac7847d05bbe98293de8d7da42",
+    "8058558cdf993c0ea43ac7910912339f1eb99b3d"
+  ],
+  "manifest_digest": "0d149c3d39245f4bbff5db6dc0bb9ce760007fda965f5b7e7ddd6013e3248f9f",
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/2",
+  "source_head": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "source_path": "crates/ggen-core/src/v6/receipt.rs | crates/ggen-core/src/v6/passes/receipt_gen.rs | v6/templates/receipt.ttl.tera | crates/praxis-core/src/receipt_record.rs",
+  "source_paths": [
+    "crates/ggen-core/src/v6/receipt.rs",
+    "crates/ggen-core/src/v6/passes/receipt_gen.rs",
+    "v6/templates/receipt.ttl.tera",
+    "crates/praxis-core/src/receipt_record.rs"
+  ],
+  "source_removed": false,
+  "source_repository": "seanchatmangpt/ggen"
+}

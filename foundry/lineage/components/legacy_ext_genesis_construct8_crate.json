@@ -1,0 +1,48 @@
+{
+  "blob_digests": [
+    "f37e5be7db3feb18c1a5b1c49f73487c7282e605e0bdfd54eb16cb773bf74255",
+    "1c794ac8339afb6ac8d7de574dd858781dd9c249ded2fd1bd658069206b28aad",
+    "d71507ad6367576b983f59f32f7d76748bea02f99de0e433b593b8baeea352eb",
+    "e1ad56a64b40ce719115f1ae35e54132a38c696c566ad1b320c927e1776ed7b9",
+    "01d81a26d8ce9cfea5d92c5f137d3ccc4ee68b058f28432d1d9e7bcc26c67114",
+    "5c0446449222b35b1d521cae18c3ce71c37a4099968e46c1b1c6ff6aab7a1c72",
+    "62d3cb4d1f7dd512ebf600b1385e153765b807b61ac243e76d4e9d41542b3957",
+    "38437e29c4202a305113d3bec12afdc43cf03f92c00539bd1656cbd800d6eee9",
+    "6b0bb9898319509573bc948d79c7b56cc608404b073152afdbb6669835e2db61",
+    "5328d344140beb408ce27bb112175d12913bb670e942a334e697786a14e94362",
+    "71dc5e51a3de604d088112c0a4c4856bafe65a0ed99a92b7ebafd66a47bb189c",
+    "45f183b05e085ea7fb91c57755593f165b716e1ce9849bac9e19135467aace5a",
+    "eb3f444f32ae1efb816b7bdd0240294bc98dcda03a71f867e3242cf3d32455c8"
+  ],
+  "capability_id": "legacy_ext_genesis_construct8_crate",
+  "classification": "CORPUS_REFUSAL_WITNESS",
+  "corpus_parent_head": "bbebdbcb840cd590e8f0c4141ed318047a6f0966",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "destination_path": "foundry/corpus/components/system/legacy_ext_genesis_construct8_crate",
+  "disposition": "REFUSED",
+  "historical_commit": "8a69f7658d2c26f6005f84c9ba1b2a1c76cce1d0",
+  "historical_commits": [
+    "8a69f7658d2c26f6005f84c9ba1b2a1c76cce1d0"
+  ],
+  "manifest_digest": "bdf0ef6f1e3713f8cb4c1438f153ae5efdc6340856d1c4bc9e1db9305b1fa3fb",
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/2",
+  "source_head": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "source_path": "crates/genesis-construct8/Cargo.toml | crates/genesis-construct8/README.md | crates/genesis-construct8/src/adapters.rs | crates/genesis-construct8/src/admission.rs | crates/genesis-construct8/src/bin/genesis8.rs | crates/genesis-construct8/src/forge.rs | crates/genesis-construct8/src/hierarchy.rs | crates/genesis-construct8/src/lib.rs | crates/genesis-construct8/src/models.rs | crates/genesis-construct8/src/projectors.rs | crates/genesis-construct8/src/receipt.rs | crates/genesis-construct8/src/replay.rs | crates/genesis-construct8/src/stream.rs",
+  "source_paths": [
+    "crates/genesis-construct8/Cargo.toml",
+    "crates/genesis-construct8/README.md",
+    "crates/genesis-construct8/src/adapters.rs",
+    "crates/genesis-construct8/src/admission.rs",
+    "crates/genesis-construct8/src/bin/genesis8.rs",
+    "crates/genesis-construct8/src/forge.rs",
+    "crates/genesis-construct8/src/hierarchy.rs",
+    "crates/genesis-construct8/src/lib.rs",
+    "crates/genesis-construct8/src/models.rs",
+    "crates/genesis-construct8/src/projectors.rs",
+    "crates/genesis-construct8/src/receipt.rs",
+    "crates/genesis-construct8/src/replay.rs",
+    "crates/genesis-construct8/src/stream.rs"
+  ],
+  "source_removed": false,
+  "source_repository": "seanchatmangpt/ggen"
+}

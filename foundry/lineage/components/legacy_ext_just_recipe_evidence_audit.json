@@ -1,0 +1,24 @@
+{
+  "blob_digests": [
+    "614baa12a5bddb66c11d0639507dd404d400b85a54bea018107fe849494ac788"
+  ],
+  "capability_id": "legacy_ext_just_recipe_evidence_audit",
+  "classification": "CORPUS_ARCHIVE",
+  "corpus_parent_head": "bbebdbcb840cd590e8f0c4141ed318047a6f0966",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "destination_path": "foundry/corpus/components/system/legacy_ext_just_recipe_evidence_audit",
+  "disposition": "ARCHIVED",
+  "historical_commit": "f5a249874c2d755e9a5d452771d76387c8d1b8ad",
+  "historical_commits": [
+    "f5a249874c2d755e9a5d452771d76387c8d1b8ad"
+  ],
+  "manifest_digest": "b991663dabb6e3cd31fa667e6f8785040ee0736eaee586afd239ab33495926a3",
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/2",
+  "source_head": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "source_path": "justfile",
+  "source_paths": [
+    "justfile"
+  ],
+  "source_removed": false,
+  "source_repository": "seanchatmangpt/ggen"
+}

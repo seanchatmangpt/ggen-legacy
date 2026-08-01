@@ -1,0 +1,32 @@
+{
+  "blob_digests": [
+    "ea308b35e95f1287db32d2bae9814a21ee654c5c60d4e04ff5f84b4f7fb821d9",
+    "7e6547dcdda46817f01e6f4e7a86e36c64283a374fb80863cbe496b8fce57632",
+    "65dcbe8da7d81c5c303f68ed6138df69d802f53e4cba048937d0fb2a367fdf76",
+    "3e1569a9d1a147b299856255da6a21be23d500d95b24766e59fa168a69ab8d85"
+  ],
+  "capability_id": "legacy_ext_template_mode_append",
+  "classification": "CORPUS_ARCHIVE",
+  "corpus_parent_head": "bbebdbcb840cd590e8f0c4141ed318047a6f0966",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "destination_path": "foundry/corpus/components/engine/legacy_ext_template_mode_append",
+  "disposition": "ARCHIVED",
+  "historical_commit": "ac989dc457d31a155f77412774e6169989f4046f | 9187e8ec199498d963c347d853029c524ea79cd3 | cf50f682d0c7f105c8de32877e3adfc3f63dc498",
+  "historical_commits": [
+    "ac989dc457d31a155f77412774e6169989f4046f",
+    "9187e8ec199498d963c347d853029c524ea79cd3",
+    "cf50f682d0c7f105c8de32877e3adfc3f63dc498"
+  ],
+  "manifest_digest": "368b0c39443638085c2449b9ecfaa3aa8b5bca94ed99d1819b26e2ca70ba1783",
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/2",
+  "source_head": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "source_path": "docs/v26.8.1/90-legacy/observer-class-report.md | tools/v26.8.1/legacy_archaeology.py | docs/archive/operations/DEB-GVISOR-RUNBOOK.md | docs/operations/DEB-GVISOR-RUNBOOK.md",
+  "source_paths": [
+    "docs/v26.8.1/90-legacy/observer-class-report.md",
+    "tools/v26.8.1/legacy_archaeology.py",
+    "docs/archive/operations/DEB-GVISOR-RUNBOOK.md",
+    "docs/operations/DEB-GVISOR-RUNBOOK.md"
+  ],
+  "source_removed": false,
+  "source_repository": "seanchatmangpt/ggen"
+}

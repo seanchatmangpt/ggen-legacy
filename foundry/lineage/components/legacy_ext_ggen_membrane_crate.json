@@ -1,0 +1,26 @@
+{
+  "blob_digests": [
+    "a54a6d1054d17afdb58ffa52eb5b8727ebac28fd4978ab9befd1b6ca6247b2bc",
+    "db75f896baf92b5f807834b804a994e5008e7769f8dc8d0734f860fa4870d576"
+  ],
+  "capability_id": "legacy_ext_ggen_membrane_crate",
+  "classification": "CORPUS_REFUSAL_WITNESS",
+  "corpus_parent_head": "bbebdbcb840cd590e8f0c4141ed318047a6f0966",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "destination_path": "foundry/corpus/components/system/legacy_ext_ggen_membrane_crate",
+  "disposition": "REFUSED",
+  "historical_commit": "8a69f7658d2c26f6005f84c9ba1b2a1c76cce1d0",
+  "historical_commits": [
+    "8a69f7658d2c26f6005f84c9ba1b2a1c76cce1d0"
+  ],
+  "manifest_digest": "109c2d4fedf901f84b6f09fd51db2a5c27b4207d915b3fffbf46a6e8c1594ff4",
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/2",
+  "source_head": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "source_path": "crates/ggen-membrane/Cargo.toml | crates/ggen-membrane/src/lib.rs",
+  "source_paths": [
+    "crates/ggen-membrane/Cargo.toml",
+    "crates/ggen-membrane/src/lib.rs"
+  ],
+  "source_removed": false,
+  "source_repository": "seanchatmangpt/ggen"
+}

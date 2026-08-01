@@ -1,0 +1,38 @@
+{
+  "capability_id": "legacy_ext2_exit_code_cli_main_result_wrapper",
+  "classification": "CORPUS_HISTORICAL_IMPLEMENTATION",
+  "corpus_destination": "foundry/corpus/components/products/legacy_ext2_exit_code_cli_main_result_wrapper",
+  "corpus_parent_head": "bbebdbcb840cd590e8f0c4141ed318047a6f0966",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "disposition": "REPLACED",
+  "historical_commit": "2123193442907377b534ee6d63eb370643a9d6b5",
+  "historical_commits": [
+    "2123193442907377b534ee6d63eb370643a9d6b5"
+  ],
+  "kernel_owner": "crates/ggen-cli/src/main.rs's current explicit match/exit(0)/exit(1) pattern (not independently re-verified against the present-day file in this pass -- confirm current main.rs still matches this shape before treating it as final)",
+  "normalized_source_path": "crates/ggen-cli/src/main.rs",
+  "normalized_source_paths": [
+    "crates/ggen-cli/src/main.rs"
+  ],
+  "recovery_command": "git show 2123193442907377b534ee6d63eb370643a9d6b5:crates/ggen-cli/src/main.rs",
+  "requested_source_path": "crates/ggen-cli/src/main.rs (or ggen-cli-lib's equivalent binary entrypoint at the time)",
+  "resolution": "GIT_OBJECTS_RECOVERED",
+  "resolution_verifier": "ggen-foundry-admit-historical-extraction/v2",
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/2",
+  "semantic_evidence_digest": "2b0e7fb1de98d4919ef576703e25e4b507a50047747ff885c3c5306ac6e74853",
+  "semantic_evidence_path": "foundry/evidence/B/legacy-capabilities.ttl",
+  "source_files": [
+    {
+      "blake3": "c12fcc1b40c9bb08efe43146b7f365ebd915361096ffc578a76340539927c061",
+      "blob_path": "foundry/blobs/blake3/c12fcc1b40c9bb08efe43146b7f365ebd915361096ffc578a76340539927c061",
+      "byte_length": 359,
+      "git_mode": "100644",
+      "git_object_id": "d539582bd64edaefa91fded06d28e34ee88e4221",
+      "git_path": "crates/ggen-cli/src/main.rs",
+      "historical_commit": "2123193442907377b534ee6d63eb370643a9d6b5"
+    }
+  ],
+  "source_head": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "source_removed": false,
+  "source_repository": "seanchatmangpt/ggen"
+}

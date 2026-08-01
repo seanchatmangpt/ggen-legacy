@@ -1,0 +1,38 @@
+{
+  "capability_id": "legacy_ext_just_recipe_workspace_sync",
+  "classification": "CORPUS_ARCHIVE",
+  "corpus_destination": "foundry/corpus/components/system/legacy_ext_just_recipe_workspace_sync",
+  "corpus_parent_head": "bbebdbcb840cd590e8f0c4141ed318047a6f0966",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "disposition": "ARCHIVED",
+  "historical_commit": "f5a249874c2d755e9a5d452771d76387c8d1b8ad",
+  "historical_commits": [
+    "f5a249874c2d755e9a5d452771d76387c8d1b8ad"
+  ],
+  "kernel_owner": "ggen-legacy/archive/system",
+  "normalized_source_path": "justfile",
+  "normalized_source_paths": [
+    "justfile"
+  ],
+  "recovery_command": "git show f5a249874c2d755e9a5d452771d76387c8d1b8ad:justfile",
+  "requested_source_path": "justfile",
+  "resolution": "GIT_OBJECTS_RECOVERED",
+  "resolution_verifier": "ggen-foundry-admit-historical-extraction/v2",
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/2",
+  "semantic_evidence_digest": "2b0e7fb1de98d4919ef576703e25e4b507a50047747ff885c3c5306ac6e74853",
+  "semantic_evidence_path": "foundry/evidence/B/legacy-capabilities.ttl",
+  "source_files": [
+    {
+      "blake3": "614baa12a5bddb66c11d0639507dd404d400b85a54bea018107fe849494ac788",
+      "blob_path": "foundry/blobs/blake3/614baa12a5bddb66c11d0639507dd404d400b85a54bea018107fe849494ac788",
+      "byte_length": 11202,
+      "git_mode": "100644",
+      "git_object_id": "0080e7cb114204f6954fd09453f272d721708351",
+      "git_path": "justfile",
+      "historical_commit": "f5a249874c2d755e9a5d452771d76387c8d1b8ad"
+    }
+  ],
+  "source_head": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "source_removed": false,
+  "source_repository": "seanchatmangpt/ggen"
+}

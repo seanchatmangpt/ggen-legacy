@@ -1,0 +1,41 @@
+{
+  "blob_digests": [
+    "34e6dc3a870aeb442509619c817a70d9fc80b941c5d697b0f8484696cef86a53",
+    "89bf552374b73cd39a69b964add5fbfea2da778880923afc092f41943f957480",
+    "839364adbd9c66bf2c1efd41fdf488f11050a860346f8803501d88589af2fced",
+    "a0022a11fc31b05375fce2e1710ef9e61ba077c8db0417941aae02833ac3af6d",
+    "4861d64bde2b2cd4ff48225f1f76131dc834402572aca7ef5659380ab6af1f59",
+    "76481426e71fb511cca6c5e19cebf8c14bf9cba2aa78547a1a4c30b9b7132e7f",
+    "57632749b45d9ed61cae3d4e5a02acc6d856152d197722422d84c6072ac06aaf",
+    "0a899b680cdcdfac23435f2b963d581695fe7d6e46da8c16378747bce9daf25d",
+    "97968f32531012b58a1ae16c2a3d640fb764aef3b0b652c19fa23076e201c514"
+  ],
+  "capability_id": "legacy_ggen_toml_dual_schema",
+  "classification": "CORPUS_HISTORICAL_IMPLEMENTATION",
+  "corpus_parent_head": "bbebdbcb840cd590e8f0c4141ed318047a6f0966",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "destination_path": "foundry/corpus/components/engine/legacy_ggen_toml_dual_schema",
+  "disposition": "REPLACED",
+  "historical_commit": "627f84c59f2e50251e7d75dce4ac409a8ecd21af | 32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "historical_commits": [
+    "627f84c59f2e50251e7d75dce4ac409a8ecd21af",
+    "32ff03016b476f5e4a938272a8a54fcd3b877e5a"
+  ],
+  "manifest_digest": "4db8e7b4e14cc6dc235b45cbc783da38ee7ad85397426e37cc355ddfcf087411",
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/2",
+  "source_head": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "source_path": "crates/ggen-config/src/manifest/types.rs | crates/ggen-engine/src/config.rs | crates/ggen-config/src/config_schema.rs | crates/ggen-engine/src/schema_dispatch.rs | crates/ggen-engine/src/verbs/handlers.rs | examples/tai-enterprise-rebuild/ggen.toml | ontology/v26.8.1/legacy-capabilities.ttl | crates/ggen-config/tests/schema_dual_fixtures_test.rs | crates/ggen-engine/tests/config_schema_dispatch_e2e.rs",
+  "source_paths": [
+    "crates/ggen-config/src/manifest/types.rs",
+    "crates/ggen-engine/src/config.rs",
+    "crates/ggen-config/src/config_schema.rs",
+    "crates/ggen-engine/src/schema_dispatch.rs",
+    "crates/ggen-engine/src/verbs/handlers.rs",
+    "examples/tai-enterprise-rebuild/ggen.toml",
+    "ontology/v26.8.1/legacy-capabilities.ttl",
+    "crates/ggen-config/tests/schema_dual_fixtures_test.rs",
+    "crates/ggen-engine/tests/config_schema_dispatch_e2e.rs"
+  ],
+  "source_removed": false,
+  "source_repository": "seanchatmangpt/ggen"
+}

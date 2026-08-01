@@ -1,0 +1,42 @@
+{
+  "blob_digests": [
+    "eedb8e13130667dfb96bfcf8cc5cdd95028dbca67f63fe88ff41f55297208813",
+    "ed276e5befed3ba04db236a9e41055735bcd5d71f9b4d2750aa34e5a5c112a92",
+    "45275a24c2b26102888ff81fb1aad8c4680e378b30c33857182c7654d6b061e7",
+    "300faec607b5930525bd494d5316d7f934e9ab338368f63a8af94046fda6d403",
+    "ce234eacff7cd16b762ddd46bb62ef3d5ae8e65d163a8063dacb6bb0888b2c9e",
+    "ebece37db01f7e3234703fd2fad0bc2e071a0b035c64e1c3afaada481a2dabca",
+    "39fdae3a3fb21bc3ac27cc1a82926c19ea4f526c293cc50c1e35c1f2354c920e",
+    "713e65bb7ffa35b3eaa1b5f4651ef3883163ae7dfaac7b650d24d7fe20197f0a",
+    "16d8bc97789642fd2d071fe6fba4a85ac16c2d038476de649ecdfc8b7f9e763d",
+    "195fb09773c9e212ea49d7ed9a3bc3eb077e5b6a46ca7cee3e7ac5205d3f4d8b"
+  ],
+  "capability_id": "legacy_ggen_lsp_mcp_server",
+  "classification": "CORPUS_HISTORICAL_IMPLEMENTATION",
+  "corpus_parent_head": "bbebdbcb840cd590e8f0c4141ed318047a6f0966",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "destination_path": "foundry/corpus/components/products/legacy_ggen_lsp_mcp_server",
+  "disposition": "SUBSUMED",
+  "historical_commit": "0a843aef6215e828fece13bfd0edb2f35c4e32fa",
+  "historical_commits": [
+    "0a843aef6215e828fece13bfd0edb2f35c4e32fa"
+  ],
+  "manifest_digest": "233e4f6246d53bfe83411a2d841c58864154d0a9b3e6a4ac944efef5eaff26ba",
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/2",
+  "source_head": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "source_path": "crates/ggen-lsp-mcp/Cargo.toml | crates/ggen-lsp-mcp/src/lib.rs | crates/ggen-lsp-mcp/src/main.rs | crates/ggen-lsp-mcp/tests/field_gauge_test.rs | crates/ggen-lsp-mcp/tests/fixtures/minimal.toml | crates/ggen-lsp-mcp/tests/fixtures/minimal.ttl | crates/ggen-lsp-mcp/tests/harden_test.rs | crates/ggen-lsp-mcp/tests/mcp_protocol_test.rs | crates/ggen-lsp-mcp/tests/parity_test.rs | crates/ggen-lsp-mcp/tests/replay_metrics_test.rs",
+  "source_paths": [
+    "crates/ggen-lsp-mcp/Cargo.toml",
+    "crates/ggen-lsp-mcp/src/lib.rs",
+    "crates/ggen-lsp-mcp/src/main.rs",
+    "crates/ggen-lsp-mcp/tests/field_gauge_test.rs",
+    "crates/ggen-lsp-mcp/tests/fixtures/minimal.toml",
+    "crates/ggen-lsp-mcp/tests/fixtures/minimal.ttl",
+    "crates/ggen-lsp-mcp/tests/harden_test.rs",
+    "crates/ggen-lsp-mcp/tests/mcp_protocol_test.rs",
+    "crates/ggen-lsp-mcp/tests/parity_test.rs",
+    "crates/ggen-lsp-mcp/tests/replay_metrics_test.rs"
+  ],
+  "source_removed": false,
+  "source_repository": "seanchatmangpt/ggen"
+}

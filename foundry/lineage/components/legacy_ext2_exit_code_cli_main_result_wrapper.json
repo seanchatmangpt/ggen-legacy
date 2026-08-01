@@ -1,0 +1,24 @@
+{
+  "blob_digests": [
+    "c12fcc1b40c9bb08efe43146b7f365ebd915361096ffc578a76340539927c061"
+  ],
+  "capability_id": "legacy_ext2_exit_code_cli_main_result_wrapper",
+  "classification": "CORPUS_HISTORICAL_IMPLEMENTATION",
+  "corpus_parent_head": "bbebdbcb840cd590e8f0c4141ed318047a6f0966",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "destination_path": "foundry/corpus/components/products/legacy_ext2_exit_code_cli_main_result_wrapper",
+  "disposition": "REPLACED",
+  "historical_commit": "2123193442907377b534ee6d63eb370643a9d6b5",
+  "historical_commits": [
+    "2123193442907377b534ee6d63eb370643a9d6b5"
+  ],
+  "manifest_digest": "3d082b4b19b8a9b6563689c588945d4b37000c87c7303fe20b299208a3b57e7b",
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/2",
+  "source_head": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "source_path": "crates/ggen-cli/src/main.rs",
+  "source_paths": [
+    "crates/ggen-cli/src/main.rs"
+  ],
+  "source_removed": false,
+  "source_repository": "seanchatmangpt/ggen"
+}

@@ -1,0 +1,70 @@
+{
+  "capability_id": "legacy_ext_template_mode_append",
+  "classification": "CORPUS_ARCHIVE",
+  "corpus_destination": "foundry/corpus/components/engine/legacy_ext_template_mode_append",
+  "corpus_parent_head": "bbebdbcb840cd590e8f0c4141ed318047a6f0966",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "disposition": "ARCHIVED",
+  "historical_commit": "ac989dc457d31a155f77412774e6169989f4046f | 9187e8ec199498d963c347d853029c524ea79cd3 | cf50f682d0c7f105c8de32877e3adfc3f63dc498",
+  "historical_commits": [
+    "ac989dc457d31a155f77412774e6169989f4046f",
+    "9187e8ec199498d963c347d853029c524ea79cd3",
+    "cf50f682d0c7f105c8de32877e3adfc3f63dc498"
+  ],
+  "kernel_owner": "ggen-legacy/archive/engine",
+  "normalized_source_path": "docs/v26.8.1/90-legacy/observer-class-report.md | tools/v26.8.1/legacy_archaeology.py | docs/archive/operations/DEB-GVISOR-RUNBOOK.md | docs/operations/DEB-GVISOR-RUNBOOK.md",
+  "normalized_source_paths": [
+    "docs/v26.8.1/90-legacy/observer-class-report.md",
+    "tools/v26.8.1/legacy_archaeology.py",
+    "docs/archive/operations/DEB-GVISOR-RUNBOOK.md",
+    "docs/operations/DEB-GVISOR-RUNBOOK.md"
+  ],
+  "recovery_command": "git show ac989dc457d31a155f77412774e6169989f4046f:docs/v26.8.1/90-legacy/observer-class-report.md && git show ac989dc457d31a155f77412774e6169989f4046f:tools/v26.8.1/legacy_archaeology.py && git show 9187e8ec199498d963c347d853029c524ea79cd3:docs/archive/operations/DEB-GVISOR-RUNBOOK.md && git show cf50f682d0c7f105c8de32877e3adfc3f63dc498:docs/operations/DEB-GVISOR-RUNBOOK.md",
+  "requested_source_path": "template frontmatter (`.tmpl`/pack ontology mode fields) predating the current 3-variant GenerationMode enum",
+  "resolution": "GIT_OBJECTS_RECOVERED",
+  "resolution_verifier": "ggen-foundry-admit-historical-extraction/v2",
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/2",
+  "semantic_evidence_digest": "2b0e7fb1de98d4919ef576703e25e4b507a50047747ff885c3c5306ac6e74853",
+  "semantic_evidence_path": "foundry/evidence/B/legacy-capabilities.ttl",
+  "source_files": [
+    {
+      "blake3": "ea308b35e95f1287db32d2bae9814a21ee654c5c60d4e04ff5f84b4f7fb821d9",
+      "blob_path": "foundry/blobs/blake3/ea308b35e95f1287db32d2bae9814a21ee654c5c60d4e04ff5f84b4f7fb821d9",
+      "byte_length": 11562,
+      "git_mode": "100644",
+      "git_object_id": "a95787b5c0c2aee31d83ec1868716daa60ea2e9e",
+      "git_path": "docs/v26.8.1/90-legacy/observer-class-report.md",
+      "historical_commit": "ac989dc457d31a155f77412774e6169989f4046f"
+    },
+    {
+      "blake3": "7e6547dcdda46817f01e6f4e7a86e36c64283a374fb80863cbe496b8fce57632",
+      "blob_path": "foundry/blobs/blake3/7e6547dcdda46817f01e6f4e7a86e36c64283a374fb80863cbe496b8fce57632",
+      "byte_length": 47737,
+      "git_mode": "100644",
+      "git_object_id": "8ce1c725c53957e8f8f6ecc4fb39ddc22ffe7adc",
+      "git_path": "tools/v26.8.1/legacy_archaeology.py",
+      "historical_commit": "ac989dc457d31a155f77412774e6169989f4046f"
+    },
+    {
+      "blake3": "65dcbe8da7d81c5c303f68ed6138df69d802f53e4cba048937d0fb2a367fdf76",
+      "blob_path": "foundry/blobs/blake3/65dcbe8da7d81c5c303f68ed6138df69d802f53e4cba048937d0fb2a367fdf76",
+      "byte_length": 65856,
+      "git_mode": "100644",
+      "git_object_id": "0a713c5121cab17235b330893e1c45e24b991985",
+      "git_path": "docs/archive/operations/DEB-GVISOR-RUNBOOK.md",
+      "historical_commit": "9187e8ec199498d963c347d853029c524ea79cd3"
+    },
+    {
+      "blake3": "3e1569a9d1a147b299856255da6a21be23d500d95b24766e59fa168a69ab8d85",
+      "blob_path": "foundry/blobs/blake3/3e1569a9d1a147b299856255da6a21be23d500d95b24766e59fa168a69ab8d85",
+      "byte_length": 61514,
+      "git_mode": "100644",
+      "git_object_id": "30d4f51738b1f0fb128c2c291a8470a366c888fe",
+      "git_path": "docs/operations/DEB-GVISOR-RUNBOOK.md",
+      "historical_commit": "cf50f682d0c7f105c8de32877e3adfc3f63dc498"
+    }
+  ],
+  "source_head": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "source_removed": false,
+  "source_repository": "seanchatmangpt/ggen"
+}

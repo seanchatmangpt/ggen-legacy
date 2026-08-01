@@ -1,0 +1,158 @@
+{
+  "capability_id": "legacy_genesis_core_crate_original",
+  "classification": "CORPUS_ARCHIVE",
+  "corpus_destination": "foundry/corpus/components/system/legacy_genesis_core_crate_original",
+  "corpus_parent_head": "bbebdbcb840cd590e8f0c4141ed318047a6f0966",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "disposition": "ARCHIVED",
+  "historical_commit": "f9027867ced619079c62f7bf819295727834b9d8",
+  "historical_commits": [
+    "f9027867ced619079c62f7bf819295727834b9d8"
+  ],
+  "kernel_owner": "ggen-legacy/archive/system",
+  "normalized_source_path": "crates/genesis-core/Cargo.toml | crates/genesis-core/src/lib.rs | crates/genesis-core-v2/Cargo.toml | crates/genesis-core-v2/src/inventory.rs | crates/genesis-core-v2/src/lib.rs | crates/genesis-core-v2/src/primitives.rs | crates/genesis-core-v2/src/registry.rs | crates/genesis-core-v2/src/revelation.rs | crates/genesis-core-v2/src/split_laws.rs | crates/genesis-core-v2/tests/fixtures/minimal.toml | crates/genesis-core-v2/tests/fixtures/minimal.ttl | crates/genesis-core-v2/tests/receipt_chain_test.rs | crates/genesis-core-v2/tests/receipt_chain_verification_test.rs",
+  "normalized_source_paths": [
+    "crates/genesis-core/Cargo.toml",
+    "crates/genesis-core/src/lib.rs",
+    "crates/genesis-core-v2/Cargo.toml",
+    "crates/genesis-core-v2/src/inventory.rs",
+    "crates/genesis-core-v2/src/lib.rs",
+    "crates/genesis-core-v2/src/primitives.rs",
+    "crates/genesis-core-v2/src/registry.rs",
+    "crates/genesis-core-v2/src/revelation.rs",
+    "crates/genesis-core-v2/src/split_laws.rs",
+    "crates/genesis-core-v2/tests/fixtures/minimal.toml",
+    "crates/genesis-core-v2/tests/fixtures/minimal.ttl",
+    "crates/genesis-core-v2/tests/receipt_chain_test.rs",
+    "crates/genesis-core-v2/tests/receipt_chain_verification_test.rs"
+  ],
+  "recovery_command": "git show f9027867ced619079c62f7bf819295727834b9d8:crates/genesis-core/Cargo.toml && git show f9027867ced619079c62f7bf819295727834b9d8:crates/genesis-core/src/lib.rs && git show f9027867ced619079c62f7bf819295727834b9d8:crates/genesis-core-v2/Cargo.toml && git show f9027867ced619079c62f7bf819295727834b9d8:crates/genesis-core-v2/src/inventory.rs && git show f9027867ced619079c62f7bf819295727834b9d8:crates/genesis-core-v2/src/lib.rs && git show f9027867ced619079c62f7bf819295727834b9d8:crates/genesis-core-v2/src/primitives.rs && git show f9027867ced619079c62f7bf819295727834b9d8:crates/genesis-core-v2/src/registry.rs && git show f9027867ced619079c62f7bf819295727834b9d8:crates/genesis-core-v2/src/revelation.rs && git show f9027867ced619079c62f7bf819295727834b9d8:crates/genesis-core-v2/src/split_laws.rs && git show f9027867ced619079c62f7bf819295727834b9d8:crates/genesis-core-v2/tests/fixtures/minimal.toml && git show f9027867ced619079c62f7bf819295727834b9d8:crates/genesis-core-v2/tests/fixtures/minimal.ttl && git show f9027867ced619079c62f7bf819295727834b9d8:crates/genesis-core-v2/tests/receipt_chain_test.rs && git show f9027867ced619079c62f7bf819295727834b9d8:crates/genesis-core-v2/tests/receipt_chain_verification_test.rs",
+  "requested_source_path": "crates/genesis-core/ (deleted whole crate -- distinct from the still-live crates/genesis-core-v2)",
+  "resolution": "GIT_OBJECTS_RECOVERED",
+  "resolution_verifier": "ggen-foundry-admit-historical-extraction/v2",
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/2",
+  "semantic_evidence_digest": "2b0e7fb1de98d4919ef576703e25e4b507a50047747ff885c3c5306ac6e74853",
+  "semantic_evidence_path": "foundry/evidence/B/legacy-capabilities.ttl",
+  "source_files": [
+    {
+      "blake3": "fdac0b8e172815189ff6b53f7affd3b7e04e1c0c60502a829997cdc6def9845b",
+      "blob_path": "foundry/blobs/blake3/fdac0b8e172815189ff6b53f7affd3b7e04e1c0c60502a829997cdc6def9845b",
+      "byte_length": 545,
+      "git_mode": "100644",
+      "git_object_id": "af2c2e0e629d3cd8ee555df912acc6e16ae894f1",
+      "git_path": "crates/genesis-core/Cargo.toml",
+      "historical_commit": "f9027867ced619079c62f7bf819295727834b9d8"
+    },
+    {
+      "blake3": "85b4ff7e8597284bf88ce1076a59c6f9b1955ac54afde6f0f0906be39136bedc",
+      "blob_path": "foundry/blobs/blake3/85b4ff7e8597284bf88ce1076a59c6f9b1955ac54afde6f0f0906be39136bedc",
+      "byte_length": 7434,
+      "git_mode": "100644",
+      "git_object_id": "7f3d9bb7f11503ae336fd98e7e5a213039998039",
+      "git_path": "crates/genesis-core/src/lib.rs",
+      "historical_commit": "f9027867ced619079c62f7bf819295727834b9d8"
+    },
+    {
+      "blake3": "00c3c1125037228bf05cdbf5158f4e2635a21e594ce2266f6f9e046b5a78cfd4",
+      "blob_path": "foundry/blobs/blake3/00c3c1125037228bf05cdbf5158f4e2635a21e594ce2266f6f9e046b5a78cfd4",
+      "byte_length": 762,
+      "git_mode": "100644",
+      "git_object_id": "c267321165ff256a1859c1d4fbfcba9a91d77fd7",
+      "git_path": "crates/genesis-core-v2/Cargo.toml",
+      "historical_commit": "f9027867ced619079c62f7bf819295727834b9d8"
+    },
+    {
+      "blake3": "381c09bc7dd4f0c9f55b7510c17c2df8d2012b463450783de52ba04ea297d835",
+      "blob_path": "foundry/blobs/blake3/381c09bc7dd4f0c9f55b7510c17c2df8d2012b463450783de52ba04ea297d835",
+      "byte_length": 9066,
+      "git_mode": "100644",
+      "git_object_id": "dc517bc2a88903c6e506503f25858a90abcbe25e",
+      "git_path": "crates/genesis-core-v2/src/inventory.rs",
+      "historical_commit": "f9027867ced619079c62f7bf819295727834b9d8"
+    },
+    {
+      "blake3": "e078f25f5d438f5f9ef4ecafe057ba5caa3ca70842cfffd56d24d4f43ae10d52",
+      "blob_path": "foundry/blobs/blake3/e078f25f5d438f5f9ef4ecafe057ba5caa3ca70842cfffd56d24d4f43ae10d52",
+      "byte_length": 9864,
+      "git_mode": "100644",
+      "git_object_id": "01e640bf23694ebf05f9149a1da6d9e0f27b377a",
+      "git_path": "crates/genesis-core-v2/src/lib.rs",
+      "historical_commit": "f9027867ced619079c62f7bf819295727834b9d8"
+    },
+    {
+      "blake3": "b52d00ec461d05e0edaf50de67c1b9d30b1673dba820a513e2ba3fca3610678f",
+      "blob_path": "foundry/blobs/blake3/b52d00ec461d05e0edaf50de67c1b9d30b1673dba820a513e2ba3fca3610678f",
+      "byte_length": 13276,
+      "git_mode": "100644",
+      "git_object_id": "da4b42aee91c369d8404f6b68d3fab2aecfc0eca",
+      "git_path": "crates/genesis-core-v2/src/primitives.rs",
+      "historical_commit": "f9027867ced619079c62f7bf819295727834b9d8"
+    },
+    {
+      "blake3": "066c5f8e9f0cefb3e053ed132d9b8906f6cbf119431a54babbb228fc4febb283",
+      "blob_path": "foundry/blobs/blake3/066c5f8e9f0cefb3e053ed132d9b8906f6cbf119431a54babbb228fc4febb283",
+      "byte_length": 1078,
+      "git_mode": "100644",
+      "git_object_id": "ef4c1769ef0343459ae378655af71e1a5c2e5b70",
+      "git_path": "crates/genesis-core-v2/src/registry.rs",
+      "historical_commit": "f9027867ced619079c62f7bf819295727834b9d8"
+    },
+    {
+      "blake3": "7cf075c35a38c96611a909725d0e0946369225b1c3ba341b8b76f6f0b8c88e05",
+      "blob_path": "foundry/blobs/blake3/7cf075c35a38c96611a909725d0e0946369225b1c3ba341b8b76f6f0b8c88e05",
+      "byte_length": 18749,
+      "git_mode": "100644",
+      "git_object_id": "4753680586267ef458ed3f6704ee5350f456001a",
+      "git_path": "crates/genesis-core-v2/src/revelation.rs",
+      "historical_commit": "f9027867ced619079c62f7bf819295727834b9d8"
+    },
+    {
+      "blake3": "a10e62bc746bfe4be8b8b1572655ff6c188ddd41dc8f80f86e28695299c7aa9f",
+      "blob_path": "foundry/blobs/blake3/a10e62bc746bfe4be8b8b1572655ff6c188ddd41dc8f80f86e28695299c7aa9f",
+      "byte_length": 10718,
+      "git_mode": "100644",
+      "git_object_id": "1b4150d6a38e0336c3dd5967b9d055bb6edfc5be",
+      "git_path": "crates/genesis-core-v2/src/split_laws.rs",
+      "historical_commit": "f9027867ced619079c62f7bf819295727834b9d8"
+    },
+    {
+      "blake3": "ce234eacff7cd16b762ddd46bb62ef3d5ae8e65d163a8063dacb6bb0888b2c9e",
+      "blob_path": "foundry/blobs/blake3/ce234eacff7cd16b762ddd46bb62ef3d5ae8e65d163a8063dacb6bb0888b2c9e",
+      "byte_length": 87,
+      "git_mode": "100644",
+      "git_object_id": "8d996d4d5000093c10d53b4d776c00e8d7a4c6a4",
+      "git_path": "crates/genesis-core-v2/tests/fixtures/minimal.toml",
+      "historical_commit": "f9027867ced619079c62f7bf819295727834b9d8"
+    },
+    {
+      "blake3": "ebece37db01f7e3234703fd2fad0bc2e071a0b035c64e1c3afaada481a2dabca",
+      "blob_path": "foundry/blobs/blake3/ebece37db01f7e3234703fd2fad0bc2e071a0b035c64e1c3afaada481a2dabca",
+      "byte_length": 161,
+      "git_mode": "100644",
+      "git_object_id": "9079de230595c9bfd29b9d2861c4b4c6a48cb52d",
+      "git_path": "crates/genesis-core-v2/tests/fixtures/minimal.ttl",
+      "historical_commit": "f9027867ced619079c62f7bf819295727834b9d8"
+    },
+    {
+      "blake3": "9b0be19fff848c368fbe2535a20cab428e59d9770a796da34ce73d967c43e7d6",
+      "blob_path": "foundry/blobs/blake3/9b0be19fff848c368fbe2535a20cab428e59d9770a796da34ce73d967c43e7d6",
+      "byte_length": 7662,
+      "git_mode": "100644",
+      "git_object_id": "fe6629f6a0e8f2fa7af72ed1dd6e51f414828936",
+      "git_path": "crates/genesis-core-v2/tests/receipt_chain_test.rs",
+      "historical_commit": "f9027867ced619079c62f7bf819295727834b9d8"
+    },
+    {
+      "blake3": "34ae066b4acd948440b8b45b90466c267fa3e1116dffc3c5452e3838eb59ea6e",
+      "blob_path": "foundry/blobs/blake3/34ae066b4acd948440b8b45b90466c267fa3e1116dffc3c5452e3838eb59ea6e",
+      "byte_length": 20723,
+      "git_mode": "100644",
+      "git_object_id": "624c8a47aad1070ede5601e8b783d81088fc862b",
+      "git_path": "crates/genesis-core-v2/tests/receipt_chain_verification_test.rs",
+      "historical_commit": "f9027867ced619079c62f7bf819295727834b9d8"
+    }
+  ],
+  "source_head": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "source_removed": false,
+  "source_repository": "seanchatmangpt/ggen"
+}

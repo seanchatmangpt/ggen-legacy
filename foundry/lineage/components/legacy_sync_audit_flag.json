@@ -1,0 +1,26 @@
+{
+  "blob_digests": [
+    "4f41c7e40019778ab0792a042ceaec375c1ee7cc4c338834fefd565457d83ac3",
+    "200128d08e3ec8430e83dba8039756684582903694fdb2249688c2b568f9263e"
+  ],
+  "capability_id": "legacy_sync_audit_flag",
+  "classification": "CORPUS_REFUSAL_WITNESS",
+  "corpus_parent_head": "bbebdbcb840cd590e8f0c4141ed318047a6f0966",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "destination_path": "foundry/corpus/components/products/legacy_sync_audit_flag",
+  "disposition": "REFUSED",
+  "historical_commit": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "historical_commits": [
+    "32ff03016b476f5e4a938272a8a54fcd3b877e5a"
+  ],
+  "manifest_digest": "5b3db8f509f19e1099c9f8d9cd6243849bab0a9bc9063647cbe53ae4d40a4a24",
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/2",
+  "source_head": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "source_path": "justfile | crates/ggen-engine/src/verbs/sync.rs",
+  "source_paths": [
+    "justfile",
+    "crates/ggen-engine/src/verbs/sync.rs"
+  ],
+  "source_removed": false,
+  "source_repository": "seanchatmangpt/ggen"
+}

@@ -1,0 +1,27 @@
+{
+  "blob_digests": [
+    "ad613fceca8d65ccebe5a6ef45a42424f7b6cfb5e72e5235ce58dbce802d36b2",
+    "7040f1c5ac6ae6e744193229b37325dd17664c702a41304b0c20f56d6a1441bc"
+  ],
+  "capability_id": "legacy_ext2_receipt_record_schema_v1",
+  "classification": "CORPUS_HISTORICAL_IMPLEMENTATION",
+  "corpus_parent_head": "bbebdbcb840cd590e8f0c4141ed318047a6f0966",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "destination_path": "foundry/corpus/components/engine/legacy_ext2_receipt_record_schema_v1",
+  "disposition": "SUBSUMED",
+  "historical_commit": "cbf173f82d0f492cf6fd165430f5afd68384d3d1 | 3b294a8ce1efbd29076db5b0818c464b13d9868f",
+  "historical_commits": [
+    "cbf173f82d0f492cf6fd165430f5afd68384d3d1",
+    "3b294a8ce1efbd29076db5b0818c464b13d9868f"
+  ],
+  "manifest_digest": "9b4517e78e718bc119fdc78ba9d8f37bc682497cd3525aff16849774dea1b694",
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/2",
+  "source_head": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "source_path": "crates/praxis-core/src/receipt_record.rs | crates/ggen-engine/tests/receipt_epoch_e2e.rs",
+  "source_paths": [
+    "crates/praxis-core/src/receipt_record.rs",
+    "crates/ggen-engine/tests/receipt_epoch_e2e.rs"
+  ],
+  "source_removed": false,
+  "source_repository": "seanchatmangpt/ggen"
+}

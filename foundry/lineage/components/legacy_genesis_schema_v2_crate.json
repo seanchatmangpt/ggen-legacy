@@ -1,0 +1,26 @@
+{
+  "blob_digests": [
+    "818890dc1257d952396c88d57235760f405921e8cb6e40b72e79bfae9863f8c1",
+    "95327db59a1e12c6107be7332078e4c39218cde2c1b25f5f52fa561f72f5a931"
+  ],
+  "capability_id": "legacy_genesis_schema_v2_crate",
+  "classification": "CORPUS_HISTORICAL_IMPLEMENTATION",
+  "corpus_parent_head": "bbebdbcb840cd590e8f0c4141ed318047a6f0966",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "destination_path": "foundry/corpus/components/system/legacy_genesis_schema_v2_crate",
+  "disposition": "SUBSUMED",
+  "historical_commit": "f9de04c335a9b53318339514f3a671475cd231e1",
+  "historical_commits": [
+    "f9de04c335a9b53318339514f3a671475cd231e1"
+  ],
+  "manifest_digest": "4c54b6d5894581270305ce8eabe03323e52f5186ff995505fc396ca3afe5de95",
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/2",
+  "source_head": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "source_path": "crates/genesis-schema-v2/Cargo.toml | crates/genesis-schema-v2/src/lib.rs",
+  "source_paths": [
+    "crates/genesis-schema-v2/Cargo.toml",
+    "crates/genesis-schema-v2/src/lib.rs"
+  ],
+  "source_removed": false,
+  "source_repository": "seanchatmangpt/ggen"
+}

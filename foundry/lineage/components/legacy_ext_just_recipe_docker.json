@@ -1,0 +1,24 @@
+{
+  "blob_digests": [
+    "69aa44de32a7ae2f0cad781b9503f13f7dae69f96484e9147c621d3b802ba4d2"
+  ],
+  "capability_id": "legacy_ext_just_recipe_docker",
+  "classification": "CORPUS_ARCHIVE",
+  "corpus_parent_head": "bbebdbcb840cd590e8f0c4141ed318047a6f0966",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "destination_path": "foundry/corpus/components/system/legacy_ext_just_recipe_docker",
+  "disposition": "ARCHIVED",
+  "historical_commit": "282a351cce21bd35943a74e7ae8583c5a280a16b",
+  "historical_commits": [
+    "282a351cce21bd35943a74e7ae8583c5a280a16b"
+  ],
+  "manifest_digest": "528880e6243eab1c2e7f5c7e8cdaea3adc1ab9afaf2228efcd56ab6c942341cf",
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/2",
+  "source_head": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "source_path": "justfile",
+  "source_paths": [
+    "justfile"
+  ],
+  "source_removed": false,
+  "source_repository": "seanchatmangpt/ggen"
+}
