@@ -1,0 +1,45 @@
+[project]
+name = "ggen-legacy-ecosystem-alive"
+version = "1.0.0"
+description = "ggen-manufactured doctor, validation, receipt, and promotion UX for the reconstituted repository ecosystem"
+authors = ["Sean Chatman"]
+license = "MIT"
+repository = "https://github.com/seanchatmangpt/ggen-legacy"
+
+[ontology]
+source = "authority/ecosystem-alive/ontology.ttl"
+base_iri = "https://ggen.dev/ecosystem-alive#"
+imports = []
+
+[ontology.prefixes]
+alive = "https://ggen.dev/ecosystem-alive#"
+dcterms = "http://purl.org/dc/terms/"
+skos = "http://www.w3.org/2004/02/skos/core#"
+xsd = "http://www.w3.org/2001/XMLSchema#"
+
+[generation]
+output_dir = "."
+
+[[generation.rules]]
+name = "ecosystem-alive-program"
+query = { file = "authority/ecosystem-alive/queries/program.rq" }
+template = { file = "authority/ecosystem-alive/templates/alive-program.json.tera" }
+output_file = "authority/ecosystem-alive/alive-program.json"
+skip_empty = false
+mode = "Overwrite"
+
+[[generation.rules]]
+name = "ecosystem-doctor-cli"
+query = { file = "authority/ecosystem-alive/queries/program.rq" }
+template = { file = "authority/ecosystem-alive/templates/ecosystem-doctor.py.tera" }
+output_file = "tools/ecosystem-doctor.py"
+skip_empty = false
+mode = "Overwrite"
+
+[[generation.rules]]
+name = "ecosystem-doctor-guide"
+query = { file = "authority/ecosystem-alive/queries/program.rq" }
+template = { file = "authority/ecosystem-alive/templates/DOCTOR.md.tera" }
+output_file = "reference/ecosystem-reconstitution/DOCTOR.md"
+skip_empty = false
+mode = "Overwrite"
