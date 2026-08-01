@@ -26,7 +26,7 @@ jobs:
     env:
       RUSTC_WRAPPER: ""
       PYTHONDONTWRITEBYTECODE: "1"
-      GGEN_RUNTIME_SHA: cc15e970f1cfc544e7e444d27f2006e74906e6f5
+      GGEN_RUNTIME_SHA: d04c69b8cbb65ff9b240bc963d56b9a7bce21f17
       CORPUS_BRANCH: agent/reconstitute-same-day-ecosystem-v1
     steps:
       - name: Checkout exact corpus branch
