@@ -1,0 +1,26 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.external-verification/1",
+  "workstream_id": "I",
+  "verifier": "ggen-foundry-external-verifier/v1",
+  "source_head": "cc15e970f1cfc544e7e444d27f2006e74906e6f5",
+  "corpus_head": "c4d2a3d6ef5bfc38f2d315d7033f2e25267b9125",
+  "receipts_replayed": 9,
+  "subsystem_count": 10,
+  "subsystems_alive": 10,
+  "unknown_standings": 0,
+  "unassigned_verifiers": 0,
+  "sabotage_case_count": 8,
+  "sabotage_cases_all_refused": true,
+  "external_verifier_passes": true,
+  "predicates": {
+    "invalid_receipts": 0,
+    "self_certification_paths": 0,
+    "stale_heads": 0,
+    "unassigned_verifiers": 0,
+    "unknown_standings": 0
+  },
+  "metrics": {
+    "capability_count": 65,
+    "receipt_count": 9
+  }
+}
