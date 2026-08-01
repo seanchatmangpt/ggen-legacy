@@ -1,0 +1,134 @@
+name: ggen Ecosystem Projection Reconcile
+
+on:
+  pull_request:
+    paths:
+      - "ggen.toml"
+      - "authority/ecosystem-alive/ontology.ttl"
+      - "authority/ecosystem-alive/queries/**"
+      - "authority/ecosystem-alive/templates/**"
+      - ".github/workflows/ggen-ecosystem-projection-reconcile.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ggen-ecosystem-projection-${{ github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: true
+
+env:
+  GGEN_SHA: 3b0fc364f586ad0155a937f756238e7bacd94e16
+  GGEN_TOOLCHAIN: nightly-2026-06-22
+
+jobs:
+  reconcile:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Checkout latest branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          fetch-depth: 0
+
+      - name: Checkout exact ggen
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: seanchatmangpt/ggen
+          ref: ${{ env.GGEN_SHA }}
+          path: ggen-runtime
+          fetch-depth: 1
+
+      - name: Install exact toolchain and build ggen
+        run: |
+          rustup toolchain install "$GGEN_TOOLCHAIN" --profile minimal
+          rustup default "$GGEN_TOOLCHAIN"
+          cargo +"$GGEN_TOOLCHAIN" build \
+            --manifest-path ggen-runtime/Cargo.toml \
+            -p ggen-cli-lib --bin ggen
+
+      - name: Bind semantic source closure
+        run: |
+          sha256sum \
+            ggen.toml \
+            authority/ecosystem-alive/ontology.ttl \
+            authority/ecosystem-alive/queries/program.rq \
+            authority/ecosystem-alive/templates/alive-program.json.tera \
+            authority/ecosystem-alive/templates/ecosystem-doctor.py.tera \
+            authority/ecosystem-alive/templates/DOCTOR.md.tera \
+            > /tmp/semantic-source.sha256
+
+      - name: Manufacture deterministic projections
+        run: |
+          GGEN="$PWD/ggen-runtime/target/debug/ggen"
+          "$GGEN" graph validate
+          "$GGEN" sync run
+          "$GGEN" receipt verify
+          mkdir -p /tmp/ggen-projections/authority/ecosystem-alive \
+                   /tmp/ggen-projections/tools \
+                   /tmp/ggen-projections/reference/ecosystem-reconstitution
+          cp authority/ecosystem-alive/alive-program.json \
+             /tmp/ggen-projections/authority/ecosystem-alive/alive-program.json
+          cp tools/ecosystem-doctor.py \
+             /tmp/ggen-projections/tools/ecosystem-doctor.py
+          cp reference/ecosystem-reconstitution/DOCTOR.md \
+             /tmp/ggen-projections/reference/ecosystem-reconstitution/DOCTOR.md
+          sha256sum \
+            authority/ecosystem-alive/alive-program.json \
+            tools/ecosystem-doctor.py \
+            reference/ecosystem-reconstitution/DOCTOR.md \
+            > /tmp/projections-first.sha256
+          "$GGEN" sync run
+          "$GGEN" receipt verify
+          sha256sum \
+            authority/ecosystem-alive/alive-program.json \
+            tools/ecosystem-doctor.py \
+            reference/ecosystem-reconstitution/DOCTOR.md \
+            > /tmp/projections-second.sha256
+          diff -u /tmp/projections-first.sha256 /tmp/projections-second.sha256
+
+      - name: Reconcile against current remote head
+        env:
+          BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
+        run: |
+          git fetch origin "$BRANCH"
+          git reset --hard "origin/$BRANCH"
+          sha256sum \
+            ggen.toml \
+            authority/ecosystem-alive/ontology.ttl \
+            authority/ecosystem-alive/queries/program.rq \
+            authority/ecosystem-alive/templates/alive-program.json.tera \
+            authority/ecosystem-alive/templates/ecosystem-doctor.py.tera \
+            authority/ecosystem-alive/templates/DOCTOR.md.tera \
+            > /tmp/semantic-source-latest.sha256
+          diff -u /tmp/semantic-source.sha256 /tmp/semantic-source-latest.sha256
+
+          cp /tmp/ggen-projections/authority/ecosystem-alive/alive-program.json \
+             authority/ecosystem-alive/alive-program.json
+          mkdir -p tools reference/ecosystem-reconstitution
+          cp /tmp/ggen-projections/tools/ecosystem-doctor.py tools/ecosystem-doctor.py
+          cp /tmp/ggen-projections/reference/ecosystem-reconstitution/DOCTOR.md \
+             reference/ecosystem-reconstitution/DOCTOR.md
+
+          git config user.name "ggen-ecosystem-projection-controller"
+          git config user.email "ggen-ecosystem-projection-controller@users.noreply.github.com"
+          git add \
+            authority/ecosystem-alive/alive-program.json \
+            tools/ecosystem-doctor.py \
+            reference/ecosystem-reconstitution/DOCTOR.md
+          if git diff --cached --quiet; then
+            echo "Projections already match exact ggen manufacture."
+          else
+            git commit -m "feat(dx): manufacture ecosystem doctor projections"
+            git push origin "HEAD:$BRANCH"
+          fi
+
+      - name: Publish exact projection digests
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ggen-ecosystem-projections-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            /tmp/semantic-source.sha256
+            /tmp/projections-first.sha256
+          if-no-files-found: error
