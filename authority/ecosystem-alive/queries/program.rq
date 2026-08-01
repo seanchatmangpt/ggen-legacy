@@ -1,0 +1,16 @@
+PREFIX alive: <https://ggen.dev/ecosystem-alive#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+SELECT ?title ?description ?version ?manifest ?state ?evidence ?broker ?promotion ?ceiling
+WHERE {
+  alive:program a alive:Program ;
+    dcterms:title ?title ;
+    dcterms:description ?description ;
+    alive:version ?version ;
+    alive:manifest ?manifest ;
+    alive:state ?state ;
+    alive:defaultEvidenceDir ?evidence ;
+    alive:requiredBroker ?broker ;
+    alive:promotionOwner ?promotion ;
+    alive:standingCeiling ?ceiling .
+}
+ORDER BY ?title
