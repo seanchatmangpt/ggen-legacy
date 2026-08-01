@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ggen-legacy-v26.8.1-${{ github.event.pull_request.head.sha || github.sha }}
+  group: ggen-legacy-v26.8.1-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
