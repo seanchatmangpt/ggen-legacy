@@ -1,0 +1,151 @@
+name: Foundry Complete ALIVE
+
+on:
+  pull_request:
+    paths:
+      - "foundry/**"
+      - "tools/complete_foundry_alive.py"
+      - "verifiers/normalize_foundry_receipts.py"
+      - "verifiers/normalize_foundry_receipts_interphase.py"
+      - "witnesses/test_foundry_receipt_ownership.py"
+      - "witnesses/test_interphase_receipt_supersession.py"
+      - ".github/workflows/foundry-complete-alive.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: foundry-complete-alive-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  complete:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      RUSTC_WRAPPER: ""
+      PYTHONDONTWRITEBYTECODE: "1"
+      GGEN_RUNTIME_SHA: df591c001a59af7705d957e590a3f8363a269de6
+      CORPUS_BRANCH: agent/reconstitute-same-day-ecosystem-v1
+    steps:
+      - name: Checkout exact corpus branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          fetch-depth: 0
+          path: ggen-legacy
+
+      - name: Checkout exact repaired ggen source authority
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: seanchatmangpt/ggen
+          ref: ${{ env.GGEN_RUNTIME_SHA }}
+          fetch-depth: 0
+          path: ggen-source
+
+      - name: Checkout exact repaired ggen runtime
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: seanchatmangpt/ggen
+          ref: ${{ env.GGEN_RUNTIME_SHA }}
+          fetch-depth: 0
+          path: ggen-runtime
+
+      - name: Install exact toolchains
+        run: |
+          rustup toolchain install nightly-2026-06-22 --profile minimal --component rustfmt
+          python3 -m pip install --disable-pip-version-check --only-binary=:all: blake3==1.0.9
+
+      - name: Compile controllers and execute ownership falsifiers
+        working-directory: ggen-legacy
+        run: |
+          python3 -m compileall -q \
+            tools/complete_foundry_alive.py \
+            verifiers/normalize_foundry_receipts.py \
+            verifiers/normalize_foundry_receipts_interphase.py \
+            witnesses/test_foundry_receipt_ownership.py \
+            witnesses/test_interphase_receipt_supersession.py
+          python3 witnesses/test_foundry_receipt_ownership.py
+          python3 witnesses/test_interphase_receipt_supersession.py
+          find . -type d -name __pycache__ -prune -exec rm -rf {} +
+          test -z "$(git status --porcelain=v1 --untracked-files=all)"
+
+      - name: Build and verify exact ggen foundry runtime
+        run: |
+          cargo +nightly-2026-06-22 fmt --manifest-path ggen-runtime/tools/architecture-foundry/Cargo.toml --all -- --check
+          cargo +nightly-2026-06-22 test --manifest-path ggen-runtime/tools/architecture-foundry/Cargo.toml --all-targets
+          cargo +nightly-2026-06-22 build --manifest-path ggen-runtime/tools/architecture-foundry/Cargo.toml --bins
+          ggen-runtime/tools/architecture-foundry/target/debug/ggen-foundry validate-program \
+            --program ggen-source/docs/architecture-foundry/work-program.yaml
+          test "$(git -C ggen-source rev-parse HEAD)" = "$GGEN_RUNTIME_SHA"
+          test "$(git -C ggen-runtime rev-parse HEAD)" = "$GGEN_RUNTIME_SHA"
+          test -z "$(git -C ggen-source status --porcelain=v1 --untracked-files=all)"
+          test -z "$(git -C ggen-runtime status --porcelain=v1 --untracked-files=all)"
+
+      - name: Configure bounded corpus publication
+        run: |
+          git -C ggen-legacy config user.name "ggen-foundry-controller"
+          git -C ggen-legacy config user.email "ggen-foundry-controller@users.noreply.github.com"
+
+      - name: Resume I through K and prove terminal theorem
+        run: |
+          mkdir -p "$RUNNER_TEMP/foundry-completion"
+          python3 ggen-legacy/tools/complete_foundry_alive.py \
+            --corpus ggen-legacy \
+            --source ggen-source \
+            --runtime-target ggen-runtime/tools/architecture-foundry/target/debug \
+            --program ggen-source/docs/architecture-foundry/work-program.yaml \
+            --branch "$CORPUS_BRANCH" \
+            --output "$RUNNER_TEMP/foundry-completion/report.json" \
+            > "$RUNNER_TEMP/foundry-completion/stdout.log" \
+            2> "$RUNNER_TEMP/foundry-completion/stderr.log"
+          cat "$RUNNER_TEMP/foundry-completion/stdout.log"
+          cat "$RUNNER_TEMP/foundry-completion/stderr.log"
+
+      - name: Verify exact published branch and terminal surfaces
+        run: |
+          git -C ggen-legacy fetch --quiet origin "$CORPUS_BRANCH"
+          test "$(git -C ggen-legacy rev-parse HEAD)" = "$(git -C ggen-legacy rev-parse "origin/$CORPUS_BRANCH")"
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path("ggen-legacy")
+          state = json.loads((root / "foundry/workstreams/state.json").read_text())
+          assert all(state["workstreams"][letter]["status"] == "ADMITTED" for letter in "ABCDEFGHIJK")
+          standing = json.loads((root / "foundry/standing.json").read_text())
+          assert standing["standing"] == "ALIVE"
+          assert standing["admitted"] is True
+          report = json.loads(Path("${{ runner.temp }}/foundry-completion/report.json").read_text())
+          assert report["standing"] == "ALIVE"
+          assert report["receipt_replay"] is True
+          assert report["independent_verification"] is True
+          print(json.dumps({
+              "head": report["head"],
+              "standing": "ALIVE",
+              "workstreams": report["workstreams"],
+              "receipt_replay": True,
+              "independent_verification": True,
+          }, indent=2, sort_keys=True))
+          PY
+          ggen-runtime/tools/architecture-foundry/target/debug/ggen-foundry replay \
+            --source ggen-source --corpus ggen-legacy
+          ggen-runtime/tools/architecture-foundry/target/debug/ggen-foundry verify \
+            --program ggen-source/docs/architecture-foundry/work-program.yaml \
+            --source ggen-source --corpus ggen-legacy
+          test -z "$(git -C ggen-legacy status --porcelain=v1 --untracked-files=all)"
+
+      - name: Publish completion evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: foundry-complete-alive-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            ${{ runner.temp }}/foundry-completion/
+            ggen-legacy/foundry/standing.json
+            ggen-legacy/foundry/workstreams/state.json
+            ggen-legacy/foundry/receipts/workstream-I.json
+            ggen-legacy/foundry/receipts/workstream-J.json
+            ggen-legacy/foundry/receipts/workstream-K.json
+            ggen-legacy/foundry/receipts/final-admission.json
+          if-no-files-found: warn
