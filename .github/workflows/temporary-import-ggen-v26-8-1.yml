@@ -1,0 +1,170 @@
+name: Temporary import ggen v26.8.1 corpus
+
+on:
+  push:
+    branches:
+      - agent/migrate-ggen-v26-8-1-corpus
+
+permissions:
+  contents: write
+
+env:
+  SOURCE_SHA: 8351af4c5bbbf60bd99ab8417752a1762c6ea4e3
+  DESTINATION_BASE: 8d6428f40c0d30d5983fb0ecdd16cab1c1328a23
+
+jobs:
+  import:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - name: Checkout destination branch
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: agent/migrate-ggen-v26-8-1-corpus
+          fetch-depth: 0
+
+      - name: Checkout exact source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: seanchatmangpt/ggen
+          ref: ${{ env.SOURCE_SHA }}
+          path: .source-ggen
+          fetch-depth: 0
+
+      - name: Install pinned Rust
+        uses: dtolnay/rust-toolchain@b3b07ba8b418998c39fb20f53e8b695cdcc8de1b
+        with:
+          toolchain: nightly-2026-06-22
+          components: rustfmt
+
+      - name: Install verifier dependencies
+        run: python3 -m pip install --disable-pip-version-check blake3==1.0.9 jsonschema==4.26.0 pyshacl==0.40.0
+
+      - name: Reconstruct admitted migration programs
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat .migration-bootstrap/import/chunk-* | base64 --decode > /tmp/import_from_ggen.py
+          cat .migration-bootstrap/verify/chunk-* | base64 --decode > /tmp/verify_ggen_v26_8_1_migration.py
+          python3 -m py_compile /tmp/import_from_ggen.py /tmp/verify_ggen_v26_8_1_migration.py
+          test "$(git -C .source-ggen rev-parse HEAD)" = "$SOURCE_SHA"
+          git merge-base --is-ancestor "$DESTINATION_BASE" HEAD
+
+      - name: Import exact corpus
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 /tmp/import_from_ggen.py import \
+            --source-root .source-ggen \
+            --destination-root . \
+            --source-commit "$SOURCE_SHA" \
+            --destination-base "$DESTINATION_BASE"
+          cp /tmp/verify_ggen_v26_8_1_migration.py scripts/verify_ggen_v26_8_1_migration.py
+          chmod +x scripts/verify_ggen_v26_8_1_migration.py
+
+      - name: Install permanent exact-head verifier workflow
+        shell: bash
+        run: |
+          cat > .github/workflows/verify-ggen-v26-8-1-migration.yml <<'EOF'
+          name: Verify ggen v26.8.1 corpus migration
+
+          on:
+            pull_request:
+              branches: [main]
+            workflow_dispatch:
+
+          permissions:
+            contents: read
+
+          concurrency:
+            group: ggen-v26.8.1-migration-${{ github.event.pull_request.head.sha || github.sha }}
+            cancel-in-progress: true
+
+          jobs:
+            verify:
+              runs-on: ubuntu-24.04
+              timeout-minutes: 90
+              steps:
+                - name: Checkout exact candidate
+                  uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+                  with:
+                    ref: ${{ github.event.pull_request.head.sha || github.sha }}
+                    fetch-depth: 0
+                - name: Checkout exact ggen source
+                  uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+                  with:
+                    repository: seanchatmangpt/ggen
+                    ref: 8351af4c5bbbf60bd99ab8417752a1762c6ea4e3
+                    path: .source-ggen
+                    fetch-depth: 0
+                - name: Install pinned Rust
+                  uses: dtolnay/rust-toolchain@b3b07ba8b418998c39fb20f53e8b695cdcc8de1b
+                  with:
+                    toolchain: nightly-2026-06-22
+                    components: rustfmt
+                - name: Install verifier dependencies
+                  run: python3 -m pip install --disable-pip-version-check blake3==1.0.9 jsonschema==4.26.0 pyshacl==0.40.0
+                - name: Verify receiving lineage, execution, falsifiers, and replay
+                  run: python3 scripts/verify_ggen_v26_8_1_migration.py --source-root .source-ggen
+                - name: Upload bounded evidence
+                  uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
+                  with:
+                    name: ggen-v26.8.1-migration-${{ github.event.pull_request.head.sha || github.sha }}
+                    path: |
+                      migrations/ggen-v26.8.1/migration-manifest.json
+                      migrations/ggen-v26.8.1/equivalence-report.json
+                      migrations/ggen-v26.8.1/verifier-report.json
+                      migrations/ggen-v26.8.1/migration-receipt.json
+                    if-no-files-found: error
+          EOF
+
+      - name: Commit received corpus checkpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf .migration-bootstrap .github/workflows/temporary-import-ggen-v26-8-1.yml
+          git config user.name 'ggen migration agent'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          git commit -m 'feat(corpus): import ggen v26.8.1 reconstruction corpus'
+          echo "CORPUS_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+
+      - name: Bind lineage to the corpus checkpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/verify_ggen_v26_8_1_migration.py --help >/dev/null
+          python3 /tmp/import_from_ggen.py finalize \
+            --source-root .source-ggen \
+            --destination-root . \
+            --source-commit "$SOURCE_SHA" \
+            --corpus-commit "$CORPUS_COMMIT"
+
+      - name: Execute receiving verifier twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/verify_ggen_v26_8_1_migration.py --source-root .source-ggen > /tmp/verify-a.json
+          cp migrations/ggen-v26.8.1/verifier-report.json /tmp/report-a.json
+          cp migrations/ggen-v26.8.1/equivalence-report.json /tmp/equivalence-a.json
+          python3 scripts/verify_ggen_v26_8_1_migration.py --source-root .source-ggen > /tmp/verify-b.json
+          cmp /tmp/report-a.json migrations/ggen-v26.8.1/verifier-report.json
+          cmp /tmp/equivalence-a.json migrations/ggen-v26.8.1/equivalence-report.json
+
+      - name: Issue migration receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 /tmp/import_from_ggen.py receipt \
+            --source-root .source-ggen \
+            --destination-root . \
+            --source-commit "$SOURCE_SHA" \
+            --corpus-commit "$CORPUS_COMMIT"
+
+      - name: Commit evidence and publish destination branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add migrations/ggen-v26.8.1
+          git commit -m 'chore(migration): bind ggen v26.8.1 lineage and receipt'
+          git push origin HEAD:agent/migrate-ggen-v26-8-1-corpus
