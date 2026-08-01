@@ -1,16 +1,16 @@
 {
   "active_receipts_replay_current_outputs_only": true,
   "archives": {
-    "foundry/receipt-history/initialization.a9244bbb01206008.json": "fbda9b09eddc3e8ce28985144f93eccf419e454825be350fc97e6c2f1031561a"
+    "foundry/receipt-history/initialization.bf29d20fd13fb09b.json": "bcb8bbe6927ffe9d65ed4537c1b426d705ccf12496034aa5e5b6ab1a08d4006a"
   },
   "changes": [
     {
-      "active_subject_digest": "bf29d20fd13fb09bc2e09bfae0c208a8116c5218a30abbaf782ebb7a8dbde224",
-      "archive": "foundry/receipt-history/initialization.a9244bbb01206008.json",
-      "archive_blake3": "fbda9b09eddc3e8ce28985144f93eccf419e454825be350fc97e6c2f1031561a",
+      "active_subject_digest": "e28c85e24300c5ee31f9ab8ea2e0146b3596cf5c3244e8f1054559553765823c",
+      "archive": "foundry/receipt-history/initialization.bf29d20fd13fb09b.json",
+      "archive_blake3": "bcb8bbe6927ffe9d65ed4537c1b426d705ccf12496034aa5e5b6ab1a08d4006a",
       "receipt": "foundry/receipts/initialization.json",
       "removed_outputs": [
-        "corpus:foundry/catalogs/capabilities.json"
+        "corpus:foundry/catalogs/primitives.json"
       ]
     }
   ],
@@ -28,9 +28,22 @@
           "receipt": "foundry/receipts/initialization.json"
         }
       ]
+    },
+    "corpus:foundry/catalogs/primitives.json": {
+      "active_digest": "9cb7cbed27134ea814416e731f373fa056ecbc675ed595e637d023cf46cd2b0f",
+      "active_receipt": "foundry/receipts/workstream-F.json",
+      "observed_digest": "9cb7cbed27134ea814416e731f373fa056ecbc675ed595e637d023cf46cd2b0f",
+      "superseded": [
+        {
+          "archive": "foundry/receipt-history/initialization.bf29d20fd13fb09b.json",
+          "archive_blake3": "bcb8bbe6927ffe9d65ed4537c1b426d705ccf12496034aa5e5b6ab1a08d4006a",
+          "expected_digest": "626d9e62452dd28f1d7baf41f7caeb3ffb01fc40c96ae1208be6eebee5fb4b55",
+          "receipt": "foundry/receipts/initialization.json"
+        }
+      ]
     }
   },
-  "ownership_digest": "sha256:0d2d53b8919f4086475e29d6eddcd46e0bcf42dbb25482bac21a7ba408be469c",
+  "ownership_digest": "sha256:5ed606dc7afd7535832fc2cf491b58f9679c33f09928f62b872cfaa599c64ee9",
   "policy": "exact-current-digest-single-owner",
   "schema_version": "ggen.enterprise-architecture-foundry.receipt-ownership/1"
 }
