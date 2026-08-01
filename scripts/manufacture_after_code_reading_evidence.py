@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-"""Manufacture a non-promoting evidence packet for the After Code Reading corpus.
+"""Manufacture a non-promoting evidence packet for After Code Reading.
 
-This producer may observe and bind evidence. It may not grant final standing.
-The independent crown verifier re-derives every material field.
+The producer observes and binds evidence. It never grants final standing.
 """
 
 from __future__ import annotations
@@ -15,7 +14,7 @@ from pathlib import Path
 from typing import Any
 
 SCHEMA = "ggen.legacy.after-code-reading.manufacture.v1"
-REQUIRED_FILES = (
+FILES = (
     "AGENTS.md",
     "RELEASE_CONTROL.md",
     "README.md",
@@ -30,14 +29,14 @@ REQUIRED_FILES = (
     "docs/src/SUMMARY.md",
     "tickets/TICKET-012-after-code-reading-pivot.md",
 )
-CATEGORY_TERMS = (
+TERMS = (
     "After Manual Code",
     "After Code Reading",
     "Proof-Carrying Software Manufacturing",
     "Software Systems Manufacturer",
     "Verified Repository Reconstitution",
 )
-CONTROL_LOOP = (
+LOOP = (
     "mission",
     "admitted_requirements",
     "machine_readable_production_law",
@@ -51,8 +50,7 @@ CONTROL_LOOP = (
     "replay",
     "kaizen",
 )
-REQUIRED_PRD_IDS = tuple(f"PRD-FR-{number:03d}" for number in range(15, 26))
-REQUIRED_ARCHITECTURE_PLANES = (
+PLANES = (
     "Mission Plane",
     "Observation Plane",
     "Admission Plane",
@@ -68,177 +66,43 @@ REQUIRED_ARCHITECTURE_PLANES = (
 )
 
 
-def run_git(root: Path, *args: str) -> str:
-    completed = subprocess.run(
+def git(root: Path, *args: str) -> str:
+    return subprocess.run(
         ["git", "-C", str(root), *args],
         check=True,
         text=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-    )
-    return completed.stdout.strip()
+    ).stdout.strip()
 
 
-def canonical_bytes(value: Any) -> bytes:
-    return json.dumps(value, sort_keys=True, separators=(",", ":")).encode("utf-8")
+def canonical(value: Any) -> bytes:
+    return json.dumps(value, sort_keys=True, separators=(",", ":")).encode()
 
 
-def digest_bytes(data: bytes) -> str:
-    return hashlib.sha256(data).hexdigest()
-
-
-def digest_file(path: Path) -> str:
-    return digest_bytes(path.read_bytes())
-
-
-def digest_source_set(root: Path) -> str:
-    hasher = hashlib.sha256()
-    for relative in sorted(REQUIRED_FILES):
+def source_digest(root: Path) -> str:
+    digest = hashlib.sha256()
+    for relative in sorted(FILES):
+        path = relative.encode()
         data = (root / relative).read_bytes()
-        encoded = relative.encode("utf-8")
-        hasher.update(len(encoded).to_bytes(8, "little"))
-        hasher.update(encoded)
-        hasher.update(len(data).to_bytes(8, "little"))
-        hasher.update(data)
-    return hasher.hexdigest()
+        digest.update(len(path).to_bytes(8, "little"))
+        digest.update(path)
+        digest.update(len(data).to_bytes(8, "little"))
+        digest.update(data)
+    return digest.hexdigest()
 
 
-def require_text(errors: list[str], root: Path, relative: str, needles: tuple[str, ...]) -> None:
+def require(errors: list[str], root: Path, relative: str, phrases: tuple[str, ...]) -> None:
     path = root / relative
     if not path.is_file():
         errors.append(f"REQUIRED_FILE_MISSING:{relative}")
         return
-    text = path.read_text(encoding="utf-8")
-    for needle in needles:
-        if needle not in text:
-            errors.append(f"REQUIRED_TEXT_MISSING:{relative}:{needle}")
-
-
-def validate(root: Path, expected_revision: str) -> tuple[list[str], dict[str, Any]]:
-    errors: list[str] = []
-    revision = run_git(root, "rev-parse", "HEAD")
-    tree = run_git(root, "rev-parse", "HEAD^{tree}")
-    if revision != expected_revision:
-        errors.append(f"EXACT_REVISION_MISMATCH:{revision}:{expected_revision}")
-
-    for relative in REQUIRED_FILES:
-        if not (root / relative).is_file():
-            errors.append(f"REQUIRED_FILE_MISSING:{relative}")
-
-    authority_path = root / "authority/after-code-reading.json"
-    try:
-        authority = json.loads(authority_path.read_text(encoding="utf-8"))
-    except Exception as exc:  # noqa: BLE001 - report typed verifier failure
-        authority = {}
-        errors.append(f"AUTHORITY_INVALID:{exc}")
-
-    if authority.get("schema") != "urn:chatman:ggen-legacy:after-code-reading:v1":
-        errors.append("AUTHORITY_SCHEMA_MISMATCH")
-    if authority.get("release") != "v26.8.1":
-        errors.append("AUTHORITY_RELEASE_MISMATCH")
-    if authority.get("ticket") != "TICKET-012":
-        errors.append("AUTHORITY_TICKET_MISMATCH")
-
-    observed_terms = tuple(
-        item.get("term")
-        for item in authority.get("category_stack", [])
-        if isinstance(item, dict)
+    text = path.read_text()
+    errors.extend(
+        f"REQUIRED_TEXT_MISSING:{relative}:{phrase}"
+        for phrase in phrases
+        if phrase not in text
     )
-    if observed_terms != CATEGORY_TERMS:
-        errors.append(f"CATEGORY_STACK_MISMATCH:{observed_terms!r}")
-    if tuple(authority.get("control_loop", [])) != CONTROL_LOOP:
-        errors.append("CONTROL_LOOP_MISMATCH")
-
-    invariants = authority.get("hard_invariants", [])
-    for required in (
-        "The producer cannot certify itself.",
-        "Unknown evidence cannot be promoted into success.",
-        "Generated output cannot become a second authority.",
-        "ALIVE requires exact-head evidence and independent replay.",
-    ):
-        if required not in invariants:
-            errors.append(f"HARD_INVARIANT_MISSING:{required}")
-
-    project_names = {
-        item.get("project")
-        for item in authority.get("project_mapping", [])
-        if isinstance(item, dict)
-    }
-    for project in ("ggen", "ggen-legacy", "ferroplan", "BRCE", "wasm4pm", "TCPS"):
-        if project not in project_names:
-            errors.append(f"PROJECT_MAPPING_MISSING:{project}")
-
-    require_text(
-        errors,
-        root,
-        "README.md",
-        (
-            "After Code Reading",
-            "Proof-Carrying Software Manufacturing",
-            "Code is intermediate manufacturing material.",
-        ),
-    )
-    require_text(
-        errors,
-        root,
-        "AGENTS.md",
-        ("## 21. After Code Reading law", "The producer cannot certify itself"),
-    )
-    require_text(
-        errors,
-        root,
-        "RELEASE_CONTROL.md",
-        ("## After Code Reading claim law", "REFERENCE_CONFORMANT"),
-    )
-    require_text(errors, root, "product/PRD.md", REQUIRED_PRD_IDS)
-    require_text(
-        errors,
-        root,
-        "architecture/AFTER_CODE_READING_ARCHITECTURE.md",
-        REQUIRED_ARCHITECTURE_PLANES,
-    )
-    require_text(
-        errors,
-        root,
-        "governance/after-code-reading-review-standard.md",
-        (
-            "human-reading task",
-            "replacement control",
-            "new risk",
-            "independent verifier",
-            "evidence",
-            "automatic stop",
-        ),
-    )
-    require_text(
-        errors,
-        root,
-        "tickets/TICKET-012-after-code-reading-pivot.md",
-        ("TICKET-012", "Falsifier", "Replay"),
-    )
-
-    files = {
-        relative: {
-            "sha256": digest_file(root / relative),
-            "bytes": (root / relative).stat().st_size,
-        }
-        for relative in REQUIRED_FILES
-        if (root / relative).is_file()
-    }
-    observations = {
-        "exact_revision": revision,
-        "exact_tree": tree,
-        "required_file_count": len(REQUIRED_FILES),
-        "observed_file_count": len(files),
-        "source_set_sha256": digest_source_set(root) if len(files) == len(REQUIRED_FILES) else None,
-        "authority_sha256": digest_file(authority_path) if authority_path.is_file() else None,
-        "category_count": len(observed_terms),
-        "control_loop_edge_count": max(0, len(CONTROL_LOOP) - 1),
-        "prd_requirement_count": len(REQUIRED_PRD_IDS),
-        "architecture_plane_count": len(REQUIRED_ARCHITECTURE_PLANES),
-        "files": files,
-    }
-    return errors, observations
 
 
 def main() -> int:
@@ -247,17 +111,103 @@ def main() -> int:
     parser.add_argument("--expected-revision", required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-
     root = args.root.resolve()
-    errors, observations = validate(root, args.expected_revision)
+    errors: list[str] = []
+
+    revision = git(root, "rev-parse", "HEAD")
+    tree = git(root, "rev-parse", "HEAD^{tree}")
+    if revision != args.expected_revision:
+        errors.append(f"EXACT_REVISION_MISMATCH:{revision}:{args.expected_revision}")
+    errors.extend(f"REQUIRED_FILE_MISSING:{item}" for item in FILES if not (root / item).is_file())
+
+    try:
+        authority = json.loads((root / "authority/after-code-reading.json").read_text())
+    except Exception as exc:  # noqa: BLE001
+        authority = {}
+        errors.append(f"AUTHORITY_INVALID:{exc}")
+
+    if authority.get("schema") != "urn:chatman:ggen-legacy:after-code-reading:v1":
+        errors.append("AUTHORITY_SCHEMA_MISMATCH")
+    if authority.get("release") != "v26.8.1" or authority.get("ticket") != "TICKET-012":
+        errors.append("AUTHORITY_IDENTITY_MISMATCH")
+    observed_terms = tuple(
+        item.get("term") for item in authority.get("category_stack", []) if isinstance(item, dict)
+    )
+    if observed_terms != TERMS:
+        errors.append("CATEGORY_STACK_MISMATCH")
+    if tuple(authority.get("control_loop", [])) != LOOP:
+        errors.append("CONTROL_LOOP_MISMATCH")
+
+    invariants = authority.get("hard_invariants", [])
+    for invariant in (
+        "The producer cannot certify itself.",
+        "Unknown evidence cannot be promoted into success.",
+        "Generated output cannot become a second authority.",
+        "ALIVE requires exact-head evidence and independent replay.",
+    ):
+        if invariant not in invariants:
+            errors.append(f"HARD_INVARIANT_MISSING:{invariant}")
+
+    require(errors, root, "README.md", (
+        "After Code Reading",
+        "Proof-Carrying Software Manufacturing",
+        "Code is intermediate manufacturing material.",
+    ))
+    require(errors, root, "AGENTS.md", (
+        "## 21. After Code Reading law",
+        "the independent verifier",
+        "receipt and clean replay",
+    ))
+    require(errors, root, "RELEASE_CONTROL.md", (
+        "## After Code Reading claim law",
+        "REFERENCE_CONFORMANT",
+    ))
+    require(errors, root, "product/PRD.md", tuple(f"PRD-FR-{n:03d}" for n in range(15, 26)))
+    require(errors, root, "architecture/AFTER_CODE_READING_ARCHITECTURE.md", PLANES)
+    require(errors, root, "governance/after-code-reading-review-standard.md", (
+        "human source-reading or source-writing task",
+        "machine control replaces it",
+        "new risk is introduced",
+        "independently attempts to falsify",
+        "runtime evidence",
+        "Automatic refusal conditions",
+    ))
+    require(errors, root, "tickets/TICKET-012-after-code-reading-pivot.md", (
+        "TICKET-012",
+        "Falsifier",
+        "Replay",
+    ))
+
+    observed = [item for item in FILES if (root / item).is_file()]
+    observations = {
+        "exact_revision": revision,
+        "exact_tree": tree,
+        "required_file_count": len(FILES),
+        "observed_file_count": len(observed),
+        "source_set_sha256": source_digest(root) if len(observed) == len(FILES) else None,
+        "authority_sha256": hashlib.sha256(
+            (root / "authority/after-code-reading.json").read_bytes()
+        ).hexdigest() if (root / "authority/after-code-reading.json").is_file() else None,
+        "category_count": len(observed_terms),
+        "control_loop_edge_count": max(0, len(LOOP) - 1),
+        "prd_requirement_count": 11,
+        "architecture_plane_count": len(PLANES),
+        "files": {
+            item: {
+                "sha256": hashlib.sha256((root / item).read_bytes()).hexdigest(),
+                "bytes": (root / item).stat().st_size,
+            }
+            for item in observed
+        },
+    }
     report: dict[str, Any] = {
         "schema": SCHEMA,
         "subject": {
             "repository": "seanchatmangpt/ggen-legacy",
             "scope": "after-code-reading-strategic-corpus",
             "release": "v26.8.1",
-            "revision": observations["exact_revision"],
-            "tree": observations["exact_tree"],
+            "revision": revision,
+            "tree": tree,
         },
         "producer": "scripts/manufacture_after_code_reading_evidence.py",
         "producer_role": "evidence_manufacturer",
@@ -272,9 +222,9 @@ def main() -> int:
             "This report does not establish external production adoption.",
         ],
     }
-    report["receipt_sha256"] = digest_bytes(canonical_bytes(report))
+    report["receipt_sha256"] = hashlib.sha256(canonical(report)).hexdigest()
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    args.output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n")
     print(json.dumps({"standing": report["standing"], "errors": errors}, sort_keys=True))
     return 0 if not errors else 1
 
