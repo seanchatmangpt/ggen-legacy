@@ -1,0 +1,33 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.disposition-decisions/1",
+  "source_authority_sha": "32ff03016b476f5e4a938272a8a54fcd3b877e5a",
+  "decisions": [
+    {
+      "capability_id": "legacy_ext_template_mode_append",
+      "expected_disposition": "DISPOSITION_UNKNOWN",
+      "resolved_disposition": "ARCHIVED",
+      "policy_id": "REMOVED_WITHOUT_REPLACEMENT_ARCHIVE",
+      "rationale": "The historical Append template-frontmatter contract has no current GenerationMode variant or declared replacement owner. Its historical source and recovery path remain in Git, so it is retained as an archive obligation rather than fabricated as a live replacement.",
+      "evidence_refs": [
+        "foundry/evidence/B/legacy-capabilities.ttl#legacy_ext_template_mode_append",
+        "ggen@32ff03016b476f5e4a938272a8a54fcd3b877e5a:crates/ggen-config/src/manifest/types.rs",
+        "ggen@e61137384",
+        "ggen@9187e8ec1",
+        "ggen@2e752ce45"
+      ]
+    },
+    {
+      "capability_id": "legacy_ext2_exit_code_mutation_budget_threshold",
+      "expected_disposition": "DISPOSITION_UNKNOWN",
+      "resolved_disposition": "ARCHIVED",
+      "policy_id": "REMOVED_WITHOUT_REPLACEMENT_ARCHIVE",
+      "rationale": "The pre-v5 fail-on-threshold and fail-on-violation exit-code contract was removed by the unified-sync refactor, has no declared replacement owner in the fixed source authority, and remains recoverable from Git history. It is therefore archived rather than asserted equivalent.",
+      "evidence_refs": [
+        "foundry/evidence/B/legacy-capabilities.ttl#legacy_ext2_exit_code_mutation_budget_threshold",
+        "ggen@9c76a75ac",
+        "ggen@1af960911",
+        "ggen@32ff03016b476f5e4a938272a8a54fcd3b877e5a:crates/ggen-cli"
+      ]
+    }
+  ]
+}
