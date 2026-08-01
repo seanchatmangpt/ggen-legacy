@@ -1,0 +1,36 @@
+{
+  "active_receipts_replay_current_outputs_only": true,
+  "archives": {
+    "foundry/receipt-history/initialization.a9244bbb01206008.json": "fbda9b09eddc3e8ce28985144f93eccf419e454825be350fc97e6c2f1031561a"
+  },
+  "changes": [
+    {
+      "active_subject_digest": "bf29d20fd13fb09bc2e09bfae0c208a8116c5218a30abbaf782ebb7a8dbde224",
+      "archive": "foundry/receipt-history/initialization.a9244bbb01206008.json",
+      "archive_blake3": "fbda9b09eddc3e8ce28985144f93eccf419e454825be350fc97e6c2f1031561a",
+      "receipt": "foundry/receipts/initialization.json",
+      "removed_outputs": [
+        "corpus:foundry/catalogs/capabilities.json"
+      ]
+    }
+  ],
+  "historical_receipts_immutable": true,
+  "outputs": {
+    "corpus:foundry/catalogs/capabilities.json": {
+      "active_digest": "67c415b627516d0af110c6302c29e1f4f99e0bd6bc35071d3d71f0567d2dcef4",
+      "active_receipt": "foundry/receipts/workstream-C.json",
+      "observed_digest": "67c415b627516d0af110c6302c29e1f4f99e0bd6bc35071d3d71f0567d2dcef4",
+      "superseded": [
+        {
+          "archive": "foundry/receipt-history/initialization.a9244bbb01206008.json",
+          "archive_blake3": "fbda9b09eddc3e8ce28985144f93eccf419e454825be350fc97e6c2f1031561a",
+          "expected_digest": "4caf6a006a3a1fde911bdcf393d9467d8705ed35f2d61cde78f107d5b630c298",
+          "receipt": "foundry/receipts/initialization.json"
+        }
+      ]
+    }
+  },
+  "ownership_digest": "sha256:0d2d53b8919f4086475e29d6eddcd46e0bcf42dbb25482bac21a7ba408be469c",
+  "policy": "exact-current-digest-single-owner",
+  "schema_version": "ggen.enterprise-architecture-foundry.receipt-ownership/1"
+}
