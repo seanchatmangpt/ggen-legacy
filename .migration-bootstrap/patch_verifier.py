@@ -62,6 +62,8 @@ replacements = [
         "        command_env[\"CARGO_TERM_COLOR\"] = \"never\"\n"
         "        command_env[\"CARGO_TERM_PROGRESS_WHEN\"] = \"never\"\n"
         "        command_env[\"RUST_TEST_THREADS\"] = \"1\"\n"
+        "        command_env[\"RUSTUP_TOOLCHAIN\"] = \"nightly-2026-06-22\"\n"
+        "        command_env[\"RUSTUP_NO_UPDATE_CHECK\"] = \"1\"\n"
         "    result = subprocess.run(\n"
         "        argv,\n"
         "        cwd=cwd,\n"
