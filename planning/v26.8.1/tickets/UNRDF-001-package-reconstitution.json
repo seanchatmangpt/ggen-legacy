@@ -1,0 +1,133 @@
+{
+  "schema": "ggen.legacy.source-admission-ticket/1",
+  "id": "UNRDF-001",
+  "title": "Reconstitute every UNRDF workspace package from admitted authority",
+  "state": "ADMITTED",
+  "authority": {
+    "repository": "seanchatmangpt/ggen-legacy",
+    "commit": "70e599a599fedb7c62c965377cc2f80df1fa01ec",
+    "release": "v26.8.1",
+    "governing_file": "AGENTS.md"
+  },
+  "subject": {
+    "repository": "seanchatmangpt/unrdf",
+    "base_commit": "17e053390316a4d0ae4484d024f817a75e421da1",
+    "working_branch": "agent/fix-all-packages",
+    "working_head_observed": "4db159cea2db6ea2f823678f347e0719bf30e18a",
+    "scope": "Every package returned by pnpm recursive workspace discovery, including package examples that are declared workspaces"
+  },
+  "problem": "UNRDF contains a large package graph whose implementation, package metadata, imports, lint, build, tests, integration boundaries, generated surfaces, and receipts are not collectively proven. Every package is UNKNOWN until independently executed and admitted.",
+  "outcome": "A dependency-closed, deterministic ggen manufacture graph generates or repairs package authority, manifests, source, tests, documentation, and verifier bindings; exact-head execution produces package receipts; an independent aggregate verifier computes bounded standing without self-certification.",
+  "calculus": {
+    "pipeline": [
+      "observe-workspace",
+      "normalize-package-graph",
+      "admit-package-contracts",
+      "render-authority-and-implementation",
+      "write-through-ggen",
+      "execute-package-verifiers",
+      "emit-receipts",
+      "replay-clean-room",
+      "compute-standing"
+    ],
+    "generation_law": "Generated artifacts are projections. Repair ontology, manifest, template, projector, or admitted inputs; never hand-edit generated output.",
+    "actuation_law": "Zero unreceipted actuation. Publication occurs only after exact-head receipts and replay evidence exist."
+  },
+  "inputs": [
+    "root package.json and pnpm lockfile",
+    "all workspace package.json files",
+    "package source and tests",
+    "root and nested AGENTS.md files",
+    "CI workflows and package verifier",
+    "existing generated artifacts and provenance markers",
+    "package-matrix receipt from the exact candidate head"
+  ],
+  "outputs": [
+    "authority/unrdf/package-graph.json",
+    "authority/unrdf/packages/<package-id>.json",
+    "templates/unrdf/package/**",
+    "generated or repaired package implementation surfaces",
+    ".artifacts/package-matrix/receipt.json",
+    ".artifacts/ggen-unrdf/manufacture-receipt.json",
+    ".artifacts/ggen-unrdf/replay-report.json",
+    ".artifacts/ggen-unrdf/standing-report.json"
+  ],
+  "package_contract": {
+    "required": [
+      "stable package identity and ownership",
+      "declared public exports resolve after build",
+      "runtime dependencies are complete",
+      "lint and type boundaries execute when declared",
+      "build executes when declared",
+      "positive and negative tests execute when declared",
+      "cross-package dependencies resolve against the same workspace head",
+      "generated surfaces have authority and drift verification",
+      "failures are typed and never masked",
+      "receipt binds source, authority, toolchain, commands, outputs, and result"
+    ],
+    "standing": {
+      "UNKNOWN": "not fully observed or admitted",
+      "PARTIAL_ALIVE": "bounded package checkpoints pass but integration or replay remains open",
+      "ALIVE": "all declared package checkpoints, imports, integration witnesses, receipt validation, and replay pass",
+      "BLOCKED": "required authority, toolchain, permission, or dependency is unavailable",
+      "BUILD_BROKEN": "declared manufacture or verification command executes and fails",
+      "UNSUPPORTED": "surface is outside the admitted package contract"
+    }
+  },
+  "positive_witnesses": [
+    "pnpm install --frozen-lockfile",
+    "node scripts/verify-workspace-packages.mjs --concurrency=4 --timeout-ms=300000",
+    "ggen render from admitted package authority produces deterministic outputs",
+    "every non-private package root export imports successfully",
+    "clean-room replay reports NO_SEMANTIC_CHANGE, NO_GENERATED_DRIFT, and REPLAY_MATCH"
+  ],
+  "negative_falsifiers": [
+    "duplicate or missing package identity",
+    "declared export path does not exist",
+    "undeclared runtime dependency is required",
+    "test, lint, or build command masks failure",
+    "generated output changes without authority change",
+    "replay differs from the first manufactured tree",
+    "a package is promoted to ALIVE without exact-head execution",
+    "aggregate verifier accepts UNKNOWN package standing"
+  ],
+  "verification": {
+    "commands": [
+      "pnpm install --frozen-lockfile",
+      "node scripts/verify-workspace-packages.mjs --concurrency=4 --timeout-ms=300000",
+      "python3 tools/v26.8.1/verify_external.py --project UNRDF-001 --subject-receipt .artifacts/package-matrix/receipt.json"
+    ],
+    "independent_verifier": "ggen-legacy tools/v26.8.1 external verifier",
+    "claim_ceiling_before_replay": "PARTIAL_ALIVE"
+  },
+  "exclusions": [
+    "publishing npm packages",
+    "deploying services",
+    "mutating external databases",
+    "retiring historical package behavior",
+    "merging the draft pull request",
+    "claiming repository crown from package-local tests"
+  ],
+  "owner": "seanchatmangpt",
+  "receipt": {
+    "required": true,
+    "path": ".artifacts/ggen-unrdf/manufacture-receipt.json"
+  },
+  "replay": {
+    "required": true,
+    "clean_state": true,
+    "required_results": [
+      "NO_SEMANTIC_CHANGE",
+      "NO_GENERATED_DRIFT",
+      "REPLAY_MATCH"
+    ]
+  },
+  "acceptance": {
+    "unknown_packages": 0,
+    "build_broken_packages": 0,
+    "missing_verifiers": 0,
+    "missing_receipts": 0,
+    "replay_differences": 0,
+    "aggregate_standing": "ALIVE"
+  }
+}
