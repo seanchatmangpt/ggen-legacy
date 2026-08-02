@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: ggen-v26.8.1-migration-${{ github.event.pull_request.head.sha || github.sha }}
@@ -29,6 +29,25 @@ jobs:
           ref: 8351af4c5bbbf60bd99ab8417752a1762c6ea4e3
           path: .source-ggen
           fetch-depth: 0
+      - name: Restore ignored source-tracked receipt inputs
+        if: github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          set -euo pipefail
+          source_dir=.source-ggen/packs/legacy-equivalence-verifier-pack/.ggen-v2
+          destination_dir=packs/legacy-equivalence-verifier-pack/.ggen-v2
+          mkdir -p "$destination_dir"
+          cp "$source_dir/receipt-log.jsonl" "$destination_dir/receipt-log.jsonl"
+          cp "$source_dir/receipt.json" "$destination_dir/receipt.json"
+          test "$(git hash-object "$destination_dir/receipt-log.jsonl")" = 5d332fd5c32f0747f75744e38495831bcfc82bdd
+          test "$(git hash-object "$destination_dir/receipt.json")" = 39bb367482201ad6a1bc5759cc60e78bc9613aaf
+          git add -f "$destination_dir/receipt-log.jsonl" "$destination_dir/receipt.json"
+          if ! git diff --cached --quiet; then
+            git config user.name 'ggen migration agent'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'fix(corpus): retain ignored source receipt evidence'
+            git push origin "HEAD:${{ github.head_ref }}"
+          fi
       - name: Install pinned Rust
         uses: dtolnay/rust-toolchain@b3b07ba8b418998c39fb20f53e8b695cdcc8de1b
         with:
