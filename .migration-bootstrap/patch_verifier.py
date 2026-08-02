@@ -7,7 +7,7 @@ text = path.read_text(encoding="utf-8")
 replacements = [
     (
         "import os\nimport shutil\n",
-        "import os\nimport re\nimport shutil\n",
+        "import os\nimport re\nimport shutil\nimport sys\n",
     ),
     (
         "def execute(argv: list[str], *, cwd: Path, timeout: int = 900) -> tuple[CommandReceipt, str, str]:\n",
@@ -250,6 +250,23 @@ replacements = [
         "    return result\n"
         "\n"
         "\n"
+        "def diagnostic_command_receipts(\n"
+        "    receipts: list[CommandReceipt], destination_root: Path\n"
+        ") -> list[dict[str, Any]]:\n"
+        "    results = [\n"
+        "        canonical_command_receipt(receipt, destination_root)\n"
+        "        for receipt in receipts\n"
+        "    ]\n"
+        "    composed = [\n"
+        "        result for result in results if result[\"cwd\"] == \"<COMPOSED_SOURCE>\"\n"
+        "    ]\n"
+        "    print(\n"
+        "        \"COMPOSED_COMMAND_RECEIPTS=\" + json.dumps(composed, sort_keys=True),\n"
+        "        file=sys.stderr,\n"
+        "    )\n"
+        "    return results\n"
+        "\n"
+        "\n"
         "def parse_args() -> argparse.Namespace:\n",
     ),
     (
@@ -265,13 +282,9 @@ replacements = [
     ),
     (
         "            \"commands\": [asdict(compile_receipt), *[asdict(item) for item in command_receipts]],\n",
-        "            \"commands\": [\n"
-        "                canonical_command_receipt(compile_receipt, destination_root),\n"
-        "                *[\n"
-        "                    canonical_command_receipt(item, destination_root)\n"
-        "                    for item in command_receipts\n"
-        "                ],\n"
-        "            ],\n",
+        "            \"commands\": diagnostic_command_receipts(\n"
+        "                [compile_receipt, *command_receipts], destination_root\n"
+        "            ),\n",
     ),
 ]
 for old, new in replacements:
