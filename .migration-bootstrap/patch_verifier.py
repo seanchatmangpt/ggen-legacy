@@ -92,6 +92,36 @@ replacements = [
         "        \"standalone_verifier_workspace_tests\": \"PASS\",\n",
     ),
     (
+        "def parse_args() -> argparse.Namespace:\n",
+        "def canonical_command_receipt(\n"
+        "    receipt: CommandReceipt, destination_root: Path\n"
+        ") -> dict[str, Any]:\n"
+        "    result = asdict(receipt)\n"
+        "    physical_cwd = receipt.cwd\n"
+        "    destination_token = str(destination_root)\n"
+        "    if Path(physical_cwd) == destination_root:\n"
+        "        logical_cwd = \"<DESTINATION>\"\n"
+        "    elif \"ggen-v26-8-1-composed-\" in physical_cwd:\n"
+        "        logical_cwd = \"<COMPOSED_SOURCE>\"\n"
+        "    else:\n"
+        "        logical_cwd = physical_cwd\n"
+        "\n"
+        "    def canonical_text(value: str) -> str:\n"
+        "        normalized = value.replace(destination_token, \"<DESTINATION>\")\n"
+        "        if logical_cwd != physical_cwd:\n"
+        "            normalized = normalized.replace(physical_cwd, logical_cwd)\n"
+        "        return normalized\n"
+        "\n"
+        "    result[\"argv\"] = [canonical_text(value) for value in receipt.argv]\n"
+        "    result[\"cwd\"] = logical_cwd\n"
+        "    result[\"stdout_excerpt\"] = canonical_text(receipt.stdout_excerpt)\n"
+        "    result[\"stderr_excerpt\"] = canonical_text(receipt.stderr_excerpt)\n"
+        "    return result\n"
+        "\n"
+        "\n"
+        "def parse_args() -> argparse.Namespace:\n",
+    ),
+    (
         "            \"rustfmt\",\n",
         "            \"rustfmt-equivalence\",\n",
     ),
@@ -101,6 +131,16 @@ replacements = [
         "            \"candidate_head\": destination_head,\n"
         "            \"corpus_head_relation\": corpus_head_relation,\n"
         "            \"components\": component_reports,\n",
+    ),
+    (
+        "            \"commands\": [asdict(compile_receipt), *[asdict(item) for item in command_receipts]],\n",
+        "            \"commands\": [\n"
+        "                canonical_command_receipt(compile_receipt, destination_root),\n"
+        "                *[\n"
+        "                    canonical_command_receipt(item, destination_root)\n"
+        "                    for item in command_receipts\n"
+        "                ],\n"
+        "            ],\n",
     ),
 ]
 for old, new in replacements:
