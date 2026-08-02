@@ -152,37 +152,43 @@ if len(report_sinks) != 1:
         f'count={len(report_sinks)} candidates={report_sinks!r}'
     )
 needle = report_sinks[0]
-diagnostic = '''    replay_probe = Path("/tmp/ggen-v26-8-1-replay-probe.json")
-    if replay_probe.exists():
-        previous_report = json.loads(replay_probe.read_text(encoding="utf-8"))
-
-        def first_replay_diff(left: Any, right: Any, location: str = "$") -> Any:
-            if type(left) is not type(right):
-                return [location, left, right]
-            if isinstance(left, dict):
-                for key in sorted(set(left) | set(right)):
-                    if key not in left or key not in right:
-                        return [location + "." + key, left.get(key, "<MISSING>"), right.get(key, "<MISSING>")]
-                    found = first_replay_diff(left[key], right[key], location + "." + key)
-                    if found is not None:
-                        return found
-                return None
-            if isinstance(left, list):
-                if len(left) != len(right):
-                    return [location + ".length", len(left), len(right)]
-                for index, (left_item, right_item) in enumerate(zip(left, right, strict=True)):
-                    found = first_replay_diff(left_item, right_item, f"{location}[{index}]")
-                    if found is not None:
-                        return found
-                return None
-            if left != right:
-                return [location, left, right]
-            return None
-
-        observed_diff = first_replay_diff(previous_report, report)
-        os.write(2, ("FIRST_REPLAY_DIFF=" + json.dumps(observed_diff, sort_keys=True, default=str) + "\\n").encode())
-    else:
-        replay_probe.write_text(json.dumps(report, sort_keys=True), encoding="utf-8")
-
-'''
+indent = needle[: len(needle) - len(needle.lstrip())]
+diagnostic_lines = [
+    'replay_probe = Path("/tmp/ggen-v26-8-1-replay-probe.json")',
+    'if replay_probe.exists():',
+    '    previous_report = json.loads(replay_probe.read_text(encoding="utf-8"))',
+    '',
+    '    def first_replay_diff(left: Any, right: Any, location: str = "$") -> Any:',
+    '        if type(left) is not type(right):',
+    '            return [location, left, right]',
+    '        if isinstance(left, dict):',
+    '            for key in sorted(set(left) | set(right)):',
+    '                if key not in left or key not in right:',
+    '                    return [location + "." + key, left.get(key, "<MISSING>"), right.get(key, "<MISSING>")]',
+    '                found = first_replay_diff(left[key], right[key], location + "." + key)',
+    '                if found is not None:',
+    '                    return found',
+    '            return None',
+    '        if isinstance(left, list):',
+    '            if len(left) != len(right):',
+    '                return [location + ".length", len(left), len(right)]',
+    '            for index, (left_item, right_item) in enumerate(zip(left, right, strict=True)):',
+    '                found = first_replay_diff(left_item, right_item, f"{location}[{index}]")',
+    '                if found is not None:',
+    '                    return found',
+    '            return None',
+    '        if left != right:',
+    '            return [location, left, right]',
+    '        return None',
+    '',
+    '    observed_diff = first_replay_diff(previous_report, report)',
+    '    os.write(2, ("FIRST_REPLAY_DIFF=" + json.dumps(observed_diff, sort_keys=True, default=str) + "\\n").encode())',
+    'else:',
+    '    replay_probe.write_text(json.dumps(report, sort_keys=True), encoding="utf-8")',
+    '',
+]
+diagnostic = ''.join(
+    (indent + line + '\n') if line else '\n'
+    for line in diagnostic_lines
+)
 verifier_path.write_text(verifier_text.replace(needle, diagnostic + needle, 1), encoding='utf-8')
