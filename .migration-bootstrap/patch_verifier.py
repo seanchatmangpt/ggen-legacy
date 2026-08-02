@@ -7,7 +7,7 @@ text = path.read_text(encoding="utf-8")
 replacements = [
     (
         "import os\nimport shutil\n",
-        "import os\nimport re\nimport shutil\nimport sys\n",
+        "import os\nimport re\nimport shutil\n",
     ),
     (
         "def execute(argv: list[str], *, cwd: Path, timeout: int = 900) -> tuple[CommandReceipt, str, str]:\n",
@@ -21,7 +21,19 @@ replacements = [
         "    def normalize(value: str) -> str:\n"
         "        return elapsed.sub(\"<DURATION>\", value)\n"
         "\n"
-        "    return normalize(stdout), normalize(stderr)\n"
+        "    def normalize_stderr(value: str) -> str:\n"
+        "        lines = normalize(value).splitlines(keepends=True)\n"
+        "        compile_positions = [\n"
+        "            index\n"
+        "            for index, line in enumerate(lines)\n"
+        "            if line.lstrip().startswith(\"Compiling \")\n"
+        "        ]\n"
+        "        compile_events = sorted(lines[index] for index in compile_positions)\n"
+        "        for index, event in zip(compile_positions, compile_events, strict=True):\n"
+        "            lines[index] = event\n"
+        "        return \"\".join(lines)\n"
+        "\n"
+        "    return normalize(stdout), normalize_stderr(stderr)\n"
         "\n"
         "\n"
         "def execute(argv: list[str], *, cwd: Path, timeout: int = 900) -> tuple[CommandReceipt, str, str]:\n",
@@ -193,6 +205,7 @@ replacements = [
         "        \"command_receipt_normalization\": [\n"
         "            \"workspace-identity\",\n"
         "            \"cargo-color-disabled\",\n"
+        "            \"cargo-compile-progress-order\",\n"
         "            \"cargo-single-build-job\",\n"
         "            \"cargo-test-cold-target\",\n"
         "            \"cargo-test-duration-tokens\",\n"
@@ -228,25 +241,6 @@ replacements = [
         "    return result\n"
         "\n"
         "\n"
-        "def diagnostic_command_receipts(\n"
-        "    receipts: list[CommandReceipt], destination_root: Path\n"
-        ") -> list[dict[str, Any]]:\n"
-        "    results = [\n"
-        "        canonical_command_receipt(receipt, destination_root)\n"
-        "        for receipt in receipts\n"
-        "    ]\n"
-        "    cargo_test = [\n"
-        "        result\n"
-        "        for result in results\n"
-        "        if result[\"argv\"][:2] == [\"cargo\", \"test\"]\n"
-        "    ]\n"
-        "    print(\n"
-        "        \"CARGO_TEST_RECEIPT=\" + json.dumps(cargo_test, sort_keys=True),\n"
-        "        file=sys.stderr,\n"
-        "    )\n"
-        "    return results\n"
-        "\n"
-        "\n"
         "def parse_args() -> argparse.Namespace:\n",
     ),
     (
@@ -262,9 +256,13 @@ replacements = [
     ),
     (
         "            \"commands\": [asdict(compile_receipt), *[asdict(item) for item in command_receipts]],\n",
-        "            \"commands\": diagnostic_command_receipts(\n"
-        "                [compile_receipt, *command_receipts], destination_root\n"
-        "            ),\n",
+        "            \"commands\": [\n"
+        "                canonical_command_receipt(compile_receipt, destination_root),\n"
+        "                *[\n"
+        "                    canonical_command_receipt(item, destination_root)\n"
+        "                    for item in command_receipts\n"
+        "                ],\n"
+        "            ],\n",
     ),
 ]
 for old, new in replacements:
