@@ -1,10 +1,9 @@
 name: Patch migration replay diagnostic
 
 on:
-  push:
-    branches: [agent/migrate-ggen-v26-8-1-corpus]
-    paths:
-      - .migration-bootstrap/trigger-replay-diff
+  pull_request:
+    branches: [main]
+    types: [reopened]
 
 permissions:
   contents: write
