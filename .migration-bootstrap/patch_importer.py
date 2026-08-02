@@ -136,3 +136,46 @@ for old, new in replacements:
         raise SystemExit(f'PATCH_PRECONDITION_REFUSED count={count} snippet={old[:100]!r}')
     text = text.replace(old, new, 1)
 path.write_text(text, encoding='utf-8')
+
+# The verifier is already decoded when this patcher runs. Add a bounded replay
+# probe that compares only the two reports produced inside this workflow run.
+verifier_path = Path('/tmp/verify_ggen_v26_8_1_migration.py')
+verifier_text = verifier_path.read_text(encoding='utf-8')
+needle = '    write_json(destination_root / DEFAULT_REPORT_PATH, report)\n'
+diagnostic = '''    replay_probe = Path("/tmp/ggen-v26-8-1-replay-probe.json")
+    if replay_probe.exists():
+        previous_report = json.loads(replay_probe.read_text(encoding="utf-8"))
+
+        def first_replay_diff(left: Any, right: Any, location: str = "$") -> Any:
+            if type(left) is not type(right):
+                return [location, left, right]
+            if isinstance(left, dict):
+                for key in sorted(set(left) | set(right)):
+                    if key not in left or key not in right:
+                        return [location + "." + key, left.get(key, "<MISSING>"), right.get(key, "<MISSING>")]
+                    found = first_replay_diff(left[key], right[key], location + "." + key)
+                    if found is not None:
+                        return found
+                return None
+            if isinstance(left, list):
+                if len(left) != len(right):
+                    return [location + ".length", len(left), len(right)]
+                for index, (left_item, right_item) in enumerate(zip(left, right, strict=True)):
+                    found = first_replay_diff(left_item, right_item, f"{location}[{index}]")
+                    if found is not None:
+                        return found
+                return None
+            if left != right:
+                return [location, left, right]
+            return None
+
+        observed_diff = first_replay_diff(previous_report, report)
+        os.write(2, ("FIRST_REPLAY_DIFF=" + json.dumps(observed_diff, sort_keys=True, default=str) + "\\n").encode())
+    else:
+        replay_probe.write_text(json.dumps(report, sort_keys=True), encoding="utf-8")
+
+'''
+count = verifier_text.count(needle)
+if count != 1:
+    raise SystemExit(f'REPLAY_PROBE_PRECONDITION_REFUSED count={count}')
+verifier_path.write_text(verifier_text.replace(needle, diagnostic + needle, 1), encoding='utf-8')
