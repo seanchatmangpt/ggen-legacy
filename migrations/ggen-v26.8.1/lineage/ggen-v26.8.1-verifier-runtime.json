@@ -1,0 +1,203 @@
+{
+  "component_id": "GGEN-V26.8.1-VERIFIER-RUNTIME",
+  "destination_path": "tools/v26.8.1",
+  "destination_repository": "seanchatmangpt/ggen-legacy",
+  "files": [
+    {
+      "destination_blake3": "ba428e13f6f59076664ea58f9d2f3d71564f4aab38201c6afeef5058119fa492",
+      "destination_path": "tools/v26.8.1/Cargo.lock",
+      "size": 12738,
+      "source_blake3": "ba428e13f6f59076664ea58f9d2f3d71564f4aab38201c6afeef5058119fa492",
+      "source_git_blob": "63ebee2ca55ec6778707411f34bda52c764d43af",
+      "source_path": "tools/v26.8.1/Cargo.lock"
+    },
+    {
+      "destination_blake3": "cb80c3f7ee9dab642e3937cd14d7712c2935b1015f568fc9d4781e79578bfbb5",
+      "destination_path": "tools/v26.8.1/Cargo.toml",
+      "size": 730,
+      "source_blake3": "cb80c3f7ee9dab642e3937cd14d7712c2935b1015f568fc9d4781e79578bfbb5",
+      "source_git_blob": "1f024ae706def56bd3bee44165ad5da7aadd5aa6",
+      "source_path": "tools/v26.8.1/Cargo.toml"
+    },
+    {
+      "destination_blake3": "fd8ae5b7272d48fd28dbae243e9dda76fbc647bb6a4d155b6354700c5e870aba",
+      "destination_path": "tools/v26.8.1/clean_room.py",
+      "size": 8955,
+      "source_blake3": "fd8ae5b7272d48fd28dbae243e9dda76fbc647bb6a4d155b6354700c5e870aba",
+      "source_git_blob": "177330b66ddcff9bdec9f1bd77ffb1f8db612def",
+      "source_path": "tools/v26.8.1/clean_room.py"
+    },
+    {
+      "destination_blake3": "bc8392c342c4c8ba0b45b64a8d6eefcb9e3ab893397a28bf080af0dcffeddba6",
+      "destination_path": "tools/v26.8.1/coverage_sabotage_tests.py",
+      "size": 12424,
+      "source_blake3": "bc8392c342c4c8ba0b45b64a8d6eefcb9e3ab893397a28bf080af0dcffeddba6",
+      "source_git_blob": "72489c71ddee221fa851cce823a24a2ef6c9e7b8",
+      "source_path": "tools/v26.8.1/coverage_sabotage_tests.py"
+    },
+    {
+      "destination_blake3": "ca7398729cdc5a21e82974a1e718dac4568726909a7e9d4925968d866fd71e20",
+      "destination_path": "tools/v26.8.1/document_evidence_index.py",
+      "size": 20514,
+      "source_blake3": "ca7398729cdc5a21e82974a1e718dac4568726909a7e9d4925968d866fd71e20",
+      "source_git_blob": "7d818a0b5fadfd9b34113766eba070e9dfd6be06",
+      "source_path": "tools/v26.8.1/document_evidence_index.py"
+    },
+    {
+      "destination_blake3": "472f63508dbfb93d73d8c956f7ca4cd29e234fc4c35002dc83e47d5c70048f6c",
+      "destination_path": "tools/v26.8.1/equivalence_runner.py",
+      "size": 17899,
+      "source_blake3": "472f63508dbfb93d73d8c956f7ca4cd29e234fc4c35002dc83e47d5c70048f6c",
+      "source_git_blob": "b945c9b9291c088b61646f711f08abe1cb8a5552",
+      "source_path": "tools/v26.8.1/equivalence_runner.py"
+    },
+    {
+      "destination_blake3": "5885a0072bd104242e9ddd4f87ebdc7e9571ce4990555358305bf0d424bf76bb",
+      "destination_path": "tools/v26.8.1/example_equivalence_cases.json",
+      "size": 2644,
+      "source_blake3": "5885a0072bd104242e9ddd4f87ebdc7e9571ce4990555358305bf0d424bf76bb",
+      "source_git_blob": "4f6165a197a8a73c2cbafc4227099762eea81ea2",
+      "source_path": "tools/v26.8.1/example_equivalence_cases.json"
+    },
+    {
+      "destination_blake3": "468a552534fa92a11fba8d5638a744e28537cc002a707bccb55e3acdfa13f0b5",
+      "destination_path": "tools/v26.8.1/guard_fail_open_subprocess.py",
+      "size": 4869,
+      "source_blake3": "468a552534fa92a11fba8d5638a744e28537cc002a707bccb55e3acdfa13f0b5",
+      "source_git_blob": "bf35d7921cb155b39506b68b01493d2dd23fd4fc",
+      "source_path": "tools/v26.8.1/guard_fail_open_subprocess.py"
+    },
+    {
+      "destination_blake3": "6eb367371dce6a7acb8fee247beb3a8a347373ab54a168eb4d5b922ca1e81cc1",
+      "destination_path": "tools/v26.8.1/guard_short_test_timeout.py",
+      "size": 3861,
+      "source_blake3": "6eb367371dce6a7acb8fee247beb3a8a347373ab54a168eb4d5b922ca1e81cc1",
+      "source_git_blob": "2813f2496c1a01154de8f5c2bdc58818310c3a50",
+      "source_path": "tools/v26.8.1/guard_short_test_timeout.py"
+    },
+    {
+      "destination_blake3": "2d1a6414768efbd4da501625d93d94e8651e95607558dd215c94f9d6f8db59bb",
+      "destination_path": "tools/v26.8.1/justfile",
+      "size": 801,
+      "source_blake3": "2d1a6414768efbd4da501625d93d94e8651e95607558dd215c94f9d6f8db59bb",
+      "source_git_blob": "b6ea242a505e5e1431f235c811c61b1e8f3108d3",
+      "source_path": "tools/v26.8.1/justfile"
+    },
+    {
+      "destination_blake3": "7abbb257b9de4d84351d308292478c635f2165251767a3ee674618115ee9ed73",
+      "destination_path": "tools/v26.8.1/legacy_archaeology.py",
+      "size": 81350,
+      "source_blake3": "7abbb257b9de4d84351d308292478c635f2165251767a3ee674618115ee9ed73",
+      "source_git_blob": "c33268f7b34e405a43d4fa6e32ca1174517f8b18",
+      "source_path": "tools/v26.8.1/legacy_archaeology.py"
+    },
+    {
+      "destination_blake3": "6575656844860996b712a4ba06f90dcafd67c74f677112bd8a46cb853efe5f32",
+      "destination_path": "tools/v26.8.1/legacy_subsystem_verification_test.py",
+      "size": 9205,
+      "source_blake3": "6575656844860996b712a4ba06f90dcafd67c74f677112bd8a46cb853efe5f32",
+      "source_git_blob": "b502ed15e2cd766180115f8366b925c504621dd9",
+      "source_path": "tools/v26.8.1/legacy_subsystem_verification_test.py"
+    },
+    {
+      "destination_blake3": "818190930b9127e30f2c547625745cfc1fcec925ee1bc2f92366397b9565fee0",
+      "destination_path": "tools/v26.8.1/schemas/step-two-report.schema.json",
+      "size": 2265,
+      "source_blake3": "818190930b9127e30f2c547625745cfc1fcec925ee1bc2f92366397b9565fee0",
+      "source_git_blob": "11290fa95974c201a6b02da670b9aa0d983d5601",
+      "source_path": "tools/v26.8.1/schemas/step-two-report.schema.json"
+    },
+    {
+      "destination_blake3": "041bb07f17cba3725770162938236612d876dcbd8e3d1af853666bf9e9e60d5a",
+      "destination_path": "tools/v26.8.1/schemas/subsystem-evidence.schema.json",
+      "size": 3639,
+      "source_blake3": "041bb07f17cba3725770162938236612d876dcbd8e3d1af853666bf9e9e60d5a",
+      "source_git_blob": "f923d3cbafa6d381241e1012b3d5864881f0d0cb",
+      "source_path": "tools/v26.8.1/schemas/subsystem-evidence.schema.json"
+    },
+    {
+      "destination_blake3": "5c810b14e7ddcb1a809e613d6588983333530d7239c588aef08ad39e364f77d1",
+      "destination_path": "tools/v26.8.1/schemas/verifier-report.schema.json",
+      "size": 2808,
+      "source_blake3": "5c810b14e7ddcb1a809e613d6588983333530d7239c588aef08ad39e364f77d1",
+      "source_git_blob": "91157c74013b648cacdc3f93cfe5e5f1d0af9625",
+      "source_path": "tools/v26.8.1/schemas/verifier-report.schema.json"
+    },
+    {
+      "destination_blake3": "41835c34e445fd4734ebb0598820e5386c9656ae075b8aafe647886f7ce8897d",
+      "destination_path": "tools/v26.8.1/src/bin/project_coverage.rs",
+      "size": 4916,
+      "source_blake3": "41835c34e445fd4734ebb0598820e5386c9656ae075b8aafe647886f7ce8897d",
+      "source_git_blob": "7f9af271d5b56b5a0b4b3dd78da7452e12bfe83b",
+      "source_path": "tools/v26.8.1/src/bin/project_coverage.rs"
+    },
+    {
+      "destination_blake3": "29d1939fe786923093e96e9fbceb700c3debfcca054d17de694c3deab393f982",
+      "destination_path": "tools/v26.8.1/src/bin/subsystem_verifier.rs",
+      "size": 25324,
+      "source_blake3": "29d1939fe786923093e96e9fbceb700c3debfcca054d17de694c3deab393f982",
+      "source_git_blob": "47dd98dd4858152f20b421f884b9549781e707ab",
+      "source_path": "tools/v26.8.1/src/bin/subsystem_verifier.rs"
+    },
+    {
+      "destination_blake3": "48320129e31e5ba5b8d0ee5195bcc0c27d36738d25473211485df60ee685cbce",
+      "destination_path": "tools/v26.8.1/src/coverage_projection.rs",
+      "size": 17510,
+      "source_blake3": "48320129e31e5ba5b8d0ee5195bcc0c27d36738d25473211485df60ee685cbce",
+      "source_git_blob": "f954a6f9f78d74e0de27fe3f1179e1c10508ab35",
+      "source_path": "tools/v26.8.1/src/coverage_projection.rs"
+    },
+    {
+      "destination_blake3": "b1aab7d2f48e3472ffb4ae98a9b68993f18ca4576b61fab8581ae96ba7f26369",
+      "destination_path": "tools/v26.8.1/src/lib.rs",
+      "size": 595,
+      "source_blake3": "b1aab7d2f48e3472ffb4ae98a9b68993f18ca4576b61fab8581ae96ba7f26369",
+      "source_git_blob": "3dc40caa0d2ba96251d7c10540d8675d7cde62a5",
+      "source_path": "tools/v26.8.1/src/lib.rs"
+    },
+    {
+      "destination_blake3": "abaeec2d83ed55ffeb0f29e2e362f6699e71686bf2d0cfac45eceb32fc420084",
+      "destination_path": "tools/v26.8.1/src/main.rs",
+      "size": 57018,
+      "source_blake3": "abaeec2d83ed55ffeb0f29e2e362f6699e71686bf2d0cfac45eceb32fc420084",
+      "source_git_blob": "8b49d8e27246ae81047a2f1b337882ba38ade9b4",
+      "source_path": "tools/v26.8.1/src/main.rs"
+    },
+    {
+      "destination_blake3": "86cab6f15981710c7061d2d4a526609684e3bd6ccbc3b44ac7ba1b3255f0258d",
+      "destination_path": "tools/v26.8.1/step_two.py",
+      "size": 24308,
+      "source_blake3": "86cab6f15981710c7061d2d4a526609684e3bd6ccbc3b44ac7ba1b3255f0258d",
+      "source_git_blob": "ca47144883fc387b57aa7d25b7788cb999baf276",
+      "source_path": "tools/v26.8.1/step_two.py"
+    },
+    {
+      "destination_blake3": "b776600ce121840ff9962699e1fccf470d0d96723ecddf4ef4423fb7d463311f",
+      "destination_path": "tools/v26.8.1/subsystem_evidence_manifest.py",
+      "size": 20961,
+      "source_blake3": "b776600ce121840ff9962699e1fccf470d0d96723ecddf4ef4423fb7d463311f",
+      "source_git_blob": "227ada66b1647655f257676e8731a15603c859e8",
+      "source_path": "tools/v26.8.1/subsystem_evidence_manifest.py"
+    },
+    {
+      "destination_blake3": "44dce6d4645479aa5253f6537cf8e9cb7c46d94d4555b54bd558703b70b1866d",
+      "destination_path": "tools/v26.8.1/subsystem_verifier_sabotage_tests.py",
+      "size": 11456,
+      "source_blake3": "44dce6d4645479aa5253f6537cf8e9cb7c46d94d4555b54bd558703b70b1866d",
+      "source_git_blob": "b5cc4b4ad6f7b33a4ab69f99092ac6d347cda436",
+      "source_path": "tools/v26.8.1/subsystem_verifier_sabotage_tests.py"
+    },
+    {
+      "destination_blake3": "05579bf7834b5948161cbc76b4509717910dc5d45bb0b04695c1a1419ff4d61e",
+      "destination_path": "tools/v26.8.1/validate_shacl.py",
+      "size": 1637,
+      "source_blake3": "05579bf7834b5948161cbc76b4509717910dc5d45bb0b04695c1a1419ff4d61e",
+      "source_git_blob": "12e7128b9d0630ab880275dce5cd010e4233e01d",
+      "source_path": "tools/v26.8.1/validate_shacl.py"
+    }
+  ],
+  "schema": "ggen.legacy.cross-repository-lineage/1",
+  "source_commit": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+  "source_path": "tools/v26.8.1",
+  "source_repository": "seanchatmangpt/ggen"
+}

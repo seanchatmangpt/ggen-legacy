@@ -1,0 +1,103 @@
+{
+  "behavioral": {
+    "command_receipt_normalization": [
+      "workspace-identity",
+      "composed-temporary-prefix",
+      "rustfmt-diagnostic-workspace",
+      "cargo-color-disabled",
+      "cargo-compile-progress-order",
+      "cargo-single-build-job",
+      "cargo-test-cold-target",
+      "cargo-test-duration-tokens",
+      "rust-test-single-thread"
+    ],
+    "full_legacy_equivalence_portfolio": "DEFERRED_TO_SOURCE_REMOVAL_PR",
+    "planning_aggregate_sha256": "40f99eddb9cdce2a662b8e2f3cb9e87737d5cc8f534d4ac3f14b8e4842ee36be",
+    "planning_counts": {
+      "deterministic_problem_families": 10,
+      "numbered_research_documents": 100,
+      "observed_surfaces": 18,
+      "required_surfaces": 17
+    },
+    "planning_report_match": true,
+    "rustfmt_exit_match": true,
+    "rustfmt_exit_status": 0,
+    "rustfmt_state": "PASS",
+    "shacl_output_match": true,
+    "shacl_result": "CONFORMS: True",
+    "standalone_verifier_workspace_tests": "PASS"
+  },
+  "claim_boundary": "migration integrity and bounded composition only",
+  "components": [
+    {
+      "byte_identical": true,
+      "component_id": "GGEN-V26.8.1-DOCUMENT-CORPUS",
+      "destination_digest": "64680e70dd91add1f68de565d6ab0bea40e1358d61334ae819066361e2b9e00b",
+      "disposition": "PRESERVED",
+      "files": 114,
+      "source_digest": "64680e70dd91add1f68de565d6ab0bea40e1358d61334ae819066361e2b9e00b"
+    },
+    {
+      "byte_identical": true,
+      "component_id": "GGEN-V26.8.1-ONTOLOGY-AUTHORITY",
+      "destination_digest": "6636d76623890d617267110a09c3c2814f564ffaa1afe40ec70909bb9fd84e2d",
+      "disposition": "PRESERVED",
+      "files": 11,
+      "source_digest": "6636d76623890d617267110a09c3c2814f564ffaa1afe40ec70909bb9fd84e2d"
+    },
+    {
+      "byte_identical": true,
+      "component_id": "GGEN-V26.8.1-PLANNING-PORTFOLIO",
+      "destination_digest": "dbe68986d9fb3c9fc865d9ff47dc59175b997930b9bc92e827f75b2d36f8b942",
+      "disposition": "PRESERVED",
+      "files": 20,
+      "source_digest": "dbe68986d9fb3c9fc865d9ff47dc59175b997930b9bc92e827f75b2d36f8b942"
+    },
+    {
+      "byte_identical": true,
+      "component_id": "GGEN-V26.8.1-VERIFIER-RUNTIME",
+      "destination_digest": "9536d89b8e5808f304174985350f6c0ef61c3d043c7b9fb5ee5c92f836adaba5",
+      "disposition": "PRESERVED",
+      "files": 24,
+      "source_digest": "9536d89b8e5808f304174985350f6c0ef61c3d043c7b9fb5ee5c92f836adaba5"
+    },
+    {
+      "byte_identical": true,
+      "component_id": "GGEN-V26.8.1-EQUIVALENCE-PACK",
+      "destination_digest": "bf1a66d4e74d4b4040c56c11a49c4281bae6d5378f6307f66984f1c2701845ae",
+      "disposition": "PRESERVED",
+      "files": 17,
+      "source_digest": "bf1a66d4e74d4b4040c56c11a49c4281bae6d5378f6307f66984f1c2701845ae"
+    },
+    {
+      "byte_identical": true,
+      "component_id": "GGEN-V26.8.1-RUSTFMT-CONTEXT",
+      "destination_digest": "2f1ef8af9a82eeb503c30222de576e290700266f2808f1d555b82b5088f5d6dd",
+      "disposition": "PRESERVED",
+      "files": 1,
+      "source_digest": "2f1ef8af9a82eeb503c30222de576e290700266f2808f1d555b82b5088f5d6dd"
+    },
+    {
+      "byte_identical": true,
+      "component_id": "GGEN-V26.8.1-SOURCE-WORKFLOW-EVIDENCE",
+      "destination_digest": "734224741f8cb98caab3c77ef34e783630e1384f49e1875e1ae4ecec8fdcccd9",
+      "disposition": "ARCHIVED",
+      "files": 3,
+      "source_digest": "734224741f8cb98caab3c77ef34e783630e1384f49e1875e1ae4ecec8fdcccd9"
+    }
+  ],
+  "corpus_head": "07928bde9d9eaba2e2e2fd8f78fcdc3f7b0b63ff",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "exact_byte_identity": true,
+  "negative_controls": {
+    "byte_drift_refused": true,
+    "missing_file_refused": true,
+    "path_escape_refused": true,
+    "stale_source_coordinate_refused": true
+  },
+  "replay": "REPLAY_MATCH",
+  "schema": "ggen.legacy.ggen-v26.8.1-equivalence/1",
+  "source_head": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+  "source_repository": "seanchatmangpt/ggen",
+  "standing": "PARTIAL_ALIVE"
+}

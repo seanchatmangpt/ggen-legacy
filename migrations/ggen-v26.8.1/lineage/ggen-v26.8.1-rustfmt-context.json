@@ -1,0 +1,19 @@
+{
+  "component_id": "GGEN-V26.8.1-RUSTFMT-CONTEXT",
+  "destination_path": "rustfmt.toml",
+  "destination_repository": "seanchatmangpt/ggen-legacy",
+  "files": [
+    {
+      "destination_blake3": "6a7657a597eac790f3a84f886dab18c47b7eb0dfb7e5e9aefcb90780f7f777be",
+      "destination_path": "rustfmt.toml",
+      "size": 636,
+      "source_blake3": "6a7657a597eac790f3a84f886dab18c47b7eb0dfb7e5e9aefcb90780f7f777be",
+      "source_git_blob": "c0003d7c8c23a41dfe4bc16f1c70c4f92880f990",
+      "source_path": "rustfmt.toml"
+    }
+  ],
+  "schema": "ggen.legacy.cross-repository-lineage/1",
+  "source_commit": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+  "source_path": "rustfmt.toml",
+  "source_repository": "seanchatmangpt/ggen"
+}

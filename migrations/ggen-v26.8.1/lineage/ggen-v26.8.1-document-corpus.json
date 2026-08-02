@@ -1,0 +1,923 @@
+{
+  "component_id": "GGEN-V26.8.1-DOCUMENT-CORPUS",
+  "destination_path": "docs/v26.8.1",
+  "destination_repository": "seanchatmangpt/ggen-legacy",
+  "files": [
+    {
+      "destination_blake3": "4aac94394be9931b57419c971141e89a79021dea86d10d3d19077c7322cfadcf",
+      "destination_path": "docs/v26.8.1/00-governance/01-canon-and-authority.md",
+      "size": 1285,
+      "source_blake3": "4aac94394be9931b57419c971141e89a79021dea86d10d3d19077c7322cfadcf",
+      "source_git_blob": "4219d0b6abc191543e0e6bd7991ec6286deec2e9",
+      "source_path": "docs/v26.8.1/00-governance/01-canon-and-authority.md"
+    },
+    {
+      "destination_blake3": "fe08e2c0e3d5d76aadb345f4a5873e02e6683c231e87cdbb803e8b99b6b9f1eb",
+      "destination_path": "docs/v26.8.1/00-governance/02-scope-and-non-goals.md",
+      "size": 1177,
+      "source_blake3": "fe08e2c0e3d5d76aadb345f4a5873e02e6683c231e87cdbb803e8b99b6b9f1eb",
+      "source_git_blob": "e5df0a8b5ab81d190fa499e1aa6ae945ee20f7c3",
+      "source_path": "docs/v26.8.1/00-governance/02-scope-and-non-goals.md"
+    },
+    {
+      "destination_blake3": "673be13229c59fb6b193ec72792869741ffd07f3b4a519c13400ea511ba8fc24",
+      "destination_path": "docs/v26.8.1/00-governance/03-standing-vocabulary.md",
+      "size": 953,
+      "source_blake3": "673be13229c59fb6b193ec72792869741ffd07f3b4a519c13400ea511ba8fc24",
+      "source_git_blob": "410cbc63130ec4542d4b16403385239aeb8b564f",
+      "source_path": "docs/v26.8.1/00-governance/03-standing-vocabulary.md"
+    },
+    {
+      "destination_blake3": "f96fc464d7344a0ebccf0f0839f31ebc9ca27f1c22fc279037c9b7871f88991d",
+      "destination_path": "docs/v26.8.1/00-governance/04-claim-classification.md",
+      "size": 1099,
+      "source_blake3": "f96fc464d7344a0ebccf0f0839f31ebc9ca27f1c22fc279037c9b7871f88991d",
+      "source_git_blob": "d3bde902e5cad0e8452b615a04b2b991b822b5f7",
+      "source_path": "docs/v26.8.1/00-governance/04-claim-classification.md"
+    },
+    {
+      "destination_blake3": "58f85172b689448990ea692d6660ece152164ea7525224c839e1547339e07077",
+      "destination_path": "docs/v26.8.1/00-governance/05-zero-information-loss-law.md",
+      "size": 1081,
+      "source_blake3": "58f85172b689448990ea692d6660ece152164ea7525224c839e1547339e07077",
+      "source_git_blob": "40304d223edcceb90d20cbda2e10692a4c276ef2",
+      "source_path": "docs/v26.8.1/00-governance/05-zero-information-loss-law.md"
+    },
+    {
+      "destination_blake3": "fffcc17fa47c648f1070e816a47bf87d37007169ed2542966ae60a38cc828d5c",
+      "destination_path": "docs/v26.8.1/00-governance/06-source-precedence.md",
+      "size": 2247,
+      "source_blake3": "fffcc17fa47c648f1070e816a47bf87d37007169ed2542966ae60a38cc828d5c",
+      "source_git_blob": "91ed1e98c8f121bd4904a0853ded52cfd1fd2fe2",
+      "source_path": "docs/v26.8.1/00-governance/06-source-precedence.md"
+    },
+    {
+      "destination_blake3": "54becb6e45fe98ff04326dd210512f41dd0dc2d4127596189da3ed31f7ef145e",
+      "destination_path": "docs/v26.8.1/00-governance/07-generated-surface-authority.md",
+      "size": 805,
+      "source_blake3": "54becb6e45fe98ff04326dd210512f41dd0dc2d4127596189da3ed31f7ef145e",
+      "source_git_blob": "8f69863ab4086beffb3f8225ab52c34e0e75e1d6",
+      "source_path": "docs/v26.8.1/00-governance/07-generated-surface-authority.md"
+    },
+    {
+      "destination_blake3": "7342cbf0ceeebf026edefdbd682e201781f8914e03835aca877a9e6f7a831ba6",
+      "destination_path": "docs/v26.8.1/00-governance/08-change-control.md",
+      "size": 5184,
+      "source_blake3": "7342cbf0ceeebf026edefdbd682e201781f8914e03835aca877a9e6f7a831ba6",
+      "source_git_blob": "4442a54a723108aa22ae0c969ed38786ba389b1b",
+      "source_path": "docs/v26.8.1/00-governance/08-change-control.md"
+    },
+    {
+      "destination_blake3": "458bc51641772b75dee4927185a550d444d1f7bc46114a0f94ee9704d6cb722a",
+      "destination_path": "docs/v26.8.1/00-governance/09-release-decision-record.md",
+      "size": 1041,
+      "source_blake3": "458bc51641772b75dee4927185a550d444d1f7bc46114a0f94ee9704d6cb722a",
+      "source_git_blob": "43743066f39b1aa9d197710c7ea41b27f9e8d886",
+      "source_path": "docs/v26.8.1/00-governance/09-release-decision-record.md"
+    },
+    {
+      "destination_blake3": "d024820d2205bf3f973b0d8b91841648ed8cacae45934d3d8dd20f768a1f966d",
+      "destination_path": "docs/v26.8.1/00-governance/10-risk-register.md",
+      "size": 1307,
+      "source_blake3": "d024820d2205bf3f973b0d8b91841648ed8cacae45934d3d8dd20f768a1f966d",
+      "source_git_blob": "3c1640cdfb50e662d3716adf46f8e7354bd7bbbd",
+      "source_path": "docs/v26.8.1/00-governance/10-risk-register.md"
+    },
+    {
+      "destination_blake3": "8cb4adcab283120cce027e516f4fd443224c7c71ef65b5420e1f43f9d9572a6e",
+      "destination_path": "docs/v26.8.1/10-system/11-repository-topology.md",
+      "size": 1209,
+      "source_blake3": "8cb4adcab283120cce027e516f4fd443224c7c71ef65b5420e1f43f9d9572a6e",
+      "source_git_blob": "b8ec6cea60f3fb3a2b79f9d3a6fab47ac34d5d3d",
+      "source_path": "docs/v26.8.1/10-system/11-repository-topology.md"
+    },
+    {
+      "destination_blake3": "8797282c3965bed4ffb41da8f286fc506a36e2e62b978fa680e6748effa18d77",
+      "destination_path": "docs/v26.8.1/10-system/12-workspace-crate-map.md",
+      "size": 2906,
+      "source_blake3": "8797282c3965bed4ffb41da8f286fc506a36e2e62b978fa680e6748effa18d77",
+      "source_git_blob": "58c98cf325af249ea8ca1c14c5cb4d50f83b20fc",
+      "source_path": "docs/v26.8.1/10-system/12-workspace-crate-map.md"
+    },
+    {
+      "destination_blake3": "5202fb29821ac3166f5ee226554c825b5b21260cdca9644ec316ff21cdcf211d",
+      "destination_path": "docs/v26.8.1/10-system/13-dependency-boundaries.md",
+      "size": 1171,
+      "source_blake3": "5202fb29821ac3166f5ee226554c825b5b21260cdca9644ec316ff21cdcf211d",
+      "source_git_blob": "27cd0d7ad18095057f5dc6a0fe43260b6e84db26",
+      "source_path": "docs/v26.8.1/10-system/13-dependency-boundaries.md"
+    },
+    {
+      "destination_blake3": "94d4e1c9f116e1bf54acab9e53ba272e951cac648abb9402d4796700ecb8e35d",
+      "destination_path": "docs/v26.8.1/10-system/14-runtime-boundaries.md",
+      "size": 1151,
+      "source_blake3": "94d4e1c9f116e1bf54acab9e53ba272e951cac648abb9402d4796700ecb8e35d",
+      "source_git_blob": "e74d6f5af8d94b02f34b5c7813570161711e56f7",
+      "source_path": "docs/v26.8.1/10-system/14-runtime-boundaries.md"
+    },
+    {
+      "destination_blake3": "97c4c6040fb06bbfa5224d64764e08dd4b1a7d46c530f342040d3704f40d39ef",
+      "destination_path": "docs/v26.8.1/10-system/15-process-intelligence-boundary.md",
+      "size": 1133,
+      "source_blake3": "97c4c6040fb06bbfa5224d64764e08dd4b1a7d46c530f342040d3704f40d39ef",
+      "source_git_blob": "57a71c400ffd1b2a40afebc4cd993da9009c200c",
+      "source_path": "docs/v26.8.1/10-system/15-process-intelligence-boundary.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/10-system/16-self-hosting-architecture.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/10-system/16-self-hosting-architecture.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/10-system/17-gall-control-plane.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/10-system/17-gall-control-plane.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/10-system/18-building-block-kernel.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/10-system/18-building-block-kernel.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/10-system/19-fortune5-capability-model.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/10-system/19-fortune5-capability-model.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/10-system/20-external-actuation-boundary.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/10-system/20-external-actuation-boundary.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/20-engine/21-sync-pipeline.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/20-engine/21-sync-pipeline.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/20-engine/22-resolve-stage.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/20-engine/22-resolve-stage.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/20-engine/23-enrich-stage.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/20-engine/23-enrich-stage.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/20-engine/24-extract-stage.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/20-engine/24-extract-stage.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/20-engine/25-render-stage.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/20-engine/25-render-stage.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/20-engine/26-write-stage.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/20-engine/26-write-stage.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/20-engine/27-receipt-stage.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/20-engine/27-receipt-stage.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/20-engine/28-dry-run-semantics.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/20-engine/28-dry-run-semantics.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/20-engine/29-watch-and-incremental-semantics.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/20-engine/29-watch-and-incremental-semantics.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/20-engine/30-failure-and-refusal-ordering.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/20-engine/30-failure-and-refusal-ordering.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/30-graph/31-rdf-authority-model.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/30-graph/31-rdf-authority-model.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/30-graph/32-oxigraph-integration.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/30-graph/32-oxigraph-integration.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/30-graph/33-praxis-graphlaw-integration.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/30-graph/33-praxis-graphlaw-integration.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/30-graph/34-sparql-contracts.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/30-graph/34-sparql-contracts.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/30-graph/35-n3-and-datalog-boundary.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/30-graph/35-n3-and-datalog-boundary.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/30-graph/36-shacl-validation.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/30-graph/36-shacl-validation.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/30-graph/37-shex-validation.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/30-graph/37-shex-validation.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/30-graph/38-ontology-imports.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/30-graph/38-ontology-imports.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/30-graph/39-deterministic-graph-hashing.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/30-graph/39-deterministic-graph-hashing.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/30-graph/40-graph-delta-and-transition-receipts.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/30-graph/40-graph-delta-and-transition-receipts.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/40-projection/41-tera-integration.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/40-projection/41-tera-integration.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/40-projection/42-template-frontmatter.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/40-projection/42-template-frontmatter.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/40-projection/43-context-construction.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/40-projection/43-context-construction.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/40-projection/44-combinatorial-maximalism.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/40-projection/44-combinatorial-maximalism.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/40-projection/45-output-path-safety.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/40-projection/45-output-path-safety.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/40-projection/46-write-modes.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/40-projection/46-write-modes.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/40-projection/47-generated-manual-merge.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/40-projection/47-generated-manual-merge.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/40-projection/48-output-ownership.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/40-projection/48-output-ownership.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/40-projection/49-render-determinism.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/40-projection/49-render-determinism.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/40-projection/50-projection-performance.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/40-projection/50-projection-performance.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/50-evidence/51-receipt-schema.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/50-evidence/51-receipt-schema.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/50-evidence/52-blake3-chain.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/50-evidence/52-blake3-chain.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/50-evidence/53-signature-and-key-management.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/50-evidence/53-signature-and-key-management.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/50-evidence/54-replay-protocol.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/50-evidence/54-replay-protocol.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/50-evidence/55-ocel-emission.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/50-evidence/55-ocel-emission.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/50-evidence/56-opentelemetry.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/50-evidence/56-opentelemetry.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/50-evidence/57-causality-chain.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/50-evidence/57-causality-chain.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/50-evidence/58-multi-surface-corroboration.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/50-evidence/58-multi-surface-corroboration.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/50-evidence/59-external-witness.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/50-evidence/59-external-witness.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/50-evidence/60-standing-promotion.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/50-evidence/60-standing-promotion.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/60-products/61-cli-surface.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/60-products/61-cli-surface.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/60-products/62-default-verb-routing.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/60-products/62-default-verb-routing.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/60-products/63-configuration-schemas.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/60-products/63-configuration-schemas.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/60-products/64-lsp-surface.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/60-products/64-lsp-surface.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/60-products/65-lsp-diagnostics.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/60-products/65-lsp-diagnostics.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/60-products/66-marketplace.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/60-products/66-marketplace.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/60-products/67-pack-kernel.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/60-products/67-pack-kernel.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/60-products/68-bblock-composition.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/60-products/68-bblock-composition.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/60-products/69-lockfile-and-resolution.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/60-products/69-lockfile-and-resolution.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/60-products/70-a2a-mcp-and-protocol-surfaces.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/60-products/70-a2a-mcp-and-protocol-surfaces.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/70-verification/71-verification-constitution.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/70-verification/71-verification-constitution.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/70-verification/72-unit-boundary-suite.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/70-verification/72-unit-boundary-suite.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/70-verification/73-property-and-fuzz-suite.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/70-verification/73-property-and-fuzz-suite.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/70-verification/74-stdio-http-integration-suite.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/70-verification/74-stdio-http-integration-suite.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/70-verification/75-black-box-cli-e2e.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/70-verification/75-black-box-cli-e2e.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/70-verification/76-security-suite.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/70-verification/76-security-suite.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/70-verification/77-chaos-stress-and-benchmark.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/70-verification/77-chaos-stress-and-benchmark.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/70-verification/78-replay-suite.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/70-verification/78-replay-suite.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/70-verification/79-machine-readable-verifier-report.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/70-verification/79-machine-readable-verifier-report.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/70-verification/80-negative-fixtures-and-falsifiers.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/70-verification/80-negative-fixtures-and-falsifiers.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/80-economics/81-tera-benchmark-research.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/80-economics/81-tera-benchmark-research.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/80-economics/82-oxigraph-benchmark-research.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/80-economics/82-oxigraph-benchmark-research.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/80-economics/83-integrated-pipeline-model.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/80-economics/83-integrated-pipeline-model.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/80-economics/84-littles-law.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/80-economics/84-littles-law.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/80-economics/85-amdahls-law.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/80-economics/85-amdahls-law.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/80-economics/86-brooks-and-coordination.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/80-economics/86-brooks-and-coordination.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/80-economics/87-conways-law.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/80-economics/87-conways-law.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/80-economics/88-human-comparison.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/80-economics/88-human-comparison.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/80-economics/89-cost-and-capacity-model.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/80-economics/89-cost-and-capacity-model.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/80-economics/90-threats-to-validity.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/80-economics/90-threats-to-validity.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/90-legacy/100-final-decision-and-refusal.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/90-legacy/100-final-decision-and-refusal.md"
+    },
+    {
+      "destination_blake3": "bed50377cfb23d68fe4e7eb9d592028bf1d9a8e08ceb23135621bf5400070ef0",
+      "destination_path": "docs/v26.8.1/90-legacy/91-ggen-legacy-definition.md",
+      "size": 6159,
+      "source_blake3": "bed50377cfb23d68fe4e7eb9d592028bf1d9a8e08ceb23135621bf5400070ef0",
+      "source_git_blob": "aa0df1704e3ce5eb4bdd36bc964a99a9e87b32c5",
+      "source_path": "docs/v26.8.1/90-legacy/91-ggen-legacy-definition.md"
+    },
+    {
+      "destination_blake3": "544e5b95d833e36a08df7f0e2da5080fb98dd6acc2b5e32cc30723ae2867d073",
+      "destination_path": "docs/v26.8.1/90-legacy/92-chestertons-fence-inventory.md",
+      "size": 8922,
+      "source_blake3": "544e5b95d833e36a08df7f0e2da5080fb98dd6acc2b5e32cc30723ae2867d073",
+      "source_git_blob": "8c031774c3fdadfa34b23b89f400c69f645aa964",
+      "source_path": "docs/v26.8.1/90-legacy/92-chestertons-fence-inventory.md"
+    },
+    {
+      "destination_blake3": "eb2c3d610a1cead5851b6f5aeccff52804f6b9b9c33046a3b72ad17ff15a5ced",
+      "destination_path": "docs/v26.8.1/90-legacy/93-capability-equivalence-matrix.md",
+      "size": 3871,
+      "source_blake3": "eb2c3d610a1cead5851b6f5aeccff52804f6b9b9c33046a3b72ad17ff15a5ced",
+      "source_git_blob": "24d3bbaedfc925646bcd2f3909b27680d6f9f573",
+      "source_path": "docs/v26.8.1/90-legacy/93-capability-equivalence-matrix.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/90-legacy/94-command-and-diagnostic-parity.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/90-legacy/94-command-and-diagnostic-parity.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/90-legacy/95-data-and-receipt-compatibility.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/90-legacy/95-data-and-receipt-compatibility.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/90-legacy/96-migration-plan.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/90-legacy/96-migration-plan.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/90-legacy/97-archive-and-recovery.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/90-legacy/97-archive-and-recovery.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/90-legacy/98-sunset-gates.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/90-legacy/98-sunset-gates.md"
+    },
+    {
+      "destination_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "destination_path": "docs/v26.8.1/90-legacy/99-sunset-runbook.md",
+      "size": 2993,
+      "source_blake3": "02e671f0ef13a9ee3fcc15e559ec32552d1a413a1716dadc7e6eff95ebf9dbe3",
+      "source_git_blob": "5921584ea0deb83965dd963554f4de87a4f04c85",
+      "source_path": "docs/v26.8.1/90-legacy/99-sunset-runbook.md"
+    },
+    {
+      "destination_blake3": "fd4025822aef18184a830ac9ef41171facb422c43b7a419109d72126f4d4ef8b",
+      "destination_path": "docs/v26.8.1/90-legacy/observer-class-report.md",
+      "size": 20090,
+      "source_blake3": "fd4025822aef18184a830ac9ef41171facb422c43b7a419109d72126f4d4ef8b",
+      "source_git_blob": "7046093f50286e4a81a921d21e462596ffa65cdb",
+      "source_path": "docs/v26.8.1/90-legacy/observer-class-report.md"
+    },
+    {
+      "destination_blake3": "d176da108fe927a83e4376f085f989fd0ea7f213b48adb7c6065257e1fb6892e",
+      "destination_path": "docs/v26.8.1/README.md",
+      "size": 2379,
+      "source_blake3": "d176da108fe927a83e4376f085f989fd0ea7f213b48adb7c6065257e1fb6892e",
+      "source_git_blob": "f1b9c4fa328c5edd977d051ac2e50525ecc2da1d",
+      "source_path": "docs/v26.8.1/README.md"
+    },
+    {
+      "destination_blake3": "2cfda3e41117dfa9411ef86630b698c6f821bb9d95968dc83e63d8cd51be50a7",
+      "destination_path": "docs/v26.8.1/coverage-matrix.csv",
+      "size": 1808,
+      "source_blake3": "2cfda3e41117dfa9411ef86630b698c6f821bb9d95968dc83e63d8cd51be50a7",
+      "source_git_blob": "9851fb6307c4fc1c642f7d8887c786b5d2f4d7ad",
+      "source_path": "docs/v26.8.1/coverage-matrix.csv"
+    },
+    {
+      "destination_blake3": "43a48d1d456497d4817d3714f8f73997f1342079a98e0c56329e192784a37e57",
+      "destination_path": "docs/v26.8.1/diagrams/01-enterprise-manufacturing-system.md",
+      "size": 2142,
+      "source_blake3": "43a48d1d456497d4817d3714f8f73997f1342079a98e0c56329e192784a37e57",
+      "source_git_blob": "cf9f93c57ced3f5c304cc40a9f9ff58f01922c74",
+      "source_path": "docs/v26.8.1/diagrams/01-enterprise-manufacturing-system.md"
+    },
+    {
+      "destination_blake3": "6723639702a3ad5f59d7247611f9535ef1d3b6b7caa5f44bb7420c763a4d6bbc",
+      "destination_path": "docs/v26.8.1/diagrams/02-agent-fleet-and-gall.md",
+      "size": 2155,
+      "source_blake3": "6723639702a3ad5f59d7247611f9535ef1d3b6b7caa5f44bb7420c763a4d6bbc",
+      "source_git_blob": "baccc9c769e9b63d454e34f3d0adc0f4d1a2a4ea",
+      "source_path": "docs/v26.8.1/diagrams/02-agent-fleet-and-gall.md"
+    },
+    {
+      "destination_blake3": "6b31255a2c03c55bc64dc03e2d4f9ed270837f3051046f152bfb0f8971b134ed",
+      "destination_path": "docs/v26.8.1/diagrams/03-unified-semantic-control-plane.md",
+      "size": 1963,
+      "source_blake3": "6b31255a2c03c55bc64dc03e2d4f9ed270837f3051046f152bfb0f8971b134ed",
+      "source_git_blob": "3a87ebdda53366811ae438c5b58bffbac3663f6b",
+      "source_path": "docs/v26.8.1/diagrams/03-unified-semantic-control-plane.md"
+    },
+    {
+      "destination_blake3": "69af2fdfe9f52eb17a8b7998d4d0fe3bf352aa6fe69e114a7f3272c75c0e6a48",
+      "destination_path": "docs/v26.8.1/diagrams/04-v2681-self-manufacture.md",
+      "size": 1871,
+      "source_blake3": "69af2fdfe9f52eb17a8b7998d4d0fe3bf352aa6fe69e114a7f3272c75c0e6a48",
+      "source_git_blob": "98e4ea21517006a39c2d2ce980b1e9a056aaf3a7",
+      "source_path": "docs/v26.8.1/diagrams/04-v2681-self-manufacture.md"
+    },
+    {
+      "destination_blake3": "a814d182ebbcbf78a0471831f39fbad6d3ff807f99227b809839e99246f478a5",
+      "destination_path": "docs/v26.8.1/diagrams/05-legacy-v2781-transformation.md",
+      "size": 2143,
+      "source_blake3": "a814d182ebbcbf78a0471831f39fbad6d3ff807f99227b809839e99246f478a5",
+      "source_git_blob": "25772ff2278a19fe798df44463074889b5277758",
+      "source_path": "docs/v26.8.1/diagrams/05-legacy-v2781-transformation.md"
+    },
+    {
+      "destination_blake3": "5a2855799cadc7911930b4aaa6d2e90f07bcfc70b57dd9a0664c533a0c6961ac",
+      "destination_path": "docs/v26.8.1/diagrams/06-crown-receipt-and-replay.md",
+      "size": 2355,
+      "source_blake3": "5a2855799cadc7911930b4aaa6d2e90f07bcfc70b57dd9a0664c533a0c6961ac",
+      "source_git_blob": "e6c5b5e368355181bc698b5c59a99b9a029b5164",
+      "source_path": "docs/v26.8.1/diagrams/06-crown-receipt-and-replay.md"
+    },
+    {
+      "destination_blake3": "4933dd9a8c46c71a6c8d230eba5097e232d90fb97027d5f585ef3f25dd94d3ab",
+      "destination_path": "docs/v26.8.1/diagrams/README.md",
+      "size": 1144,
+      "source_blake3": "4933dd9a8c46c71a6c8d230eba5097e232d90fb97027d5f585ef3f25dd94d3ab",
+      "source_git_blob": "e5e571097b9c0a0a149e0fabe42a2e764535b1bf",
+      "source_path": "docs/v26.8.1/diagrams/README.md"
+    },
+    {
+      "destination_blake3": "bd5c6584555c10eee3d3130a5598098597d0660d0ee60623b1533d0b25ace3bf",
+      "destination_path": "docs/v26.8.1/document-evidence-index.csv",
+      "size": 20442,
+      "source_blake3": "bd5c6584555c10eee3d3130a5598098597d0660d0ee60623b1533d0b25ace3bf",
+      "source_git_blob": "33fc723c3cf5de96b49b7e2fe6df027d7340e37b",
+      "source_path": "docs/v26.8.1/document-evidence-index.csv"
+    },
+    {
+      "destination_blake3": "42635d9c7b6f01b28c8291d23e7cab591648c2404227bd59cbab4b84ff474fe9",
+      "destination_path": "docs/v26.8.1/document-evidence-index.json",
+      "size": 71562,
+      "source_blake3": "42635d9c7b6f01b28c8291d23e7cab591648c2404227bd59cbab4b84ff474fe9",
+      "source_git_blob": "3b142c01bee0685879107d29626d14ba4ae62625",
+      "source_path": "docs/v26.8.1/document-evidence-index.json"
+    },
+    {
+      "destination_blake3": "207045d21da217e9f6e769460c44a010439c62326d643260865bee3614c9560d",
+      "destination_path": "docs/v26.8.1/document-evidence-index.md",
+      "size": 21495,
+      "source_blake3": "207045d21da217e9f6e769460c44a010439c62326d643260865bee3614c9560d",
+      "source_git_blob": "9a26d9c870d79f41840b7c55ddae2291f59dc553",
+      "source_path": "docs/v26.8.1/document-evidence-index.md"
+    },
+    {
+      "destination_blake3": "3e5d80f9cceaa072a0b5641f912be4354775bd1ea5c7c8c4ed0949d6348a2645",
+      "destination_path": "docs/v26.8.1/manifest.toml",
+      "size": 1024,
+      "source_blake3": "3e5d80f9cceaa072a0b5641f912be4354775bd1ea5c7c8c4ed0949d6348a2645",
+      "source_git_blob": "5517d8aa0e7cf9e85966d538734d3dfb8a912f2a",
+      "source_path": "docs/v26.8.1/manifest.toml"
+    }
+  ],
+  "schema": "ggen.legacy.cross-repository-lineage/1",
+  "source_commit": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+  "source_path": "docs/v26.8.1",
+  "source_repository": "seanchatmangpt/ggen"
+}

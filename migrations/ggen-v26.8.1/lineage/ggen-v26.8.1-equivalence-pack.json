@@ -1,0 +1,147 @@
+{
+  "component_id": "GGEN-V26.8.1-EQUIVALENCE-PACK",
+  "destination_path": "packs/legacy-equivalence-verifier-pack",
+  "destination_repository": "seanchatmangpt/ggen-legacy",
+  "files": [
+    {
+      "destination_blake3": "62ff3a19f38b02f27168e9eb8f1033e39f5981c3a280c2f6f4dff5c2be71f539",
+      "destination_path": "packs/legacy-equivalence-verifier-pack/.ggen-v2/receipt-log.jsonl",
+      "size": 32422,
+      "source_blake3": "62ff3a19f38b02f27168e9eb8f1033e39f5981c3a280c2f6f4dff5c2be71f539",
+      "source_git_blob": "5d332fd5c32f0747f75744e38495831bcfc82bdd",
+      "source_path": "packs/legacy-equivalence-verifier-pack/.ggen-v2/receipt-log.jsonl"
+    },
+    {
+      "destination_blake3": "4e1dd0031187f1db369cec230ca1b59c449aa6b9597f7f85ccd0f357254fa541",
+      "destination_path": "packs/legacy-equivalence-verifier-pack/.ggen-v2/receipt.json",
+      "size": 3607,
+      "source_blake3": "4e1dd0031187f1db369cec230ca1b59c449aa6b9597f7f85ccd0f357254fa541",
+      "source_git_blob": "39bb367482201ad6a1bc5759cc60e78bc9613aaf",
+      "source_path": "packs/legacy-equivalence-verifier-pack/.ggen-v2/receipt.json"
+    },
+    {
+      "destination_blake3": "2be0df3bd03a743d87a29093b10e861add7ab85a4d4a71f0768c8bf821f1193b",
+      "destination_path": "packs/legacy-equivalence-verifier-pack/README.md",
+      "size": 3002,
+      "source_blake3": "2be0df3bd03a743d87a29093b10e861add7ab85a4d4a71f0768c8bf821f1193b",
+      "source_git_blob": "06d4907b7e133859a182451b6265993b97eee36b",
+      "source_path": "packs/legacy-equivalence-verifier-pack/README.md"
+    },
+    {
+      "destination_blake3": "5a8e81634af43c26d77aa231581bf3ad025f6a1325a5dca4342f834f66da6382",
+      "destination_path": "packs/legacy-equivalence-verifier-pack/consumer/legacy-equivalence/README.md",
+      "size": 1648,
+      "source_blake3": "5a8e81634af43c26d77aa231581bf3ad025f6a1325a5dca4342f834f66da6382",
+      "source_git_blob": "e637d991bfcec02d9b1a4c3a974bc5337bef1dc9",
+      "source_path": "packs/legacy-equivalence-verifier-pack/consumer/legacy-equivalence/README.md"
+    },
+    {
+      "destination_blake3": "74c25112b73d30fd525c18dfa4fe4b82638bc6ba50fcc0028a6a9595ec8c55f1",
+      "destination_path": "packs/legacy-equivalence-verifier-pack/consumer/legacy-equivalence/VERIFIER_REPORT.json",
+      "size": 7167,
+      "source_blake3": "74c25112b73d30fd525c18dfa4fe4b82638bc6ba50fcc0028a6a9595ec8c55f1",
+      "source_git_blob": "546e3ef4fd03876ad5cf4b7edbf471a32bad34fb",
+      "source_path": "packs/legacy-equivalence-verifier-pack/consumer/legacy-equivalence/VERIFIER_REPORT.json"
+    },
+    {
+      "destination_blake3": "87390ddec15fe67f072920fe40ec1e2176da0695609f3230fe5c03f9ac0ffeac",
+      "destination_path": "packs/legacy-equivalence-verifier-pack/consumer/legacy-equivalence/case_manifest.json",
+      "size": 10468,
+      "source_blake3": "87390ddec15fe67f072920fe40ec1e2176da0695609f3230fe5c03f9ac0ffeac",
+      "source_git_blob": "1affc55375d0ce93b7ba42f75cccd72442adb180",
+      "source_path": "packs/legacy-equivalence-verifier-pack/consumer/legacy-equivalence/case_manifest.json"
+    },
+    {
+      "destination_blake3": "3ddbed0460e2d0f041ecb713d563ace6e0cc529ac3fa60d4de6808e451990606",
+      "destination_path": "packs/legacy-equivalence-verifier-pack/consumer/legacy-equivalence/suites/verify-all.sh",
+      "size": 1382,
+      "source_blake3": "3ddbed0460e2d0f041ecb713d563ace6e0cc529ac3fa60d4de6808e451990606",
+      "source_git_blob": "ab6a610b4fd8cbb310558aa3adca99e8552e5bf5",
+      "source_path": "packs/legacy-equivalence-verifier-pack/consumer/legacy-equivalence/suites/verify-all.sh"
+    },
+    {
+      "destination_blake3": "ad9c8fe237f594ed576a054b6b36d36d2c5982d21390a0adab44d6ac25778f67",
+      "destination_path": "packs/legacy-equivalence-verifier-pack/consumer/legacy-equivalence/verifier-report.schema.json",
+      "size": 1684,
+      "source_blake3": "ad9c8fe237f594ed576a054b6b36d36d2c5982d21390a0adab44d6ac25778f67",
+      "source_git_blob": "415a8416513eb2048c9c9d4815afcd327421a338",
+      "source_path": "packs/legacy-equivalence-verifier-pack/consumer/legacy-equivalence/verifier-report.schema.json"
+    },
+    {
+      "destination_blake3": "19b431be97cdeb1f53d15ebb324b2a66649b2d20c5924cb74542179f1ec93621",
+      "destination_path": "packs/legacy-equivalence-verifier-pack/ggen.toml",
+      "size": 1776,
+      "source_blake3": "19b431be97cdeb1f53d15ebb324b2a66649b2d20c5924cb74542179f1ec93621",
+      "source_git_blob": "91881fa1c71aca73065c89fe7bfb508f02e7fdbe",
+      "source_path": "packs/legacy-equivalence-verifier-pack/ggen.toml"
+    },
+    {
+      "destination_blake3": "a101fefafe3b0ef51ace268cc935f2095be4d9e3b37a124b02cf0cd071f2b25b",
+      "destination_path": "packs/legacy-equivalence-verifier-pack/ontology.ttl",
+      "size": 21516,
+      "source_blake3": "a101fefafe3b0ef51ace268cc935f2095be4d9e3b37a124b02cf0cd071f2b25b",
+      "source_git_blob": "fcbba364867e3ec795595eecc02da512d72313ad",
+      "source_path": "packs/legacy-equivalence-verifier-pack/ontology.ttl"
+    },
+    {
+      "destination_blake3": "dd0c6a738a1ac1d479a3957a66393a3dc6c43792217133a9c72d3e6e63500235",
+      "destination_path": "packs/legacy-equivalence-verifier-pack/pack.toml",
+      "size": 481,
+      "source_blake3": "dd0c6a738a1ac1d479a3957a66393a3dc6c43792217133a9c72d3e6e63500235",
+      "source_git_blob": "10089feee32905043eb4ad243373f7ede1d05f08",
+      "source_path": "packs/legacy-equivalence-verifier-pack/pack.toml"
+    },
+    {
+      "destination_blake3": "e8aad054957227af4c17b3c035ac6ab182d7da14b4952f0695841516e370c87a",
+      "destination_path": "packs/legacy-equivalence-verifier-pack/queries/cases.rq",
+      "size": 1181,
+      "source_blake3": "e8aad054957227af4c17b3c035ac6ab182d7da14b4952f0695841516e370c87a",
+      "source_git_blob": "c89417fe903e0cf9c3282df34a505a5d449c0c2a",
+      "source_path": "packs/legacy-equivalence-verifier-pack/queries/cases.rq"
+    },
+    {
+      "destination_blake3": "a5291b32e144c200153f3c04aad800626536ba4238f51ac3de0b45d41bc413f7",
+      "destination_path": "packs/legacy-equivalence-verifier-pack/queries/legacy-equivalence.rq",
+      "size": 146,
+      "source_blake3": "a5291b32e144c200153f3c04aad800626536ba4238f51ac3de0b45d41bc413f7",
+      "source_git_blob": "2760b4ac26df56ec06570657ed5a8623f198bb8c",
+      "source_path": "packs/legacy-equivalence-verifier-pack/queries/legacy-equivalence.rq"
+    },
+    {
+      "destination_blake3": "5a8e81634af43c26d77aa231581bf3ad025f6a1325a5dca4342f834f66da6382",
+      "destination_path": "packs/legacy-equivalence-verifier-pack/templates/consumer/legacy-equivalence/README.md.tmpl",
+      "size": 1648,
+      "source_blake3": "5a8e81634af43c26d77aa231581bf3ad025f6a1325a5dca4342f834f66da6382",
+      "source_git_blob": "e637d991bfcec02d9b1a4c3a974bc5337bef1dc9",
+      "source_path": "packs/legacy-equivalence-verifier-pack/templates/consumer/legacy-equivalence/README.md.tmpl"
+    },
+    {
+      "destination_blake3": "0c9d8383e292d3552c28959d4c13aab5dbcaf4c818f78f24d58d0be00d135fee",
+      "destination_path": "packs/legacy-equivalence-verifier-pack/templates/consumer/legacy-equivalence/case_manifest.json.tmpl",
+      "size": 1440,
+      "source_blake3": "0c9d8383e292d3552c28959d4c13aab5dbcaf4c818f78f24d58d0be00d135fee",
+      "source_git_blob": "e43a417e027f0dc9ac9438fabed4e4937c0089d5",
+      "source_path": "packs/legacy-equivalence-verifier-pack/templates/consumer/legacy-equivalence/case_manifest.json.tmpl"
+    },
+    {
+      "destination_blake3": "93ff2f41daac43479e9f1789e220688755070b9a6ebccd6cb429185adf4889b5",
+      "destination_path": "packs/legacy-equivalence-verifier-pack/templates/consumer/legacy-equivalence/suites/verify-all.sh.tmpl",
+      "size": 1432,
+      "source_blake3": "93ff2f41daac43479e9f1789e220688755070b9a6ebccd6cb429185adf4889b5",
+      "source_git_blob": "d3feeba0bc1df0f4f99a997685f680ba0a116652",
+      "source_path": "packs/legacy-equivalence-verifier-pack/templates/consumer/legacy-equivalence/suites/verify-all.sh.tmpl"
+    },
+    {
+      "destination_blake3": "ad9c8fe237f594ed576a054b6b36d36d2c5982d21390a0adab44d6ac25778f67",
+      "destination_path": "packs/legacy-equivalence-verifier-pack/templates/consumer/legacy-equivalence/verifier-report.schema.json.tmpl",
+      "size": 1684,
+      "source_blake3": "ad9c8fe237f594ed576a054b6b36d36d2c5982d21390a0adab44d6ac25778f67",
+      "source_git_blob": "415a8416513eb2048c9c9d4815afcd327421a338",
+      "source_path": "packs/legacy-equivalence-verifier-pack/templates/consumer/legacy-equivalence/verifier-report.schema.json.tmpl"
+    }
+  ],
+  "schema": "ggen.legacy.cross-repository-lineage/1",
+  "source_commit": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+  "source_path": "packs/legacy-equivalence-verifier-pack",
+  "source_repository": "seanchatmangpt/ggen"
+}

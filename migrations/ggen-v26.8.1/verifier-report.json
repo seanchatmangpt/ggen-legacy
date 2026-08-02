@@ -1,0 +1,262 @@
+{
+  "behavioral": {
+    "command_receipt_normalization": [
+      "workspace-identity",
+      "composed-temporary-prefix",
+      "rustfmt-diagnostic-workspace",
+      "cargo-color-disabled",
+      "cargo-compile-progress-order",
+      "cargo-single-build-job",
+      "cargo-test-cold-target",
+      "cargo-test-duration-tokens",
+      "rust-test-single-thread"
+    ],
+    "full_legacy_equivalence_portfolio": "DEFERRED_TO_SOURCE_REMOVAL_PR",
+    "planning_aggregate_sha256": "40f99eddb9cdce2a662b8e2f3cb9e87737d5cc8f534d4ac3f14b8e4842ee36be",
+    "planning_counts": {
+      "deterministic_problem_families": 10,
+      "numbered_research_documents": 100,
+      "observed_surfaces": 18,
+      "required_surfaces": 17
+    },
+    "planning_report_match": true,
+    "rustfmt_exit_match": true,
+    "rustfmt_exit_status": 0,
+    "rustfmt_state": "PASS",
+    "shacl_output_match": true,
+    "shacl_result": "CONFORMS: True",
+    "standalone_verifier_workspace_tests": "PASS"
+  },
+  "candidate_head": "07928bde9d9eaba2e2e2fd8f78fcdc3f7b0b63ff",
+  "checks": [
+    "manifest-schema",
+    "exact-source-head",
+    "corpus-head-ancestry",
+    "per-file-git-blob-and-blake3-lineage",
+    "component-tree-identity",
+    "python-compilation",
+    "json-and-toml-parse",
+    "planning-verifier",
+    "shacl-verifier",
+    "rustfmt-equivalence",
+    "rust-verifier-tests",
+    "composed-planning-equivalence",
+    "composed-shacl-equivalence",
+    "negative-controls",
+    "deterministic-replay"
+  ],
+  "commands": [
+    {
+      "argv": [
+        "python3",
+        "-m",
+        "py_compile",
+        "<DESTINATION>/planning/v26.8.1/verify_planning.py",
+        "<DESTINATION>/tools/v26.8.1/clean_room.py",
+        "<DESTINATION>/tools/v26.8.1/coverage_sabotage_tests.py",
+        "<DESTINATION>/tools/v26.8.1/document_evidence_index.py",
+        "<DESTINATION>/tools/v26.8.1/equivalence_runner.py",
+        "<DESTINATION>/tools/v26.8.1/guard_fail_open_subprocess.py",
+        "<DESTINATION>/tools/v26.8.1/guard_short_test_timeout.py",
+        "<DESTINATION>/tools/v26.8.1/legacy_archaeology.py",
+        "<DESTINATION>/tools/v26.8.1/legacy_subsystem_verification_test.py",
+        "<DESTINATION>/tools/v26.8.1/step_two.py",
+        "<DESTINATION>/tools/v26.8.1/subsystem_evidence_manifest.py",
+        "<DESTINATION>/tools/v26.8.1/subsystem_verifier_sabotage_tests.py",
+        "<DESTINATION>/tools/v26.8.1/validate_shacl.py",
+        "<DESTINATION>/scripts/verify_ggen_v26_8_1_migration.py"
+      ],
+      "cwd": "<DESTINATION>",
+      "exit_status": 0,
+      "stderr_excerpt": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_excerpt": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "python3",
+        "planning/v26.8.1/verify_planning.py"
+      ],
+      "cwd": "<DESTINATION>",
+      "exit_status": 0,
+      "stderr_excerpt": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_excerpt": "\"domains/ggen-v2681-hierarchical.hddl\": \"2ada8e244fc154615e501e9ca22a69f2544e1b17bf9bd8e4edcd2dcc9d8babe6\",\n    \"domains/ggen-v2681-probabilistic.ppddl\": \"8340b69c78ff928d7c7a46ee8ae59a7f46435acb4d51cefa02944d7eeaa96647\",\n    \"domains/ggen-v2681-temporal.pddl\": \"5256b48c352b2e907fdbf77531d314b7d16ebb46f02b0c26512a4d7a7374992f\",\n    \"manifest.toml\": \"48c073edb4123f52d1f333b563d47e1ab592afb7923d3f5b0c5cef8bb9366e31\",\n    \"ontology-binding.ttl\": \"904625e7c4c72967c394ba83bbf1bfdbad57ecaaf5cfa59b4615630b27d66a32\",\n    \"ontology/v26.8.1/ontology.ttl\": \"ed9072a6ea962869bbd4735420b2658a63f629afc87270b150d20b593398ab00\",\n    \"problems/01-governance.pddl\": \"1098865b29d23b04d8782184d8885407ad66414b188feb92f16960d8db200469\",\n    \"problems/02-system.pddl\": \"c726ff96cc6e8d8fb98fe8a13a45fda850cab88e546a0ffb7595dc7b19107b8a\",\n    \"problems/03-engine.pddl\": \"87b100cd5638ab2f2707420ce2d0ac6682778b59d40aba7feebc33f90ea77c5f\",\n    \"problems/04-graph.pddl\": \"c3137bed9c9e2d65bf9a29cfb2ef87de917646e61d419c657ba1f93598d8f473\",\n    \"problems/05-projection.pddl\": \"885ce6cc674f03fb0d1cad6831baf5705869b34e03fd34392ac77ead33356b61\",\n    \"problems/06-evidence.pddl\": \"775ca0519b09546f5926739cc19e39f7ad34be5960ed21a647f2076b2557a8b4\",\n    \"problems/07-products.pddl\": \"c7c39317580c06a8277c6a26de1fec5b9da6c14a8f18041f96d54e33b75436ef\",\n    \"problems/08-verification.pddl\": \"af69b983d33a6357aa47b2e92ca05a47be2dac5214405651aa8a8b4286921daa\",\n    \"problems/09-economics.pddl\": \"096a2746d9cc6a78d338e4131ebb84fe4c539f5c52088b424791327cf96f4b97\",\n    \"problems/10-legacy-sunset.pddl\": \"65259b683514c840f51947a1853b5a23daae7d0375a0e9ef1cd724f65a9f44ac\",\n    \"problems/11-recovery-under-uncertainty.ppddl\": \"1c81b6eee0fd889bfb154170de5511d56c628380b3a32413d63546412cd089bb\"\n  },\n  \"findings\": [],\n  \"release_admitted\": false,\n  \"schema\": \"ggen.planning.verifier.report.v1\",\n  \"source_head\": \"07928bde9d9eaba2e2e2fd8f78fcdc3f7b0b63ff\",\n  \"standing\": \"PARTIAL_ALIVE\",\n  \"sunset_admitted\": false,\n  \"version\": \"26.8.1\"\n}\n",
+      "stdout_sha256": "ea65a6418bb5445b90251ca95bfaab3717fcfdc0ffb90bcbb864d00eeabbb427"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/v26.8.1/validate_shacl.py",
+        "--root",
+        "."
+      ],
+      "cwd": "<DESTINATION>",
+      "exit_status": 0,
+      "stderr_excerpt": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_excerpt": "CONFORMS: True\n",
+      "stdout_sha256": "d7ee7008447d7812dfa8dd829bd3249f0f4a38504c582d0091fe6e5f65858920"
+    },
+    {
+      "argv": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "tools/v26.8.1/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "<DESTINATION>",
+      "exit_status": 0,
+      "stderr_excerpt": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_excerpt": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "cargo",
+        "test",
+        "--manifest-path",
+        "tools/v26.8.1/Cargo.toml",
+        "--locked",
+        "--all-targets"
+      ],
+      "cwd": "<DESTINATION>",
+      "exit_status": 0,
+      "stderr_excerpt": "lock-buffer v0.10.4\n   Compiling cc v1.4.0\n   Compiling cfg-if v1.0.4\n   Compiling constant_time_eq v0.4.2\n   Compiling cpufeatures v0.2.17\n   Compiling cpufeatures v0.3.0\n   Compiling crypto-common v0.1.7\n   Compiling csv v1.4.0\n   Compiling csv-core v0.1.13\n   Compiling digest v0.10.7\n   Compiling equivalent v1.0.2\n   Compiling fastrand v2.5.0\n   Compiling find-msvc-tools v0.1.9\n   Compiling generic-array v0.14.7\n   Compiling getrandom v0.4.3\n   Compiling ggen-v26-8-1-verifier v26.8.1 (<DESTINATION>/tools/v26.8.1)\n   Compiling hashbrown v0.17.1\n   Compiling indexmap v2.14.0\n   Compiling itoa v1.0.18\n   Compiling libc v0.2.189\n   Compiling linux-raw-sys v0.12.1\n   Compiling memchr v2.8.3\n   Compiling once_cell v1.21.4\n   Compiling proc-macro2 v1.0.107\n   Compiling quote v1.0.47\n   Compiling rustix v1.1.4\n   Compiling ryu v1.0.23\n   Compiling same-file v1.0.6\n   Compiling serde v1.0.229\n   Compiling serde_core v1.0.229\n   Compiling serde_derive v1.0.229\n   Compiling serde_json v1.0.151\n   Compiling serde_spanned v0.6.9\n   Compiling sha2 v0.10.9\n   Compiling shlex v2.0.1\n   Compiling syn v3.0.3\n   Compiling tempfile v3.27.0\n   Compiling toml v0.8.23\n   Compiling toml_datetime v0.6.11\n   Compiling toml_edit v0.22.27\n   Compiling toml_write v0.1.2\n   Compiling typenum v1.20.1\n   Compiling unicode-ident v1.0.24\n   Compiling version_check v0.9.5\n   Compiling walkdir v2.5.0\n   Compiling winnow v0.7.15\n   Compiling zmij v1.0.23\n    Finished `test` profile [unoptimized + debuginfo] target(s) in <DURATION>\n     Running unittests src/lib.rs (tools/v26.8.1/target/debug/deps/v26_8_1_tools-d1d84c12bd2e5c82)\n     Running unittests src/main.rs (tools/v26.8.1/target/debug/deps/ggen_v26_8_1_verifier-c3516ee8f22d70af)\n     Running unittests src/bin/project_coverage.rs (tools/v26.8.1/target/debug/deps/project_coverage-b665a4ef556021b4)\n     Running unittests src/bin/subsystem_verifier.rs (tools/v26.8.1/target/debug/deps/subsystem_verifier-05b0e7a0fbef463c)\n",
+      "stderr_sha256": "1e3a3f4fc795655ad2359199851e621e80e19aa4b022d5cea774122e99a611db",
+      "stdout_excerpt": "\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in <DURATION>\n\n\nrunning 13 tests\ntest document_evidence_sabotage_tests::clean_fixture_produces_no_document_level_findings ... ok\ntest document_evidence_sabotage_tests::duplicate_record_for_same_document_refuses_with_document_evidence_missing ... ok\ntest document_evidence_sabotage_tests::empty_authority_references_across_subsystem_refuses_with_authority_unmapped ... ok\ntest document_evidence_sabotage_tests::empty_implementation_references_across_subsystem_refuses_with_implementation_unmapped ... ok\ntest document_evidence_sabotage_tests::empty_verifier_references_across_subsystem_refuses_with_verifier_unmapped ... ok\ntest document_evidence_sabotage_tests::invalid_role_refuses_with_document_role_invalid ... ok\ntest document_evidence_sabotage_tests::missing_index_file_refuses_with_document_evidence_missing ... ok\ntest document_evidence_sabotage_tests::nonexistent_referenced_path_refuses_with_document_reference_missing ... ok\ntest document_evidence_sabotage_tests::record_pointing_at_nonexistent_document_refuses_with_document_orphaned ... ok\ntest document_evidence_sabotage_tests::stale_source_head_refuses_with_document_head_stale ... ok\ntest document_evidence_sabotage_tests::tampered_document_bytes_refuse_with_document_digest_drift ... ok\ntest document_evidence_sabotage_tests::undocumented_document_refuses_with_document_evidence_missing ... ok\ntest document_evidence_sabotage_tests::unmapped_legacy_capability_refuses_with_document_legacy_unmapped ... ok\n\ntest result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in <DURATION>\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in <DURATION>\n\n\nrunning 0 tests\n\ntest result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in <DURATION>\n\n",
+      "stdout_sha256": "1613e332c1f40b16d2d8baf2bda3882601a0b68112aa1cc9459299546e300e7b"
+    },
+    {
+      "argv": [
+        "python3",
+        "planning/v26.8.1/verify_planning.py"
+      ],
+      "cwd": "<COMPOSED_SOURCE>",
+      "exit_status": 0,
+      "stderr_excerpt": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_excerpt": "\"domains/ggen-v2681-hierarchical.hddl\": \"2ada8e244fc154615e501e9ca22a69f2544e1b17bf9bd8e4edcd2dcc9d8babe6\",\n    \"domains/ggen-v2681-probabilistic.ppddl\": \"8340b69c78ff928d7c7a46ee8ae59a7f46435acb4d51cefa02944d7eeaa96647\",\n    \"domains/ggen-v2681-temporal.pddl\": \"5256b48c352b2e907fdbf77531d314b7d16ebb46f02b0c26512a4d7a7374992f\",\n    \"manifest.toml\": \"48c073edb4123f52d1f333b563d47e1ab592afb7923d3f5b0c5cef8bb9366e31\",\n    \"ontology-binding.ttl\": \"904625e7c4c72967c394ba83bbf1bfdbad57ecaaf5cfa59b4615630b27d66a32\",\n    \"ontology/v26.8.1/ontology.ttl\": \"ed9072a6ea962869bbd4735420b2658a63f629afc87270b150d20b593398ab00\",\n    \"problems/01-governance.pddl\": \"1098865b29d23b04d8782184d8885407ad66414b188feb92f16960d8db200469\",\n    \"problems/02-system.pddl\": \"c726ff96cc6e8d8fb98fe8a13a45fda850cab88e546a0ffb7595dc7b19107b8a\",\n    \"problems/03-engine.pddl\": \"87b100cd5638ab2f2707420ce2d0ac6682778b59d40aba7feebc33f90ea77c5f\",\n    \"problems/04-graph.pddl\": \"c3137bed9c9e2d65bf9a29cfb2ef87de917646e61d419c657ba1f93598d8f473\",\n    \"problems/05-projection.pddl\": \"885ce6cc674f03fb0d1cad6831baf5705869b34e03fd34392ac77ead33356b61\",\n    \"problems/06-evidence.pddl\": \"775ca0519b09546f5926739cc19e39f7ad34be5960ed21a647f2076b2557a8b4\",\n    \"problems/07-products.pddl\": \"c7c39317580c06a8277c6a26de1fec5b9da6c14a8f18041f96d54e33b75436ef\",\n    \"problems/08-verification.pddl\": \"af69b983d33a6357aa47b2e92ca05a47be2dac5214405651aa8a8b4286921daa\",\n    \"problems/09-economics.pddl\": \"096a2746d9cc6a78d338e4131ebb84fe4c539f5c52088b424791327cf96f4b97\",\n    \"problems/10-legacy-sunset.pddl\": \"65259b683514c840f51947a1853b5a23daae7d0375a0e9ef1cd724f65a9f44ac\",\n    \"problems/11-recovery-under-uncertainty.ppddl\": \"1c81b6eee0fd889bfb154170de5511d56c628380b3a32413d63546412cd089bb\"\n  },\n  \"findings\": [],\n  \"release_admitted\": false,\n  \"schema\": \"ggen.planning.verifier.report.v1\",\n  \"source_head\": \"8351af4c5bbbf60bd99ab8417752a1762c6ea4e3\",\n  \"standing\": \"PARTIAL_ALIVE\",\n  \"sunset_admitted\": false,\n  \"version\": \"26.8.1\"\n}\n",
+      "stdout_sha256": "cba6d1beab152c94490b609647e077b24d7422902e3c84bfd741c938fbc69448"
+    },
+    {
+      "argv": [
+        "python3",
+        "tools/v26.8.1/validate_shacl.py",
+        "--root",
+        "."
+      ],
+      "cwd": "<COMPOSED_SOURCE>",
+      "exit_status": 0,
+      "stderr_excerpt": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_excerpt": "CONFORMS: True\n",
+      "stdout_sha256": "d7ee7008447d7812dfa8dd829bd3249f0f4a38504c582d0091fe6e5f65858920"
+    },
+    {
+      "argv": [
+        "cargo",
+        "fmt",
+        "--manifest-path",
+        "tools/v26.8.1/Cargo.toml",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "cwd": "<COMPOSED_SOURCE>",
+      "exit_status": 0,
+      "stderr_excerpt": "",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_excerpt": "",
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "components": [
+    {
+      "byte_identical": true,
+      "component_id": "GGEN-V26.8.1-DOCUMENT-CORPUS",
+      "destination_digest": "64680e70dd91add1f68de565d6ab0bea40e1358d61334ae819066361e2b9e00b",
+      "disposition": "PRESERVED",
+      "files": 114,
+      "source_digest": "64680e70dd91add1f68de565d6ab0bea40e1358d61334ae819066361e2b9e00b"
+    },
+    {
+      "byte_identical": true,
+      "component_id": "GGEN-V26.8.1-ONTOLOGY-AUTHORITY",
+      "destination_digest": "6636d76623890d617267110a09c3c2814f564ffaa1afe40ec70909bb9fd84e2d",
+      "disposition": "PRESERVED",
+      "files": 11,
+      "source_digest": "6636d76623890d617267110a09c3c2814f564ffaa1afe40ec70909bb9fd84e2d"
+    },
+    {
+      "byte_identical": true,
+      "component_id": "GGEN-V26.8.1-PLANNING-PORTFOLIO",
+      "destination_digest": "dbe68986d9fb3c9fc865d9ff47dc59175b997930b9bc92e827f75b2d36f8b942",
+      "disposition": "PRESERVED",
+      "files": 20,
+      "source_digest": "dbe68986d9fb3c9fc865d9ff47dc59175b997930b9bc92e827f75b2d36f8b942"
+    },
+    {
+      "byte_identical": true,
+      "component_id": "GGEN-V26.8.1-VERIFIER-RUNTIME",
+      "destination_digest": "9536d89b8e5808f304174985350f6c0ef61c3d043c7b9fb5ee5c92f836adaba5",
+      "disposition": "PRESERVED",
+      "files": 24,
+      "source_digest": "9536d89b8e5808f304174985350f6c0ef61c3d043c7b9fb5ee5c92f836adaba5"
+    },
+    {
+      "byte_identical": true,
+      "component_id": "GGEN-V26.8.1-EQUIVALENCE-PACK",
+      "destination_digest": "bf1a66d4e74d4b4040c56c11a49c4281bae6d5378f6307f66984f1c2701845ae",
+      "disposition": "PRESERVED",
+      "files": 17,
+      "source_digest": "bf1a66d4e74d4b4040c56c11a49c4281bae6d5378f6307f66984f1c2701845ae"
+    },
+    {
+      "byte_identical": true,
+      "component_id": "GGEN-V26.8.1-RUSTFMT-CONTEXT",
+      "destination_digest": "2f1ef8af9a82eeb503c30222de576e290700266f2808f1d555b82b5088f5d6dd",
+      "disposition": "PRESERVED",
+      "files": 1,
+      "source_digest": "2f1ef8af9a82eeb503c30222de576e290700266f2808f1d555b82b5088f5d6dd"
+    },
+    {
+      "byte_identical": true,
+      "component_id": "GGEN-V26.8.1-SOURCE-WORKFLOW-EVIDENCE",
+      "destination_digest": "734224741f8cb98caab3c77ef34e783630e1384f49e1875e1ae4ecec8fdcccd9",
+      "disposition": "ARCHIVED",
+      "files": 3,
+      "source_digest": "734224741f8cb98caab3c77ef34e783630e1384f49e1875e1ae4ecec8fdcccd9"
+    }
+  ],
+  "corpus_head": "07928bde9d9eaba2e2e2fd8f78fcdc3f7b0b63ff",
+  "corpus_head_relation": "CORPUS_ANCESTOR_OF_CANDIDATE",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "data_counts": {
+    "json": 9,
+    "toml": 5
+  },
+  "failed_checks": 0,
+  "negative_controls": {
+    "byte_drift_refused": true,
+    "missing_file_refused": true,
+    "path_escape_refused": true,
+    "stale_source_coordinate_refused": true
+  },
+  "next_checkpoint": "source-removal PR composed against this exact corpus head",
+  "passed_checks": 15,
+  "replay": "REPLAY_MATCH",
+  "replay_digest": "ad2bb693d0a10b7abb96387ae25b3fc0a2823d95b6a395df65e428760825245f",
+  "schema": "ggen.legacy.ggen-v26.8.1-migration-verifier/1",
+  "source_head": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+  "source_removal_admitted": false,
+  "source_repository": "seanchatmangpt/ggen",
+  "standing": "PARTIAL_ALIVE",
+  "verified_files": 190,
+  "verifier": "scripts/verify_ggen_v26_8_1_migration.py"
+}

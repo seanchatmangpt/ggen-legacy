@@ -1,0 +1,140 @@
+{
+  "components": [
+    {
+      "capability_ids": [
+        "architecture-knowledge",
+        "governance-evidence",
+        "legacy-sunset"
+      ],
+      "component_id": "GGEN-V26.8.1-DOCUMENT-CORPUS",
+      "destination_digest": "64680e70dd91add1f68de565d6ab0bea40e1358d61334ae819066361e2b9e00b",
+      "destination_path": "docs/v26.8.1",
+      "disposition": "PRESERVED",
+      "equivalence_case": "migrations/ggen-v26.8.1/equivalence-report.json",
+      "migration_evidence": "migrations/ggen-v26.8.1/lineage/ggen-v26.8.1-document-corpus.json",
+      "receipt": "migrations/ggen-v26.8.1/migration-receipt.json",
+      "replacement_owner": "seanchatmangpt/ggen-legacy",
+      "source_commit": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+      "source_digest": "64680e70dd91add1f68de565d6ab0bea40e1358d61334ae819066361e2b9e00b",
+      "source_path": "docs/v26.8.1",
+      "verifier_report": "migrations/ggen-v26.8.1/verifier-report.json"
+    },
+    {
+      "capability_ids": [
+        "semantic-authority",
+        "shacl-admission",
+        "capability-ledger"
+      ],
+      "component_id": "GGEN-V26.8.1-ONTOLOGY-AUTHORITY",
+      "destination_digest": "6636d76623890d617267110a09c3c2814f564ffaa1afe40ec70909bb9fd84e2d",
+      "destination_path": "ontology/v26.8.1",
+      "disposition": "PRESERVED",
+      "equivalence_case": "migrations/ggen-v26.8.1/equivalence-report.json",
+      "migration_evidence": "migrations/ggen-v26.8.1/lineage/ggen-v26.8.1-ontology-authority.json",
+      "receipt": "migrations/ggen-v26.8.1/migration-receipt.json",
+      "replacement_owner": "seanchatmangpt/ggen-legacy",
+      "source_commit": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+      "source_digest": "6636d76623890d617267110a09c3c2814f564ffaa1afe40ec70909bb9fd84e2d",
+      "source_path": "ontology/v26.8.1",
+      "verifier_report": "migrations/ggen-v26.8.1/verifier-report.json"
+    },
+    {
+      "capability_ids": [
+        "planning-authority",
+        "pddl-portfolio",
+        "plan-verification"
+      ],
+      "component_id": "GGEN-V26.8.1-PLANNING-PORTFOLIO",
+      "destination_digest": "dbe68986d9fb3c9fc865d9ff47dc59175b997930b9bc92e827f75b2d36f8b942",
+      "destination_path": "planning/v26.8.1",
+      "disposition": "PRESERVED",
+      "equivalence_case": "migrations/ggen-v26.8.1/equivalence-report.json",
+      "migration_evidence": "migrations/ggen-v26.8.1/lineage/ggen-v26.8.1-planning-portfolio.json",
+      "receipt": "migrations/ggen-v26.8.1/migration-receipt.json",
+      "replacement_owner": "seanchatmangpt/ggen-legacy",
+      "source_commit": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+      "source_digest": "dbe68986d9fb3c9fc865d9ff47dc59175b997930b9bc92e827f75b2d36f8b942",
+      "source_path": "planning/v26.8.1",
+      "verifier_report": "migrations/ggen-v26.8.1/verifier-report.json"
+    },
+    {
+      "capability_ids": [
+        "external-verifier",
+        "receipt-replay",
+        "release-sunset-admission"
+      ],
+      "component_id": "GGEN-V26.8.1-VERIFIER-RUNTIME",
+      "destination_digest": "9536d89b8e5808f304174985350f6c0ef61c3d043c7b9fb5ee5c92f836adaba5",
+      "destination_path": "tools/v26.8.1",
+      "disposition": "PRESERVED",
+      "equivalence_case": "migrations/ggen-v26.8.1/equivalence-report.json",
+      "migration_evidence": "migrations/ggen-v26.8.1/lineage/ggen-v26.8.1-verifier-runtime.json",
+      "receipt": "migrations/ggen-v26.8.1/migration-receipt.json",
+      "replacement_owner": "seanchatmangpt/ggen-legacy",
+      "source_commit": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+      "source_digest": "9536d89b8e5808f304174985350f6c0ef61c3d043c7b9fb5ee5c92f836adaba5",
+      "source_path": "tools/v26.8.1",
+      "verifier_report": "migrations/ggen-v26.8.1/verifier-report.json"
+    },
+    {
+      "capability_ids": [
+        "cross-version-equivalence",
+        "positive-witnesses",
+        "negative-fixtures"
+      ],
+      "component_id": "GGEN-V26.8.1-EQUIVALENCE-PACK",
+      "destination_digest": "bf1a66d4e74d4b4040c56c11a49c4281bae6d5378f6307f66984f1c2701845ae",
+      "destination_path": "packs/legacy-equivalence-verifier-pack",
+      "disposition": "PRESERVED",
+      "equivalence_case": "migrations/ggen-v26.8.1/equivalence-report.json",
+      "migration_evidence": "migrations/ggen-v26.8.1/lineage/ggen-v26.8.1-equivalence-pack.json",
+      "receipt": "migrations/ggen-v26.8.1/migration-receipt.json",
+      "replacement_owner": "seanchatmangpt/ggen-legacy",
+      "source_commit": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+      "source_digest": "bf1a66d4e74d4b4040c56c11a49c4281bae6d5378f6307f66984f1c2701845ae",
+      "source_path": "packs/legacy-equivalence-verifier-pack",
+      "verifier_report": "migrations/ggen-v26.8.1/verifier-report.json"
+    },
+    {
+      "capability_ids": [
+        "workspace-format-law",
+        "source-context-projection"
+      ],
+      "component_id": "GGEN-V26.8.1-RUSTFMT-CONTEXT",
+      "destination_digest": "2f1ef8af9a82eeb503c30222de576e290700266f2808f1d555b82b5088f5d6dd",
+      "destination_path": "rustfmt.toml",
+      "disposition": "PRESERVED",
+      "equivalence_case": "migrations/ggen-v26.8.1/equivalence-report.json",
+      "migration_evidence": "migrations/ggen-v26.8.1/lineage/ggen-v26.8.1-rustfmt-context.json",
+      "receipt": "migrations/ggen-v26.8.1/migration-receipt.json",
+      "replacement_owner": "seanchatmangpt/ggen-legacy",
+      "source_commit": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+      "source_digest": "2f1ef8af9a82eeb503c30222de576e290700266f2808f1d555b82b5088f5d6dd",
+      "source_path": "rustfmt.toml",
+      "verifier_report": "migrations/ggen-v26.8.1/verifier-report.json"
+    },
+    {
+      "capability_ids": [
+        "historical-workflow-evidence",
+        "replay-provenance"
+      ],
+      "component_id": "GGEN-V26.8.1-SOURCE-WORKFLOW-EVIDENCE",
+      "destination_digest": "734224741f8cb98caab3c77ef34e783630e1384f49e1875e1ae4ecec8fdcccd9",
+      "destination_path": "migrations/ggen-v26.8.1/source-workflows",
+      "disposition": "ARCHIVED",
+      "equivalence_case": "migrations/ggen-v26.8.1/equivalence-report.json",
+      "migration_evidence": "migrations/ggen-v26.8.1/lineage/ggen-v26.8.1-source-workflow-evidence.json",
+      "receipt": "migrations/ggen-v26.8.1/migration-receipt.json",
+      "replacement_owner": "seanchatmangpt/ggen-legacy",
+      "source_commit": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+      "source_digest": "734224741f8cb98caab3c77ef34e783630e1384f49e1875e1ae4ecec8fdcccd9",
+      "source_path": ".github/workflows",
+      "verifier_report": "migrations/ggen-v26.8.1/verifier-report.json"
+    }
+  ],
+  "corpus_head": "07928bde9d9eaba2e2e2fd8f78fcdc3f7b0b63ff",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "schema_version": "ggen.legacy.migration-manifest/1",
+  "source_head": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+  "source_repository": "seanchatmangpt/ggen"
+}

@@ -1,0 +1,99 @@
+{
+  "component_id": "GGEN-V26.8.1-ONTOLOGY-AUTHORITY",
+  "destination_path": "ontology/v26.8.1",
+  "destination_repository": "seanchatmangpt/ggen-legacy",
+  "files": [
+    {
+      "destination_blake3": "abdd538e7420e86d7960fc7b92a29260fa461d04b0d81ac5e3fe6e2aab56b8ab",
+      "destination_path": "ontology/v26.8.1/README.md",
+      "size": 1642,
+      "source_blake3": "abdd538e7420e86d7960fc7b92a29260fa461d04b0d81ac5e3fe6e2aab56b8ab",
+      "source_git_blob": "01654ab5889eddef44b414a46debad9838339940",
+      "source_path": "ontology/v26.8.1/README.md"
+    },
+    {
+      "destination_blake3": "9d7ee196b58c8bc15409cb3bc71ddf8515f64c504ad2bcc5ca41c30937a83d7c",
+      "destination_path": "ontology/v26.8.1/document-evidence.ttl",
+      "size": 63082,
+      "source_blake3": "9d7ee196b58c8bc15409cb3bc71ddf8515f64c504ad2bcc5ca41c30937a83d7c",
+      "source_git_blob": "76b16a9707b5a225c261746b74826ca0885e0626",
+      "source_path": "ontology/v26.8.1/document-evidence.ttl"
+    },
+    {
+      "destination_blake3": "fec9f7392d55f59c6dd8e6392b27d3af200544bdfd4bfc36e0106906f9119044",
+      "destination_path": "ontology/v26.8.1/legacy-capabilities.ttl",
+      "size": 123056,
+      "source_blake3": "fec9f7392d55f59c6dd8e6392b27d3af200544bdfd4bfc36e0106906f9119044",
+      "source_git_blob": "d3e4824d095716ded78548c88abfbd859d6e23f3",
+      "source_path": "ontology/v26.8.1/legacy-capabilities.ttl"
+    },
+    {
+      "destination_blake3": "f3e1eae239f6e565e34246cf4c6ce76a63d31d625bd62e1d2dd5d65837da843b",
+      "destination_path": "ontology/v26.8.1/ontology.ttl",
+      "size": 18032,
+      "source_blake3": "f3e1eae239f6e565e34246cf4c6ce76a63d31d625bd62e1d2dd5d65837da843b",
+      "source_git_blob": "ffc45d4eb8266d0b3519f9c649dd896e59842171",
+      "source_path": "ontology/v26.8.1/ontology.ttl"
+    },
+    {
+      "destination_blake3": "0e2dd690740baf84e6f7418195669fc6a173dab6e20da8afb89b81bc7eadd280",
+      "destination_path": "ontology/v26.8.1/queries/legacy-disposition-unknown.rq",
+      "size": 344,
+      "source_blake3": "0e2dd690740baf84e6f7418195669fc6a173dab6e20da8afb89b81bc7eadd280",
+      "source_git_blob": "16ffd06913f3e2a3a39f1175310af765a2c170fc",
+      "source_path": "ontology/v26.8.1/queries/legacy-disposition-unknown.rq"
+    },
+    {
+      "destination_blake3": "1e1dffa22ebd468ca48bacb22cea12a667529740b7f7147e822b284e5dc2cc51",
+      "destination_path": "ontology/v26.8.1/queries/legacy-missing-equivalence-verifier.rq",
+      "size": 590,
+      "source_blake3": "1e1dffa22ebd468ca48bacb22cea12a667529740b7f7147e822b284e5dc2cc51",
+      "source_git_blob": "9abf499c61317a5b391caff12cd04f7f29edced0",
+      "source_path": "ontology/v26.8.1/queries/legacy-missing-equivalence-verifier.rq"
+    },
+    {
+      "destination_blake3": "22fc6e4e079fdbeb2872a89ad701a703e44c0c4d4e86ca51f9d15a4076e499b6",
+      "destination_path": "ontology/v26.8.1/queries/legacy-per-subsystem-count.rq",
+      "size": 496,
+      "source_blake3": "22fc6e4e079fdbeb2872a89ad701a703e44c0c4d4e86ca51f9d15a4076e499b6",
+      "source_git_blob": "a4b9fdbe4d16e41c12e9537f23b802c6f389e87c",
+      "source_path": "ontology/v26.8.1/queries/legacy-per-subsystem-count.rq"
+    },
+    {
+      "destination_blake3": "19637a729127aff595fe54d4f40c6387db14a9e522df8364194116b2b253dc35",
+      "destination_path": "ontology/v26.8.1/queries/legacy-subsystem-coverage-gaps.rq",
+      "size": 738,
+      "source_blake3": "19637a729127aff595fe54d4f40c6387db14a9e522df8364194116b2b253dc35",
+      "source_git_blob": "b664bace83ab3102788c67267b6b8a8b5fd1d17c",
+      "source_path": "ontology/v26.8.1/queries/legacy-subsystem-coverage-gaps.rq"
+    },
+    {
+      "destination_blake3": "aa8ee3bc2c5608610a04334b80577cab73a13a0442b7fe28bc036774bd07f02f",
+      "destination_path": "ontology/v26.8.1/queries/subsystem-inventory.rq",
+      "size": 285,
+      "source_blake3": "aa8ee3bc2c5608610a04334b80577cab73a13a0442b7fe28bc036774bd07f02f",
+      "source_git_blob": "83dd89ef7c4f4c21751e803f34bd312c127782ea",
+      "source_path": "ontology/v26.8.1/queries/subsystem-inventory.rq"
+    },
+    {
+      "destination_blake3": "e302d6539b9f38ceeb35f04b8d8830d94b40e68eec7a11c05ebc0eef1e632c76",
+      "destination_path": "ontology/v26.8.1/queries/unresolved-legacy.rq",
+      "size": 326,
+      "source_blake3": "e302d6539b9f38ceeb35f04b8d8830d94b40e68eec7a11c05ebc0eef1e632c76",
+      "source_git_blob": "d92ff8a99ddb1e5ef10c9ec34b7d2e4902e029b0",
+      "source_path": "ontology/v26.8.1/queries/unresolved-legacy.rq"
+    },
+    {
+      "destination_blake3": "71a6ec3bf6c8f99daa3ce172c14c98ff25cf1c93acfc50798fe205667ac8099a",
+      "destination_path": "ontology/v26.8.1/shapes.ttl",
+      "size": 7029,
+      "source_blake3": "71a6ec3bf6c8f99daa3ce172c14c98ff25cf1c93acfc50798fe205667ac8099a",
+      "source_git_blob": "966b44da083ef745a86c770684c8555740f46eaa",
+      "source_path": "ontology/v26.8.1/shapes.ttl"
+    }
+  ],
+  "schema": "ggen.legacy.cross-repository-lineage/1",
+  "source_commit": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+  "source_path": "ontology/v26.8.1",
+  "source_repository": "seanchatmangpt/ggen"
+}

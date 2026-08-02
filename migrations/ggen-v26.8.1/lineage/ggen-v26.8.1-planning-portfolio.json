@@ -1,0 +1,171 @@
+{
+  "component_id": "GGEN-V26.8.1-PLANNING-PORTFOLIO",
+  "destination_path": "planning/v26.8.1",
+  "destination_repository": "seanchatmangpt/ggen-legacy",
+  "files": [
+    {
+      "destination_blake3": "327030351d6e127ff16e1307378ff5118926a47b2b566a33b3cbc3a9245c86ff",
+      "destination_path": "planning/v26.8.1/README.md",
+      "size": 2162,
+      "source_blake3": "327030351d6e127ff16e1307378ff5118926a47b2b566a33b3cbc3a9245c86ff",
+      "source_git_blob": "2c30dcebc3f45a76a8fcdccea59dbc7b6215dc7c",
+      "source_path": "planning/v26.8.1/README.md"
+    },
+    {
+      "destination_blake3": "730e3438638cc23fd929e03bf2321a08044a8e52af09a1edbabcde544edf899f",
+      "destination_path": "planning/v26.8.1/domains/ggen-v2681-core.pddl",
+      "size": 4316,
+      "source_blake3": "730e3438638cc23fd929e03bf2321a08044a8e52af09a1edbabcde544edf899f",
+      "source_git_blob": "b823e9cd1caef876ebd951a5c2515a116e43e8a0",
+      "source_path": "planning/v26.8.1/domains/ggen-v2681-core.pddl"
+    },
+    {
+      "destination_blake3": "a53b8f6fa126ea9dd8d2093a412e5522485cf804e573dbef50e00b7926384ebb",
+      "destination_path": "planning/v26.8.1/domains/ggen-v2681-hierarchical.hddl",
+      "size": 3087,
+      "source_blake3": "a53b8f6fa126ea9dd8d2093a412e5522485cf804e573dbef50e00b7926384ebb",
+      "source_git_blob": "3f48646eea0677ffbcfb5c0e3b504b96b7fe63df",
+      "source_path": "planning/v26.8.1/domains/ggen-v2681-hierarchical.hddl"
+    },
+    {
+      "destination_blake3": "b5797be3ecc5f1a541d328a91638279ef9e9ca0a857b75054dea240967cb0d8d",
+      "destination_path": "planning/v26.8.1/domains/ggen-v2681-probabilistic.ppddl",
+      "size": 1499,
+      "source_blake3": "b5797be3ecc5f1a541d328a91638279ef9e9ca0a857b75054dea240967cb0d8d",
+      "source_git_blob": "08f02e9b427428c0f8d41548f0ce162d7ef8e310",
+      "source_path": "planning/v26.8.1/domains/ggen-v2681-probabilistic.ppddl"
+    },
+    {
+      "destination_blake3": "87f34b25d6993056c459b6bc4dc531787152783de4f5901244eee3abcdd0b529",
+      "destination_path": "planning/v26.8.1/domains/ggen-v2681-temporal.pddl",
+      "size": 2411,
+      "source_blake3": "87f34b25d6993056c459b6bc4dc531787152783de4f5901244eee3abcdd0b529",
+      "source_git_blob": "b947e93c7894bfb6de1b37d9286d9f6d8933d40c",
+      "source_path": "planning/v26.8.1/domains/ggen-v2681-temporal.pddl"
+    },
+    {
+      "destination_blake3": "09bf4892a0f4ad496162c4ea79e9a659326d29b848118bf9627f11606ac184c4",
+      "destination_path": "planning/v26.8.1/justfile",
+      "size": 332,
+      "source_blake3": "09bf4892a0f4ad496162c4ea79e9a659326d29b848118bf9627f11606ac184c4",
+      "source_git_blob": "83eb6695d28672fef10612906e87c626f9ed997f",
+      "source_path": "planning/v26.8.1/justfile"
+    },
+    {
+      "destination_blake3": "93fd2521beabe9f62c04d02968ef2f61958682afd6397ee2ec881b22d626ec64",
+      "destination_path": "planning/v26.8.1/manifest.toml",
+      "size": 1715,
+      "source_blake3": "93fd2521beabe9f62c04d02968ef2f61958682afd6397ee2ec881b22d626ec64",
+      "source_git_blob": "34f1b2f840875622b6be8800dbd67b68fed84e17",
+      "source_path": "planning/v26.8.1/manifest.toml"
+    },
+    {
+      "destination_blake3": "c63f1267daa73d38e4a7efb1efbb1d30460a38a66a2839daa5c2220659b9acd6",
+      "destination_path": "planning/v26.8.1/ontology-binding.ttl",
+      "size": 2898,
+      "source_blake3": "c63f1267daa73d38e4a7efb1efbb1d30460a38a66a2839daa5c2220659b9acd6",
+      "source_git_blob": "b8bdb36dc1cd7ebba33df9f7a7a24f1d14af6ff9",
+      "source_path": "planning/v26.8.1/ontology-binding.ttl"
+    },
+    {
+      "destination_blake3": "c3aafa070df101fe3685d3ab6958a5c992c7f9a537428565955b914bf65fac16",
+      "destination_path": "planning/v26.8.1/problems/01-governance.pddl",
+      "size": 1438,
+      "source_blake3": "c3aafa070df101fe3685d3ab6958a5c992c7f9a537428565955b914bf65fac16",
+      "source_git_blob": "70ceabb93f41a3832792e20d34344bd816a7a244",
+      "source_path": "planning/v26.8.1/problems/01-governance.pddl"
+    },
+    {
+      "destination_blake3": "5adc59ec75515834d79cf89cd936ad94f352296b227f01923a8ecc6df230a93e",
+      "destination_path": "planning/v26.8.1/problems/02-system.pddl",
+      "size": 613,
+      "source_blake3": "5adc59ec75515834d79cf89cd936ad94f352296b227f01923a8ecc6df230a93e",
+      "source_git_blob": "b000ba8f89e065674ef96f1ac92aa16c36b966e0",
+      "source_path": "planning/v26.8.1/problems/02-system.pddl"
+    },
+    {
+      "destination_blake3": "ddcff9c0205b72385fa6bb9ca7c5045928631481c7ce2e6390eff0d97dfa973e",
+      "destination_path": "planning/v26.8.1/problems/03-engine.pddl",
+      "size": 641,
+      "source_blake3": "ddcff9c0205b72385fa6bb9ca7c5045928631481c7ce2e6390eff0d97dfa973e",
+      "source_git_blob": "76e2bf961ebe8769f268c6741e9cf77ee827b3cc",
+      "source_path": "planning/v26.8.1/problems/03-engine.pddl"
+    },
+    {
+      "destination_blake3": "93b5bc412aa1f67262438c6046fcae06d74d405e4f0b0d9fc94d3c563e11ab76",
+      "destination_path": "planning/v26.8.1/problems/04-graph.pddl",
+      "size": 534,
+      "source_blake3": "93b5bc412aa1f67262438c6046fcae06d74d405e4f0b0d9fc94d3c563e11ab76",
+      "source_git_blob": "374469f6e633cbe7e886b4c9d55c329b486a1985",
+      "source_path": "planning/v26.8.1/problems/04-graph.pddl"
+    },
+    {
+      "destination_blake3": "f3564b9bd9d02a9d9c4e39141c8ab96f0e0ab44411b4f7077b4b468b881205a0",
+      "destination_path": "planning/v26.8.1/problems/05-projection.pddl",
+      "size": 643,
+      "source_blake3": "f3564b9bd9d02a9d9c4e39141c8ab96f0e0ab44411b4f7077b4b468b881205a0",
+      "source_git_blob": "72a009e8db93c990ec33787abd4669300838c83c",
+      "source_path": "planning/v26.8.1/problems/05-projection.pddl"
+    },
+    {
+      "destination_blake3": "ea08af3a669e7c711ba2e9fa363e14ccbffc50bc195dcc91801ea6a32cd71195",
+      "destination_path": "planning/v26.8.1/problems/06-evidence.pddl",
+      "size": 631,
+      "source_blake3": "ea08af3a669e7c711ba2e9fa363e14ccbffc50bc195dcc91801ea6a32cd71195",
+      "source_git_blob": "ca6de8c8102aea8bad15243f6716d4aea2658a40",
+      "source_path": "planning/v26.8.1/problems/06-evidence.pddl"
+    },
+    {
+      "destination_blake3": "4932d24bc91875254c81f4410fec0c6d7bd15ad09d1adf850d11400830b97f62",
+      "destination_path": "planning/v26.8.1/problems/07-products.pddl",
+      "size": 531,
+      "source_blake3": "4932d24bc91875254c81f4410fec0c6d7bd15ad09d1adf850d11400830b97f62",
+      "source_git_blob": "f2fd68c07f00a08214f228cf7c9a57ca12ab07a6",
+      "source_path": "planning/v26.8.1/problems/07-products.pddl"
+    },
+    {
+      "destination_blake3": "47015a639c307533b8e63d44e97262fc0177b3c4c9187335ec633393d90de27c",
+      "destination_path": "planning/v26.8.1/problems/08-verification.pddl",
+      "size": 643,
+      "source_blake3": "47015a639c307533b8e63d44e97262fc0177b3c4c9187335ec633393d90de27c",
+      "source_git_blob": "c38a0ec1f930284d70335b43c2870c39992cfa86",
+      "source_path": "planning/v26.8.1/problems/08-verification.pddl"
+    },
+    {
+      "destination_blake3": "5142bd6d54890fbd3d1fe8e5194fa9c2693ba67646dda14a31c6b8231c57ed6d",
+      "destination_path": "planning/v26.8.1/problems/09-economics.pddl",
+      "size": 608,
+      "source_blake3": "5142bd6d54890fbd3d1fe8e5194fa9c2693ba67646dda14a31c6b8231c57ed6d",
+      "source_git_blob": "770d194dd512b23fe7c9e8848d437b824505a054",
+      "source_path": "planning/v26.8.1/problems/09-economics.pddl"
+    },
+    {
+      "destination_blake3": "f2287d9e18e0e2db3bc2ef9e7d389676d0363098227b8ea2d7faf18a7f0f828c",
+      "destination_path": "planning/v26.8.1/problems/10-legacy-sunset.pddl",
+      "size": 1353,
+      "source_blake3": "f2287d9e18e0e2db3bc2ef9e7d389676d0363098227b8ea2d7faf18a7f0f828c",
+      "source_git_blob": "5ad8ee375f00d55e1f4e307f967dd8b2ad202785",
+      "source_path": "planning/v26.8.1/problems/10-legacy-sunset.pddl"
+    },
+    {
+      "destination_blake3": "0d595dfaed6a16a1623c465a3b97f8e998735d3b1aa7c0054578e4468d19f95e",
+      "destination_path": "planning/v26.8.1/problems/11-recovery-under-uncertainty.ppddl",
+      "size": 817,
+      "source_blake3": "0d595dfaed6a16a1623c465a3b97f8e998735d3b1aa7c0054578e4468d19f95e",
+      "source_git_blob": "9d059935175ad9ba07fa58e57600ac0bef4d745b",
+      "source_path": "planning/v26.8.1/problems/11-recovery-under-uncertainty.ppddl"
+    },
+    {
+      "destination_blake3": "ea6a070a335fa2a41a403e860b3453989b1375219a7885a6a24ab9fc4d06933b",
+      "destination_path": "planning/v26.8.1/verify_planning.py",
+      "size": 6537,
+      "source_blake3": "ea6a070a335fa2a41a403e860b3453989b1375219a7885a6a24ab9fc4d06933b",
+      "source_git_blob": "a3c6fc192e3dda9751ed3079560b3d9a3cf43082",
+      "source_path": "planning/v26.8.1/verify_planning.py"
+    }
+  ],
+  "schema": "ggen.legacy.cross-repository-lineage/1",
+  "source_commit": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+  "source_path": "planning/v26.8.1",
+  "source_repository": "seanchatmangpt/ggen"
+}
