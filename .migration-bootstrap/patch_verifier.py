@@ -37,7 +37,6 @@ replacements = [
         "                \"migrations/ggen-v26.8.1/SOURCE_LEDGER.md\",\n"
         "                \"migrations/ggen-v26.8.1/migration-intent.json\",\n"
         "                \"migrations/ggen-v26.8.1/source-workflows\",\n"
-        "                \".github/workflows/verify-ggen-v26-8-1-migration.yml\",\n"
         "            ]\n"
         "            checkpoint_receipt, _, _ = execute(\n"
         "                [\"git\", \"diff\", \"--quiet\", corpus_head, \"--\", *checkpoint_paths],\n"
