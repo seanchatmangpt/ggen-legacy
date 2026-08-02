@@ -1,0 +1,18 @@
+{
+  "actuator": "github-actions/ggen-legacy-migration",
+  "corpus_commit": "07928bde9d9eaba2e2e2fd8f78fcdc3f7b0b63ff",
+  "destination_repository": "seanchatmangpt/ggen-legacy",
+  "effect": "IMPORT_CORPUS_AND_BIND_LINEAGE",
+  "equivalence_report_blake3": "c111b0e0e9e606700e3df7f4a48a7085be7a1dd04541b1c22fc4bc515bc111a0",
+  "exit_status": 0,
+  "manifest_blake3": "b773959149bf961ec37e625ffed4604fbff1bfec586364557b4ef9462eff5429",
+  "replay": "REPLAY_MATCH",
+  "run_id": "30d0c0c0cb69e3cbf444b82efb09c4c8b5ce9703b51015236d63b9c756a317ef",
+  "schema": "ggen.legacy.migration-receipt/1",
+  "source_commit": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+  "source_removal_admitted": false,
+  "source_removal_precondition": "destination PR plus composed source-removal verification",
+  "source_repository": "seanchatmangpt/ggen",
+  "standing": "PARTIAL_ALIVE",
+  "verifier_report_blake3": "5dd67b8cf3be758159ebd99ed30a037b9b4111f4974c94235b12c1ea3bd77298"
+}

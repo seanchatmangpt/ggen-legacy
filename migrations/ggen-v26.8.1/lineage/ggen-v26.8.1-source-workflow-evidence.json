@@ -1,0 +1,35 @@
+{
+  "component_id": "GGEN-V26.8.1-SOURCE-WORKFLOW-EVIDENCE",
+  "destination_path": "migrations/ggen-v26.8.1/source-workflows",
+  "destination_repository": "seanchatmangpt/ggen-legacy",
+  "files": [
+    {
+      "destination_blake3": "33c013c0b53d51888e6c2b87434be1c69d9000b47b0af3a9ee1f5eeb2a2e7c4d",
+      "destination_path": "migrations/ggen-v26.8.1/source-workflows/v26.8.1-crown.yml",
+      "size": 3730,
+      "source_blake3": "33c013c0b53d51888e6c2b87434be1c69d9000b47b0af3a9ee1f5eeb2a2e7c4d",
+      "source_git_blob": "60865a664a8e40a69382a531e2210dc1d2cf64fe",
+      "source_path": ".github/workflows/v26.8.1-crown.yml"
+    },
+    {
+      "destination_blake3": "e125c5337b3dc3e6bc9fd1861112409f00af86b9b5aa8978634680c1d7677885",
+      "destination_path": "migrations/ggen-v26.8.1/source-workflows/v26.8.1-planning.yml",
+      "size": 1901,
+      "source_blake3": "e125c5337b3dc3e6bc9fd1861112409f00af86b9b5aa8978634680c1d7677885",
+      "source_git_blob": "a22e785a09b814c842463ea792f16729019072e3",
+      "source_path": ".github/workflows/v26.8.1-planning.yml"
+    },
+    {
+      "destination_blake3": "a28cad22df3f457363313d4b1fde76e849f4a833bfd18d6680896b1f3c7f51b3",
+      "destination_path": "migrations/ggen-v26.8.1/source-workflows/v26.8.1-step-two.yml",
+      "size": 3730,
+      "source_blake3": "a28cad22df3f457363313d4b1fde76e849f4a833bfd18d6680896b1f3c7f51b3",
+      "source_git_blob": "9cd09115563fac1b6979f6e0298e06955d632f07",
+      "source_path": ".github/workflows/v26.8.1-step-two.yml"
+    }
+  ],
+  "schema": "ggen.legacy.cross-repository-lineage/1",
+  "source_commit": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+  "source_path": ".github/workflows",
+  "source_repository": "seanchatmangpt/ggen"
+}
