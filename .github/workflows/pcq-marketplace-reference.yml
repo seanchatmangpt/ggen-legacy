@@ -9,7 +9,7 @@ on:
 permissions: { contents: read }
 concurrency: { group: pcq-reference-${{ github.ref }}, cancel-in-progress: true }
 env:
-  GGEN_REF: 821741c06343a14534b001a8baf49840068af25e
+  GGEN_REF: 5cf1c5b917db97ddc48ba9a72825c55e23487dcf
 jobs:
   verify-reference:
     runs-on: ubuntu-24.04
@@ -38,12 +38,13 @@ jobs:
       - name: Manufacture and prove byte-stable replay
         working-directory: reference-implementations/pcq-marketplace
         run: |
+          mkdir -p .ggen/evidence ../../../.build
           ../../../.ggen-kernel/target/release/ggen sync run
-          find . -type f ! -path './.ggen/*' -print0 | sort -z | xargs -0 sha256sum > ../../../.build/pcq-projection-first.sha256
+          find . -type f ! -path './.ggen/*' ! -path './.ggen-v2/*' -print0 | sort -z | xargs -0 sha256sum > .ggen/evidence/projection-first.sha256
           ../../../.ggen-kernel/target/release/ggen sync run
-          find . -type f ! -path './.ggen/*' -print0 | sort -z | xargs -0 sha256sum > ../../../.build/pcq-projection-second.sha256
-          diff -u ../../../.build/pcq-projection-first.sha256 ../../../.build/pcq-projection-second.sha256
-          ../../../.ggen-kernel/target/release/ggen sync run --dry-run | tee ../../../.build/pcq-ggen-dry-run.log
+          find . -type f ! -path './.ggen/*' ! -path './.ggen-v2/*' -print0 | sort -z | xargs -0 sha256sum > .ggen/evidence/projection-second.sha256
+          diff -u .ggen/evidence/projection-first.sha256 .ggen/evidence/projection-second.sha256
+          ../../../.ggen-kernel/target/release/ggen sync run --dry-run | tee .ggen/evidence/pcq-ggen-dry-run.log
       - name: Static authority and manufactured implementation verification
         run: python3 scripts/verify_pcq_reference.py
       - uses: pnpm/action-setup@v4
@@ -79,7 +80,8 @@ jobs:
           if-no-files-found: error
           path: |
             .build/**
-            reference-implementations/pcq-marketplace/.ggen/receipts/**
+            reference-implementations/pcq-marketplace/.ggen/**
+            reference-implementations/pcq-marketplace/.ggen-v2/**
             reference-implementations/pcq-marketplace/.build/**
             reference-implementations/pcq-marketplace/test-results/**
             reference-implementations/pcq-marketplace/app/**

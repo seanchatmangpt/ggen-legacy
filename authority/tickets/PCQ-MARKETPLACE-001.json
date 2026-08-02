@@ -4,7 +4,7 @@
   "state": "ADMITTED",
   "authority": [
     "AGENTS.md",
-    "seanchatmangpt/ggen@821741c06343a14534b001a8baf49840068af25e:packs/pcq-marketplace-pack"
+    "seanchatmangpt/ggen@5cf1c5b917db97ddc48ba9a72825c55e23487dcf:packs/pcq-marketplace-pack"
   ],
   "exactBase": "70e599a599fedb7c62c965377cc2f80df1fa01ec",
   "scope": [
@@ -45,7 +45,7 @@
     "missing WebGL canvas"
   ],
   "receipt": ".build/pcq-runtime-receipt.json",
-  "replay": "two ggen sync runs plus byte-manifest equality and dry-run receipt",
+  "replay": "two ggen sync runs plus byte-manifest equality excluding .ggen and .ggen-v2 receipt state",
   "exclusions": [
     "external fiat conversion",
     "public cryptocurrency issuance",
@@ -54,5 +54,5 @@
     "production deployment"
   ],
   "expectedTransition": "UNKNOWN -> PARTIAL_ALIVE after exact-head workflow; repository crown remains separate",
-  "exactGgenSource": "821741c06343a14534b001a8baf49840068af25e"
+  "exactGgenSource": "5cf1c5b917db97ddc48ba9a72825c55e23487dcf"
 }
