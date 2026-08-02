@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run the preserved importer patcher, then add a bounded JSON-output delta probe."""
+"""Run the preserved importer patcher, then fence verifier-generated outputs."""
 
 from pathlib import Path
 import runpy
@@ -9,39 +9,31 @@ runpy.run_path(str(base), run_name="__main__")
 
 verifier_path = Path("/tmp/verify_ggen_v26_8_1_migration.py")
 verifier_text = verifier_path.read_text(encoding="utf-8")
-
-before_needle = "        data_counts = parse_data_files(destination_root)\n"
-before_replacement = """        json_paths_before = {
-            candidate.relative_to(destination_root).as_posix()
-            for candidate in destination_root.rglob("*.json")
-            if ".git" not in candidate.parts and ".source-ggen" not in candidate.parts
-        }
+needle = "        data_counts = parse_data_files(destination_root)\n"
+replacement = """        generated_outputs = (
+            destination_root / ".ggen/v26.8.1/planning-report.json",
+            destination_root / "tools/v26.8.1/target",
+        )
+        destination_boundary = destination_root.resolve()
+        for generated_output in generated_outputs:
+            resolved_output = generated_output.resolve()
+            try:
+                resolved_output.relative_to(destination_boundary)
+            except ValueError as exc:
+                raise VerificationRefusal(
+                    f"GENERATED_OUTPUT_CLEANUP_ESCAPE_REFUSED path={generated_output}"
+                ) from exc
+            if generated_output.is_symlink():
+                raise VerificationRefusal(
+                    f"GENERATED_OUTPUT_SYMLINK_REFUSED path={generated_output}"
+                )
+            if generated_output.is_dir():
+                shutil.rmtree(generated_output)
+            elif generated_output.exists():
+                generated_output.unlink()
         data_counts = parse_data_files(destination_root)
 """
-if verifier_text.count(before_needle) != 1:
-    raise SystemExit(
-        f"JSON_DELTA_BEFORE_PRECONDITION_REFUSED count={verifier_text.count(before_needle)}"
-    )
-verifier_text = verifier_text.replace(before_needle, before_replacement, 1)
-
-after_needle = "        controls = negative_controls(destination_root, source_root, manifest)\n"
-after_replacement = after_needle + """        json_paths_after = {
-            candidate.relative_to(destination_root).as_posix()
-            for candidate in destination_root.rglob("*.json")
-            if ".git" not in candidate.parts and ".source-ggen" not in candidate.parts
-        }
-        os.write(
-            2,
-            (
-                "JSON_OUTPUT_DELTA="
-                + json.dumps(sorted(json_paths_after - json_paths_before))
-                + "\\n"
-            ).encode(),
-        )
-"""
-if verifier_text.count(after_needle) != 1:
-    raise SystemExit(
-        f"JSON_DELTA_AFTER_PRECONDITION_REFUSED count={verifier_text.count(after_needle)}"
-    )
-verifier_text = verifier_text.replace(after_needle, after_replacement, 1)
-verifier_path.write_text(verifier_text, encoding="utf-8")
+count = verifier_text.count(needle)
+if count != 1:
+    raise SystemExit(f"GENERATED_OUTPUT_FENCE_PRECONDITION_REFUSED count={count}")
+verifier_path.write_text(verifier_text.replace(needle, replacement, 1), encoding="utf-8")
