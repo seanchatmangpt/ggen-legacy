@@ -1,0 +1,127 @@
+@prefix ce: <https://chatmangpt.com/ns/ecosystem#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ce:EcosystemShape
+    a sh:NodeShape ;
+    sh:targetClass ce:Ecosystem ;
+    sh:property [
+        sh:path ce:authorityClass ;
+        sh:hasValue "AUTHORED_INPUT_ONLY" ;
+        sh:minCount 1 ;
+        sh:maxCount 1
+    ] ;
+    sh:property [
+        sh:path ce:directActuation ;
+        sh:hasValue false ;
+        sh:minCount 1 ;
+        sh:maxCount 1
+    ] ;
+    sh:property [
+        sh:path ce:finalAdmissionAllowed ;
+        sh:hasValue false ;
+        sh:minCount 1 ;
+        sh:maxCount 1
+    ] ;
+    sh:property [
+        sh:path ce:hasCapability ;
+        sh:minCount 26
+    ] ;
+    sh:property [
+        sh:path ce:hasRepositoryRealization ;
+        sh:minCount 19
+    ] .
+
+ce:CapabilityShape
+    a sh:NodeShape ;
+    sh:targetClass ce:Capability ;
+    sh:property [
+        sh:path dcterms:identifier ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:pattern "^[a-z0-9][a-z0-9-]+$"
+    ] ;
+    sh:property [
+        sh:path ce:inPlane ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class ce:CapabilityPlane
+    ] ;
+    sh:property [
+        sh:path ce:canActuate ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:boolean
+    ] ;
+    sh:property [
+        sh:path ce:deniesAuthority ;
+        sh:minCount 1
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Only the BRCE capability may declare canActuate true." ;
+        sh:select """
+            SELECT $this
+            WHERE {
+              $this dcterms:identifier ?identifier ;
+                    ce:canActuate true .
+              FILTER (?identifier != "brce")
+            }
+        """
+    ] .
+
+ce:RelationshipShape
+    a sh:NodeShape ;
+    sh:targetClass ce:CapabilityRelationship ;
+    sh:property [
+        sh:path ce:sourceCapability ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class ce:Capability
+    ] ;
+    sh:property [
+        sh:path ce:targetCapability ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:class ce:Capability
+    ] ;
+    sh:property [
+        sh:path ce:receiptRequired ;
+        sh:hasValue true ;
+        sh:minCount 1 ;
+        sh:maxCount 1
+    ] ;
+    sh:property [
+        sh:path ce:directActuation ;
+        sh:hasValue false ;
+        sh:minCount 1 ;
+        sh:maxCount 1
+    ] .
+
+ce:RepositoryRealizationShape
+    a sh:NodeShape ;
+    sh:targetClass ce:RepositoryRealization ;
+    sh:property [
+        sh:path dcterms:identifier ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:pattern "^[^/]+/[^/]+$"
+    ] ;
+    sh:property [
+        sh:path ce:transportLineageOnly ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:datatype xsd:boolean
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Transport-only realizations cannot possess product authority." ;
+        sh:select """
+            SELECT $this
+            WHERE {
+              $this ce:transportLineageOnly true ;
+                    ce:productAuthority true .
+            }
+        """
+    ] .

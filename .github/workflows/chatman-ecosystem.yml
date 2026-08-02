@@ -1,0 +1,60 @@
+name: Chatman Ecosystem Corpus
+
+on:
+  pull_request:
+    paths:
+      - "authority/chatman-ecosystem/**"
+      - "ontology/chatman-ecosystem/**"
+      - "docs/chatman-ecosystem/**"
+      - "verifiers/verify_chatman_ecosystem.py"
+      - "witnesses/test_chatman_ecosystem.py"
+      - "tickets/TICKET-013-chatman-ecosystem-corpus.md"
+      - ".github/workflows/chatman-ecosystem.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          fetch-depth: 0
+
+      - name: Refuse controller-owned foundry edits
+        if: github.base_ref != ''
+        shell: bash
+        run: |
+          git fetch origin "${GITHUB_BASE_REF}" --depth=1
+          if git diff --name-only "origin/${GITHUB_BASE_REF}...HEAD" | grep -q '^foundry/'; then
+            echo "REFUSED: controller-owned foundry/** changed"
+            exit 1
+          fi
+
+      - name: Install exact verifier dependencies
+        run: >
+          python3 -m pip install --disable-pip-version-check
+          jsonschema==4.25.0
+          rdflib==7.1.4
+          pyshacl==0.31.0
+
+      - name: Compile verifier surfaces
+        run: python3 -m compileall -q verifiers witnesses
+
+      - name: Parse authored JSON
+        run: |
+          python3 -m json.tool authority/chatman-ecosystem/ecosystem.json >/dev/null
+          python3 -m json.tool authority/chatman-ecosystem/schemas/ecosystem.schema.json >/dev/null
+
+      - name: Execute mutation falsifiers
+        run: python3 witnesses/test_chatman_ecosystem.py
+
+      - name: Verify authority, RDF, SHACL, and deterministic replay
+        run: |
+          mkdir -p target/chatman-ecosystem
+          python3 verifiers/verify_chatman_ecosystem.py --strict-tools --output target/chatman-ecosystem/report-1.json
+          python3 verifiers/verify_chatman_ecosystem.py --strict-tools --output target/chatman-ecosystem/report-2.json
+          cmp target/chatman-ecosystem/report-1.json target/chatman-ecosystem/report-2.json
