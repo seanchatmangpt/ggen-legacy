@@ -6,6 +6,14 @@ path = Path(sys.argv[1])
 text = path.read_text(encoding="utf-8")
 replacements = [
     (
+        "            item = path.relative_to(base).as_posix()\n",
+        "            item = (\n"
+        "                path.name\n"
+        "                if len(records) == 1 and path == base\n"
+        "                else path.relative_to(base).as_posix()\n"
+        "            )\n",
+    ),
+    (
         "        destination_head = git_head(destination_root)\n"
         "        if not is_ancestor(destination_root, manifest[\"corpus_head\"], destination_head):\n"
         "            raise VerificationRefusal(\n"
