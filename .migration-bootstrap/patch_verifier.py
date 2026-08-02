@@ -58,6 +58,14 @@ replacements = [
         "    receipt_stdout, receipt_stderr = canonical_receipt_output(\n"
         "        argv, result.stdout, result.stderr\n"
         "    )\n"
+        "    physical_cwd = str(cwd)\n"
+        "    if \"ggen-v26-8-1-composed-\" in physical_cwd:\n"
+        "        receipt_stdout = receipt_stdout.replace(\n"
+        "            physical_cwd, \"<COMPOSED_SOURCE>\"\n"
+        "        )\n"
+        "        receipt_stderr = receipt_stderr.replace(\n"
+        "            physical_cwd, \"<COMPOSED_SOURCE>\"\n"
+        "        )\n"
         "    receipt = CommandReceipt(\n",
     ),
     (
@@ -204,6 +212,7 @@ replacements = [
         "        ),\n"
         "        \"command_receipt_normalization\": [\n"
         "            \"workspace-identity\",\n"
+        "            \"composed-workspace-output-path\",\n"
         "            \"cargo-color-disabled\",\n"
         "            \"cargo-compile-progress-order\",\n"
         "            \"cargo-single-build-job\",\n"
