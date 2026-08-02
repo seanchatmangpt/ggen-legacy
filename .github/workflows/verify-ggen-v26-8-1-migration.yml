@@ -9,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ggen-v26.8.1-migration-e0fb965aaf0bf8bf57721a4fde8caa50153f84e2
+  group: ggen-v26.8.1-migration-${{ github.event.pull_request.head.sha || github.sha }}
   cancel-in-progress: true
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
       - name: Checkout exact candidate
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          ref: e0fb965aaf0bf8bf57721a4fde8caa50153f84e2
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
       - name: Checkout exact ggen source
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
@@ -41,7 +41,7 @@ jobs:
       - name: Upload bounded evidence
         uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
         with:
-          name: ggen-v26.8.1-migration-e0fb965aaf0bf8bf57721a4fde8caa50153f84e2
+          name: ggen-v26.8.1-migration-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             migrations/ggen-v26.8.1/migration-manifest.json
             migrations/ggen-v26.8.1/equivalence-report.json
