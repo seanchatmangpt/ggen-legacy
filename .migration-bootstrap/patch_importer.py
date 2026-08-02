@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import json
 from pathlib import Path
 import sys
 
@@ -141,6 +142,22 @@ path.write_text(text, encoding='utf-8')
 # probe that compares only the two reports produced inside this workflow run.
 verifier_path = Path('/tmp/verify_ggen_v26_8_1_migration.py')
 verifier_text = verifier_path.read_text(encoding='utf-8')
+verifier_lines = verifier_text.splitlines()
+data_count_context = []
+for index, line in enumerate(verifier_lines):
+    if 'data_counts' in line:
+        start = max(0, index - 6)
+        end = min(len(verifier_lines), index + 7)
+        data_count_context.append(
+            {
+                'line': index + 1,
+                'context': [
+                    f'{line_number + 1}: {verifier_lines[line_number]}'
+                    for line_number in range(start, end)
+                ],
+            }
+        )
+print('DATA_COUNTS_SOURCE=' + json.dumps(data_count_context, sort_keys=True))
 report_sinks = [
     line
     for line in verifier_text.splitlines(keepends=True)
