@@ -6,6 +6,47 @@ path = Path(sys.argv[1])
 text = path.read_text(encoding="utf-8")
 replacements = [
     (
+        "import os\nimport shutil\n",
+        "import os\nimport re\nimport shutil\n",
+    ),
+    (
+        "def execute(argv: list[str], *, cwd: Path, timeout: int = 900) -> tuple[CommandReceipt, str, str]:\n",
+        "def canonical_receipt_output(\n"
+        "    argv: list[str], stdout: str, stderr: str\n"
+        ") -> tuple[str, str]:\n"
+        "    if argv[:2] != [\"cargo\", \"test\"]:\n"
+        "        return stdout, stderr\n"
+        "    elapsed = re.compile(\n"
+        "        r\"\\b(finished in|target\\(s\\) in) \\d+(?:\\.\\d+)?s\",\n"
+        "        re.IGNORECASE,\n"
+        "    )\n"
+        "\n"
+        "    def normalize(value: str) -> str:\n"
+        "        return elapsed.sub(lambda match: f\"{match.group(1)} <DURATION>\", value)\n"
+        "\n"
+        "    return normalize(stdout), normalize(stderr)\n"
+        "\n"
+        "\n"
+        "def execute(argv: list[str], *, cwd: Path, timeout: int = 900) -> tuple[CommandReceipt, str, str]:\n",
+    ),
+    (
+        "    receipt = CommandReceipt(\n",
+        "    receipt_stdout, receipt_stderr = canonical_receipt_output(\n"
+        "        argv, result.stdout, result.stderr\n"
+        "    )\n"
+        "    receipt = CommandReceipt(\n",
+    ),
+    (
+        "        stdout_sha256=hashlib.sha256(result.stdout.encode()).hexdigest(),\n"
+        "        stderr_sha256=hashlib.sha256(result.stderr.encode()).hexdigest(),\n"
+        "        stdout_excerpt=result.stdout[-2000:],\n"
+        "        stderr_excerpt=result.stderr[-2000:],\n",
+        "        stdout_sha256=hashlib.sha256(receipt_stdout.encode()).hexdigest(),\n"
+        "        stderr_sha256=hashlib.sha256(receipt_stderr.encode()).hexdigest(),\n"
+        "        stdout_excerpt=receipt_stdout[-2000:],\n"
+        "        stderr_excerpt=receipt_stderr[-2000:],\n",
+    ),
+    (
         "            item = path.relative_to(base).as_posix()\n",
         "            item = (\n"
         "                path.name\n"
@@ -89,6 +130,10 @@ replacements = [
         "        \"rustfmt_state\": (\n"
         "            \"PASS\" if destination_fmt_receipt.exit_status == 0 else \"SOURCE_DEFECT_PRESERVED\"\n"
         "        ),\n"
+        "        \"command_receipt_normalization\": [\n"
+        "            \"workspace-identity\",\n"
+        "            \"cargo-test-elapsed-time\",\n"
+        "        ],\n"
         "        \"standalone_verifier_workspace_tests\": \"PASS\",\n",
     ),
     (
