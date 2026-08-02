@@ -9,7 +9,7 @@ on:
 permissions: { contents: read }
 concurrency: { group: pcq-reference-${{ github.ref }}, cancel-in-progress: true }
 env:
-  GGEN_REF: a59ce44aaa938f0b18a08759575dee83308f4683
+  GGEN_REF: 821741c06343a14534b001a8baf49840068af25e
 jobs:
   verify-reference:
     runs-on: ubuntu-24.04

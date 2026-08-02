@@ -4,7 +4,7 @@
   "state": "ADMITTED",
   "authority": [
     "AGENTS.md",
-    "seanchatmangpt/ggen@a59ce44aaa938f0b18a08759575dee83308f4683:packs/pcq-marketplace-pack"
+    "seanchatmangpt/ggen@821741c06343a14534b001a8baf49840068af25e:packs/pcq-marketplace-pack"
   ],
   "exactBase": "70e599a599fedb7c62c965377cc2f80df1fa01ec",
   "scope": [
@@ -54,5 +54,5 @@
     "production deployment"
   ],
   "expectedTransition": "UNKNOWN -> PARTIAL_ALIVE after exact-head workflow; repository crown remains separate",
-  "exactGgenSource": "a59ce44aaa938f0b18a08759575dee83308f4683"
+  "exactGgenSource": "821741c06343a14534b001a8baf49840068af25e"
 }
