@@ -14,6 +14,10 @@ replacements = [
         "            )\n",
     ),
     (
+        "    write_json(destination_root / EQUIVALENCE_PARH, equivalence)\n",
+        "    write_json(destination_root / EQUIVALENCE_PATH, equivalence)\n",
+    ),
+    (
         "        destination_head = git_head(destination_root)\n"
         "        if not is_ancestor(destination_root, manifest[\"corpus_head\"], destination_head):\n"
         "            raise VerificationRefusal(\n"
