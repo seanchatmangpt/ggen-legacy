@@ -32,7 +32,10 @@ replacements = [
         "        cwd=cwd,\n",
         "    command_env = os.environ.copy()\n"
         "    if argv and argv[0] == \"cargo\":\n"
+        "        command_env[\"CARGO_BUILD_JOBS\"] = \"1\"\n"
         "        command_env[\"CARGO_TERM_COLOR\"] = \"never\"\n"
+        "        command_env[\"CARGO_TERM_PROGRESS_WHEN\"] = \"never\"\n"
+        "        command_env[\"RUST_TEST_THREADS\"] = \"1\"\n"
         "    result = subprocess.run(\n"
         "        argv,\n"
         "        cwd=cwd,\n"
@@ -190,8 +193,10 @@ replacements = [
         "        \"command_receipt_normalization\": [\n"
         "            \"workspace-identity\",\n"
         "            \"cargo-color-disabled\",\n"
+        "            \"cargo-single-build-job\",\n"
         "            \"cargo-test-cold-target\",\n"
         "            \"cargo-test-duration-tokens\",\n"
+        "            \"rust-test-single-thread\",\n"
         "        ],\n"
         "        \"standalone_verifier_workspace_tests\": \"PASS\",\n",
     ),
