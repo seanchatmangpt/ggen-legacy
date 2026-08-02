@@ -7,19 +7,26 @@ text = path.read_text(encoding="utf-8")
 replacements = [
     (
         "import os\nimport shutil\n",
-        "import os\nimport re\nimport shutil\nimport sys\n",
+        "import os\nimport re\nimport shutil\n",
     ),
     (
         "def execute(argv: list[str], *, cwd: Path, timeout: int = 900) -> tuple[CommandReceipt, str, str]:\n",
         "def canonical_receipt_output(\n"
         "    argv: list[str], stdout: str, stderr: str\n"
         ") -> tuple[str, str]:\n"
-        "    if argv[:2] != [\"cargo\", \"test\"]:\n"
-        "        return stdout, stderr\n"
         "    elapsed = re.compile(r\"\\b\\d+(?:\\.\\d+)?s\\b\")\n"
+        "    composed_workspace = re.compile(\n"
+        "        r\"/tmp/ggen-v26-8-1-composed-[^/\\s]+(?:/composed-source)?\"\n"
+        "    )\n"
+        "\n"
+        "    def normalize_workspace(value: str) -> str:\n"
+        "        return composed_workspace.sub(\"<COMPOSED_SOURCE>\", value)\n"
+        "\n"
+        "    if argv[:2] != [\"cargo\", \"test\"]:\n"
+        "        return normalize_workspace(stdout), normalize_workspace(stderr)\n"
         "\n"
         "    def normalize(value: str) -> str:\n"
-        "        return elapsed.sub(\"<DURATION>\", value)\n"
+        "        return elapsed.sub(\"<DURATION>\", normalize_workspace(value))\n"
         "\n"
         "    def normalize_stderr(value: str) -> str:\n"
         "        lines = normalize(value).splitlines(keepends=True)\n"
@@ -58,14 +65,6 @@ replacements = [
         "    receipt_stdout, receipt_stderr = canonical_receipt_output(\n"
         "        argv, result.stdout, result.stderr\n"
         "    )\n"
-        "    physical_cwd = str(cwd)\n"
-        "    if \"ggen-v26-8-1-composed-\" in physical_cwd:\n"
-        "        receipt_stdout = receipt_stdout.replace(\n"
-        "            physical_cwd, \"<COMPOSED_SOURCE>\"\n"
-        "        )\n"
-        "        receipt_stderr = receipt_stderr.replace(\n"
-        "            physical_cwd, \"<COMPOSED_SOURCE>\"\n"
-        "        )\n"
         "    receipt = CommandReceipt(\n",
     ),
     (
@@ -136,7 +135,7 @@ replacements = [
         "            \"test\",\n"
         "            \"--manifest-path\",\n"
         "            \"tools/v26.8.1/Cargo.toml\",\n"
-        "            \"--all-targets\",\n"
+        "            \"--all-targetS\",\n"
         "        ],\n"
         "        cwd=destination_root,\n"
         "        timeout=1200,\n"
@@ -212,7 +211,7 @@ replacements = [
         "        ),\n"
         "        \"command_receipt_normalization\": [\n"
         "            \"workspace-identity\",\n"
-        "            \"composed-workspace-output-path\",\n"
+        "            \"composed-temporary-prefix\",\n"
         "            \"cargo-color-disabled\",\n"
         "            \"cargo-compile-progress-order\",\n"
         "            \"cargo-single-build-job\",\n"
@@ -239,6 +238,11 @@ replacements = [
         "\n"
         "    def canonical_text(value: str) -> str:\n"
         "        normalized = value.replace(destination_token, \"<DESTINATION>\")\n"
+        "        normalized = re.sub(\n"
+        "            r\"/tmp/ggen-v26-8-1-composed-[^/\\s]+(?:/composed-source)?\",\n"
+        "            \"<COMPOSED_SOURCE>\",\n"
+        "            normalized,\n"
+        "        )\n"
         "        if logical_cwd != physical_cwd:\n"
         "            normalized = normalized.replace(physical_cwd, logical_cwd)\n"
         "        return normalized\n"
@@ -248,23 +252,6 @@ replacements = [
         "    result[\"stdout_excerpt\"] = canonical_text(receipt.stdout_excerpt)\n"
         "    result[\"stderr_excerpt\"] = canonical_text(receipt.stderr_excerpt)\n"
         "    return result\n"
-        "\n"
-        "\n"
-        "def diagnostic_command_receipts(\n"
-        "    receipts: list[CommandReceipt], destination_root: Path\n"
-        ") -> list[dict[str, Any]]:\n"
-        "    results = [\n"
-        "        canonical_command_receipt(receipt, destination_root)\n"
-        "        for receipt in receipts\n"
-        "    ]\n"
-        "    composed = [\n"
-        "        result for result in results if result[\"cwd\"] == \"<COMPOSED_SOURCE>\"\n"
-        "    ]\n"
-        "    print(\n"
-        "        \"COMPOSED_COMMAND_RECEIPTS=\" + json.dumps(composed, sort_keys=True),\n"
-        "        file=sys.stderr,\n"
-        "    )\n"
-        "    return results\n"
         "\n"
         "\n"
         "def parse_args() -> argparse.Namespace:\n",
@@ -282,9 +269,13 @@ replacements = [
     ),
     (
         "            \"commands\": [asdict(compile_receipt), *[asdict(item) for item in command_receipts]],\n",
-        "            \"commands\": diagnostic_command_receipts(\n"
-        "                [compile_receipt, *command_receipts], destination_root\n"
-        "            ),\n",
+        "            \"commands\": [\n"
+        "                canonical_command_receipt(compile_receipt, destination_root),\n"
+        "                *[\n"
+        "                    canonical_command_receipt(item, destination_root)\n"
+        "                    for item in command_receipts\n"
+        "                ],\n"
+        "            ],\n",
     ),
 ]
 for old, new in replacements:
