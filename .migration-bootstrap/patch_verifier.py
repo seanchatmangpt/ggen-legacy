@@ -27,6 +27,18 @@ replacements = [
         "def execute(argv: list[str], *, cwd: Path, timeout: int = 900) -> tuple[CommandReceipt, str, str]:\n",
     ),
     (
+        "    result = subprocess.run(\n"
+        "        argv,\n"
+        "        cwd=cwd,\n",
+        "    command_env = os.environ.copy()\n"
+        "    if argv and argv[0] == \"cargo\":\n"
+        "        command_env[\"CARGO_TERM_COLOR\"] = \"never\"\n"
+        "    result = subprocess.run(\n"
+        "        argv,\n"
+        "        cwd=cwd,\n"
+        "        env=command_env,\n",
+    ),
+    (
         "    receipt = CommandReceipt(\n",
         "    receipt_stdout, receipt_stderr = canonical_receipt_output(\n"
         "        argv, result.stdout, result.stderr\n"
@@ -95,6 +107,54 @@ replacements = [
         "    destination_fmt_receipt, _, _ = execute(\n",
     ),
     (
+        "    destination_test_receipt, _ = require_success(\n"
+        "        [\n"
+        "            \"cargo\",\n"
+        "            \"test\",\n"
+        "            \"--manifest-path\",\n"
+        "            \"tools/v26.8.1/Cargo.toml\",\n"
+        "            \"--all-targets\",\n"
+        "        ],\n"
+        "        cwd=destination_root,\n"
+        "        timeout=1200,\n"
+        "    )\n",
+        "    cargo_fetch_receipt, _ = require_success(\n"
+        "        [\n"
+        "            \"cargo\",\n"
+        "            \"fetch\",\n"
+        "            \"--manifest-path\",\n"
+        "            \"tools/v26.8.1/Cargo.toml\",\n"
+        "            \"--locked\",\n"
+        "        ],\n"
+        "        cwd=destination_root,\n"
+        "        timeout=1200,\n"
+        "    )\n"
+        "    del cargo_fetch_receipt\n"
+        "    cargo_clean_receipt, _ = require_success(\n"
+        "        [\n"
+        "            \"cargo\",\n"
+        "            \"clean\",\n"
+        "            \"--manifest-path\",\n"
+        "            \"tools/v26.8.1/Cargo.toml\",\n"
+        "        ],\n"
+        "        cwd=destination_root,\n"
+        "        timeout=1200,\n"
+        "    )\n"
+        "    del cargo_clean_receipt\n"
+        "    destination_test_receipt, _ = require_success(\n"
+        "        [\n"
+        "            \"cargo\",\n"
+        "            \"test\",\n"
+        "            \"--manifest-path\",\n"
+        "            \"tools/v26.8.1/Cargo.toml\",\n"
+        "            \"--locked\",\n"
+        "            \"--all-targets\",\n"
+        "        ],\n"
+        "        cwd=destination_root,\n"
+        "        timeout=1200,\n"
+        "    )\n",
+    ),
+    (
         "        composed_fmt_receipt, _ = require_success(\n",
         "        composed_fmt_receipt, _, _ = execute(\n",
     ),
@@ -129,6 +189,8 @@ replacements = [
         "        ),\n"
         "        \"command_receipt_normalization\": [\n"
         "            \"workspace-identity\",\n"
+        "            \"cargo-color-disabled\",\n"
+        "            \"cargo-test-cold-target\",\n"
         "            \"cargo-test-duration-tokens\",\n"
         "        ],\n"
         "        \"standalone_verifier_workspace_tests\": \"PASS\",\n",
