@@ -1,189 +1,259 @@
-name: Temporary import ggen v26.8.1 corpus
+name: Verify ggen-legacy v26.8.1 assurance
 
 on:
-  push:
-    branches: [agent/migrate-ggen-v26-8-1-corpus]
   pull_request:
     branches: [main]
-    types: [opened, reopened, synchronize]
-
-concurrency:
-  group: temporary-import-ggen-v26-8-1
-  cancel-in-progress: true
+  workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
-env:
-  SOURCE_SHA: 8351af4c5bbbf60bd99ab8417752a1762c6ea4e3
-  DESTINATION_BASE: 8d6428f40c0d30d5983fb0ecdd16cab1c1328a23
+concurrency:
+  group: ggen-legacy-v26.8.1-${{ github.event.pull_request.head.sha || github.sha }}
+  cancel-in-progress: true
 
 jobs:
-  import:
+  verify:
     runs-on: ubuntu-24.04
-    timeout-minutes: 90
+    timeout-minutes: 60
     steps:
-      - name: Checkout destination branch
+      - name: Check out exact candidate
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          ref: agent/migrate-ggen-v26-8-1-corpus
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           fetch-depth: 0
 
-      - name: Checkout exact source
+      - name: Assert exact source coordinate
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+          test -s AGENTS.md
+          test -s ggen.toml
+          test -s ontology/assurance-program.ttl
+          test -s authority/assurance-subsystems.json
+          test -s authority/document-evidence.json
+          test -s authority/foundry-work-program.json
+          test -s authority/offline-verifier-transport.json
+          test -s foundry/bootstrap.yaml
+          test -s scripts/verify_foundry_provenance.py
+          test -s scripts/verify_foundry_bootstrap.py
+          test -s scripts/verify_offline_transport.py
+          test -s packs/ggen-legacy-assurance-pack/pack.toml
+
+      - name: Verify documentary, projection, foundry, receiving, and transport authority
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/verify_docs.py --strict
+          python3 scripts/verify_foundry_provenance.py
+          python3 scripts/verify_foundry_bootstrap.py
+          python3 scripts/verify_offline_transport.py
+
+      - name: Execute customer-controlled assurance and read-only crown
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash appliance/bin/run-reference-e2e.sh
+          python3 - <<'PY'
+          import json
+          crown=json.load(open("evidence/appliance/crown-report.json"))
+          assert crown["standing"] == "ALIVE", crown
+          assert crown["release_admitted"] is True, crown
+          assert crown["sunset_admitted"] is False, crown
+          PY
+
+      - name: Manufacture deterministic offline verifier transport twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/ggen-legacy-offline-a /tmp/ggen-legacy-offline-b /tmp/ggen-legacy-offline-extract
+          bash appliance/bin/build-offline-bundle.sh /tmp/ggen-legacy-offline-a
+          bash appliance/bin/build-offline-bundle.sh /tmp/ggen-legacy-offline-b
+          cmp \
+            /tmp/ggen-legacy-offline-a/ggen-legacy-verifier-v26.8.1.tar.gz \
+            /tmp/ggen-legacy-offline-b/ggen-legacy-verifier-v26.8.1.tar.gz
+          cmp \
+            /tmp/ggen-legacy-offline-a/ggen-legacy-verifier-v26.8.1.tar.gz.sha256 \
+            /tmp/ggen-legacy-offline-b/ggen-legacy-verifier-v26.8.1.tar.gz.sha256
+          cmp \
+            /tmp/ggen-legacy-offline-a/ggen-legacy-verifier-v26.8.1.receipt.json \
+            /tmp/ggen-legacy-offline-b/ggen-legacy-verifier-v26.8.1.receipt.json
+          mkdir -p /tmp/ggen-legacy-offline-extract
+          tar -xzf /tmp/ggen-legacy-offline-a/ggen-legacy-verifier-v26.8.1.tar.gz \
+            -C /tmp/ggen-legacy-offline-extract
+          bash /tmp/ggen-legacy-offline-extract/ggen-legacy-verifier-v26.8.1/verify-manifest.sh
+
+      - name: Check out exact ggen manufacturing coordinate
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: seanchatmangpt/ggen
-          ref: ${{ env.SOURCE_SHA }}
-          path: .source-ggen
-          fetch-depth: 0
+          ref: 0f39227c102e0ac7519f0f27561356227a518653
+          path: .ggen-tool
+          fetch-depth: 1
 
-      - name: Install pinned Rust
+      - name: Check out exact foundry runtime candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: seanchatmangpt/ggen
+          ref: 458f0f88aee0060cddce3ffdaa7e2172a4f40a25
+          path: .foundry-runtime
+          fetch-depth: 1
+
+      - name: Provision ggen sibling coordinates
+        shell: bash
+        run: |
+          set -euo pipefail
+          repos=(lsp-max lsp-types-max wasm4pm wasm4pm-compat)
+          shas=(7bcc1e16dec71ef5fb2cedea2dfd6cb5cde37f59 6773e6017ca83c565785d0ec39d75304f62c3237 0bb134b29245517ac4969a9f1916f5432931c5d0 e46155e209a750fda0218532d96ae17a9e10903e)
+          for i in "${!repos[@]}"; do
+            git init -q "${repos[$i]}"
+            git -C "${repos[$i]}" remote add origin "https://github.com/seanchatmangpt/${repos[$i]}"
+            git -C "${repos[$i]}" fetch -q --depth 1 origin "${shas[$i]}"
+            git -C "${repos[$i]}" checkout -q FETCH_HEAD
+          done
+
+      - name: Install pinned ggen toolchain
         uses: dtolnay/rust-toolchain@b3b07ba8b418998c39fb20f53e8b695cdcc8de1b
         with:
           toolchain: nightly-2026-06-22
-          components: rustfmt
 
-      - name: Install verifier dependencies
-        run: python3 -m pip install --disable-pip-version-check blake3==1.0.9 jsonschema==4.26.0 pyshacl==0.40.0
+      - name: Install sccache
+        uses: taiki-e/install-action@81ecf985428d5c2ea81dbf079bceca32bc9604ab
+        with:
+          tool: sccache
 
-      - name: Reconstruct admitted migration programs
+      - name: Verify exact foundry runtime candidate
         shell: bash
         run: |
           set -euo pipefail
-          cat .migration-bootstrap/import/chunk-* | base64 --decode > /tmp/import_from_ggen.py
-          cat .migration-bootstrap/verify/chunk-* | base64 --decode > /tmp/verify_ggen_v26_8_1_migration.py
-          python3 .migration-bootstrap/patch_importer.py /tmp/import_from_ggen.py
-          python3 .migration-bootstrap/patch_verifier.py /tmp/verify_ggen_v26_8_1_migration.py
-          echo 'cbfebbb4555264b0f9fecf5961b3fc133f646928249655912f58edf0efef7438  /tmp/import_from_ggen.py' | sha256sum -c -
-          patched_verifier_sha256="$(sha256sum /tmp/verify_ggen_v26_8_1_migration.py | awk '{print $1}')"
-          echo "PATCHED_VERIFIER_SHA256=$patched_verifier_sha256"
-          echo "PATCHED_VERIFIER_SHA256=$patched_verifier_sha256" >> "$GITHUB_ENV"
-          python3 -m py_compile /tmp/import_from_ggen.py /tmp/verify_ggen_v26_8_1_migration.py
-          test "$(git -C .source-ggen rev-parse HEAD)" = "$SOURCE_SHA"
-          git merge-base --is-ancestor "$DESTINATION_BASE" HEAD
-
-      - name: Import exact corpus
-        shell: bash
-        run: |
-          set -euo pipefail
-          python3 /tmp/import_from_ggen.py import \
-            --source-root .source-ggen \
-            --destination-root . \
-            --source-commit "$SOURCE_SHA" \
-            --destination-base "$DESTINATION_BASE"
-          cp /tmp/verify_ggen_v26_8_1_migration.py scripts/verify_ggen_v26_8_1_migration.py
-          chmod +x scripts/verify_ggen_v26_8_1_migration.py
-
-      - name: Install permanent exact-head verifier workflow
-        shell: bash
-        run: |
-          set -euo pipefail
-          cat > .github/workflows/verify-ggen-v26-8-1-migration.yml <<'EOF'
-          name: Verify ggen v26.8.1 corpus migration
-
-          on:
-            pull_request:
-              branches: [main]
-            workflow_dispatch:
-
-          permissions:
-            contents: read
-
-          concurrency:
-            group: ggen-v26.8.1-migration-${{ github.event.pull_request.head.sha || github.sha }}
-            cancel-in-progress: true
-
-          jobs:
-            verify:
-              runs-on: ubuntu-24.04
-              timeout-minutes: 90
-              steps:
-                - name: Checkout exact candidate
-                  uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-                  with:
-                    ref: ${{ github.event.pull_request.head.sha || github.sha }}
-                    fetch-depth: 0
-                - name: Checkout exact ggen source
-                  uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
-                  with:
-                    repository: seanchatmangpt/ggen
-                    ref: 8351af4c5bbbf60bd99ab8417752a1762c6ea4e3
-                    path: .source-ggen
-                    fetch-depth: 0
-                - name: Install pinned Rust
-                  uses: dtolnay/rust-toolchain@b3b07ba8b418998c39fb20f53e8b695cdcc8de1b
-                  with:
-                    toolchain: nightly-2026-06-22
-                    components: rustfmt
-                - name: Install verifier dependencies
-                  run: python3 -m pip install --disable-pip-version-check blake3==1.0.9 jsonschema==4.26.0 pyshacl==0.40.0
-                - name: Verify receiving lineage, execution, falsifiers, and replay
-                  run: python3 scripts/verify_ggen_v26_8_1_migration.py --source-root .source-ggen
-                - name: Upload bounded evidence
-                  uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08
-                  with:
-                    name: ggen-v26.8.1-migration-${{ github.event.pull_request.head.sha || github.sha }}
-                    path: |
-                      migrations/ggen-v26.8.1/migration-manifest.json
-                      migrations/ggen-v26.8.1/equivalence-report.json
-                      migrations/ggen-v26.8.1/verifier-report.json
-                      migrations/ggen-v26.8.1/migration-receipt.json
-                    if-no-files-found: error
-          EOF
-
-      - name: Commit received corpus checkpoint
-        shell: bash
-        run: |
-          set -euo pipefail
-          printf '/.source-ggen\n' >> .git/info/exclude
-          rm -rf .migration-bootstrap .github/workflows/temporary-import-ggen-v26-8-1.yml
-          git checkout "$DESTINATION_BASE" -- .github/workflows/verify-docs.yml
-          git config user.name 'ggen migration agent'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A
-          if git ls-files --stage .source-ggen | grep -q .; then
-            echo 'SOURCE_CHECKOUT_STAGED_REFUSED' >&2
-            exit 3
+          RUNTIME_HEAD=458f0f88aee0060cddce3ffdaa7e2172a4f40a25
+          test "$(git -C .foundry-runtime rev-parse HEAD)" = "$RUNTIME_HEAD"
+          test -z "$(git -C .foundry-runtime status --porcelain)"
+          RUNTIME_COPY="$(mktemp -d)"
+          cp -a .foundry-runtime/. "$RUNTIME_COPY/"
+          cargo fmt \
+            --manifest-path "$RUNTIME_COPY/tools/architecture-foundry/Cargo.toml" \
+            --check
+          echo RUNTIME_FMT_OK
+          cargo test \
+            --manifest-path "$RUNTIME_COPY/tools/architecture-foundry/Cargo.toml" \
+            --all-targets
+          echo RUNTIME_TESTS_OK
+          cargo run \
+            --quiet \
+            --manifest-path "$RUNTIME_COPY/tools/architecture-foundry/Cargo.toml" \
+            -- validate-program \
+            --program "$RUNTIME_COPY/docs/architecture-foundry/work-program.yaml"
+          echo RUNTIME_VALIDATE_OK
+          rm -rf "$RUNTIME_COPY"
+          STATUS="$(git -C .foundry-runtime status --porcelain)"
+          if [ -n "$STATUS" ]; then
+            printf '%s\n' "$STATUS"
+            if [ "$STATUS" = "?? tools/architecture-foundry/Cargo.lock" ]; then
+              rm -f .foundry-runtime/tools/architecture-foundry/Cargo.lock
+            else
+              echo RUNTIME_SOURCE_DRIFT_REFUSED >&2
+              exit 1
+            fi
           fi
-          git commit -m 'feat(corpus): import ggen v26.8.1 reconstruction corpus'
-          echo "CORPUS_COMMIT=$(git rev-parse HEAD)" >> "$GITHUB_ENV"
+          test -z "$(git -C .foundry-runtime status --porcelain)"
+          mkdir -p evidence
+          python3 - <<'PY'
+          import json
+          report={
+            "schema":"ggen.legacy.foundry.runtime.candidate.receipt.v1",
+            "exact_head":"458f0f88aee0060cddce3ffdaa7e2172a4f40a25",
+            "upstream_workflow_run":30678718944,
+            "manifest":"tools/architecture-foundry/Cargo.toml",
+            "real_boundary_suite":"tools/architecture-foundry/tests/real_git.rs",
+            "execution_mode":"isolated exact-source copy",
+            "ephemeral_generated_paths":["tools/architecture-foundry/Cargo.lock"],
+            "commands":["cargo fmt --check","cargo test --all-targets","validate-program"],
+            "source_clean_before":True,
+            "source_clean_after":True,
+            "runtime_dependency_admitted":False,
+            "standing":"ALIVE",
+            "nonclaims":["production dependency admitted","complete A-K foundry ALIVE"]
+          }
+          open("evidence/foundry-runtime-candidate.json","w").write(json.dumps(report,indent=2,sort_keys=True)+"\n")
+          PY
+          echo RUNTIME_RECEIPT_WRITTEN
 
-      - name: Bind lineage to the corpus checkpoint
+      - name: Build exact ggen CLI
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/verify_ggen_v26_8_1_migration.py --help >/dev/null
-          python3 /tmp/import_from_ggen.py finalize \
-            --source-root .source-ggen \
-            --destination-root . \
-            --source-commit "$SOURCE_SHA" \
-            --corpus-commit "$CORPUS_COMMIT"
+          cargo build --manifest-path .ggen-tool/Cargo.toml -p ggen-cli-lib --bin ggen
+          .ggen-tool/target/debug/ggen --version
 
-      - name: Execute receiving verifier twice
+      - name: Manufacture and replay appliance projections with ggen
         shell: bash
         run: |
           set -euo pipefail
-          python3 scripts/verify_ggen_v26_8_1_migration.py --source-root .source-ggen > /tmp/verify-a.json
-          cp migrations/ggen-v26.8.1/verifier-report.json /tmp/report-a.json
-          cp migrations/ggen-v26.8.1/equivalence-report.json /tmp/equivalence-a.json
-          python3 scripts/verify_ggen_v26_8_1_migration.py --source-root .source-ggen > /tmp/verify-b.json
-          cmp /tmp/report-a.json migrations/ggen-v26.8.1/verifier-report.json
-          cmp /tmp/equivalence-a.json migrations/ggen-v26.8.1/equivalence-report.json
+          GGEN="$GITHUB_WORKSPACE/.ggen-tool/target/debug/ggen"
+          "$GGEN" sync run
+          git diff --exit-code -- appliance
+          find appliance -type f -print0 | sort -z | xargs -0 sha256sum > /tmp/appliance-a.sha256
+          "$GGEN" sync run
+          git diff --exit-code -- appliance
+          find appliance -type f -print0 | sort -z | xargs -0 sha256sum > /tmp/appliance-b.sha256
+          cmp /tmp/appliance-a.sha256 /tmp/appliance-b.sha256
+          python3 scripts/verify_docs.py --strict
+          python3 scripts/verify_foundry_provenance.py
+          python3 scripts/verify_foundry_bootstrap.py
+          python3 scripts/verify_offline_transport.py
+          bash appliance/bin/run-reference-e2e.sh
 
-      - name: Issue migration receipt
+      - name: Install pinned mdBook
         shell: bash
         run: |
           set -euo pipefail
-          python3 /tmp/import_from_ggen.py receipt \
-            --source-root .source-ggen \
-            --destination-root . \
-            --source-commit "$SOURCE_SHA" \
-            --corpus-commit "$CORPUS_COMMIT"
+          cargo install mdbook --version 0.4.40 --locked
+          mdbook --version
 
-      - name: Commit evidence and publish destination branch
+      - name: Build mdBook projection
         shell: bash
         run: |
           set -euo pipefail
-          git add migrations/ggen-v26.8.1
-          git commit -m 'chore(migration): bind ggen v26.8.1 lineage and receipt'
-          git push origin HEAD:agent/migrate-ggen-v26-8-1-corpus
+          mdbook build docs
+          test -s docs/book/index.html
+          test -s docs/book/print.html
+
+      - name: Assert authority remained unchanged
+        shell: bash
+        run: |
+          set -euo pipefail
+          git diff --exit-code -- . \
+            ':(exclude)evidence/local-docs-verifier.json' \
+            ':(exclude)evidence/foundry-provenance-verifier.json' \
+            ':(exclude)evidence/foundry-bootstrap-verifier.json' \
+            ':(exclude)evidence/foundry-runtime-candidate.json' \
+            ':(exclude)evidence/offline-transport-provenance.json' \
+            ':(exclude)evidence/appliance/**' \
+            ':(exclude)docs/book/**'
+          test -s evidence/local-docs-verifier.json
+          test -s evidence/foundry-provenance-verifier.json
+          test -s evidence/foundry-bootstrap-verifier.json
+          test -s evidence/foundry-runtime-candidate.json
+          test -s evidence/offline-transport-provenance.json
+          test -s evidence/appliance/subsystem-verifier-report.json
+          test -s evidence/appliance/subsystem-coverage.json
+          test -s evidence/appliance/crown-report.json
+
+      - name: Upload exact-head assurance evidence
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
+        with:
+          name: ggen-legacy-v26.8.1-assurance-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            evidence/local-docs-verifier.json
+            evidence/foundry-provenance-verifier.json
+            evidence/foundry-bootstrap-verifier.json
+            evidence/foundry-runtime-candidate.json
+            evidence/offline-transport-provenance.json
+            evidence/appliance/*.json
+            /tmp/appliance-a.sha256
+            /tmp/appliance-b.sha256
+            /tmp/ggen-legacy-offline-a/*
+          if-no-files-found: error
+          retention-days: 30

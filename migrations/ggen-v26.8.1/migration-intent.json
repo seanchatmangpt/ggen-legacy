@@ -1,0 +1,94 @@
+{
+  "actuator": "github-actions/ggen-legacy-migration",
+  "components": [
+    {
+      "capability_ids": [
+        "architecture-knowledge",
+        "governance-evidence",
+        "legacy-sunset"
+      ],
+      "component_id": "GGEN-V26.8.1-DOCUMENT-CORPUS",
+      "destination_path": "docs/v26.8.1",
+      "source_digest": "64680e70dd91add1f68de565d6ab0bea40e1358d61334ae819066361e2b9e00b",
+      "source_files": 114,
+      "source_path": "docs/v26.8.1"
+    },
+    {
+      "capability_ids": [
+        "semantic-authority",
+        "shacl-admission",
+        "capability-ledger"
+      ],
+      "component_id": "GGEN-V26.8.1-ONTOLOGY-AUTHORITY",
+      "destination_path": "ontology/v26.8.1",
+      "source_digest": "6636d76623890d617267110a09c3c2814f564ffaa1afe40ec70909bb9fd84e2d",
+      "source_files": 11,
+      "source_path": "ontology/v26.8.1"
+    },
+    {
+      "capability_ids": [
+        "planning-authority",
+        "pddl-portfolio",
+        "plan-verification"
+      ],
+      "component_id": "GGEN-V26.8.1-PLANNING-PORTFOLIO",
+      "destination_path": "planning/v26.8.1",
+      "source_digest": "dbe68986d9fb3c9fc865d9ff47dc59175b997930b9bc92e827f75b2d36f8b942",
+      "source_files": 20,
+      "source_path": "planning/v26.8.1"
+    },
+    {
+      "capability_ids": [
+        "external-verifier",
+        "receipt-replay",
+        "release-sunset-admission"
+      ],
+      "component_id": "GGEN-V26.8.1-VERIFIER-RUNTIME",
+      "destination_path": "tools/v26.8.1",
+      "source_digest": "9536d89b8e5808f304174985350f6c0ef61c3d043c7b9fb5ee5c92f836adaba5",
+      "source_files": 24,
+      "source_path": "tools/v26.8.1"
+    },
+    {
+      "capability_ids": [
+        "cross-version-equivalence",
+        "positive-witnesses",
+        "negative-fixtures"
+      ],
+      "component_id": "GGEN-V26.8.1-EQUIVALENCE-PACK",
+      "destination_path": "packs/legacy-equivalence-verifier-pack",
+      "source_digest": "bf1a66d4e74d4b4040c56c11a49c4281bae6d5378f6307f66984f1c2701845ae",
+      "source_files": 17,
+      "source_path": "packs/legacy-equivalence-verifier-pack"
+    },
+    {
+      "capability_ids": [
+        "workspace-format-law",
+        "source-context-projection"
+      ],
+      "component_id": "GGEN-V26.8.1-RUSTFMT-CONTEXT",
+      "destination_path": "rustfmt.toml",
+      "source_digest": "2f1ef8af9a82eeb503c30222de576e290700266f2808f1d555b82b5088f5d6dd",
+      "source_files": 1,
+      "source_path": "rustfmt.toml"
+    },
+    {
+      "capability_ids": [
+        "historical-workflow-evidence",
+        "replay-provenance"
+      ],
+      "component_id": "GGEN-V26.8.1-SOURCE-WORKFLOW-EVIDENCE",
+      "destination_path": "migrations/ggen-v26.8.1/source-workflows",
+      "source_digest": "734224741f8cb98caab3c77ef34e783630e1384f49e1875e1ae4ecec8fdcccd9",
+      "source_files": 3,
+      "source_path": ".github/workflows"
+    }
+  ],
+  "destination_base": "8d6428f40c0d30d5983fb0ecdd16cab1c1328a23",
+  "destination_repository": "seanchatmangpt/ggen-legacy",
+  "effect": "IMPORT_VERSIONED_CORPUS",
+  "schema": "ggen.legacy.migration-intent/1",
+  "source_commit": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+  "source_repository": "seanchatmangpt/ggen",
+  "standing": "UNKNOWN"
+}

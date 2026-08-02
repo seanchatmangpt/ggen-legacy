@@ -1,0 +1,93 @@
+{
+  "claim_ceiling": "PARTIAL_ALIVE",
+  "components": [
+    {
+      "capability_ids": [
+        "architecture-knowledge",
+        "governance-evidence",
+        "legacy-sunset"
+      ],
+      "component_id": "GGEN-V26.8.1-DOCUMENT-CORPUS",
+      "destination_path": "docs/v26.8.1",
+      "source_path": "docs/v26.8.1"
+    },
+    {
+      "capability_ids": [
+        "semantic-authority",
+        "shacl-admission",
+        "capability-ledger"
+      ],
+      "component_id": "GGEN-V26.8.1-ONTOLOGY-AUTHORITY",
+      "destination_path": "ontology/v26.8.1",
+      "source_path": "ontology/v26.8.1"
+    },
+    {
+      "capability_ids": [
+        "planning-authority",
+        "pddl-portfolio",
+        "plan-verification"
+      ],
+      "component_id": "GGEN-V26.8.1-PLANNING-PORTFOLIO",
+      "destination_path": "planning/v26.8.1",
+      "source_path": "planning/v26.8.1"
+    },
+    {
+      "capability_ids": [
+        "external-verifier",
+        "receipt-replay",
+        "release-sunset-admission"
+      ],
+      "component_id": "GGEN-V26.8.1-VERIFIER-RUNTIME",
+      "destination_path": "tools/v26.8.1",
+      "source_path": "tools/v26.8.1"
+    },
+    {
+      "capability_ids": [
+        "cross-version-equivalence",
+        "positive-witnesses",
+        "negative-fixtures"
+      ],
+      "component_id": "GGEN-V26.8.1-EQUIVALENCE-PACK",
+      "destination_path": "packs/legacy-equivalence-verifier-pack",
+      "source_path": "packs/legacy-equivalence-verifier-pack"
+    },
+    {
+      "capability_ids": [
+        "workspace-format-law",
+        "source-context-projection"
+      ],
+      "component_id": "GGEN-V26.8.1-RUSTFMT-CONTEXT",
+      "destination_path": "rustfmt.toml",
+      "source_path": "rustfmt.toml"
+    },
+    {
+      "capability_ids": [
+        "historical-workflow-evidence",
+        "replay-provenance"
+      ],
+      "component_id": "GGEN-V26.8.1-SOURCE-WORKFLOW-EVIDENCE",
+      "destination_path": "migrations/ggen-v26.8.1/source-workflows",
+      "source_path": ".github/workflows"
+    }
+  ],
+  "composition_law": {
+    "corpus": "seanchatmangpt/ggen-legacy",
+    "kernel": "seanchatmangpt/ggen",
+    "rule": "project the pinned corpus into its original relative paths before executing v26.8.1 verification"
+  },
+  "destination_base": "8d6428f40c0d30d5983fb0ecdd16cab1c1328a23",
+  "destination_repository": "seanchatmangpt/ggen-legacy",
+  "disposition": "PRESERVED",
+  "id": "ggen-v26.8.1-corpus-migration",
+  "nonclaims": [
+    "ggen repository crown",
+    "ggen-legacy repository crown",
+    "source deletion admitted",
+    "release admitted",
+    "sunset admitted"
+  ],
+  "replacement_owner": "seanchatmangpt/ggen-legacy",
+  "schema": "ggen.legacy.ggen-v26.8.1-migration-authority/1",
+  "source_commit": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+  "source_repository": "seanchatmangpt/ggen"
+}
