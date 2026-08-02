@@ -1,0 +1,58 @@
+{
+  "ticket": "PCQ-MARKETPLACE-001",
+  "title": "Admit PCQ Atlas Marketplace reference implementation",
+  "state": "ADMITTED",
+  "authority": [
+    "AGENTS.md",
+    "seanchatmangpt/ggen@a59ce44aaa938f0b18a08759575dee83308f4683:packs/pcq-marketplace-pack"
+  ],
+  "exactBase": "70e599a599fedb7c62c965377cc2f80df1fa01ec",
+  "scope": [
+    "reference-implementations/pcq-marketplace",
+    "authority/pcq-marketplace.ttl",
+    ".github/workflows/pcq-marketplace-reference.yml",
+    "authority/tickets/PCQ-MARKETPLACE-001.json",
+    "scripts/verify_pcq_reference.py"
+  ],
+  "observableContract": [
+    "ggen projection is idempotent",
+    "Next.js production build passes",
+    "SSE emits snapshot and market event",
+    "PCQ settlement preserves fixed supply",
+    "deck.gl canvas renders in Chromium",
+    "settlement receipt is digest-bound"
+  ],
+  "toolchain": [
+    "ggen exact commit from workflow",
+    "Node.js 22",
+    "pnpm 10.14.0",
+    "Next.js 16.2.12",
+    "deck.gl 9.3.7"
+  ],
+  "positiveWitnesses": [
+    "schema/domain.ttl",
+    "tests/market.test.ts",
+    "e2e/dashboard.spec.ts",
+    "scripts/verify-runtime.mjs"
+  ],
+  "negativeFalsifiers": [
+    "unbalanced PCQ supply",
+    "negative balance",
+    "overspend",
+    "dangling listing reference",
+    "invalid coordinates",
+    "missing SSE event",
+    "missing WebGL canvas"
+  ],
+  "receipt": ".build/pcq-runtime-receipt.json",
+  "replay": "two ggen sync runs plus byte-manifest equality and dry-run receipt",
+  "exclusions": [
+    "external fiat conversion",
+    "public cryptocurrency issuance",
+    "legal tender",
+    "securities classification",
+    "production deployment"
+  ],
+  "expectedTransition": "UNKNOWN -> PARTIAL_ALIVE after exact-head workflow; repository crown remains separate",
+  "exactGgenSource": "a59ce44aaa938f0b18a08759575dee83308f4683"
+}

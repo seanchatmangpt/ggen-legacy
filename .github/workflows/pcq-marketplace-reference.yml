@@ -1,0 +1,93 @@
+name: PCQ Marketplace Reference
+on:
+  push:
+    branches: [agent/pcq-marketplace-reference]
+    paths: ['reference-implementations/pcq-marketplace/**', 'authority/pcq-marketplace.ttl', 'authority/tickets/PCQ-MARKETPLACE-001.json', 'scripts/verify_pcq_reference.py', '.github/workflows/pcq-marketplace-reference.yml']
+  pull_request:
+    paths: ['reference-implementations/pcq-marketplace/**', 'authority/pcq-marketplace.ttl', 'authority/tickets/PCQ-MARKETPLACE-001.json', 'scripts/verify_pcq_reference.py', '.github/workflows/pcq-marketplace-reference.yml']
+  workflow_dispatch:
+permissions: { contents: read }
+concurrency: { group: pcq-reference-${{ github.ref }}, cancel-in-progress: true }
+env:
+  GGEN_REF: a59ce44aaa938f0b18a08759575dee83308f4683
+jobs:
+  verify-reference:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Checkout exact ggen manufacturing authority
+        uses: actions/checkout@v4
+        with: { repository: seanchatmangpt/ggen, ref: ${{ env.GGEN_REF }}, path: .ggen-kernel }
+      - name: Record source identities
+        run: |
+          mkdir -p .build
+          git rev-parse HEAD | tee .build/ggen-legacy.sha
+          git -C .ggen-kernel rev-parse HEAD | tee .build/ggen.sha
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: nightly-2026-06-22
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+        with: { workspaces: '.ggen-kernel -> target' }
+      - name: Build exact ggen kernel
+        working-directory: .ggen-kernel
+        run: cargo build --release -p ggen-cli-lib --bin ggen
+      - name: Manufacture and prove byte-stable replay
+        working-directory: reference-implementations/pcq-marketplace
+        run: |
+          ../../../.ggen-kernel/target/release/ggen sync run
+          find . -type f ! -path './.ggen/*' -print0 | sort -z | xargs -0 sha256sum > ../../../.build/pcq-projection-first.sha256
+          ../../../.ggen-kernel/target/release/ggen sync run
+          find . -type f ! -path './.ggen/*' -print0 | sort -z | xargs -0 sha256sum > ../../../.build/pcq-projection-second.sha256
+          diff -u ../../../.build/pcq-projection-first.sha256 ../../../.build/pcq-projection-second.sha256
+          ../../../.ggen-kernel/target/release/ggen sync run --dry-run | tee ../../../.build/pcq-ggen-dry-run.log
+      - name: Static authority and manufactured implementation verification
+        run: python3 scripts/verify_pcq_reference.py
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.14.0 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - name: Build and test marketplace
+        working-directory: reference-implementations/pcq-marketplace
+        run: |
+          pnpm install --no-frozen-lockfile
+          pnpm typecheck
+          pnpm test
+          pnpm build
+      - name: Execute HTTP/SSE/ledger boundaries
+        working-directory: reference-implementations/pcq-marketplace
+        run: |
+          mkdir -p .build
+          pnpm start > .build/next.log 2>&1 & echo $! > .build/next.pid
+          trap 'kill $(cat .build/next.pid) 2>/dev/null || true' EXIT
+          for i in $(seq 1 60); do curl -fsS http://127.0.0.1:3000/api/snapshot >/dev/null && break; sleep 1; done
+          PCQ_RUNTIME_RECEIPT=.build/pcq-runtime-receipt.json pnpm verify:runtime
+          kill $(cat .build/next.pid)
+          trap - EXIT
+      - name: Execute browser rendering and UI settlement
+        working-directory: reference-implementations/pcq-marketplace
+        run: |
+          pnpm exec playwright install --with-deps chromium
+          pnpm test:e2e
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pcq-marketplace-reference-${{ github.sha }}
+          retention-days: 30
+          if-no-files-found: error
+          path: |
+            .build/**
+            reference-implementations/pcq-marketplace/.ggen/receipts/**
+            reference-implementations/pcq-marketplace/.build/**
+            reference-implementations/pcq-marketplace/test-results/**
+            reference-implementations/pcq-marketplace/app/**
+            reference-implementations/pcq-marketplace/components/**
+            reference-implementations/pcq-marketplace/lib/**
+            reference-implementations/pcq-marketplace/scripts/**
+            reference-implementations/pcq-marketplace/tests/**
+            reference-implementations/pcq-marketplace/e2e/**
+            reference-implementations/pcq-marketplace/package.json
+            reference-implementations/pcq-marketplace/tsconfig.json
+            reference-implementations/pcq-marketplace/next.config.ts

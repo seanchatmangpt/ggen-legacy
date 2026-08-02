@@ -1,0 +1,3 @@
+# Lineage
+
+This consumer authority is manufactured by `seanchatmangpt/ggen@a59ce44aaa938f0b18a08759575dee83308f4683`, pack `packs/pcq-marketplace-pack`. The exact-head workflow builds that source, executes two byte-stable `ggen sync run` projections, validates the generated Next.js/deck.gl application, and uploads the full manufactured source plus receipts and browser evidence.

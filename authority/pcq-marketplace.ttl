@@ -1,0 +1,6 @@
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix pcq: <https://ggen.dev/packs/pcq-marketplace#> .
+
+pcq:PCQMarketplaceReference a prov:Entity ; dct:title "PCQ Atlas Marketplace Reference" ; dct:description "Admitted reference implementation manufactured by the pcq-marketplace-pack from ggen." ; prov:wasDerivedFrom <https://github.com/seanchatmangpt/ggen/tree/a59ce44aaa938f0b18a08759575dee83308f4683/packs/pcq-marketplace-pack> .
+pcq:PCQ dct:description "Fixed-supply internal unit of account for proof-carrying capability settlement; no fiat, legal-tender, or external-exchange claim." .
