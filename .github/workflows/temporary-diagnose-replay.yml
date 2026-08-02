@@ -3,6 +3,9 @@ name: Temporary diagnose migration replay
 on:
   push:
     branches: [agent/migrate-ggen-v26-8-1-corpus]
+  pull_request:
+    branches: [main]
+    types: [reopened]
 
 permissions:
   contents: write
