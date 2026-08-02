@@ -135,7 +135,7 @@ replacements = [
         "            \"test\",\n"
         "            \"--manifest-path\",\n"
         "            \"tools/v26.8.1/Cargo.toml\",\n"
-        "            \"--all-targetS\",\n"
+        "            \"--all-targets\",\n"
         "        ],\n"
         "        cwd=destination_root,\n"
         "        timeout=1200,\n"
