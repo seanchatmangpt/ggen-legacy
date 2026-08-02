@@ -141,7 +141,17 @@ path.write_text(text, encoding='utf-8')
 # probe that compares only the two reports produced inside this workflow run.
 verifier_path = Path('/tmp/verify_ggen_v26_8_1_migration.py')
 verifier_text = verifier_path.read_text(encoding='utf-8')
-needle = '    write_json(destination_root / DEFAULT_REPORT_PATH, report)\n'
+report_sinks = [
+    line
+    for line in verifier_text.splitlines(keepends=True)
+    if 'write_json(' in line and line.rstrip().endswith(', report)')
+]
+if len(report_sinks) != 1:
+    raise SystemExit(
+        'REPLAY_PROBE_PRECONDITION_REFUSED '
+        f'count={len(report_sinks)} candidates={report_sinks!r}'
+    )
+needle = report_sinks[0]
 diagnostic = '''    replay_probe = Path("/tmp/ggen-v26-8-1-replay-probe.json")
     if replay_probe.exists():
         previous_report = json.loads(replay_probe.read_text(encoding="utf-8"))
@@ -175,7 +185,4 @@ diagnostic = '''    replay_probe = Path("/tmp/ggen-v26-8-1-replay-probe.json")
         replay_probe.write_text(json.dumps(report, sort_keys=True), encoding="utf-8")
 
 '''
-count = verifier_text.count(needle)
-if count != 1:
-    raise SystemExit(f'REPLAY_PROBE_PRECONDITION_REFUSED count={count}')
 verifier_path.write_text(verifier_text.replace(needle, diagnostic + needle, 1), encoding='utf-8')
