@@ -1,0 +1,173 @@
+{
+  "authority_boundary": {
+    "banned_actuation_calls": [],
+    "status": "PASS",
+    "stdlib_import_roots": [
+      "__future__",
+      "pathlib",
+      "sys"
+    ],
+    "third_party_imports": []
+  },
+  "base_sha": "70e599a599fedb7c62c965377cc2f80df1fa01ec",
+  "claim_ceiling": "REFERENCE_CONFORMANT",
+  "compile": {
+    "compiled_paths": [
+      "bin/ggen-lsp",
+      "scripts/verify_lsp.py",
+      "src/ggen_lsp/__init__.py",
+      "src/ggen_lsp/analyzers.py",
+      "src/ggen_lsp/core.py",
+      "src/ggen_lsp/dispatch.py",
+      "src/ggen_lsp/features.py",
+      "src/ggen_lsp/protocol.py",
+      "src/ggen_lsp/server.py",
+      "tests/test_lsp_protocol.py"
+    ],
+    "status": "PASS"
+  },
+  "exclusions": [
+    "aggregate ggen-legacy repository crown",
+    "Rust build compatibility",
+    "MCP or A2A transports",
+    "full language-spec conformance",
+    "filesystem or network actuation",
+    "release, production, certification, or sunset admission"
+  ],
+  "execution": {
+    "boundary": "real subprocess + stdin/stdout Content-Length framed JSON-RPC",
+    "first": {
+      "errors": 0,
+      "failures": 0,
+      "normalized_output_sha256": "b557d47730d61fe13620bafbe102838e5fb65b1263e6dfb83d3ce071d8226bb4",
+      "skipped": 0,
+      "successful": true,
+      "tests": [
+        "test_lsp_protocol.AnalyzerTests.test_advertised_capabilities_have_dispatch_paths",
+        "test_lsp_protocol.AnalyzerTests.test_toml_turtle_and_tera_diagnostics_are_deterministic",
+        "test_lsp_protocol.ProtocolLifecycleTests.test_incremental_change_is_refused_not_silently_applied",
+        "test_lsp_protocol.ProtocolLifecycleTests.test_initialize_open_change_features_close_shutdown",
+        "test_lsp_protocol.ProtocolLifecycleTests.test_malformed_json_recovers_and_unknown_method_refuses",
+        "test_lsp_protocol.ProtocolLifecycleTests.test_non_object_json_rpc_message_is_invalid_request",
+        "test_lsp_protocol.ProtocolLifecycleTests.test_turtle_and_tera_protocol_surfaces",
+        "test_lsp_protocol.TransportRefusalTests.test_missing_content_length_is_typed_fatal_refusal"
+      ],
+      "tests_run": 8
+    },
+    "second": {
+      "errors": 0,
+      "failures": 0,
+      "normalized_output_sha256": "b557d47730d61fe13620bafbe102838e5fb65b1263e6dfb83d3ce071d8226bb4",
+      "skipped": 0,
+      "successful": true,
+      "tests": [
+        "test_lsp_protocol.AnalyzerTests.test_advertised_capabilities_have_dispatch_paths",
+        "test_lsp_protocol.AnalyzerTests.test_toml_turtle_and_tera_diagnostics_are_deterministic",
+        "test_lsp_protocol.ProtocolLifecycleTests.test_incremental_change_is_refused_not_silently_applied",
+        "test_lsp_protocol.ProtocolLifecycleTests.test_initialize_open_change_features_close_shutdown",
+        "test_lsp_protocol.ProtocolLifecycleTests.test_malformed_json_recovers_and_unknown_method_refuses",
+        "test_lsp_protocol.ProtocolLifecycleTests.test_non_object_json_rpc_message_is_invalid_request",
+        "test_lsp_protocol.ProtocolLifecycleTests.test_turtle_and_tera_protocol_surfaces",
+        "test_lsp_protocol.TransportRefusalTests.test_missing_content_length_is_typed_fatal_refusal"
+      ],
+      "tests_run": 8
+    }
+  },
+  "negative_controls": [
+    "malformed JSON recovers with -32700",
+    "unknown method refuses with -32601",
+    "incremental change refuses with -32602",
+    "missing Content-Length exits 2 with typed transport refusal",
+    "stdout remains frame-only"
+  ],
+  "replay": "REPLAY_MATCH",
+  "repository": "seanchatmangpt/ggen-legacy",
+  "schema": "ggen.legacy.lsp-verification-report/1",
+  "standing": "ALIVE",
+  "subject": {
+    "files": [
+      {
+        "bytes": 632,
+        "path": ".gitignore",
+        "sha256": "c724771fbc9b95ed10edd104dcc5c141092c93f9da8775cc10f12a2d382ea294"
+      },
+      {
+        "bytes": 10523,
+        "path": "AGENTS.md",
+        "sha256": "c9bb2fe4ff573d7d7b65f6ddc785c0f352e009856d7f886dbe6ca224313766ae"
+      },
+      {
+        "bytes": 346,
+        "path": "bin/ggen-lsp",
+        "sha256": "81acbef321d678df286bfde22eaa1cc30526fd86ca12f7a121918d61997ea4ab"
+      },
+      {
+        "bytes": 2420,
+        "path": "docs/lsp/README.md",
+        "sha256": "7ea2c8a54015175ce9ab8493cd00054b2f9df321f2332e8d0d5780194a5701dd"
+      },
+      {
+        "bytes": 319,
+        "path": "pyproject.toml",
+        "sha256": "92a9375c4e81a25d3bdf388c8b23ddeffe3d3a92a060520ad08d3861f7fa47b4"
+      },
+      {
+        "bytes": 7124,
+        "path": "scripts/verify_lsp.py",
+        "sha256": "65a8540d095a207b32984a3907d237d4425c8b25368402c458548fa66dbf3992"
+      },
+      {
+        "bytes": 218,
+        "path": "src/ggen_lsp/__init__.py",
+        "sha256": "5a2ed596b4cf19208baea1fc6c094d68bf74b3827ec38a929c53403a23adf073"
+      },
+      {
+        "bytes": 7805,
+        "path": "src/ggen_lsp/analyzers.py",
+        "sha256": "0fa120388c6f1bf328fcaef2fe590238c3f81d645b2dc450e3583deec11c86a5"
+      },
+      {
+        "bytes": 3185,
+        "path": "src/ggen_lsp/core.py",
+        "sha256": "cc87492568d4f8ac46091656762404846e0f9fba50f090769b220e693ab68e12"
+      },
+      {
+        "bytes": 13806,
+        "path": "src/ggen_lsp/dispatch.py",
+        "sha256": "7fc48875f05b0b7e73efc158850883f3bb23c4bec7973baa59fa56dce64b0242"
+      },
+      {
+        "bytes": 6645,
+        "path": "src/ggen_lsp/features.py",
+        "sha256": "0a449886440c023882486d682d03ef85d0fb26da109997d001166dbc22407401"
+      },
+      {
+        "bytes": 3894,
+        "path": "src/ggen_lsp/protocol.py",
+        "sha256": "6515e56861daac52dc888f600532f2fe3a8b7eb98dd3620aa8965fbab952fe70"
+      },
+      {
+        "bytes": 335,
+        "path": "src/ggen_lsp/server.py",
+        "sha256": "5e518aa7ebd2721b16ee86148f68f2dac8d1252b66c716f9567c5184b8c66ea2"
+      },
+      {
+        "bytes": 14127,
+        "path": "tests/test_lsp_protocol.py",
+        "sha256": "d8a5fcecd9a59ffa538de875587640e32734afc1899d0feb09273b339703e569"
+      },
+      {
+        "bytes": 4791,
+        "path": "tickets/GL-LSP-001.md",
+        "sha256": "12ad9a70182236b2ce6e451bfa45a93cadf3061c60771c23875c66207d59429c"
+      }
+    ],
+    "source_manifest_sha256": "4b3c86b81e789c7fe4b5837033fe5d1a2b6a730172a003559681d67fb1e72afb"
+  },
+  "ticket": "GL-LSP-001",
+  "toolchain": {
+    "implementation": "python-standard-library-only",
+    "python": "3.13.5",
+    "third_party_dependencies": 0
+  }
+}

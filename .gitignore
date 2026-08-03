@@ -5,6 +5,11 @@ target
 *.pdb
 **/mutants.out*/
 
+# Python local outputs
+__pycache__/
+*.py[cod]
+.venv/
+
 # Generated projections and local evidence
 docs/book/
 evidence/local-docs-verifier.json
