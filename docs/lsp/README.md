@@ -1,67 +1,47 @@
-# ggen-legacy language-server reference runtime
+# ggen-legacy LSP on lsp-max
 
-## Purpose
+The executable language server is a Rust crate built directly on `lsp-max`.
 
-This directory documents the executable `GL-LSP-001` boundary admitted by the root constitution. It is a dependency-free LSP 3.17 reference server for ggen's Turtle, TOML/ggen-manifest, and Tera surfaces.
+## Exact runtime dependency
 
-The server is intentionally smaller than the live Rust implementation in `seanchatmangpt/ggen/crates/ggen-lsp`. Its role is to preserve and execute the protocol contract inside `ggen-legacy` without importing the monorepo's path-dependent build graph.
+```text
+repository: seanchatmangpt/lsp-max
+commit:     220d3251e959f6a58ce0311e995b31a85f98240c
+crate:      lsp-max 26.7.1
+```
+
+`lsp-max` owns JSON-RPC framing, the stdio server runtime, the `LanguageServer` contract, client notifications, and `lsp_types_max`. `ggen-legacy` owns domain diagnostics and feature behavior.
 
 ## Run
 
 ```bash
-python3 bin/ggen-lsp
-# equivalent
-python3 bin/ggen-lsp stdio
+cargo run --bin ggen-lsp
 ```
 
-Standard output is reserved for Content-Length framed JSON-RPC. Logs and fatal transport refusals use standard error.
+Standard output is exclusively the LSP protocol channel. Tracing is directed to standard error.
 
-## Verify
+## Verify locally
 
 ```bash
-PYTHONPATH=src python3 -m unittest discover -s tests -p 'test_lsp_*.py' -v
-python3 scripts/verify_lsp.py
-cp evidence/lsp-reference/verification-report.json /tmp/ggen-lsp-report-a.json
-python3 scripts/verify_lsp.py
-cmp /tmp/ggen-lsp-report-a.json evidence/lsp-reference/verification-report.json
+cargo fmt --all -- --check
+cargo check --all-targets
+cargo clippy --all-targets -- -D warnings
+cargo test --all-targets
 ```
 
-The test suite launches the real `python3 bin/ggen-lsp` subprocess. It does not call handlers in place as a substitute for protocol evidence.
+These commands must execute locally before the bounded runtime may be promoted to `ALIVE`.
 
-## Supported lifecycle
+## Implemented boundary
 
-- `initialize`, `initialized`, `shutdown`, `exit`
-- `textDocument/didOpen`, `didChange` (full sync), `didSave`, `didClose`
-- deterministic `publishDiagnostics`
-
-## Supported requests
-
-- completion and hover
-- definition and references
-- prepare rename and rename
-- document and workspace symbols
-- document and range formatting
+- full document synchronization
+- diagnostics for Turtle, TOML/ggen manifests, and Tera
+- completion
+- hover
+- document symbols
+- document formatting
 - quick-fix code actions
-- folding ranges
-- semantic tokens
-- inlay hints
-- code lenses
+- clean diagnostic removal on close
 
-## Diagnostics
+## Exclusions
 
-| Code | Meaning |
-|---|---|
-| `GGEN-TOML-001` | TOML parse refusal |
-| `GGEN-MANIFEST-001` | missing `[project]` in `ggen.toml` |
-| `GGEN-MANIFEST-002` | missing project name |
-| `GGEN-TTL-001` | undeclared Turtle prefix |
-| `GGEN-TTL-002` | malformed `@prefix` terminator |
-| `GGEN-TERA-001` | unclosed delimiter |
-| `GGEN-TERA-002` | unexpected closing block |
-| `GGEN-TERA-003` | unclosed block |
-| `GGEN-SYNTAX-*` | common delimiter/string refusal |
-| `GGEN-TEXT-001` | missing final newline |
-
-## Nonclaims
-
-This runtime does not claim full RDF/Turtle, SPARQL, TOML, or Tera conformance. It does not replace the live Rust feature set, MCP/A2A bridges, persistent workspace indexing, or `ggen-engine` integration. It establishes an executable, replayable compatibility floor.
+This change does not claim MCP/A2A, persistent graph indexing, the full feature surface of `ggen/crates/ggen-lsp`, release admission, or sunset admission.
