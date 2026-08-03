@@ -1,6 +1,6 @@
-# Rust and build outputs
-debug
-target
+# Rust build outputs
+target/
+debug/
 **/*.rs.bk
 *.pdb
 **/mutants.out*/
@@ -21,7 +21,7 @@ foundry/generated/
 foundry/reports/
 foundry/receipts/
 
-# CI-only exact-coordinate tool checkouts
+# Exact-coordinate tool checkouts
 .ggen-tool/
 .foundry-runtime/
 lsp-max/

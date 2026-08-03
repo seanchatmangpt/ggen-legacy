@@ -1,303 +1,196 @@
-# AGENTS.md — ggen-legacy v26.8.1
+# AGENTS.md — ggen-legacy executable reconstruction
 
-## 0. Root authority
+## 0. Authority and exact subject
 
-This file is the normative contract for every human or automated agent operating in `ggen-legacy`.
+This file governs every human or automated change in `seanchatmangpt/ggen-legacy`.
 
-- **Release:** `v26.8.1`
-- **Category:** Verified Repository Reconstitution
-- **Platform:** ggen Repository Manufacturing System
-- **Method:** Evidence-Driven Repository Manufacture
-- **Initial engagement:** Project 001 — ggen-legacy Self-Reconstitution
+- admitted reconstruction base: `70e599a599fedb7c62c965377cc2f80df1fa01ec`
+- active executable ticket: `GL-LSP-001`
+- required LSP runtime: `lsp-max`
+- pinned runtime revision: `seanchatmangpt/lsp-max@220d3251e959f6a58ce0311e995b31a85f98240c`
+- publication boundary: draft pull request unless the user explicitly authorizes merge
 
-The repository begins as a non-production-source bootstrap. It must manufacture and verify the authority that will later manufacture the implementation. `ggen-legacy` is the first project governed by `ggen-legacy`.
+The repository began as a documentation-only bootstrap. That fence remains the default. Executable source is admitted only by a deterministic ticket naming its contract, authority, dependency closure, witnesses, falsifiers, commands, receipt, replay rule, and exclusions.
 
 ## 1. Mission
 
-Reconstruct the real behavioral contract of a legacy repository, encode it as machine-readable authority, manufacture a replacement from that authority, prove behavioral closure, and compute whether the predecessor may be retired.
+Reconstruct observable legacy behavior, encode it as admitted authority, implement the smallest lawful executable boundary, execute that exact boundary locally, and preserve evidence sufficient for replay and later release or sunset decisions.
 
 ```text
-history → observation → admission → authority → manufacture
-→ equivalence → independent verification → receipt → replay
-→ Release Admission → Sunset Admission
+observe → align → admit/refuse → construct → execute
+→ verify → receipt → replay → bounded standing
 ```
 
-The customer outcome is not “new code exists.” The outcome is that replacement standing is proven and retirement is admitted or refused.
+For `GL-LSP-001`:
 
-## 2. Absolute invariants
+```text
+LSP bytes → lsp-max framing and dispatch
+→ admitted document state → ggen analysis
+→ lsp-max client response/notification → receipt
+```
 
-### Zero unreceipted actuation
+A custom JSON-RPC transport or Python substitute is outside the admitted final architecture.
 
-No material publication, mutation, release, deployment, migration, deletion, retirement, or external side effect may occur without a receipt.
+## 2. Foundational order
 
-### Observation is not admission
+Every material change follows:
+
+1. Preserve the prior purpose and recovery path.
+2. Fence unsafe or unadmitted transitions.
+3. Define objects, morphisms, admission, closure, authority, actuation, receipt, and replay.
+4. State exclusions.
+5. Name a falsifier against the same subject and boundary.
+6. Preserve reversible lawful extension points.
+7. Bind implementation to commands and evidence.
+
+Historical corpus material remains evidence even when a new executable projection is admitted. Adjacency is not refutation.
+
+## 3. Absolute invariants
+
+### 3.1 Zero unreceipted actuation
+
+No release, deployment, migration, deletion, retirement, external network operation, or durable mutation outside the working tree occurs without explicit authority and a receipt.
+
+The language server may analyze in-memory document text and emit protocol responses. It has no ambient shell, package-manager, Git, deployment, network, or filesystem-write authority.
+
+### 3.2 Observation is not admission
 
 ```text
 O  = partial or stale observation
-O* = admitted, aligned, complete, grounded, bounded observation
+O* = admitted, aligned, grounded, bounded observation
 A  = μ(O*)
 R  = receipt(A)
 ```
 
-Preserve the distinction between observed, inferred, admitted, refused, unsupported, and unknown.
+Track observed, admitted, executed, changed, verified, inferred, refused, blocked, and unsupported separately.
 
-### No self-certification
+### 3.3 lsp-max is the protocol boundary
 
-The repository, implementing agent, generated report, coverage matrix, or documentation may not grant standing to itself. Standing is computed by an independent verifier over authority, implementation, witnesses, falsifiers, evidence, receipts, and replay.
+The executable server must use:
 
-### No silent unknowns
+- `lsp_max::LspService`
+- `lsp_max::Server`
+- `lsp_max::Client`
+- `lsp_max::LanguageServer`
+- `lsp_max::lsp_types_max`
 
-Zero findings and no observation are different states. An unexecuted observer remains `UNKNOWN`. No unknown capability, disposition, verifier, equivalence case, or standing may survive final admission.
+Do not hand-roll Content-Length framing, JSON-RPC dispatch, client notification plumbing, or substitute another LSP runtime without a new admission decision.
 
-### No hand-edited generated output
+### 3.4 Protocol purity
 
-Repair authority, template, projector, or input. Do not patch generated artifacts to create apparent conformance.
+Standard output is exclusively the LSP protocol channel. Tracing and refusal details go to standard error. `clippy::print_stdout` is denied.
 
-### Checkpoint is not crown
+### 3.5 Exact dependency identity
 
-A local passing check proves only its declared scope. Only the crown verifier may assign repository-level `ALIVE`.
+`lsp-max` must be pinned to an exact Git revision or exact released version admitted by the ticket. Floating branches and unbounded semver ranges are refused for the runtime authority edge.
 
-### Exact source identity
+### 3.6 No self-certification
 
-Every implementation or verification claim is bound to an exact commit SHA and tree digest.
+Source, generated documentation, an authored status file, or an unexecuted test cannot grant `ALIVE`. The exact candidate must compile and execute locally against the pinned runtime.
 
-## 3. Project 001
+### 3.7 Checkpoint is not crown
 
-The first admitted corpus is non-production-source authority:
+A parser test, capability assertion, compile check, or smoke exchange proves only its named boundary. Repository, release, production, certification, and sunset standing remain separate.
 
-- AGENTS and release law;
-- Working Backwards press release, PR/FAQ, and Vision 2030;
-- PRD and ARD;
-- category and terminology authority;
-- ontology, schema, policy, and decision specifications;
-- verifier and evidence contracts;
-- positive and negative fixtures;
-- G0–G9 checkpoint law;
-- security, privacy, resilience, operations, procurement, and support documents;
-- deterministic source-admission tickets.
+## 4. Typed states
 
-These artifacts do not prove that production implementation exists.
+Use exactly:
 
-### Bootstrap theorem
+- `UNKNOWN` — insufficient observation or admission.
+- `PARTIAL_ALIVE` — a bounded subset executed; required checks remain open.
+- `ALIVE` — every conjunct in the declared bounded scope executed and replayed.
+- `BLOCKED` — required authority, dependency, permission, transport, artifact, or toolchain unavailable.
+- `BUILD_BROKEN` — an admitted build command executed with an available toolchain and failed.
+- `UNSUPPORTED` — outside the declared product boundary.
+- `REFUSED:<CODE>` — policy or admission law rejected the operation.
 
-Project 001 is complete only when terminology is consistent; every normative requirement has an owner; every output has a projector or implementation owner; every claim has a verifier; every refusal has a falsifier; launch gates are machine-readable; generation is reproducible; receipt and replay requirements are explicit; and the repository reports its actual bounded state.
-
-Until executable exact-head verification and replay are observed, the maximum state is `PARTIAL_ALIVE`.
-
-## 4. Bootstrap scope
-
-Allowed surfaces include Markdown, mdBook, RDF/JSON/TOML authority, SHACL, schemas, fixtures, verifier specifications, read-only CI, and evidence examples.
-
-Production implementation source is refused until a deterministic ticket admits it. Absent admission, do not add top-level `src/`, `crates/`, `packages/`, `cmd/`, `internal/`, `app/`, `lib/`, `services/`, or `runtime/`.
-
-Also refused: hidden implementation, copied source without provenance, fake receipts, manually authored execution results, predeclared `ALIVE`, release tags without Release Admission, or Sunset Admission without a closed capability ledger.
-
-A source-admission ticket must name authority, scope, observable contract, implementation boundary, toolchain, owner, positive witnesses, negative falsifiers, verification commands, receipt, replay, exclusions, and acceptance.
+No toolchain means `BLOCKED:TOOLCHAIN_UNAVAILABLE`, not `BUILD_BROKEN`. Source inspection is not execution.
 
 ## 5. Authority precedence
 
 1. `AGENTS.md`
 2. `RELEASE_CONTROL.md`
-3. admitted machine-readable authority under `authority/`
-4. validated schemas and SHACL shapes
-5. `product/PRD.md`
-6. `architecture/ARD.md`
-7. accepted decisions and deterministic tickets
-8. verifier specifications
-9. mdBook and explanatory documentation
-10. generated reports
-11. agent assumptions
+3. admitted tickets under `tickets/`
+4. admitted machine-readable authority
+5. schemas, gates, and verifier contracts
+6. executable source and fixtures at the exact candidate
+7. PRD and ARD
+8. explanatory documentation
+9. generated reports
+10. assumptions
 
-A contradiction produces `BLOCKED / AUTHORITY_CONTRADICTION`. Do not silently choose the convenient instruction.
+A contradiction returns `BLOCKED:AUTHORITY_CONTRADICTION`.
 
-## 6. Required law-state workflow
+## 6. GL-LSP-001 boundary
 
-Every material task follows:
-
-```text
-parse → route → observe → admit/refuse → diagnose/repair
-→ manufacture → verify → receipt → replay → admission decision
-```
-
-- **Parse:** repository, exact base, outcome, acceptance, constraints, evidence.
-- **Route:** observation, authority, documentation, schema, plan, fixture, verifier, implementation, repair, release, or sunset.
-- **Observe:** inspect the complete relevant surface and record unobserved areas.
-- **Admit/refuse:** validate before authority; return typed refusal for contradiction or missing basis.
-- **Repair:** fix the earliest lawful cause: authority → schema → projector → implementation → verifier → evidence.
-- **Manufacture:** produce only declared artifacts.
-- **Verify:** narrow first, then expand.
-- **Receipt:** bind source, authority, tools, inputs, outputs, results, environment, and state.
-- **Replay:** re-execute from clean state.
-- **Decide:** Release and Sunset are computed and separate.
-
-## 7. G0–G9 Gall checkpoints
-
-### G0 — Orient
-Resolve tools, permissions, repository, exact base, authority, and constraints.
-
-### G1 — Fence
-Preserve purpose and dependencies before replacement or deletion. Record exclusions, falsifier, and retirement condition.
-
-### G2 — Observe
-Inventory the bounded current and historical contract. Unexecuted observers remain explicit.
-
-### G3 — Admit
-Validate observations into semantic authority. Refuse contradictions and missing required properties.
-
-### G4 — Plan
-Create a deterministic, dependency-closed manufacture and verification DAG.
-
-### G5 — Manufacture
-Project declared repository artifacts from authority. Refuse hand-edited generated output.
-
-### G6 — Verify
-Execute positive witnesses, negative falsifiers, schemas, integration, E2E, security, chaos, stress, and benchmark as required.
-
-### G7 — Replay
-Re-run from a clean state and require:
+Admitted authored paths:
 
 ```text
-NO_SEMANTIC_CHANGE
-NO_GENERATED_DRIFT
-REPLAY_MATCH
+Cargo.toml
+rust-toolchain.toml
+src/**
+tests/**
+tickets/GL-LSP-001.md
+docs/lsp/**
 ```
 
-### G8 — Release Admission
-Compute whether the manufactured replacement may release.
+Required behavior:
 
-### G9 — Sunset Admission
-Compute whether the predecessor may retire. Actual deletion is a separate irreversible, authorized, receipted actuation.
+1. Start `lsp_max::Server` over stdin/stdout.
+2. Advertise only implemented capabilities.
+3. Track open documents with full synchronization.
+4. Publish deterministic Turtle, TOML/ggen-manifest, and Tera diagnostics.
+5. Clear diagnostics on close.
+6. Execute completion, hover, document symbols, formatting, and quick-fix code actions through the `LanguageServer` implementation.
+7. Refuse incremental changes while full sync is advertised.
+8. Keep stdout free of tracing or prose.
+9. Compile, lint, test, and replay locally against the exact `lsp-max` revision.
 
-## 8. Typed states
+## 7. Verification ladder
 
-Use exactly:
-
-- `PARTIAL_ALIVE` — observed success for a bounded subset; crown open.
-- `ALIVE` — complete declared scope observed and crown passed.
-- `BLOCKED` — required dependency, authority, permission, artifact, or evidence unavailable.
-- `BUILD_BROKEN` — declared build/manufacture command executed and failed.
-- `UNKNOWN` — insufficient observation or admission.
-- `UNSUPPORTED` — outside declared product boundary.
-
-Policy may return `REFUSED`. Never translate `UNKNOWN → ALIVE`, `UNSUPPORTED → REFUSED`, `PARTIAL_ALIVE → ALIVE`, agent completion → checkpoint completion, or checkpoint completion → crown completion.
-
-## 9. Capability disposition law
-
-Each final LegacyCapability has exactly one disposition:
-
-- `PRESERVED`
-- `SUBSUMED`
-- `REPLACED`
-- `ARCHIVED`
-- `REFUSED`
-
-Each records identity, provenance, observable contract, rationale, owner, equivalence/refusal case, verifier, evidence, receipt, and standing. A refusal requires a negative contract and falsifier.
-
-## 10. Repository doctrine
-
-Read governing authority, ticket, adjacent docs, schemas, fixtures, verifier specifications, and status before writing. Preserve architecture and vocabulary. Make bounded diffs. Do not delete apparently stale work before proving provenance, purpose, dependency, disposition, and retirement condition. One failed transport or tool edge is not graph failure. Do not replace exact evidence with memory.
-
-## 11. Git and publication safety
-
-Resolve exact base before editing. Preserve unrelated user work. Do not use destructive Git commands without explicit authorization. Commits map to deterministic tickets or coherent acceptance boundaries. Publication requires diff review, verification, receipt, intentional commit, branch push, draft PR, and check inspection. A tag requires Release Admission.
-
-## 12. Ticket doctrine
-
-A valid ticket contains identity, title, authority, exact base, problem, bounded scope, inputs, outputs, exclusions, owner, positive witnesses, negative falsifiers, acceptance commands, evidence paths, receipt, replay, and expected state transition.
-
-“What would falsify completion?” must be answerable.
-
-## 13. Verification ladder
+Run the cheapest high-information gates first:
 
 ```text
-protocol/unit
-→ property/fuzz
-→ stdio and HTTP integration
-→ black-box CLI E2E
-→ security
-→ chaos
-→ stress
-→ benchmark
-→ replay
-→ external verifier report
+cargo fmt --all -- --check
+→ cargo check --all-targets
+→ cargo clippy --all-targets -- -D warnings
+→ cargo test --all-targets
+→ real stdio initialize/open/change/close exchange
+→ malformed-message and refusal fixtures
+→ deterministic replay
 ```
 
-Mocks may support isolated units. Crown evidence crosses real declared process, filesystem, serialization, protocol, database/service, receipt, and replay boundaries.
+Do not use GitHub Actions as a substitute for local execution. Hosted CI may supplement a local receipt only when the user permits it.
 
-The machine-readable report records exact revision, tree digest, toolchain, authority digests, suites, commands, crossed boundaries, evidence, pass/fail/blocked/unsupported checks, refusal codes, benchmarks, replay, standing, and verifier identity.
+## 8. Repair law
 
-## 14. Evidence and receipts
+On failure:
 
-Every material claim names claim, scope, source identity, authority identity, verifier, execution, result, artifact digest, exclusions, and typed state.
+1. preserve the exact command, exit status, and stderr;
+2. classify the failed transition;
+3. repair the narrowest lawful cause;
+4. add a permanent guard or fixture;
+5. rerun the failed boundary;
+6. expand only after success.
 
-A receipt binds version, run, project, exact source, authority digest, ticket, toolchain, environment, input/output digests, actuator, exit status, verifier results, time, lineage, and final state. Do not hand-author execution receipts.
+Never rerun an unchanged failure without a new hypothesis.
 
-## 15. Documentation and claim law
+## 9. Git and publication safety
 
-Documentation distinguishes current fact, admitted design, future target, example, unsupported claim, and unresolved question. It may explain authority but cannot prove implementation, execution, receipt validity, replay, Release Admission, Sunset Admission, or production standing.
+Resolve the exact base and current branch head before writing. Preserve unrelated work. Use non-force branch updates. Do not merge unless explicitly requested. `gh` and GitHub CI are excluded for this task.
 
-Do not write future functionality in present tense unless the document explicitly labels it as target behavior.
+## 10. Required receipt
 
-## 16. Ontology and schema law
+Report:
 
-Prefer PROV-O, DCAT, DCTERMS, SKOS, SHACL, ODRL, FOAF, OCEL, QUDT, SOSA, and FIBO where applicable. Create local terms only when public vocabularies fail to preserve the required distinction.
+- repository, original base, branch, candidate SHA, and pinned `lsp-max` SHA;
+- O and O*;
+- transport and toolchain attempts with typed failures;
+- files changed and removed;
+- commands and exit statuses;
+- observed execution boundaries;
+- replay result;
+- scoped standing and exclusions;
+- draft PR identity.
 
-SHACL and schemas are admission boundaries. They reject missing identity/provenance, contradictory or multiple dispositions, missing verifier/equivalence cases, illegal standing transitions, self-certification loops, and missing receipt linkage.
-
-## 17. Preserve → Fence → Calculus
-
-Before replacing an established surface, record:
-
-1. **Preserve:** purpose and dependency.
-2. **Fence:** boundary protecting valid behavior.
-3. **Calculus:** admitted transformation.
-4. **Exclusions:** what is outside the claim.
-5. **Falsifier:** same-object observation proving the change wrong.
-6. **Extension:** lawful future capability.
-7. **Operationalization:** commands, fixtures, verifiers, receipts, and replay.
-
-Adjacency is not refutation.
-
-## 18. v26.8.1 launch law
-
-The future product crown requires:
-
-```text
-unknown_capabilities=0
-unknown_dispositions=0
-unknown_standings=0
-unassigned_verifiers=0
-missing_equivalence_cases=0
-equivalence_failures=0
-replay_differences=0
-release_admitted=true
-sunset_admitted=true
-standing=ALIVE
-```
-
-Project 001 uses a separate bootstrap crown and must not fabricate a predecessor or Sunset Admission.
-
-## 19. Required task report
-
-Every task reports state, exact base SHA, scope, files changed, authority affected, commands, observed results, receipts, replay status, exclusions, remaining unknowns, blockers, and next lawful checkpoint.
-
-## 20. Immediate bootstrap order
-
-1. repository doctrine;
-2. product vocabulary;
-3. Project 001 charter;
-4. PRD;
-5. ARD;
-6. ontology and admission rules;
-7. evidence, receipt, verifier, release, and sunset schemas;
-8. positive, negative, contradiction, and replay fixtures;
-9. G0–G9 verifier specifications;
-10. deterministic source-admission tickets;
-11. first implementation;
-12. full verification ladder;
-13. clean-room replay;
-14. Project 001 crown.
-
-The repository must first manufacture the authority that will manufacture the implementation.
-
-> Reconstruct the contract. Manufacture the repository. Prove the standing.
+> Preserve the contract. Use lsp-max. Execute locally. Replay the receipt.
