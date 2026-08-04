@@ -9,7 +9,7 @@ FIXTURE=ROOT/'fixtures/autonomic/conversation.json'
 FOUNDRY=ROOT/'scripts/autonomic_finish.py'
 VERIFIER=ROOT/'scripts/verify_autonomic_finish.py'
 DEFAULT_EVIDENCE=ROOT/'evidence/autonomic/GL-AUTO-001.json'
-ALLOWED_PREFIXES=('autonomic/','fixtures/autonomic/','scripts/autonomic_','scripts/run_autonomic_crown.py','tickets/GL-AUTO-001.md','evidence/autonomic/','.github/workflows/autonomic-crown.yml')
+ALLOWED_PREFIXES=('autonomic/','fixtures/autonomic/','scripts/autonomic_finish.py','scripts/verify_autonomic_finish.py','scripts/run_autonomic_crown.py','tickets/GL-AUTO-001.md','evidence/autonomic/','.github/workflows/autonomic-crown.yml')
 
 def command(args:list[str],cwd:Path=ROOT)->dict:
  p=subprocess.run(args,cwd=cwd,text=True,capture_output=True,check=False)
