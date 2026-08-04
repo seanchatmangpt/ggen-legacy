@@ -9,10 +9,10 @@
   "schema": "ggen.lsp.receiver-report/1",
   "source_manifest": {
     "authority/lsp-contract.json": "adfc4604c1bb54698257e70f7ade3ec8a2a285c2ac7f897a6fa4868f1729d189",
-    "src/analysis.rs": "3ce808b73596464481662155175f698d1848bda995f866eca5b328fe48326306",
-    "src/backend.rs": "2298f06b37b605d6fc47909fe73fe39674beabb30488e18eba69cb908f5b629a",
-    "src/capabilities.rs": "bb1fe71da0049f2723d2122b83f5e8e8897682153ce2d559b9183ef5c0d0d839",
-    "src/generated_contract.rs": "e22648c0b936734055766e1e2b6a5784e357afbe891b547a4b2aff06f76f859e"
+    "src/analysis.rs": "f0797f72679f6dcdefd70e66e5f25e72ea0b08b3fa2e9af5aaff5d26d632a629",
+    "src/backend.rs": "2d019bba5ebb566496b70f268bdadf0112538ec227fe3af0980ec8d613241765",
+    "src/capabilities.rs": "15c6b4e8223e5904f77027b211033abda02edea3bdd1c104060ff1d955e20ad4",
+    "src/generated_contract.rs": "96e67e2b7037867ddc13bb17329ed38827036706d588ec99d368470c8613cf01"
   },
   "standing": "ALIVE",
   "surface_count": 8

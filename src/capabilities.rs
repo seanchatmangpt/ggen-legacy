@@ -5,8 +5,13 @@ pub fn server_capabilities() -> ServerCapabilities {
         text_document_sync: Some(TextDocumentSyncCapability::Kind(TextDocumentSyncKind::FULL)),
         completion_provider: Some(CompletionOptions {
             trigger_characters: Some(vec![
-                ":".into(), "@".into(), ".".into(), "{".into(), "[".into(),
-                "\"".into(), "|".into(),
+                ":".into(),
+                "@".into(),
+                ".".into(),
+                "{".into(),
+                "[".into(),
+                "\"".into(),
+                "|".into(),
             ]),
             ..Default::default()
         }),
@@ -27,8 +32,8 @@ pub fn server_capabilities() -> ServerCapabilities {
             work_done_progress_options: WorkDoneProgressOptions::default(),
         })),
         folding_range_provider: Some(FoldingRangeProviderCapability::Simple(true)),
-        semantic_tokens_provider: Some(
-            SemanticTokensServerCapabilities::SemanticTokensOptions(SemanticTokensOptions {
+        semantic_tokens_provider: Some(SemanticTokensServerCapabilities::SemanticTokensOptions(
+            SemanticTokensOptions {
                 legend: SemanticTokensLegend {
                     token_types: vec![
                         SemanticTokenType::NAMESPACE,
@@ -46,8 +51,8 @@ pub fn server_capabilities() -> ServerCapabilities {
                 range: None,
                 full: Some(SemanticTokensFullOptions::Bool(true)),
                 ..Default::default()
-            }),
-        ),
+            },
+        )),
         inlay_hint_provider: Some(OneOf::Left(true)),
         code_lens_provider: Some(CodeLensOptions {
             resolve_provider: Some(false),

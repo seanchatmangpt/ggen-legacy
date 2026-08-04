@@ -40,7 +40,8 @@ impl GgenLanguageServer {
     }
 
     fn completion_items(uri: &Url) -> Vec<CompletionItem> {
-        let values: &[(&str, &str)] = match uri.path().rsplit_once('.').map(|(_, ext)| ext) {
+        let values: &[(&str, &str)] = match uri.path().as_str().rsplit_once('.').map(|(_, ext)| ext)
+        {
             Some("ttl" | "rdf" | "n3" | "nt" | "nq") => &[
                 ("@prefix", "@prefix ${1:prefix}: <${2:iri}> ."),
                 ("rdfs:label", "rdfs:label \"${1:label}\" ;"),
@@ -48,7 +49,10 @@ impl GgenLanguageServer {
             Some("toml") => &[
                 ("[project]", "[project]\nname = \"${1:name}\""),
                 ("[ontology]", "[ontology]\nsource = \"${1:ontology.ttl}\""),
-                ("[[generation.rules]]", "[[generation.rules]]\nname = \"${1:rule}\""),
+                (
+                    "[[generation.rules]]",
+                    "[[generation.rules]]\nname = \"${1:rule}\"",
+                ),
             ],
             Some("rq" | "sparql") => &[
                 ("SELECT", "SELECT ${1:*} WHERE {\n  ${2:?s ?p ?o .}\n}"),
@@ -77,12 +81,9 @@ impl GgenLanguageServer {
     fn symbols(text: &str) -> Vec<DocumentSymbol> {
         let patterns = [
             Regex::new(r"(?m)^\s*(\[\[?[^\]\n]+\]\]?)\s*$").expect("static regex"),
-            Regex::new(r"(?im)^\s*(?:@prefix|prefix)\s+([A-Za-z][\w-]*):")
-                .expect("static regex"),
-            Regex::new(r"{%\s*(?:block|macro)\s+([A-Za-z_][\w-]*)")
-                .expect("static regex"),
-            Regex::new(r"(?m)^\s*(?:pub\s+)?mod\s+([A-Za-z_][A-Za-z0-9_]*)")
-                .expect("static regex"),
+            Regex::new(r"(?im)^\s*(?:@prefix|prefix)\s+([A-Za-z][\w-]*):").expect("static regex"),
+            Regex::new(r"\{%\s*(?:block|macro)\s+([A-Za-z_][\w-]*)").expect("static regex"),
+            Regex::new(r"(?m)^\s*(?:pub\s+)?mod\s+([A-Za-z_][A-Za-z0-9_]*)").expect("static regex"),
         ];
         patterns
             .iter()
@@ -139,7 +140,8 @@ fn offset_position(text: &str, offset: usize) -> Position {
     let line = prefix.bytes().filter(|byte| *byte == b'\n').count() as u32;
     let character = prefix
         .rsplit_once('\n')
-        .map_or(prefix.chars().count(), |(_, tail)| tail.chars().count()) as u32;
+        .map_or(prefix.chars().count(), |(_, tail)| tail.chars().count())
+        as u32;
     Position::new(line, character)
 }
 
@@ -215,7 +217,11 @@ impl LanguageServer for GgenLanguageServer {
     }
 
     async fn did_change(&self, params: DidChangeTextDocumentParams) {
-        if params.content_changes.iter().any(|change| change.range.is_some()) {
+        if params
+            .content_changes
+            .iter()
+            .any(|change| change.range.is_some())
+        {
             self.client
                 .log_message(
                     MessageType::ERROR,
@@ -294,8 +300,7 @@ impl LanguageServer for GgenLanguageServer {
     }
 
     async fn goto_definition(
-        &self,
-        _params: GotoDefinitionParams,
+        &self, _params: GotoDefinitionParams,
     ) -> Result<Option<GotoDefinitionResponse>> {
         Ok(None)
     }
@@ -305,8 +310,7 @@ impl LanguageServer for GgenLanguageServer {
     }
 
     async fn prepare_rename(
-        &self,
-        params: TextDocumentPositionParams,
+        &self, params: TextDocumentPositionParams,
     ) -> Result<Option<PrepareRenameResponse>> {
         let Some(document) = self.document(&params.text_document.uri).await else {
             return Ok(None);
@@ -320,8 +324,7 @@ impl LanguageServer for GgenLanguageServer {
     }
 
     async fn document_symbol(
-        &self,
-        params: DocumentSymbolParams,
+        &self, params: DocumentSymbolParams,
     ) -> Result<Option<DocumentSymbolResponse>> {
         let uri = params.text_document.uri;
         Ok(self
@@ -331,16 +334,12 @@ impl LanguageServer for GgenLanguageServer {
     }
 
     async fn symbol(
-        &self,
-        _params: WorkspaceSymbolParams,
+        &self, _params: WorkspaceSymbolParams,
     ) -> Result<Option<Vec<SymbolInformation>>> {
         Ok(Some(Vec::new()))
     }
 
-    async fn formatting(
-        &self,
-        params: DocumentFormattingParams,
-    ) -> Result<Option<Vec<TextEdit>>> {
+    async fn formatting(&self, params: DocumentFormattingParams) -> Result<Option<Vec<TextEdit>>> {
         let uri = params.text_document.uri;
         let Some(document) = self.document(&uri).await else {
             return Ok(None);
@@ -365,16 +364,12 @@ impl LanguageServer for GgenLanguageServer {
     }
 
     async fn range_formatting(
-        &self,
-        _params: DocumentRangeFormattingParams,
+        &self, _params: DocumentRangeFormattingParams,
     ) -> Result<Option<Vec<TextEdit>>> {
         Ok(Some(Vec::new()))
     }
 
-    async fn code_action(
-        &self,
-        params: CodeActionParams,
-    ) -> Result<Option<CodeActionResponse>> {
+    async fn code_action(&self, params: CodeActionParams) -> Result<Option<CodeActionResponse>> {
         let actions = params
             .context
             .diagnostics
@@ -408,23 +403,18 @@ impl LanguageServer for GgenLanguageServer {
     }
 
     async fn folding_range(
-        &self,
-        _params: FoldingRangeParams,
+        &self, _params: FoldingRangeParams,
     ) -> Result<Option<Vec<FoldingRange>>> {
         Ok(Some(Vec::new()))
     }
 
     async fn semantic_tokens_full(
-        &self,
-        _params: SemanticTokensParams,
+        &self, _params: SemanticTokensParams,
     ) -> Result<Option<SemanticTokensResult>> {
         Ok(None)
     }
 
-    async fn inlay_hint(
-        &self,
-        _params: InlayHintParams,
-    ) -> Result<Option<Vec<InlayHint>>> {
+    async fn inlay_hint(&self, _params: InlayHintParams) -> Result<Option<Vec<InlayHint>>> {
         Ok(Some(Vec::new()))
     }
 
@@ -433,43 +423,37 @@ impl LanguageServer for GgenLanguageServer {
     }
 
     async fn prepare_call_hierarchy(
-        &self,
-        _params: CallHierarchyPrepareParams,
+        &self, _params: CallHierarchyPrepareParams,
     ) -> Result<Option<Vec<CallHierarchyItem>>> {
         Ok(Some(Vec::new()))
     }
 
     async fn incoming_calls(
-        &self,
-        _params: CallHierarchyIncomingCallsParams,
+        &self, _params: CallHierarchyIncomingCallsParams,
     ) -> Result<Option<Vec<CallHierarchyIncomingCall>>> {
         Ok(Some(Vec::new()))
     }
 
     async fn outgoing_calls(
-        &self,
-        _params: CallHierarchyOutgoingCallsParams,
+        &self, _params: CallHierarchyOutgoingCallsParams,
     ) -> Result<Option<Vec<CallHierarchyOutgoingCall>>> {
         Ok(Some(Vec::new()))
     }
 
     async fn prepare_type_hierarchy(
-        &self,
-        _params: TypeHierarchyPrepareParams,
+        &self, _params: TypeHierarchyPrepareParams,
     ) -> Result<Option<Vec<TypeHierarchyItem>>> {
         Ok(Some(Vec::new()))
     }
 
     async fn supertypes(
-        &self,
-        _params: TypeHierarchySupertypesParams,
+        &self, _params: TypeHierarchySupertypesParams,
     ) -> Result<Option<Vec<TypeHierarchyItem>>> {
         Ok(Some(Vec::new()))
     }
 
     async fn subtypes(
-        &self,
-        _params: TypeHierarchySubtypesParams,
+        &self, _params: TypeHierarchySubtypesParams,
     ) -> Result<Option<Vec<TypeHierarchyItem>>> {
         Ok(Some(Vec::new()))
     }

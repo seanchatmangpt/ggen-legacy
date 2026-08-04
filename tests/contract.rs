@@ -58,12 +58,36 @@ fn received_json_matches_generated_rust_contract() {
 #[test]
 fn required_analysis_surfaces_emit_typed_diagnostics() {
     let cases = [
-        ("file:///contract/ggen.toml", "ontology = {}", "GGEN-MANIFEST-001"),
-        ("file:///contract/model.ttl", "missing:Thing a missing:Type .", "GGEN-TTL-001"),
-        ("file:///contract/model.nt", "<urn:s> <urn:p> <urn:o>", "GGEN-RDF-001"),
-        ("file:///contract/model.nq", "<urn:s> <urn:p> <urn:o> <urn:g>", "GGEN-RDF-001"),
-        ("file:///contract/query.rq", "SELECT * WHERE {", "GGEN-SPARQL-001"),
-        ("file:///contract/query.sparql", "not a query", "GGEN-SPARQL-001"),
+        (
+            "file:///contract/ggen.toml",
+            "ontology = {}",
+            "GGEN-MANIFEST-001",
+        ),
+        (
+            "file:///contract/model.ttl",
+            "missing:Thing a missing:Type .",
+            "GGEN-TTL-001",
+        ),
+        (
+            "file:///contract/model.nt",
+            "<urn:s> <urn:p> <urn:o>",
+            "GGEN-RDF-001",
+        ),
+        (
+            "file:///contract/model.nq",
+            "<urn:s> <urn:p> <urn:o> <urn:g>",
+            "GGEN-RDF-001",
+        ),
+        (
+            "file:///contract/query.rq",
+            "SELECT * WHERE {",
+            "GGEN-SPARQL-001",
+        ),
+        (
+            "file:///contract/query.sparql",
+            "not a query",
+            "GGEN-SPARQL-001",
+        ),
         ("file:///contract/view.tera", "{{ value", "GGEN-TERA-001"),
     ];
     for (uri, source, expected) in cases {
@@ -74,10 +98,8 @@ fn required_analysis_surfaces_emit_typed_diagnostics() {
 
 #[test]
 fn generated_rust_requires_generation_rule_ownership() {
-    let root: PathBuf = std::env::temp_dir().join(format!(
-        "ggen-legacy-contract-{}",
-        std::process::id()
-    ));
+    let root: PathBuf =
+        std::env::temp_dir().join(format!("ggen-legacy-contract-{}", std::process::id()));
     let _ = fs::remove_dir_all(&root);
     fs::create_dir_all(root.join("src")).expect("fixture directory");
     fs::write(

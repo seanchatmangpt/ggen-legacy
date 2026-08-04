@@ -11,16 +11,13 @@ fn offset_position(text: &str, offset: usize) -> Position {
     let line = prefix.bytes().filter(|byte| *byte == b'\n').count() as u32;
     let character = prefix
         .rsplit_once('\n')
-        .map_or(prefix.chars().count(), |(_, tail)| tail.chars().count()) as u32;
+        .map_or(prefix.chars().count(), |(_, tail)| tail.chars().count())
+        as u32;
     Position::new(line, character)
 }
 
 fn diagnostic(
-    text: &str,
-    start: usize,
-    end: usize,
-    code: &str,
-    message: impl Into<String>,
+    text: &str, start: usize, end: usize, code: &str, message: impl Into<String>,
 ) -> Diagnostic {
     Diagnostic {
         range: Range::new(offset_position(text, start), offset_position(text, end)),
@@ -35,7 +32,7 @@ fn diagnostic(
 fn analyze_toml(uri: &Url, text: &str) -> Vec<Diagnostic> {
     match toml::from_str::<toml::Value>(text) {
         Ok(value) => {
-            if uri.path().ends_with("/ggen.toml") && value.get("project").is_none() {
+            if uri.path().as_str().ends_with("/ggen.toml") && value.get("project").is_none() {
                 vec![diagnostic(
                     text,
                     0,
@@ -59,18 +56,16 @@ fn analyze_toml(uri: &Url, text: &str) -> Vec<Diagnostic> {
 
 fn analyze_turtle(text: &str) -> Vec<Diagnostic> {
     let declaration =
-        Regex::new(r"(?im)^\s*(?:@prefix|prefix)\s+([A-Za-z][\w-]*):")
-            .expect("static regex");
-    let use_pattern =
-        Regex::new(r"(?m)([A-Za-z][\w-]*):([A-Za-z_][\w.-]*)").expect("static regex");
+        Regex::new(r"(?im)^\s*(?:@prefix|prefix)\s+([A-Za-z][\w-]*):").expect("static regex");
+    let use_pattern = Regex::new(r"(?m)([A-Za-z][\w-]*):([A-Za-z_][\w.-]*)").expect("static regex");
     let mut declared: HashSet<String> = declaration
         .captures_iter(text)
         .filter_map(|captures| captures.get(1).map(|item| item.as_str().to_owned()))
         .collect();
     declared.extend(
         [
-            "rdf", "rdfs", "xsd", "owl", "sh", "dcterms", "prov", "skos", "foaf",
-            "dcat", "odrl", "sosa", "qudt",
+            "rdf", "rdfs", "xsd", "owl", "sh", "dcterms", "prov", "skos", "foaf", "dcat", "odrl",
+            "sosa", "qudt",
         ]
         .into_iter()
         .map(str::to_owned),
@@ -264,7 +259,12 @@ fn analyze_generated_rust(uri: &Url, text: &str) -> Vec<Diagnostic> {
 }
 
 pub fn analyze_document(uri: &Url, text: &str) -> Vec<Diagnostic> {
-    match uri.path().rsplit_once('.').map(|(_, extension)| extension) {
+    match uri
+        .path()
+        .as_str()
+        .rsplit_once('.')
+        .map(|(_, extension)| extension)
+    {
         Some("toml") => analyze_toml(uri, text),
         Some("ttl" | "rdf" | "n3") => analyze_turtle(text),
         Some("nt" | "nq") => analyze_rdf_lines(text),

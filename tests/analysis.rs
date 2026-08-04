@@ -3,7 +3,7 @@ use lsp_max::lsp_types_max::{NumberOrString, Url};
 
 #[test]
 fn invalid_toml_is_refused() {
-    let uri = Url::parse("file:///tmp/ggen.toml").expect("valid URI");
+    let uri: Url = "file:///tmp/ggen.toml".parse().expect("valid URI");
     let diagnostics = analyze_document(&uri, "[project\nname = 'demo'");
     assert!(diagnostics.iter().any(|diagnostic| {
         matches!(
@@ -15,7 +15,7 @@ fn invalid_toml_is_refused() {
 
 #[test]
 fn undeclared_turtle_prefix_is_reported() {
-    let uri = Url::parse("file:///tmp/model.ttl").expect("valid URI");
+    let uri: Url = "file:///tmp/model.ttl".parse().expect("valid URI");
     let diagnostics = analyze_document(&uri, "ex:item a missing:Type .\n");
     assert_eq!(diagnostics.len(), 2);
 }

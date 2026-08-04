@@ -1,0 +1,48 @@
+{
+  "schema": "ggen.lsp.stdio-replay/1",
+  "date": "2026-08-03",
+  "binary": "target/debug/ggen-lsp",
+  "toolchain": "nightly-2026-06-22",
+  "lsp_max_rev": "c1cab89bf54fcc9100b3ce75580b3cc3aa8eb852 (draft PR seanchatmangpt/lsp-max#22, unmerged -- see note below)",
+  "runs": 2,
+  "deterministic_across_runs": true,
+  "sequence": [
+    "initialize",
+    "initialized",
+    "textDocument/didOpen (invalid ggen.toml, missing [project])",
+    "textDocument/didChange (fixed ggen.toml)",
+    "textDocument/prepareTypeHierarchy",
+    "textDocument/didClose",
+    "shutdown",
+    "exit"
+  ],
+  "observed": {
+    "server_info": { "name": "ggen-lsp", "version": "26.8.5" },
+    "capabilities_advertised": [
+      "callHierarchyProvider", "codeActionProvider", "codeLensProvider",
+      "completionProvider", "definitionProvider", "documentFormattingProvider",
+      "documentRangeFormattingProvider", "documentSymbolProvider",
+      "foldingRangeProvider", "hoverProvider", "inlayHintProvider",
+      "referencesProvider", "renameProvider", "semanticTokensProvider",
+      "textDocumentSync", "workspaceSymbolProvider"
+    ],
+    "diagnostic_codes_after_open": ["GGEN-MANIFEST-001", "LSPMAX-ANDON-PUSH-MISSING"],
+    "diagnostics_cleared_after_fix": true,
+    "diagnostics_cleared_on_close": true,
+    "prepare_type_hierarchy_response": []
+  },
+  "findings": [
+    {
+      "id": "GL-LSP-001-F1",
+      "severity": "unresolved",
+      "summary": "Process does not self-terminate within 5s of shutdown request + exit notification + stdin close; observed exit via SIGKILL (-9) on both runs.",
+      "note": "lsp-max's Server::serve read_input loop (src/transport.rs) structurally exits on stdin EOF and disconnects its channels, so the root cause is not yet identified. Real protocol exchange up to and including the shutdown response is correct and deterministic. Tracked as ggen-legacy TaskCreate #6, not yet fixed."
+    },
+    {
+      "id": "GL-LSP-001-F2",
+      "severity": "observed, unexplained",
+      "summary": "An additional diagnostic LSPMAX-ANDON-PUSH-MISSING fires alongside the expected GGEN-MANIFEST-001 on didOpen. Not one of ggen-legacy's own GGEN-* diagnostic families; likely emitted by lsp-max's own Andon/receipt-chain subsystem. Not yet investigated further."
+    }
+  ],
+  "conclusion": "Real stdio initialize/open/change/hierarchy/close exchange executes correctly and deterministically (2/2 runs identical). This satisfies the diagnostics-lifecycle and hierarchy portions of GL-LSP-001's acceptance criteria. Clean process termination is NOT yet proven -- do not read this receipt as satisfying that specific falsifier (\"real stdio initialize/open/change/close and hierarchy requests return lawful responses\" is satisfied; full lifecycle including a clean exit is not)."
+}
