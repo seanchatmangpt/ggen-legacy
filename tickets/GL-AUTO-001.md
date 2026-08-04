@@ -6,100 +6,77 @@
 - admitted base: `33dd18801fecce48a5022c2727d1cefdf450cc87`
 - runtime: Python 3 standard library only
 - authority: read admitted JSON input; write only beneath an explicit output directory
-- claim ceiling: deterministic conversation-to-projection bootstrap
+- claim ceiling: autonomic bootstrap projection only
 
 ## Purpose
 
-Reduce a structured design conversation to a canonical concept graph, manufacture deterministic operator and planning projections, and emit the smallest unresolved decision set.
+Convert the bounded conversation into a zero-gap canonical graph and manufacture the minimum production package for Claude configuration, Toyota flow control, Genesis naming, PPDDL planning, Hygen bootstrap, receipts, replay, and standing.
 
-```text
-conversation observations
-→ normalize
-→ admit/refuse
-→ canonical concept graph
-→ deterministic projections
-→ gap ledger
-→ receipt
-→ replay comparison
+## Automated production command
+
+```bash
+python3 scripts/run_autonomic_crown.py
 ```
+
+This command replaces the former manual sequence. It:
+
+1. compiles the foundry, verifier, and crown runner;
+2. manufactures the complete projection set;
+3. executes deterministic replay and mutation verification;
+4. requires `gap_count = 0` and bounded standing `ALIVE`;
+5. verifies the exact-base changed-file boundary when Git metadata is available;
+6. writes `evidence/autonomic/GL-AUTO-001.json`.
+
+The pull-request workflow `.github/workflows/autonomic-crown.yml` executes the same command and uploads the evidence receipt.
 
 ## Authored boundary
 
 ```text
+.github/workflows/autonomic-crown.yml
 autonomic/**
 scripts/autonomic_finish.py
 scripts/verify_autonomic_finish.py
+scripts/run_autonomic_crown.py
 fixtures/autonomic/**
 tickets/GL-AUTO-001.md
-evidence/autonomic/GL-AUTO-001.json
+evidence/autonomic/**
 ```
 
 ## Required behavior
 
-1. Accept a JSON observation bundle with explicit source identity.
-2. Preserve observed, inferred, proposed, decided, blocked, unsupported, and refused claims separately.
-3. Reject unknown standing values and duplicate concept identifiers.
-4. Build a stable, sorted canonical graph.
-5. Manufacture a Working Backwards brief, Claude operator contract, PPDDL problem, architecture summary, and gap ledger.
-6. Never execute generated commands, modify repositories, call networks, or publish.
-7. Write atomically beneath the supplied output directory only.
-8. Emit a SHA-256 receipt binding input, canonical graph, projections, output manifest, and claim ceiling.
-9. Re-running with identical input must produce byte-identical outputs and receipt.
-10. A verifier must execute the fixture twice, compare trees byte-for-byte, and exercise negative fixtures.
-
-## Falsifiers
-
-- duplicate concept IDs are accepted;
-- inferred claims are promoted to observed or decided;
-- generated output escapes the output directory;
-- generated commands execute;
-- unknown standings are accepted;
-- unresolved decisions disappear from the gap ledger;
-- second execution differs from the first;
-- receipt omits input or projection identity.
+- Bind admitted decisions to authority, acceptance, falsifier, and evidence.
+- Freeze the nine-object constitutional calculus.
+- Enforce one-piece flow with WIP limit one.
+- Manufacture Claude agents, skills, settings, and andon hook.
+- Manufacture Genesis 1+3 CLI tokens and reject collisions.
+- Manufacture PPDDL domain and problem with action costs.
+- Manufacture the Hygen bootstrap lower-bound templates.
+- Surface no unresolved gaps for the admitted fixture.
+- Produce byte-identical second manufacture.
+- Refuse duplicate concepts, optimistic standings, unknown projections, WIP expansion, invalid CLI tokens, and incomplete decisions.
 
 ## Exclusions
 
-- natural-language extraction from arbitrary chat transcripts;
+- arbitrary raw-language transcript extraction;
 - LLM invocation;
-- Git, shell, network, package manager, deployment, or BRCE actuation;
+- autonomous Git publication or deployment;
 - spiritual diagnosis or recovery certification;
-- final project naming decisions;
-- ecosystem `ALIVE` standing.
+- ecosystem-wide production standing.
 
 ## Acceptance
 
 ```bash
-python3 scripts/verify_autonomic_finish.py
+python3 scripts/run_autonomic_crown.py
 ```
 
-Required stdout:
+Successful execution must print:
 
 ```text
-GL_AUTO_001_VERIFIER_ALIVE
+GL_AUTO_001_AUTONOMIC_CROWN_ALIVE
 ```
 
-## Observed execution
+The inner verifier must print:
 
-Direct Git transport was attempted first and failed with `BLOCKED:DNS_GITHUB_COM_UNRESOLVED`. The exact PR-head source capsule was then reconstructed through the GitHub connector as a dependency-closed sparse tree.
-
-Observed on Python `3.13.5`:
-
-```bash
-python3 -m py_compile scripts/autonomic_finish.py scripts/verify_autonomic_finish.py
-python3 scripts/autonomic_finish.py --input fixtures/autonomic/conversation.json --output /tmp/ggen-auto-output
-python3 scripts/verify_autonomic_finish.py
+```text
+GL_AUTO_001_CROWN_ALIVE
 ```
-
-All commands exited `0`. The verifier emitted `GL_AUTO_001_VERIFIER_ALIVE`. Two manufacture runs matched byte-for-byte. Duplicate-concept, unknown-standing, and unknown-projection mutations were killed. The foundry manufactured seven outputs and surfaced ten unresolved decisions.
-
-The machine-readable execution receipt is `evidence/autonomic/GL-AUTO-001.json`.
-
-## Standing
-
-- source capsule: `ALIVE`
-- validation pack: `ALIVE`
-- bounded deterministic projection subject: `ALIVE`
-- arbitrary transcript understanding: `UNSUPPORTED`
-- autonomous repository actuation: `REFUSED:AMBIENT_ACTUATION`
-- complete conversation closure: `PARTIAL_ALIVE`
