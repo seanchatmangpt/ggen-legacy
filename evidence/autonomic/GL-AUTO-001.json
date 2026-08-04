@@ -1,0 +1,69 @@
+{
+  "schema": "ggen-legacy.autonomic.execution-receipt.v1",
+  "subject": {
+    "repository": "seanchatmangpt/ggen-legacy",
+    "base": "33dd18801fecce48a5022c2727d1cefdf450cc87",
+    "head_before_receipt": "dd29bcb7424128be84bafc4c6f07d14d83d1fe9c",
+    "ticket": "GL-AUTO-001"
+  },
+  "materialization": {
+    "primary": "git clone",
+    "primary_result": "BLOCKED:DNS_GITHUB_COM_UNRESOLVED",
+    "fallback": "connector-backed dependency-closed sparse tree",
+    "fallback_result": "ALIVE"
+  },
+  "environment": {
+    "python": "3.13.5",
+    "network": "unavailable for direct Git transport",
+    "execution_mode": "local cloud capsule"
+  },
+  "commands": [
+    {
+      "command": "python3 -m py_compile scripts/autonomic_finish.py scripts/verify_autonomic_finish.py",
+      "exit": 0
+    },
+    {
+      "command": "python3 scripts/autonomic_finish.py --input fixtures/autonomic/conversation.json --output /tmp/ggen-auto-output",
+      "exit": 0
+    },
+    {
+      "command": "python3 scripts/verify_autonomic_finish.py",
+      "exit": 0,
+      "stdout": "GL_AUTO_001_VERIFIER_ALIVE"
+    }
+  ],
+  "observed_consequence": {
+    "gap_count": 10,
+    "claim_ceiling": "DETERMINISTIC_CONVERSATION_PROJECTION_ONLY",
+    "actuation": "OUTPUT_DIRECTORY_ONLY",
+    "outputs": {
+      "ARCHITECTURE.md": "e8d6f57cb3ba67f7d7d737bc4b82bbae255bbf7723fa59032d9b9f6962bf8bb8",
+      "CLAUDE.md": "4b245af638f69e8e7dded04b6f62686d7248fbe51f272784d124d45ec8fdd910",
+      "GAPS.json": "7d0dceb9ac52fe8de07e513ca4bd94220ea2e54f2cf20fb446600498b71e9129",
+      "RECEIPT.json": "d24832ac6bcf4680daacc2090658c4a2188ce43fb8a10ffdd8cfb4b8c8d78b84",
+      "WORKING_BACKWARDS.md": "3407331b5c36142a2b9df0d90c02d9a6344b087697013adad72ae0e4e22fb286",
+      "canonical-graph.json": "b3911aa5ced6bfcfe41ffeedf5863fded1df5b4ba395d0b39f414e4d61d9c90b",
+      "ppddl/problem.pddl": "10cb328a492583f47a64307181b56733d95b0aba224a373ec01b08d73e3fca82"
+    }
+  },
+  "falsifiers": {
+    "duplicate_concept": "KILLED",
+    "unknown_standing_DONE": "KILLED",
+    "unknown_projection_execute": "KILLED",
+    "two_run_byte_replay": "MATCH"
+  },
+  "standing": {
+    "source_capsule": "ALIVE",
+    "validation_pack": "ALIVE",
+    "subject_projection": "ALIVE",
+    "aggregate_claim": "PARTIAL_ALIVE"
+  },
+  "exclusions": [
+    "arbitrary raw transcript extraction",
+    "model invocation",
+    "repository mutation outside output directory",
+    "Git publication by generated artifacts",
+    "runtime LSP standing",
+    "full architectural decision closure"
+  ]
+}
