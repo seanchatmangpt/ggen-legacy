@@ -31,6 +31,7 @@ scripts/autonomic_finish.py
 scripts/verify_autonomic_finish.py
 fixtures/autonomic/**
 tickets/GL-AUTO-001.md
+evidence/autonomic/GL-AUTO-001.json
 ```
 
 ## Required behavior
@@ -72,4 +73,33 @@ tickets/GL-AUTO-001.md
 python3 scripts/verify_autonomic_finish.py
 ```
 
-Successful execution establishes only `ALIVE` for the bounded local foundry fixture and verifier subject.
+Required stdout:
+
+```text
+GL_AUTO_001_VERIFIER_ALIVE
+```
+
+## Observed execution
+
+Direct Git transport was attempted first and failed with `BLOCKED:DNS_GITHUB_COM_UNRESOLVED`. The exact PR-head source capsule was then reconstructed through the GitHub connector as a dependency-closed sparse tree.
+
+Observed on Python `3.13.5`:
+
+```bash
+python3 -m py_compile scripts/autonomic_finish.py scripts/verify_autonomic_finish.py
+python3 scripts/autonomic_finish.py --input fixtures/autonomic/conversation.json --output /tmp/ggen-auto-output
+python3 scripts/verify_autonomic_finish.py
+```
+
+All commands exited `0`. The verifier emitted `GL_AUTO_001_VERIFIER_ALIVE`. Two manufacture runs matched byte-for-byte. Duplicate-concept, unknown-standing, and unknown-projection mutations were killed. The foundry manufactured seven outputs and surfaced ten unresolved decisions.
+
+The machine-readable execution receipt is `evidence/autonomic/GL-AUTO-001.json`.
+
+## Standing
+
+- source capsule: `ALIVE`
+- validation pack: `ALIVE`
+- bounded deterministic projection subject: `ALIVE`
+- arbitrary transcript understanding: `UNSUPPORTED`
+- autonomous repository actuation: `REFUSED:AMBIENT_ACTUATION`
+- complete conversation closure: `PARTIAL_ALIVE`
