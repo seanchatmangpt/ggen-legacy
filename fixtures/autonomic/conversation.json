@@ -1,0 +1,152 @@
+{
+  "subject": {
+    "id": "conversation:2026-08-03:ggen-first-principles",
+    "source": "bounded-design-conversation",
+    "base": "ggen#573-context"
+  },
+  "constraints": [
+    "zero unreceipted actuation",
+    "one active capability crown per lane",
+    "canonical graph owns projections",
+    "Claude Code is a reference operator, not standing authority",
+    "private recovery inventory must not enter public source control",
+    "stop on evidence failure or authority ambiguity"
+  ],
+  "projections": [
+    "architecture",
+    "working_backwards",
+    "claude",
+    "ppddl",
+    "gaps"
+  ],
+  "concepts": [
+    {
+      "id": "doctrine.chatman-equation",
+      "label": "Chatman Equation",
+      "kind": "doctrine",
+      "state": "decided",
+      "standing": "PARTIAL_ALIVE",
+      "summary": "A = μ(O*) and R = receipt(A); admitted observation precedes lawful manufacture.",
+      "authority": "CONSTITUTION",
+      "evidence": ["conversation-context"]
+    },
+    {
+      "id": "doctrine.combinatorial-maximalism",
+      "label": "Combinatorial Maximalism",
+      "kind": "design-doctrine",
+      "state": "decided",
+      "standing": "PARTIAL_ALIVE",
+      "summary": "Preserve the maximum bounded reversible possibility space before irreversible selection.",
+      "authority": "SELECT_ONLY",
+      "depends_on": ["doctrine.chatman-equation"],
+      "evidence": ["conversation-context"]
+    },
+    {
+      "id": "doctrine.combinatorial-minimalism",
+      "label": "Combinatorial Minimalism",
+      "kind": "production-doctrine",
+      "state": "decided",
+      "standing": "PARTIAL_ALIVE",
+      "summary": "After admission, choose the smallest sufficient lawful path to terminal standing.",
+      "authority": "CONSTRUCT_ONLY",
+      "depends_on": ["doctrine.combinatorial-maximalism"],
+      "evidence": ["conversation-context"]
+    },
+    {
+      "id": "production.toyota-code-system",
+      "label": "Toyota Code Production System",
+      "kind": "production-system",
+      "state": "proposed",
+      "standing": "UNKNOWN",
+      "summary": "Pull-based one-piece capability flow with WIP limits, jidoka, andon, receipts, and independent acceptance.",
+      "authority": "PRODUCTION_POLICY",
+      "depends_on": ["doctrine.combinatorial-minimalism"],
+      "decision": "freeze the first production-lane invariants and measurable takt",
+      "evidence": ["conversation-context"]
+    },
+    {
+      "id": "operator.claude-reference",
+      "label": "Claude Code Reference Operator",
+      "kind": "operator",
+      "state": "proposed",
+      "standing": "UNKNOWN",
+      "summary": "Claude reconstructs, challenges, and iterates system understanding without ambient actuation or self-certification.",
+      "authority": "SELECT_AND_CONSTRUCT",
+      "depends_on": ["production.toyota-code-system"],
+      "decision": "admit the first machine-readable operator model and permission profile",
+      "evidence": ["conversation-context", "Anthropic best-practice research"]
+    },
+    {
+      "id": "protocol.multilingual",
+      "label": "Multilingual Typed Protocol",
+      "kind": "protocol",
+      "state": "proposed",
+      "standing": "UNKNOWN",
+      "summary": "Chinese tokens type strategic planning, Japanese tokens type standardized automation, and Korean tokens type bounded execution.",
+      "authority": "NAMESPACE",
+      "depends_on": ["operator.claude-reference"],
+      "decision": "freeze the minimal canonical token registry and collision rules",
+      "evidence": ["conversation-context"]
+    },
+    {
+      "id": "protocol.genesis-naming",
+      "label": "Genesis Naming and CLI Law",
+      "kind": "identity-protocol",
+      "state": "proposed",
+      "standing": "UNKNOWN",
+      "summary": "Observe, distinguish, identify invariants, then derive a four-character CLI token using first-letter plus first-three-letter compression.",
+      "authority": "IDENTITY",
+      "depends_on": ["protocol.multilingual"],
+      "decision": "name the clean successor only after its invariant set is admitted",
+      "evidence": ["conversation-context"]
+    },
+    {
+      "id": "planning.ppddl-refactor",
+      "label": "PPDDL Refactor Planner",
+      "kind": "planner",
+      "state": "proposed",
+      "standing": "UNKNOWN",
+      "summary": "Represent the restart as bounded capability states, actions, costs, probabilities, WIP, verification, and self-hosting goals.",
+      "authority": "SELECT_ONLY",
+      "depends_on": ["production.toyota-code-system", "protocol.genesis-naming"],
+      "decision": "admit the minimal domain predicates and first reference-product problem",
+      "evidence": ["conversation-context"]
+    },
+    {
+      "id": "bootstrap.hygen",
+      "label": "Hygen Bootstrap Lower Bound",
+      "kind": "bootstrap",
+      "state": "proposed",
+      "standing": "UNKNOWN",
+      "summary": "Use discover, route, bind, render, and write to scaffold the minimum self-hosting ggen successor, then retire Hygen from production.",
+      "authority": "CONSTRUCT_ONLY",
+      "depends_on": ["planning.ppddl-refactor"],
+      "decision": "select the exact minimal source capsule that Hygen must scaffold",
+      "evidence": ["conversation-context"]
+    },
+    {
+      "id": "recovery.twelve-steps",
+      "label": "Twelve-Step Vibecoding Boundary",
+      "kind": "human-boundary",
+      "state": "admitted",
+      "standing": "PARTIAL_ALIVE",
+      "summary": "Canonical Workaholics Anonymous Steps remain external authority; machines may support technical boundaries but cannot sponsor, diagnose, amend, or certify recovery.",
+      "authority": "HUMAN_ONLY",
+      "depends_on": ["production.toyota-code-system"],
+      "decision": "retain the existing privacy and non-diagnosis refusals",
+      "evidence": ["conversation-context", "canonical WA source"]
+    },
+    {
+      "id": "product.first-crown",
+      "label": "First Reference Capability Crown",
+      "kind": "product",
+      "state": "proposed",
+      "standing": "UNKNOWN",
+      "summary": "One customer capability flows from demand through ontology, planning, manufacture, BRCE, receipt, replay, and independent standing.",
+      "authority": "BRCE_REQUIRED",
+      "depends_on": ["bootstrap.hygen", "operator.claude-reference", "planning.ppddl-refactor"],
+      "decision": "choose the single first customer capability and acceptance consequence",
+      "evidence": ["conversation-context"]
+    }
+  ]
+}
