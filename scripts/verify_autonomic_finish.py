@@ -1,91 +1,29 @@
 #!/usr/bin/env python3
-"""Dependency-free verifier for GL-AUTO-001."""
-
 from __future__ import annotations
-
-import filecmp
-import json
-import shutil
-import subprocess
-import sys
-import tempfile
+import filecmp,json,subprocess,sys,tempfile
 from pathlib import Path
-
-ROOT = Path(__file__).resolve().parents[1]
-SCRIPT = ROOT / "scripts" / "autonomic_finish.py"
-FIXTURE = ROOT / "fixtures" / "autonomic" / "conversation.json"
-
-
-def run(input_path: Path, output: Path) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
-        [sys.executable, str(SCRIPT), "--input", str(input_path), "--output", str(output)],
-        text=True,
-        capture_output=True,
-        check=False,
-    )
-
-
-def compare_trees(left: Path, right: Path) -> None:
-    comparison = filecmp.dircmp(left, right)
-    if comparison.left_only or comparison.right_only or comparison.funny_files:
-        raise AssertionError("REPLAY_FILE_SET_MISMATCH")
-    for filename in comparison.common_files:
-        if (left / filename).read_bytes() != (right / filename).read_bytes():
-            raise AssertionError(f"REPLAY_BYTES_MISMATCH:{filename}")
-    for dirname in comparison.common_dirs:
-        compare_trees(left / dirname, right / dirname)
-
-
-def write_case(root: Path, payload: dict) -> Path:
-    path = root / "case.json"
-    path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
-    return path
-
-
-def main() -> int:
-    with tempfile.TemporaryDirectory(prefix="ggen-auto-") as temp:
-        temp_root = Path(temp)
-        first = temp_root / "first"
-        second = temp_root / "second"
-        a = run(FIXTURE, first)
-        b = run(FIXTURE, second)
-        assert a.returncode == 0, a.stderr
-        assert b.returncode == 0, b.stderr
-        compare_trees(first, second)
-
-        receipt = json.loads((first / "RECEIPT.json").read_text(encoding="utf-8"))
-        assert receipt["claim_ceiling"] == "DETERMINISTIC_CONVERSATION_PROJECTION_ONLY"
-        assert receipt["gap_count"] > 0
-        assert receipt["standing"] == "PARTIAL_ALIVE"
-        assert (first / "CLAUDE.md").exists()
-        assert (first / "ppddl" / "problem.pddl").exists()
-
-        base = json.loads(FIXTURE.read_text(encoding="utf-8"))
-
-        duplicate = json.loads(json.dumps(base))
-        duplicate["concepts"].append(dict(duplicate["concepts"][0]))
-        result = run(write_case(temp_root, duplicate), temp_root / "duplicate")
-        assert result.returncode == 2
-        assert "REFUSED:DUPLICATE_CONCEPT" in result.stderr
-
-        unknown = json.loads(json.dumps(base))
-        unknown["concepts"][0]["standing"] = "DONE"
-        result = run(write_case(temp_root, unknown), temp_root / "unknown")
-        assert result.returncode == 2
-        assert "REFUSED:UNKNOWN_STANDING" in result.stderr
-
-        bad_projection = json.loads(json.dumps(base))
-        bad_projection["projections"] = ["execute"]
-        result = run(write_case(temp_root, bad_projection), temp_root / "projection")
-        assert result.returncode == 2
-        assert "REFUSED:UNKNOWN_PROJECTION" in result.stderr
-
-        shutil.rmtree(first)
-        shutil.rmtree(second)
-
-    print("GL_AUTO_001_VERIFIER_ALIVE")
-    return 0
-
-
-if __name__ == "__main__":
-    raise SystemExit(main())
+ROOT=Path(__file__).resolve().parents[1]; SCRIPT=ROOT/'scripts/autonomic_finish.py'; FIXTURE=ROOT/'fixtures/autonomic/conversation.json'
+def run(inp,out): return subprocess.run([sys.executable,str(SCRIPT),'--input',str(inp),'--output',str(out)],text=True,capture_output=True)
+def cmp(a,b):
+ d=filecmp.dircmp(a,b); assert not(d.left_only or d.right_only or d.funny_files)
+ for f in d.common_files: assert (a/f).read_bytes()==(b/f).read_bytes(),f
+ for x in d.common_dirs: cmp(a/x,b/x)
+def case(root,p,n): q=root/f'{n}.json';q.write_text(json.dumps(p,ensure_ascii=False));return q
+def main():
+ with tempfile.TemporaryDirectory() as t:
+  t=Path(t);a=t/'a';b=t/'b';ra=run(FIXTURE,a);rb=run(FIXTURE,b);assert ra.returncode==rb.returncode==0,(ra.stderr,rb.stderr);cmp(a,b)
+  r=json.loads((a/'RECEIPT.json').read_text());assert r['standing']=='ALIVE' and r['gap_count']==0
+  required=['.claude/settings.json','.claude/hooks/protocol_andon.py','.claude/agents/strategist.md','.claude/skills/close-capability/SKILL.md','production/KANBAN.json','genesis/NAMING.json','schemas/admitted-decision.schema.json','ppddl/domain.pddl','ppddl/problem.pddl']
+  for p in required: assert (a/p).exists(),p
+  base=json.loads(FIXTURE.read_text())
+  muts=[]
+  x=json.loads(json.dumps(base));x['concepts'].append(dict(x['concepts'][0]));muts.append((x,'DUPLICATE_CONCEPT'))
+  x=json.loads(json.dumps(base));x['concepts'][0]['standing']='DONE';muts.append((x,'UNKNOWN_STANDING'))
+  x=json.loads(json.dumps(base));x['projections']=['execute'];muts.append((x,'UNKNOWN_PROJECTION'))
+  x=json.loads(json.dumps(base));x['system']['production_lane']['wip_limit']=2;muts.append((x,'WIP_LIMIT_NOT_ONE'))
+  x=json.loads(json.dumps(base));x['system']['naming']['pairs'][1]['token']=x['system']['naming']['pairs'][0]['token'];muts.append((x,'INVALID_CLI_TOKEN'))
+  x=json.loads(json.dumps(base));del x['concepts'][0]['decision']['acceptance'];muts.append((x,'DECISION_MISSING_ACCEPTANCE'))
+  for i,(p,needle) in enumerate(muts):
+   z=run(case(t,p,str(i)),t/f'm{i}');assert z.returncode==2 and needle in z.stderr,(needle,z.stderr)
+ print('GL_AUTO_001_CROWN_ALIVE');return 0
+if __name__=='__main__':raise SystemExit(main())
