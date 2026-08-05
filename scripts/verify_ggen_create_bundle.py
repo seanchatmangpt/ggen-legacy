@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import stat
 from typing import Any
 
 MANIFEST_SCHEMA = "ggen-create-legacy-manifest/1"
@@ -55,6 +56,10 @@ def digest_file(path: Path) -> str:
     return "sha256:" + hasher.hexdigest()
 
 
+def file_mode(path: Path) -> str:
+    return f"{stat.S_IMODE(path.stat().st_mode):04o}"
+
+
 def read_object(path: Path) -> dict[str, Any]:
     try:
         value = json.loads(path.read_text(encoding="utf-8"))
@@ -65,26 +70,49 @@ def read_object(path: Path) -> dict[str, Any]:
     return value
 
 
-def bundle_outputs(root: Path) -> dict[str, str]:
-    return {
-        path.relative_to(root).as_posix(): digest_file(path)
-        for path in sorted(root.rglob("*"))
-        if path.is_file() and path.name != "receipt.json"
-    }
+def bundle_outputs(root: Path) -> tuple[dict[str, str], dict[str, str], list[dict[str, str]]]:
+    digests: dict[str, str] = {}
+    modes: dict[str, str] = {}
+    problems: list[dict[str, str]] = []
+    for path in sorted(root.rglob("*")):
+        if path.name == "receipt.json":
+            continue
+        relative = path.relative_to(root).as_posix()
+        if path.is_symlink():
+            problems.append({"path": relative, "reason": "symlink"})
+            continue
+        try:
+            metadata = path.lstat()
+        except OSError:
+            problems.append({"path": relative, "reason": "stat"})
+            continue
+        if stat.S_ISDIR(metadata.st_mode):
+            continue
+        if not stat.S_ISREG(metadata.st_mode):
+            problems.append({"path": relative, "reason": "special"})
+            continue
+        digests[relative] = digest_file(path)
+        modes[relative] = f"{stat.S_IMODE(metadata.st_mode):04o}"
+    return digests, modes, problems
 
 
-def observed_subject_paths(subject: Path, bundle: Path) -> set[str]:
+def observed_subject_paths(
+    subject: Path,
+    bundle: Path,
+) -> tuple[set[str], list[dict[str, str]]]:
     bundle = bundle.resolve()
     result: set[str] = set()
+    problems: list[dict[str, str]] = []
     for current, dirs, files in os.walk(subject, topdown=True, followlinks=False):
         current_path = Path(current)
         kept: list[str] = []
         for name in sorted(dirs):
             candidate = current_path / name
+            relative = candidate.relative_to(subject).as_posix()
             if name in EXCLUDED_DIRS:
                 continue
             if candidate.is_symlink():
-                result.add(candidate.relative_to(subject).as_posix() + "/@symlink")
+                problems.append({"path": relative, "reason": "symlink"})
                 continue
             resolved = candidate.resolve()
             if resolved == bundle or resolved.is_relative_to(bundle):
@@ -93,11 +121,22 @@ def observed_subject_paths(subject: Path, bundle: Path) -> set[str]:
         dirs[:] = kept
         for name in sorted(files):
             path = current_path / name
-            resolved = path.resolve()
-            if resolved.is_relative_to(bundle):
+            relative = path.relative_to(subject).as_posix()
+            if path.resolve().is_relative_to(bundle):
                 continue
-            result.add(path.relative_to(subject).as_posix())
-    return result
+            if path.is_symlink():
+                problems.append({"path": relative, "reason": "symlink"})
+                continue
+            try:
+                mode = path.lstat().st_mode
+            except OSError:
+                problems.append({"path": relative, "reason": "stat"})
+                continue
+            if not stat.S_ISREG(mode):
+                problems.append({"path": relative, "reason": "special"})
+                continue
+            result.add(relative)
+    return result, problems
 
 
 def verify(
@@ -113,7 +152,8 @@ def verify(
     receipt = read_object(bundle / "receipt.json")
 
     expected_outputs = receipt.get("outputs")
-    actual_outputs = bundle_outputs(bundle)
+    expected_modes = receipt.get("output_modes")
+    actual_outputs, actual_modes, output_problems = bundle_outputs(bundle)
     receipt_payload = {
         key: value
         for key, value in receipt.items()
@@ -127,6 +167,7 @@ def verify(
         "files": manifest_files,
     }
     producer = authority.get("producer", {})
+    producer_identity = manifest.get("producer_identity")
     claims = receipt.get("claims", {})
 
     checks: dict[str, bool] = {
@@ -143,6 +184,16 @@ def verify(
             and producer.get("accepted_contract_schema") == CONTRACT_SCHEMA
             and producer.get("accepted_receipt_schema") == RECEIPT_SCHEMA
         ),
+        "producer_identity": (
+            isinstance(producer_identity, dict)
+            and producer_identity == contract.get("producer_identity")
+            and producer_identity == receipt.get("producer_identity")
+            and producer_identity.get("name") == "ggen-create"
+            and producer_identity.get("repository") == producer.get("repository")
+            and producer_identity.get("commit") == producer.get("commit")
+            and producer_identity.get("version") == producer.get("version")
+        ),
+        "output_regular_files": not output_problems,
         "output_set": (
             isinstance(expected_outputs, dict)
             and set(actual_outputs) == set(expected_outputs)
@@ -150,6 +201,17 @@ def verify(
         "output_digests": (
             isinstance(expected_outputs, dict)
             and actual_outputs == expected_outputs
+        ),
+        "output_modes": (
+            isinstance(expected_modes, dict)
+            and actual_modes == expected_modes
+        ),
+        "bundle_digest": (
+            digest_json({
+                "outputs": actual_outputs,
+                "output_modes": actual_modes,
+            })
+            == receipt.get("bundle_digest")
         ),
         "receipt_digest": (
             digest_json(receipt_payload) == receipt.get("receipt_digest")
@@ -172,34 +234,36 @@ def verify(
         ),
     }
 
-    drift: list[dict[str, str]] = []
+    drift: list[dict[str, str]] = list(output_problems)
     if subject_root is not None:
         subject = subject_root.resolve()
+        subject_drift: list[dict[str, str]] = []
         admitted_paths = {
             item.get("path")
             for item in manifest_files
             if isinstance(item, dict) and isinstance(item.get("path"), str)
         }
-        observed_paths = observed_subject_paths(subject, bundle)
+        observed_paths, subject_problems = observed_subject_paths(subject, bundle)
+        subject_drift.extend(subject_problems)
         for item in manifest_files:
             path = subject / item["path"]
-            if path.is_symlink():
-                drift.append({"path": item["path"], "reason": "symlink"})
-            elif not path.is_file():
-                drift.append({"path": item["path"], "reason": "missing"})
+            if item["path"] not in observed_paths:
+                subject_drift.append({"path": item["path"], "reason": "missing"})
             elif digest_file(path) != item.get("sha256"):
-                drift.append({"path": item["path"], "reason": "digest"})
+                subject_drift.append({"path": item["path"], "reason": "digest"})
+            elif file_mode(path) != item.get("mode"):
+                subject_drift.append({"path": item["path"], "reason": "mode"})
+            elif path.stat().st_size != item.get("size"):
+                subject_drift.append({"path": item["path"], "reason": "size"})
         for path in sorted(observed_paths - admitted_paths):
-            drift.append({"path": path, "reason": "unadmitted"})
-        checks["subject_replay"] = not drift
+            subject_drift.append({"path": path, "reason": "unadmitted"})
+        drift.extend(subject_drift)
+        checks["subject_replay"] = not subject_drift
 
     valid = all(checks.values())
     return {
         "schema": "ggen-legacy-ggen-create-verification/1",
-        "producer": {
-            "repository": producer.get("repository"),
-            "commit": producer.get("commit"),
-        },
+        "producer": producer_identity,
         "bundle": str(bundle),
         "subject": str(subject_root.resolve()) if subject_root else None,
         "checks": checks,
