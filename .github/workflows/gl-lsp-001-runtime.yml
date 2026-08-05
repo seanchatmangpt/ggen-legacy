@@ -11,6 +11,7 @@ on:
       - "authority/lsp-contract.json"
       - "scripts/verify_lsp_contract.py"
       - "scripts/ci_step_receipt.py"
+      - "scripts/tests/test_ci_step_receipt.py"
       - ".github/workflows/gl-lsp-001-runtime.yml"
   push:
     branches: [main]
@@ -23,6 +24,7 @@ on:
       - "authority/lsp-contract.json"
       - "scripts/verify_lsp_contract.py"
       - "scripts/ci_step_receipt.py"
+      - "scripts/tests/test_ci_step_receipt.py"
       - ".github/workflows/gl-lsp-001-runtime.yml"
   workflow_dispatch:
 
@@ -49,6 +51,9 @@ jobs:
 
       - name: Assert exact head
         run: test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+
+      - name: Verify receipt laws
+        run: python3 -m unittest scripts/tests/test_ci_step_receipt.py
 
       - name: Initialize exact-head receipt
         run: |
