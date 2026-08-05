@@ -1,0 +1,20 @@
+{
+  "schema": "ggen-legacy.receiving-contract.v5",
+  "subject": "cyberpunk-tv-platform",
+  "source": {
+    "repository": "seanchatmangpt/ggen",
+    "base_sha": "8351af4c5bbbf60bd99ab8417752a1762c6ea4e3",
+    "head_sha": "1780c205a72a1ee0e8be02f3eb500ee00b5ecea2",
+    "branch": "agent/cyberpunk-tv-platform-v1",
+    "pull_request": 555,
+    "path": "packs/cyberpunk-tv-platform"
+  },
+  "canonical_authority": ["ontology/platform.ttl","ontology/platform-shapes.ttl","ontology/vision2030.ttl","rules/escrow.n3","rules/settlement.dl","queries","templates","fixtures","verify","ggen.toml","pack.toml"],
+  "required_paths": ["pack.toml","ggen.toml","README.md","ontology/platform.ttl","ontology/platform-shapes.ttl","ontology/vision2030.ttl","rules/escrow.n3","rules/settlement.dl","fixtures/valid-session.ttl","fixtures/refused-session.ttl","queries/extract-platform.rq","queries/extract-world.rq","queries/extract-capabilities.rq","queries/extract-projections.rq","queries/extract-runtime.rq","queries/extract-governance.rq","queries/extract-rights.rq","queries/extract-rdf.rq","queries/extract-vision2030.rq","verify/chicago-tdd.mjs","verify/polyglot_validate.py","verify/polyglot_validate.sh","templates/package.json.tera","templates/index.html.tera","templates/main.js.tera","templates/style.css.tera","templates/world.json.tera","templates/world.ttl.tera","templates/capabilities.json.tera","templates/vision2030.json.tera","templates/control-plane.mjs.tera","templates/projections.json.tera","templates/runtime-config.json.tera","templates/governance.json.tera","templates/rights.json.tera","templates/system.mmd.tera","templates/settlement.rq.tera","templates/manifest.webmanifest.tera","templates/service-worker.js.tera","templates/rust-toolchain.toml.tera","templates/Cargo.toml.tera","templates/lib.rs.tera","templates/receipt.rs.tera","templates/verify.mjs.tera","templates/replay.mjs.tera","templates/e2e.mjs.tera","templates/README.md.tera",".github/workflows/cyberpunk-tv-platform.yml"],
+  "required_correspondence": ["rdf-to-sparql","sparql-to-ggen","ggen-to-rust-wasm","rdf-to-unrdf-oxigraph","rdf-to-mermaid-mmdio","rdf-to-deckgl","vision2030-to-doctor-wizard-telco-plan","capability-graph-to-chicago-tdd","all-profiles-to-exhaustive-validation","python-to-semantic-contract-verification","bash-to-polyglot-orchestration","negative-control-to-autonomic-classification","procedure-to-settlement-query","interaction-to-broker-to-receipt","tree-to-blake3-receipt","receipt-to-replay"],
+  "receipt_algorithm": "blake3-256",
+  "generated_outputs_are_authority": false,
+  "implementation_standing": "UNKNOWN",
+  "release_admission": false,
+  "sunset_admission": false
+}

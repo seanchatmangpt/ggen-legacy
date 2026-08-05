@@ -1,0 +1,33 @@
+{
+  "schema": "ggen-legacy.verifier-spec.v2",
+  "id": "cyberpunk-tv-platform-independent-verifier",
+  "subject": "cyberpunk-tv-platform",
+  "source_head": "1d384907883e6458372a2da8f3de63ca60890633",
+  "self_certification": false,
+  "checks": [
+    {"id":"exact-source","class":"identity","command":"git rev-parse HEAD","expected":"1d384907883e6458372a2da8f3de63ca60890633","required":true},
+    {"id":"required-source-paths","class":"authority","command":"verify_source.py","expected":"missing_paths=0","required":true},
+    {"id":"capability-dispositions","class":"authority","expected":"count=22;unknown_dispositions=0","required":true},
+    {"id":"manifest-admission","class":"admission","expected":"current_schema=true;strict_mode=true;shacl_enabled=true","required":true},
+    {"id":"query-contract","class":"admission","expected":"explicit_projection=true;ordered=true","required":true},
+    {"id":"double-manufacture","class":"manufacture","command":"ggen sync; digest; ggen sync; digest; cmp","expected":"NO_GENERATED_DRIFT","required":true},
+    {"id":"rust-tests","class":"runtime","command":"cargo test --manifest-path generated/wasm/Cargo.toml","expected":"exit=0","required":true},
+    {"id":"wasm-build","class":"runtime","command":"wasm-pack build generated/wasm --target web --release","expected":"exit=0","required":true},
+    {"id":"browser-build","class":"runtime","command":"npm run build","expected":"exit=0","required":true},
+    {"id":"browser-e2e","class":"execution","command":"npm run e2e","expected":"browser=EXECUTED;console_errors=0","required":true},
+    {"id":"semantic-correspondence","class":"equivalence","expected":"UNRDF node set equals deck.gl node projection","required":true},
+    {"id":"projection-correspondence","class":"equivalence","expected":"Mermaid and deck.gl identities derive from the same RDF subject","required":true},
+    {"id":"positive-escrow","class":"behavior","expected":"valid-session=adopted-awaiting-brce","required":true},
+    {"id":"negative-escrow","class":"falsifier","expected":"refused-session!=adopted","required":true},
+    {"id":"broker-receipts","class":"causality","expected":"declared material transitions have intent plus consequence or refusal receipt","required":true},
+    {"id":"tree-receipt","class":"receipt","command":"npm run verify","expected":"algorithm=blake3-256","required":true},
+    {"id":"replay","class":"replay","command":"npm run replay","expected":"REPLAY_MATCH","required":true}
+  ],
+  "standing_rule": {
+    "PARTIAL_ALIVE": "all required checks pass for the declared browser/TV slice",
+    "ALIVE": "PARTIAL_ALIVE plus independent crown and zero unknown required capability standings",
+    "BUILD_BROKEN": "a declared manufacture, build, execution, receipt, or replay command ran and failed",
+    "BLOCKED": "a required source, toolchain, dependency, permission, or evidence surface was unavailable",
+    "UNKNOWN": "required checks were not executed or evidence was insufficient"
+  }
+}
