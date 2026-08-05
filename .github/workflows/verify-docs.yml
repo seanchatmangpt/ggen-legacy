@@ -1,15 +1,45 @@
-name: Verify ggen-legacy v26.8.1 assurance
+name: Deep ggen-legacy assurance replay
 
 on:
   pull_request:
     branches: [main]
+    paths:
+      - 'AGENTS.md'
+      - 'README.md'
+      - 'RELEASE_CONTROL.md'
+      - 'ggen.toml'
+      - 'product/**'
+      - 'architecture/**'
+      - 'strategy/**'
+      - 'docs/**'
+      - '!docs/lsp/**'
+      - 'governance/**'
+      - 'security/**'
+      - 'operations/**'
+      - 'procurement/**'
+      - 'authority/**'
+      - '!authority/lsp-contract.json'
+      - 'foundry/**'
+      - 'ontology/**'
+      - 'templates/**'
+      - 'packs/ggen-legacy-assurance-pack/**'
+      - 'appliance/**'
+      - 'schemas/**'
+      - '!schemas/migration-manifest.schema.json'
+      - 'fixtures/**'
+      - 'projects/001/**'
+      - 'scripts/verify_docs.py'
+      - 'scripts/verify_foundry_provenance.py'
+      - 'scripts/verify_foundry_bootstrap.py'
+      - 'scripts/verify_offline_transport.py'
+      - '.github/workflows/verify-docs.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ggen-legacy-v26.8.1-${{ github.event.pull_request.head.sha || github.sha }}
+  group: ggen-legacy-deep-assurance-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -21,7 +51,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          fetch-depth: 0
+          fetch-depth: 1
 
       - name: Assert exact source coordinate
         shell: bash
@@ -244,7 +274,7 @@ jobs:
       - name: Upload exact-head assurance evidence
         uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
         with:
-          name: ggen-legacy-v26.8.1-assurance-${{ github.event.pull_request.head.sha || github.sha }}
+          name: ggen-legacy-deep-assurance-${{ github.event.pull_request.head.sha || github.sha }}
           path: |
             evidence/local-docs-verifier.json
             evidence/foundry-provenance-verifier.json

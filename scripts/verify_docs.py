@@ -80,7 +80,6 @@ REQUIRED = [
     "tests/fixtures/engagement.reference.json",
 ]
 FORBIDDEN_DIRS = {
-    "src",
     "crates",
     "packages",
     "cmd",
@@ -90,6 +89,16 @@ FORBIDDEN_DIRS = {
     "services",
     "runtime",
 }
+ADMITTED_SOURCE_REQUIRED = (
+    "Cargo.toml",
+    "Cargo.lock",
+    "rust-toolchain.toml",
+    "src/lib.rs",
+    "src/main.rs",
+    "authority/lsp-contract.json",
+    "scripts/verify_lsp_contract.py",
+    "tickets/GL-LSP-001.md",
+)
 STATES = {
     "PARTIAL_ALIVE",
     "ALIVE",
@@ -134,6 +143,28 @@ def main() -> int:
             "passed": not any(
                 item["code"] == "UNADMITTED_TOP_LEVEL_SOURCE" for item in errors
             ),
+        }
+    )
+
+    admitted_source_failures: list[str] = []
+    if (ROOT / "src").exists():
+        for rel in ADMITTED_SOURCE_REQUIRED:
+            if not (ROOT / rel).is_file():
+                admitted_source_failures.append(rel)
+                fail("ADMITTED_SOURCE_AUTHORITY_MISSING", rel)
+        doctrine = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+        if "active executable ticket: `GL-LSP-001`" not in doctrine:
+            admitted_source_failures.append("AGENTS.md:GL-LSP-001")
+            fail("ADMITTED_SOURCE_TICKET_MISSING", "GL-LSP-001")
+        if "protocol runtime: `lsp-max`" not in doctrine:
+            admitted_source_failures.append("AGENTS.md:lsp-max")
+            fail("ADMITTED_SOURCE_PROTOCOL_MISSING", "lsp-max")
+    checks.append(
+        {
+            "id": "admitted-source-boundary",
+            "passed": not admitted_source_failures,
+            "required": len(ADMITTED_SOURCE_REQUIRED),
+            "failures": admitted_source_failures,
         }
     )
 
