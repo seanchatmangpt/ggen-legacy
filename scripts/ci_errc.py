@@ -56,7 +56,6 @@ LANE_RULES: dict[str, dict[str, tuple[str, ...]]] = {
             "migrations/ggen-v26.8.1/**",
             "scripts/verify_ggen_v26_8_1_migration.py",
             "schemas/migration-manifest.schema.json",
-            ".github/workflows/verify-ggen-v26-8-1-migration.yml",
         ),
         "exclude": (),
     },

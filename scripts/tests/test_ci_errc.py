@@ -34,6 +34,12 @@ class CiErrcTests(unittest.TestCase):
             ["migrations/ggen-v26.8.1/migration-manifest.json"],
         )
 
+    def test_migration_workflow_definition_is_fast_only(self) -> None:
+        path = ".github/workflows/verify-ggen-v26-8-1-migration.yml"
+        routed = ci_errc.classify_paths([path])
+        self.assertEqual(routed["migration_deep"], [])
+        self.assertEqual(routed["fast_only"], [path])
+
     def test_invalid_changed_json_is_typed_failure(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
