@@ -17,7 +17,7 @@ name = "ggen_legacy_lsp"
 path = "src/lib.rs"
 
 [dependencies]
-lsp-max = { git = "https://github.com/seanchatmangpt/lsp-max", rev = "220d3251e959f6a58ce0311e995b31a85f98240c" }
+lsp-max = { git = "https://github.com/seanchatmangpt/lsp-max", rev = "c1cab89bf54fcc9100b3ce75580b3cc3aa8eb852" }
 tokio = { version = "1", features = ["io-std", "io-util", "macros", "rt-multi-thread", "sync"] }
 tracing = "0.1"
 tracing-subscriber = "0.3"

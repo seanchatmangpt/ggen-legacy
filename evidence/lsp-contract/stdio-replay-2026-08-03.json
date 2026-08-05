@@ -1,0 +1,50 @@
+{
+  "schema": "ggen.lsp.stdio-replay/1",
+  "date": "2026-08-03",
+  "binary": "target/debug/ggen-lsp",
+  "toolchain": "nightly-2026-06-22",
+  "lsp_max_rev": "c1cab89bf54fcc9100b3ce75580b3cc3aa8eb852 (draft PR seanchatmangpt/lsp-max#22, unmerged -- see note below)",
+  "runs": 2,
+  "deterministic_across_runs": true,
+  "sequence": [
+    "initialize",
+    "initialized",
+    "textDocument/didOpen (invalid ggen.toml, missing [project])",
+    "textDocument/didChange (fixed ggen.toml)",
+    "textDocument/prepareTypeHierarchy",
+    "textDocument/didClose",
+    "shutdown",
+    "exit"
+  ],
+  "observed": {
+    "exit_code": 0,
+    "server_info": { "name": "ggen-lsp", "version": "26.8.5" },
+    "capabilities_advertised": [
+      "callHierarchyProvider", "codeActionProvider", "codeLensProvider",
+      "completionProvider", "definitionProvider", "documentFormattingProvider",
+      "documentRangeFormattingProvider", "documentSymbolProvider",
+      "foldingRangeProvider", "hoverProvider", "inlayHintProvider",
+      "referencesProvider", "renameProvider", "semanticTokensProvider",
+      "textDocumentSync", "workspaceSymbolProvider"
+    ],
+    "diagnostic_codes_after_open": ["GGEN-MANIFEST-001", "LSPMAX-ANDON-PUSH-MISSING"],
+    "diagnostics_cleared_after_fix": true,
+    "diagnostics_cleared_on_close": true,
+    "prepare_type_hierarchy_response": []
+  },
+  "findings_resolved": [
+    {
+      "id": "GL-LSP-001-F1",
+      "status": "resolved",
+      "summary": "Process previously appeared to hang (SIGKILL after 5s) following shutdown+exit+stdin-close.",
+      "root_cause": "Two layered causes, both now understood. (1) The FIRST replay harness only drained notifications; it never answered lsp-max's client/registerCapability request (sent during `initialized` for dynamic type-hierarchy registration), so a server-side task awaiting that response never resolved, blocking lsp-max's Server::serve internal join! forever -- not a real server defect, a test-harness gap, fixed here. (2) Independently, even with a fully protocol-correct client, the process exited with code 1 instead of 0: lsp-max's Server::serve signals a *lawful* shutdown by returning Err(ExitedError(0)), and ggen-legacy's own src/main.rs blindly `?`-propagated any Err (including a lawful ExitedError(0)) as a generic anyhow failure, which #[tokio::main]'s default Termination impl always turns into exit code 1. Fixed in src/main.rs: destructure ExitedError explicitly and call std::process::exit(code) instead of `?`-propagating it."
+    },
+    {
+      "id": "GL-LSP-001-F2",
+      "status": "explained, not a receiver bug",
+      "summary": "LSPMAX-ANDON-PUSH-MISSING fires alongside GGEN-MANIFEST-001 on every didOpen that produces an ERROR-severity diagnostic.",
+      "root_cause": "lsp-max's own Client::publish_diagnostics (src/service/client/lsp_methods.rs) unconditionally flags any ERROR-severity diagnostic whose `source` field is not literally \"lsp-max-andon\" and appends this synthetic diagnostic. ggen-legacy's diagnostics correctly set source: \"ggen-lsp\" (standard LSP practice). The framework's own code comment ('Track the pushes we made in the inner state, or simply assume... For now, if there is a blocking diagnostic but no push was tracked...') indicates this Andon-push registration API is not yet finished upstream. Not fixable from ggen-legacy's authored boundary; tracked as an upstream lsp-max gap, not a receiver defect."
+    }
+  ],
+  "conclusion": "Real stdio initialize/open/change/hierarchy/close/shutdown/exit exchange executes correctly, deterministically (2/2 runs identical), and exits with the lawful status code 0. This satisfies GL-LSP-001's full acceptance falsifier: 'real stdio initialize/open/change/close and hierarchy requests return lawful responses', including clean process termination."
+}
