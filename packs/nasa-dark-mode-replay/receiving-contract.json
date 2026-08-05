@@ -1,0 +1,83 @@
+{
+  "manufacture": {
+    "artifactCount": 19,
+    "generatedRoot": "15be96bf05c1ecb158e1cf4d49f58f4ad3109dc0647d61e0601b663d694ab3ed",
+    "replay": "REPLAY_MATCH",
+    "schema": "ggen.nasa-dark-mode.manufacture.v1"
+  },
+  "noCi": {
+    "aggregate": "PARTIAL_ALIVE",
+    "browserScreenshotSha256": "2b949f03f8b670d9741c1f8a30f614f81d24baafcc29afc8208867716a6ac543",
+    "exhaustiveWasmProfiles": 2072,
+    "receiptDigest": "b0df20d5c83e47e060700c3a80622b8578404f5cc9f5bb233f370351b64bb417",
+    "releaseAdmission": false,
+    "requiredAlive": [
+      "sourceCapsule",
+      "deterministicManufacture",
+      "wasmControlCore",
+      "browserDom",
+      "browserWebGL2",
+      "rokuSourceSimulation",
+      "rokuPackage",
+      "receiptReplay"
+    ],
+    "requiredBlocked": {
+      "deckGlRuntime": "BLOCKED_DEPENDENCY_TRANSPORT",
+      "rokuPhysicalDevice": "BLOCKED_DEVICE_REQUIRED",
+      "rustImplementation": "BLOCKED_TOOLCHAIN_REQUIRED"
+    },
+    "rokuPackageSha256": "fb53ededddd5785c7c8fdd10cdcfc7195b684e7dec983f2631b2dd9a2466dc25",
+    "schema": "ggen.nasa-dark-mode.no-ci-receipt.v1",
+    "sourceAssertions": 94,
+    "wasmSha256": "c8e0dda1232a5631cadbc929e23212c30d007ede2922af5d0ce89307170cff97"
+  },
+  "releaseAdmission": false,
+  "runtime": {
+    "assertionsAtLeast": 94,
+    "deviceBound": {
+      "browserWebGL2": "EXECUTED_LOCALLY",
+      "deckGlRuntime": "BLOCKED_DEPENDENCY_TRANSPORT",
+      "rokuPhysicalDevice": "BLOCKED_DEVICE_REQUIRED"
+    },
+    "failed": 0,
+    "missionFeedDigest": "ed041ac7efdb54c8aaabe2574ef5f1998570bb48e470bb57f23aa88bebfe0ade",
+    "requiredAlive": [
+      "sourceCapsule",
+      "eonetTransform",
+      "deckLayerPlan",
+      "rokuStateMachine",
+      "rokuPackage",
+      "browserSource"
+    ],
+    "verifierSchema": "ggen.nasa-dark-mode.verifier-report.v1"
+  },
+  "schema": "ggen-legacy.nasa-dark-mode.receiving-contract.v1",
+  "source": {
+    "branch": "agent/cyberpunk-tv-platform-v1",
+    "head": "eea5265eed9b790e54df3aae436a98a3b6b115f2",
+    "pack": "packs/cyberpunk-tv-platform/nasa-dark-mode",
+    "pullRequest": 555,
+    "repository": "seanchatmangpt/ggen"
+  },
+  "sourceObjects": {
+    ".github/workflows/nasa-dark-mode.yml": "126e72b5f979927c8a972b3119e39c567daac1ed",
+    "packs/cyberpunk-tv-platform/nasa-dark-mode/.gitignore": "65c753d4bbc648ff03cf75508b2363aaa98d1a0e",
+    "packs/cyberpunk-tv-platform/nasa-dark-mode/README.md": "63213a3707c9eda66f63712a0037608b175011ac",
+    "packs/cyberpunk-tv-platform/nasa-dark-mode/capsule.mjs": "dffe59609312ddb1a7ae2cab831c2eeff5879966",
+    "packs/cyberpunk-tv-platform/nasa-dark-mode/contract/nasa-dark-mode.json": "a49e6f00ef9342235fef9f1f36eba21e606e89cb",
+    "packs/cyberpunk-tv-platform/nasa-dark-mode/fixtures/eonet-events.json": "76130f66110e81f14a260282983541005286f024",
+    "packs/cyberpunk-tv-platform/nasa-dark-mode/local/README.md": "4b6fdf4fd18f90ecb74b86f2dc5660223d5389d6",
+    "packs/cyberpunk-tv-platform/nasa-dark-mode/local/aggregate.mjs": "5a312fe2bd4ded4a0dabf05dc1b6c1527765558e",
+    "packs/cyberpunk-tv-platform/nasa-dark-mode/local/nasa_core.c": "12449dd8ceb4336109482067df34579b752834c6",
+    "packs/cyberpunk-tv-platform/nasa-dark-mode/local/package_roku.py": "a9732dd28e3919f6197b4e9cd425f84c34af8ca0",
+    "packs/cyberpunk-tv-platform/nasa-dark-mode/local/run-no-ci.sh": "af184d02a5c61e2de3282873f0d766e7367db611",
+    "packs/cyberpunk-tv-platform/nasa-dark-mode/local/verify_browser.py": "a44b5103d8486bafbc9e9e872b1d0699069fcbff",
+    "packs/cyberpunk-tv-platform/nasa-dark-mode/local/verify_roku.py": "83b9d093d125ba898e25b3a1053eff34f1cfc83a",
+    "packs/cyberpunk-tv-platform/nasa-dark-mode/local/verify_wasm.mjs": "802dcee7b57967025d91733bdd5a36bdb3e28754",
+    "packs/cyberpunk-tv-platform/nasa-dark-mode/ontology/nasa-dark-mode.ttl": "1afbb5a35511f0989942683a050cd90848dacc74",
+    "packs/cyberpunk-tv-platform/nasa-dark-mode/payload/00.b64": "b3d747ffbc95d16bdf764146b6f92983d659034e",
+    "packs/cyberpunk-tv-platform/nasa-dark-mode/payload/01.b64": "66712cb1631984d0bea2339b31115a72c5fe6fe2",
+    "packs/cyberpunk-tv-platform/nasa-dark-mode/payload/02.b64": "a12ec96d25c7879903f3be32b035063dea98d243",
+    "packs/cyberpunk-tv-platform/nasa-dark-mode/payload/03.b64": "285c6026fd7e41fe8d049acf2f835fb5eddc726d"
+  }
+}

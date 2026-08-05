@@ -1,0 +1,104 @@
+name: NASA Dark Mode Independent Replay
+
+on:
+  pull_request:
+    paths:
+      - 'packs/nasa-dark-mode-replay/**'
+      - '.github/workflows/nasa-dark-mode-replay.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  SOURCE_SHA: 0a7bd408dd38e31147c6fc141ad316bbae673354
+  SOURCE_PACK: source-ggen/packs/cyberpunk-tv-platform/nasa-dark-mode
+
+jobs:
+  independent-replay:
+    name: Exact source, Roku package, deck.gl browser, replay
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout receiving exact head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          path: legacy
+          fetch-depth: 0
+      - name: Checkout admitted source exact head
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: seanchatmangpt/ggen
+          ref: 0a7bd408dd38e31147c6fc141ad316bbae673354
+          path: source-ggen
+          fetch-depth: 0
+      - name: Orient subjects
+        run: |
+          set -euo pipefail
+          test "$(git -C source-ggen rev-parse HEAD)" = "$SOURCE_SHA"
+          git -C legacy rev-parse HEAD | tee /tmp/legacy-head.txt
+          git -C source-ggen rev-parse HEAD | tee /tmp/source-head.txt
+          node --version
+          python3 --version
+      - name: Manufacture and execute source capsule
+        working-directory: ${{ env.SOURCE_PACK }}
+        run: |
+          set -euo pipefail
+          node capsule.mjs
+          (cd generated/roku && zip -qr ../.ggen/evidence/nasa-dark-mode-roku.zip manifest source components data)
+          (cd generated && node verify/verify.mjs --verify-package .ggen/evidence/nasa-dark-mode-roku.zip)
+      - name: Install and execute deck.gl browser boundary
+        working-directory: ${{ env.SOURCE_PACK }}/generated/browser
+        run: |
+          set -euo pipefail
+          npm install --no-audit --no-fund
+          npx playwright install --with-deps chromium
+          npm run build
+          npm run e2e
+      - name: Independently verify exact source and evidence
+        run: |
+          set -euo pipefail
+          python3 legacy/packs/nasa-dark-mode-replay/verify_source.py \
+            --source-repo source-ggen \
+            --contract legacy/packs/nasa-dark-mode-replay/receiving-contract.json \
+            --output legacy/evidence/nasa-dark-mode/independent-verifier.json \
+            --require-git-head
+          grep -q '"independentReplay": "ALIVE"' legacy/evidence/nasa-dark-mode/independent-verifier.json
+          grep -q '"browserWebGL": "ALIVE"' legacy/evidence/nasa-dark-mode/independent-verifier.json
+          grep -q '"rokuPhysicalDevice": "BLOCKED_DEVICE_REQUIRED"' legacy/evidence/nasa-dark-mode/independent-verifier.json
+      - name: Kill source-head mutant
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          source = Path('legacy/packs/nasa-dark-mode-replay/receiving-contract.json')
+          target = Path('/tmp/nasa-dark-mode-mutant.json')
+          value = json.loads(source.read_text())
+          value['source']['head'] = '0000000000000000000000000000000000000000'
+          target.write_text(json.dumps(value))
+          PY
+          set +e
+          python3 legacy/packs/nasa-dark-mode-replay/verify_source.py \
+            --source-repo source-ggen \
+            --contract /tmp/nasa-dark-mode-mutant.json \
+            --output /tmp/nasa-dark-mode-refusal.json \
+            --require-git-head
+          status=$?
+          set -e
+          test "$status" -eq 2
+          grep -q 'SOURCE_HEAD_MISMATCH' /tmp/nasa-dark-mode-refusal.json
+      - name: Publish independent evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: nasa-dark-mode-independent-${{ github.sha }}
+          if-no-files-found: error
+          retention-days: 14
+          path: |
+            /tmp/legacy-head.txt
+            /tmp/source-head.txt
+            legacy/evidence/nasa-dark-mode/
+            source-ggen/packs/cyberpunk-tv-platform/nasa-dark-mode/.ggen/evidence/
+            source-ggen/packs/cyberpunk-tv-platform/nasa-dark-mode/generated/.ggen/evidence/
+            source-ggen/packs/cyberpunk-tv-platform/nasa-dark-mode/generated/browser/dist/
