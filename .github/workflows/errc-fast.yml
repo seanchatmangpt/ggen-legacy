@@ -1,0 +1,58 @@
+name: ERRC 80/20 exact-head admission
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ggen-legacy-errc-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  fast-receipt:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Check out exact candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Assert exact subject
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+          test -s scripts/ci_errc.py
+          test -s scripts/verify_docs.py
+
+      - name: Verify ERRC router laws
+        run: python3 -m unittest scripts/tests/test_ci_errc.py
+
+      - name: Execute fast authority gate and route deep lanes
+        id: errc
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python3 scripts/ci_errc.py \
+            --base "$BASE_SHA" \
+            --head "$HEAD_SHA" \
+            --report evidence/ci/errc-fast.json \
+            --github-output "$GITHUB_OUTPUT"
+
+      - name: Upload exact-head fast receipt
+        if: always()
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
+        with:
+          name: ggen-legacy-errc-${{ github.event.pull_request.head.sha || github.sha }}
+          path: evidence/ci/errc-fast.json
+          if-no-files-found: error
+          retention-days: 14

@@ -3,13 +3,18 @@ name: Verify ggen v26.8.1 corpus migration
 on:
   pull_request:
     branches: [main]
+    paths:
+      - 'migrations/ggen-v26.8.1/**'
+      - 'scripts/verify_ggen_v26_8_1_migration.py'
+      - 'schemas/migration-manifest.schema.json'
+      - '.github/workflows/verify-ggen-v26-8-1-migration.yml'
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: ggen-v26.8.1-migration-${{ github.event.pull_request.head.sha || github.sha }}
+  group: ggen-v26.8.1-migration-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -21,14 +26,18 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          fetch-depth: 0
+          fetch-depth: 1
+      - name: Assert exact candidate
+        env:
+          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
       - name: Checkout exact ggen source
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
           repository: seanchatmangpt/ggen
           ref: 8351af4c5bbbf60bd99ab8417752a1762c6ea4e3
           path: .source-ggen
-          fetch-depth: 0
+          fetch-depth: 1
       - name: Install pinned Rust
         uses: dtolnay/rust-toolchain@b3b07ba8b418998c39fb20f53e8b695cdcc8de1b
         with:
