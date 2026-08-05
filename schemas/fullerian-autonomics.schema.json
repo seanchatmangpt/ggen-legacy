@@ -1,0 +1,275 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chatmangpt.com/ggen-legacy/schemas/fullerian-autonomics.schema.json",
+  "title": "ggen-legacy Fullerian Autonomics",
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "gitSha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "provenance",
+        "boundary",
+        "value"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provenance": {
+          "type": "string",
+          "minLength": 1
+        },
+        "boundary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {}
+      }
+    },
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "effect",
+        "represented_stakeholder_coverage",
+        "unrepresented_stakeholders",
+        "ecological_externality_known",
+        "lawful_reversible_options",
+        "irreversible_commitments",
+        "outcome_units",
+        "resource_units"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "effect": {
+          "const": "WRITE_DECLARED_PROJECTION"
+        },
+        "represented_stakeholder_coverage": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "unrepresented_stakeholders": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ecological_externality_known": {
+          "type": "boolean"
+        },
+        "lawful_reversible_options": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "irreversible_commitments": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "outcome_units": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "resource_units": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "program": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "admitted_base_sha",
+        "system_boundary",
+        "observations",
+        "candidates",
+        "execution"
+      ],
+      "properties": {
+        "schema": {
+          "const": "ggen.legacy.fullerian.autonomics.program.v1"
+        },
+        "admitted_base_sha": {
+          "$ref": "#/$defs/gitSha"
+        },
+        "system_boundary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/observation"
+          }
+        },
+        "candidates": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/candidate"
+          }
+        },
+        "requested_standing": {
+          "enum": [
+            "PARTIAL_ALIVE",
+            "ALIVE",
+            "REPOSITORY_ALIVE"
+          ]
+        },
+        "execution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "authorized",
+            "target"
+          ],
+          "properties": {
+            "mode": {
+              "enum": [
+                "BROKERED_WRITE",
+                "DIRECT_WRITE"
+              ]
+            },
+            "authorized": {
+              "type": "boolean"
+            },
+            "target": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "receipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "run_id",
+        "admitted_base_sha",
+        "authority_sha256",
+        "program_sha256",
+        "selected_candidate",
+        "effect",
+        "output_sha256",
+        "broker",
+        "exit_status",
+        "standing"
+      ],
+      "properties": {
+        "schema": {
+          "const": "ggen.legacy.fullerian.autonomics.receipt.v1"
+        },
+        "run_id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "admitted_base_sha": {
+          "$ref": "#/$defs/gitSha"
+        },
+        "authority_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "program_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "selected_candidate": {
+          "type": "string"
+        },
+        "effect": {
+          "const": "WRITE_DECLARED_PROJECTION"
+        },
+        "output_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "broker": {
+          "const": "BRCE"
+        },
+        "exit_status": {
+          "const": 0
+        },
+        "standing": {
+          "const": "PARTIAL_ALIVE"
+        }
+      }
+    },
+    "refusalReceipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema",
+        "run_id",
+        "authority_sha256",
+        "program_sha256",
+        "refusal",
+        "effect",
+        "output_sha256",
+        "broker",
+        "exit_status",
+        "standing"
+      ],
+      "properties": {
+        "schema": {
+          "const": "ggen.legacy.fullerian.autonomics.refusal-receipt.v1"
+        },
+        "run_id": {
+          "$ref": "#/$defs/sha256"
+        },
+        "authority_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "program_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "refusal": {
+          "type": "string",
+          "minLength": 1
+        },
+        "effect": {
+          "const": "WRITE_REFUSAL_EVIDENCE"
+        },
+        "output_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "broker": {
+          "const": "BRCE"
+        },
+        "exit_status": {
+          "const": 3
+        },
+        "standing": {
+          "const": "REFUSED"
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "$ref": "#/$defs/program"
+    },
+    {
+      "$ref": "#/$defs/receipt"
+    },
+    {
+      "$ref": "#/$defs/refusalReceipt"
+    }
+  ]
+}

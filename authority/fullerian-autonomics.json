@@ -1,0 +1,174 @@
+{
+  "schema": "ggen.legacy.fullerian.autonomics.authority.v1",
+  "id": "fullerian-comprehensive-autonomics",
+  "release": "v26.8.1",
+  "admitted_base_sha": "8d6428f40c0d30d5983fb0ecdd16cab1c1328a23",
+  "scope": "bounded reference automation for comprehensive anticipatory design decisions",
+  "claim_ceiling": "REFERENCE_CONFORMANT",
+  "repository_crown_authority": false,
+  "public_ontology_bindings": {
+    "observation": "http://www.w3.org/ns/sosa/Observation",
+    "activity": "http://www.w3.org/ns/prov#Activity",
+    "entity": "http://www.w3.org/ns/prov#Entity",
+    "policy": "http://www.w3.org/ns/odrl/2/Policy",
+    "measurement": "http://qudt.org/schema/qudt/QuantityValue"
+  },
+  "canon": [
+    {
+      "id": "comprehensive-anticipatory-design-science",
+      "classification": "FULLER_CANON",
+      "operational_rule": "Observe the whole bounded system before selecting a local intervention."
+    },
+    {
+      "id": "synergy",
+      "classification": "FULLER_CANON",
+      "operational_rule": "Evaluate candidate behavior at system level rather than summing isolated component claims."
+    },
+    {
+      "id": "ephemeralization",
+      "classification": "FULLER_CANON",
+      "operational_rule": "Prefer greater admitted outcome per bounded unit of resource, time, and irreversible commitment."
+    },
+    {
+      "id": "trimtab-leverage",
+      "classification": "FULLER_CANON",
+      "operational_rule": "Prefer the smallest lawful intervention that changes the governing system trajectory."
+    },
+    {
+      "id": "world-game-100-percent",
+      "classification": "FULLER_CANON",
+      "operational_rule": "Refuse candidates that silently externalize represented stakeholders or ecological consequences."
+    }
+  ],
+  "extensions": [
+    {
+      "id": "observation-admission",
+      "classification": "POST_FULLER_OPERATIONAL_EXTENSION",
+      "formula": "O_star = Admit(O, boundary, provenance, authority, exclusions)",
+      "rule": "Observation does not acquire standing or execution authority merely by being present."
+    },
+    {
+      "id": "combinatorial-maximalism",
+      "classification": "POST_FULLER_NOVELTY",
+      "formula": "maximize lawful_reversible_options before irreversible_selection",
+      "rule": "One failed edge is preserved as topology and does not collapse the candidate graph."
+    },
+    {
+      "id": "brce",
+      "classification": "POST_FULLER_NOVELTY",
+      "formula": "for every consequential actuation a, there exists an identity-bound receipt r",
+      "rule": "Zero unreceipted actuation; only the broker may perform a declared effect."
+    },
+    {
+      "id": "typed-non-success",
+      "classification": "POST_FULLER_OPERATIONAL_EXTENSION",
+      "rule": "UNKNOWN, PARTIAL_ALIVE, ALIVE, BLOCKED, BUILD_BROKEN, UNSUPPORTED, and typed REFUSED remain distinct."
+    },
+    {
+      "id": "scoped-standing",
+      "classification": "POST_FULLER_CORRECTIVE_EXTENSION",
+      "rule": "A passing reference execution establishes standing only for its exact admitted subject."
+    }
+  ],
+  "autonomic_model": {
+    "name": "MAPE-K",
+    "phases": [
+      {
+        "id": "MONITOR",
+        "input": "raw observations O",
+        "output": "provenance-bearing bounded observations"
+      },
+      {
+        "id": "ANALYZE",
+        "input": "bounded observations",
+        "output": "admitted observations O_star and typed refusals"
+      },
+      {
+        "id": "PLAN",
+        "input": "O_star and lawful candidate graph",
+        "output": "deterministic maximal-reversibility intent"
+      },
+      {
+        "id": "EXECUTE",
+        "input": "authorized intent",
+        "output": "brokered effect plus receipt"
+      }
+    ],
+    "knowledge": [
+      "canon",
+      "extensions",
+      "system boundary",
+      "authority",
+      "receipts",
+      "replay evidence"
+    ],
+    "self_configuration": "derive checks and scoring order from admitted authority",
+    "self_optimization": "select the lexicographically best lawful candidate",
+    "self_protection": "refuse ambient execution, path escape, missing provenance, and crown escalation",
+    "self_healing": "manufacture a repair intent; never mutate the governed subject without broker authorization"
+  },
+  "admission": {
+    "required_observation_fields": [
+      "id",
+      "provenance",
+      "boundary",
+      "value"
+    ],
+    "candidate_refusals": [
+      "MISSING_PROVENANCE_REFUSED",
+      "BOUNDARY_MISMATCH_REFUSED",
+      "STAKEHOLDER_EXTERNALITY_REFUSED",
+      "ECOLOGICAL_UNKNOWN_REFUSED",
+      "AMBIENT_EXECUTION_REFUSED",
+      "PATH_ESCAPE_REFUSED",
+      "CROWN_ESCALATION_REFUSED"
+    ]
+  },
+  "planning": {
+    "selection": "lexicographic",
+    "order": [
+      "represented_stakeholder_coverage_desc",
+      "ecological_externality_known_desc",
+      "lawful_reversible_options_desc",
+      "irreversible_commitments_asc",
+      "outcome_per_resource_desc",
+      "candidate_id_asc"
+    ]
+  },
+  "actuation": {
+    "exclusive_path": "BRCE",
+    "ambient_execution": false,
+    "allowed_effects": [
+      "WRITE_DECLARED_PROJECTION",
+      "WRITE_REFUSAL_EVIDENCE"
+    ],
+    "receipt_required": true,
+    "receipt_fields": [
+      "run_id",
+      "admitted_base_sha",
+      "authority_sha256",
+      "program_sha256",
+      "selected_candidate",
+      "effect",
+      "output_sha256",
+      "broker",
+      "exit_status"
+    ]
+  },
+  "standing": {
+    "reference_alive_requires": [
+      "positive brokered execution",
+      "identity-bound receipt",
+      "byte-identical replay",
+      "negative-control refusal",
+      "exact admitted base binding"
+    ],
+    "nonclaims": [
+      "repository crown",
+      "production autonomy",
+      "universal Fuller equivalence",
+      "ecological certification",
+      "stakeholder completeness outside the represented boundary"
+    ]
+  }
+}

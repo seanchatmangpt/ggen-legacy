@@ -1,0 +1,73 @@
+name: Verify Fullerian autonomics
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - authority/fullerian-autonomics.json
+      - schemas/fullerian-autonomics.schema.json
+      - scripts/run_fullerian_autonomics.py
+      - scripts/verify_fullerian_autonomics.py
+      - tests/fixtures/autonomics/**
+      - projects/001/TICKET-012-fullerian-autonomics.md
+      - .github/workflows/verify-fullerian-autonomics.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out exact candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Assert admitted base and source files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s authority/fullerian-autonomics.json
+          test -s schemas/fullerian-autonomics.schema.json
+          test -s scripts/run_fullerian_autonomics.py
+          test -s scripts/verify_fullerian_autonomics.py
+          test -s tests/fixtures/autonomics/reference-program.json
+          test -s tests/fixtures/autonomics/negative-programs.json
+          python3 - <<'PY'
+          import json
+          authority=json.load(open('authority/fullerian-autonomics.json'))
+          fixture=json.load(open('tests/fixtures/autonomics/reference-program.json'))
+          expected='8d6428f40c0d30d5983fb0ecdd16cab1c1328a23'
+          assert authority['admitted_base_sha'] == expected
+          assert fixture['admitted_base_sha'] == expected
+          assert authority['repository_crown_authority'] is False
+          PY
+
+      - name: Compile and execute bounded verifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile \
+            scripts/run_fullerian_autonomics.py \
+            scripts/verify_fullerian_autonomics.py
+          python3 scripts/verify_fullerian_autonomics.py
+          python3 - <<'PY'
+          import json
+          report=json.load(open('evidence/fullerian-autonomics-verifier.json'))
+          assert report['standing'] == 'ALIVE', report
+          assert report['claim_ceiling'] == 'REFERENCE_CONFORMANT', report
+          assert report['replay'] == 'REPLAY_MATCH', report
+          assert 'repository crown' in report['nonclaims'], report
+          PY
+
+      - name: Upload bounded execution receipt
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
+        with:
+          name: fullerian-autonomics-${{ github.event.pull_request.head.sha || github.sha }}
+          path: evidence/fullerian-autonomics-verifier.json
+          if-no-files-found: error
+          retention-days: 30

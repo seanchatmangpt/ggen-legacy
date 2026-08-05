@@ -1,0 +1,33 @@
+{
+  "schema": "ggen.legacy.fullerian.autonomics.negative-fixtures.v1",
+  "cases": [
+    {
+      "id": "ambient-execution",
+      "expected_refusal": "AMBIENT_EXECUTION_REFUSED",
+      "patch": {
+        "execution.mode": "DIRECT_WRITE"
+      }
+    },
+    {
+      "id": "path-escape",
+      "expected_refusal": "PATH_ESCAPE_REFUSED",
+      "patch": {
+        "execution.target": "../escaped.json"
+      }
+    },
+    {
+      "id": "crown-escalation",
+      "expected_refusal": "CROWN_ESCALATION_REFUSED",
+      "patch": {
+        "requested_standing": "REPOSITORY_ALIVE"
+      }
+    },
+    {
+      "id": "missing-provenance",
+      "expected_refusal": "MISSING_PROVENANCE_REFUSED",
+      "patch": {
+        "observations.0.provenance": ""
+      }
+    }
+  ]
+}

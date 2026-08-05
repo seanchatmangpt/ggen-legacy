@@ -1,0 +1,66 @@
+{
+  "schema": "ggen.legacy.fullerian.autonomics.program.v1",
+  "admitted_base_sha": "8d6428f40c0d30d5983fb0ecdd16cab1c1328a23",
+  "system_boundary": "ggen-legacy:project-001:reference-autonomics",
+  "observations": [
+    {
+      "id": "current-contract",
+      "provenance": "fixture:legacy-contract-v1",
+      "boundary": "ggen-legacy:project-001:reference-autonomics",
+      "value": "preserve observable behavior before replacement"
+    },
+    {
+      "id": "represented-stakeholders",
+      "provenance": "fixture:stakeholder-register-v1",
+      "boundary": "ggen-legacy:project-001:reference-autonomics",
+      "value": ["operator", "customer", "verifier", "ecological-boundary"]
+    },
+    {
+      "id": "authority-path",
+      "provenance": "fixture:brce-policy-v1",
+      "boundary": "ggen-legacy:project-001:reference-autonomics",
+      "value": "broker-only"
+    }
+  ],
+  "candidates": [
+    {
+      "id": "heavy-batch-rewrite",
+      "effect": "WRITE_DECLARED_PROJECTION",
+      "represented_stakeholder_coverage": 1.0,
+      "unrepresented_stakeholders": [],
+      "ecological_externality_known": true,
+      "lawful_reversible_options": 4,
+      "irreversible_commitments": 4,
+      "outcome_units": 20,
+      "resource_units": 10
+    },
+    {
+      "id": "preserve-fence-brce-intent",
+      "effect": "WRITE_DECLARED_PROJECTION",
+      "represented_stakeholder_coverage": 1.0,
+      "unrepresented_stakeholders": [],
+      "ecological_externality_known": true,
+      "lawful_reversible_options": 12,
+      "irreversible_commitments": 1,
+      "outcome_units": 20,
+      "resource_units": 2
+    },
+    {
+      "id": "fast-unbounded-replacement",
+      "effect": "WRITE_DECLARED_PROJECTION",
+      "represented_stakeholder_coverage": 0.75,
+      "unrepresented_stakeholders": ["ecological-boundary"],
+      "ecological_externality_known": false,
+      "lawful_reversible_options": 20,
+      "irreversible_commitments": 8,
+      "outcome_units": 40,
+      "resource_units": 1
+    }
+  ],
+  "requested_standing": "PARTIAL_ALIVE",
+  "execution": {
+    "mode": "BROKERED_WRITE",
+    "authorized": true,
+    "target": "projection/selected-design.json"
+  }
+}
