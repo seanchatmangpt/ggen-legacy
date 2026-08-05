@@ -1,0 +1,22 @@
+name: ggen-create receiver
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile receiver
+        run: python -m compileall -q scripts tests/test_ggen_create_receiver.py
+      - name: Execute independent receiver tests
+        run: python -m unittest tests/test_ggen_create_receiver.py -v
