@@ -1,0 +1,33 @@
+{
+  "schema": "ggen-legacy-ggen-create-receiver/1",
+  "producer": {
+    "repository": "seanchatmangpt/ggen-create",
+    "commit": "a0a9133095e5114b693d62a85fc287fe76425c2e",
+    "accepted_manifest_schema": "ggen-create-legacy-manifest/1",
+    "accepted_contract_schema": "ggen-create-to-ggen-legacy-contract/1",
+    "accepted_receipt_schema": "ggen-create-legacy-receipt/1",
+    "version": "0.4.0"
+  },
+  "receiver": {
+    "repository": "seanchatmangpt/ggen-legacy",
+    "base_commit": "71ed0ada1c91cd4fa649cd0d3d079e66b4e80e9d"
+  },
+  "provided_workstreams": ["A", "B", "C", "D"],
+  "receiver_owned_workstreams": ["E", "F", "G", "H", "I", "J", "K"],
+  "required_unknown_claims": [
+    "ggen_execution",
+    "behavioral_equivalence",
+    "release",
+    "sunset"
+  ],
+  "refusals": [
+    "PRODUCER_IDENTITY_MISMATCH",
+    "PRODUCER_VERSION_MISMATCH",
+    "RECEIVING_SCHEMA_MISMATCH",
+    "BUNDLE_DIGEST_MISMATCH",
+    "OUTPUT_MODE_MISMATCH",
+    "SUBJECT_REPLAY_DIVERGENCE",
+    "SELF_CERTIFICATION_REFUSED"
+  ],
+  "standing": "PARTIAL_ALIVE"
+}

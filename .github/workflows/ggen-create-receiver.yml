@@ -1,0 +1,63 @@
+name: ggen-create receiver
+
+on:
+  pull_request:
+  push:
+    branches: [main, "agent/receive-ggen-create-fortune5"]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Assert exact admitted head
+        shell: bash
+        run: test "$(git rev-parse HEAD)" = "${{ github.event.pull_request.head.sha || github.sha }}"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Compile receiver
+        run: python -m compileall -q scripts tests/test_ggen_create_receiver.py
+      - name: Execute independent receiver tests
+        run: python -m unittest tests/test_ggen_create_receiver.py -v
+      - name: Manufacture exact-head receiver receipt
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p alive-evidence/source/scripts alive-evidence/source/tests/fixtures alive-evidence/source/authority
+          cp scripts/verify_ggen_create_bundle.py alive-evidence/source/scripts/
+          cp tests/test_ggen_create_receiver.py alive-evidence/source/tests/
+          cp tests/fixtures/ggen_create_fortune5.json alive-evidence/source/tests/fixtures/
+          cp authority/ggen-create-receiving-contract.json alive-evidence/source/authority/
+          head="$(git rev-parse HEAD)"
+          python - "$head" > alive-evidence/ggen-legacy-pr-19-alive.json <<'PY'
+          import json, platform, sys
+          print(json.dumps({
+              "schema": "chatman-pr-alive-receipt/v1",
+              "repository": "seanchatmangpt/ggen-legacy",
+              "pull_request": 19,
+              "head": sys.argv[1],
+              "python": platform.python_version(),
+              "acceptance": [
+                  "python -m compileall -q scripts tests/test_ggen_create_receiver.py",
+                  "python -m unittest tests/test_ggen_create_receiver.py -v"
+              ],
+              "standing": "ALIVE"
+          }, indent=2, sort_keys=True))
+          PY
+          tar -czf alive-evidence/ggen-legacy-pr-19-source.tgz -C alive-evidence source
+          rm -rf alive-evidence/source
+          (
+            cd alive-evidence
+            sha256sum ggen-legacy-pr-19-alive.json ggen-legacy-pr-19-source.tgz > SHA256SUMS
+          )
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ggen-legacy-pr-19-alive-evidence
+          path: alive-evidence/
+          if-no-files-found: error
