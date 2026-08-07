@@ -10,6 +10,21 @@ on:
       - "tests/**"
       - "authority/lsp-contract.json"
       - "scripts/verify_lsp_contract.py"
+      - "scripts/ci_step_receipt.py"
+      - "scripts/tests/test_ci_step_receipt.py"
+      - ".github/workflows/gl-lsp-001-runtime.yml"
+  push:
+    branches: [main]
+    paths:
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "rust-toolchain.toml"
+      - "src/**"
+      - "tests/**"
+      - "authority/lsp-contract.json"
+      - "scripts/verify_lsp_contract.py"
+      - "scripts/ci_step_receipt.py"
+      - "scripts/tests/test_ci_step_receipt.py"
       - ".github/workflows/gl-lsp-001-runtime.yml"
   workflow_dispatch:
 
@@ -22,62 +37,62 @@ concurrency:
 
 jobs:
   exact-head-runtime:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
+    env:
+      EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+      RECEIPT_DIR: evidence/ci/gl-lsp-001
     steps:
       - name: Check out exact candidate
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ env.EXPECTED_HEAD }}
           fetch-depth: 1
 
       - name: Assert exact head
-        env:
-          EXPECTED_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
         run: test "$(git rev-parse HEAD)" = "$EXPECTED_HEAD"
+
+      - name: Verify receipt laws
+        run: python3 -m unittest scripts/tests/test_ci_step_receipt.py
+
+      - name: Initialize exact-head receipt
+        run: |
+          mkdir -p "$RECEIPT_DIR"
+          python3 scripts/ci_step_receipt.py init \
+            --report "$RECEIPT_DIR/receipt.json" \
+            --schema gl-lsp-001-exact-head-runtime/v2 \
+            --head "$EXPECTED_HEAD" \
+            --claim-ceiling EXACT_HEAD_RUST_RUNTIME_AND_STDIO_TESTS_ONLY
 
       - name: Install admitted Rust toolchain
         run: |
-          rustup toolchain install nightly-2026-06-22 --profile minimal --component rustfmt,clippy
-          rustup default nightly-2026-06-22
-          rustc --version --verbose
-          cargo --version --verbose
+          python3 scripts/ci_step_receipt.py run --report "$RECEIPT_DIR/receipt.json" --id rust-toolchain -- \
+            bash -lc 'rustup toolchain install nightly-2026-06-22 --profile minimal --component rustfmt,clippy && rustup default nightly-2026-06-22 && rustc --version --verbose && cargo --version --verbose'
 
       - name: Verify received contract
-        run: python3 scripts/verify_lsp_contract.py --root . --report /tmp/receiver-report.json
+        run: python3 scripts/ci_step_receipt.py run --report "$RECEIPT_DIR/receipt.json" --id lsp-contract -- python3 scripts/verify_lsp_contract.py --root . --report "$RECEIPT_DIR/receiver-report.json"
 
       - name: Check formatting
-        run: cargo fmt --all -- --check
+        run: python3 scripts/ci_step_receipt.py run --report "$RECEIPT_DIR/receipt.json" --id cargo-fmt -- cargo fmt --all -- --check
 
       - name: Compile every target
-        run: cargo check --all-targets --locked
+        run: python3 scripts/ci_step_receipt.py run --report "$RECEIPT_DIR/receipt.json" --id cargo-check -- cargo check --all-targets --locked
 
       - name: Refuse Clippy warnings
-        run: cargo clippy --all-targets --locked -- -D warnings
+        run: python3 scripts/ci_step_receipt.py run --report "$RECEIPT_DIR/receipt.json" --id cargo-clippy -- cargo clippy --all-targets --locked -- -D warnings
 
       - name: Execute runtime and stdio tests
-        run: cargo test --all-targets --locked -- --test-threads=1
+        run: python3 scripts/ci_step_receipt.py run --report "$RECEIPT_DIR/receipt.json" --id cargo-test -- cargo test --all-targets --locked -- --test-threads=1
 
-      - name: Preserve receipt summary
+      - name: Finalize exact-head receipt
         if: always()
-        run: |
-          python3 - <<'PY'
-          import json
-          import os
-          import subprocess
-          from pathlib import Path
+        run: python3 scripts/ci_step_receipt.py finalize --report "$RECEIPT_DIR/receipt.json"
 
-          report = {
-              "schema": "gl-lsp-001-exact-head-runtime/v1",
-              "repository": os.environ.get("GITHUB_REPOSITORY"),
-              "head": subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip(),
-              "workflow": os.environ.get("GITHUB_WORKFLOW"),
-              "run_id": os.environ.get("GITHUB_RUN_ID"),
-              "claim_ceiling": "EXACT_HEAD_RUST_RUNTIME_AND_STDIO_TESTS_ONLY",
-          }
-          Path("/tmp/gl-lsp-001-workflow-receipt.json").write_text(
-              json.dumps(report, indent=2, sort_keys=True) + "\n",
-              encoding="utf-8",
-          )
-          print(json.dumps(report, sort_keys=True))
-          PY
+      - name: Upload exact-head runtime receipt
+        if: always()
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
+        with:
+          name: gl-lsp-001-${{ env.EXPECTED_HEAD }}
+          path: evidence/ci/gl-lsp-001/
+          if-no-files-found: error
+          retention-days: 14
