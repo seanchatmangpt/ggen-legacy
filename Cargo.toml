@@ -17,6 +17,11 @@ name = "ggen_legacy_lsp"
 path = "src/lib.rs"
 
 [dependencies]
+# PROVISIONAL PIN: this rev lives on the unmerged branch
+# fix/wasm4pm-lsp-example-crates-io-dep of seanchatmangpt/lsp-max (same org
+# as this repo). It is not admitted as a stable dependency per AGENTS.md's
+# "no self-certification" rule -- unblock by merging that branch upstream
+# (or pinning to a released tag once one exists) and re-pinning here.
 lsp-max = { git = "https://github.com/seanchatmangpt/lsp-max", rev = "c1cab89bf54fcc9100b3ce75580b3cc3aa8eb852" }
 tokio = { version = "1", features = ["io-std", "io-util", "macros", "rt-multi-thread", "sync"] }
 tracing = "0.1"
@@ -26,3 +31,6 @@ toml = "0.8"
 anyhow = "1"
 serde_json = "1"
 url = "2"
+
+[dev-dependencies]
+chicago-tdd-tools = { version = "26.8.3", features = ["cli-proof"] }

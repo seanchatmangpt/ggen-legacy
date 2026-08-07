@@ -1,0 +1,54 @@
+# ggen-verifier-cli-verify domain facts — CLI boundary proofs against
+# ggen-legacy's OWN real tools/v26.8.1 binary, ggen-v26-8-1-verifier. Every
+# ctt:expectExitCode / ctt:stdoutNeedle / ctt:stderrNeedle below was verified
+# live against tools/v26.8.1/target/debug/ggen-v26-8-1-verifier (built from
+# the just-fixed resolve_root, which now checks for AGENTS.md alone instead
+# of requiring Cargo.toml AND AGENTS.md in the same directory) before being
+# transcribed here (2026-08-02 dogfood-loop session: each invocation was run
+# directly with stdout/stderr captured separately, matching exactly how
+# chicago_tdd_tools::cli_proof::CliHarness::run captures them via
+# std::process::Command::output()).
+
+@prefix ctt:  <http://seanchatmangpt.github.io/packs/chicago-tdd-tools#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+ctt:ggen-verifier-good-root
+  a ctt:CliBoundaryTest ;
+  rdfs:label "ggen-v26-8-1-verifier --root <real repo root> boundary proof" ;
+  ctt:testName "ggen_verifier_good_root_gets_past_root_resolution" ;
+  ctt:binary "ggen-v26-8-1-verifier" ;
+  ctt:args "--root /Users/sac/ggen-legacy" ;
+  ctt:expectExitCode 2 ;
+  # NOTE (corrected 2026-08-03 after adversarial re-verification found the
+  # original comment here named the wrong cause): the resolve_root fix
+  # (AGENTS.md alone, no longer requiring Cargo.toml in the same directory)
+  # means this no longer fails with "repository root not found" -- root
+  # resolution genuinely succeeds now. But the tool does NOT go on to do
+  # anything useful: main.rs's run() next calls observe_workspace(root)
+  # (main.rs:413-414), which does `fs::read_to_string(root.join("Cargo.toml"))?`
+  # with no .context() wrapper. ggen-legacy's repo root has no top-level
+  # Cargo.toml (only tools/v26.8.1/Cargo.toml does), so this bare `?`
+  # propagates a plain io::Error, surfaced by anyhow as "No such file or
+  # directory (os error 2)". This is a SECOND bug in the same tool, not the
+  # missing-manifest cause an earlier draft of this comment claimed (that
+  # code path, subsystem-evidence-manifest.json, is never reached -- traced
+  # via main.rs's actual control flow, not assumed). Net honest status:
+  # resolve_root is fixed; the tool as a whole still cannot complete
+  # verification against this repo for ANY input, fixed or not -- this
+  # axiom proves only that one specific bug is gone, not that the tool works.
+  ctt:stderrNeedle "v26.8.1 verifier refused: No such file or directory" ;
+  ctt:coversAxiom "with the resolve_root fix, an explicit correct --root gets past root resolution and fails later on a SEPARATE, still-unfixed bug: observe_workspace's unwrapped read of root/Cargo.toml, which does not exist at ggen-legacy's repo root" .
+
+ctt:ggen-verifier-bad-root
+  a ctt:CliBoundaryTest ;
+  rdfs:label "ggen-v26-8-1-verifier --root <bogus path> boundary proof" ;
+  ctt:testName "ggen_verifier_bad_root_fails_closed" ;
+  ctt:binary "ggen-v26-8-1-verifier" ;
+  ctt:args "--root /tmp/definitely-not-a-repo" ;
+  ctt:expectExitCode 2 ;
+  # NOTE (verified live, 2026-08-02): a --root that has no AGENTS.md
+  # anywhere up its ancestry still fails closed with the genuine
+  # "repository root not found" refusal -- this negative case is
+  # unaffected by the fix and still fires correctly.
+  ctt:stderrNeedle "repository root not found; pass --root <path>" ;
+  ctt:coversAxiom "an explicit --root with no AGENTS.md anywhere up its ancestry still fails closed with repository root not found" .

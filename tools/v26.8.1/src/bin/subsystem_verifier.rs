@@ -379,7 +379,7 @@ fn resolve_root(args: &[String]) -> Result<PathBuf> {
         .map(|pair| PathBuf::from(&pair[1]));
     let mut current = explicit.unwrap_or(env::current_dir()?);
     loop {
-        if current.join("Cargo.toml").is_file() && current.join("AGENTS.md").is_file() {
+        if current.join("AGENTS.md").is_file() {
             return current
                 .canonicalize()
                 .context("canonicalize repository root");
