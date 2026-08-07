@@ -54,7 +54,7 @@ class GgenCreateReceiverTests(unittest.TestCase):
         self.assertEqual(
             fixture["producer"],
             {
-                "commit": "a0a9133095e5114b693d62a85fc287fe76425c2e",
+                "commit": "8a092c13538dc4ac91abfcfc46bcc6eaae6ceec4",
                 "repository": "seanchatmangpt/ggen-create",
                 "version": "0.4.0",
             },
@@ -101,7 +101,7 @@ class GgenCreateReceiverTests(unittest.TestCase):
             self.assertTrue(all(report["checks"].values()))
             self.assertEqual(
                 report["producer"]["commit"],
-                "a0a9133095e5114b693d62a85fc287fe76425c2e",
+                "8a092c13538dc4ac91abfcfc46bcc6eaae6ceec4",
             )
 
     def test_subject_drift_is_build_broken(self) -> None:
