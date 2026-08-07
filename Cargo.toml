@@ -26,3 +26,6 @@ toml = "0.8"
 anyhow = "1"
 serde_json = "1"
 url = "2"
+
+[dev-dependencies]
+chicago-tdd-tools = { version = "26.8.3", features = ["cli-proof"] }
