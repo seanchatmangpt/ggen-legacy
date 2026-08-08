@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: exact-subject contract and LSP runtime
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact subject
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Admit exact head and one-workflow topology
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          count="$(find .github/workflows -maxdepth 1 -type f \( -name '*.yml' -o -name '*.yaml' \) | wc -l | tr -d ' ')"
+          test "$count" -eq 1
+          printf 'subject_sha=%s workflow_count=%s\n' "$EXPECTED_SHA" "$count"
+      - name: Verify received generated contract
+        run: python3 scripts/verify_lsp_contract.py
+      - name: Install repository-pinned Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: nightly-2026-06-22
+          components: rustfmt, clippy
+      - name: Format
+        run: cargo fmt --all -- --check
+      - name: Compile all targets
+        run: cargo check --all-targets --locked
+      - name: Clippy
+        run: cargo clippy --all-targets --locked -- -D warnings
+      - name: Test all targets including real stdio LSP boundary
+        run: cargo test --all-targets --locked
+      - name: Re-run real process boundary explicitly
+        run: cargo test --locked --test lsp_boundary -- --nocapture
+      - name: Emit verification receipt
+        shell: bash
+        env:
+          SUBJECT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/ci
+          cat > evidence/ci/receipt.json <<JSON
+          {"repository":"${GITHUB_REPOSITORY}","subject_sha":"${SUBJECT_SHA}","workflow":"${GITHUB_WORKFLOW}","run_id":"${GITHUB_RUN_ID}","standing":"ALIVE","workflow_count":1,"boundaries":["generated-contract","rust","real-lsp-stdio","malformed-input-refusal"]}
+          JSON
+          cat evidence/ci/receipt.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ci-receipt-${{ github.run_id }}
+          path: evidence/ci/receipt.json
+          if-no-files-found: error
+          retention-days: 14
