@@ -1,0 +1,6 @@
+PREFIX glp: <https://example.org/ggen-legacy/planning#>
+SELECT ?task ?candidate ?selected WHERE {
+  ?task glp:candidateChild ?candidate .
+  OPTIONAL { ?task glp:selectedChild ?selected . }
+}
+ORDER BY ?task ?candidate

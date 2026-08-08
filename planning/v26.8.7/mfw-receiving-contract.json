@@ -1,0 +1,24 @@
+{
+  "schema": "ggen.legacy.mfw-receiving-contract.v1",
+  "producer": {
+    "repository": "seanchatmangpt/mfw",
+    "commit": "e4fbda46f13d8213b86aa4f981d2387638983066",
+    "authority_files": ["src/mfw/universal.py", "src/mfw/oracle.py"]
+  },
+  "consumer": {
+    "repository": "seanchatmangpt/ggen-legacy",
+    "ticket": "GL-PLAN-002",
+    "projection": "planning/v26.8.7/lib.py::project_mfw_request"
+  },
+  "planning_types": [
+    "classical", "cost_optimal", "numeric", "temporal", "preferences", "flow_constrained",
+    "multi_agent", "rdf_derived", "probabilistic", "fond", "contingent", "hierarchical",
+    "resolution_adaptive", "partial_order", "workflow", "a2a_delegated", "mcp_bound", "conformant"
+  ],
+  "laws": [
+    "semantic comparison outranks exact plan sequence identity",
+    "connector/source contract does not imply mounted tree",
+    "live MFW replay requires observed exact-subject execution",
+    "one unavailable planner family does not delete the remaining graph"
+  ]
+}

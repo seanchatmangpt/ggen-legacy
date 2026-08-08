@@ -1,0 +1,5 @@
+(define (problem career-capability-sean)
+  (:domain career-capability-admission)
+  (:init (admitted-python))
+  (:goal (admitted-forward-deployment))
+)

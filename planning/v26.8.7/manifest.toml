@@ -1,0 +1,23 @@
+version = "26.8.7"
+ticket = "GL-PLAN-002"
+standing_ceiling = "PARTIAL_ALIVE"
+actuation_authority = "none"
+selection_policy = "max-options/min-wip"
+
+[boundaries]
+benchmark_goal = "ggen.legacy.benchmark-goal.v1"
+engine_receipt = "ggen.legacy.engine-run-receipt.v1"
+replay = "ggen.legacy.replay-report.v1"
+mfw = "mfw.universal.v1-compatible"
+powl = "candidate-projection-only"
+
+[verification]
+command = "python3 planning/v26.8.7/verify.py --strict"
+unit_command = "python3 -m unittest discover -s planning/v26.8.7/tests -v"
+
+[exclusions]
+reference_solution_access = true
+planner_self_promotion = true
+hook_direct_actuation = true
+ambient_shell = true
+silent_pddl_simplification = true

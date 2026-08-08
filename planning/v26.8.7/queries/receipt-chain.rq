@@ -1,0 +1,6 @@
+PREFIX glp: <https://example.org/ggen-legacy/planning#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+SELECT ?receipt ?digest ?subject WHERE {
+  ?receipt a glp:VerificationReceipt ; glp:receiptDigest ?digest ; prov:specializationOf ?subject .
+}
+ORDER BY ?receipt

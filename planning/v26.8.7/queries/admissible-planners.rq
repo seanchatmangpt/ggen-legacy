@@ -1,0 +1,7 @@
+PREFIX glp: <https://example.org/ggen-legacy/planning#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+SELECT ?planner ?role WHERE {
+  ?planner a glp:PlannerEdge ; glp:engineRole ?role .
+  FILTER NOT EXISTS { ?planner prov:invalidatedAtTime ?t }
+}
+ORDER BY ?role

@@ -1,0 +1,27 @@
+{
+  "benchmark_id": "career-capability-admission-v1",
+  "observation": {
+    "subject": "candidate-capability-graph",
+    "observed_facts": ["python"]
+  },
+  "goal": {
+    "required_facts": ["forward-deployment"],
+    "forbidden_facts": ["unreceipted-actuation"],
+    "verifier_obligations": [
+      "plan-validates",
+      "child-receipt-subject-matches",
+      "replay-chain-valid"
+    ]
+  },
+  "invariants": [
+    "planning-selects-only",
+    "broker-authorizes",
+    "zero-unreceipted-actuation",
+    "maximum-reversible-options"
+  ],
+  "exclusions": [
+    "reference-solution-access",
+    "planner-self-promotion",
+    "hook-direct-actuation"
+  ]
+}

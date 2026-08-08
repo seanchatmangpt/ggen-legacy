@@ -1,0 +1,30 @@
+# External planner/validator edges. Every argv is passed directly with shell=False.
+# Registry entries preserve option-space topology; presence is proved separately by probe.
+
+[skdecide_astar]
+program = "planning/v26.8.7/skdecide_classical_engine.py"
+args = ["{domain}", "{problem}", "{plan}"]
+version_args = ["--help"]
+version_witness_prefix = "skdecide-classical-engine/"
+output_mode = "file"
+success_codes = [0]
+parse_refusal_codes = [2]
+unsolvable_codes = [3]
+
+[fast_downward_lama]
+program = "fast-downward.py"
+args = ["--plan-file", "{plan}", "--alias", "lama-first", "{domain}", "{problem}"]
+version_args = ["--help"]
+output_mode = "file"
+success_codes = [0]
+parse_refusal_codes = [34, 35, 36]
+unsolvable_codes = [11, 12]
+
+[val_validator]
+program = "Validate"
+args = ["-v", "-t", "0.001", "{domain}", "{problem}", "{plan}"]
+version_args = ["-h"]
+output_mode = "none"
+success_codes = [0]
+parse_refusal_codes = [1]
+unsolvable_codes = []

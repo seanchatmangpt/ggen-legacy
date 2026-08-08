@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/ggen-legacy/planning/orchestration-snapshot.schema.json",
+  "type": "object",
+  "required": ["schema", "policy", "admitted", "tasks", "events", "event_chain_digest"],
+  "properties": {
+    "schema": {"const": "ggen.legacy.orchestration-snapshot.v1"},
+    "policy": {"const": "max-options/min-wip"},
+    "admitted": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "tasks": {"type": "array", "items": {"type": "object"}},
+    "events": {"type": "array", "items": {"type": "object"}},
+    "event_chain_digest": {"type": ["string", "null"]}
+  }
+}
