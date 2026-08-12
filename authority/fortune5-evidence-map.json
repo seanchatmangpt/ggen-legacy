@@ -1,0 +1,468 @@
+{
+  "bundles": [
+    {
+      "assertions": [
+        {
+          "equals": "$SUBJECT_HEAD",
+          "field": "candidate_head",
+          "path": "migrations/ggen-v26.8.1/verifier-report.json"
+        },
+        {
+          "equals": "PARTIAL_ALIVE",
+          "field": "standing",
+          "path": "migrations/ggen-v26.8.1/verifier-report.json"
+        },
+        {
+          "equals": "REPLAY_MATCH",
+          "field": "replay",
+          "path": "migrations/ggen-v26.8.1/equivalence-report.json"
+        }
+      ],
+      "authority_paths": [
+        "authority/ggen-v26.8.1-migration.json",
+        "migrations/ggen-v26.8.1/migration-manifest.json",
+        "schemas/migration-manifest.schema.json"
+      ],
+      "complete_objects": [
+        "PRD-FR-001",
+        "PRD-FR-002",
+        "PRD-FR-003",
+        "PRD-FR-004",
+        "PRD-FR-005",
+        "PRD-FR-013",
+        "CLM-001",
+        "CLM-002"
+      ],
+      "evidence_paths": [
+        "migrations/ggen-v26.8.1/verifier-report.json",
+        "migrations/ggen-v26.8.1/equivalence-report.json",
+        "migrations/ggen-v26.8.1/migration-receipt.json"
+      ],
+      "id": "migration-v26-8-1",
+      "implementation_paths": [
+        "scripts/verify_ggen_v26_8_1_migration.py",
+        "tools/v26.8.1/legacy_archaeology.py",
+        "tools/v26.8.1/equivalence_runner.py",
+        "tools/v26.8.1/validate_shacl.py"
+      ],
+      "modes": [
+        "positive",
+        "negative",
+        "replay"
+      ],
+      "partial_objects": [
+        "PRD-FR-006",
+        "CLM-003"
+      ],
+      "scope": "exact-head revalidation of the bounded ggen v26.8.1 source-to-corpus migration",
+      "standing_ceiling": "PARTIAL_ALIVE",
+      "test_paths": [
+        "tools/v26.8.1/coverage_sabotage_tests.py",
+        "tools/v26.8.1/subsystem_verifier_sabotage_tests.py",
+        "tools/v26.8.1/legacy_subsystem_verification_test.py"
+      ],
+      "verifier_paths": [
+        "scripts/verify_ggen_v26_8_1_migration.py"
+      ]
+    },
+    {
+      "assertions": [
+        {
+          "equals": "$SUBJECT_HEAD",
+          "field": "exact_source_head",
+          "path": "evidence/appliance/crown-report.json"
+        },
+        {
+          "equals": "ALIVE",
+          "field": "standing",
+          "path": "evidence/appliance/crown-report.json"
+        },
+        {
+          "equals": true,
+          "field": "release_admitted",
+          "path": "evidence/appliance/crown-report.json"
+        },
+        {
+          "equals": false,
+          "field": "sunset_admitted",
+          "path": "evidence/appliance/crown-report.json"
+        },
+        {
+          "equals": "REPLAY_MATCH",
+          "field": "status",
+          "path": "evidence/appliance/reference-replay-report.json"
+        }
+      ],
+      "authority_paths": [
+        "authority/assurance-subsystems.json",
+        "authority/verifier-appliance-profile.json",
+        "appliance/policy/claim-boundary.json",
+        "appliance/policy/trust-roots.json"
+      ],
+      "complete_objects": [
+        "PRD-FR-009",
+        "PRD-FR-010",
+        "PRD-FR-011",
+        "CLM-004",
+        "CLM-009"
+      ],
+      "evidence_paths": [
+        "evidence/appliance/crown-report.json",
+        "evidence/appliance/reference-verifier-report.json",
+        "evidence/appliance/reference-cross-check-report.json",
+        "evidence/appliance/reference-replay-report.json",
+        "evidence/appliance/reference-tamper-report.json",
+        "evidence/appliance/reference-independence-report.json"
+      ],
+      "id": "verifier-appliance-reference",
+      "implementation_paths": [
+        "appliance/bin/build-standing-portfolio.py",
+        "appliance/bin/verify-standing-portfolio.py",
+        "appliance/bin/cross-check-portfolio.py",
+        "appliance/bin/replay-standing-portfolio.py",
+        "appliance/bin/decision-engine.py",
+        "appliance/bin/transparency-log.py"
+      ],
+      "modes": [
+        "positive",
+        "negative",
+        "replay"
+      ],
+      "partial_objects": [
+        "PRD-FR-012",
+        "EM-10-P",
+        "EM-10-N",
+        "EM-10-R",
+        "EM-17-P",
+        "EM-17-N",
+        "EM-17-R",
+        "EM-18-P",
+        "EM-18-N",
+        "EM-18-R",
+        "EM-21-P",
+        "EM-21-N",
+        "EM-21-R"
+      ],
+      "scope": "exact-head customer-controlled verifier-appliance reference fixture",
+      "standing_ceiling": "ALIVE",
+      "test_paths": [
+        "appliance/bin/run-reference-e2e.sh",
+        "tests/fixtures/engagement.reference.json"
+      ],
+      "verifier_paths": [
+        "appliance/bin/verify-standing-portfolio.py",
+        "appliance/bin/cross-check-portfolio.py",
+        "appliance/bin/verify-crown.py"
+      ]
+    },
+    {
+      "assertions": [
+        {
+          "equals": "$SUBJECT_HEAD",
+          "field": "source_head",
+          "path": "evidence/offline-bundle/ggen-legacy-verifier-v26.8.1.receipt.json"
+        },
+        {
+          "equals": false,
+          "field": "network_required",
+          "path": "evidence/offline-bundle/ggen-legacy-verifier-v26.8.1.receipt.json"
+        },
+        {
+          "equals": "$SUBJECT_HEAD",
+          "field": "subject_head",
+          "path": "evidence/offline-bundle/replay-report.json"
+        },
+        {
+          "equals": "REPLAY_MATCH",
+          "field": "replay",
+          "path": "evidence/offline-bundle/replay-report.json"
+        },
+        {
+          "equals": "KILLED",
+          "field": "tamper_mutant",
+          "path": "evidence/offline-bundle/replay-report.json"
+        },
+        {
+          "equals": "ALIVE",
+          "field": "standing",
+          "path": "evidence/offline-bundle/replay-report.json"
+        }
+      ],
+      "authority_paths": [
+        "authority/offline-verifier-transport.json"
+      ],
+      "complete_objects": [
+        "CLM-010"
+      ],
+      "evidence_paths": [
+        "evidence/offline-bundle/ggen-legacy-verifier-v26.8.1.receipt.json",
+        "evidence/offline-bundle/replay-report.json"
+      ],
+      "id": "offline-verifier-transport",
+      "implementation_paths": [
+        "appliance/bin/build-offline-bundle.sh"
+      ],
+      "modes": [
+        "positive",
+        "replay"
+      ],
+      "partial_objects": [],
+      "scope": "exact-head deterministic portable verifier application bundle",
+      "standing_ceiling": "ALIVE",
+      "test_paths": [
+        "scripts/verify_offline_bundle.py"
+      ],
+      "verifier_paths": [
+        "scripts/verify_offline_bundle.py"
+      ]
+    },
+    {
+      "assertions": [
+        {
+          "equals": "ALIVE",
+          "field": "standing",
+          "path": "evidence/foundry-bootstrap-verifier.json"
+        },
+        {
+          "equals": "$SUBJECT_HEAD",
+          "field": "subject_head",
+          "path": "evidence/ci/local-qualification.json"
+        },
+        {
+          "equals": "ALIVE",
+          "field": "foundry_bootstrap",
+          "path": "evidence/ci/local-qualification.json"
+        }
+      ],
+      "authority_paths": [
+        "authority/foundry-work-program.json",
+        "foundry/bootstrap.yaml"
+      ],
+      "complete_objects": [],
+      "evidence_paths": [
+        "evidence/foundry-bootstrap-verifier.json",
+        "evidence/ci/local-qualification.json"
+      ],
+      "id": "foundry-bootstrap-evidence",
+      "implementation_paths": [
+        "scripts/verify_foundry_bootstrap.py"
+      ],
+      "modes": [
+        "positive",
+        "replay"
+      ],
+      "partial_objects": [
+        "CLM-012",
+        "FOUNDRY-A",
+        "FOUNDRY-B",
+        "FOUNDRY-C",
+        "FOUNDRY-D"
+      ],
+      "scope": "bounded foundry authority/runtime-candidate evidence without stable runtime admission",
+      "standing_ceiling": "PARTIAL_ALIVE",
+      "test_paths": [
+        "scripts/verify_foundry_bootstrap.py"
+      ],
+      "verifier_paths": [
+        "scripts/verify_foundry_bootstrap.py"
+      ]
+    },
+    {
+      "assertions": [
+        {
+          "equals": "$SUBJECT_HEAD",
+          "field": "subject_head",
+          "path": "evidence/ci/local-qualification.json"
+        },
+        {
+          "equals": "ALIVE",
+          "field": "foundry_runtime_candidate",
+          "path": "evidence/ci/local-qualification.json"
+        },
+        {
+          "equals": "458f0f88aee0060cddce3ffdaa7e2172a4f40a25",
+          "field": "foundry_runtime_head",
+          "path": "evidence/ci/local-qualification.json"
+        }
+      ],
+      "authority_paths": [
+        "authority/project-001-promotion.json",
+        "authority/foundry-work-program.json"
+      ],
+      "complete_objects": [
+        "CLM-011"
+      ],
+      "evidence_paths": [
+        "evidence/ci/local-qualification.json"
+      ],
+      "id": "foundry-runtime-candidate",
+      "implementation_paths": [
+        "scripts/verify_foundry_bootstrap.py"
+      ],
+      "modes": [
+        "positive",
+        "negative",
+        "replay"
+      ],
+      "partial_objects": [],
+      "scope": "exact ggen architecture-foundry runtime candidate execution; candidate evidence only, stable dependency remains unadmitted",
+      "standing_ceiling": "ALIVE",
+      "test_paths": [
+        "scripts/verify_foundry_bootstrap.py"
+      ],
+      "verifier_paths": [
+        "scripts/verify_foundry_bootstrap.py"
+      ]
+    },
+    {
+      "assertions": [
+        {
+          "equals": "PARTIAL_ALIVE",
+          "field": "state",
+          "path": "evidence/ci/gl-plan-002.json"
+        },
+        {
+          "equals": "$SUBJECT_HEAD",
+          "field": "subject_head",
+          "path": "evidence/ci/local-qualification.json"
+        },
+        {
+          "equals": "PARTIAL_ALIVE",
+          "field": "planning",
+          "path": "evidence/ci/local-qualification.json"
+        }
+      ],
+      "authority_paths": [
+        "planning/v26.8.7/capability.py"
+      ],
+      "complete_objects": [],
+      "evidence_paths": [
+        "evidence/ci/gl-plan-002.json",
+        "evidence/ci/local-qualification.json"
+      ],
+      "id": "planning-combinatorial-max",
+      "implementation_paths": [
+        "planning/v26.8.7/verify.py",
+        "planning/v26.8.7/orchestration.py"
+      ],
+      "modes": [
+        "positive",
+        "negative",
+        "replay"
+      ],
+      "partial_objects": [
+        "PRD-FR-008"
+      ],
+      "scope": "bounded planning/CMD reference surface; unavailable external planners remain explicit",
+      "standing_ceiling": "PARTIAL_ALIVE",
+      "test_paths": [
+        "planning/v26.8.7/tests/test_planning.py"
+      ],
+      "verifier_paths": [
+        "planning/v26.8.7/verify.py"
+      ]
+    },
+    {
+      "assertions": [
+        {
+          "equals": "ALIVE",
+          "field": "standing",
+          "path": "evidence/ci/lsp-contract-current.json"
+        },
+        {
+          "equals": "$SUBJECT_HEAD",
+          "field": "subject_head",
+          "path": "evidence/ci/local-qualification.json"
+        },
+        {
+          "equals": "ALIVE",
+          "field": "lsp_runtime",
+          "path": "evidence/ci/local-qualification.json"
+        }
+      ],
+      "authority_paths": [
+        "authority/lsp-contract.json"
+      ],
+      "complete_objects": [],
+      "evidence_paths": [
+        "evidence/ci/lsp-contract-current.json",
+        "evidence/ci/local-qualification.json",
+        "evidence/lsp-contract/stdio-replay-2026-08-03.json"
+      ],
+      "id": "lsp-enterprise-boundary",
+      "implementation_paths": [
+        "src/backend.rs",
+        "src/generated_contract.rs"
+      ],
+      "modes": [
+        "positive",
+        "negative",
+        "replay"
+      ],
+      "partial_objects": [
+        "PRD-FR-014"
+      ],
+      "scope": "bounded generated-contract plus real stdio LSP boundary, not full enterprise integration",
+      "standing_ceiling": "PARTIAL_ALIVE",
+      "test_paths": [
+        "tests/lsp_boundary.rs",
+        "tests/contract.rs"
+      ],
+      "verifier_paths": [
+        "scripts/verify_lsp_contract.py"
+      ]
+    },
+    {
+      "assertions": [
+        {
+          "equals": "ALIVE",
+          "field": "standing",
+          "path": "evidence/autonomic/GL-AUTO-001.json"
+        },
+        {
+          "equals": "$SUBJECT_HEAD",
+          "field": "subject_head",
+          "path": "evidence/ci/local-qualification.json"
+        },
+        {
+          "equals": "ALIVE",
+          "field": "autonomic_projection",
+          "path": "evidence/ci/local-qualification.json"
+        }
+      ],
+      "authority_paths": [
+        "fixtures/autonomic/conversation.json"
+      ],
+      "complete_objects": [],
+      "evidence_paths": [
+        "evidence/autonomic/GL-AUTO-001.json",
+        "evidence/ci/local-qualification.json"
+      ],
+      "id": "autonomic-projection-reference",
+      "implementation_paths": [
+        "scripts/autonomic_finish.py"
+      ],
+      "modes": [
+        "positive",
+        "negative",
+        "replay"
+      ],
+      "partial_objects": [
+        "PRD-FR-007",
+        "EM-02-P",
+        "EM-02-N",
+        "EM-02-R"
+      ],
+      "scope": "deterministic single-source projection reference; ggen ontology-owned manufacture remains broader",
+      "standing_ceiling": "PARTIAL_ALIVE",
+      "test_paths": [
+        "scripts/verify_autonomic_finish.py"
+      ],
+      "verifier_paths": [
+        "scripts/verify_autonomic_finish.py"
+      ]
+    }
+  ],
+  "claim_ceiling": "BOUNDED_EXACT_HEAD_AND_REFERENCE_EVIDENCE_ONLY",
+  "schema": "ggen.legacy.fortune5.evidence-map/1"
+}
