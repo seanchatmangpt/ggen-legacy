@@ -1,0 +1,19 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/1",
+  "capability_id": "legacy_ext_genesis_wasm_shell_crate",
+  "source_repository": "seanchatmangpt/ggen",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_parent_head": "4043a1c311d2920a193f7530b300850c543d5397",
+  "historical_commit": "8a69f7658d2c26f6005f84c9ba1b2a1c76cce1d0",
+  "source_path": "crates/genesis-wasm-shell/",
+  "destination_path": "foundry/corpus/components/system/legacy_ext_genesis_wasm_shell_crate",
+  "manifest_digest": "910660333ba116ef283f3328e46ef5359d5adb062b924b42cc561c53cd8e7c2d",
+  "blob_digests": [
+    "c9e9c8be53d6754e250dc7b4ffe6ae1f0b67917c119ed3f26ffe979437f31d8b",
+    "19dbfc90be3a4c625de222fc1fc3ba4e5eb2f70761ed9b29a98f41bab17d8f91"
+  ],
+  "disposition": "REFUSED",
+  "classification": "CORPUS_REFUSAL_WITNESS",
+  "source_removed": false
+}

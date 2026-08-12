@@ -1,0 +1,27 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/1",
+  "capability_id": "legacy_ext_genesis_lockchain_crate",
+  "source_repository": "seanchatmangpt/ggen",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_parent_head": "4043a1c311d2920a193f7530b300850c543d5397",
+  "historical_commit": "8a69f7658d2c26f6005f84c9ba1b2a1c76cce1d0",
+  "source_path": "crates/genesis-lockchain/",
+  "destination_path": "foundry/corpus/components/system/legacy_ext_genesis_lockchain_crate",
+  "manifest_digest": "32f36d7514bab92e81b50bdd83b18adeb9328e5b99e88a7637876e63bb7c8b23",
+  "blob_digests": [
+    "5b8941a0c126c148fc0248e99f354c9a1d4706b03355f594498ecfbc91f77580",
+    "dbace7ade45bb095bb28b7f53800d9850fcb517e4e8637977cf43196cd843549",
+    "a3e0343db207be20f122157c3a3b8f9c0f931f5e9175bc378cd08922435e6303",
+    "367a50e4fe915202508c497954ec7f2151a5f79251e1ecec619ef5300a60e055",
+    "d050525cb3243917bd7deb74f214ba70cf22b127897a7745c07f4d0efb2820af",
+    "c93d7b97d1b447fcc09648712ae9181ff18d7160c6ac148e44f6bad44e7b2988",
+    "27126a86c80b530e62fa1d4f59ee6952a0eac2b5d6688dffe66af6363113ad96",
+    "4025530a82934b32423915a10fb47168f58246a9c89dbc4af3ba58e8e8c9950c",
+    "f1032f0b6f8c25cacf5f0c271980aea1274b7bea4715ade2f42b87a525a5f7a8",
+    "cdf0051b33828980d67fa47ed77afe20f42c714f34581301a15a41ca9927ed9e"
+  ],
+  "disposition": "REFUSED",
+  "classification": "CORPUS_REFUSAL_WITNESS",
+  "source_removed": false
+}

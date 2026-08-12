@@ -1,0 +1,28 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/1",
+  "capability_id": "legacy_star_toml_workspace_member",
+  "source_repository": "seanchatmangpt/ggen",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_parent_head": "4043a1c311d2920a193f7530b300850c543d5397",
+  "historical_commit": "c7e9c79f6f7f8eafa937428a597dd4e30359f7f7",
+  "source_path": "crates/star-toml/",
+  "destination_path": "foundry/corpus/components/system/legacy_star_toml_workspace_member",
+  "manifest_digest": "e150c61c173f8b44bd1ad3daf155fda68ab42fb2f7b46c361d2e3c521520ba25",
+  "blob_digests": [
+    "2a4508e5faf10276c36c8d0759ebe1941bb99c2dc7c9081c6a85c44eae53d7b8",
+    "63b0cbb0c1aa406fbc653671e3357d1c705905baa1d375d031e1be9ef880dd1d",
+    "aec0da33762e42cd9434903b15a69c9e30b33a9f55ed5a72cafbf4ce344d5ecd",
+    "7b70899284d6d65b3681255a9ddc8f42af64f91e2f0f5b648ac91f0ff3982dd1",
+    "dd344ed14e55dda1113737ff9599426cc5b93a0ea05aeacd75d3336a60d993b2",
+    "a5238f9665c02b4684709837f4af6f9a6077b776dff0555a786c33d55a12a00d",
+    "e40e7c7e76f9f7376a5c20a5b6b2c7d72494748254e8560f66eba9c46af730d9",
+    "3d4628cfdf5801f2fc2cac120924b77446e4de252d5cac8cc91f5670584b0328",
+    "3b34b829c44aba96de2af9f6a2592238847cd13806cfabbe4d7859ba1c2efe70",
+    "87f1ec9bdda207b95c7bf25443739f07bc75e184625f8658823481c2e5523140",
+    "f23a7362302b7d8e6f5ec3e2f75bafdf8ee93734eea21e02beb3c911625e94c2"
+  ],
+  "disposition": "REPLACED",
+  "classification": "CORPUS_HISTORICAL_IMPLEMENTATION",
+  "source_removed": false
+}

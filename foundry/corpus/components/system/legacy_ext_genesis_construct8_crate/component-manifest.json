@@ -1,0 +1,126 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/1",
+  "capability_id": "legacy_ext_genesis_construct8_crate",
+  "source_repository": "seanchatmangpt/ggen",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_parent_head": "4043a1c311d2920a193f7530b300850c543d5397",
+  "historical_commit": "8a69f7658d2c26f6005f84c9ba1b2a1c76cce1d0",
+  "requested_source_path": "crates/genesis-construct8/ (deleted whole crate)",
+  "normalized_source_path": "crates/genesis-construct8/",
+  "disposition": "REFUSED",
+  "classification": "CORPUS_REFUSAL_WITNESS",
+  "kernel_owner": "ggen-legacy/archive/system",
+  "corpus_destination": "foundry/corpus/components/system/legacy_ext_genesis_construct8_crate",
+  "resolution": "GIT_OBJECTS_RECOVERED",
+  "source_files": [
+    {
+      "git_path": "crates/genesis-construct8/Cargo.toml",
+      "git_object_id": "572782a7a997bcedc68b997279a48c677460ee31",
+      "git_mode": "100644",
+      "byte_length": 864,
+      "blake3": "f37e5be7db3feb18c1a5b1c49f73487c7282e605e0bdfd54eb16cb773bf74255",
+      "blob_path": "foundry/blobs/blake3/f37e5be7db3feb18c1a5b1c49f73487c7282e605e0bdfd54eb16cb773bf74255"
+    },
+    {
+      "git_path": "crates/genesis-construct8/README.md",
+      "git_object_id": "08e8ed1e158f466469b153140a136ae1ff583f41",
+      "git_mode": "100644",
+      "byte_length": 6276,
+      "blake3": "1c794ac8339afb6ac8d7de574dd858781dd9c249ded2fd1bd658069206b28aad",
+      "blob_path": "foundry/blobs/blake3/1c794ac8339afb6ac8d7de574dd858781dd9c249ded2fd1bd658069206b28aad"
+    },
+    {
+      "git_path": "crates/genesis-construct8/src/adapters.rs",
+      "git_object_id": "47e3d2441e0fda1fc1f594d5c865b3f6df219620",
+      "git_mode": "100644",
+      "byte_length": 37719,
+      "blake3": "d71507ad6367576b983f59f32f7d76748bea02f99de0e433b593b8baeea352eb",
+      "blob_path": "foundry/blobs/blake3/d71507ad6367576b983f59f32f7d76748bea02f99de0e433b593b8baeea352eb"
+    },
+    {
+      "git_path": "crates/genesis-construct8/src/admission.rs",
+      "git_object_id": "3fa630e24b9b9ac2bc7c4de6d27473ec623da145",
+      "git_mode": "100644",
+      "byte_length": 8720,
+      "blake3": "e1ad56a64b40ce719115f1ae35e54132a38c696c566ad1b320c927e1776ed7b9",
+      "blob_path": "foundry/blobs/blake3/e1ad56a64b40ce719115f1ae35e54132a38c696c566ad1b320c927e1776ed7b9"
+    },
+    {
+      "git_path": "crates/genesis-construct8/src/bin/genesis8.rs",
+      "git_object_id": "d311c072cbac0b46df56c2108ae2e2d4c10b0ff9",
+      "git_mode": "100644",
+      "byte_length": 11729,
+      "blake3": "01d81a26d8ce9cfea5d92c5f137d3ccc4ee68b058f28432d1d9e7bcc26c67114",
+      "blob_path": "foundry/blobs/blake3/01d81a26d8ce9cfea5d92c5f137d3ccc4ee68b058f28432d1d9e7bcc26c67114"
+    },
+    {
+      "git_path": "crates/genesis-construct8/src/forge.rs",
+      "git_object_id": "ea42f6913f6bcc1c4fddfb3bb437e52c4eafe07c",
+      "git_mode": "100644",
+      "byte_length": 7896,
+      "blake3": "5c0446449222b35b1d521cae18c3ce71c37a4099968e46c1b1c6ff6aab7a1c72",
+      "blob_path": "foundry/blobs/blake3/5c0446449222b35b1d521cae18c3ce71c37a4099968e46c1b1c6ff6aab7a1c72"
+    },
+    {
+      "git_path": "crates/genesis-construct8/src/hierarchy.rs",
+      "git_object_id": "8ad18d90547280cbe754d2524cd579ffbfaacd4d",
+      "git_mode": "100644",
+      "byte_length": 14082,
+      "blake3": "62d3cb4d1f7dd512ebf600b1385e153765b807b61ac243e76d4e9d41542b3957",
+      "blob_path": "foundry/blobs/blake3/62d3cb4d1f7dd512ebf600b1385e153765b807b61ac243e76d4e9d41542b3957"
+    },
+    {
+      "git_path": "crates/genesis-construct8/src/lib.rs",
+      "git_object_id": "4af6368304aeddde946fc11fbad604591b40c4ac",
+      "git_mode": "100644",
+      "byte_length": 992,
+      "blake3": "38437e29c4202a305113d3bec12afdc43cf03f92c00539bd1656cbd800d6eee9",
+      "blob_path": "foundry/blobs/blake3/38437e29c4202a305113d3bec12afdc43cf03f92c00539bd1656cbd800d6eee9"
+    },
+    {
+      "git_path": "crates/genesis-construct8/src/models.rs",
+      "git_object_id": "88c2396a64d7be34877d7f79d8f13e4149dc3291",
+      "git_mode": "100644",
+      "byte_length": 8994,
+      "blake3": "6b0bb9898319509573bc948d79c7b56cc608404b073152afdbb6669835e2db61",
+      "blob_path": "foundry/blobs/blake3/6b0bb9898319509573bc948d79c7b56cc608404b073152afdbb6669835e2db61"
+    },
+    {
+      "git_path": "crates/genesis-construct8/src/projectors.rs",
+      "git_object_id": "7599d62aa06ca7b4b68c0468d3bfbc6115b1948c",
+      "git_mode": "100644",
+      "byte_length": 30614,
+      "blake3": "5328d344140beb408ce27bb112175d12913bb670e942a334e697786a14e94362",
+      "blob_path": "foundry/blobs/blake3/5328d344140beb408ce27bb112175d12913bb670e942a334e697786a14e94362"
+    },
+    {
+      "git_path": "crates/genesis-construct8/src/receipt.rs",
+      "git_object_id": "071511d43db8c8b52144385a0b237c0ce92fd904",
+      "git_mode": "100644",
+      "byte_length": 409,
+      "blake3": "71dc5e51a3de604d088112c0a4c4856bafe65a0ed99a92b7ebafd66a47bb189c",
+      "blob_path": "foundry/blobs/blake3/71dc5e51a3de604d088112c0a4c4856bafe65a0ed99a92b7ebafd66a47bb189c"
+    },
+    {
+      "git_path": "crates/genesis-construct8/src/replay.rs",
+      "git_object_id": "19b66d936fb9a1e30fe9903a71e2335da824369c",
+      "git_mode": "100644",
+      "byte_length": 7120,
+      "blake3": "45f183b05e085ea7fb91c57755593f165b716e1ce9849bac9e19135467aace5a",
+      "blob_path": "foundry/blobs/blake3/45f183b05e085ea7fb91c57755593f165b716e1ce9849bac9e19135467aace5a"
+    },
+    {
+      "git_path": "crates/genesis-construct8/src/stream.rs",
+      "git_object_id": "f32d4ba498920738733f52d6bdd215ded127fc87",
+      "git_mode": "100644",
+      "byte_length": 2070,
+      "blake3": "eb3f444f32ae1efb816b7bdd0240294bc98dcda03a71f867e3242cf3d32455c8",
+      "blob_path": "foundry/blobs/blake3/eb3f444f32ae1efb816b7bdd0240294bc98dcda03a71f867e3242cf3d32455c8"
+    }
+  ],
+  "semantic_evidence_path": "foundry/evidence/B/legacy-capabilities.ttl",
+  "semantic_evidence_digest": "1d1570f7464d5fed916e78edefba1191a05ef631302f0ed3b2f754f58b434034",
+  "source_removed": false,
+  "recovery_command": "git show 8a69f7658d2c26f6005f84c9ba1b2a1c76cce1d0:crates/genesis-construct8/"
+}

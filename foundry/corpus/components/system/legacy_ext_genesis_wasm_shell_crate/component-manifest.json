@@ -1,0 +1,38 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/1",
+  "capability_id": "legacy_ext_genesis_wasm_shell_crate",
+  "source_repository": "seanchatmangpt/ggen",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_parent_head": "4043a1c311d2920a193f7530b300850c543d5397",
+  "historical_commit": "8a69f7658d2c26f6005f84c9ba1b2a1c76cce1d0",
+  "requested_source_path": "crates/genesis-wasm-shell/ (deleted whole crate)",
+  "normalized_source_path": "crates/genesis-wasm-shell/",
+  "disposition": "REFUSED",
+  "classification": "CORPUS_REFUSAL_WITNESS",
+  "kernel_owner": "ggen-legacy/archive/system",
+  "corpus_destination": "foundry/corpus/components/system/legacy_ext_genesis_wasm_shell_crate",
+  "resolution": "GIT_OBJECTS_RECOVERED",
+  "source_files": [
+    {
+      "git_path": "crates/genesis-wasm-shell/Cargo.toml",
+      "git_object_id": "dbf2192a317b722cf0dc74d458a762328b268422",
+      "git_mode": "100644",
+      "byte_length": 702,
+      "blake3": "c9e9c8be53d6754e250dc7b4ffe6ae1f0b67917c119ed3f26ffe979437f31d8b",
+      "blob_path": "foundry/blobs/blake3/c9e9c8be53d6754e250dc7b4ffe6ae1f0b67917c119ed3f26ffe979437f31d8b"
+    },
+    {
+      "git_path": "crates/genesis-wasm-shell/src/lib.rs",
+      "git_object_id": "0d98b680c9ffd71d62fdefd942f69daaf6ea7dbb",
+      "git_mode": "100644",
+      "byte_length": 8605,
+      "blake3": "19dbfc90be3a4c625de222fc1fc3ba4e5eb2f70761ed9b29a98f41bab17d8f91",
+      "blob_path": "foundry/blobs/blake3/19dbfc90be3a4c625de222fc1fc3ba4e5eb2f70761ed9b29a98f41bab17d8f91"
+    }
+  ],
+  "semantic_evidence_path": "foundry/evidence/B/legacy-capabilities.ttl",
+  "semantic_evidence_digest": "1d1570f7464d5fed916e78edefba1191a05ef631302f0ed3b2f754f58b434034",
+  "source_removed": false,
+  "recovery_command": "git show 8a69f7658d2c26f6005f84c9ba1b2a1c76cce1d0:crates/genesis-wasm-shell/"
+}

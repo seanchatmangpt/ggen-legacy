@@ -1,0 +1,30 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/1",
+  "capability_id": "legacy_ext_template_mode_update",
+  "source_repository": "seanchatmangpt/ggen",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_parent_head": "4043a1c311d2920a193f7530b300850c543d5397",
+  "historical_commit": "72b0606de4d1861dfbfea2fb5665d39e834d83b2",
+  "requested_source_path": "crates/ggen-daemon/src/generator.rs (resolved 2026-08-12: fca98756f's own commit message reads \"Delete generator.rs and its tests\", confirmed via `git show fca98756f --stat` and `git ls-tree -r fca98756f^`; the field this replaces described the mode's function rather than its source file)",
+  "normalized_source_path": "crates/ggen-daemon/src/generator.rs",
+  "disposition": "REPLACED",
+  "classification": "CORPUS_HISTORICAL_IMPLEMENTATION",
+  "kernel_owner": "crates/ggen-engine's SyncExecutor-based pipeline (per commit fca98756f's own message)",
+  "corpus_destination": "foundry/corpus/components/engine/legacy_ext_template_mode_update",
+  "resolution": "GIT_OBJECTS_RECOVERED",
+  "source_files": [
+    {
+      "git_path": "crates/ggen-daemon/src/generator.rs",
+      "git_object_id": "afe87af00ca1af455d61bb40e99e30bf2f634334",
+      "git_mode": "100644",
+      "byte_length": 4580,
+      "blake3": "50e1d467a5283c5b8df76d30919f901fbe9a005432e751b016e7258bfa5ca96c",
+      "blob_path": "foundry/blobs/blake3/50e1d467a5283c5b8df76d30919f901fbe9a005432e751b016e7258bfa5ca96c"
+    }
+  ],
+  "semantic_evidence_path": "foundry/evidence/B/legacy-capabilities.ttl",
+  "semantic_evidence_digest": "1d1570f7464d5fed916e78edefba1191a05ef631302f0ed3b2f754f58b434034",
+  "source_removed": false,
+  "recovery_command": "git show 72b0606de4d1861dfbfea2fb5665d39e834d83b2:crates/ggen-daemon/src/generator.rs"
+}

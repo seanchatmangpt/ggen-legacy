@@ -1,0 +1,19 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/1",
+  "capability_id": "legacy_genesis_schema_v2_crate",
+  "source_repository": "seanchatmangpt/ggen",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_parent_head": "4043a1c311d2920a193f7530b300850c543d5397",
+  "historical_commit": "f9de04c335a9b53318339514f3a671475cd231e1",
+  "source_path": "crates/genesis-schema-v2/",
+  "destination_path": "foundry/corpus/components/system/legacy_genesis_schema_v2_crate",
+  "manifest_digest": "459c6a7eaf47ab5a994c1db513d61a155724b4be10bab307330c24b60ca1c64b",
+  "blob_digests": [
+    "818890dc1257d952396c88d57235760f405921e8cb6e40b72e79bfae9863f8c1",
+    "95327db59a1e12c6107be7332078e4c39218cde2c1b25f5f52fa561f72f5a931"
+  ],
+  "disposition": "SUBSUMED",
+  "classification": "CORPUS_HISTORICAL_IMPLEMENTATION",
+  "source_removed": false
+}

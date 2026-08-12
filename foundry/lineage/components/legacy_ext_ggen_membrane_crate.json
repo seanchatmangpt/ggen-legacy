@@ -1,0 +1,19 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/1",
+  "capability_id": "legacy_ext_ggen_membrane_crate",
+  "source_repository": "seanchatmangpt/ggen",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_parent_head": "4043a1c311d2920a193f7530b300850c543d5397",
+  "historical_commit": "8a69f7658d2c26f6005f84c9ba1b2a1c76cce1d0",
+  "source_path": "crates/ggen-membrane/",
+  "destination_path": "foundry/corpus/components/system/legacy_ext_ggen_membrane_crate",
+  "manifest_digest": "55bb16d6ac8ef972e7c2dc5dcf5653c0747a42a484c70f8b2240ad8c38d1a25d",
+  "blob_digests": [
+    "a54a6d1054d17afdb58ffa52eb5b8727ebac28fd4978ab9befd1b6ca6247b2bc",
+    "db75f896baf92b5f807834b804a994e5008e7769f8dc8d0734f860fa4870d576"
+  ],
+  "disposition": "REFUSED",
+  "classification": "CORPUS_REFUSAL_WITNESS",
+  "source_removed": false
+}

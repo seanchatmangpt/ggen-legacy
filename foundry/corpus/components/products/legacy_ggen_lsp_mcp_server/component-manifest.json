@@ -1,0 +1,102 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/1",
+  "capability_id": "legacy_ggen_lsp_mcp_server",
+  "source_repository": "seanchatmangpt/ggen",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_parent_head": "4043a1c311d2920a193f7530b300850c543d5397",
+  "historical_commit": "0a843aef6215e828fece13bfd0edb2f35c4e32fa",
+  "requested_source_path": "crates/ggen-lsp-mcp/ (deleted whole crate)",
+  "normalized_source_path": "crates/ggen-lsp-mcp/",
+  "disposition": "SUBSUMED",
+  "classification": "CORPUS_HISTORICAL_IMPLEMENTATION",
+  "kernel_owner": "crates/ggen-lsp (feature `mcp`)",
+  "corpus_destination": "foundry/corpus/components/products/legacy_ggen_lsp_mcp_server",
+  "resolution": "GIT_OBJECTS_RECOVERED",
+  "source_files": [
+    {
+      "git_path": "crates/ggen-lsp-mcp/Cargo.toml",
+      "git_object_id": "313faa108dc4a39dde6c6afb1f80fe0ebcbe76db",
+      "git_mode": "100644",
+      "byte_length": 1021,
+      "blake3": "eedb8e13130667dfb96bfcf8cc5cdd95028dbca67f63fe88ff41f55297208813",
+      "blob_path": "foundry/blobs/blake3/eedb8e13130667dfb96bfcf8cc5cdd95028dbca67f63fe88ff41f55297208813"
+    },
+    {
+      "git_path": "crates/ggen-lsp-mcp/src/lib.rs",
+      "git_object_id": "8db54010ee9b933a2554493ab1a173f2913f9835",
+      "git_mode": "100644",
+      "byte_length": 17570,
+      "blake3": "ed276e5befed3ba04db236a9e41055735bcd5d71f9b4d2750aa34e5a5c112a92",
+      "blob_path": "foundry/blobs/blake3/ed276e5befed3ba04db236a9e41055735bcd5d71f9b4d2750aa34e5a5c112a92"
+    },
+    {
+      "git_path": "crates/ggen-lsp-mcp/src/main.rs",
+      "git_object_id": "a5a8f7dbcf49b83335ee9a5ba386451772646d0a",
+      "git_mode": "100644",
+      "byte_length": 589,
+      "blake3": "45275a24c2b26102888ff81fb1aad8c4680e378b30c33857182c7654d6b061e7",
+      "blob_path": "foundry/blobs/blake3/45275a24c2b26102888ff81fb1aad8c4680e378b30c33857182c7654d6b061e7"
+    },
+    {
+      "git_path": "crates/ggen-lsp-mcp/tests/field_gauge_test.rs",
+      "git_object_id": "0e5dadbb7418569b4a8e363ac3921db1b8f56a35",
+      "git_mode": "100644",
+      "byte_length": 2750,
+      "blake3": "300faec607b5930525bd494d5316d7f934e9ab338368f63a8af94046fda6d403",
+      "blob_path": "foundry/blobs/blake3/300faec607b5930525bd494d5316d7f934e9ab338368f63a8af94046fda6d403"
+    },
+    {
+      "git_path": "crates/ggen-lsp-mcp/tests/fixtures/minimal.toml",
+      "git_object_id": "8d996d4d5000093c10d53b4d776c00e8d7a4c6a4",
+      "git_mode": "100644",
+      "byte_length": 87,
+      "blake3": "ce234eacff7cd16b762ddd46bb62ef3d5ae8e65d163a8063dacb6bb0888b2c9e",
+      "blob_path": "foundry/blobs/blake3/ce234eacff7cd16b762ddd46bb62ef3d5ae8e65d163a8063dacb6bb0888b2c9e"
+    },
+    {
+      "git_path": "crates/ggen-lsp-mcp/tests/fixtures/minimal.ttl",
+      "git_object_id": "9079de230595c9bfd29b9d2861c4b4c6a48cb52d",
+      "git_mode": "100644",
+      "byte_length": 161,
+      "blake3": "ebece37db01f7e3234703fd2fad0bc2e071a0b035c64e1c3afaada481a2dabca",
+      "blob_path": "foundry/blobs/blake3/ebece37db01f7e3234703fd2fad0bc2e071a0b035c64e1c3afaada481a2dabca"
+    },
+    {
+      "git_path": "crates/ggen-lsp-mcp/tests/harden_test.rs",
+      "git_object_id": "2f4a385af005d4b6c683d509c6683dd2000e40f4",
+      "git_mode": "100644",
+      "byte_length": 3245,
+      "blake3": "39fdae3a3fb21bc3ac27cc1a82926c19ea4f526c293cc50c1e35c1f2354c920e",
+      "blob_path": "foundry/blobs/blake3/39fdae3a3fb21bc3ac27cc1a82926c19ea4f526c293cc50c1e35c1f2354c920e"
+    },
+    {
+      "git_path": "crates/ggen-lsp-mcp/tests/mcp_protocol_test.rs",
+      "git_object_id": "fc9e16fa863621c5720cd172bed68a0dc4dd8254",
+      "git_mode": "100644",
+      "byte_length": 22903,
+      "blake3": "713e65bb7ffa35b3eaa1b5f4651ef3883163ae7dfaac7b650d24d7fe20197f0a",
+      "blob_path": "foundry/blobs/blake3/713e65bb7ffa35b3eaa1b5f4651ef3883163ae7dfaac7b650d24d7fe20197f0a"
+    },
+    {
+      "git_path": "crates/ggen-lsp-mcp/tests/parity_test.rs",
+      "git_object_id": "a6a9a5a68a9471a3860a294d7f7742fcdf2663df",
+      "git_mode": "100644",
+      "byte_length": 2064,
+      "blake3": "16d8bc97789642fd2d071fe6fba4a85ac16c2d038476de649ecdfc8b7f9e763d",
+      "blob_path": "foundry/blobs/blake3/16d8bc97789642fd2d071fe6fba4a85ac16c2d038476de649ecdfc8b7f9e763d"
+    },
+    {
+      "git_path": "crates/ggen-lsp-mcp/tests/replay_metrics_test.rs",
+      "git_object_id": "f2fe592daebf256e41e437f2596d0d7c68742649",
+      "git_mode": "100644",
+      "byte_length": 3250,
+      "blake3": "195fb09773c9e212ea49d7ed9a3bc3eb077e5b6a46ca7cee3e7ac5205d3f4d8b",
+      "blob_path": "foundry/blobs/blake3/195fb09773c9e212ea49d7ed9a3bc3eb077e5b6a46ca7cee3e7ac5205d3f4d8b"
+    }
+  ],
+  "semantic_evidence_path": "foundry/evidence/B/legacy-capabilities.ttl",
+  "semantic_evidence_digest": "1d1570f7464d5fed916e78edefba1191a05ef631302f0ed3b2f754f58b434034",
+  "source_removed": false,
+  "recovery_command": "git show 0a843aef6215e828fece13bfd0edb2f35c4e32fa:crates/ggen-lsp-mcp/"
+}

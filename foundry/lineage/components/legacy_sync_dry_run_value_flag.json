@@ -1,0 +1,18 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/1",
+  "capability_id": "legacy_sync_dry_run_value_flag",
+  "source_repository": "seanchatmangpt/ggen",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_parent_head": "4043a1c311d2920a193f7530b300850c543d5397",
+  "historical_commit": "baca724b90875a813010b4434e1acda4f9fe0335",
+  "source_path": "justfile",
+  "destination_path": "foundry/corpus/components/products/legacy_sync_dry_run_value_flag",
+  "manifest_digest": "07fdbe113203da717d4d973db6567046584d09adfa3cd4f3ab3ad87f2f27f0dc",
+  "blob_digests": [
+    "662596e5d452e450a1beed2f69ef961c5d45a68dd1a543513fdf1dd9e2cda168"
+  ],
+  "disposition": "REPLACED",
+  "classification": "CORPUS_HISTORICAL_IMPLEMENTATION",
+  "source_removed": false
+}

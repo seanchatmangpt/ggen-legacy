@@ -1,0 +1,30 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/1",
+  "capability_id": "legacy_ext2_output_tree_src_generated_default",
+  "source_repository": "seanchatmangpt/ggen",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_parent_head": "4043a1c311d2920a193f7530b300850c543d5397",
+  "historical_commit": "04fa6074bad941ac7847d05bbe98293de8d7da42",
+  "requested_source_path": "crates/ggen-core/src/v6/receipt.rs or its PipelineConfig owner (deleted with ggen-core, 9cef6e40f)",
+  "normalized_source_path": "crates/ggen-core/src/v6/receipt.rs",
+  "disposition": "REPLACED",
+  "classification": "CORPUS_HISTORICAL_IMPLEMENTATION",
+  "kernel_owner": "Per-template `output_file` pattern (crates/ggen-config/src/manifest/types.rs), validated by GGEN-YIELD-001 (crates/ggen-lsp/src/analyzers/tera_analyzer.rs) rather than defaulted to one fixed directory",
+  "corpus_destination": "foundry/corpus/components/engine/legacy_ext2_output_tree_src_generated_default",
+  "resolution": "GIT_OBJECTS_RECOVERED",
+  "source_files": [
+    {
+      "git_path": "crates/ggen-core/src/v6/receipt.rs",
+      "git_object_id": "46214c77273a84cd5b74f4244bd6147b6733fd9a",
+      "git_mode": "100644",
+      "byte_length": 10326,
+      "blake3": "176351aec176ac887d009542698a5ea60bd878f93485f32c245ea8fe2e7ba3b0",
+      "blob_path": "foundry/blobs/blake3/176351aec176ac887d009542698a5ea60bd878f93485f32c245ea8fe2e7ba3b0"
+    }
+  ],
+  "semantic_evidence_path": "foundry/evidence/B/legacy-capabilities.ttl",
+  "semantic_evidence_digest": "1d1570f7464d5fed916e78edefba1191a05ef631302f0ed3b2f754f58b434034",
+  "source_removed": false,
+  "recovery_command": "git show 04fa6074bad941ac7847d05bbe98293de8d7da42:crates/ggen-core/src/v6/receipt.rs"
+}
