@@ -37,10 +37,7 @@ class EnterpriseConnectionTest(unittest.TestCase):
                 first["labels"]["admitted_workstreams"],
                 ",".join(expected_admitted),
             )
-            self.assertEqual(
-                first["labels"]["committed_admission_reports_verified"],
-                ",".join(expected_admitted),
-            )
+            self.assertEqual(first["labels"]["native_report_digest_algorithm"], "BLAKE3")
             report_evidence = [
                 e for e in first["evidence"]
                 if e["kind"] == "foundry-workstream-admission-report"
@@ -49,6 +46,12 @@ class EnterpriseConnectionTest(unittest.TestCase):
                 sorted(e["identity"].split(":", 1)[0] for e in report_evidence),
                 expected_admitted,
             )
+            for name in expected_admitted:
+                report = ROOT / "foundry" / "workstreams" / name / "admission-report.json"
+                self.assertEqual(
+                    module._native_report_digest(report.read_bytes()),
+                    state["workstreams"][name]["report_digest"],
+                )
             self.assertEqual(first["labels"]["local_receipts_present"], "")
             self.assertTrue(first["architecture"]["capabilities"])
             self.assertIn(
