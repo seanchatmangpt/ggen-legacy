@@ -15,9 +15,9 @@ concurrency:
 
 jobs:
   verify:
-    name: exact-subject contract and LSP runtime
+    name: exact-subject reconstitution, planning, contract and LSP runtime
     runs-on: ubuntu-24.04
-    timeout-minutes: 25
+    timeout-minutes: 30
     steps:
       - name: Checkout exact subject
         uses: actions/checkout@v4
@@ -34,6 +34,17 @@ jobs:
           count="$(find .github/workflows -maxdepth 1 -type f \( -name '*.yml' -o -name '*.yaml' \) | wc -l | tr -d ' ')"
           test "$count" -eq 1
           printf 'subject_sha=%s workflow_count=%s\n' "$EXPECTED_SHA" "$count"
+      - name: Compile autonomous reconstitution court
+        run: python3 -m py_compile scripts/reconstitute_fortune5.py scripts/verify_fortune5_reconstitution.py
+      - name: Manufacture Fortune 5 self-reconstitution matrix
+        run: python3 scripts/reconstitute_fortune5.py --root . --output evidence/reconstitution/current --strict
+      - name: Independently replay and mutate Fortune 5 self-reconstitution
+        run: python3 scripts/verify_fortune5_reconstitution.py --root .
+      - name: Verify combinatorial-max planning subsystem
+        run: |
+          python3 -m unittest discover -s planning/v26.8.7/tests -v
+          python3 planning/v26.8.7/verify.py --strict --output evidence/ci/gl-plan-002.json
+          planning/v26.8.7/skdecide_classical_engine.py --help | head -n 1 | grep '^skdecide-classical-engine/26.8.7$'
       - name: Verify received generated contract
         run: python3 scripts/verify_lsp_contract.py
       - name: Install repository-pinned Rust
@@ -59,12 +70,15 @@ jobs:
           set -euo pipefail
           mkdir -p evidence/ci
           cat > evidence/ci/receipt.json <<JSON
-          {"repository":"${GITHUB_REPOSITORY}","subject_sha":"${SUBJECT_SHA}","workflow":"${GITHUB_WORKFLOW}","run_id":"${GITHUB_RUN_ID}","standing":"ALIVE","workflow_count":1,"boundaries":["generated-contract","rust","real-lsp-stdio","malformed-input-refusal"]}
+          {"repository":"${GITHUB_REPOSITORY}","subject_sha":"${SUBJECT_SHA}","workflow":"${GITHUB_WORKFLOW}","run_id":"${GITHUB_RUN_ID}","standing":"PARTIAL_ALIVE","workflow_count":1,"claim_ceiling":"EXACT_HEAD_LOCAL_AND_REFERENCE_BOUNDARIES_ONLY","boundaries":["fortune5-self-reconstitution","errc-work-queue","reconstitution-replay","reconstitution-negative-controls","gl-plan-002","generated-contract","rust","real-lsp-stdio","malformed-input-refusal"]}
           JSON
           cat evidence/ci/receipt.json
       - uses: actions/upload-artifact@v4
         with:
-          name: ci-receipt-${{ github.run_id }}
-          path: evidence/ci/receipt.json
+          name: exact-head-reconstitution-receipt-${{ github.run_id }}
+          path: |
+            evidence/ci/receipt.json
+            evidence/ci/gl-plan-002.json
+            evidence/reconstitution/current/
           if-no-files-found: error
           retention-days: 14
