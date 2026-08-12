@@ -76,8 +76,33 @@
         "receipts_replayed": 1
       }
     },
-    {"id": "B", "status": "READY"},
-    {"id": "C", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_B_NOT_ADMITTED"},
+    {
+      "id": "B",
+      "status": "ADMITTED",
+      "admitted_evidence": {
+        "command": "admit_observation --program authority/foundry-work-program.json --source ~/ggen --corpus ~/ggen-legacy --evidence-ref agent/v26.8.1-remaining-observers",
+        "run_date": "2026-08-12",
+        "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+        "note": "real local branch override; the binary's default origin/agent/v26.8.1-remaining-observers ref does not resolve locally",
+        "predicates_verified": {
+          "evidence_capability_count_exact": 65,
+          "evidence_observer_class_count_exact": 20,
+          "evidence_observer_classes_fully_attempted": true,
+          "workstream_a_admitted": true
+        }
+      }
+    },
+    {
+      "id": "C",
+      "status": "BLOCKED",
+      "blocked_reason": "UNKNOWN_DISPOSITION",
+      "blocked_evidence": {
+        "command": "admit_capabilities --program authority/foundry-work-program.json --source ~/ggen --corpus ~/ggen-legacy",
+        "run_date": "2026-08-12",
+        "real_error": "UNKNOWN_DISPOSITION: DISPOSITION_UNKNOWN",
+        "detail": "2 of the 65 real legacy capabilities in foundry/evidence/B/legacy-capabilities.ttl carry ggen:hasDisposition ggen:DISPOSITION_UNKNOWN, both left honestly unresolved by the prior real investigation that produced this evidence (one about a generation-mode variant absent from the live enum; one whose own evidenceFixtures note literally reads 'this pass did not confirm whether the v5 unified sync command still exposes an equivalent check'). This is a genuine domain-judgment gap, not a schema/plumbing issue -- deliberately not resolved here by inventing a disposition value, per this repo's own absence-is-not-evidence doctrine. Needs real investigation of the two named capabilities before C can admit."
+      }
+    },
     {"id": "D", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_C_NOT_ADMITTED"},
     {"id": "E", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_D_NOT_ADMITTED"},
     {"id": "F", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_E_NOT_ADMITTED"},
