@@ -47,7 +47,7 @@ jobs:
           components: rustfmt, clippy
 
       - name: Compile Fortune 5 courts
-        run: python3 -m py_compile scripts/reconstitute_fortune5.py scripts/fortune5_reconstitute_v2.py scripts/verify_fortune5_reconstitution.py scripts/fortune5_verify_v2.py scripts/verify_offline_bundle.py
+        run: python3 -m py_compile scripts/reconstitute_fortune5.py scripts/fortune5_reconstitute_v2.py scripts/verify_fortune5_reconstitution.py scripts/fortune5_verify_v2.py scripts/verify_offline_bundle.py scripts/verify_ggen_v26_8_1_migration_current.py
 
       - name: Qualify customer-controlled verifier appliance at exact head
         run: bash appliance/bin/run-reference-e2e.sh
@@ -145,9 +145,9 @@ jobs:
           path: .source-ggen
           persist-credentials: false
 
-      - name: Revalidate source-to-corpus migration against exact source
+      - name: Revalidate historical migration and admitted successor evolution
         run: |
-          python3 scripts/verify_ggen_v26_8_1_migration.py \
+          python3 scripts/verify_ggen_v26_8_1_migration_current.py \
             --source-root .source-ggen \
             --destination-root . \
             --report migrations/ggen-v26.8.1/verifier-report.json
@@ -179,7 +179,7 @@ jobs:
             'bounded_evidence_complete':m['counts']['bounded_evidence_complete'],
             'bounded_evidence_partial':m['counts']['bounded_evidence_partial'],
             'remaining_work_orders':m['counts']['work_orders'],
-            'boundaries':['migration-v26.8.1','verifier-appliance-reference','offline-verifier-transport','foundry-bootstrap','autonomic-projection','gl-plan-002','generated-contract','rust','real-lsp-stdio','reconstitution-replay','reconstitution-negative-controls']
+            'boundaries':['migration-v26.8.1-historical','migration-v26.8.1-successor','verifier-appliance-reference','offline-verifier-transport','foundry-bootstrap','autonomic-projection','gl-plan-002','generated-contract','rust','real-lsp-stdio','reconstitution-replay','reconstitution-negative-controls']
           }
           open('evidence/ci/receipt.json','w').write(json.dumps(receipt,sort_keys=True)+'\n')
           print(json.dumps(receipt,sort_keys=True))
