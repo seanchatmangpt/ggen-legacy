@@ -48,8 +48,8 @@ def main() -> int:
         second = td / "second"
         if output.exists():
             shutil.rmtree(output)
-        a = run([str(build), str(output)], root)
-        b = run([str(build), str(second)], root)
+        a = run(["bash", str(build), str(output)], root)
+        b = run(["bash", str(build), str(second)], root)
         if a.returncode or b.returncode:
             print(json.dumps({"standing": "BUILD_BROKEN", "first": a.stderr, "second": b.stderr}, sort_keys=True))
             return 1
@@ -66,12 +66,12 @@ def main() -> int:
         with tarfile.open(archive_a, "r:gz") as tf:
             tf.extractall(extracted, filter="data")
         bundle = extracted / NAME
-        verify = run([str(bundle / "verify-manifest.sh")], bundle)
+        verify = run(["bash", str(bundle / "verify-manifest.sh")], bundle)
         if verify.returncode:
             raise RuntimeError("OFFLINE_MANIFEST_VERIFY_FAILED:" + verify.stderr)
         tamper = bundle / "AGENTS.md"
         tamper.write_text(tamper.read_text() + "\nTAMPER\n")
-        killed = run([str(bundle / "verify-manifest.sh")], bundle)
+        killed = run(["bash", str(bundle / "verify-manifest.sh")], bundle)
         if killed.returncode == 0:
             raise RuntimeError("OFFLINE_TAMPER_MUTANT_SURVIVED")
         report = {
