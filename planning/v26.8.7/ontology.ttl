@@ -1,0 +1,31 @@
+@prefix glp: <https://example.org/ggen-legacy/planning#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix pplan: <http://purl.org/net/p-plan#> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Public-ontology-first vocabulary. glp terms exist only where no public term captures
+# the planning-specific distinction without semantic loss.
+glp:Capability a skos:Concept .
+glp:Task a pplan:Step .
+glp:ManufactureIntent a prov:Entity .
+glp:VerificationReceipt a prov:Entity .
+glp:PlannerEdge a prov:Plan .
+glp:GoalReconstruction a prov:Entity .
+
+glp:requiresCapability a rdf:Property .
+glp:candidateChild a rdf:Property .
+glp:selectedChild a rdf:Property .
+glp:admitsCapability a rdf:Property .
+glp:receiptDigest a rdf:Property .
+glp:standing a rdf:Property .
+glp:engineRole a rdf:Property .
+
+glp:NoActuationPolicy a odrl:Prohibition ;
+  dcterms:description "Planning, projections, and hooks must not directly actuate world state." .
+
+glp:MaxOptionsMinWip a prov:Plan ;
+  skos:prefLabel "preserve all lawful reversible options while selecting at most one active consequential child" .

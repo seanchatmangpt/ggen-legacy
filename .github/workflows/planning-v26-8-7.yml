@@ -1,0 +1,25 @@
+name: GL-PLAN-002 planning v26.8.7 replay
+
+on:
+  pull_request:
+    paths:
+      - 'planning/v26.8.7/**'
+      - 'tickets/GL-PLAN-002.md'
+      - '.github/workflows/planning-v26-8-7.yml'
+      - 'AGENTS.md'
+      - 'justfile'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bounded-planning-replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify combinatorial-max planning subsystem
+        run: python3 planning/v26.8.7/verify.py --strict --output /tmp/gl-plan-002-report.json
+      - name: Stable scikit-decide process witness
+        run: planning/v26.8.7/skdecide_classical_engine.py --help | head -n 1 | grep '^skdecide-classical-engine/26.8.7$'

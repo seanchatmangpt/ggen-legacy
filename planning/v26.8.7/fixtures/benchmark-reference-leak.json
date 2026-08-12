@@ -1,0 +1,5 @@
+{
+  "benchmark_id": "negative-reference-leak",
+  "goal": {"required_facts": ["done"]},
+  "reference_solution": ["do-the-hidden-thing"]
+}

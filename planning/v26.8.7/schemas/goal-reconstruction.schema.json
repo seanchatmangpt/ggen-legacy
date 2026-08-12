@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/ggen-legacy/planning/goal-reconstruction.schema.json",
+  "type": "object",
+  "required": ["schema", "benchmark_id", "required_facts", "forbidden_facts", "invariants", "exclusions", "verifier_obligations", "source_digest", "state"],
+  "properties": {
+    "schema": {"const": "ggen.legacy.benchmark-goal.v1"},
+    "benchmark_id": {"type": "string", "minLength": 1},
+    "required_facts": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "forbidden_facts": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "invariants": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "exclusions": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "verifier_obligations": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "source_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "state": {"enum": ["PARTIAL_ALIVE"]}
+  },
+  "additionalProperties": false
+}

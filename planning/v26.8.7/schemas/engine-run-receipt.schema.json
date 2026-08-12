@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/ggen-legacy/planning/engine-run-receipt.schema.json",
+  "type": "object",
+  "required": ["schema", "role", "program", "argv", "outcome", "duration_ms", "stdout_digest", "stderr_digest", "receipt_digest"],
+  "properties": {
+    "schema": {"const": "ggen.legacy.engine-run-receipt.v1"},
+    "role": {"type": "string"},
+    "program": {"type": "string"},
+    "argv": {"type": "array", "items": {"type": "string"}},
+    "outcome": {"enum": ["success", "unsolvable", "parse_refused", "tool_failed", "bounded", "missing_binary", "no_candidate", "version_witness_refused"]},
+    "exit_code": {"type": ["integer", "null"]},
+    "duration_ms": {"type": "integer", "minimum": 0},
+    "stdout_digest": {"type": "string"},
+    "stderr_digest": {"type": "string"},
+    "plan_digest": {"type": ["string", "null"]},
+    "version_witness": {"type": ["string", "null"]},
+    "receipt_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+  }
+}

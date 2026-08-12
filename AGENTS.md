@@ -6,6 +6,7 @@ This file governs `seanchatmangpt/ggen-legacy`.
 
 - admitted reconstruction base: `70e599a599fedb7c62c965377cc2f80df1fa01ec`
 - active executable ticket: `GL-LSP-001`
+- concurrent executable ticket: `GL-PLAN-002`
 - protocol runtime: `lsp-max`
 - pinned runtime: `seanchatmangpt/lsp-max@220d3251e959f6a58ce0311e995b31a85f98240c`
 - received contract authority: `authority/lsp-contract.json`
@@ -31,6 +32,15 @@ ggen ontology → ggen projection → received JSON/Rust contract
 → ggen analysis behavior → receiver verifier → receipt
 ```
 
+For `GL-PLAN-002`:
+
+```text
+benchmark observation → anti-leak goal reconstruction → finite reversible search graph
+→ preserve all lawful planner/child edges → select bounded WIP child
+→ construct-only manufacture intent → independent receipt → admit child
+→ resume/replan parent → candidate POWL/MFW projections → replay
+```
+
 The receiver may validate and execute a contract. It may not alter the producing ontology, certify the ggen kernel, or convert source agreement into runtime `ALIVE`.
 
 ## Foundational order
@@ -50,6 +60,8 @@ Historical corpus material remains evidence. Adjacency is not refutation.
 ### Zero unreceipted actuation
 
 The LSP may analyze in-memory text and emit protocol messages. It has no ambient shell, Git, package-manager, deployment, network, or durable filesystem-write authority.
+
+The planning subsystem may select candidates, construct plans/projections/intents, execute declared local planner subprocesses, and verify receipts. It has no broker and no ambient world-actuation authority. Planner or hook output never actuates directly.
 
 ### Observation is not admission
 
@@ -82,13 +94,19 @@ Stdout is exclusively LSP framing. Tracing and refusals go to stderr. `clippy::p
 
 `lsp-max` remains pinned to an exact Git revision or an exact admitted release.
 
+External planning contracts remain pinned to exact observed producer identities. A connector object or registry entry is not a mounted tree or executed planner.
+
 ### No self-certification
 
 Generated files, verifier source, documentation, and unexecuted tests cannot grant runtime `ALIVE`. The exact Rust candidate must compile, execute real stdio exchanges, and replay locally.
 
+Planning source, projections, internal reference search, registry entries, and `--help` witnesses cannot grant external planner `ALIVE`. Exact-subject execution is required.
+
 ### Checkpoint is not crown
 
 Contract synchronization proves only representation agreement. It does not prove runtime, release, production, certification, or sunset standing.
+
+`planning/v26.8.7/verify.py` has a `PARTIAL_ALIVE` ceiling and cannot promote repository/release standing.
 
 ## Typed states
 
@@ -139,6 +157,29 @@ Required behavior:
 9. Keep stdout frame-pure.
 10. Independently verify the received JSON, generated Rust, runtime handlers, capabilities, analyzers, and no-actuation boundary.
 
+## GL-PLAN-002 concurrent authored boundary
+
+```text
+AGENTS.md                              # this admission extension only
+justfile                               # planning-max target only
+.github/workflows/planning-v26-8-7.yml
+planning/v26.8.7/**
+tickets/GL-PLAN-002.md
+```
+
+Required behavior:
+
+1. Reconstruct benchmark goal constraints without consuming reference/gold solutions.
+2. Preserve the maximal finite reversible capability graph before selection.
+3. Keep consequential child WIP bounded while retaining all candidate child edges.
+4. Treat unsupported PDDL/planner edges as topology; never silently simplify or delete them.
+5. Keep scikit-decide, Fast Downward, VAL, MFW, POWL, and internal finite-search evidence distinct.
+6. Manufacture intents only; no hook or planner output has direct actuation authority.
+7. Admit a child only through an exact-subject independent verification receipt.
+8. Resume and replan blocked parents after child admission.
+9. Emit and deterministically replay a tamper-evident orchestration event chain.
+10. Never promote subsystem, repository, release, or production standing from planner success.
+
 ## Verification ladder
 
 ```text
@@ -152,7 +193,16 @@ python3 scripts/verify_lsp_contract.py
 → deterministic replay
 ```
 
-Hosted CI is not a substitute for local execution. `gh` and hosted CI are excluded for this task.
+For `GL-PLAN-002`:
+
+```text
+python3 -m unittest discover -s planning/v26.8.7/tests -v
+→ python3 planning/v26.8.7/verify.py --strict
+→ planning/v26.8.7/skdecide_classical_engine.py --help
+→ exact external planner/MFW replay when those runtimes/trees are observed available
+```
+
+Hosted CI is not a substitute for local execution. `gh` and hosted CI are excluded for the original GL-LSP-001 task; GL-PLAN-002 may add a replay workflow as supplemental publication evidence, never as a substitute for local verification.
 
 ## Repair law
 
@@ -165,3 +215,5 @@ Resolve exact base and head before writing. Preserve unrelated work. Use non-for
 ## Required receipt
 
 Report repository/base/branch/head, producing ontology and projection identities, pinned lsp-max identity, transports, files changed, commands/exits, observed execution, replay, scoped standing, exclusions, and draft PR identity.
+
+For GL-PLAN-002 also report the pinned MFW producer identity, engine probe/execution states, blocked/unsupported planner edges, orchestration receipt-chain head, and explicit statement that planning has no actuation authority.

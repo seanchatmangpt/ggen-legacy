@@ -35,3 +35,8 @@ v26-ci: v26-fmt v26-check v26-clippy v26-test
 # Run the full ladder for both workspaces — the single local command a new
 # engineer can run to reproduce what CI gates before opening a PR.
 ci-all: ci v26-ci
+
+# GL-PLAN-002 is a concurrent, dependency-free planning verifier. It is not added
+# to ci-all because that target mirrors the pre-existing GL-LSP-001 workspace ladder.
+planning-max:
+    python3 planning/v26.8.7/verify.py --strict

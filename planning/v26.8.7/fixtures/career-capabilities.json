@@ -1,0 +1,11 @@
+{
+  "facts": [
+    {"id": "python", "category": "language", "cost": 1, "prerequisite_ids": []},
+    {"id": "cloud", "category": "platform", "cost": 2, "prerequisite_ids": ["python"]},
+    {"id": "distributed-systems", "category": "architecture", "cost": 2, "prerequisite_ids": ["python"]},
+    {"id": "agentic-architecture", "category": "architecture", "cost": 3, "prerequisite_ids": ["cloud", "distributed-systems"]},
+    {"id": "forward-deployment", "category": "delivery", "cost": 2, "prerequisite_ids": ["agentic-architecture"]}
+  ],
+  "admitted": ["python"],
+  "goals": ["forward-deployment"]
+}
