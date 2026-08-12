@@ -19,7 +19,6 @@ evidence/offline-bundle/
 .ggen-packs/
 foundry/generated/
 foundry/reports/
-foundry/receipts/
 
 # Exact-coordinate tool checkouts
 .ggen-tool/

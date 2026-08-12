@@ -1,0 +1,21 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.receipt/1",
+  "receipt_type": "WORKSTREAM_ADMISSION",
+  "subject": "I",
+  "subject_digest": "636d46cf44461e2d163a03bd70c11fb33f8c3aa6446b720fad4bf901a8021db6",
+  "source_head": "0c519155c73216f9c80334870651cfe4f3fccca4",
+  "corpus_head": "c2646e9bb0b74df55e14fa456f73bda05b65ca4f",
+  "input_digests": {
+    "corpus-tree": "ce05441dc42a3ca1af98fcadbd8557d424375f6a57979e3d25233a1239f12dcc",
+    "source-tree": "0709b79fe2dfd6ef767dc041ec7a93625454a3b696a70ee7a5fc3bed0bf66357",
+    "work-program": "56cd7d001cee5fc074b562195254cebe5bc474a9453234c1cdc141109a346a2d"
+  },
+  "output_digests": {
+    "corpus:foundry/catalogs/subsystem-evidence-matrix.json": "737bda84d7936bdde115b408f725d6617cb32c975374971abd4aa1c62483a4da",
+    "corpus:foundry/evidence/I/sabotage-report.json": "25becf1538cc703a5aa260a89c81a97e256a05a6f62125bc049b33717877afde",
+    "corpus:foundry/receipt-ownership.json": "d487d46e4d9dc619c0a66b8aa0ef4d57dc2383ee65a960f6d5b04aee3dc919b5",
+    "corpus:foundry/workstreams/I/admission-report.json": "f0c129b813bbec95b92bc00d80b223aa87d31fbc3e524930597d9544fd9c17ec",
+    "projection:foundry/workstreams/state.json": "70ad22af69aa82b4f6bcc3ba9f5e4cfb5a95ae9298baf9d60dff8e670a30878a"
+  },
+  "run_id": "636d46cf44461e2d163a"
+}

@@ -1,0 +1,20 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.receipt/1",
+  "receipt_type": "WORKSTREAM_ADMISSION",
+  "subject": "F",
+  "subject_digest": "d8650c6fb0e74dbb8e696036498310d88534241298faf17c4a57b6827e776d84",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_head": "c1ece50eaa8ec223c42418773e1299691f0948a6",
+  "input_digests": {
+    "corpus-tree": "47136f058c0cda2b80d1edf5f5d515286ccba8293797dee7cdf831c41fbf1a0b",
+    "source-tree": "cd3072e58baa660660f87ea6162b7e0070b9a3947aafd11b6e4a68b6b090a2ec",
+    "work-program": "56cd7d001cee5fc074b562195254cebe5bc474a9453234c1cdc141109a346a2d"
+  },
+  "output_digests": {
+    "corpus:foundry/catalogs/primitives.json": "f19d3f7762445b2a0a377ad109072f885fa5c74e0292e206c3bda3e3d5d239b1",
+    "corpus:foundry/evidence/F/primitive-witnesses.json": "f889b5e892069dacc4c49cf7cb4eb5114526ec0bff43ee7a3bbd3a3381a49f58",
+    "corpus:foundry/workstreams/F/admission-report.json": "a9f6a10077cc62d8a84a395a8a95a1e46e62d35a17b00c9acb4aff1128458c6a",
+    "projection:foundry/workstreams/state.json": "d0b8005a0d5d87d22ce2c6ea8d0fb636e0c11d7149d06a2ce5156432b5b846f9"
+  },
+  "run_id": "d8650c6fb0e74dbb8e69"
+}

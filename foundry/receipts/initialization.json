@@ -1,0 +1,26 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.receipt/1",
+  "receipt_type": "CORPUS_INITIALIZATION",
+  "subject": "ggen-legacy Enterprise Architecture Foundry corpus",
+  "subject_digest": "f23397b3206245b3b15b22253724a63ecd21cb7d69de926cc8190526906734b2",
+  "source_head": "48cfeeb7628e5b5c6b76d581f8eb00231ee8a198",
+  "corpus_head": "66cc30ec0ec5d4a8fdc477bebb5dad762bcbba4c",
+  "input_digests": {
+    "corpus-parent-tree": "d598a2d8e65513f1e4b26bbae03eb458e3b25cb41c15b2379688b9991a23a4da",
+    "program": "56cd7d001cee5fc074b562195254cebe5bc474a9453234c1cdc141109a346a2d",
+    "source-tree": "08827de9962fd91aaeab37b52baf1df4627a0e1774f7383424794899761e262e"
+  },
+  "output_digests": {
+    "corpus:foundry/catalogs/architectures.json": "59cebd4661dce39335fd5621739676bf7fdb2eff4bca62d78070a823c4e996f5",
+    "corpus:foundry/catalogs/bblocks.json": "9b828f58ef13d8b54d44d663fdd126525e8014d02f42e7aead2a47e42be64093",
+    "corpus:foundry/catalogs/capabilities.json": "4caf6a006a3a1fde911bdcf393d9467d8705ed35f2d61cde78f107d5b630c298",
+    "corpus:foundry/catalogs/equivalence.json": "8f39bd4213eb339ced45d527bfddd13c36553630c4e11cc21652ea3712084cf2",
+    "corpus:foundry/catalogs/primitives.json": "626d9e62452dd28f1d7baf41f7caeb3ffb01fc40c96ae1208be6eebee5fb4b55",
+    "corpus:foundry/catalogs/solution-packs.json": "5db4991f815ef9f5d0f77e3313c6fdd7f4529ea520d73ae60ed6cdc2b2dcc6e0",
+    "corpus:foundry/catalogs/verifiers.json": "8bef4a8c117e4a900407d46285ea48bafaad25afd012fe5374f77edbe4532dc0",
+    "corpus:foundry/foundry-manifest.json": "902cbe62b8edf7d766ed39281f81cf8cd5bd1852234cfe1a4629e23996de42b9",
+    "projection:foundry/standing.json": "b166de083d1ac392f2b52ce4b6096d6d36ecd2bb37fc97fe07248e1abff5eb21",
+    "projection:foundry/workstreams/state.json": "433242123641721009b649b64e321def700b4919d36eb30687aa1c924c0b308c"
+  },
+  "run_id": "f23397b3206245b3b15b"
+}

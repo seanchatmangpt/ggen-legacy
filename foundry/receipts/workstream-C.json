@@ -1,0 +1,23 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.receipt/1",
+  "receipt_type": "WORKSTREAM_ADMISSION",
+  "subject": "C",
+  "subject_digest": "730c2bda1ba61ee04f3f9c0756d4265c0eb8a2c10b7cbfa117cf09841edf6794",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_head": "d6ce5bffb983f46b8193f227af68aec2dac269e3",
+  "input_digests": {
+    "capability-evidence": "c2cd766f27b9bc7f177190fcf98f54228c9b54af9e4e412fd7a7a2e0afb242f5",
+    "corpus-tree": "95ea743c3f164bcb6054200fb8a58bc578ddb7178569d49d46a8ca9b2dc48053",
+    "source-tree": "cd3072e58baa660660f87ea6162b7e0070b9a3947aafd11b6e4a68b6b090a2ec",
+    "work-program": "56cd7d001cee5fc074b562195254cebe5bc474a9453234c1cdc141109a346a2d"
+  },
+  "output_digests": {
+    "corpus:foundry/catalogs/capabilities.json": "a10fed4bde427a9b022484f3a76e9e53fd9b5036b0384db150e2c5eb36ba1e8c",
+    "corpus:foundry/catalogs/disposition-obligations.json": "0fcae5c3b48fa9e646a28a3dbc6f6c047de0e574b4a1896f148f1ada8ae4e33d",
+    "corpus:foundry/catalogs/provenance.json": "7a04bc3254bb53bdf0b2acc89f15b8162d961c29ba3ba1fa9fe1a2b6356c76c3",
+    "corpus:foundry/catalogs/subsystem-ownership.json": "da27724a114cae7988d8206c48230929011794d912214c98ba5956223ccf220c",
+    "corpus:foundry/workstreams/C/admission-report.json": "9331791ff2e4a0192e8f7d751f59c95362d62aaa209e039e869f59d85cbed145",
+    "projection:foundry/workstreams/state.json": "3caeecc5b11b62b73bdd3d8bbb5a3a40ac9fbb43426102511b22050bf858473e"
+  },
+  "run_id": "730c2bda1ba61ee04f3f"
+}

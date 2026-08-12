@@ -50,9 +50,9 @@
   ],
   "generated_directories": [
     "foundry/generated",
-    "foundry/reports",
-    "foundry/receipts"
+    "foundry/reports"
   ],
+  "receipts_tracking_note": "foundry/receipts/ was previously gitignored/generated -- corrected 2026-08-12 after running workstream J (Clean-room manufacture and replay) for real: a genuinely independent `git clone` naturally omits gitignored content, so replay_all_receipts always failed with RECEIPT_DIRECTORY_MISSING in a fresh clean-room clone. Receipts are the durable attestation record this program's own doctrine requires (the evidence graph is the record, not a regeneratable cache) -- now tracked in git like every other real corpus artifact.",
   "workstreams_authority_note": "the real source of truth is foundry/workstreams/state.json, written by the real admit_baseline/admit_* binaries -- this array is a non-authoritative reporting projection of it, per this repo's own no-dual-bookkeeping doctrine; where they disagree, foundry/workstreams/state.json is right by construction.",
   "workstreams": [
     {

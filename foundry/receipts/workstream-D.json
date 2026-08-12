@@ -1,0 +1,22 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.receipt/1",
+  "receipt_type": "WORKSTREAM_ADMISSION",
+  "subject": "D",
+  "subject_digest": "481b8a87544001a75351211e0d3e8ae45a7d6c0eb36d7eb18ebd4854971f3e01",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_head": "dc4c6cebbb1be37ba3336d56a8a6e3296156007b",
+  "input_digests": {
+    "capability-catalog": "a10fed4bde427a9b022484f3a76e9e53fd9b5036b0384db150e2c5eb36ba1e8c",
+    "corpus-tree": "15d0e911030c46819ad67a5e4a46aacaf9e3b46cc926ffa596c5d179b381d49d",
+    "source-tree": "cd3072e58baa660660f87ea6162b7e0070b9a3947aafd11b6e4a68b6b090a2ec",
+    "work-program": "56cd7d001cee5fc074b562195254cebe5bc474a9453234c1cdc141109a346a2d"
+  },
+  "output_digests": {
+    "corpus:foundry/catalogs/component-classification.json": "e30184a2a86f9a899f8464ff56cf147b98b7922e732974f281e97332fe24f047",
+    "corpus:foundry/catalogs/migration-dependency-graph.json": "a0b1506e3016597feac55fd89c9a2086555f57437368742a71cf7c2f8226bb6f",
+    "corpus:foundry/catalogs/recovery-plans.json": "82146a31f2031f507f2a91fb3cdd18bc5a132009add37cbde8792b446e8d7551",
+    "corpus:foundry/workstreams/D/admission-report.json": "6ff0ea1a46343edccd16ee8ab56615bf9a9d759b8d420eaec2ec09ed30766851",
+    "projection:foundry/workstreams/state.json": "35c6be2788a8f0dd2b9c33e6ac160ac5203bf6a7e072a9b23132704833304148"
+  },
+  "run_id": "481b8a87544001a75351"
+}
