@@ -1,0 +1,20 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.products/1",
+  "workstream_id": "F",
+  "verifier": "ggen-foundry-admit-products/primitives/v1",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_head": "c1ece50eaa8ec223c42418773e1299691f0948a6",
+  "item_count": 10,
+  "failure_count": 0,
+  "negative_falsifiers_passed": 10,
+  "predicates": {
+    "no_pack_input_primitives_empty": true,
+    "no_primitive_admission_refused": true,
+    "workstream_e_admitted": true
+  },
+  "metrics": {
+    "capability_count": 65,
+    "primitive_count": 10,
+    "unverifiable_primitives": 0
+  }
+}
