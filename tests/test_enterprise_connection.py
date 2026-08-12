@@ -38,9 +38,18 @@ class EnterpriseConnectionTest(unittest.TestCase):
                 ",".join(expected_admitted),
             )
             self.assertEqual(
-                sorted(e["identity"].split(":", 1)[0] for e in first["evidence"]),
+                first["labels"]["committed_admission_reports_verified"],
+                ",".join(expected_admitted),
+            )
+            report_evidence = [
+                e for e in first["evidence"]
+                if e["kind"] == "foundry-workstream-admission-report"
+            ]
+            self.assertEqual(
+                sorted(e["identity"].split(":", 1)[0] for e in report_evidence),
                 expected_admitted,
             )
+            self.assertEqual(first["labels"]["local_receipts_present"], "")
             self.assertTrue(first["architecture"]["capabilities"])
             self.assertIn(
                 "ZERO_UNRECEIPTED_ACTUATION",
