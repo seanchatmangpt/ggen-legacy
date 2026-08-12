@@ -1,0 +1,9 @@
+{
+  "clean_room_replay": true,
+  "exact_head_evidence": true,
+  "independent_verification": true,
+  "regional_failure_domains": 3,
+  "segregation_of_duties": true,
+  "supply_chain_attestation": true,
+  "zero_unreceipted_actuation": true
+}
