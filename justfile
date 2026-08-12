@@ -1,8 +1,6 @@
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
-# Root ggen-legacy-lsp workspace ladder — mirrors
-# .github/workflows/gl-lsp-001-runtime.yml step for step (fmt, check,
-# clippy, test), minus the receipt bookkeeping and toolchain install.
+# Root ggen-legacy-lsp workspace ladder.
 fmt:
     cargo fmt --all -- --check
 
@@ -32,11 +30,18 @@ v26-test:
 
 v26-ci: v26-fmt v26-check v26-clippy v26-test
 
-# Run the full ladder for both workspaces — the single local command a new
-# engineer can run to reproduce what CI gates before opening a PR.
-ci-all: ci v26-ci
-
-# GL-PLAN-002 is a concurrent, dependency-free planning verifier. It is not added
-# to ci-all because that target mirrors the pre-existing GL-LSP-001 workspace ladder.
+# GL-PLAN-002: bounded combinatorial-max planning replay.
 planning-max:
+    python3 -m unittest discover -s planning/v26.8.7/tests -v
     python3 planning/v26.8.7/verify.py --strict
+    planning/v26.8.7/skdecide_classical_engine.py --help | head -n 1 | grep '^skdecide-classical-engine/26.8.7$'
+
+# GL-ERRC-003: self-reconstitute the complete Fortune-5 decision surface,
+# replay it independently, and kill topology/cardinality mutants.
+fortune5-reconstitute:
+    rm -rf /tmp/ggen-legacy-fortune5-reconstitution
+    python3 scripts/reconstitute_fortune5.py --root . --output /tmp/ggen-legacy-fortune5-reconstitution --strict
+    python3 scripts/verify_fortune5_reconstitution.py --root .
+
+# One local crown matching the single hosted exact-subject court.
+ci-all: fortune5-reconstitute planning-max ci v26-ci
