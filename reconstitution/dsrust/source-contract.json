@@ -24,13 +24,20 @@
     "exclude_prefixes": ["target"]
   },
   "baseline": {
-    "toolchain": "1.86.0",
-    "toolchain_authority": "evidence-derived verification floor; source manifest does not declare rust-version",
-    "toolchain_discovery": {
-      "candidate": "1.85.0",
-      "result": "REFUSED",
-      "reason": "exact locked dependency graph contains ICU 2.2.0/idna_adapter packages requiring rustc 1.86"
-    },
+    "toolchain": "nightly-2026-06-22",
+    "toolchain_authority": "known-good verifier observed executing the frozen workspace successfully; explicitly bound for replay and not asserted as source-declared MSRV",
+    "toolchain_discovery": [
+      {
+        "candidate": "1.85.0",
+        "result": "REFUSED",
+        "reason": "exact locked dependency graph contains ICU 2.2.0/idna_adapter packages requiring rustc 1.86"
+      },
+      {
+        "candidate": "1.86.0",
+        "result": "REFUSED",
+        "reason": "dsrust-derive derive/src/parse.rs uses let-chain syntax rejected with E0658 by rustc 1.86.0"
+      }
+    ],
     "commands": [
       "cargo metadata --format-version 1 --locked --no-deps",
       "cargo test --workspace --all-targets --locked"

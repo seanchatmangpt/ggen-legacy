@@ -89,7 +89,7 @@ jobs:
     timeout-minutes: 25
     env:
       DSRUST_SHA: f24adde08c1d8850e4d7079d019643bb40f905cb
-      RUSTUP_TOOLCHAIN: 1.86.0
+      RUSTUP_TOOLCHAIN: nightly-2026-06-22
     steps:
       - name: Checkout exact ggen-legacy subject
         uses: actions/checkout@v4
@@ -111,17 +111,18 @@ jobs:
           set -euo pipefail
           test "$(git -C _subjects/dsrust rev-parse HEAD)" = "$DSRUST_SHA"
           test -z "$(git -C _subjects/dsrust status --porcelain=v1 --untracked-files=no)"
-      - name: Install dsrust verification Rust 1.86.0
+      - name: Install known-good dsrust verifier toolchain
         uses: dtolnay/rust-toolchain@master
         with:
-          toolchain: 1.86.0
+          toolchain: nightly-2026-06-22
       - name: Verify selected Rust toolchain
         shell: bash
         run: |
           set -euo pipefail
+          rustup show active-toolchain
           rustc --version --verbose
           cargo --version --verbose
-          rustc --version | grep '^rustc 1\.86\.0 '
+          rustup show active-toolchain | grep '^nightly-2026-06-22-'
       - name: Execute frozen legacy workspace baseline
         working-directory: _subjects/dsrust
         run: cargo test --workspace --all-targets --locked
