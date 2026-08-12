@@ -18,7 +18,7 @@ merged) against this repo's `authority/foundry-work-program.json` and
 |---|---|---|
 | A — Exact-head baseline | `admit_baseline` | `ADMITTED` |
 | B — Exhaustive observation | `admit_observation` | `ADMITTED` |
-| C — Capability admission | `admit_capabilities` | `BLOCKED` |
+| C — Capability admission | `admit_capabilities` | `ADMITTED` |
 | D — Kernel-corpus classification | `admit_classification` | not attempted |
 | E — Cross-repository extraction | `admit_extraction` | not attempted |
 | F — Primitive generalization | `admit_products` (stage 1) | not attempted |
@@ -28,50 +28,46 @@ merged) against this repo's `authority/foundry-work-program.json` and
 | J — Clean-room manufacture and replay | `admit_clean_room` | not attempted |
 | K — Fortune-scale reference reconstitution | `admit_reference` | not attempted |
 
-A and B admitted for real, with real evidence commits and digest chains
+A, B, and C admitted for real, with real evidence commits and digest chains
 recorded in `foundry/bootstrap.yaml`'s `admitted_evidence` blocks and
-`foundry/receipts/workstream-{A,B}.json`.
+`foundry/receipts/workstream-{A,B,C}.json`.
 
-## The real, current blocker (C)
+## Closed: the two DISPOSITION_UNKNOWN capabilities
 
-`admit_capabilities` refuses with `UNKNOWN_DISPOSITION: DISPOSITION_UNKNOWN`.
-Two of the 65 real legacy capabilities admitted in workstream B
-(`foundry/evidence/B/legacy-capabilities.ttl`) carry
-`ggen:hasDisposition ggen:DISPOSITION_UNKNOWN`:
+`admit_capabilities` originally refused with
+`UNKNOWN_DISPOSITION: DISPOSITION_UNKNOWN`. Two of the 65 real legacy
+capabilities carried `ggen:hasDisposition ggen:DISPOSITION_UNKNOWN`:
 
-- **Line 577** — a capability about a `mode = "Append"` generation-mode
-  variant. Its own `ggen:defaultBehavior` field already states: *"Not one of
-  the 3 variants (Create/Overwrite/Merge) in the live
-  `ggen_config::manifest::types::GenerationMode` enum today."*
-- **Line 1595** — a capability about a mutation-kill-rate/budget-threshold
-  exit-code check. Its own `ggen:replacementOwner` field already states:
-  *"UNKNOWN — this pass did not confirm whether the v5 unified `ggen sync`
-  command still exposes an equivalent mutation-kill-rate/budget-threshold
-  check under any exit code, or whether the capability was dropped
-  entirely."*
+- A capability about a `mode = "Append"` generation-mode variant. Resolved
+  **`ARCHIVED`**: `~/ggen`'s current `GenerationMode` enum
+  (`crates/ggen-config/src/manifest/types.rs`) has exactly 3 variants
+  (Create/Overwrite/Merge), no Append; that file was created wholesale in
+  the ggen-core-retirement commit (`cbf173f82`), so Append was never
+  carried forward and no migration commit links it to a current variant.
+- A capability about a mutation-kill-rate/budget-threshold exit-code check.
+  Resolved **`REFUSED`**: a real search of `~/ggen`'s current codebase
+  found zero matches for the check under any name or exit code — genuinely
+  dropped in the v5 unified-sync consolidation, not relocated.
 
-Both are honest, pre-existing admissions of incomplete investigation from
-whoever produced this evidence — not schema defects, and not something this
-PRD (or any planning document) resolves. See the companion
-[Completion ARD](16-foundry-completion-ard.md) for what closing them
-actually requires.
+Both resolutions were made at the real source
+(`~/ggen`'s `ontology/v26.8.1/legacy-capabilities.ttl`, commit `b7db94e8e`
+on `agent/v26.8.1-resolve-2-dispositions`), not by hand-editing the
+corpus's receipted transcription — an initial attempt to fix the corpus
+copy directly was caught by the tool itself (`RECEIPT_OUTPUT_DRIFT`) and
+reverted; see `foundry/bootstrap.yaml`'s workstream B `admitted_evidence`
+note for the full account. See the companion
+[Completion ARD](16-foundry-completion-ard.md) for the architecture lesson
+this drew out.
 
-## Requirement
+## Requirement (now for D–K)
 
-Workstream C, and everything after it (D–K), admits only when:
-
-1. Both capabilities above carry a real, verified disposition — determined
-   by actually checking `~/ggen`'s current source (does
-   `GenerationMode` have an `Append` variant today; does the v5 unified
-   `ggen sync` command expose an equivalent threshold check), not by
-   assigning a plausible-sounding value.
-2. `admit_capabilities` is re-run for real and itself reports the real
-   outcome — this document does not assert in advance that it will succeed.
-3. The same discipline — read the real verifier binary, determine what real
-   evidence or real decision it requires, obtain that evidence for real, run
-   it, record the real result — repeats for D through K. This PRD does not
-   pre-certify that D–K's real evidence exists; see the ARD for what is and
-   isn't yet known about each.
+Workstream D, and everything after it, admits only when the same
+discipline already applied to A, B, and C repeats: read the real verifier
+binary, determine what real evidence or real decision it requires, obtain
+that evidence for real (never hand-edit a receipted corpus artifact — fix
+at the real source and re-run the admitting binary), run it, record the
+real result. This PRD does not pre-certify that D–K's real evidence exists;
+see the ARD for what is and isn't yet known about each.
 
 ## Non-goals
 

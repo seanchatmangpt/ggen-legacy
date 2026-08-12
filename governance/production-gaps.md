@@ -54,10 +54,10 @@ pass could close. Listed here so they aren't silently dropped:
   manufacture, equivalence, verification, replay, and standing systems are
   mostly `DOCUMENTED`/`PARTIAL_ALIVE`, not `TESTED`/`REFERENCE_CONFORMANT`.
   Closing this is the actual multi-month scope of "complete the A–K
-  foundry program," not something an 80/20 pass reaches. A and B are now
-  real-admitted (real receipts, real evidence commits); C is genuinely
-  blocked on an unresolved legacy-disposition question, not a schema gap;
-  D–K remain unattempted. See
+  foundry program," not something an 80/20 pass reaches. A, B, and C are
+  now real-admitted (real receipts, real evidence commits) -- C's two
+  DISPOSITION_UNKNOWN capabilities were resolved via real investigation of
+  the current codebase, not asserted. D–K remain unattempted. See
   [Completion PRD](../docs/src/15-foundry-completion-prd.md) and
   [Completion ARD](../docs/src/16-foundry-completion-ard.md) for exactly
   what each remaining workstream needs.

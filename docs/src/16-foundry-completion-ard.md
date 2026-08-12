@@ -9,32 +9,33 @@ Nothing here pre-guesses an answer a real investigation hasn't produced.
 
 ## C — Capability admission (`admit_capabilities.rs`)
 
-**Blocking now.** Real refusal: `UNKNOWN_DISPOSITION: DISPOSITION_UNKNOWN`.
+**Real, `ADMITTED`.** Both `DISPOSITION_UNKNOWN` capabilities resolved
+against `~/ggen`'s real current source (see PRD), on a new commit
+(`b7db94e8e`, branch `agent/v26.8.1-resolve-2-dispositions`) — not by
+editing the corpus's transcription. Re-running `admit_capabilities` after
+re-admitting B against that corrected evidence: all 65 capabilities
+admitted, `unknown_capabilities: 0`,
+`disposition_counts: {ARCHIVED: 36, REFUSED: 12, REPLACED: 9, SUBSUMED: 8}`,
+every predicate true (`no_capability_property_empty`,
+`no_replacement_owner_missing`, `no_turtle_string_unterminated`,
+`no_unknown_disposition`, `workstream_b_admitted`).
 
-Requirement to close: a real, verified disposition for the two capabilities
-named in the PRD (`foundry/evidence/B/legacy-capabilities.ttl` lines 577 and
-1595). Concretely:
-
-- Line 577 (`Append` generation-mode variant): check
-  `ggen_config::manifest::types::GenerationMode`'s current real definition in
-  `~/ggen` (`git grep -n "enum GenerationMode"` or equivalent) — does an
-  `Append` variant exist today, under any name? If not, was it ever added
-  and removed (`git log -p` on the enum), or never implemented at all?
-- Line 1595 (mutation-kill-rate/budget-threshold exit-code check): check
-  whether the real, current v5 unified `ggen sync` command
-  (`git log --all -p -S'fail_on_threshold'` or equivalent, per the
-  capability's own `evidenceFixtures` hint) still exposes an equivalent
-  check under any exit code.
-
-Both are answerable from `~/ggen`'s real git history — this is real
-investigation work, not a design decision, and not something an ARD
-performs on its own.
-
-The binary's other real refusal codes (`CAPABILITY_PROPERTY_EMPTY`,
-`REPLACEMENT_OWNER_MISSING`, `TURTLE_STRING_UNTERMINATED`) were not hit this
-pass — no claim is made about whether the remaining 63 capabilities would
-pass those checks; only that the run got as far as
-`UNKNOWN_DISPOSITION` before refusing.
+**Architecture lesson, real and load-bearing for D–K**: `admit_observation`
+writes evidence into the corpus via `write_new` — a byte-for-byte `git show`
+of the real source commit, receipted with a BLAKE3 digest. It is not an
+editable document. A first attempt to fix the two capabilities by directly
+editing `foundry/evidence/B/legacy-capabilities.ttl` in the corpus was
+correctly refused downstream by `admit_capabilities` itself
+(`RECEIPT_OUTPUT_DRIFT: expected <old digest>, observed <new digest>`) —
+proof the digest chain actually catches tampering, not just schema gaps.
+The real fix required: (1) making the correction at the actual source path
+in `~/ggen`, on a new commit; (2) retracting B's stale admission (deleting
+its generated outputs, resetting `state.json`'s B entry to `READY`); (3)
+re-running `admit_observation` with `--evidence-ref` pointed at the new
+commit; (4) only then re-running `admit_capabilities`. Any future
+correction to already-admitted evidence for D–K must follow this same
+path — fix at the source, retract, re-admit — never hand-edit a corpus
+artifact directly.
 
 ## D — Kernel-corpus classification (`admit_classification.rs`)
 

@@ -80,10 +80,10 @@
       "id": "B",
       "status": "ADMITTED",
       "admitted_evidence": {
-        "command": "admit_observation --program authority/foundry-work-program.json --source ~/ggen --corpus ~/ggen-legacy --evidence-ref agent/v26.8.1-remaining-observers",
+        "command": "admit_observation --program authority/foundry-work-program.json --source ~/ggen --corpus ~/ggen-legacy --evidence-ref agent/v26.8.1-resolve-2-dispositions",
         "run_date": "2026-08-12",
-        "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
-        "note": "real local branch override; the binary's default origin/agent/v26.8.1-remaining-observers ref does not resolve locally",
+        "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
+        "note": "re-admitted after retracting an earlier, architecturally-wrong direct edit to the corpus evidence file; the real fix was made at ~/ggen's actual source path (ontology/v26.8.1/legacy-capabilities.ttl) on this new commit, branched from agent/v26.8.1-remaining-observers",
         "predicates_verified": {
           "evidence_capability_count_exact": 65,
           "evidence_observer_class_count_exact": 20,
@@ -94,16 +94,22 @@
     },
     {
       "id": "C",
-      "status": "BLOCKED",
-      "blocked_reason": "UNKNOWN_DISPOSITION",
-      "blocked_evidence": {
+      "status": "ADMITTED",
+      "admitted_evidence": {
         "command": "admit_capabilities --program authority/foundry-work-program.json --source ~/ggen --corpus ~/ggen-legacy",
         "run_date": "2026-08-12",
-        "real_error": "UNKNOWN_DISPOSITION: DISPOSITION_UNKNOWN",
-        "detail": "2 of the 65 real legacy capabilities in foundry/evidence/B/legacy-capabilities.ttl carry ggen:hasDisposition ggen:DISPOSITION_UNKNOWN, both left honestly unresolved by the prior real investigation that produced this evidence (one about a generation-mode variant absent from the live enum; one whose own evidenceFixtures note literally reads 'this pass did not confirm whether the v5 unified sync command still exposes an equivalent check'). This is a genuine domain-judgment gap, not a schema/plumbing issue -- deliberately not resolved here by inventing a disposition value, per this repo's own absence-is-not-evidence doctrine. Needs real investigation of the two named capabilities before C can admit."
+        "resolution": "Both real DISPOSITION_UNKNOWN capabilities resolved via real investigation of ~/ggen's current source (see ggen commit b7db94e8e): legacy_ext_template_mode_append -> ARCHIVED (GenerationMode enum confirmed to have exactly 3 variants today, no Append, no migration commit found); legacy_ext2_exit_code_mutation_budget_threshold -> REFUSED (zero real matches for the check anywhere in the current codebase -- genuinely dropped, not relocated).",
+        "disposition_counts": {"ARCHIVED": 36, "REFUSED": 12, "REPLACED": 9, "SUBSUMED": 8},
+        "predicates_verified": {
+          "no_capability_property_empty": true,
+          "no_replacement_owner_missing": true,
+          "no_turtle_string_unterminated": true,
+          "no_unknown_disposition": true,
+          "workstream_b_admitted": true
+        }
       }
     },
-    {"id": "D", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_C_NOT_ADMITTED"},
+    {"id": "D", "status": "READY"},
     {"id": "E", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_D_NOT_ADMITTED"},
     {"id": "F", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_E_NOT_ADMITTED"},
     {"id": "G", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_F_NOT_ADMITTED"},
