@@ -1,7 +1,8 @@
 {
-  "schema": "ggen.legacy.errc.reconstitution.contract/1",
+  "schema": "ggen.legacy.errc.reconstitution.contract/2",
   "ticket": "GL-ERRC-003",
   "claim_ceiling": "FORTUNE5_SELF_RECONSTITUTION_ANALYSIS_ONLY",
+  "evidence_map": "authority/fortune5-evidence-map.json",
   "expected_cardinality": {
     "product_requirements": 14,
     "claims": 13,
@@ -21,6 +22,9 @@
     "OBSERVATION_IS_NOT_ADMISSION",
     "CHECKPOINT_IS_NOT_CROWN",
     "EXTERNAL_EVIDENCE_CANNOT_BE_SYNTHESIZED",
-    "EVERY_INHERITED_OBJECT_REQUIRES_EXPLICIT_RECONSTITUTION"
+    "EVERY_INHERITED_OBJECT_REQUIRES_EXPLICIT_RECONSTITUTION",
+    "LITERAL_IDENTIFIER_MENTION_IS_NOT_EVIDENCE",
+    "EVIDENCE_MAPPING_REQUIRES_EXECUTABLE_QUALIFICATION",
+    "BOUNDED_REFERENCE_EVIDENCE_DOES_NOT_WIDEN_ENTERPRISE_STANDING"
   ]
 }
