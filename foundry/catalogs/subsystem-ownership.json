@@ -1,0 +1,526 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.capability-admission/1",
+  "evidence_digest": "c2cd766f27b9bc7f177190fcf98f54228c9b54af9e4e412fd7a7a2e0afb242f5",
+  "entries": [
+    {
+      "capability_id": "legacy_ggen_core_pipeline",
+      "subsystem": "engine",
+      "historical_owner": "ggen-core crate (pre-2026-ggen-core-replacement)",
+      "replacement_owner": "crates/ggen-engine (src/sync.rs 5-stage pipeline)",
+      "admitted_owner": "crates/ggen-engine (src/sync.rs 5-stage pipeline)",
+      "ownership_basis": "declared_replacement_owner"
+    },
+    {
+      "capability_id": "legacy_wizard_command",
+      "subsystem": "products",
+      "historical_owner": "ggen-cli (imported ggen_core:: symbols)",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/products",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_sigma_command",
+      "subsystem": "products",
+      "historical_owner": "ggen-cli (imported ggen_core:: symbols)",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/products",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_inverse_sync_command",
+      "subsystem": "products",
+      "historical_owner": "ggen-cli (imported ggen_core:: symbols)",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/products",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ggen_a2a_mcp_server",
+      "subsystem": "products",
+      "historical_owner": "ggen-a2a-mcp crate (standalone A2A protocol + MCP server)",
+      "replacement_owner": "crates/ggen-lsp (a2a_mcp module, feature-gated `mcp`/`a2a`)",
+      "admitted_owner": "crates/ggen-lsp (a2a_mcp module, feature-gated `mcp`/`a2a`)",
+      "ownership_basis": "declared_replacement_owner"
+    },
+    {
+      "capability_id": "legacy_ggen_lsp_mcp_server",
+      "subsystem": "products",
+      "historical_owner": "ggen-lsp-mcp crate (standalone MCP server exposing repair routes)",
+      "replacement_owner": "crates/ggen-lsp (feature `mcp`)",
+      "admitted_owner": "crates/ggen-lsp (feature `mcp`)",
+      "ownership_basis": "declared_replacement_owner"
+    },
+    {
+      "capability_id": "legacy_ggen_lsp_a2a_bridge",
+      "subsystem": "products",
+      "historical_owner": "ggen-lsp-a2a crate (A2A bridge over MCP tools)",
+      "replacement_owner": "crates/ggen-lsp (feature `a2a`)",
+      "admitted_owner": "crates/ggen-lsp (feature `a2a`)",
+      "ownership_basis": "declared_replacement_owner"
+    },
+    {
+      "capability_id": "legacy_genesis_schema_v2_crate",
+      "subsystem": "system",
+      "historical_owner": "genesis-schema-v2 crate (standalone)",
+      "replacement_owner": "crates/genesis-types-v2 (schema module)",
+      "admitted_owner": "crates/genesis-types-v2 (schema module)",
+      "ownership_basis": "declared_replacement_owner"
+    },
+    {
+      "capability_id": "legacy_star_toml_workspace_member",
+      "subsystem": "system",
+      "historical_owner": "star-toml as an in-workspace path dependency",
+      "replacement_owner": "published `star-toml` crate (external dependency, same crate, now out-of-workspace)",
+      "admitted_owner": "published `star-toml` crate (external dependency, same crate, now out-of-workspace)",
+      "ownership_basis": "declared_replacement_owner"
+    },
+    {
+      "capability_id": "legacy_stpnt_crate",
+      "subsystem": "system",
+      "historical_owner": "stpnt crate (dead, zero dependents at time of removal per commit message)",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_genesis_core_crate_original",
+      "subsystem": "system",
+      "historical_owner": "genesis-core crate (dead, zero dependents at removal time per commit message)",
+      "replacement_owner": "crates/genesis-core-v2 (successor by name/domain only -- this script found no explicit migration commit linking the two; treat the link as a naming inference, not confirmed lineage)",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_sync_audit_flag",
+      "subsystem": "products",
+      "historical_owner": "justfile author's assumption about the sync verb's flag surface",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/products",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_sync_dry_run_value_flag",
+      "subsystem": "products",
+      "historical_owner": "justfile author's assumption about the sync verb's flag surface",
+      "replacement_owner": "`ggen sync run --dry-run` (direct invocation)",
+      "admitted_owner": "`ggen sync run --dry-run` (direct invocation)",
+      "ownership_basis": "declared_replacement_owner"
+    },
+    {
+      "capability_id": "legacy_ggen_toml_dual_schema",
+      "subsystem": "engine",
+      "historical_owner": "Two independently-defined struct hierarchies, dispatched by a raw-text pre-parse in crates/ggen-engine/src/generation_rules.rs:108 (has_generation_rules) and crates/ggen-engine/src/sync.rs:155",
+      "replacement_owner": "crates/ggen-config/src/config_schema.rs (classify_ggen_toml) + crates/ggen-engine/src/schema_dispatch.rs (load)",
+      "admitted_owner": "crates/ggen-config/src/config_schema.rs (classify_ggen_toml) + crates/ggen-engine/src/schema_dispatch.rs (load)",
+      "ownership_basis": "declared_replacement_owner"
+    },
+    {
+      "capability_id": "legacy_process_intelligence_local_analysis",
+      "subsystem": "engine",
+      "historical_owner": "ggen-graph (pre-refactor)",
+      "replacement_owner": "wasm4pm-compat::dfg::{discover_ocel_dfg,dfg_fitness,dfg_precision,extract_ocel_variants} (external, per CLAUDE.md's Process Intelligence Boundary table)",
+      "admitted_owner": "wasm4pm-compat::dfg::{discover_ocel_dfg,dfg_fitness,dfg_precision,extract_ocel_variants} (external, per CLAUDE.md's Process Intelligence Boundary table)",
+      "ownership_basis": "declared_replacement_owner"
+    },
+    {
+      "capability_id": "legacy_ext_genesis_construct8_crate",
+      "subsystem": "system",
+      "historical_owner": "genesis-construct8 crate (dead, zero dependents at removal time per commit message)",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_genesis_lockchain_crate",
+      "subsystem": "system",
+      "historical_owner": "genesis-lockchain crate (dead, zero dependents at removal time per commit message)",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_genesis_wasm_shell_crate",
+      "subsystem": "system",
+      "historical_owner": "genesis-wasm-shell crate (dead, zero dependents at removal time per commit message)",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_ggen_daemon_crate",
+      "subsystem": "system",
+      "historical_owner": "ggen-daemon crate (dead, zero dependents at removal time per commit message)",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_ggen_membrane_crate",
+      "subsystem": "system",
+      "historical_owner": "ggen-membrane crate (dead, zero dependents at removal time per commit message)",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_ggen_projection_crate",
+      "subsystem": "system",
+      "historical_owner": "ggen-projection crate (dead, zero dependents at removal time per commit message)",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_template_mode_append",
+      "subsystem": "engine",
+      "historical_owner": "pre-GenerationMode-consolidation template frontmatter parser",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/engine",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_template_mode_update",
+      "subsystem": "engine",
+      "historical_owner": "ggen-daemon's own custom generator (pre-SyncExecutor)",
+      "replacement_owner": "crates/ggen-engine's SyncExecutor-based pipeline (per commit fca98756f's own message)",
+      "admitted_owner": "crates/ggen-engine's SyncExecutor-based pipeline (per commit fca98756f's own message)",
+      "ownership_basis": "declared_replacement_owner"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_doctor",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_graph",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_pipeline",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_docker",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_docker_build",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_docker_run",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_docker_test",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_docker_version",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_build_docker",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_build_image",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_push_image",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_lsp_max_check",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_lsp_check",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_lsp_max_edit",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_lsp_max_sync",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_test_mutation",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_test_bdd",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_test_changed",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_test_marketplace",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_test_marketplace_full",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_run_tests",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_affidavit_seal",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_affidavit_verify",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_evidence_audit",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_evidence_show",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_certification_show",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_workspace_sync",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_status_audit",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_pipeline_status",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_pipeline_validate",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_publish_check",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_target_prune",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_target_show",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_git_status",
+      "subsystem": "system",
+      "historical_owner": "justfile author",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/system",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext2_receipt_v6_ttl_schema",
+      "subsystem": "engine",
+      "historical_owner": "ggen-core's v6 pipeline (pre-ggen-engine, pre-ReceiptRecord)",
+      "replacement_owner": "crates/praxis-core/src/receipt_record.rs (ReceiptRecord, introduced by cbf173f82 -- a from-scratch JSON+BLAKE3 design, not an evolution of the v6 TTL receipt's field names)",
+      "admitted_owner": "crates/praxis-core/src/receipt_record.rs (ReceiptRecord, introduced by cbf173f82 -- a from-scratch JSON+BLAKE3 design, not an evolution of the v6 TTL receipt's field names)",
+      "ownership_basis": "declared_replacement_owner"
+    },
+    {
+      "capability_id": "legacy_ext2_receipt_record_schema_v1",
+      "subsystem": "engine",
+      "historical_owner": "praxis-core::ReceiptRecord, pre-receipt_epoch.rs",
+      "replacement_owner": "crates/praxis-core/src/receipt_epoch.rs (schema v2, live)",
+      "admitted_owner": "crates/praxis-core/src/receipt_epoch.rs (schema v2, live)",
+      "ownership_basis": "declared_replacement_owner"
+    },
+    {
+      "capability_id": "legacy_ext2_output_tree_dotggen_receipt_path",
+      "subsystem": "engine",
+      "historical_owner": "ggen-core v6 pipeline config default",
+      "replacement_owner": "crates/ggen-engine/src/sync.rs RECEIPT_REL_PATH const (.ggen-v2/receipt.json)",
+      "admitted_owner": "crates/ggen-engine/src/sync.rs RECEIPT_REL_PATH const (.ggen-v2/receipt.json)",
+      "ownership_basis": "declared_replacement_owner"
+    },
+    {
+      "capability_id": "legacy_ext2_output_tree_src_generated_default",
+      "subsystem": "engine",
+      "historical_owner": "ggen-core v6 pipeline config default",
+      "replacement_owner": "Per-template `output_file` pattern (crates/ggen-config/src/manifest/types.rs), validated by GGEN-YIELD-001 (crates/ggen-lsp/src/analyzers/tera_analyzer.rs) rather than defaulted to one fixed directory",
+      "admitted_owner": "Per-template `output_file` pattern (crates/ggen-config/src/manifest/types.rs), validated by GGEN-YIELD-001 (crates/ggen-lsp/src/analyzers/tera_analyzer.rs) rather than defaulted to one fixed directory",
+      "ownership_basis": "declared_replacement_owner"
+    },
+    {
+      "capability_id": "legacy_ext2_exit_code_mutation_budget_threshold",
+      "subsystem": "products",
+      "historical_owner": "Pre-v5 ggen-cli mutation-testing and budget-enforcement subcommands",
+      "replacement_owner": "",
+      "admitted_owner": "ggen-legacy/archive/products",
+      "ownership_basis": "disposition_requires_corpus_archive"
+    },
+    {
+      "capability_id": "legacy_ext2_exit_code_cli_main_result_wrapper",
+      "subsystem": "products",
+      "historical_owner": "ggen-cli's top-level `#[tokio::main] async fn main()`",
+      "replacement_owner": "crates/ggen-cli/src/main.rs's current explicit match/exit(0)/exit(1) pattern (not independently re-verified against the present-day file in this pass -- confirm current main.rs still matches this shape before treating it as final)",
+      "admitted_owner": "crates/ggen-cli/src/main.rs's current explicit match/exit(0)/exit(1) pattern (not independently re-verified against the present-day file in this pass -- confirm current main.rs still matches this shape before treating it as final)",
+      "ownership_basis": "declared_replacement_owner"
+    },
+    {
+      "capability_id": "legacy_ext2_pack_toml_schema_v1_no_outputs",
+      "subsystem": "products",
+      "historical_owner": "ggen-marketplace's pack.toml deserializer, v6.1 era",
+      "replacement_owner": "crates/ggen-marketplace/src/marketplace/metadata.rs's live PackageToml, which adds `pack: Option<PackSection>` carrying `[pack.outputs]` (named-output key -> relative-path mapping, `#[serde(default)]` so old pack.toml files without a `[pack]` table still parse)",
+      "admitted_owner": "crates/ggen-marketplace/src/marketplace/metadata.rs's live PackageToml, which adds `pack: Option<PackSection>` carrying `[pack.outputs]` (named-output key -> relative-path mapping, `#[serde(default)]` so old pack.toml files without a `[pack]` table still parse)",
+      "ownership_basis": "declared_replacement_owner"
+    },
+    {
+      "capability_id": "legacy_ext2_pack_toml_schema_no_registry_provenance",
+      "subsystem": "products",
+      "historical_owner": "ggen-marketplace's PackMetadata, pre-1000x-consequence-substrate",
+      "replacement_owner": "Live PackMetadata (crates/ggen-marketplace/src/marketplace/metadata.rs) with registry_type/origin_url populated",
+      "admitted_owner": "Live PackMetadata (crates/ggen-marketplace/src/marketplace/metadata.rs) with registry_type/origin_url populated",
+      "ownership_basis": "declared_replacement_owner"
+    }
+  ]
+}

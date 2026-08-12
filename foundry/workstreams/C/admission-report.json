@@ -1,0 +1,33 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.capability-admission/1",
+  "workstream_id": "C",
+  "verifier": "ggen-foundry-admit-capabilities/v1",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_head": "d6ce5bffb983f46b8193f227af68aec2dac269e3",
+  "capability_count": 65,
+  "provenance_count": 65,
+  "ownership_count": 65,
+  "obligation_count": 65,
+  "unknown_capabilities": 0,
+  "capabilities_without_provenance": 0,
+  "contradictory_owners": 0,
+  "disposition_counts": {
+    "ARCHIVED": 36,
+    "REFUSED": 12,
+    "REPLACED": 9,
+    "SUBSUMED": 8
+  },
+  "subsystem_counts": {
+    "engine": 9,
+    "products": 12,
+    "system": 44
+  },
+  "predicates": {
+    "no_capability_property_empty": true,
+    "no_replacement_owner_missing": true,
+    "no_turtle_string_unterminated": true,
+    "no_unknown_disposition": true,
+    "workstream_b_admitted": true
+  },
+  "evidence_digest": "c2cd766f27b9bc7f177190fcf98f54228c9b54af9e4e412fd7a7a2e0afb242f5"
+}
