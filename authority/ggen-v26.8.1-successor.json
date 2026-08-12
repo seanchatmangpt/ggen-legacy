@@ -1,9 +1,23 @@
 {
-  "schema": "ggen.legacy.migration-successor/1",
+  "schema": "ggen.legacy.migration-successor/2",
   "migration": "migrations/ggen-v26.8.1/migration-manifest.json",
   "corpus_head": "07928bde9d9eaba2e2e2fd8f78fcdc3f7b0b63ff",
   "claim_ceiling": "POST_MIGRATION_EVOLUTION_ONLY",
   "entries": [
+    {
+      "path": "packs/legacy-equivalence-verifier-pack/.ggen-v2/receipt-log.jsonl",
+      "kind": "MATERIALIZED",
+      "origin_commit": "5eb12fad330d8c380267f3a4c88f2584ad10971d",
+      "git_blob": "5d332fd5c32f0747f75744e38495831bcfc82bdd",
+      "reason": "The migration lineage records this ignored source receipt log exactly, but the declared corpus commit omitted the ignored file; fix(corpus) later materialized the lineage-identical blob into Git."
+    },
+    {
+      "path": "packs/legacy-equivalence-verifier-pack/.ggen-v2/receipt.json",
+      "kind": "MATERIALIZED",
+      "origin_commit": "5eb12fad330d8c380267f3a4c88f2584ad10971d",
+      "git_blob": "39bb367482201ad6a1bc5759cc60e78bc9613aaf",
+      "reason": "The migration lineage records this ignored source receipt exactly, but the declared corpus commit omitted the ignored file; fix(corpus) later materialized the lineage-identical blob into Git."
+    },
     {
       "path": "tools/v26.8.1/Cargo.toml",
       "kind": "MODIFIED",
@@ -43,6 +57,8 @@
   "laws": [
     "ORIGINAL_MIGRATION_IS_VERIFIED_AT_CORPUS_HEAD",
     "CURRENT_EVOLUTION_REQUIRES_EXPLICIT_SUCCESSOR_ADMISSION",
+    "LINEAGE_RECORDED_BUT_CORPUS_OMITTED_IGNORED_FILES_REQUIRE_MATERIALIZATION_ADMISSION",
+    "MATERIALIZED_BLOB_MUST_EQUAL_MIGRATION_LINEAGE_SOURCE_BLOB",
     "UNMAPPED_INHERITED_DRIFT_IS_REFUSED",
     "SUCCESSOR_ORIGIN_MUST_BE_ANCESTOR_OF_CANDIDATE",
     "CURRENT_BLOB_MUST_EQUAL_ADMITTED_ORIGIN_BLOB"
