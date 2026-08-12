@@ -3,13 +3,13 @@
   "program_id": "ggen-legacy-to-foundry",
   "workstreams": {
     "A": {
-      "status": "READY",
+      "status": "ADMITTED",
       "dependencies": [],
-      "report_digest": null,
-      "receipt_path": null
+      "report_digest": "cef7a71ab9df4fe672f975356a3d1c07c3242a15bf85fbb396addfb85501a169",
+      "receipt_path": "foundry/receipts/workstream-A.json"
     },
     "B": {
-      "status": "BLOCKED",
+      "status": "READY",
       "dependencies": [
         "A"
       ],

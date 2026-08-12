@@ -1,0 +1,21 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.baseline-admission/1",
+  "workstream_id": "A",
+  "verifier": "ggen-foundry-admit-baseline/v1",
+  "source_head": "48cfeeb7628e5b5c6b76d581f8eb00231ee8a198",
+  "corpus_head": "957bc31d260fbe1e631962bd2bfb7cb61ed49e3f",
+  "source_tree_digest": "08827de9962fd91aaeab37b52baf1df4627a0e1774f7383424794899761e262e",
+  "corpus_tree_digest": "db05e2702db87d82e9aaddf7fe10703057b33e8fe0afcd856dcb346e2fbff799",
+  "program_digest": "56cd7d001cee5fc074b562195254cebe5bc474a9453234c1cdc141109a346a2d",
+  "foundry_manifest_digest": "902cbe62b8edf7d766ed39281f81cf8cd5bd1852234cfe1a4629e23996de42b9",
+  "initialization_receipt_digest": "bf70073e05e7529753c7846ca04d48e8b238a485d55acc1acdd9d63f6bd4e0ee",
+  "initialization_parent_is_ancestor": true,
+  "receipts_replayed": 1,
+  "predicates": {
+    "corpus_lineage_intact": true,
+    "corpus_worktree_clean": true,
+    "foundry_manifest_authority_matched": true,
+    "initialization_receipt_replayed": true,
+    "source_worktree_clean": true
+  }
+}
