@@ -1,0 +1,50 @@
+{
+  "schema": "ggen.legacy.migration-successor/1",
+  "migration": "migrations/ggen-v26.8.1/migration-manifest.json",
+  "corpus_head": "07928bde9d9eaba2e2e2fd8f78fcdc3f7b0b63ff",
+  "claim_ceiling": "POST_MIGRATION_EVOLUTION_ONLY",
+  "entries": [
+    {
+      "path": "tools/v26.8.1/Cargo.toml",
+      "kind": "MODIFIED",
+      "origin_commit": "ed5891635d8e3dd22dbe92535086997e02e20977",
+      "git_blob": "8c9325bfaa3bd345c172d4b606e1001e96adc54c",
+      "reason": "Chicago-TDD CLI boundary tests require the published chicago-tdd-tools dev dependency."
+    },
+    {
+      "path": "tools/v26.8.1/Cargo.lock",
+      "kind": "MODIFIED",
+      "origin_commit": "ed5891635d8e3dd22dbe92535086997e02e20977",
+      "git_blob": "e564844538b0b51a4bb844779974d6bbce4c1ee7",
+      "reason": "Lockfile consequence of the admitted Chicago-TDD verifier boundary dependency."
+    },
+    {
+      "path": "tools/v26.8.1/src/bin/subsystem_verifier.rs",
+      "kind": "MODIFIED",
+      "origin_commit": "ed5891635d8e3dd22dbe92535086997e02e20977",
+      "git_blob": "41869aea8400e66a1b7f476c7656b82d5f581d4f",
+      "reason": "Hermetic boundary verification corrected repository-root resolution to the governed AGENTS.md root marker."
+    },
+    {
+      "path": "tools/v26.8.1/src/coverage_projection.rs",
+      "kind": "MODIFIED",
+      "origin_commit": "ed5891635d8e3dd22dbe92535086997e02e20977",
+      "git_blob": "b1b09f1e8084a66b04c398869eb753f3a7923c53",
+      "reason": "Hermetic coverage projection corrected repository-root resolution to the governed AGENTS.md root marker."
+    },
+    {
+      "path": "tools/v26.8.1/tests/verifier_boundary.rs",
+      "kind": "ADDED",
+      "origin_commit": "ed5891635d8e3dd22dbe92535086997e02e20977",
+      "git_blob": "15242827677b706e107fb84af1a7d2291a4fc9ef",
+      "reason": "Real-filesystem and real-subprocess Chicago-TDD boundary witnesses for all three verifier binaries."
+    }
+  ],
+  "laws": [
+    "ORIGINAL_MIGRATION_IS_VERIFIED_AT_CORPUS_HEAD",
+    "CURRENT_EVOLUTION_REQUIRES_EXPLICIT_SUCCESSOR_ADMISSION",
+    "UNMAPPED_INHERITED_DRIFT_IS_REFUSED",
+    "SUCCESSOR_ORIGIN_MUST_BE_ANCESTOR_OF_CANDIDATE",
+    "CURRENT_BLOB_MUST_EQUAL_ADMITTED_ORIGIN_BLOB"
+  ]
+}
