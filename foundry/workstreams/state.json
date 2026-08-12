@@ -9,31 +9,31 @@
       "receipt_path": "foundry/receipts/workstream-A.json"
     },
     "B": {
-      "status": "ADMITTED",
+      "status": "READY",
       "dependencies": [
         "A"
       ],
-      "report_digest": "02bb5e0f0a6f9861611c53231d38a1fd9565b70e9aff1213d3e9d9e3deef26fd",
-      "receipt_path": "foundry/receipts/workstream-B.json"
+      "report_digest": null,
+      "receipt_path": null
     },
     "C": {
-      "status": "ADMITTED",
+      "status": "BLOCKED",
       "dependencies": [
         "B"
       ],
-      "report_digest": "aae3c0c9ebc042ad2e8a1273dd9e0e3c3c37dae8da94cf6989187364bae0a1f8",
-      "receipt_path": "foundry/receipts/workstream-C.json"
+      "report_digest": null,
+      "receipt_path": null
     },
     "D": {
-      "status": "ADMITTED",
+      "status": "BLOCKED",
       "dependencies": [
         "C"
       ],
-      "report_digest": "794bf8ea597ed35f17aa966539ac1725627cb071e33c53b4096be1d3571cfc32",
-      "receipt_path": "foundry/receipts/workstream-D.json"
+      "report_digest": null,
+      "receipt_path": null
     },
     "E": {
-      "status": "READY",
+      "status": "BLOCKED",
       "dependencies": [
         "D"
       ],
