@@ -24,8 +24,13 @@
     "exclude_prefixes": ["target"]
   },
   "baseline": {
-    "toolchain": "1.85.0",
-    "toolchain_authority": "verification-choice; source manifest declares edition=2024 and does not declare rust-version",
+    "toolchain": "1.86.0",
+    "toolchain_authority": "evidence-derived verification floor; source manifest does not declare rust-version",
+    "toolchain_discovery": {
+      "candidate": "1.85.0",
+      "result": "REFUSED",
+      "reason": "exact locked dependency graph contains ICU 2.2.0/idna_adapter packages requiring rustc 1.86"
+    },
     "commands": [
       "cargo metadata --format-version 1 --locked --no-deps",
       "cargo test --workspace --all-targets --locked"

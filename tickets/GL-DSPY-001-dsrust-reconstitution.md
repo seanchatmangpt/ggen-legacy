@@ -13,10 +13,14 @@ Create the first executable external-source rail for `ggen-legacy` using the per
 - license expression: `MIT OR Apache-2.0`
 - source manifest edition: `2024`
 - source-declared `rust-version`: absent
-- hosted verification toolchain: `1.85.0` (verifier choice, not source-declared MSRV)
+- hosted verification toolchain: `1.86.0` (evidence-derived verifier floor, not source-declared MSRV)
 - observed workspace members: `derive`, `bridge`, `tpe`, `pyrng`, `gepa`
 
 The exact commit is immutable for this ticket. Moving the source ref requires a new admission event and new receipt.
+
+## Toolchain discovery evidence
+
+Rust `1.85.0` was executed against the exact frozen lockfile and refused before compilation because the locked ICU 2.2.0 / `idna_adapter` dependency set requires rustc `1.86`. The dependency graph is not rewritten to manufacture compatibility. Rust `1.86.0` is therefore the next admitted verifier candidate.
 
 ## Chesterton fence
 
@@ -70,7 +74,7 @@ Those claims remain `UNKNOWN` until observed execution crosses their respective 
 - dirty tracked source;
 - missing expected license/workspace files;
 - Cargo metadata failure at the frozen subject;
-- selected verifier toolchain differs from `1.85.0`;
+- selected verifier toolchain differs from `1.86.0`;
 - legacy workspace test failure;
 - nondeterministic reconstitution digest on replay;
 - any emitted observation labeled as admitted semantic truth without an explicit admission artifact.
@@ -80,7 +84,7 @@ Those claims remain `UNKNOWN` until observed execution crosses their respective 
 Hosted replay command after the exact source checkout:
 
 ```bash
-RUSTUP_TOOLCHAIN=1.85.0 \
+RUSTUP_TOOLCHAIN=1.86.0 \
 python3 tools/v26.8.1/external_reconstitution.py \
   --source _subjects/dsrust \
   --contract reconstitution/dsrust/source-contract.json \
