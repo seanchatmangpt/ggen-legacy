@@ -47,14 +47,14 @@ justfile
 3. Expand exactly 21 maturity dimensions into 63 conjunctive positive/negative/replay obligations.
 4. Recover exactly 11 A–K foundry workstreams.
 5. Refuse cardinality drift rather than silently dropping authority objects.
-6. Exclude generated reconstitution outputs from their own evidence index.
+6. Exclude generated reconstitution outputs and the reconstitution engine/verifier themselves from the evidence they classify; bind those source files in the receipt instead.
 7. Preserve CLM-005/006/007/008/013 as external gates that local execution cannot promote.
 8. Detect workflow-topology drift against the admitted single-workflow architecture.
 9. Detect known machine-readable/narrative standing drift without auto-promoting authority.
 10. Emit `matrix.json`, `work-queue.json`, `report.md`, and `receipt.json` deterministically.
-11. Bind source and output digests into a replay identity.
+11. Bind governing authority, engine, verifier, ticket, CI court, and output digests into the receipt/replay identity.
 12. Independently execute the engine twice and require byte-identical output trees.
-13. Kill cardinality-drift and rogue-workflow negative controls.
+13. Kill cardinality-drift, rogue-workflow, and self-evidence-exclusion negative controls.
 14. Emit construct-only ERRC work orders with `REFUSED:AMBIENT_ACTUATION`.
 15. Never claim external production, compliance, security, performance, or Sunset standing.
 
@@ -76,9 +76,11 @@ workflow_count=1
 reconstitution_objects=101
 external_claims_auto_promoted=0
 ambient_work_orders=0
+self_evidence_leaks=0
 engine_replay=REPLAY_MATCH
 cardinality_mutant=KILLED
 workflow_mutant=KILLED
+self_evidence_mutant=KILLED
 claim_ceiling=FORTUNE5_SELF_RECONSTITUTION_ANALYSIS_ONLY
 standing=PARTIAL_ALIVE
 ```
