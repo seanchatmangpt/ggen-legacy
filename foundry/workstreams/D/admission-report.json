@@ -1,0 +1,21 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.kernel-corpus-classification/1",
+  "workstream_id": "D",
+  "verifier": "ggen-foundry-admit-classification/v1",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_head": "dc4c6cebbb1be37ba3336d56a8a6e3296156007b",
+  "component_count": 65,
+  "unclassified_components": 0,
+  "classification_conflicts": 0,
+  "migration_dependencies_closed": true,
+  "classification_counts": {
+    "CORPUS_ARCHIVE": 36,
+    "CORPUS_HISTORICAL_IMPLEMENTATION": 17,
+    "CORPUS_REFUSAL_WITNESS": 12
+  },
+  "predicates": {
+    "no_classification_disposition_unknown": true,
+    "workstream_c_admitted": true
+  },
+  "source_catalog_digest": "a10fed4bde427a9b022484f3a76e9e53fd9b5036b0384db150e2c5eb36ba1e8c"
+}
