@@ -15,15 +15,16 @@ concurrency:
 
 jobs:
   verify:
-    name: exact-subject reconstitution, planning, contract and LSP runtime
+    name: exact-subject evidence qualification, reconstitution and runtime
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    timeout-minutes: 40
     steps:
       - name: Checkout exact subject
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
+
       - name: Admit exact head and one-workflow topology
         shell: bash
         env:
@@ -34,34 +35,128 @@ jobs:
           count="$(find .github/workflows -maxdepth 1 -type f \( -name '*.yml' -o -name '*.yaml' \) | wc -l | tr -d ' ')"
           test "$count" -eq 1
           printf 'subject_sha=%s workflow_count=%s\n' "$EXPECTED_SHA" "$count"
-      - name: Compile autonomous reconstitution court
-        run: python3 -m py_compile scripts/reconstitute_fortune5.py scripts/verify_fortune5_reconstitution.py
-      - name: Manufacture Fortune 5 self-reconstitution matrix
-        run: python3 scripts/reconstitute_fortune5.py --root . --output evidence/reconstitution/current --strict
-      - name: Independently replay and mutate Fortune 5 self-reconstitution
-        run: python3 scripts/verify_fortune5_reconstitution.py --root .
-      - name: Verify combinatorial-max planning subsystem
-        run: |
-          python3 -m unittest discover -s planning/v26.8.7/tests -v
-          python3 planning/v26.8.7/verify.py --strict --output evidence/ci/gl-plan-002.json
-          planning/v26.8.7/skdecide_classical_engine.py --help | head -n 1 | grep '^skdecide-classical-engine/26.8.7$'
-      - name: Verify received generated contract
-        run: python3 scripts/verify_lsp_contract.py
+
+      - name: Install evidence-verifier Python dependencies
+        run: python3 -m pip install --disable-pip-version-check --no-input blake3 jsonschema
+
       - name: Install repository-pinned Rust
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: nightly-2026-06-22
           components: rustfmt, clippy
+
+      - name: Compile Fortune 5 courts
+        run: python3 -m py_compile scripts/reconstitute_fortune5.py scripts/fortune5_reconstitute_v2.py scripts/verify_fortune5_reconstitution.py scripts/fortune5_verify_v2.py scripts/verify_offline_bundle.py
+
+      - name: Qualify customer-controlled verifier appliance at exact head
+        run: appliance/bin/run-reference-e2e.sh
+
+      - name: Qualify deterministic offline verifier transport
+        run: python3 scripts/verify_offline_bundle.py --root . --output evidence/offline-bundle
+
+      - name: Verify foundry bootstrap fence
+        run: python3 scripts/verify_foundry_bootstrap.py
+
+      - name: Verify autonomic projection reference
+        run: python3 scripts/verify_autonomic_finish.py
+
+      - name: Verify combinatorial-max planning subsystem
+        run: |
+          python3 -m unittest discover -s planning/v26.8.7/tests -v
+          python3 planning/v26.8.7/verify.py --strict --output evidence/ci/gl-plan-002.json
+          planning/v26.8.7/skdecide_classical_engine.py --help | head -n 1 | grep '^skdecide-classical-engine/26.8.7$'
+
+      - name: Verify received generated contract
+        run: python3 scripts/verify_lsp_contract.py --report evidence/ci/lsp-contract-current.json
+
       - name: Format
         run: cargo fmt --all -- --check
+
       - name: Compile all targets
         run: cargo check --all-targets --locked
+
       - name: Clippy
         run: cargo clippy --all-targets --locked -- -D warnings
+
       - name: Test all targets including real stdio LSP boundary
         run: cargo test --all-targets --locked
+
       - name: Re-run real process boundary explicitly
         run: cargo test --locked --test lsp_boundary -- --nocapture
+
+      - name: Checkout exact foundry runtime candidate
+        uses: actions/checkout@v4
+        with:
+          repository: seanchatmangpt/ggen
+          ref: 458f0f88aee0060cddce3ffdaa7e2172a4f40a25
+          path: .foundry-ggen
+          persist-credentials: false
+
+      - name: Qualify exact foundry runtime candidate
+        run: cargo test --manifest-path .foundry-ggen/tools/architecture-foundry/Cargo.toml --all-targets
+
+      - name: Emit exact-head local qualification receipt
+        shell: bash
+        env:
+          SUBJECT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import hashlib, json, os, subprocess
+          def load(path): return json.load(open(path))
+          def digest(path): return hashlib.sha256(open(path,'rb').read()).hexdigest()
+          subject=os.environ['SUBJECT_SHA']
+          assert subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()==subject
+          foundry_head=subprocess.check_output(['git','-C','.foundry-ggen','rev-parse','HEAD'],text=True).strip()
+          assert foundry_head=='458f0f88aee0060cddce3ffdaa7e2172a4f40a25'
+          planning=load('evidence/ci/gl-plan-002.json')
+          lsp=load('evidence/ci/lsp-contract-current.json')
+          foundry=load('evidence/foundry-bootstrap-verifier.json')
+          assert planning['state']=='PARTIAL_ALIVE'
+          assert lsp['standing']=='ALIVE'
+          assert foundry['standing']=='ALIVE'
+          receipt={
+            'schema':'ggen.legacy.local-qualification/1',
+            'subject_head':subject,
+            'autonomic_projection':'ALIVE',
+            'planning':planning['state'],
+            'planning_report_sha256':digest('evidence/ci/gl-plan-002.json'),
+            'lsp_source_contract':lsp['standing'],
+            'lsp_runtime':'ALIVE',
+            'lsp_contract_report_sha256':digest('evidence/ci/lsp-contract-current.json'),
+            'foundry_bootstrap':foundry['standing'],
+            'foundry_bootstrap_report_sha256':digest('evidence/foundry-bootstrap-verifier.json'),
+            'foundry_runtime_candidate':'ALIVE',
+            'foundry_runtime_head':foundry_head,
+            'claim_ceiling':'EXACT_HEAD_LOCAL_AND_REFERENCE_BOUNDARIES_ONLY',
+            'standing':'PARTIAL_ALIVE'
+          }
+          os.makedirs('evidence/ci',exist_ok=True)
+          open('evidence/ci/local-qualification.json','w').write(json.dumps(receipt,sort_keys=True)+'\n')
+          print(json.dumps(receipt,sort_keys=True))
+          PY
+
+      - name: Checkout exact ggen v26.8.1 migration source
+        uses: actions/checkout@v4
+        with:
+          repository: seanchatmangpt/ggen
+          ref: 8351af4c5bbbf60bd99ab8417752a1762c6ea4e3
+          path: .source-ggen
+          persist-credentials: false
+
+      - name: Revalidate source-to-corpus migration against exact source
+        run: |
+          python3 scripts/verify_ggen_v26_8_1_migration.py \
+            --source-root .source-ggen \
+            --destination-root . \
+            --report migrations/ggen-v26.8.1/verifier-report.json
+
+      - name: Manufacture evidence-qualified Fortune 5 self-reconstitution
+        run: python3 scripts/reconstitute_fortune5.py --root . --output evidence/reconstitution/current --strict
+
+      - name: Independently replay and mutate Fortune 5 self-reconstitution
+        run: python3 scripts/verify_fortune5_reconstitution.py --root .
+
       - name: Emit verification receipt
         shell: bash
         env:
@@ -69,16 +164,40 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p evidence/ci
-          cat > evidence/ci/receipt.json <<JSON
-          {"repository":"${GITHUB_REPOSITORY}","subject_sha":"${SUBJECT_SHA}","workflow":"${GITHUB_WORKFLOW}","run_id":"${GITHUB_RUN_ID}","standing":"PARTIAL_ALIVE","workflow_count":1,"claim_ceiling":"EXACT_HEAD_LOCAL_AND_REFERENCE_BOUNDARIES_ONLY","boundaries":["fortune5-self-reconstitution","errc-work-queue","reconstitution-replay","reconstitution-negative-controls","gl-plan-002","generated-contract","rust","real-lsp-stdio","malformed-input-refusal"]}
-          JSON
-          cat evidence/ci/receipt.json
+          python3 - <<'PY'
+          import json, os
+          m=json.load(open('evidence/reconstitution/current/matrix.json'))
+          receipt={
+            'repository':os.environ['GITHUB_REPOSITORY'],
+            'subject_sha':os.environ['SUBJECT_SHA'],
+            'workflow':os.environ['GITHUB_WORKFLOW'],
+            'run_id':os.environ['GITHUB_RUN_ID'],
+            'standing':'PARTIAL_ALIVE',
+            'workflow_count':1,
+            'claim_ceiling':'EXACT_HEAD_LOCAL_AND_REFERENCE_BOUNDARIES_ONLY',
+            'bounded_evidence_complete':m['counts']['bounded_evidence_complete'],
+            'bounded_evidence_partial':m['counts']['bounded_evidence_partial'],
+            'remaining_work_orders':m['counts']['work_orders'],
+            'boundaries':['migration-v26.8.1','verifier-appliance-reference','offline-verifier-transport','foundry-bootstrap','autonomic-projection','gl-plan-002','generated-contract','rust','real-lsp-stdio','reconstitution-replay','reconstitution-negative-controls']
+          }
+          open('evidence/ci/receipt.json','w').write(json.dumps(receipt,sort_keys=True)+'\n')
+          print(json.dumps(receipt,sort_keys=True))
+          PY
+
       - uses: actions/upload-artifact@v4
         with:
           name: exact-head-reconstitution-receipt-${{ github.run_id }}
           path: |
             evidence/ci/receipt.json
             evidence/ci/gl-plan-002.json
+            evidence/ci/lsp-contract-current.json
+            evidence/ci/local-qualification.json
+            evidence/appliance/
+            evidence/offline-bundle/
+            evidence/foundry-bootstrap-verifier.json
+            migrations/ggen-v26.8.1/verifier-report.json
+            migrations/ggen-v26.8.1/equivalence-report.json
+            migrations/ggen-v26.8.1/migration-receipt.json
             evidence/reconstitution/current/
           if-no-files-found: error
           retention-days: 14
