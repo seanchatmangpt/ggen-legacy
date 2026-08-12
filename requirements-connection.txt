@@ -1,0 +1,4 @@
+# Exact native Foundry report-digest verifier used by GL-CONN-001.
+# ggen/tools/architecture-foundry uses the official Rust blake3 crate;
+# this is the official Python binding to that implementation.
+blake3==1.0.9
