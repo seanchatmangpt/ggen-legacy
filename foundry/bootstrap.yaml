@@ -122,21 +122,25 @@
     },
     {
       "id": "E",
-      "status": "BLOCKED",
-      "blocked_reason": "REQUIRED_SOURCE_OBJECTS_UNRESOLVED",
-      "blocked_evidence": {
+      "status": "ADMITTED",
+      "admitted_evidence": {
         "command": "admit_extraction --program authority/foundry-work-program.json --source <isolated worktree> --corpus ~/ggen-legacy",
         "run_date": "2026-08-12",
-        "real_error": "REQUIRED_SOURCE_OBJECTS_UNRESOLVED for all 17 REPLACED/SUBSUMED capabilities",
-        "two_real_tool_bugs_found_and_fixed_along_the_way": [
-          "replay_all_receipts checked every receipt's output digests independently against current corpus state, so initialize-corpus's stale seed-catalog digest for capabilities.json permanently conflicted with C's legitimate real replacement of that file -- fixed to check only the latest receipt per output path (ggen commit c73619246)",
-          "admit_extraction's tree-entry prefix matcher built a double-slash pattern for directory-shaped legacy_source_path values ending in '/' (e.g. crates/ggen-core/), which could never match -- fixed with trim_end_matches('/') (ggen commit 5816faac7)"
+        "extracted_components": 65,
+        "unresolved_required_sources": 0,
+        "unique_blob_count": 1141,
+        "total_source_files": 1197,
+        "real_tool_fixes_along_the_way": [
+          "replay_all_receipts: latest-receipt-per-path, not every receipt independently (ggen c73619246)",
+          "admit_extraction tree matcher: trailing-slash double-slash bug (ggen 5816faac7)",
+          "admit_extraction: generic path normalization (parenthetical/comma-list/vs./or) + removal-commit parent fallback (ggen 73f804836)",
+          "admit_extraction: globstar ** matching zero directory levels (ggen 4ff83f4ec)"
         ],
-        "remaining_real_blocker": "after both fixes, all 17 still fail. Real investigation of one (legacy_ggen_core_pipeline @ 9cef6e40f) shows historical_source_commit is itself the REMOVAL commit ('remove ggen-core, rewrite README from first principles') -- content lives at its parent (9cef6e40f^), a convention admit_classification.rs's own recovery_command() already encodes (git show {commit}^:{path}) but admit_extraction.rs's tree resolution does not apply. Blindly applying ^ to all 17 would be wrong for entries where the commit is not a removal commit. Several of the 17 have legacy_source_path values that are genuinely prose/comparisons ('X vs. Y', 'X or Y', a foundry/ marketplace/src/**/metadata.rs glob) not reducible to one literal git path without real per-capability judgment -- the same class of investigation C's 2 dispositions needed, at far larger scope (17, several ambiguous) and not safely resolvable by inventing a single path per capability.",
-        "fix_branch": "ggen agent/foundry-replay-latest-receipt-per-path (2 commits, both cargo test-verified, not yet pushed)"
+        "real_evidence_corrections": "3 stale/incomplete historicalSourceCommit fields resolved via real investigation of ~/ggen's actual git history (ggen commit 603314129 on agent/v26.8.1-fix-extraction-source-paths) -- genesis-schema-v2's real deletion commit, template_mode_update's real deleted file path, and 2 already-resolved-elsewhere-in-the-same-entry commit references that were just never filled into historicalSourceCommit",
+        "cascade": "B and C and D were retracted and re-admitted fresh against the corrected evidence commit before E could run"
       }
     },
-    {"id": "F", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_E_NOT_ADMITTED"},
+    {"id": "F", "status": "READY"},
     {"id": "G", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_F_NOT_ADMITTED"},
     {"id": "H", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_E_OR_F_NOT_ADMITTED"},
     {"id": "I", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_G_OR_H_NOT_ADMITTED"},
