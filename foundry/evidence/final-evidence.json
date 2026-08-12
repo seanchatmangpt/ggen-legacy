@@ -1,0 +1,33 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.final-evidence/1",
+  "source_head": "db484402eb28d5e973f553b23402fddbaf70f873",
+  "corpus_head": "0977bdead97e5a8981c82a6be7a6b58a4ef485bb",
+  "verifier": "ggen-foundry-final-admission-verifier/v1",
+  "predicates": {
+    "cross_repository_receipts_valid": true,
+    "equivalence_failures": 0,
+    "fortune_scale_reference_manufactured": true,
+    "ggen_kernel_admitted": true,
+    "ggen_legacy_corpus_admitted": true,
+    "missing_equivalence_cases": 0,
+    "replay_differences": 0,
+    "solution_admission": true,
+    "standing": "ALIVE",
+    "unassigned_verifiers": 0,
+    "unknown_capabilities": 0,
+    "unknown_dispositions": 0,
+    "unknown_standings": 0
+  },
+  "evidence": [
+    {
+      "repository": "corpus",
+      "path": "foundry/workstreams/I/admission-report.json",
+      "blake3": "f0c129b813bbec95b92bc00d80b223aa87d31fbc3e524930597d9544fd9c17ec"
+    },
+    {
+      "repository": "corpus",
+      "path": "foundry/workstreams/K/admission-report.json",
+      "blake3": "8ffb772cec8b033e0495d128330edf0d043936f49f7575ccf64cc3c2d1e73042"
+    }
+  ]
+}
