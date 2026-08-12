@@ -11,7 +11,10 @@ Create the first executable external-source rail for `ggen-legacy` using the per
 - legacy specimen: `seanchatmangpt/dsrust`
 - exact legacy commit: `f24adde08c1d8850e4d7079d019643bb40f905cb`
 - license expression: `MIT OR Apache-2.0`
-- Rust floor observed in source manifest: `1.85`
+- source manifest edition: `2024`
+- source-declared `rust-version`: absent
+- hosted verification toolchain: `1.85.0` (verifier choice, not source-declared MSRV)
+- observed workspace members: `derive`, `bridge`, `tpe`, `pyrng`, `gepa`
 
 The exact commit is immutable for this ticket. Moving the source ref requires a new admission event and new receipt.
 
@@ -39,17 +42,19 @@ No object produced here has execution authority and no semantic domain concept i
 
 1. Reject a source whose checked-out `HEAD` differs from the contract SHA with `SOURCE_IDENTITY_MISMATCH`.
 2. Reject tracked local source mutations with `SOURCE_TREE_DIRTY`.
-3. Verify all contract-declared source files exist.
+3. Verify all contract-declared source files exist, including every workspace-member manifest observed at the frozen commit.
 4. Execute `cargo metadata --format-version 1 --locked --no-deps` against the exact specimen in hosted verification.
-5. Execute the specimen's workspace/all-target baseline against the exact specimen.
+5. Execute the specimen's workspace/all-target baseline against the exact specimen with the explicitly selected verifier toolchain.
 6. Run reconstitution twice against the same exact checkout and require identical receipt/artifact digests.
-7. Preserve planning replay after consolidating CI to one workflow.
-8. Upload the exact reconstitution evidence from the pull-request head.
+7. Observe all tracked Rust paths rather than silently restricting archaeology to a guessed subtree.
+8. Preserve planning replay after consolidating CI to one workflow.
+9. Upload the exact reconstitution evidence from the pull-request head.
 
 ## Exclusions
 
 This ticket does **not** claim:
 
+- a source-declared MSRV;
 - semantic DSPy ontology admission;
 - a ggen pack has been manufactured;
 - a replacement Rust ecosystem exists;
@@ -65,6 +70,7 @@ Those claims remain `UNKNOWN` until observed execution crosses their respective 
 - dirty tracked source;
 - missing expected license/workspace files;
 - Cargo metadata failure at the frozen subject;
+- selected verifier toolchain differs from `1.85.0`;
 - legacy workspace test failure;
 - nondeterministic reconstitution digest on replay;
 - any emitted observation labeled as admitted semantic truth without an explicit admission artifact.
@@ -74,6 +80,7 @@ Those claims remain `UNKNOWN` until observed execution crosses their respective 
 Hosted replay command after the exact source checkout:
 
 ```bash
+RUSTUP_TOOLCHAIN=1.85.0 \
 python3 tools/v26.8.1/external_reconstitution.py \
   --source _subjects/dsrust \
   --contract reconstitution/dsrust/source-contract.json \

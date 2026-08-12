@@ -12,15 +12,20 @@
       "LICENSE-MIT",
       "LICENSE-APACHE",
       "src/lib.rs",
-      "crates/dsrust-derive/Cargo.toml",
-      "bridge/Cargo.toml"
+      "derive/Cargo.toml",
+      "bridge/Cargo.toml",
+      "tpe/Cargo.toml",
+      "pyrng/Cargo.toml",
+      "gepa/Cargo.toml"
     ]
   },
   "observation": {
-    "include_prefixes": ["src", "crates", "bridge"],
+    "include_prefixes": [],
     "exclude_prefixes": ["target"]
   },
   "baseline": {
+    "toolchain": "1.85.0",
+    "toolchain_authority": "verification-choice; source manifest declares edition=2024 and does not declare rust-version",
     "commands": [
       "cargo metadata --format-version 1 --locked --no-deps",
       "cargo test --workspace --all-targets --locked"
