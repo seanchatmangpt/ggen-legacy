@@ -1,0 +1,591 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.kernel-corpus-classification/1",
+  "source_catalog_digest": "e9d8da05ce3567334a5cd8ce333b70911615d28ce96b21ec47ae425eb45c68f4",
+  "entries": [
+    {
+      "capability_id": "legacy_ggen_core_pipeline",
+      "historical_source_commit": "9cef6e40f (delete) / cbf173f82 (disconnect, PR #255) / d0b9ff1c6.. (original crate history)",
+      "legacy_source_path": "crates/ggen-core/ (deleted; git history preserved via `git log --all -- crates/ggen-core`)",
+      "archive_path": "git history at 9cef6e40f^ (crate deleted, not moved)",
+      "rollback_path": "",
+      "recovery_command": "git show 9cef6e40f^:crates/ggen-core/",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_wizard_command",
+      "historical_source_commit": "d0b9ff1c6 (added) / 9cef6e40f (removed)",
+      "legacy_source_path": "crates/ggen-cli/src/cmds/wizard.rs (deleted)",
+      "archive_path": "git history at 9cef6e40f^",
+      "rollback_path": "",
+      "recovery_command": "git show d0b9ff1c6^:crates/ggen-cli/src/cmds/wizard.rs",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_sigma_command",
+      "historical_source_commit": "9cef6e40f (removed, same commit as wizard/inverse_sync)",
+      "legacy_source_path": "crates/ggen-cli/src/cmds/sigma.rs (deleted)",
+      "archive_path": "git history at 9cef6e40f^",
+      "rollback_path": "",
+      "recovery_command": "git show 9cef6e40f^:crates/ggen-cli/src/cmds/sigma.rs",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_inverse_sync_command",
+      "historical_source_commit": "9cef6e40f (removed, same commit as wizard/sigma)",
+      "legacy_source_path": "crates/ggen-cli/src/cmds/inverse_sync.rs (deleted)",
+      "archive_path": "git history at 9cef6e40f^",
+      "rollback_path": "",
+      "recovery_command": "git show 9cef6e40f^:crates/ggen-cli/src/cmds/inverse_sync.rs",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ggen_a2a_mcp_server",
+      "historical_source_commit": "bde78f7d5 (chore(consolidation): phase 4 - fold lsp trio into ggen-lsp behind features)",
+      "legacy_source_path": "crates/ggen-a2a-mcp/ (deleted whole crate: a2a/, a2a_generated/, a2a_registry/, mcp_server.rs, mcp_packs.rs)",
+      "archive_path": "git history at bde78f7d5^",
+      "rollback_path": "",
+      "recovery_command": "git show bde78f7d5^:crates/ggen-a2a-mcp/",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ggen_lsp_mcp_server",
+      "historical_source_commit": "bde78f7d5",
+      "legacy_source_path": "crates/ggen-lsp-mcp/ (deleted whole crate)",
+      "archive_path": "git history at bde78f7d5^",
+      "rollback_path": "",
+      "recovery_command": "git show bde78f7d5^:crates/ggen-lsp-mcp/",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ggen_lsp_a2a_bridge",
+      "historical_source_commit": "bde78f7d5",
+      "legacy_source_path": "crates/ggen-lsp-a2a/ (deleted whole crate)",
+      "archive_path": "git history at bde78f7d5^",
+      "rollback_path": "",
+      "recovery_command": "git show bde78f7d5^:crates/ggen-lsp-a2a/",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_genesis_schema_v2_crate",
+      "historical_source_commit": "5b8dd6407b6dd1f11d572e9768499c534c59aec9 (chore(consolidation): phase 3b - fold genesis-schema-v2 into genesis-types-v2 -- real deletion commit for crates/genesis-schema-v2/, resolved 2026-08-12 via `git log --oneline --diff-filter=D --all -- crates/genesis-schema-v2` against the actual repository; the field this replaces described the search procedure rather than its result)",
+      "legacy_source_path": "crates/genesis-schema-v2/ (deleted whole crate: OpenAPI specs, RDF ontology, 43 YAWL pattern definitions, workflow schema validation)",
+      "archive_path": "git history prior to the deletion commit",
+      "rollback_path": "",
+      "recovery_command": "git show 5b8dd6407b6dd1f11d572e9768499c534c59aec9^:crates/genesis-schema-v2/",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_star_toml_workspace_member",
+      "historical_source_commit": "73d726ab4 (chore(consolidation): phase 3a - remove star-toml from workspace, depend on published crate)",
+      "legacy_source_path": "crates/star-toml/ (deleted as a workspace member: error.rs, expand.rs, loader.rs, merge.rs, schema.rs, validation.rs, examples/validate.rs, tests/adversarial.rs)",
+      "archive_path": "git history at 73d726ab4^",
+      "rollback_path": "",
+      "recovery_command": "git show 73d726ab4^:crates/star-toml/",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_stpnt_crate",
+      "historical_source_commit": "dfa3664a5 (chore(consolidation): phase 2 - remove stpnt and genesis-core (dead crates))",
+      "legacy_source_path": "crates/stpnt/ (deleted whole crate)",
+      "archive_path": "git history at dfa3664a5^",
+      "rollback_path": "",
+      "recovery_command": "git show dfa3664a5^:crates/stpnt/",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_genesis_core_crate_original",
+      "historical_source_commit": "dfa3664a5",
+      "legacy_source_path": "crates/genesis-core/ (deleted whole crate -- distinct from the still-live crates/genesis-core-v2)",
+      "archive_path": "git history at dfa3664a5^",
+      "rollback_path": "",
+      "recovery_command": "git show dfa3664a5^:crates/genesis-core/",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_sync_audit_flag",
+      "historical_source_commit": "UNKNOWN -- the justfile's `sync:` recipe calls `ggen sync --audit true`, but this script found no commit where the live ggen-engine sync verb ever implemented `--audit`; confirmed broken by direct invocation, not by history mining",
+      "legacy_source_path": "justfile (`sync:` recipe) vs. crates/ggen-engine/src/verbs/sync.rs (accepts only --dry-run/--watch)",
+      "archive_path": "",
+      "rollback_path": "",
+      "recovery_command": "resolve historical source from archive evidence for legacy_sync_audit_flag",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_sync_dry_run_value_flag",
+      "historical_source_commit": "baca724b9 (real commit confirmed 2026-08-12 to still carry justfile's broken `sync-dry: {{GGEN}} sync --dry_run true` form, via `git log --all -- justfile` scanned for the literal string; superseded by 7e4dfb621 per ggen:migrationPath below, which documents the resolution but never itself changed the broken justfile line -- the actual code fix landed earlier)",
+      "legacy_source_path": "justfile (`sync-dry:` recipe) vs. crates/ggen-engine/src/verbs/sync.rs (--dry-run is a bare switch, not value-taking)",
+      "archive_path": "",
+      "rollback_path": "git history of justfile at any commit before agent/v26.8.1-disposition-repair (the broken `ggen sync --dry_run true` form)",
+      "recovery_command": "git show baca724b9^:justfile (`sync-dry:` recipe) vs. crates/ggen-engine/src/verbs/sync.rs (--dry-run is a bare switch, not value-taking)",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ggen_toml_dual_schema",
+      "historical_source_commit": "627f84c59 (fix: disable broken commands, fix policy/doctor/init bugs, archive examples, add canonical clap-noun-verb-cli example (#265) -- real commit confirmed 2026-08-12 via `git ls-tree -r 627f84c59^` to have both pre-classifier files at its parent: crates/ggen-config/src/manifest/types.rs and crates/ggen-engine/src/config.rs. No single commit introduced the two-schema split itself as a deliberate decision (per this field's original text), but this is the real commit that replaced the ad-hoc raw-text dispatch with the shared classifier -- the disposition-relevant event -- per ggen:migrationPath below)",
+      "legacy_source_path": "crates/ggen-config/src/manifest/types.rs (GgenManifest, declarative-rules schema) vs. crates/ggen-engine/src/config.rs (GgenConfig, frontmatter schema)",
+      "archive_path": "",
+      "rollback_path": "git history of crates/ggen-config/src/config_schema.rs and crates/ggen-engine/src/schema_dispatch.rs before commit 627f84c59 (2026-07-17), when six call sites each used ad-hoc per-site dispatch logic instead of the one shared classifier",
+      "recovery_command": "git show 627f84c59^:crates/ggen-config/src/manifest/types.rs (GgenManifest, declarative-rules schema) vs. crates/ggen-engine/src/config.rs (GgenConfig, frontmatter schema)",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_process_intelligence_local_analysis",
+      "historical_source_commit": "3176f9a18 (refactor(ggen-graph): remove process intelligence — ggen emits, wasm4pm analyses)",
+      "legacy_source_path": "crates/ggen-graph/ (local discovery/conformance/fitness/precision/variant code, removed)",
+      "archive_path": "git history at 3176f9a18^",
+      "rollback_path": "",
+      "recovery_command": "git show 3176f9a18^:crates/ggen-graph/ (local discovery/conformance/fitness/precision/variant code, removed)",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_genesis_construct8_crate",
+      "historical_source_commit": "1752de841 (chore(consolidation): phase 1 - delete dormant/dead code (0 blast radius))",
+      "legacy_source_path": "crates/genesis-construct8/ (deleted whole crate)",
+      "archive_path": "git history at 1752de841^",
+      "rollback_path": "",
+      "recovery_command": "git show 1752de841^:crates/genesis-construct8/",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_genesis_lockchain_crate",
+      "historical_source_commit": "1752de841",
+      "legacy_source_path": "crates/genesis-lockchain/ (deleted whole crate)",
+      "archive_path": "git history at 1752de841^",
+      "rollback_path": "",
+      "recovery_command": "git show 1752de841^:crates/genesis-lockchain/",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_genesis_wasm_shell_crate",
+      "historical_source_commit": "1752de841",
+      "legacy_source_path": "crates/genesis-wasm-shell/ (deleted whole crate)",
+      "archive_path": "git history at 1752de841^",
+      "rollback_path": "",
+      "recovery_command": "git show 1752de841^:crates/genesis-wasm-shell/",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_ggen_daemon_crate",
+      "historical_source_commit": "1752de841",
+      "legacy_source_path": "crates/ggen-daemon/ (deleted whole crate)",
+      "archive_path": "git history at 1752de841^",
+      "rollback_path": "",
+      "recovery_command": "git show 1752de841^:crates/ggen-daemon/",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_ggen_membrane_crate",
+      "historical_source_commit": "1752de841",
+      "legacy_source_path": "crates/ggen-membrane/ (deleted whole crate)",
+      "archive_path": "git history at 1752de841^",
+      "rollback_path": "",
+      "recovery_command": "git show 1752de841^:crates/ggen-membrane/",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_ggen_projection_crate",
+      "historical_source_commit": "1752de841",
+      "legacy_source_path": "crates/ggen-projection/ (deleted whole crate)",
+      "archive_path": "git history at 1752de841^",
+      "rollback_path": "",
+      "recovery_command": "git show 1752de841^:crates/ggen-projection/",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_template_mode_append",
+      "historical_source_commit": "e61137384 / 9187e8ec1 / 2e752ce45 (pickaxe hits for `mode = \"Append\"`; earliest clean hit not independently re-dated beyond confirming presence in `git log --all -p -S'mode = \"Append\"'` output)",
+      "legacy_source_path": "template frontmatter (`.tmpl`/pack ontology mode fields) predating the current 3-variant GenerationMode enum",
+      "archive_path": "",
+      "rollback_path": "",
+      "recovery_command": "git show e61137384^:template frontmatter (`.tmpl`/pack ontology mode fields) predating the current 3-variant GenerationMode enum",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_template_mode_update",
+      "historical_source_commit": "fca98756f (refactor(daemon): replace custom generator with SyncExecutor from ggen-core) / 6af9ba404 (feat(specs): add universal domain, cron schedule ontology, and 8 spec bundles)",
+      "legacy_source_path": "crates/ggen-daemon/src/generator.rs (resolved 2026-08-12: fca98756f's own commit message reads \"Delete generator.rs and its tests\", confirmed via `git show fca98756f --stat` and `git ls-tree -r fca98756f^`; the field this replaces described the mode's function rather than its source file)",
+      "archive_path": "git history at fca98756f^",
+      "rollback_path": "",
+      "recovery_command": "git show fca98756f^:crates/ggen-daemon/src/generator.rs (resolved 2026-08-12: fca98756f's own commit message reads \"Delete generator.rs and its tests\", confirmed via `git show fca98756f --stat` and `git ls-tree -r fca98756f^`; the field this replaces described the mode's function rather than its source file)",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_doctor",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_graph",
+      "historical_source_commit": "d816469fa (ultravibe coding)",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at d816469fa^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show d816469fa^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_pipeline",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_docker",
+      "historical_source_commit": "f80c458ea (chore(docker): update justfile commands for docker)",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at f80c458ea^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show f80c458ea^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_docker_build",
+      "historical_source_commit": "7afa50f8c (chore(CI): Update Dockerfile)",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 7afa50f8c^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 7afa50f8c^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_docker_run",
+      "historical_source_commit": "7afa50f8c (chore(CI): Update Dockerfile)",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 7afa50f8c^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 7afa50f8c^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_docker_test",
+      "historical_source_commit": "7afa50f8c (chore(CI): Update Dockerfile)",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 7afa50f8c^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 7afa50f8c^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_docker_version",
+      "historical_source_commit": "7afa50f8c (chore(CI): Update Dockerfile)",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 7afa50f8c^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 7afa50f8c^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_build_docker",
+      "historical_source_commit": "2c0753296 (chore(docker): Initial docker implementation)",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 2c0753296^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 2c0753296^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_build_image",
+      "historical_source_commit": "d816469fa (ultravibe coding)",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at d816469fa^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show d816469fa^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_push_image",
+      "historical_source_commit": "d816469fa (ultravibe coding)",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at d816469fa^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show d816469fa^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_lsp_max_check",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_lsp_check",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_lsp_max_edit",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_lsp_max_sync",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_test_mutation",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_test_bdd",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_test_changed",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_test_marketplace",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_test_marketplace_full",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_run_tests",
+      "historical_source_commit": "d816469fa (ultravibe coding)",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at d816469fa^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show d816469fa^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_affidavit_seal",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_affidavit_verify",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_evidence_audit",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_evidence_show",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_certification_show",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_workspace_sync",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_status_audit",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_pipeline_status",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_pipeline_validate",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_publish_check",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_target_prune",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_target_show",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext_just_recipe_git_status",
+      "historical_source_commit": "083651dba (release: v26.7.3 DX rewrite + CI fixes (#249))",
+      "legacy_source_path": "justfile",
+      "archive_path": "git history at 083651dba^ -- justfile",
+      "rollback_path": "",
+      "recovery_command": "git show 083651dba^:justfile",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext2_receipt_v6_ttl_schema",
+      "historical_source_commit": "04fa6074b (Implement ontology-first compilation for ggen v6 (#98)) -- introduces crates/ggen-core/src/v6/receipt.rs; deleted with the rest of ggen-core by 9cef6e40f",
+      "legacy_source_path": "crates/ggen-core/src/v6/receipt.rs, crates/ggen-core/src/v6/passes/receipt_gen.rs, v6/templates/receipt.ttl.tera (all deleted; git history via `git log --all --diff-filter=A -- crates/praxis-core/src/receipt_record.rs` shows ReceiptRecord itself was only introduced later, by cbf173f82)",
+      "archive_path": "git history at 9cef6e40f^ (crates/ggen-core/src/v6/receipt.rs)",
+      "rollback_path": "",
+      "recovery_command": "git show 04fa6074b^:crates/ggen-core/src/v6/receipt.rs, crates/ggen-core/src/v6/passes/receipt_gen.rs, v6/templates/receipt.ttl.tera (all deleted; git history via `git log --all --diff-filter=A -- crates/praxis-core/src/receipt_record.rs` shows ReceiptRecord itself was only introduced later, by cbf173f82)",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext2_receipt_record_schema_v1",
+      "historical_source_commit": "cbf173f82 (ReceiptRecord introduced, implicit schema v1, no `schema`/`v2` fields exist yet) / 3b294a8ce and ba2f6a1ae (feat(heal-thyself-r1): constitution pack, receipt v2 epoch, release-pack scaffold (v26.7.20) (#281) -- adds schema/v2 fields)",
+      "legacy_source_path": "crates/praxis-core/src/receipt_record.rs (ReceiptRecord struct)",
+      "archive_path": "git history at 3b294a8ce^ (crates/praxis-core/src/receipt_record.rs without the schema/v2 fields)",
+      "rollback_path": "",
+      "recovery_command": "git show cbf173f82^:crates/praxis-core/src/receipt_record.rs (ReceiptRecord struct)",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext2_output_tree_dotggen_receipt_path",
+      "historical_source_commit": "04fa6074b (ggen-core v6, default receipt_path = PathBuf::from(\".ggen/receipt.json\")) / cbf173f82 (ggen-engine's RECEIPT_REL_PATH introduced as \".ggen-v2/receipt.json\" from its first commit, no in-file rename found)",
+      "legacy_source_path": "crates/ggen-core/src/v6/receipt.rs (PipelineConfig::default(), deleted) vs. crates/ggen-engine/src/sync.rs (RECEIPT_REL_PATH const, live)",
+      "archive_path": "git history at 9cef6e40f^ (crates/ggen-core/src/v6/receipt.rs)",
+      "rollback_path": "",
+      "recovery_command": "git show 04fa6074b^:crates/ggen-core/src/v6/receipt.rs (PipelineConfig::default(), deleted) vs. crates/ggen-engine/src/sync.rs (RECEIPT_REL_PATH const, live)",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext2_output_tree_src_generated_default",
+      "historical_source_commit": "04fa6074b (ggen-core v6 PipelineConfig::default(), output_dir = PathBuf::from(\"src/generated\"))",
+      "legacy_source_path": "crates/ggen-core/src/v6/receipt.rs or its PipelineConfig owner (deleted with ggen-core, 9cef6e40f)",
+      "archive_path": "git history at 9cef6e40f^",
+      "rollback_path": "",
+      "recovery_command": "git show 04fa6074b^:crates/ggen-core/src/v6/receipt.rs or its PipelineConfig owner",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext2_exit_code_mutation_budget_threshold",
+      "historical_source_commit": "9c76a75ac / 1af960911 (feat(cli): ggen v5 - unified sync command (#91)) -- removes two `std::process::exit(2)` sites; introduced earlier by Quicksave commits (24e7c1cd9/591b4aefc/fdb7bb477/d8445fd53)",
+      "legacy_source_path": "crates/ggen-cli (mutation-testing `--fail-on-threshold` and budget-enforcement `--fail-on-violation` CLI paths, removed by the v5 unified-sync refactor; exact file path not re-derived beyond the diff hunks captured this session)",
+      "archive_path": "",
+      "rollback_path": "",
+      "recovery_command": "git show 9c76a75ac^:crates/ggen-cli (mutation-testing `--fail-on-threshold` and budget-enforcement `--fail-on-violation` CLI paths, removed by the v5 unified-sync refactor; exact file path not re-derived beyond the diff hunks captured this session)",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext2_exit_code_cli_main_result_wrapper",
+      "historical_source_commit": "c30e4c244 / 594f48669 (Audit CLI functionality and capabilities (#54))",
+      "legacy_source_path": "crates/ggen-cli/src/main.rs (or ggen-cli-lib's equivalent binary entrypoint at the time)",
+      "archive_path": "git history at c30e4c244^",
+      "rollback_path": "",
+      "recovery_command": "git show c30e4c244^:crates/ggen-cli/src/main.rs (or ggen-cli-lib's equivalent binary entrypoint at the time)",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext2_pack_toml_schema_v1_no_outputs",
+      "historical_source_commit": "3a6eb6a8c / ea6b227c9 (feat: marketplace v6.1 expansion, receipt signing, CLI ontology templates, pack integration) -- introduces crates/ggen-marketplace/src/metadata.rs's PackageToml/PackageSection/SecuritySection",
+      "legacy_source_path": "crates/ggen-marketplace/src/metadata.rs (original location; live struct now at crates/ggen-marketplace/src/marketplace/metadata.rs after the marketplace module reorg)",
+      "archive_path": "git history at the metadata.rs file's introduction, 3a6eb6a8c",
+      "rollback_path": "",
+      "recovery_command": "git show 3a6eb6a8c^:crates/ggen-marketplace/src/metadata.rs (original location; live struct now at crates/ggen-marketplace/src/marketplace/metadata.rs after the marketplace module reorg)",
+      "recovery_evidence_required": true
+    },
+    {
+      "capability_id": "legacy_ext2_pack_toml_schema_no_registry_provenance",
+      "historical_source_commit": "55268c2e0 / b4eaa96e7 (feat(cli, marketplace, sos): finish 1000x consequence substrate) -- adds registry_type/origin_url fields, commit message states \"receipts now include full provenance (registry_type, origin_url)\"",
+      "legacy_source_path": "crates/ggen-marketplace/src/**/metadata.rs (PackMetadata struct)",
+      "archive_path": "git history at 55268c2e0^",
+      "rollback_path": "",
+      "recovery_command": "git show 55268c2e0^:crates/ggen-marketplace/src/**/metadata.rs (PackMetadata struct)",
+      "recovery_evidence_required": true
+    }
+  ]
+}
