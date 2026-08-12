@@ -9,55 +9,55 @@
       "receipt_path": "foundry/receipts/workstream-A.json"
     },
     "B": {
-      "status": "ADMITTED",
+      "status": "READY",
       "dependencies": [
         "A"
       ],
-      "report_digest": "d51e9d2362c8e1f6223f5c3f9ef84f44042772d338f39825989f728705092d31",
-      "receipt_path": "foundry/receipts/workstream-B.json"
+      "report_digest": null,
+      "receipt_path": null
     },
     "C": {
-      "status": "ADMITTED",
+      "status": "BLOCKED",
       "dependencies": [
         "B"
       ],
-      "report_digest": "58beac585dfeb187f55fb0c320723cc3b2d2f423252b2882b5d15bfe174b9332",
-      "receipt_path": "foundry/receipts/workstream-C.json"
+      "report_digest": null,
+      "receipt_path": null
     },
     "D": {
-      "status": "ADMITTED",
+      "status": "BLOCKED",
       "dependencies": [
         "C"
       ],
-      "report_digest": "7aabd890f8c1c8b9d963f08acb14d2cb7677a0165937963766f30ccd6026d49a",
-      "receipt_path": "foundry/receipts/workstream-D.json"
+      "report_digest": null,
+      "receipt_path": null
     },
     "E": {
-      "status": "ADMITTED",
+      "status": "BLOCKED",
       "dependencies": [
         "D"
       ],
-      "report_digest": "acfbd4bf6dc2eae37a9ec56c128c83f66c6214ae8cb11bf8ec162a6fc7f8a8d2",
-      "receipt_path": "foundry/receipts/workstream-E.json"
+      "report_digest": null,
+      "receipt_path": null
     },
     "F": {
-      "status": "ADMITTED",
+      "status": "BLOCKED",
       "dependencies": [
         "E"
       ],
-      "report_digest": "0c3ea5914ef8fd14227fbe363b67930eb7ab021e452db2f28e21b43828ac5bb4",
-      "receipt_path": "foundry/receipts/workstream-F.json"
+      "report_digest": null,
+      "receipt_path": null
     },
     "G": {
-      "status": "ADMITTED",
+      "status": "BLOCKED",
       "dependencies": [
         "F"
       ],
-      "report_digest": "1f137136ab3af85027ce4f9730b00a8760252db028aa6871e89fb0da042d0474",
-      "receipt_path": "foundry/receipts/workstream-G.json"
+      "report_digest": null,
+      "receipt_path": null
     },
     "H": {
-      "status": "READY",
+      "status": "BLOCKED",
       "dependencies": [
         "E",
         "F"

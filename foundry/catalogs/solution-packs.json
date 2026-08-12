@@ -1,255 +1,102 @@
 {
+  "schema_version": "ggen.enterprise-architecture-foundry.corpus/1",
   "catalog_type": "SOLUTION_PACKS",
   "entries": [
     {
-      "authority_reference": "docs/architecture-foundry/work-program.yaml",
-      "capacity_model": {
-        "minimum_replicas": 2,
-        "model": "compositional",
-        "primitive_count": 7
-      },
-      "cost_model": {
-        "base_units": 7,
-        "marginal_projection_cost": 0,
-        "model": "primitive-weighted"
-      },
-      "negative_falsifier_code": "PACK_PRIMITIVE_MISSING",
-      "operating_model": {
-        "deployment_units": 7,
-        "operating_domains": 2,
-        "replay_required": true
-      },
-      "pack_id": "repository_manufacturing_platform",
-      "parameter_schema_path": "foundry/packs/repository_manufacturing_platform/parameters.schema.json",
-      "primitive_ids": [
-        "engine-archived-primitive",
-        "engine-replaced-primitive",
-        "engine-subsumed-primitive",
-        "system-archived-primitive",
-        "system-refused-primitive",
-        "system-replaced-primitive",
-        "system-subsumed-primitive"
-      ],
-      "receipt_reference": "foundry/receipts/workstream-G.json",
-      "replay_command": "ggen-foundry replay-pack --corpus . --pack repository_manufacturing_platform",
-      "verifier_entrypoint": "ggen-foundry verify-pack --corpus . --pack repository_manufacturing_platform"
+      "id": "repository_manufacturing_platform",
+      "standing": "DECLARED",
+      "required_workstreams": [
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K"
+      ]
     },
     {
-      "authority_reference": "docs/architecture-foundry/work-program.yaml",
-      "capacity_model": {
-        "minimum_replicas": 2,
-        "model": "compositional",
-        "primitive_count": 10
-      },
-      "cost_model": {
-        "base_units": 10,
-        "marginal_projection_cost": 0,
-        "model": "primitive-weighted"
-      },
-      "negative_falsifier_code": "PACK_PRIMITIVE_MISSING",
-      "operating_model": {
-        "deployment_units": 10,
-        "operating_domains": 3,
-        "replay_required": true
-      },
-      "pack_id": "enterprise_developer_platform",
-      "parameter_schema_path": "foundry/packs/enterprise_developer_platform/parameters.schema.json",
-      "primitive_ids": [
-        "engine-archived-primitive",
-        "engine-replaced-primitive",
-        "engine-subsumed-primitive",
-        "products-refused-primitive",
-        "products-replaced-primitive",
-        "products-subsumed-primitive",
-        "system-archived-primitive",
-        "system-refused-primitive",
-        "system-replaced-primitive",
-        "system-subsumed-primitive"
-      ],
-      "receipt_reference": "foundry/receipts/workstream-G.json",
-      "replay_command": "ggen-foundry replay-pack --corpus . --pack enterprise_developer_platform",
-      "verifier_entrypoint": "ggen-foundry verify-pack --corpus . --pack enterprise_developer_platform"
+      "id": "enterprise_developer_platform",
+      "standing": "DECLARED",
+      "required_workstreams": [
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K"
+      ]
     },
     {
-      "authority_reference": "docs/architecture-foundry/work-program.yaml",
-      "capacity_model": {
-        "minimum_replicas": 2,
-        "model": "compositional",
-        "primitive_count": 3
-      },
-      "cost_model": {
-        "base_units": 3,
-        "marginal_projection_cost": 0,
-        "model": "primitive-weighted"
-      },
-      "negative_falsifier_code": "PACK_PRIMITIVE_MISSING",
-      "operating_model": {
-        "deployment_units": 3,
-        "operating_domains": 1,
-        "replay_required": true
-      },
-      "pack_id": "governed_data_lakehouse_platform",
-      "parameter_schema_path": "foundry/packs/governed_data_lakehouse_platform/parameters.schema.json",
-      "primitive_ids": [
-        "engine-archived-primitive",
-        "engine-replaced-primitive",
-        "engine-subsumed-primitive"
-      ],
-      "receipt_reference": "foundry/receipts/workstream-G.json",
-      "replay_command": "ggen-foundry replay-pack --corpus . --pack governed_data_lakehouse_platform",
-      "verifier_entrypoint": "ggen-foundry verify-pack --corpus . --pack governed_data_lakehouse_platform"
+      "id": "governed_data_lakehouse_platform",
+      "standing": "DECLARED",
+      "required_workstreams": [
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K"
+      ]
     },
     {
-      "authority_reference": "docs/architecture-foundry/work-program.yaml",
-      "capacity_model": {
-        "minimum_replicas": 2,
-        "model": "compositional",
-        "primitive_count": 3
-      },
-      "cost_model": {
-        "base_units": 3,
-        "marginal_projection_cost": 0,
-        "model": "primitive-weighted"
-      },
-      "negative_falsifier_code": "PACK_PRIMITIVE_MISSING",
-      "operating_model": {
-        "deployment_units": 3,
-        "operating_domains": 1,
-        "replay_required": true
-      },
-      "pack_id": "event_and_integration_platform",
-      "parameter_schema_path": "foundry/packs/event_and_integration_platform/parameters.schema.json",
-      "primitive_ids": [
-        "engine-archived-primitive",
-        "engine-replaced-primitive",
-        "engine-subsumed-primitive"
-      ],
-      "receipt_reference": "foundry/receipts/workstream-G.json",
-      "replay_command": "ggen-foundry replay-pack --corpus . --pack event_and_integration_platform",
-      "verifier_entrypoint": "ggen-foundry verify-pack --corpus . --pack event_and_integration_platform"
+      "id": "event_and_integration_platform",
+      "standing": "DECLARED",
+      "required_workstreams": [
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K"
+      ]
     },
     {
-      "authority_reference": "docs/architecture-foundry/work-program.yaml",
-      "capacity_model": {
-        "minimum_replicas": 2,
-        "model": "compositional",
-        "primitive_count": 4
-      },
-      "cost_model": {
-        "base_units": 4,
-        "marginal_projection_cost": 0,
-        "model": "primitive-weighted"
-      },
-      "negative_falsifier_code": "PACK_PRIMITIVE_MISSING",
-      "operating_model": {
-        "deployment_units": 4,
-        "operating_domains": 1,
-        "replay_required": true
-      },
-      "pack_id": "identity_and_policy_enforcement_platform",
-      "parameter_schema_path": "foundry/packs/identity_and_policy_enforcement_platform/parameters.schema.json",
-      "primitive_ids": [
-        "system-archived-primitive",
-        "system-refused-primitive",
-        "system-replaced-primitive",
-        "system-subsumed-primitive"
-      ],
-      "receipt_reference": "foundry/receipts/workstream-G.json",
-      "replay_command": "ggen-foundry replay-pack --corpus . --pack identity_and_policy_enforcement_platform",
-      "verifier_entrypoint": "ggen-foundry verify-pack --corpus . --pack identity_and_policy_enforcement_platform"
+      "id": "identity_and_policy_enforcement_platform",
+      "standing": "DECLARED",
+      "required_workstreams": [
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K"
+      ]
     },
     {
-      "authority_reference": "docs/architecture-foundry/work-program.yaml",
-      "capacity_model": {
-        "minimum_replicas": 2,
-        "model": "compositional",
-        "primitive_count": 6
-      },
-      "cost_model": {
-        "base_units": 6,
-        "marginal_projection_cost": 0,
-        "model": "primitive-weighted"
-      },
-      "negative_falsifier_code": "PACK_PRIMITIVE_MISSING",
-      "operating_model": {
-        "deployment_units": 6,
-        "operating_domains": 2,
-        "replay_required": true
-      },
-      "pack_id": "ai_and_agent_execution_platform",
-      "parameter_schema_path": "foundry/packs/ai_and_agent_execution_platform/parameters.schema.json",
-      "primitive_ids": [
-        "engine-archived-primitive",
-        "engine-replaced-primitive",
-        "engine-subsumed-primitive",
-        "products-refused-primitive",
-        "products-replaced-primitive",
-        "products-subsumed-primitive"
-      ],
-      "receipt_reference": "foundry/receipts/workstream-G.json",
-      "replay_command": "ggen-foundry replay-pack --corpus . --pack ai_and_agent_execution_platform",
-      "verifier_entrypoint": "ggen-foundry verify-pack --corpus . --pack ai_and_agent_execution_platform"
+      "id": "ai_and_agent_execution_platform",
+      "standing": "DECLARED",
+      "required_workstreams": [
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K"
+      ]
     },
     {
-      "authority_reference": "docs/architecture-foundry/work-program.yaml",
-      "capacity_model": {
-        "minimum_replicas": 2,
-        "model": "compositional",
-        "primitive_count": 1
-      },
-      "cost_model": {
-        "base_units": 1,
-        "marginal_projection_cost": 0,
-        "model": "primitive-weighted"
-      },
-      "negative_falsifier_code": "PACK_PRIMITIVE_MISSING",
-      "operating_model": {
-        "deployment_units": 1,
-        "operating_domains": 1,
-        "replay_required": true
-      },
-      "pack_id": "process_evidence_and_observability_platform",
-      "parameter_schema_path": "foundry/packs/process_evidence_and_observability_platform/parameters.schema.json",
-      "primitive_ids": [
-        "engine-archived-primitive"
-      ],
-      "receipt_reference": "foundry/receipts/workstream-G.json",
-      "replay_command": "ggen-foundry replay-pack --corpus . --pack process_evidence_and_observability_platform",
-      "verifier_entrypoint": "ggen-foundry verify-pack --corpus . --pack process_evidence_and_observability_platform"
+      "id": "process_evidence_and_observability_platform",
+      "standing": "DECLARED",
+      "required_workstreams": [
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K"
+      ]
     },
     {
-      "authority_reference": "docs/architecture-foundry/work-program.yaml",
-      "capacity_model": {
-        "minimum_replicas": 2,
-        "model": "compositional",
-        "primitive_count": 7
-      },
-      "cost_model": {
-        "base_units": 7,
-        "marginal_projection_cost": 0,
-        "model": "primitive-weighted"
-      },
-      "negative_falsifier_code": "PACK_PRIMITIVE_MISSING",
-      "operating_model": {
-        "deployment_units": 7,
-        "operating_domains": 2,
-        "replay_required": true
-      },
-      "pack_id": "regulated_release_and_supply_chain_platform",
-      "parameter_schema_path": "foundry/packs/regulated_release_and_supply_chain_platform/parameters.schema.json",
-      "primitive_ids": [
-        "products-refused-primitive",
-        "products-replaced-primitive",
-        "products-subsumed-primitive",
-        "system-archived-primitive",
-        "system-refused-primitive",
-        "system-replaced-primitive",
-        "system-subsumed-primitive"
-      ],
-      "receipt_reference": "foundry/receipts/workstream-G.json",
-      "replay_command": "ggen-foundry replay-pack --corpus . --pack regulated_release_and_supply_chain_platform",
-      "verifier_entrypoint": "ggen-foundry verify-pack --corpus . --pack regulated_release_and_supply_chain_platform"
+      "id": "regulated_release_and_supply_chain_platform",
+      "standing": "DECLARED",
+      "required_workstreams": [
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K"
+      ]
     }
-  ],
-  "schema_version": "ggen.enterprise-architecture-foundry.products/1"
+  ]
 }
