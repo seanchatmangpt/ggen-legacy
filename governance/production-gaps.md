@@ -54,10 +54,15 @@ pass could close. Listed here so they aren't silently dropped:
   manufacture, equivalence, verification, replay, and standing systems are
   mostly `DOCUMENTED`/`PARTIAL_ALIVE`, not `TESTED`/`REFERENCE_CONFORMANT`.
   Closing this is the actual multi-month scope of "complete the A–K
-  foundry program," not something an 80/20 pass reaches. A, B, and C are
-  now real-admitted (real receipts, real evidence commits) -- C's two
+  foundry program," not something an 80/20 pass reaches. A, B, C, and D
+  are now real-admitted (real receipts, real evidence commits) -- C's two
   DISPOSITION_UNKNOWN capabilities were resolved via real investigation of
-  the current codebase, not asserted. D–K remain unattempted. See
+  the current codebase; D admitted after two real tool bugs in
+  tools/architecture-foundry were found and fixed (stale-receipt replay
+  drift, a directory-path double-slash matcher bug). E is genuinely
+  blocked on 17 capabilities needing real per-path investigation (removal
+  commits vs. parent commits, prose comparison values) -- not a tool bug,
+  not fabricated. F–K remain unattempted. See
   [Completion PRD](../docs/src/15-foundry-completion-prd.md) and
   [Completion ARD](../docs/src/16-foundry-completion-ard.md) for exactly
   what each remaining workstream needs.
