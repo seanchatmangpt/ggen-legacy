@@ -1,330 +1,330 @@
 {
   "schema_version": "ggen.enterprise-architecture-foundry.observation-admission/1",
-  "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+  "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
   "candidates": [
     {
       "capability_id": "legacy_ext2_exit_code_cli_main_result_wrapper",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext2_exit_code_mutation_budget_threshold",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext2_output_tree_dotggen_receipt_path",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext2_output_tree_src_generated_default",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext2_pack_toml_schema_no_registry_provenance",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext2_pack_toml_schema_v1_no_outputs",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext2_receipt_record_schema_v1",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext2_receipt_v6_ttl_schema",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_genesis_construct8_crate",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_genesis_lockchain_crate",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_genesis_wasm_shell_crate",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_ggen_daemon_crate",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_ggen_membrane_crate",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_ggen_projection_crate",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_affidavit_seal",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_affidavit_verify",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_build_docker",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_build_image",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_certification_show",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_docker",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_docker_build",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_docker_run",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_docker_test",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_docker_version",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_doctor",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_evidence_audit",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_evidence_show",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_git_status",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_graph",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_lsp_check",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_lsp_max_check",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_lsp_max_edit",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_lsp_max_sync",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_pipeline",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_pipeline_status",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_pipeline_validate",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_publish_check",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_push_image",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_run_tests",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_status_audit",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_target_prune",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_target_show",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_test_bdd",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_test_changed",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_test_marketplace",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_test_marketplace_full",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_test_mutation",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_just_recipe_workspace_sync",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_template_mode_append",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ext_template_mode_update",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_genesis_core_crate_original",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_genesis_schema_v2_crate",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ggen_a2a_mcp_server",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ggen_core_pipeline",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ggen_lsp_a2a_bridge",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ggen_lsp_mcp_server",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_ggen_toml_dual_schema",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_inverse_sync_command",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_process_intelligence_local_analysis",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_sigma_command",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_star_toml_workspace_member",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_stpnt_crate",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_sync_audit_flag",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_sync_dry_run_value_flag",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     },
     {
       "capability_id": "legacy_wizard_command",
-      "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+      "evidence_commit": "b7db94e8e84ef916cffcf39e16c410b071570752",
       "evidence_path": "ontology/v26.8.1/legacy-capabilities.ttl"
     }
   ]
