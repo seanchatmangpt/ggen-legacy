@@ -1,0 +1,62 @@
+{
+  "cases": [
+    {
+      "case_id": "1-altered-output-digest",
+      "injected_fault": "ALTERED_OUTPUT_DIGEST",
+      "refusal_code": "RECEIPT_OUTPUT_DRIFT",
+      "refused": true,
+      "target_receipt": "/Users/sac/ggen-legacy/foundry/receipts/workstream-A.json"
+    },
+    {
+      "case_id": "2-altered-output-digest",
+      "injected_fault": "ALTERED_OUTPUT_DIGEST",
+      "refusal_code": "RECEIPT_OUTPUT_DRIFT",
+      "refused": true,
+      "target_receipt": "/Users/sac/ggen-legacy/foundry/receipts/workstream-B.json"
+    },
+    {
+      "case_id": "3-altered-output-digest",
+      "injected_fault": "ALTERED_OUTPUT_DIGEST",
+      "refusal_code": "RECEIPT_OUTPUT_DRIFT",
+      "refused": true,
+      "target_receipt": "/Users/sac/ggen-legacy/foundry/receipts/workstream-C.json"
+    },
+    {
+      "case_id": "4-altered-output-digest",
+      "injected_fault": "ALTERED_OUTPUT_DIGEST",
+      "refusal_code": "RECEIPT_OUTPUT_DRIFT",
+      "refused": true,
+      "target_receipt": "/Users/sac/ggen-legacy/foundry/receipts/workstream-D.json"
+    },
+    {
+      "case_id": "5-altered-output-digest",
+      "injected_fault": "ALTERED_OUTPUT_DIGEST",
+      "refusal_code": "RECEIPT_OUTPUT_DRIFT",
+      "refused": true,
+      "target_receipt": "/Users/sac/ggen-legacy/foundry/receipts/workstream-E.json"
+    },
+    {
+      "case_id": "6-altered-output-digest",
+      "injected_fault": "ALTERED_OUTPUT_DIGEST",
+      "refusal_code": "RECEIPT_OUTPUT_DRIFT",
+      "refused": true,
+      "target_receipt": "/Users/sac/ggen-legacy/foundry/receipts/workstream-F.json"
+    },
+    {
+      "case_id": "7-altered-output-digest",
+      "injected_fault": "ALTERED_OUTPUT_DIGEST",
+      "refusal_code": "RECEIPT_OUTPUT_DRIFT",
+      "refused": true,
+      "target_receipt": "/Users/sac/ggen-legacy/foundry/receipts/workstream-G.json"
+    },
+    {
+      "case_id": "8-altered-output-digest",
+      "injected_fault": "ALTERED_OUTPUT_DIGEST",
+      "refusal_code": "RECEIPT_OUTPUT_DRIFT",
+      "refused": true,
+      "target_receipt": "/Users/sac/ggen-legacy/foundry/receipts/workstream-H.json"
+    }
+  ],
+  "schema_version": "ggen.enterprise-architecture-foundry.external-verification/1",
+  "suite": "receipt-and-standing-sabotage"
+}

@@ -1,0 +1,54 @@
+{
+  "audit_type": "RECEIPT_OWNERSHIP",
+  "entries": [
+    {
+      "receipt_path": "foundry/receipts/workstream-A.json",
+      "receipt_source_head_matches_corpus_head": true,
+      "receipt_subject_matches": true,
+      "workstream_id": "A"
+    },
+    {
+      "receipt_path": "foundry/receipts/workstream-B.json",
+      "receipt_source_head_matches_corpus_head": true,
+      "receipt_subject_matches": true,
+      "workstream_id": "B"
+    },
+    {
+      "receipt_path": "foundry/receipts/workstream-C.json",
+      "receipt_source_head_matches_corpus_head": true,
+      "receipt_subject_matches": true,
+      "workstream_id": "C"
+    },
+    {
+      "receipt_path": "foundry/receipts/workstream-D.json",
+      "receipt_source_head_matches_corpus_head": true,
+      "receipt_subject_matches": true,
+      "workstream_id": "D"
+    },
+    {
+      "receipt_path": "foundry/receipts/workstream-E.json",
+      "receipt_source_head_matches_corpus_head": true,
+      "receipt_subject_matches": true,
+      "workstream_id": "E"
+    },
+    {
+      "receipt_path": "foundry/receipts/workstream-F.json",
+      "receipt_source_head_matches_corpus_head": true,
+      "receipt_subject_matches": true,
+      "workstream_id": "F"
+    },
+    {
+      "receipt_path": "foundry/receipts/workstream-G.json",
+      "receipt_source_head_matches_corpus_head": true,
+      "receipt_subject_matches": true,
+      "workstream_id": "G"
+    },
+    {
+      "receipt_path": "foundry/receipts/workstream-H.json",
+      "receipt_source_head_matches_corpus_head": true,
+      "receipt_subject_matches": true,
+      "workstream_id": "H"
+    }
+  ],
+  "schema_version": "ggen.enterprise-architecture-foundry.external-verification/1"
+}

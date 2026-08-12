@@ -1,0 +1,148 @@
+{
+  "corpus_head": "c2646e9bb0b74df55e14fa456f73bda05b65ca4f",
+  "entries": [
+    {
+      "assigned_verifiers": 1,
+      "capability_count": 0,
+      "equivalence_case_count": 1,
+      "evidence_basis": [
+        "work-program-validation+state-machine+receipt-ownership"
+      ],
+      "negative_falsifiers": 1,
+      "positive_witnesses": 1,
+      "standing": "ALIVE",
+      "subsystem": "governance",
+      "system_evidence_count": 1,
+      "unknown_dispositions": 0
+    },
+    {
+      "assigned_verifiers": 1,
+      "capability_count": 44,
+      "equivalence_case_count": 44,
+      "evidence_basis": [
+        "legacy-capability-equivalence"
+      ],
+      "negative_falsifiers": 44,
+      "positive_witnesses": 44,
+      "standing": "ALIVE",
+      "subsystem": "system",
+      "system_evidence_count": 0,
+      "unknown_dispositions": 0
+    },
+    {
+      "assigned_verifiers": 1,
+      "capability_count": 9,
+      "equivalence_case_count": 9,
+      "evidence_basis": [
+        "legacy-capability-equivalence"
+      ],
+      "negative_falsifiers": 9,
+      "positive_witnesses": 9,
+      "standing": "ALIVE",
+      "subsystem": "engine",
+      "system_evidence_count": 0,
+      "unknown_dispositions": 0
+    },
+    {
+      "assigned_verifiers": 1,
+      "capability_count": 0,
+      "equivalence_case_count": 1,
+      "evidence_basis": [
+        "admitted-D+migration-dependency-graph+receipt-replay"
+      ],
+      "negative_falsifiers": 1,
+      "positive_witnesses": 1,
+      "standing": "ALIVE",
+      "subsystem": "graph",
+      "system_evidence_count": 1,
+      "unknown_dispositions": 0
+    },
+    {
+      "assigned_verifiers": 1,
+      "capability_count": 0,
+      "equivalence_case_count": 1,
+      "evidence_basis": [
+        "active-receipt-ownership+deterministic-replay"
+      ],
+      "negative_falsifiers": 1,
+      "positive_witnesses": 1,
+      "standing": "ALIVE",
+      "subsystem": "projection",
+      "system_evidence_count": 1,
+      "unknown_dispositions": 0
+    },
+    {
+      "assigned_verifiers": 1,
+      "capability_count": 0,
+      "equivalence_case_count": 1,
+      "evidence_basis": [
+        "A-H-receipt-portfolio+eight-sabotage-refusals"
+      ],
+      "negative_falsifiers": 1,
+      "positive_witnesses": 1,
+      "standing": "ALIVE",
+      "subsystem": "evidence",
+      "system_evidence_count": 1,
+      "unknown_dispositions": 0
+    },
+    {
+      "assigned_verifiers": 1,
+      "capability_count": 12,
+      "equivalence_case_count": 12,
+      "evidence_basis": [
+        "legacy-capability-equivalence"
+      ],
+      "negative_falsifiers": 12,
+      "positive_witnesses": 12,
+      "standing": "ALIVE",
+      "subsystem": "products",
+      "system_evidence_count": 0,
+      "unknown_dispositions": 0
+    },
+    {
+      "assigned_verifiers": 1,
+      "capability_count": 0,
+      "equivalence_case_count": 1,
+      "evidence_basis": [
+        "independent-recomputation+receipt-sabotage-suite"
+      ],
+      "negative_falsifiers": 1,
+      "positive_witnesses": 1,
+      "standing": "ALIVE",
+      "subsystem": "verification",
+      "system_evidence_count": 1,
+      "unknown_dispositions": 0
+    },
+    {
+      "assigned_verifiers": 1,
+      "capability_count": 0,
+      "equivalence_case_count": 1,
+      "evidence_basis": [
+        "admitted-G+solution-pack-cost-models+receipt-replay"
+      ],
+      "negative_falsifiers": 1,
+      "positive_witnesses": 1,
+      "standing": "ALIVE",
+      "subsystem": "economics",
+      "system_evidence_count": 1,
+      "unknown_dispositions": 0
+    },
+    {
+      "assigned_verifiers": 1,
+      "capability_count": 0,
+      "equivalence_case_count": 1,
+      "evidence_basis": [
+        "admitted-E+65-component-extraction-ledger+receipt-replay"
+      ],
+      "negative_falsifiers": 1,
+      "positive_witnesses": 1,
+      "standing": "ALIVE",
+      "subsystem": "legacy",
+      "system_evidence_count": 1,
+      "unknown_dispositions": 0
+    }
+  ],
+  "schema_version": "ggen.enterprise-architecture-foundry.external-verification/1",
+  "source_head": "0c519155c73216f9c80334870651cfe4f3fccca4",
+  "verifier": "ggen-foundry-external-verifier/v1"
+}
