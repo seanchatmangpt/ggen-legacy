@@ -53,33 +53,39 @@
     "foundry/reports",
     "foundry/receipts"
   ],
+  "workstreams_authority_note": "the real source of truth is foundry/workstreams/state.json, written by the real admit_baseline/admit_* binaries -- this array is a non-authoritative reporting projection of it, per this repo's own no-dual-bookkeeping doctrine; where they disagree, foundry/workstreams/state.json is right by construction.",
   "workstreams": [
     {
       "id": "A",
-      "status": "BLOCKED",
-      "blocked_reason": "PROGRAM_SCHEMA_MISSING_PREDICATES",
-      "blocked_evidence": {
-        "command": "ggen-foundry validate-program --program authority/foundry-work-program.json",
+      "status": "ADMITTED",
+      "admitted_evidence": {
+        "command": "admit_baseline --program authority/foundry-work-program.json --source ~/ggen --corpus ~/ggen-legacy",
         "runtime": "tools/architecture-foundry (seanchatmangpt/ggen, PR #544, MERGED)",
         "run_date": "2026-08-12",
-        "real_error": "YAML decode failure: workstreams[0]: missing field `predicates` at line 106 column 5",
-        "fixed_in_this_pass": [
-          "added top-level source_repository=seanchatmangpt/ggen, corpus_repository=seanchatmangpt/ggen-legacy (both required by WorkProgram, both previously absent)",
-          "corrected runtime_provenance.status OPEN_DRAFT -> MERGED (stale; PR #544 confirmed MERGED via gh pr view)"
-        ],
-        "remaining_real_blocker": "workstream A now carries real predicates+outputs, grounded 1:1 in tools/architecture-foundry/src/bin/admit_baseline.rs's actual bail! guards (source_worktree_clean, corpus_worktree_clean, foundry_manifest_authority_matched, corpus_lineage_intact, initialization_receipt_replayed) and its real written output paths (foundry/workstreams/A/admission-report.json, foundry/receipts/workstream-A.json) -- verified: validate-program's decode error now advances past workstreams[0] (A) to workstreams[1] (B). Workstreams B-K still lack predicates/outputs and remain the real, precisely-named blocker. This is deliberately not fabricated here -- each of B-K's predicates must be grounded the same way A's were (in that workstream's own real verifier code, once it exists), not invented from the workstream's name alone; B-K's own admission logic (admit_workstream, not admit_baseline) doesn't exist yet as running code the way A's does."
+        "source_head": "48cfeeb7628e5b5c6b76d581f8eb00231ee8a198",
+        "corpus_head": "957bc31d260fbe1e631962bd2bfb7cb61ed49e3f",
+        "report_digest": "cef7a71ab9df4fe672f975356a3d1c07c3242a15bf85fbb396addfb85501a169",
+        "receipt_path": "foundry/receipts/workstream-A.json",
+        "predicates_verified": {
+          "corpus_lineage_intact": true,
+          "corpus_worktree_clean": true,
+          "foundry_manifest_authority_matched": true,
+          "initialization_receipt_replayed": true,
+          "source_worktree_clean": true
+        },
+        "receipts_replayed": 1
       }
     },
-    {"id": "B", "status": "NOT_STARTED"},
-    {"id": "C", "status": "NOT_STARTED"},
-    {"id": "D", "status": "NOT_STARTED"},
-    {"id": "E", "status": "NOT_STARTED"},
-    {"id": "F", "status": "NOT_STARTED"},
-    {"id": "G", "status": "NOT_STARTED"},
-    {"id": "H", "status": "NOT_STARTED"},
-    {"id": "I", "status": "NOT_STARTED"},
-    {"id": "J", "status": "NOT_STARTED"},
-    {"id": "K", "status": "NOT_STARTED"}
+    {"id": "B", "status": "READY"},
+    {"id": "C", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_B_NOT_ADMITTED"},
+    {"id": "D", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_C_NOT_ADMITTED"},
+    {"id": "E", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_D_NOT_ADMITTED"},
+    {"id": "F", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_E_NOT_ADMITTED"},
+    {"id": "G", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_F_NOT_ADMITTED"},
+    {"id": "H", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_E_OR_F_NOT_ADMITTED"},
+    {"id": "I", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_G_OR_H_NOT_ADMITTED"},
+    {"id": "J", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_I_NOT_ADMITTED"},
+    {"id": "K", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_J_NOT_ADMITTED"}
   ],
   "allowed_workstream_statuses": [
     "NOT_STARTED",
