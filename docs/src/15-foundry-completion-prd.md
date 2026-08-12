@@ -19,8 +19,8 @@ merged) against this repo's `authority/foundry-work-program.json` and
 | A — Exact-head baseline | `admit_baseline` | `ADMITTED` |
 | B — Exhaustive observation | `admit_observation` | `ADMITTED` |
 | C — Capability admission | `admit_capabilities` | `ADMITTED` |
-| D — Kernel-corpus classification | `admit_classification` | not attempted |
-| E — Cross-repository extraction | `admit_extraction` | not attempted |
+| D — Kernel-corpus classification | `admit_classification` | `ADMITTED` |
+| E — Cross-repository extraction | `admit_extraction` | `BLOCKED` |
 | F — Primitive generalization | `admit_products` (stage 1) | not attempted |
 | G — bblock/solution-pack composition | `admit_products` (stage 2) | not attempted |
 | H — Full equivalence closure | `admit_products` (stage 3) | not attempted |
@@ -59,15 +59,41 @@ note for the full account. See the companion
 [Completion ARD](16-foundry-completion-ard.md) for the architecture lesson
 this drew out.
 
-## Requirement (now for D–K)
+## D closed; the real, current blocker (E)
 
-Workstream D, and everything after it, admits only when the same
-discipline already applied to A, B, and C repeats: read the real verifier
-binary, determine what real evidence or real decision it requires, obtain
-that evidence for real (never hand-edit a receipted corpus artifact — fix
-at the real source and re-run the admitting binary), run it, record the
-real result. This PRD does not pre-certify that D–K's real evidence exists;
-see the ARD for what is and isn't yet known about each.
+Workstream D admitted cleanly once a real tool bug was found and fixed:
+`replay_all_receipts` checked every receipt's output digests independently
+against current corpus state, so `initialize-corpus`'s stale seed-catalog
+digest for `capabilities.json` permanently conflicted with C's legitimate
+real replacement of that file. Fixed to check only the causally-latest
+receipt per output path (see ARD). D then admitted all 65 capabilities
+cleanly, zero unclassified, zero conflicts.
+
+`admit_extraction` (E) refuses `REQUIRED_SOURCE_OBJECTS_UNRESOLVED` for all
+17 real `REPLACED`/`SUBSUMED` capabilities. A second real tool bug was
+found and fixed along the way (a double-slash path-matching bug for
+directory-shaped source paths) but did not resolve any of the 17 — real
+investigation of one shows the deeper issue: several `historical_source_commit`
+values are the capability's *removal* commit, not a commit where the source
+still exists (content lives at the parent, a convention already encoded in
+`admit_classification.rs`'s `recovery_command()` but not applied by
+`admit_extraction.rs`'s tree resolution), and several `legacy_source_path`
+values are genuinely prose comparisons, not single literal git paths. See
+the [Completion ARD](16-foundry-completion-ard.md) for the full, real
+per-capability breakdown.
+
+## Requirement (now for E–K)
+
+Workstream E's real blocker requires per-capability investigation of the
+same character as C's two disposition unknowns, at larger scope (17
+capabilities, several genuinely ambiguous) — not a single code fix. F
+through K admit only when the same discipline already applied to A–D
+repeats: read the real verifier binary, determine what real evidence or
+real decision it requires, obtain that evidence for real (never hand-edit
+a receipted corpus artifact — fix at the real source and re-run the
+admitting binary; never invent a resolution to force a green run), run it,
+record the real result. This PRD does not pre-certify that F–K's real
+evidence exists; see the ARD.
 
 ## Non-goals
 
