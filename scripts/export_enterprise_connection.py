@@ -2,14 +2,15 @@
 """Export admitted ggen-legacy foundry state as ConnectionEnvelope v1.
 
 This is a CONSTRUCT-only transport projection. Native Foundry admission
-reports are verified with the same BLAKE3-over-canonical-report-byte law used
-by ggen's architecture-foundry producer. The Connection separately uses
-SHA-256 as transport content identity; those two digest domains are not
-interchangeable.
+reports are verified with the same BLAKE3-over-report-byte law used by ggen's
+architecture-foundry producer. The report predicate map must exactly equal the
+typed predicate map in the admitted work program; predicates are not assumed
+to be booleans (for example, observation cardinalities are integer values).
 
-`foundry/receipts/` is deliberately gitignored local/generated evidence, so a
-clean checkout may corroborate those receipts when present but never requires
-them as repository transport authority.
+The Connection separately uses SHA-256 as transport content identity. Native
+BLAKE3 evidence and Connection SHA-256 identity are deliberately distinct.
+`foundry/receipts/` is gitignored local/generated evidence, so a clean checkout
+may corroborate those receipts when present but never requires them.
 """
 from __future__ import annotations
 
@@ -97,13 +98,34 @@ def _artifact(
     }
 
 
+def _program_workstreams(program: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    raw = program.get("workstreams")
+    if not isinstance(raw, list) or not raw:
+        raise Refusal("REFUSED:PROGRAM_WORKSTREAMS")
+    mapped: dict[str, dict[str, Any]] = {}
+    for item in raw:
+        if not isinstance(item, dict):
+            raise Refusal("REFUSED:PROGRAM_WORKSTREAM")
+        identifier = item.get("id")
+        if not isinstance(identifier, str) or not identifier:
+            raise Refusal("REFUSED:PROGRAM_WORKSTREAM_ID")
+        if identifier in mapped:
+            raise Refusal(f"REFUSED:DUPLICATE_PROGRAM_WORKSTREAM:{identifier}")
+        predicates = item.get("predicates")
+        if not isinstance(predicates, dict) or not predicates:
+            raise Refusal(f"REFUSED:PROGRAM_WORKSTREAM_PREDICATES:{identifier}")
+        mapped[identifier] = item
+    return mapped
+
+
 def _admission_report(
     root: Path,
     name: str,
     item: dict[str, Any],
+    expected_predicates: dict[str, Any],
 ) -> tuple[dict[str, str], dict[str, Any], str]:
-    expected = item.get("report_digest")
-    if not isinstance(expected, str) or not HEX64.fullmatch(expected):
+    expected_digest = item.get("report_digest")
+    if not isinstance(expected_digest, str) or not HEX64.fullmatch(expected_digest):
         raise Refusal(f"REFUSED:ADMITTED_WITHOUT_REPORT_DIGEST:{name}")
 
     relative = f"foundry/workstreams/{name}/admission-report.json"
@@ -115,20 +137,22 @@ def _admission_report(
         "application/json",
     )
     actual_native = _native_report_digest(path.read_bytes())
-    if actual_native != expected:
+    if actual_native != expected_digest:
         raise Refusal(
             "REFUSED:ADMISSION_REPORT_DRIFT:"
-            f"{name}:algorithm=BLAKE3:expected={expected}:actual={actual_native}"
+            f"{name}:algorithm=BLAKE3:expected={expected_digest}:actual={actual_native}"
         )
 
     report = _read_object(path)
     if report.get("workstream_id") != name:
         raise Refusal(f"REFUSED:ADMISSION_REPORT_ID:{name}")
     predicates = report.get("predicates")
-    if not isinstance(predicates, dict) or not predicates:
-        raise Refusal(f"REFUSED:ADMISSION_REPORT_PREDICATES:{name}")
-    if any(value is not True for value in predicates.values()):
-        raise Refusal(f"REFUSED:ADMISSION_REPORT_FALSE_PREDICATE:{name}")
+    if predicates != expected_predicates:
+        raise Refusal(
+            "REFUSED:ADMISSION_REPORT_PREDICATE_DRIFT:"
+            f"{name}:expected={json.dumps(expected_predicates, sort_keys=True)}:"
+            f"actual={json.dumps(predicates, sort_keys=True)}"
+        )
     return artifact, report, actual_native
 
 
@@ -153,6 +177,7 @@ def export_connection(
     if program.get("program_id") != state.get("program_id"):
         raise Refusal("REFUSED:PROGRAM_ID_DRIFT")
 
+    program_workstreams = _program_workstreams(program)
     workstreams = state.get("workstreams")
     if not isinstance(workstreams, dict) or not workstreams:
         raise Refusal("REFUSED:WORKSTREAM_STATE")
@@ -190,7 +215,15 @@ def export_connection(
 
     for name in admitted:
         item = workstreams[name]
-        report_artifact, report, native_digest = _admission_report(root, name, item)
+        program_workstream = program_workstreams.get(name)
+        if program_workstream is None:
+            raise Refusal(f"REFUSED:ADMITTED_WORKSTREAM_NOT_IN_PROGRAM:{name}")
+        report_artifact, report, native_digest = _admission_report(
+            root,
+            name,
+            item,
+            program_workstream["predicates"],
+        )
         artifacts.append(report_artifact)
         native_report_digests.append(f"{name}={native_digest}")
         evidence.append(
@@ -204,10 +237,6 @@ def export_connection(
             }
         )
 
-        # The canonical repository intentionally ignores foundry/receipts/.
-        # When a local receipt exists, bind it as corroborating evidence; a
-        # clean cross-repository checkout is not refused merely because the
-        # ignored local projection is absent.
         receipt = item.get("receipt_path")
         if isinstance(receipt, str) and _safe_rel(receipt) and (root / receipt).is_file():
             receipt_artifact = _artifact(
@@ -269,7 +298,7 @@ def export_connection(
         "standing": {
             "state": "PARTIAL_ALIVE" if admitted else "UNKNOWN",
             "claim": (
-                f"NATIVE_BLAKE3_ADMISSION_REPORTS_VERIFIED={','.join(admitted) or 'NONE'}; "
+                f"NATIVE_BLAKE3_AND_PROGRAM_PREDICATES_VERIFIED={','.join(admitted) or 'NONE'}; "
                 "LOCAL_RECEIPTS_ARE_OPTIONAL_IGNORED_EVIDENCE; "
                 "CONNECTION_EXPORT_EXECUTED; COMPLETE_A_K_AND_EXTERNAL_PRODUCTION_NOT_INFERRED"
             ),
@@ -284,6 +313,7 @@ def export_connection(
             "admitted_workstreams": ",".join(admitted),
             "native_report_digest_algorithm": "BLAKE3",
             "native_report_digests_verified": ";".join(native_report_digests),
+            "program_predicates_verified": ",".join(admitted),
             "local_receipts_present": ",".join(local_receipts_present),
             "workstream_count": str(len(workstreams)),
             "program_transport_digest": program_digest,
