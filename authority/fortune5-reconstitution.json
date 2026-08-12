@@ -1,0 +1,22 @@
+{
+  "schema": "ggen.legacy.errc.reconstitution.contract/1",
+  "ticket": "GL-ERRC-003",
+  "claim_ceiling": "FORTUNE5_SELF_RECONSTITUTION_ANALYSIS_ONLY",
+  "expected_cardinality": {
+    "product_requirements": 14,
+    "claims": 13,
+    "maturity_dimensions": 21,
+    "maturity_obligations": 63,
+    "workstreams": 11
+  },
+  "expected_workflow_count": 1,
+  "external_claims": ["CLM-005", "CLM-006", "CLM-007", "CLM-008", "CLM-013"],
+  "laws": [
+    "ZERO_UNRECEIPTED_ACTUATION",
+    "NO_SELF_CERTIFICATION",
+    "OBSERVATION_IS_NOT_ADMISSION",
+    "CHECKPOINT_IS_NOT_CROWN",
+    "EXTERNAL_EVIDENCE_CANNOT_BE_SYNTHESIZED",
+    "EVERY_INHERITED_OBJECT_REQUIRES_EXPLICIT_RECONSTITUTION"
+  ]
+}
