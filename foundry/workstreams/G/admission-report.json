@@ -1,0 +1,18 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.products/1",
+  "workstream_id": "G",
+  "verifier": "ggen-foundry-admit-products/packs/v1",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_head": "90ea3158f7456fa22bcf54481686368dfce1ae49",
+  "item_count": 8,
+  "failure_count": 0,
+  "negative_falsifiers_passed": 8,
+  "predicates": {
+    "no_pack_input_primitives_empty": true,
+    "workstream_f_admitted": true
+  },
+  "metrics": {
+    "pack_count": 8,
+    "pack_failures": 0
+  }
+}
