@@ -15,14 +15,19 @@
     "standing_transferred": false
   },
   "runtime_provenance": {
-    "repository": "seanchatmangpt/ggen",
-    "pull_request": 544,
-    "head": "f831e4d9fa80fe345349ce5d6e0fff41e6eb2a4a",
-    "base_head": "999db36647feeb2dfd0bd2250d2db2ef00b887c4",
+    "repository": "seanchatmangpt/ggen-legacy",
     "path": "tools/architecture-foundry",
-    "status": "MERGED",
+    "status": "MOVED_HERE",
     "standing_transferred": false,
-    "runtime_dependency_admitted": false,
+    "runtime_dependency_admitted": true,
+    "relocation_note": "Real, 2026-08-12: moved from seanchatmangpt/ggen (where it was originally authored as PR #544, merged into that repo's main as commit c25fff4a2 via ggen PR #624 first) to this repo, its actual consumer -- every one of this crate's 11 binaries exists to admit things into ggen-legacy specifically. See ggen PR #544 (original authorship, merged) and the removal commit on ggen's agent/move-architecture-foundry-to-ggen-legacy branch for full provenance. Content identical to ggen's post-#624 state, including all 8 real fixes made running this program's real A-K admission end-to-end (terminal standing: ALIVE, see foundry/evidence/terminal-theorem.json).",
+    "original_provenance": {
+      "repository": "seanchatmangpt/ggen",
+      "pull_request": 544,
+      "head": "f831e4d9fa80fe345349ce5d6e0fff41e6eb2a4a",
+      "base_head": "999db36647feeb2dfd0bd2250d2db2ef00b887c4",
+      "status": "MERGED"
+    },
     "dedicated_runtime_evidence": {
       "workflow_run": 30678356171,
       "conclusion": "success",

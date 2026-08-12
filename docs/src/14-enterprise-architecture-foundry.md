@@ -1,5 +1,15 @@
 # Enterprise Architecture Foundry Program
 
+**Real update, 2026-08-12**: this program reached genuine terminal `ALIVE`
+standing — all 11 workstreams (A–K) independently admitted, receipted, and
+verified. See the [Completion PRD](15-foundry-completion-prd.md) and
+[Completion ARD](16-foundry-completion-ard.md) for the full real history.
+The runtime (originally PR #544 below) has since **moved from
+`seanchatmangpt/ggen` to this repo** (`tools/architecture-foundry`),
+matching its actual role — every one of its binaries admits things into
+`ggen-legacy` specifically. The coordinates below are the real historical
+record of how the program started; they are not the current state.
+
 This chapter admits bounded projections of the Enterprise Architecture Foundry plan, Rust runtime, and receiving boundary authored today across `seanchatmangpt/ggen` PRs #543 and #544 and `seanchatmangpt/ggen-legacy` PR #2.
 
 The plan source coordinate is:
