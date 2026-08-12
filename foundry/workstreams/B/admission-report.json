@@ -1,0 +1,27 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.observation-admission/1",
+  "workstream_id": "B",
+  "verifier": "ggen-foundry-admit-observation/v1",
+  "source_head": "48cfeeb7628e5b5c6b76d581f8eb00231ee8a198",
+  "corpus_head": "2746da2812548f04b576d550ffc395929bb0a320",
+  "evidence_ref": "agent/v26.8.1-remaining-observers",
+  "evidence_commit": "598bf9e91f2ae27049cdfd989bcb76e0a3d85abb",
+  "capability_count": 65,
+  "observer_class_count": 20,
+  "observer_classes_unattempted": 0,
+  "orphan_candidates": 0,
+  "inventory_complete": true,
+  "predicates": {
+    "evidence_capability_count_exact": 65,
+    "evidence_observer_class_count_exact": 20,
+    "evidence_observer_classes_fully_attempted": true,
+    "workstream_a_admitted": true
+  },
+  "evidence_digests": {
+    "capability-candidates.json": "71af1f64eb407eb62d096a2439d63e6148659e52fc3cc0ed37aedb15947df8d9",
+    "exclusion-records.json": "6fc0a0fb600f61fc9faa187310c97dd3958d691ea6f6417fe7f0c9c31a063093",
+    "legacy-capabilities.ttl": "2b0e7fb1de98d4919ef576703e25e4b507a50047747ff885c3c5306ac6e74853",
+    "observer-class-report.md": "fd4025822aef18184a830ac9ef41171facb422c43b7a419109d72126f4d4ef8b",
+    "observer-reports.json": "9ff73e57c2014dfa6e34e8ed3b71c6bfa52723f6df81a0ff9daed24e266341df"
+  }
+}
