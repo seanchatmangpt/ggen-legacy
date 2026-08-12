@@ -1,0 +1,18 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/1",
+  "capability_id": "legacy_ext2_pack_toml_schema_no_registry_provenance",
+  "source_repository": "seanchatmangpt/ggen",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_parent_head": "08b45bd27ffcf699dd3a5544ea8ee45908106985",
+  "historical_commit": "55268c2e0e43ec72b2e000ef08538bc1df63a136",
+  "source_path": "crates/ggen-marketplace/src/**/metadata.rs",
+  "destination_path": "foundry/corpus/components/products/legacy_ext2_pack_toml_schema_no_registry_provenance",
+  "manifest_digest": "1112b76183e8ff8d3db48a1470596fb5976571c1304f66c4257c4cae5dd17df8",
+  "blob_digests": [
+    "e89f38b75e7d89e1f531a02e22afa70e4bfd3c0e6233a0d3a3f5133d31af3a31"
+  ],
+  "disposition": "SUBSUMED",
+  "classification": "CORPUS_HISTORICAL_IMPLEMENTATION",
+  "source_removed": false
+}

@@ -1,0 +1,30 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/1",
+  "capability_id": "legacy_ext2_output_tree_dotggen_receipt_path",
+  "source_repository": "seanchatmangpt/ggen",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_parent_head": "08b45bd27ffcf699dd3a5544ea8ee45908106985",
+  "historical_commit": "04fa6074bad941ac7847d05bbe98293de8d7da42",
+  "requested_source_path": "crates/ggen-core/src/v6/receipt.rs (PipelineConfig::default(), deleted) vs. crates/ggen-engine/src/sync.rs (RECEIPT_REL_PATH const, live)",
+  "normalized_source_path": "crates/ggen-core/src/v6/receipt.rs",
+  "disposition": "REPLACED",
+  "classification": "CORPUS_HISTORICAL_IMPLEMENTATION",
+  "kernel_owner": "crates/ggen-engine/src/sync.rs RECEIPT_REL_PATH const (.ggen-v2/receipt.json)",
+  "corpus_destination": "foundry/corpus/components/engine/legacy_ext2_output_tree_dotggen_receipt_path",
+  "resolution": "GIT_OBJECTS_RECOVERED",
+  "source_files": [
+    {
+      "git_path": "crates/ggen-core/src/v6/receipt.rs",
+      "git_object_id": "46214c77273a84cd5b74f4244bd6147b6733fd9a",
+      "git_mode": "100644",
+      "byte_length": 10326,
+      "blake3": "176351aec176ac887d009542698a5ea60bd878f93485f32c245ea8fe2e7ba3b0",
+      "blob_path": "foundry/blobs/blake3/176351aec176ac887d009542698a5ea60bd878f93485f32c245ea8fe2e7ba3b0"
+    }
+  ],
+  "semantic_evidence_path": "foundry/evidence/B/legacy-capabilities.ttl",
+  "semantic_evidence_digest": "c2cd766f27b9bc7f177190fcf98f54228c9b54af9e4e412fd7a7a2e0afb242f5",
+  "source_removed": false,
+  "recovery_command": "git show 04fa6074bad941ac7847d05bbe98293de8d7da42:crates/ggen-core/src/v6/receipt.rs"
+}

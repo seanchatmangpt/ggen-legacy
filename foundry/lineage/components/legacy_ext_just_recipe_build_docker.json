@@ -1,0 +1,18 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/1",
+  "capability_id": "legacy_ext_just_recipe_build_docker",
+  "source_repository": "seanchatmangpt/ggen",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_parent_head": "08b45bd27ffcf699dd3a5544ea8ee45908106985",
+  "historical_commit": "2c0753296589c5aa8611d25b90ac80a124e7514c",
+  "source_path": "justfile",
+  "destination_path": "foundry/corpus/components/system/legacy_ext_just_recipe_build_docker",
+  "manifest_digest": "de301ad0d05256a0bb2f9c267c3ebf13fe88773408121fb9fc9e2d2db93da190",
+  "blob_digests": [
+    "1be8f4cfcc19b50d5aac91e43a726e227dda9bb81c9b8d87608084736796568d"
+  ],
+  "disposition": "ARCHIVED",
+  "classification": "CORPUS_ARCHIVE",
+  "source_removed": false
+}

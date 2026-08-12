@@ -1,0 +1,22 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/1",
+  "workstream_id": "E",
+  "verifier": "ggen-foundry-admit-extraction/v1",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_head": "08b45bd27ffcf699dd3a5544ea8ee45908106985",
+  "extracted_components": 65,
+  "extracted_components_without_lineage": 0,
+  "unresolved_required_sources": 0,
+  "unique_blob_count": 1141,
+  "total_source_files": 1197,
+  "source_removed_before_destination_admission": false,
+  "source_and_destination_heads_bound": true,
+  "cross_repository_receipts_valid": true,
+  "predicates": {
+    "no_classification_id_conflict": true,
+    "no_destination_path_escapes_corpus": true,
+    "no_destination_path_invalid": true,
+    "no_extraction_input_count_mismatch": true,
+    "workstream_d_admitted": true
+  }
+}

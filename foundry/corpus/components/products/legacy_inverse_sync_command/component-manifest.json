@@ -1,0 +1,30 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/1",
+  "capability_id": "legacy_inverse_sync_command",
+  "source_repository": "seanchatmangpt/ggen",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_parent_head": "08b45bd27ffcf699dd3a5544ea8ee45908106985",
+  "historical_commit": "8058558cdf993c0ea43ac7910912339f1eb99b3d",
+  "requested_source_path": "crates/ggen-cli/src/cmds/inverse_sync.rs (deleted)",
+  "normalized_source_path": "crates/ggen-cli/src/cmds/inverse_sync.rs",
+  "disposition": "REFUSED",
+  "classification": "CORPUS_REFUSAL_WITNESS",
+  "kernel_owner": "ggen-legacy/archive/products",
+  "corpus_destination": "foundry/corpus/components/products/legacy_inverse_sync_command",
+  "resolution": "GIT_OBJECTS_RECOVERED",
+  "source_files": [
+    {
+      "git_path": "crates/ggen-cli/src/cmds/inverse_sync.rs",
+      "git_object_id": "20cd38456af28f50ac8b82de499742c42b3133a4",
+      "git_mode": "100644",
+      "byte_length": 13850,
+      "blake3": "23cddf6def16b34f6da615a1c6c8609f5d65c7c1787a8b752a93bb1a774dac67",
+      "blob_path": "foundry/blobs/blake3/23cddf6def16b34f6da615a1c6c8609f5d65c7c1787a8b752a93bb1a774dac67"
+    }
+  ],
+  "semantic_evidence_path": "foundry/evidence/B/legacy-capabilities.ttl",
+  "semantic_evidence_digest": "c2cd766f27b9bc7f177190fcf98f54228c9b54af9e4e412fd7a7a2e0afb242f5",
+  "source_removed": false,
+  "recovery_command": "git show 8058558cdf993c0ea43ac7910912339f1eb99b3d:crates/ggen-cli/src/cmds/inverse_sync.rs"
+}

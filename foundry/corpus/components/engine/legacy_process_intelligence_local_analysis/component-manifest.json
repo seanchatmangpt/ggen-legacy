@@ -1,0 +1,1710 @@
+{
+  "schema_version": "ggen.enterprise-architecture-foundry.extraction-admission/1",
+  "capability_id": "legacy_process_intelligence_local_analysis",
+  "source_repository": "seanchatmangpt/ggen",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "source_head": "4ff83f4ecaa7ae3b3e37e64f906802f05e825574",
+  "corpus_parent_head": "08b45bd27ffcf699dd3a5544ea8ee45908106985",
+  "historical_commit": "3176f9a18be342f0c08554f5aef66208c741e169",
+  "requested_source_path": "crates/ggen-graph/ (local discovery/conformance/fitness/precision/variant code, removed)",
+  "normalized_source_path": "crates/ggen-graph/",
+  "disposition": "SUBSUMED",
+  "classification": "CORPUS_HISTORICAL_IMPLEMENTATION",
+  "kernel_owner": "wasm4pm-compat::dfg::{discover_ocel_dfg,dfg_fitness,dfg_precision,extract_ocel_variants} (external, per CLAUDE.md's Process Intelligence Boundary table)",
+  "corpus_destination": "foundry/corpus/components/engine/legacy_process_intelligence_local_analysis",
+  "resolution": "GIT_OBJECTS_RECOVERED",
+  "source_files": [
+    {
+      "git_path": "crates/ggen-graph/Cargo.toml",
+      "git_object_id": "9d2fb8a495dfce1c8853089b7696c049e1c1cb1c",
+      "git_mode": "100644",
+      "byte_length": 659,
+      "blake3": "c7f09513c338d59a6b0c2ac4adaf8e9f76de049edfc2413e5d91c0f8bc022e00",
+      "blob_path": "foundry/blobs/blake3/c7f09513c338d59a6b0c2ac4adaf8e9f76de049edfc2413e5d91c0f8bc022e00"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/clean_room_rebuild.json",
+      "git_object_id": "b383f6fc1643edcf3f467fa674d4bda949a4f99f",
+      "git_mode": "100644",
+      "byte_length": 207,
+      "blake3": "89bbcf68e6010b570f38f696f241f7ca31c5c23899933ae16e5fdbec598b6026",
+      "blob_path": "foundry/blobs/blake3/89bbcf68e6010b570f38f696f241f7ca31c5c23899933ae16e5fdbec598b6026"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/clean_room_rebuild.ttl",
+      "git_object_id": "1224c6c7e73f536664030637c248a69c8f16da27",
+      "git_mode": "100644",
+      "byte_length": 517,
+      "blake3": "a754a9ab8c5a4245c4f58f54a6adbeee0a7e78ff77ef6caf0e14d43d8859414c",
+      "blob_path": "foundry/blobs/blake3/a754a9ab8c5a4245c4f58f54a6adbeee0a7e78ff77ef6caf0e14d43d8859414c"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/contradiction_supersession.json",
+      "git_object_id": "8471ffd8e07ae6f52e27f902e4cd4f4aa7db5218",
+      "git_mode": "100644",
+      "byte_length": 129,
+      "blake3": "396db56f53331d67c1193b1030f106c1cd74e11bbdeaa5785901d1e075a39ce0",
+      "blob_path": "foundry/blobs/blake3/396db56f53331d67c1193b1030f106c1cd74e11bbdeaa5785901d1e075a39ce0"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/cross_artifact_consistency.json",
+      "git_object_id": "72ac97c001a6df0a962e60503a6fd3d86078e3a8",
+      "git_mode": "100644",
+      "byte_length": 147,
+      "blake3": "4b6c8a3e4edd0a247c4432732d23b0f4c1ab6a583f268431cabc02b1c9771a35",
+      "blob_path": "foundry/blobs/blake3/4b6c8a3e4edd0a247c4432732d23b0f4c1ab6a583f268431cabc02b1c9771a35"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/dialect_completeness.validation.ttl",
+      "git_object_id": "1325bbf4675ce966e1db5e5084d8f151d5c5267c",
+      "git_mode": "100644",
+      "byte_length": 2198,
+      "blake3": "0c8a0b7b5136ced6ddd1f76cda3c3f3eb3531e18d3dc446f0d2e0706f4188050",
+      "blob_path": "foundry/blobs/blake3/0c8a0b7b5136ced6ddd1f76cda3c3f3eb3531e18d3dc446f0d2e0706f4188050"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/doctest_results.json",
+      "git_object_id": "9c361a5b4eda34b9b11075ac8d71a8dd5767ee83",
+      "git_mode": "100644",
+      "byte_length": 122,
+      "blake3": "bde0b2ccb9ada47ab9bca1c6c13f76ff6407f5fd7048542b594b31ea5c1f6fac",
+      "blob_path": "foundry/blobs/blake3/bde0b2ccb9ada47ab9bca1c6c13f76ff6407f5fd7048542b594b31ea5c1f6fac"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/doctest_results.ttl",
+      "git_object_id": "3a17d667215cdc49a90bed4ab4137578f38744b4",
+      "git_mode": "100644",
+      "byte_length": 568,
+      "blake3": "56ad06c164455994b474416daabc2010be70d2c86946ff8ba5808e444cda162c",
+      "blob_path": "foundry/blobs/blake3/56ad06c164455994b474416daabc2010be70d2c86946ff8ba5808e444cda162c"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/final.validation.ttl",
+      "git_object_id": "cccf803298f927054b3e8a988941d45324a17ce9",
+      "git_mode": "100644",
+      "byte_length": 428,
+      "blake3": "ddb6bb7d87b7bc21dee818714f7b48d401c0644f922301ca1fe747b90c275807",
+      "blob_path": "foundry/blobs/blake3/ddb6bb7d87b7bc21dee818714f7b48d401c0644f922301ca1fe747b90c275807"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/gall_code_evaluation.final.ttl",
+      "git_object_id": "de3aed46dac7cf659346c01304a5544c09a5271a",
+      "git_mode": "100644",
+      "byte_length": 5064,
+      "blake3": "1c7dea31a5e1b9af3f543cea36248230d70025b5bfd51c976f77c480348db668",
+      "blob_path": "foundry/blobs/blake3/1c7dea31a5e1b9af3f543cea36248230d70025b5bfd51c976f77c480348db668"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/gall_code_evaluation.receipt.ttl",
+      "git_object_id": "8803dc6e9b55a5dd1b95836245803bc1c6e0ba64",
+      "git_mode": "100644",
+      "byte_length": 5790,
+      "blake3": "98cddf1d2df456d611bedf44cf882cdcede0b83882268e1e13c51b9825551d5e",
+      "blob_path": "foundry/blobs/blake3/98cddf1d2df456d611bedf44cf882cdcede0b83882268e1e13c51b9825551d5e"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/gall_decision.delta.ttl",
+      "git_object_id": "0e81d55b6b0d784133dd73a933a5f65ed40b358f",
+      "git_mode": "100644",
+      "byte_length": 4217,
+      "blake3": "8db7d53d509425d35e340078cdd0d37d9ca5689851b8da6aceb533478c3b2cce",
+      "blob_path": "foundry/blobs/blake3/8db7d53d509425d35e340078cdd0d37d9ca5689851b8da6aceb533478c3b2cce"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/gall_evidence.ocel.json",
+      "git_object_id": "25bc95a3193107db60f86f5cfe3c8b75c3409830",
+      "git_mode": "100644",
+      "byte_length": 1921,
+      "blake3": "5851ff86c92e00fb6449e85380554ac752827a09517c6bf9a8697f8e4a57caac",
+      "blob_path": "foundry/blobs/blake3/5851ff86c92e00fb6449e85380554ac752827a09517c6bf9a8697f8e4a57caac"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/gall_evidence.ttl",
+      "git_object_id": "29a3022e640ee8a8ba721b13a12fcd7f1c81caca",
+      "git_mode": "100644",
+      "byte_length": 17534270,
+      "blake3": "dd85c504cda612fa2bce9041e9d1fd89169456f31fa9bf77fd0a92e12f492be8",
+      "blob_path": "foundry/blobs/blake3/dd85c504cda612fa2bce9041e9d1fd89169456f31fa9bf77fd0a92e12f492be8"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/hook_actuation.validation.ttl",
+      "git_object_id": "040989e43471a1210d2aa9b7f4aca042c8ecdf1a",
+      "git_mode": "100644",
+      "byte_length": 458,
+      "blake3": "a1da77e45e7efa652e780eca9461c735c18d665c1cd2ed5e1cd9ef3991833726",
+      "blob_path": "foundry/blobs/blake3/a1da77e45e7efa652e780eca9461c735c18d665c1cd2ed5e1cd9ef3991833726"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/ocel_causal_sufficiency.json",
+      "git_object_id": "9ca0293971ca68e04409bf84541036092cfa7f01",
+      "git_mode": "100644",
+      "byte_length": 134,
+      "blake3": "3d2b06c46037a0721122b14538105b8a04a0f4dc788869578bdad41f987c9cda",
+      "blob_path": "foundry/blobs/blake3/3d2b06c46037a0721122b14538105b8a04a0f4dc788869578bdad41f987c9cda"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/public_vocab.validation.ttl",
+      "git_object_id": "d08627ac5b2476c634948d99d729b0c626b5ffe3",
+      "git_mode": "100644",
+      "byte_length": 455,
+      "blake3": "70af9954a2c0e51e6c1063e61f606972c9ecdf4550b925f0df62fb14a745aaa4",
+      "blob_path": "foundry/blobs/blake3/70af9954a2c0e51e6c1063e61f606972c9ecdf4550b925f0df62fb14a745aaa4"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/sabotage.validation.ttl",
+      "git_object_id": "f437a7cd08f73e84fc56c8d91f715bb59f4bdf6d",
+      "git_mode": "100644",
+      "byte_length": 566,
+      "blake3": "fe68141faaa8016dfaf19d1be469c1ea605cde2d8adc14715c42dca9336929dc",
+      "blob_path": "foundry/blobs/blake3/fe68141faaa8016dfaf19d1be469c1ea605cde2d8adc14715c42dca9336929dc"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/sabotage_results.json",
+      "git_object_id": "522e85c6d80211a8c9af9b3f5bdb81a950600611",
+      "git_mode": "100644",
+      "byte_length": 79657,
+      "blake3": "c2b2f1a7dd9bcfb2e485f5aae2764e49afa47de794d37f8fc3dc62c2f5ff7bcb",
+      "blob_path": "foundry/blobs/blake3/c2b2f1a7dd9bcfb2e485f5aae2764e49afa47de794d37f8fc3dc62c2f5ff7bcb"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/sabotage_results.ttl",
+      "git_object_id": "aeb3d6346ccc56cb2618e73c2a310765d7653ac4",
+      "git_mode": "100644",
+      "byte_length": 85076,
+      "blake3": "05147e764665df9a3d0722df0aa8d1de6253fc9d7423413ad2a5961b95996702",
+      "blob_path": "foundry/blobs/blake3/05147e764665df9a3d0722df0aa8d1de6253fc9d7423413ad2a5961b95996702"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/script_adequacy.json",
+      "git_object_id": "ce814f581f6b603d96c7a7a099ecf5929f98d7e4",
+      "git_mode": "100644",
+      "byte_length": 5213,
+      "blake3": "0577e09ea4436307d3b0361d11e56c3ca894b594e59de1ab7568fdd26485b538",
+      "blob_path": "foundry/blobs/blake3/0577e09ea4436307d3b0361d11e56c3ca894b594e59de1ab7568fdd26485b538"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/00_capture_baseline.json",
+      "git_object_id": "acf5d43b5c6e959208aa11665ba5a9b524c553eb",
+      "git_mode": "100644",
+      "byte_length": 6934,
+      "blake3": "0931467d4982b847c87c5f78eb4b7ca856ddd5e80f0a214fb5ce5773e2883ed7",
+      "blob_path": "foundry/blobs/blake3/0931467d4982b847c87c5f78eb4b7ca856ddd5e80f0a214fb5ce5773e2883ed7"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/00_capture_baseline.stderr",
+      "git_object_id": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "byte_length": 0,
+      "blake3": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "blob_path": "foundry/blobs/blake3/af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/00_capture_baseline.stdout",
+      "git_object_id": "dffecbd35316fcd0b4bc15a4c233c4fc74d451e2",
+      "git_mode": "100644",
+      "byte_length": 6450,
+      "blake3": "4ea25e5581f447c4d60cd32f169061280225dee8d746a9a473f9ffe4603c4dde",
+      "blob_path": "foundry/blobs/blake3/4ea25e5581f447c4d60cd32f169061280225dee8d746a9a473f9ffe4603c4dde"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/00_capture_baseline.ttl",
+      "git_object_id": "7e726c14fa5cd3b86b45cb80f0e833336ad8569d",
+      "git_mode": "100644",
+      "byte_length": 1259,
+      "blake3": "18b5b97d21d8de19e705713bbcd94a5b2a7e065167507a8c553cf852c6b5fb50",
+      "blob_path": "foundry/blobs/blake3/18b5b97d21d8de19e705713bbcd94a5b2a7e065167507a8c553cf852c6b5fb50"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/01_extract_requirements.json",
+      "git_object_id": "bbf93f546c25fe8f0042c9c381518e4ee0f5e796",
+      "git_mode": "100644",
+      "byte_length": 6949,
+      "blake3": "8cee6b56b73d31cc4d2cf395574f6b992b4a069e6fc760649f5a2ed88e4cd74d",
+      "blob_path": "foundry/blobs/blake3/8cee6b56b73d31cc4d2cf395574f6b992b4a069e6fc760649f5a2ed88e4cd74d"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/01_extract_requirements.stderr",
+      "git_object_id": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "byte_length": 0,
+      "blake3": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "blob_path": "foundry/blobs/blake3/af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/01_extract_requirements.stdout",
+      "git_object_id": "834c6313a119682084d786116b5c2feb6f220a04",
+      "git_mode": "100644",
+      "byte_length": 636,
+      "blake3": "029bf61f7648c44dbca7be8899f18b80d570046bc125a110827f7c9168b9b458",
+      "blob_path": "foundry/blobs/blake3/029bf61f7648c44dbca7be8899f18b80d570046bc125a110827f7c9168b9b458"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/01_extract_requirements.ttl",
+      "git_object_id": "7b251b011a18ccc60fc4c45aa6ae09fd4ab9a85b",
+      "git_mode": "100644",
+      "byte_length": 1291,
+      "blake3": "6c072079fbcfad92a0711f98f7cfb7c4ef22cd0cdb2be1478d53adba24366df9",
+      "blob_path": "foundry/blobs/blake3/6c072079fbcfad92a0711f98f7cfb7c4ef22cd0cdb2be1478d53adba24366df9"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/02_verify_package_constraints.json",
+      "git_object_id": "374fb6d0818264ea6822f6d530bb9ecc317e3eb7",
+      "git_mode": "100644",
+      "byte_length": 6981,
+      "blake3": "56c5b102ba579381cf75de89d76f846e08dc6f1fb56634c76377b90ccc93538f",
+      "blob_path": "foundry/blobs/blake3/56c5b102ba579381cf75de89d76f846e08dc6f1fb56634c76377b90ccc93538f"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/02_verify_package_constraints.stderr",
+      "git_object_id": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "byte_length": 0,
+      "blake3": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "blob_path": "foundry/blobs/blake3/af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/02_verify_package_constraints.stdout",
+      "git_object_id": "2c1b0ebe3d973014c22ccdd69686e4b787fdf0c7",
+      "git_mode": "100644",
+      "byte_length": 122,
+      "blake3": "6f2babec568aac6ccc807bd68c164e232d620c81e5f75717de00609597133a48",
+      "blob_path": "foundry/blobs/blake3/6f2babec568aac6ccc807bd68c164e232d620c81e5f75717de00609597133a48"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/02_verify_package_constraints.ttl",
+      "git_object_id": "bbb050fe9f9f15a1c18c2cae5ce4cd2f88fe1cea",
+      "git_mode": "100644",
+      "byte_length": 1339,
+      "blake3": "3d2d576879f53b2f49028ca6d025c6247bbacaf570ad65fd98ad8be863ccad16",
+      "blob_path": "foundry/blobs/blake3/3d2d576879f53b2f49028ca6d025c6247bbacaf570ad65fd98ad8be863ccad16"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/03_check_feature_flags.json",
+      "git_object_id": "494597f0a60040e066d735dc1aeb2b29b8d08870",
+      "git_mode": "100644",
+      "byte_length": 6945,
+      "blake3": "699755b2d49cf4da45a3b740030f14a2b4f586f90874fb58538a539402e2ee1c",
+      "blob_path": "foundry/blobs/blake3/699755b2d49cf4da45a3b740030f14a2b4f586f90874fb58538a539402e2ee1c"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/03_check_feature_flags.stderr",
+      "git_object_id": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "byte_length": 0,
+      "blake3": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "blob_path": "foundry/blobs/blake3/af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/03_check_feature_flags.stdout",
+      "git_object_id": "8c0828f1e564bab795e8f2f21a0f561d6ab2add4",
+      "git_mode": "100644",
+      "byte_length": 100,
+      "blake3": "1c0af714275637ede9fe289dab7995a58ac1f7deee1ab58ea0f1bca24d0dd0fb",
+      "blob_path": "foundry/blobs/blake3/1c0af714275637ede9fe289dab7995a58ac1f7deee1ab58ea0f1bca24d0dd0fb"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/03_check_feature_flags.ttl",
+      "git_object_id": "2e2c050540eb876036d3000593bd53b69f6f0e4c",
+      "git_mode": "100644",
+      "byte_length": 1283,
+      "blake3": "1518145a23d0e0a74caedb9fefcaed5110ca1bda37658c2d53945bee9c5d4c66",
+      "blob_path": "foundry/blobs/blake3/1518145a23d0e0a74caedb9fefcaed5110ca1bda37658c2d53945bee9c5d4c66"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/04_run_unit_tests.json",
+      "git_object_id": "5d170152124bdca3476cddbd7e1f27011b5c5891",
+      "git_mode": "100644",
+      "byte_length": 6923,
+      "blake3": "075b0b27dea04ecc20d55c7cbb6260bb5762d96f4a34d0e741c040c7e1642ed5",
+      "blob_path": "foundry/blobs/blake3/075b0b27dea04ecc20d55c7cbb6260bb5762d96f4a34d0e741c040c7e1642ed5"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/04_run_unit_tests.stderr",
+      "git_object_id": "d11a747005fc1bfd3ec01fb5dd341914a25d2f7b",
+      "git_mode": "100644",
+      "byte_length": 181,
+      "blake3": "059a607f2114dd2b4d71184e2ace590561b964ba3923a3cdba95189a7d63ba41",
+      "blob_path": "foundry/blobs/blake3/059a607f2114dd2b4d71184e2ace590561b964ba3923a3cdba95189a7d63ba41"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/04_run_unit_tests.stdout",
+      "git_object_id": "b2e5b871bfbc0a8594d9082f4a51ee33e0278adb",
+      "git_mode": "100644",
+      "byte_length": 313,
+      "blake3": "ce7b7df766d323347e0a2cd232ee2b0da52c08b99eb25c94e1ba40f0f12f2977",
+      "blob_path": "foundry/blobs/blake3/ce7b7df766d323347e0a2cd232ee2b0da52c08b99eb25c94e1ba40f0f12f2977"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/04_run_unit_tests.ttl",
+      "git_object_id": "598413bbbfd5efd4478fca4168d6cb637c798e1d",
+      "git_mode": "100644",
+      "byte_length": 1243,
+      "blake3": "ce237e529106ab6b78438ca6871f5caeab56abd0f603c6b6c17aef4f76347bd4",
+      "blob_path": "foundry/blobs/blake3/ce237e529106ab6b78438ca6871f5caeab56abd0f603c6b6c17aef4f76347bd4"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/05_run_integration_tests.json",
+      "git_object_id": "ec1e25a9cf17f5bc8c26f38f706ea96b4b317408",
+      "git_mode": "100644",
+      "byte_length": 6955,
+      "blake3": "0dc788c8a0873a56a4638863fd0889ca29ff66bc0e0dd0bed22b6fe86f1c7150",
+      "blob_path": "foundry/blobs/blake3/0dc788c8a0873a56a4638863fd0889ca29ff66bc0e0dd0bed22b6fe86f1c7150"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/05_run_integration_tests.stderr",
+      "git_object_id": "66146af4c54f520f5cc1f748383654d8b9b5019a",
+      "git_mode": "100644",
+      "byte_length": 3463,
+      "blake3": "721e98bc907e60ae6093e992bef18b619c8cd6f0cc6dba500c5e1047512a8551",
+      "blob_path": "foundry/blobs/blake3/721e98bc907e60ae6093e992bef18b619c8cd6f0cc6dba500c5e1047512a8551"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/05_run_integration_tests.stdout",
+      "git_object_id": "daded09ec737004fb6ed23919dbc965b96505333",
+      "git_mode": "100644",
+      "byte_length": 5476,
+      "blake3": "8d29361134289d183ce9821719ff05809727985c070cb98aef6d783fc71389b6",
+      "blob_path": "foundry/blobs/blake3/8d29361134289d183ce9821719ff05809727985c070cb98aef6d783fc71389b6"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/05_run_integration_tests.ttl",
+      "git_object_id": "d3d3e78a30449182c2fd145b4a71a8258727605c",
+      "git_mode": "100644",
+      "byte_length": 1299,
+      "blake3": "0ba8db6a1b1e3728c5eb41f23741efc1dcdbc48e810e0ef25eb0526f97785d1b",
+      "blob_path": "foundry/blobs/blake3/0ba8db6a1b1e3728c5eb41f23741efc1dcdbc48e810e0ef25eb0526f97785d1b"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/06_scan_forbidden_surfaces.json",
+      "git_object_id": "a46d128a4feb1260708bec5d142f381138ebaeed",
+      "git_mode": "100644",
+      "byte_length": 6961,
+      "blake3": "a7413cd24840eadd2147eca9e28b1b79a9220ac76bb77a7ba29561b799a44b61",
+      "blob_path": "foundry/blobs/blake3/a7413cd24840eadd2147eca9e28b1b79a9220ac76bb77a7ba29561b799a44b61"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/06_scan_forbidden_surfaces.stderr",
+      "git_object_id": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "byte_length": 0,
+      "blake3": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "blob_path": "foundry/blobs/blake3/af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/06_scan_forbidden_surfaces.stdout",
+      "git_object_id": "01e9656947197f96cee0fc97b3a539d3ae13f064",
+      "git_mode": "100644",
+      "byte_length": 163,
+      "blake3": "2aa29e8a3fadeb60f257e686f42d5d2823d0a60838778c5097dc0f86269fcbcc",
+      "blob_path": "foundry/blobs/blake3/2aa29e8a3fadeb60f257e686f42d5d2823d0a60838778c5097dc0f86269fcbcc"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/06_scan_forbidden_surfaces.ttl",
+      "git_object_id": "93b0df1b9e2d159faddba630f9422f1814648e0b",
+      "git_mode": "100644",
+      "byte_length": 1315,
+      "blake3": "cfee310a9c3fcab1310892e4539004ec2c5ba9b7a660849cc3549e2bddf98744",
+      "blob_path": "foundry/blobs/blake3/cfee310a9c3fcab1310892e4539004ec2c5ba9b7a660849cc3549e2bddf98744"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/07_check_anti_fake.json",
+      "git_object_id": "2fbf2108a7b66ae2f43a645f10830c4c0c913ef3",
+      "git_mode": "100644",
+      "byte_length": 6938,
+      "blake3": "d0f0882150c2ae1950e2fd71cd4bd89410da3faedc2b494a41d7994e18596c76",
+      "blob_path": "foundry/blobs/blake3/d0f0882150c2ae1950e2fd71cd4bd89410da3faedc2b494a41d7994e18596c76"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/07_check_anti_fake.stderr",
+      "git_object_id": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "byte_length": 0,
+      "blake3": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "blob_path": "foundry/blobs/blake3/af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/07_check_anti_fake.stdout",
+      "git_object_id": "fbe112ebaa81c93b3ca3a97615f1065c9122f83b",
+      "git_mode": "100644",
+      "byte_length": 183,
+      "blake3": "68f6288c082c477a18d04f73fc90ae784aae4baa0fe3588e3cf66bc0b635e417",
+      "blob_path": "foundry/blobs/blake3/68f6288c082c477a18d04f73fc90ae784aae4baa0fe3588e3cf66bc0b635e417"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/07_check_anti_fake.ttl",
+      "git_object_id": "c1342732c249262290267ea35d77100e13bf4491",
+      "git_mode": "100644",
+      "byte_length": 1251,
+      "blake3": "7dfa4365e8004ac5a6e389132dab274394b344a5fcc92b46af1e44f84563169e",
+      "blob_path": "foundry/blobs/blake3/7dfa4365e8004ac5a6e389132dab274394b344a5fcc92b46af1e44f84563169e"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/08_verify_replay_receipts.json",
+      "git_object_id": "50df1ea1f13d3988faa065046a3a15483e45a6b3",
+      "git_mode": "100644",
+      "byte_length": 6957,
+      "blake3": "faad201fda19247a0781d190358a7706b330b17e72c7f6d173e5cde50680ee8e",
+      "blob_path": "foundry/blobs/blake3/faad201fda19247a0781d190358a7706b330b17e72c7f6d173e5cde50680ee8e"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/08_verify_replay_receipts.stderr",
+      "git_object_id": "3f9aaa65c4b40d20fd9f3bd556ad6ff9ccda5af0",
+      "git_mode": "100644",
+      "byte_length": 188,
+      "blake3": "d61d7c453cc2066ff1a6b613f473a7116e20e116c24a5da940822936e64ad942",
+      "blob_path": "foundry/blobs/blake3/d61d7c453cc2066ff1a6b613f473a7116e20e116c24a5da940822936e64ad942"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/08_verify_replay_receipts.stdout",
+      "git_object_id": "19fc9b11b80fb8cfecf89efce15409b04dcf2c0c",
+      "git_mode": "100644",
+      "byte_length": 265,
+      "blake3": "f04b6b2ac1364732e64fc05830cecec7ba6cdb2dac8909401106da61e0b61c9b",
+      "blob_path": "foundry/blobs/blake3/f04b6b2ac1364732e64fc05830cecec7ba6cdb2dac8909401106da61e0b61c9b"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/08_verify_replay_receipts.ttl",
+      "git_object_id": "0311c0aee38a319eaf9cfb93b07f37c5a45415bc",
+      "git_mode": "100644",
+      "byte_length": 1307,
+      "blake3": "3ad155630b0f91cea5bc20229903b84bc37f6b42272184c596da9edb5b0cc62a",
+      "blob_path": "foundry/blobs/blake3/3ad155630b0f91cea5bc20229903b84bc37f6b42272184c596da9edb5b0cc62a"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/09_verify_ocel_self_audit.json",
+      "git_object_id": "21bffb8dbbcef59419331cbf2da331638d595b8d",
+      "git_mode": "100644",
+      "byte_length": 6966,
+      "blake3": "1af8a76195650d961d571ecff27d30c1f4573738492942385014cbd9649c9e15",
+      "blob_path": "foundry/blobs/blake3/1af8a76195650d961d571ecff27d30c1f4573738492942385014cbd9649c9e15"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/09_verify_ocel_self_audit.stderr",
+      "git_object_id": "7af9882726365564e2bf03da057b96ae7aecc993",
+      "git_mode": "100644",
+      "byte_length": 276,
+      "blake3": "6a1ae17e52d2864c46f2ce65690512eb9fff0e36d286d079bc95a3f06f8099d2",
+      "blob_path": "foundry/blobs/blake3/6a1ae17e52d2864c46f2ce65690512eb9fff0e36d286d079bc95a3f06f8099d2"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/09_verify_ocel_self_audit.stdout",
+      "git_object_id": "9aa5eb56977636e78599a3e9147daf1eb29a7f9e",
+      "git_mode": "100644",
+      "byte_length": 687,
+      "blake3": "185b1e682c8b6e74f6ff30f2a3e0173e559f09b447efc97f752278dec98b55de",
+      "blob_path": "foundry/blobs/blake3/185b1e682c8b6e74f6ff30f2a3e0173e559f09b447efc97f752278dec98b55de"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/09_verify_ocel_self_audit.ttl",
+      "git_object_id": "6aa5078c4e367111ce96603745bd5d1f3e651319",
+      "git_mode": "100644",
+      "byte_length": 1307,
+      "blake3": "62d7fcf9573f50e3d4126d9e995ca980e80d6a9c640062cf58f8239d56c02629",
+      "blob_path": "foundry/blobs/blake3/62d7fcf9573f50e3d4126d9e995ca980e80d6a9c640062cf58f8239d56c02629"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/10_verify_coverage_matrix.json",
+      "git_object_id": "1a0a33df5fbcd393c75f547b7540ce5118896fae",
+      "git_mode": "100644",
+      "byte_length": 6966,
+      "blake3": "5543d9acb2db55a39d92e309672829dbde7562ea9bbe5bebc430e9a8929a185b",
+      "blob_path": "foundry/blobs/blake3/5543d9acb2db55a39d92e309672829dbde7562ea9bbe5bebc430e9a8929a185b"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/10_verify_coverage_matrix.stderr",
+      "git_object_id": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "byte_length": 0,
+      "blake3": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "blob_path": "foundry/blobs/blake3/af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/10_verify_coverage_matrix.stdout",
+      "git_object_id": "819bdacb843931143a41a43328e333b6ee7746d9",
+      "git_mode": "100644",
+      "byte_length": 81,
+      "blake3": "a65ef6ba9fa51d1c02173fce2e9df8217268650be6a8b45dfabf69938b86b07b",
+      "blob_path": "foundry/blobs/blake3/a65ef6ba9fa51d1c02173fce2e9df8217268650be6a8b45dfabf69938b86b07b"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/10_verify_coverage_matrix.ttl",
+      "git_object_id": "3675b107ba7f4b21deb12b3a26e20b706b910983",
+      "git_mode": "100644",
+      "byte_length": 1307,
+      "blake3": "dc9cb2354e7e8658d7b40e9a2b146d0f4465875ee348eeff5786e8ec56470cd4",
+      "blob_path": "foundry/blobs/blake3/dc9cb2354e7e8658d7b40e9a2b146d0f4465875ee348eeff5786e8ec56470cd4"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/11_verify_proof_report.json",
+      "git_object_id": "c40d4c921bd729283242a586968223d63fb0886d",
+      "git_mode": "100644",
+      "byte_length": 6953,
+      "blake3": "9762075607966bc4ae3c315707ed23f4e8cfad5f3fe4884dce10a35c0bd32e03",
+      "blob_path": "foundry/blobs/blake3/9762075607966bc4ae3c315707ed23f4e8cfad5f3fe4884dce10a35c0bd32e03"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/11_verify_proof_report.stderr",
+      "git_object_id": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "byte_length": 0,
+      "blake3": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "blob_path": "foundry/blobs/blake3/af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/11_verify_proof_report.stdout",
+      "git_object_id": "bc8321ec7b630d7ada0543473754d95403a07c3e",
+      "git_mode": "100644",
+      "byte_length": 82,
+      "blake3": "1c585314428ab8a5099a2b1d7ad89fcd1663e3c9fc2b526071b3a4f0b0b07222",
+      "blob_path": "foundry/blobs/blake3/1c585314428ab8a5099a2b1d7ad89fcd1663e3c9fc2b526071b3a4f0b0b07222"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/11_verify_proof_report.ttl",
+      "git_object_id": "516f144070b50412859dd5643364dc7bbd2a119d",
+      "git_mode": "100644",
+      "byte_length": 1283,
+      "blake3": "bbdcbc8eb611fa49fb288f50b61f70f42671284e7838f8f11a3e7725e60176a6",
+      "blob_path": "foundry/blobs/blake3/bbdcbc8eb611fa49fb288f50b61f70f42671284e7838f8f11a3e7725e60176a6"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/12_detect_contradictions.json",
+      "git_object_id": "423c9279a2a3b0befb6c4eca7c264358a271db75",
+      "git_mode": "100644",
+      "byte_length": 6962,
+      "blake3": "9232def166d79425eb0814102334747aaefafc2b6e97727a460293a44bb541db",
+      "blob_path": "foundry/blobs/blake3/9232def166d79425eb0814102334747aaefafc2b6e97727a460293a44bb541db"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/12_detect_contradictions.stderr",
+      "git_object_id": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "byte_length": 0,
+      "blake3": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "blob_path": "foundry/blobs/blake3/af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/12_detect_contradictions.stdout",
+      "git_object_id": "a47b1a09ceb8bf0fca43a83a7b8fc01a31788cec",
+      "git_mode": "100644",
+      "byte_length": 589,
+      "blake3": "795fb0eb171ebb6298447a663aa59aec06baa852786d1cbf12cdbbb5731c535c",
+      "blob_path": "foundry/blobs/blake3/795fb0eb171ebb6298447a663aa59aec06baa852786d1cbf12cdbbb5731c535c"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/12_detect_contradictions.ttl",
+      "git_object_id": "1c0b203d422e837fc3000df294dc60e2cfd3daf3",
+      "git_mode": "100644",
+      "byte_length": 1299,
+      "blake3": "5751667fe2c53b9fa350fe809b619ea72370dcefba586ee7a398c44f93911ff8",
+      "blob_path": "foundry/blobs/blake3/5751667fe2c53b9fa350fe809b619ea72370dcefba586ee7a398c44f93911ff8"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/13_adjudicate_gall_promotion.json",
+      "git_object_id": "ad97e4613a83f72c1ea10ed07c34a80515ce9554",
+      "git_mode": "100644",
+      "byte_length": 6971,
+      "blake3": "ce67f8fba4a15a6d79591ca3581b9f0ad73999204daf44eaa4dd042906515e22",
+      "blob_path": "foundry/blobs/blake3/ce67f8fba4a15a6d79591ca3581b9f0ad73999204daf44eaa4dd042906515e22"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/13_adjudicate_gall_promotion.stderr",
+      "git_object_id": "f5f77a89d55b725ab3f1cf00f6d7ef277dea04a7",
+      "git_mode": "100644",
+      "byte_length": 4108,
+      "blake3": "082753a5112036fd13538a38538986846d453e1854e1d917bbfc94822b456831",
+      "blob_path": "foundry/blobs/blake3/082753a5112036fd13538a38538986846d453e1854e1d917bbfc94822b456831"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/13_adjudicate_gall_promotion.stdout",
+      "git_object_id": "d69abe06e4810a5e4aed58cc5d6ddfefd2ba0aa2",
+      "git_mode": "100644",
+      "byte_length": 16460,
+      "blake3": "8f4a8140c1a65549f49797af96616d9fa9b47259f2011f38cc30ad39b64783ad",
+      "blob_path": "foundry/blobs/blake3/8f4a8140c1a65549f49797af96616d9fa9b47259f2011f38cc30ad39b64783ad"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/13_adjudicate_gall_promotion.ttl",
+      "git_object_id": "6ef0a5b3053951e2e9a0a7fde2d87e9f36f0bb9e",
+      "git_mode": "100644",
+      "byte_length": 1356,
+      "blake3": "085910e6c7530ac96565b8fa4b5e78e369afb0938fdf5c9bec60a6f312acbece",
+      "blob_path": "foundry/blobs/blake3/085910e6c7530ac96565b8fa4b5e78e369afb0938fdf5c9bec60a6f312acbece"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/20_capture_full_worktree_inventory.json",
+      "git_object_id": "a6085f4e453a2fdc5426dffb951c3560f68d3aa2",
+      "git_mode": "100644",
+      "byte_length": 6995,
+      "blake3": "82f1621eba1bdc53d7caa59d7c8f8b60e31e1c41e4ca6822ab41896146d72828",
+      "blob_path": "foundry/blobs/blake3/82f1621eba1bdc53d7caa59d7c8f8b60e31e1c41e4ca6822ab41896146d72828"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/20_capture_full_worktree_inventory.stderr",
+      "git_object_id": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "byte_length": 0,
+      "blake3": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "blob_path": "foundry/blobs/blake3/af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/20_capture_full_worktree_inventory.stdout",
+      "git_object_id": "bf0f730db1b0007baaea565fdb30fbfcf0c0b7e7",
+      "git_mode": "100644",
+      "byte_length": 41,
+      "blake3": "fa16c22af3c02590ad1d5e0d806e8fdd32fc0a6cb016c8dfb6067ff0b83bd5bb",
+      "blob_path": "foundry/blobs/blake3/fa16c22af3c02590ad1d5e0d806e8fdd32fc0a6cb016c8dfb6067ff0b83bd5bb"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/21_verify_command_transcripts.json",
+      "git_object_id": "af2b3b6df2a3463b20458ca9d3effea816dbe876",
+      "git_mode": "100644",
+      "byte_length": 6982,
+      "blake3": "e6f14a9b847e3775826ef11ad7715329b1784e443a731113a20b9df0a8c23f99",
+      "blob_path": "foundry/blobs/blake3/e6f14a9b847e3775826ef11ad7715329b1784e443a731113a20b9df0a8c23f99"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/21_verify_command_transcripts.stderr",
+      "git_object_id": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "byte_length": 0,
+      "blake3": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "blob_path": "foundry/blobs/blake3/af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/21_verify_command_transcripts.stdout",
+      "git_object_id": "d8222790122bb013f36d3b8ea0c81751c63b8463",
+      "git_mode": "100644",
+      "byte_length": 51,
+      "blake3": "861fe66f66e7a0ed52a7a46a3c78708f9a594addc30aaeed38d41d758c10a790",
+      "blob_path": "foundry/blobs/blake3/861fe66f66e7a0ed52a7a46a3c78708f9a594addc30aaeed38d41d758c10a790"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/22_verify_script_adequacy.json",
+      "git_object_id": "7b16f598cd415f448f597ee0aaa65a344fe10a25",
+      "git_mode": "100644",
+      "byte_length": 6954,
+      "blake3": "ab7376e2a6d7154f92c63cc10dfe14a1275545ec1ee1556609f63b834c17129e",
+      "blob_path": "foundry/blobs/blake3/ab7376e2a6d7154f92c63cc10dfe14a1275545ec1ee1556609f63b834c17129e"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/22_verify_script_adequacy.stderr",
+      "git_object_id": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "byte_length": 0,
+      "blake3": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "blob_path": "foundry/blobs/blake3/af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/22_verify_script_adequacy.stdout",
+      "git_object_id": "aa3b15613a1a6d93616e4fd446ad672d75bde6b0",
+      "git_mode": "100644",
+      "byte_length": 54,
+      "blake3": "4847298acb1ff113326cc6bef7aec7df2b72cadfb8e2ace7d0ab5e3a5cb6fc15",
+      "blob_path": "foundry/blobs/blake3/4847298acb1ff113326cc6bef7aec7df2b72cadfb8e2ace7d0ab5e3a5cb6fc15"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/24_run_clean_room_rebuild.json",
+      "git_object_id": "98fa75f3edfb03aebd8eaae3f3e7d7f0cef91bc7",
+      "git_mode": "100644",
+      "byte_length": 6960,
+      "blake3": "ef521bfc3b1b33df76d05b49785cb6514cac12563d9356be457d5b8146365942",
+      "blob_path": "foundry/blobs/blake3/ef521bfc3b1b33df76d05b49785cb6514cac12563d9356be457d5b8146365942"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/24_run_clean_room_rebuild.stderr",
+      "git_object_id": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "byte_length": 0,
+      "blake3": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "blob_path": "foundry/blobs/blake3/af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/24_run_clean_room_rebuild.stdout",
+      "git_object_id": "a691fa9cd9c64483a4c66e4b9969c385f03f5ac2",
+      "git_mode": "100644",
+      "byte_length": 42,
+      "blake3": "0ddbfa7e7420668bd7e11b998e0c404717eeb46b3efa8759dc9aae58da551d9d",
+      "blob_path": "foundry/blobs/blake3/0ddbfa7e7420668bd7e11b998e0c404717eeb46b3efa8759dc9aae58da551d9d"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/25_verify_cross_artifact_consistency.json",
+      "git_object_id": "b885e8080e1c7f1414ff6647cd3192f3590cac8a",
+      "git_mode": "100644",
+      "byte_length": 7001,
+      "blake3": "2fb0eae3d0986f069f43453f982dbcf320e03b5baefac064d7fbfc66fe05fdf3",
+      "blob_path": "foundry/blobs/blake3/2fb0eae3d0986f069f43453f982dbcf320e03b5baefac064d7fbfc66fe05fdf3"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/25_verify_cross_artifact_consistency.stderr",
+      "git_object_id": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "byte_length": 0,
+      "blake3": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "blob_path": "foundry/blobs/blake3/af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/25_verify_cross_artifact_consistency.stdout",
+      "git_object_id": "83c44519ac111a2ef23fb16b19b3ab24d767dd51",
+      "git_mode": "100644",
+      "byte_length": 54,
+      "blake3": "c6360f4f9f674e3b23809038f1712e7ea8452c36272fe48b48979287640f4035",
+      "blob_path": "foundry/blobs/blake3/c6360f4f9f674e3b23809038f1712e7ea8452c36272fe48b48979287640f4035"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/26_verify_ocel_causal_sufficiency.json",
+      "git_object_id": "a8ab29b5ee23b735be4e263547cdf4498283eee1",
+      "git_mode": "100644",
+      "byte_length": 6989,
+      "blake3": "d6a3b714a6463979c7b6b3c8295a84757fe0b8e33ba1c3e9ca643204722a8d27",
+      "blob_path": "foundry/blobs/blake3/d6a3b714a6463979c7b6b3c8295a84757fe0b8e33ba1c3e9ca643204722a8d27"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/26_verify_ocel_causal_sufficiency.stderr",
+      "git_object_id": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "byte_length": 0,
+      "blake3": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "blob_path": "foundry/blobs/blake3/af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/26_verify_ocel_causal_sufficiency.stdout",
+      "git_object_id": "5e88c578da5092c3b0b744d40be2890f90555c3b",
+      "git_mode": "100644",
+      "byte_length": 51,
+      "blake3": "ad1b66ad4a993c5b361829cad20305064b9e168f3b413be52b582306c3d6eaf2",
+      "blob_path": "foundry/blobs/blake3/ad1b66ad4a993c5b361829cad20305064b9e168f3b413be52b582306c3d6eaf2"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/27_verify_contradiction_supersession.json",
+      "git_object_id": "72170d75479f9b4bf389af8ed4e6e7f3db31f2d6",
+      "git_mode": "100644",
+      "byte_length": 7001,
+      "blake3": "8ac029b7bcc781e9ce35416c57e51b32b4d71a5bafb935b6a881c9ec3330c0fb",
+      "blob_path": "foundry/blobs/blake3/8ac029b7bcc781e9ce35416c57e51b32b4d71a5bafb935b6a881c9ec3330c0fb"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/27_verify_contradiction_supersession.stderr",
+      "git_object_id": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "byte_length": 0,
+      "blake3": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "blob_path": "foundry/blobs/blake3/af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/27_verify_contradiction_supersession.stdout",
+      "git_object_id": "621349bf4f1afa13a29d58c0b2cf96369c72ef47",
+      "git_mode": "100644",
+      "byte_length": 54,
+      "blake3": "b4cb63246934e9d99149c209e18bb350a6d550f978ff37912cb37a5836e5b613",
+      "blob_path": "foundry/blobs/blake3/b4cb63246934e9d99149c209e18bb350a6d550f978ff37912cb37a5836e5b613"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/99_adjudicate_witnessed_truthfulness.json",
+      "git_object_id": "10d63e7638967f76f8747fbe117d1a0c7d56a5a1",
+      "git_mode": "100644",
+      "byte_length": 6668,
+      "blake3": "9725dc855936d5e46ce4aa8c49c48a382b8809fe0624be43cb60cc5f68866125",
+      "blob_path": "foundry/blobs/blake3/9725dc855936d5e46ce4aa8c49c48a382b8809fe0624be43cb60cc5f68866125"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/99_adjudicate_witnessed_truthfulness.stderr",
+      "git_object_id": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "git_mode": "100644",
+      "byte_length": 0,
+      "blake3": "af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262",
+      "blob_path": "foundry/blobs/blake3/af1349b9f5f9a1a6a0404dea36dcc9499bcb25c9adc112b7cc9a93cae41f3262"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/transcripts/99_adjudicate_witnessed_truthfulness.stdout",
+      "git_object_id": "e1f73154f15a383313a59e4f23b820a511d74733",
+      "git_mode": "100644",
+      "byte_length": 273,
+      "blake3": "159dd68da58996bf303f480671cd0667c914ba43e69a8eba01632976de20ce39",
+      "blob_path": "foundry/blobs/blake3/159dd68da58996bf303f480671cd0667c914ba43e69a8eba01632976de20ce39"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/vision2030.coverage.json",
+      "git_object_id": "5a627417cd2e9ed5482c76b988a3063dadc602c2",
+      "git_mode": "100644",
+      "byte_length": 5703,
+      "blake3": "baa7d485ecf07040ec6dae5efc3e80d93fd0325013af29127a9c1ada353325e5",
+      "blob_path": "foundry/blobs/blake3/baa7d485ecf07040ec6dae5efc3e80d93fd0325013af29127a9c1ada353325e5"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/vision2030.external_adjudication.json",
+      "git_object_id": "2925cd2224c7994838a479b035fdc898781e11ff",
+      "git_mode": "100644",
+      "byte_length": 4328,
+      "blake3": "a726cc70d6fe77ab6c9bcd45316ea827d582e4332422a78d6e4e1a4272ba2eb5",
+      "blob_path": "foundry/blobs/blake3/a726cc70d6fe77ab6c9bcd45316ea827d582e4332422a78d6e4e1a4272ba2eb5"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/vision2030.self_audit.ocel.json",
+      "git_object_id": "397c6556f9274bb1e89e12ca0cd381d6db00c937",
+      "git_mode": "100644",
+      "byte_length": 15032,
+      "blake3": "813c47eb61750e613e425e3c0721350ff23cac30ebc30451c619f282da6d1952",
+      "blob_path": "foundry/blobs/blake3/813c47eb61750e613e425e3c0721350ff23cac30ebc30451c619f282da6d1952"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/vision2030.self_audit.summary.md",
+      "git_object_id": "d3876e8fb373d1b146a803c70b21e7219b5e8e57",
+      "git_mode": "100644",
+      "byte_length": 6728,
+      "blake3": "371fb25aa63109ffe5f34c72ea7751793e5a245e02ddac7cc170e3b036183835",
+      "blob_path": "foundry/blobs/blake3/371fb25aa63109ffe5f34c72ea7751793e5a245e02ddac7cc170e3b036183835"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/vision2030.verification_manifest.json",
+      "git_object_id": "fae1a72d51775183cdd1e4dc501dc1b30d8f58d2",
+      "git_mode": "100644",
+      "byte_length": 3338,
+      "blake3": "b52f872c65cf9c17022c77456110543d57672f7653fffd8e6e154bceb3bfea0b",
+      "blob_path": "foundry/blobs/blake3/b52f872c65cf9c17022c77456110543d57672f7653fffd8e6e154bceb3bfea0b"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/witnessed_truthfulness.external_adjudication.json",
+      "git_object_id": "13d167ca93a79059f3c5e09e87c2553ec1986e99",
+      "git_mode": "100644",
+      "byte_length": 316,
+      "blake3": "d87c66f728db1d39f838f6de221da8fec8e0d00f3aede5d14c0ee2b14c694a44",
+      "blob_path": "foundry/blobs/blake3/d87c66f728db1d39f838f6de221da8fec8e0d00f3aede5d14c0ee2b14c694a44"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/worktree_inventory.full.json",
+      "git_object_id": "ae65c834248695d85b31b15de1aecba6a9ec3556",
+      "git_mode": "100644",
+      "byte_length": 3023320,
+      "blake3": "e82089fb792d7fd47c82eb1c02cd63653f63a4da96aa35a773972dd44f3e9d63",
+      "blob_path": "foundry/blobs/blake3/e82089fb792d7fd47c82eb1c02cd63653f63a4da96aa35a773972dd44f3e9d63"
+    },
+    {
+      "git_path": "crates/ggen-graph/audit/worktree_inventory.ttl",
+      "git_object_id": "e2d75353428ff62a3aba4e5b4b19d8e8329a7a69",
+      "git_mode": "100644",
+      "byte_length": 8931282,
+      "blake3": "bba651fa7b4bb65ce78cef59435fc393d01bf6f416c7d6f784c4fbcb36c935bf",
+      "blob_path": "foundry/blobs/blake3/bba651fa7b4bb65ce78cef59435fc393d01bf6f416c7d6f784c4fbcb36c935bf"
+    },
+    {
+      "git_path": "crates/ggen-graph/hooks/gall-code-evaluation.ttl",
+      "git_object_id": "5f406e94205080f5470a392b70c6ed76b14d2989",
+      "git_mode": "100644",
+      "byte_length": 14389,
+      "blake3": "1082d69ab1807a26667a4eb36055532722b665e2f2328b2a184561b128bbb0c7",
+      "blob_path": "foundry/blobs/blake3/1082d69ab1807a26667a4eb36055532722b665e2f2328b2a184561b128bbb0c7"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/bin/emit_audit.rs",
+      "git_object_id": "634a0c0d0607c6ce5ad4d712be4ec33a6bd6bb52",
+      "git_mode": "100644",
+      "byte_length": 1111,
+      "blake3": "286b082c40af47116a69c93ba7342111e67558bdc57a2000ac6fcb3bb879aa97",
+      "blob_path": "foundry/blobs/blake3/286b082c40af47116a69c93ba7342111e67558bdc57a2000ac6fcb3bb879aa97"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/bin/gall_actuate_code_evaluation.rs",
+      "git_object_id": "7ab5b66cca9d3393b37f4eedf68ae91dc944e57f",
+      "git_mode": "100644",
+      "byte_length": 32821,
+      "blake3": "4f195091949e46d97e8f676c25b6d4bc6a42438dd5bf011e35106a2a5ec25bf1",
+      "blob_path": "foundry/blobs/blake3/4f195091949e46d97e8f676c25b6d4bc6a42438dd5bf011e35106a2a5ec25bf1"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/bin/gall_adjudicate_witnessed_truthfulness.rs",
+      "git_object_id": "ae87bb5b3cf04315e85e10aba3a9af2a0f7476b7",
+      "git_mode": "100644",
+      "byte_length": 10103,
+      "blake3": "d22b89a9611d52ae4d706d9f4a0ea7d82b824f3e24ea5b67b29ca6344c107bf9",
+      "blob_path": "foundry/blobs/blake3/d22b89a9611d52ae4d706d9f4a0ea7d82b824f3e24ea5b67b29ca6344c107bf9"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/bin/gall_materialize_evidence_graph.rs",
+      "git_object_id": "e9e821176c0d9c73797ef3738ab8710c46cf4ddf",
+      "git_mode": "100644",
+      "byte_length": 19527,
+      "blake3": "0378b1295c556450bb59834aadb34c334b0c0a0795d2a5540d04eeaa96f964cb",
+      "blob_path": "foundry/blobs/blake3/0378b1295c556450bb59834aadb34c334b0c0a0795d2a5540d04eeaa96f964cb"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/bin/gall_observe_clean_room.rs",
+      "git_object_id": "5018949efd92a1bcfb8fa334b50181e97795eede",
+      "git_mode": "100644",
+      "byte_length": 6508,
+      "blake3": "fc845ff535ee38c9646ffee2a3894feaa76893c1ecda5d0445a646b1c8ee70fc",
+      "blob_path": "foundry/blobs/blake3/fc845ff535ee38c9646ffee2a3894feaa76893c1ecda5d0445a646b1c8ee70fc"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/bin/gall_observe_commands.rs",
+      "git_object_id": "503baf09ab7d1e6da8e77aea50fe989b7d208e5f",
+      "git_mode": "100644",
+      "byte_length": 8356,
+      "blake3": "944665ee40162e0376719ca08940b388ed238c58a46be99f586548109ea74411",
+      "blob_path": "foundry/blobs/blake3/944665ee40162e0376719ca08940b388ed238c58a46be99f586548109ea74411"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/bin/gall_observe_docs_tree.rs",
+      "git_object_id": "1c5c2458a030ce3c8f384c411b1f831409b2e18c",
+      "git_mode": "100644",
+      "byte_length": 9716,
+      "blake3": "5e599aea89938baf544753ca9381b355cb67c771924cf12aaa8bc564f9d8f2e8",
+      "blob_path": "foundry/blobs/blake3/5e599aea89938baf544753ca9381b355cb67c771924cf12aaa8bc564f9d8f2e8"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/bin/gall_observe_doctests.rs",
+      "git_object_id": "79b4fa44c5f200e15bf698bf678e953df318ce88",
+      "git_mode": "100644",
+      "byte_length": 6047,
+      "blake3": "b4eff2791cbb7e9fc7c5ba6cc49bc188909096bc6938ca4ecaf5206c45b9b118",
+      "blob_path": "foundry/blobs/blake3/b4eff2791cbb7e9fc7c5ba6cc49bc188909096bc6938ca4ecaf5206c45b9b118"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/bin/gall_observe_sabotage.rs",
+      "git_object_id": "a4c6627010444fdf6be209d790110745bc41d491",
+      "git_mode": "100644",
+      "byte_length": 23618,
+      "blake3": "b326c2f1307097856a0f96b3126b83cbf5157986a7462f66b37e51572bbcb5a0",
+      "blob_path": "foundry/blobs/blake3/b326c2f1307097856a0f96b3126b83cbf5157986a7462f66b37e51572bbcb5a0"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/bin/gall_observe_worktree.rs",
+      "git_object_id": "55d89fbe21f4e1347e9923c0fec06b0009de3cd6",
+      "git_mode": "100644",
+      "byte_length": 7937,
+      "blake3": "bb15803602fc56e8af8b0dc7b2c7ee419a6796760c00b9ab482496b3a3f71e02",
+      "blob_path": "foundry/blobs/blake3/bb15803602fc56e8af8b0dc7b2c7ee419a6796760c00b9ab482496b3a3f71e02"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/bin/verify_audit.rs",
+      "git_object_id": "d8c82690480e95c150410dd504bce51d8dcd2d37",
+      "git_mode": "100644",
+      "byte_length": 4986,
+      "blake3": "5129ad91fcd9b09ff03995611848e20a10b244cecd75ee3e4a5039873034917a",
+      "blob_path": "foundry/blobs/blake3/5129ad91fcd9b09ff03995611848e20a10b244cecd75ee3e4a5039873034917a"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/coherence.rs",
+      "git_object_id": "ab51fbb12787ed76eff295bb14d812a2c0d54c52",
+      "git_mode": "100644",
+      "byte_length": 27202,
+      "blake3": "507a858c191ea102dae8a9eee6110668bd73421a59226ee9c28b3d6e17a3b844",
+      "blob_path": "foundry/blobs/blake3/507a858c191ea102dae8a9eee6110668bd73421a59226ee9c28b3d6e17a3b844"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/delta/mod.rs",
+      "git_object_id": "7bcd72e4b15ce3b15f8c00803705753e7a2213eb",
+      "git_mode": "100644",
+      "byte_length": 3451,
+      "blake3": "9ed28b7dfd1b20c3f196d466e2836509662b833b930d8f3abf472a558885fa8c",
+      "blob_path": "foundry/blobs/blake3/9ed28b7dfd1b20c3f196d466e2836509662b833b930d8f3abf472a558885fa8c"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/diagnostics/mod.rs",
+      "git_object_id": "8bfd8f6710e501ad9508f0a603b83dd6fe2f7f22",
+      "git_mode": "100644",
+      "byte_length": 1406,
+      "blake3": "f65571748a491d53ab5ca90461e4ddbc755f0e2f3b2406bd0b9cd41e550a747e",
+      "blob_path": "foundry/blobs/blake3/f65571748a491d53ab5ca90461e4ddbc755f0e2f3b2406bd0b9cd41e550a747e"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/dialect.rs",
+      "git_object_id": "5a16eb6250682643b91da4b9651456c7471b29e6",
+      "git_mode": "100644",
+      "byte_length": 11600,
+      "blake3": "7b4614e2b6a79ceb3b2477c3fe536c83b0cdfd5a7787d1af779792a6ecfbccc4",
+      "blob_path": "foundry/blobs/blake3/7b4614e2b6a79ceb3b2477c3fe536c83b0cdfd5a7787d1af779792a6ecfbccc4"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/doctor/mod.rs",
+      "git_object_id": "9a6a4c7e44b5df7f97180750e0bf2a8a8bfecbb9",
+      "git_mode": "100644",
+      "byte_length": 1722,
+      "blake3": "07ee20bef2561a65abcbcabd0e8bd392b35015cbbb77d3cdcc540b630accaf1f",
+      "blob_path": "foundry/blobs/blake3/07ee20bef2561a65abcbcabd0e8bd392b35015cbbb77d3cdcc540b630accaf1f"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/graph/canonical.rs",
+      "git_object_id": "87c843ae65c7c4a1c3fffae8c161c821c124d607",
+      "git_mode": "100644",
+      "byte_length": 6157,
+      "blake3": "8375dd4f76666862b6ce4d6deda248977dd9c503ab0dde593054fb0354c4e345",
+      "blob_path": "foundry/blobs/blake3/8375dd4f76666862b6ce4d6deda248977dd9c503ab0dde593054fb0354c4e345"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/graph/dataset.rs",
+      "git_object_id": "c534c2bb0e0dd978d4fb2a765909fabebeb86229",
+      "git_mode": "100644",
+      "byte_length": 7126,
+      "blake3": "f44b360c0ecd49e1136bc476dfdbd7e8c50e2198525af1cd22a6b053cd1b7a75",
+      "blob_path": "foundry/blobs/blake3/f44b360c0ecd49e1136bc476dfdbd7e8c50e2198525af1cd22a6b053cd1b7a75"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/graph/hash.rs",
+      "git_object_id": "96eb462a97f1eaea9101221b62af7268c6396488",
+      "git_mode": "100644",
+      "byte_length": 861,
+      "blake3": "ef67b94c1be0fa1312a4e58f9b11f899cf79e2e2ac97c618bcfb0607ac4f7e91",
+      "blob_path": "foundry/blobs/blake3/ef67b94c1be0fa1312a4e58f9b11f899cf79e2e2ac97c618bcfb0607ac4f7e91"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/graph/introspect.rs",
+      "git_object_id": "1455e04aca34894c79d3015008151edc1a59b055",
+      "git_mode": "100644",
+      "byte_length": 3180,
+      "blake3": "c45afb2ba3fddd3923d923cbb1bc14e9347bb0191467569ef5c7e12f6f01e75f",
+      "blob_path": "foundry/blobs/blake3/c45afb2ba3fddd3923d923cbb1bc14e9347bb0191467569ef5c7e12f6f01e75f"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/graph/locate.rs",
+      "git_object_id": "145d9569a2fb4ddbe2b4f3037319caa6a694dbd1",
+      "git_mode": "100644",
+      "byte_length": 5728,
+      "blake3": "52dbb574f42296df6b6989786589adc6839a842822d5e54b0de422cc6d391895",
+      "blob_path": "foundry/blobs/blake3/52dbb574f42296df6b6989786589adc6839a842822d5e54b0de422cc6d391895"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/graph/mod.rs",
+      "git_object_id": "a86214c3d02ba17edc764f74b6677724e45b1721",
+      "git_mode": "100644",
+      "byte_length": 548,
+      "blake3": "b83451a5e507e9bf0b9dca586202d8c94fd34dec3f97fdf2cc0ca46171352bbd",
+      "blob_path": "foundry/blobs/blake3/b83451a5e507e9bf0b9dca586202d8c94fd34dec3f97fdf2cc0ca46171352bbd"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/graph/parse.rs",
+      "git_object_id": "6299e7a975fe28cde9a50688087924d4d31f2755",
+      "git_mode": "100644",
+      "byte_length": 1332,
+      "blake3": "9ce7baa7324221b33a863b3238ec6bdeb5c8a0fd547b68ed49cb552b493bf9d9",
+      "blob_path": "foundry/blobs/blake3/9ce7baa7324221b33a863b3238ec6bdeb5c8a0fd547b68ed49cb552b493bf9d9"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/graph/quad.rs",
+      "git_object_id": "b597e66ed8d9a9ff7221cae286f4373ae137e699",
+      "git_mode": "100644",
+      "byte_length": 3493,
+      "blake3": "3669d1850df0a9bde49da85343b0d069e903bfe97214aaf1cd52de074152a93c",
+      "blob_path": "foundry/blobs/blake3/3669d1850df0a9bde49da85343b0d069e903bfe97214aaf1cd52de074152a93c"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/graph/serialize.rs",
+      "git_object_id": "03f25e0f92d22091195d68d09c5ab736a9220db2",
+      "git_mode": "100644",
+      "byte_length": 1860,
+      "blake3": "87c416741a807d5edfc450792e185987798f16efd7acca34d99fbbf9c3812ed2",
+      "blob_path": "foundry/blobs/blake3/87c416741a807d5edfc450792e185987798f16efd7acca34d99fbbf9c3812ed2"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/interchangeable.rs",
+      "git_object_id": "601bdfe18642631cc43eac5fc5bb4332949042ae",
+      "git_mode": "100644",
+      "byte_length": 5727,
+      "blake3": "6a298a996a98320bcb2123850262817d8780534eef18b9aef48cf96c1169457a",
+      "blob_path": "foundry/blobs/blake3/6a298a996a98320bcb2123850262817d8780534eef18b9aef48cf96c1169457a"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/lib.rs",
+      "git_object_id": "47a9b2e00bd42f47c6364dbe3dbaf6f4a3b9dc30",
+      "git_mode": "100644",
+      "byte_length": 5289,
+      "blake3": "7daf28efc2960b419c29b818eac5162b9e1d0881098d69528bba28fa54365b3c",
+      "blob_path": "foundry/blobs/blake3/7daf28efc2960b419c29b818eac5162b9e1d0881098d69528bba28fa54365b3c"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/lib.rs.clean",
+      "git_object_id": "8676e50afa7af03e26c643be0a39da94b502ff2b",
+      "git_mode": "100644",
+      "byte_length": 5163,
+      "blake3": "eafe6878a00ff9cd0a9b6ee8223cdae684dd2a220b320cce36ad9260f2c98c28",
+      "blob_path": "foundry/blobs/blake3/eafe6878a00ff9cd0a9b6ee8223cdae684dd2a220b320cce36ad9260f2c98c28"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/ocel/coverage.rs",
+      "git_object_id": "06f49e7794d972dd31281c3971b77a4d995209eb",
+      "git_mode": "100644",
+      "byte_length": 9696,
+      "blake3": "dd107f044be3c114c95337754d0c98bb229c293ee2032c9b577270bd494ff456",
+      "blob_path": "foundry/blobs/blake3/dd107f044be3c114c95337754d0c98bb229c293ee2032c9b577270bd494ff456"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/ocel/dfg.rs",
+      "git_object_id": "e3aa6dfcc0bb89b1ffabaa4cd05f5eb7a934f92a",
+      "git_mode": "100644",
+      "byte_length": 5341,
+      "blake3": "545705c0b5759e7fd1487f0a3661704f176299824f52d1d1995013350b23c08c",
+      "blob_path": "foundry/blobs/blake3/545705c0b5759e7fd1487f0a3661704f176299824f52d1d1995013350b23c08c"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/ocel/gall_projection.rs",
+      "git_object_id": "b0405ab85d510953b1edac90a278fbe203c1a317",
+      "git_mode": "100644",
+      "byte_length": 3054,
+      "blake3": "3461eb3771ae5c7453c20f0a9fbb60fb77c93baa2a63910bf18b9e985afac1b6",
+      "blob_path": "foundry/blobs/blake3/3461eb3771ae5c7453c20f0a9fbb60fb77c93baa2a63910bf18b9e985afac1b6"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/ocel/lifecycle.rs",
+      "git_object_id": "9f002e4acc0a01ffff21696c6a9b6ae0e57560ba",
+      "git_mode": "100644",
+      "byte_length": 4718,
+      "blake3": "620c14ae3b88a4418d9f9ac304b7b0d090ff0b4a5522f7cc93e846cabdf7b9af",
+      "blob_path": "foundry/blobs/blake3/620c14ae3b88a4418d9f9ac304b7b0d090ff0b4a5522f7cc93e846cabdf7b9af"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/ocel/mod.rs",
+      "git_object_id": "34d4a5b077a6dafaf8f1119164e3210c64366add",
+      "git_mode": "100644",
+      "byte_length": 1116,
+      "blake3": "334387baadfc78711e9219aa4d2578b694e0d9a3b33048c3104feddf8d4af46e",
+      "blob_path": "foundry/blobs/blake3/334387baadfc78711e9219aa4d2578b694e0d9a3b33048c3104feddf8d4af46e"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/ocel/ocel_types.rs",
+      "git_object_id": "abcba4173d5e857aa80a21f1d2c4128db917ada0",
+      "git_mode": "100644",
+      "byte_length": 3310,
+      "blake3": "39e44486d1dbd80cf44acccfd995d7fa6e1b6d746fcccec4bfe317bb40c9bf97",
+      "blob_path": "foundry/blobs/blake3/39e44486d1dbd80cf44acccfd995d7fa6e1b6d746fcccec4bfe317bb40c9bf97"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/ocel/pack_events.rs",
+      "git_object_id": "ccb4ae62f71db12e9e2f4195ddfaed1d247b1215",
+      "git_mode": "100644",
+      "byte_length": 18669,
+      "blake3": "0298bc29981f121e034fa5f665b196845195fed5b00cce759ba60e303e16a59f",
+      "blob_path": "foundry/blobs/blake3/0298bc29981f121e034fa5f665b196845195fed5b00cce759ba60e303e16a59f"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/ocel/projection.rs",
+      "git_object_id": "042dbf9ab81e790957249e3529adde5ef538619f",
+      "git_mode": "100644",
+      "byte_length": 35523,
+      "blake3": "792c4ec9b1f78e249b610e41dbafbbd684d3ffadfb6eced1fa43d1803bc8a304",
+      "blob_path": "foundry/blobs/blake3/792c4ec9b1f78e249b610e41dbafbbd684d3ffadfb6eced1fa43d1803bc8a304"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/ocel/prov_types.rs",
+      "git_object_id": "6bfce29ec016284af076943f108786c23f3eefe3",
+      "git_mode": "100644",
+      "byte_length": 3033,
+      "blake3": "9880a1e6de9fdc815845d3c1acdff0ac931b1c42ce88aef023150ab12274734b",
+      "blob_path": "foundry/blobs/blake3/9880a1e6de9fdc815845d3c1acdff0ac931b1c42ce88aef023150ab12274734b"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/ocel/self_audit.rs",
+      "git_object_id": "3cb4ee0808aa37c7f52f37d78b45ea563ec7a0af",
+      "git_mode": "100644",
+      "byte_length": 24833,
+      "blake3": "c9d8cd548f492251c4047f69233071d8703cda6d0cde824605de63045e3bcf71",
+      "blob_path": "foundry/blobs/blake3/c9d8cd548f492251c4047f69233071d8703cda6d0cde824605de63045e3bcf71"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/prelude.rs",
+      "git_object_id": "f632b3fef54993a698bad35109be4d56bd9231f9",
+      "git_mode": "100644",
+      "byte_length": 801,
+      "blake3": "2143e77d92f003b495b9e67c94d9519ce68e71f76a5e1ffcc761cd510cec3718",
+      "blob_path": "foundry/blobs/blake3/2143e77d92f003b495b9e67c94d9519ce68e71f76a5e1ffcc761cd510cec3718"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/receipt/mod.rs",
+      "git_object_id": "4a1bfcd575667844ea027e685f08c9ead127d122",
+      "git_mode": "100644",
+      "byte_length": 10119,
+      "blake3": "6372600871c771db6c5f28543708ab3e8d88013402f457e6d951a9d4990e8ff4",
+      "blob_path": "foundry/blobs/blake3/6372600871c771db6c5f28543708ab3e8d88013402f457e6d951a9d4990e8ff4"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/shacl.rs",
+      "git_object_id": "a817a71776c93f18d70ce0e9c4a7be3f9d87fcb6",
+      "git_mode": "100644",
+      "byte_length": 7702,
+      "blake3": "458b3281584d46b6424de5a0b6112e693a508786d598b93422b0ad66ee7af029",
+      "blob_path": "foundry/blobs/blake3/458b3281584d46b6424de5a0b6112e693a508786d598b93422b0ad66ee7af029"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/sparql.rs",
+      "git_object_id": "a3407d3c5f4db1bec75f48f4df23e6398413b5bf",
+      "git_mode": "100644",
+      "byte_length": 3125,
+      "blake3": "f6846151a06af13566096c5a16235256f9f7dcbaa0417e2da383a619ac272938",
+      "blob_path": "foundry/blobs/blake3/f6846151a06af13566096c5a16235256f9f7dcbaa0417e2da383a619ac272938"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/vocab/dfg.rs",
+      "git_object_id": "5510b331d9693de29a57ab6af74afb6ca526971d",
+      "git_mode": "100644",
+      "byte_length": 800,
+      "blake3": "99838e57e17f9cc0ecb0421fb55d3b1f92606e25105e425bd9f172b7aefe7062",
+      "blob_path": "foundry/blobs/blake3/99838e57e17f9cc0ecb0421fb55d3b1f92606e25105e425bd9f172b7aefe7062"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/vocab/mod.rs",
+      "git_object_id": "50355494932f6ed1dce689a9616e0f33264c0917",
+      "git_mode": "100644",
+      "byte_length": 1845,
+      "blake3": "27f0c3e9503113a2a6af06621d8b2c02089f0bcf91432898ab50d860d589d2f2",
+      "blob_path": "foundry/blobs/blake3/27f0c3e9503113a2a6af06621d8b2c02089f0bcf91432898ab50d860d589d2f2"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/vocab/ocel.rs",
+      "git_object_id": "efd9f3a815b8b86196299a6310a3fdf667460204",
+      "git_mode": "100644",
+      "byte_length": 1462,
+      "blake3": "b6f77103c04c2d283d3c20eb4eb2d17b04d36c2a5b15d85263afd7927f7b35c8",
+      "blob_path": "foundry/blobs/blake3/b6f77103c04c2d283d3c20eb4eb2d17b04d36c2a5b15d85263afd7927f7b35c8"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/vocab/owl.rs",
+      "git_object_id": "ef8ab223913acf03f7fc34b2e9ee94bc9c65852f",
+      "git_mode": "100644",
+      "byte_length": 3036,
+      "blake3": "68c0d724c4264ba9874c19de7d02273bddaa0e223dfefc2a4b8210a1372deb4b",
+      "blob_path": "foundry/blobs/blake3/68c0d724c4264ba9874c19de7d02273bddaa0e223dfefc2a4b8210a1372deb4b"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/vocab/powl.rs",
+      "git_object_id": "8369c7b763e8e32abe3b7858ad56369b97280463",
+      "git_mode": "100644",
+      "byte_length": 3277,
+      "blake3": "8d5195f80d2fdcf843626ebfebb52bf8423d3602f36e3ef16b419dc0eebab2a6",
+      "blob_path": "foundry/blobs/blake3/8d5195f80d2fdcf843626ebfebb52bf8423d3602f36e3ef16b419dc0eebab2a6"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/vocab/prov.rs",
+      "git_object_id": "7203d525b6439894cbe66ee4227f49b8cd689c25",
+      "git_mode": "100644",
+      "byte_length": 3939,
+      "blake3": "8c0b47a8484387a818430b9f026e00f453885812fae2f6a8458eb5bec5353944",
+      "blob_path": "foundry/blobs/blake3/8c0b47a8484387a818430b9f026e00f453885812fae2f6a8458eb5bec5353944"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/vocab/rdf.rs",
+      "git_object_id": "1a9c37a4154670759474ef4354b77bd6c1154d5b",
+      "git_mode": "100644",
+      "byte_length": 2176,
+      "blake3": "7f3a16c14b39ed679d1c4ae16712f7d507dae964f38d0578f6b3d12c06f91782",
+      "blob_path": "foundry/blobs/blake3/7f3a16c14b39ed679d1c4ae16712f7d507dae964f38d0578f6b3d12c06f91782"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/vocab/rdfs.rs",
+      "git_object_id": "fb66796ef25f2ba584bda3896b8f08d87fc45458",
+      "git_mode": "100644",
+      "byte_length": 1933,
+      "blake3": "a93d9483cc0ccd6f6449387cbfcd6e369b17e184565f72262b5aa95956047072",
+      "blob_path": "foundry/blobs/blake3/a93d9483cc0ccd6f6449387cbfcd6e369b17e184565f72262b5aa95956047072"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/vocab/shacl.rs",
+      "git_object_id": "d7fa196cbcdc0bd687efd712267ff9b6a2ad4c2d",
+      "git_mode": "100644",
+      "byte_length": 6268,
+      "blake3": "0d5418d6ff33586dd385a93af3c38574e60b3948189530d231a31b07ccff4205",
+      "blob_path": "foundry/blobs/blake3/0d5418d6ff33586dd385a93af3c38574e60b3948189530d231a31b07ccff4205"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/vocab/skos.rs",
+      "git_object_id": "b5c70934e19e01fa012bd48c9d0a794a9cbea9fb",
+      "git_mode": "100644",
+      "byte_length": 4831,
+      "blake3": "303f4b514fe4bdde46a90fd84042c1390e01f31431bc6cf69ef86be92045800c",
+      "blob_path": "foundry/blobs/blake3/303f4b514fe4bdde46a90fd84042c1390e01f31431bc6cf69ef86be92045800c"
+    },
+    {
+      "git_path": "crates/ggen-graph/src/vocab/xsd.rs",
+      "git_object_id": "a8c29ec1fa9a614effa4b9a12ddf1fb454aab4bb",
+      "git_mode": "100644",
+      "byte_length": 2322,
+      "blake3": "f20b5120af3d9b95a53fe272fbfb9c1b7c103604b609e7a9ba994ee053de1f7f",
+      "blob_path": "foundry/blobs/blake3/f20b5120af3d9b95a53fe272fbfb9c1b7c103604b609e7a9ba994ee053de1f7f"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/adversarial_dfg_test.rs",
+      "git_object_id": "af5a8c7a6e038585c50efc8f88e84dd89b4ff679",
+      "git_mode": "100644",
+      "byte_length": 4250,
+      "blake3": "f50152e34a1ba3a9531d723aec5f8e4dc661394e279eab32aefbe17118c68376",
+      "blob_path": "foundry/blobs/blake3/f50152e34a1ba3a9531d723aec5f8e4dc661394e279eab32aefbe17118c68376"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/anti_fake_implementation.rs",
+      "git_object_id": "1b870672b93072f978d7474a1dff966ef9a4e0da",
+      "git_mode": "100644",
+      "byte_length": 2706,
+      "blake3": "798aeefdd89bc1bc0d1e2e4c16f0be9eeab3b50e419df330c41c1460eb1785d2",
+      "blob_path": "foundry/blobs/blake3/798aeefdd89bc1bc0d1e2e4c16f0be9eeab3b50e419df330c41c1460eb1785d2"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/coherence_hash_expectations_test.rs",
+      "git_object_id": "1be32ebf5e6f3598a4a17842408c0273ebd37b53",
+      "git_mode": "100644",
+      "byte_length": 16177,
+      "blake3": "eee98c650f968ef07ca8f32947b81c9260fa7749260c5b59ffef5d64d03d7791",
+      "blob_path": "foundry/blobs/blake3/eee98c650f968ef07ca8f32947b81c9260fa7749260c5b59ffef5d64d03d7791"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/delta_determinism.rs",
+      "git_object_id": "0800cd6fc411c4a92133faa706c8e7d7fb98641d",
+      "git_mode": "100644",
+      "byte_length": 2772,
+      "blake3": "b3bae2bbe4371f0919009f2a9fcfa0f342897e4c003d3a3b0522e2194bf0af39",
+      "blob_path": "foundry/blobs/blake3/b3bae2bbe4371f0919009f2a9fcfa0f342897e4c003d3a3b0522e2194bf0af39"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/dialect_completeness.rs",
+      "git_object_id": "888f0020f78faf9689b13594baefdf3cfcf58b9a",
+      "git_mode": "100644",
+      "byte_length": 4901,
+      "blake3": "78572152f776c5bec2d65d2240850e33669a1e483aa2e62498122ce97a321ddb",
+      "blob_path": "foundry/blobs/blake3/78572152f776c5bec2d65d2240850e33669a1e483aa2e62498122ce97a321ddb"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/dialect_receipts.rs",
+      "git_object_id": "59bfc9c2ce0818bc1b42bddbb53d60c4e51300c3",
+      "git_mode": "100644",
+      "byte_length": 1874,
+      "blake3": "59701e132d9a95870903df97ae51bf4dec63199610f36b588db38af4b0eb59f9",
+      "blob_path": "foundry/blobs/blake3/59701e132d9a95870903df97ae51bf4dec63199610f36b588db38af4b0eb59f9"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/dialect_replay.rs",
+      "git_object_id": "7e27f4e3bf06eada6064b1d8553405f474773bf2",
+      "git_mode": "100644",
+      "byte_length": 1477,
+      "blake3": "ffa4a6abe8db19103b2df8269c784b5a4dbf73cf77a8f447b3a7cc36f0636349",
+      "blob_path": "foundry/blobs/blake3/ffa4a6abe8db19103b2df8269c784b5a4dbf73cf77a8f447b3a7cc36f0636349"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/dialect_sabotage.rs",
+      "git_object_id": "4d80114a1f0b30eadd90b6f11bba68f48e347a80",
+      "git_mode": "100644",
+      "byte_length": 1547,
+      "blake3": "7702d9dedcdbda55bd487fe71c66be122671577f50b85773b3c841b6192c729a",
+      "blob_path": "foundry/blobs/blake3/7702d9dedcdbda55bd487fe71c66be122671577f50b85773b3c841b6192c729a"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/datalog/malformed.dl",
+      "git_object_id": "df74fc7cc1240dab037dafe288aa39974612e0d9",
+      "git_mode": "100644",
+      "byte_length": 29,
+      "blake3": "0f0bb3a5a64ab4e043b0d6f09877414b2f12812f3e7d1efbbdb2b3afa3201d85",
+      "blob_path": "foundry/blobs/blake3/0f0bb3a5a64ab4e043b0d6f09877414b2f12812f3e7d1efbbdb2b3afa3201d85"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/datalog/rule_fail.dl",
+      "git_object_id": "99ee5d2ed3fedb7c146e84b65387fc7133f54dca",
+      "git_mode": "100644",
+      "byte_length": 56,
+      "blake3": "1b824fb505c33eb3ab81e95c2fd41d3def23ccf0f608a5bbdc28f8aae4c0bc49",
+      "blob_path": "foundry/blobs/blake3/1b824fb505c33eb3ab81e95c2fd41d3def23ccf0f608a5bbdc28f8aae4c0bc49"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/datalog/rule_pass.dl",
+      "git_object_id": "c68dbf1abc3273bd148c41425907c640cf16d0bf",
+      "git_mode": "100644",
+      "byte_length": 51,
+      "blake3": "708571fb6d0dffc52b4ce56416b30bfca61744850452101fd33b5a6fff275021",
+      "blob_path": "foundry/blobs/blake3/708571fb6d0dffc52b4ce56416b30bfca61744850452101fd33b5a6fff275021"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/datalog/sabotage.dl",
+      "git_object_id": "5c5c189f82abd5443b44bd029e1b3ac7d6e34ee2",
+      "git_mode": "100644",
+      "byte_length": 40,
+      "blake3": "88591e450e67108f1c4758988de95921ae53b4a087c6981f85ff61446033fdb0",
+      "blob_path": "foundry/blobs/blake3/88591e450e67108f1c4758988de95921ae53b4a087c6981f85ff61446033fdb0"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/datalog/trigger.dl",
+      "git_object_id": "6aa8c76b741a69b97b029da63297f96e0790b5db",
+      "git_mode": "100644",
+      "byte_length": 19,
+      "blake3": "334fa3a08454d5348024237db98659c30882d6aa3b74626b22a8447ddff6515c",
+      "blob_path": "foundry/blobs/blake3/334fa3a08454d5348024237db98659c30882d6aa3b74626b22a8447ddff6515c"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/n3/malformed.n3",
+      "git_object_id": "1123517d26a4c567a873a341da405fe4c5ade26f",
+      "git_mode": "100644",
+      "byte_length": 19,
+      "blake3": "1091a1dd1422a728f19199863e4fc99cccf5ffedfdd7751c84947a2b5a250487",
+      "blob_path": "foundry/blobs/blake3/1091a1dd1422a728f19199863e4fc99cccf5ffedfdd7751c84947a2b5a250487"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/n3/rule_fail.n3",
+      "git_object_id": "8b232dd52f45c97b80d429eb29b50ae3fc1ed1e3",
+      "git_mode": "100644",
+      "byte_length": 162,
+      "blake3": "7c8c08c7f758e77f3b9c7f37e1ef04bbaeda874bf295a871d6493cec60946435",
+      "blob_path": "foundry/blobs/blake3/7c8c08c7f758e77f3b9c7f37e1ef04bbaeda874bf295a871d6493cec60946435"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/n3/rule_pass.n3",
+      "git_object_id": "806a500bebea23ba49c1ea22331fc71a9b84fdf6",
+      "git_mode": "100644",
+      "byte_length": 164,
+      "blake3": "fa8bc3144c2784d99a22c767cb8963427ebe2695ab3813fdc50233de22c39fb5",
+      "blob_path": "foundry/blobs/blake3/fa8bc3144c2784d99a22c767cb8963427ebe2695ab3813fdc50233de22c39fb5"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/n3/sabotage.n3",
+      "git_object_id": "159b0dfc0eb562464b5fafe039eeadb9838a6916",
+      "git_mode": "100644",
+      "byte_length": 21,
+      "blake3": "0f9a09082c1f9b32c3951279d15d385f4aac1c39334d5e5d8fc3650e5c609b47",
+      "blob_path": "foundry/blobs/blake3/0f9a09082c1f9b32c3951279d15d385f4aac1c39334d5e5d8fc3650e5c609b47"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/n3/trigger.n3",
+      "git_object_id": "69ec3d355b77c69ae71a3d10bb9966abe0f35c5e",
+      "git_mode": "100644",
+      "byte_length": 90,
+      "blake3": "bc38a9f4782b3f4154cc330e7f4ca9cbbfe428466f3a500af38591eaef413e5c",
+      "blob_path": "foundry/blobs/blake3/bc38a9f4782b3f4154cc330e7f4ca9cbbfe428466f3a500af38591eaef413e5c"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/shacl/conforms.ttl",
+      "git_object_id": "29ca77afcb212396500c626c40e9245dbc50213f",
+      "git_mode": "100644",
+      "byte_length": 451,
+      "blake3": "307586e07b3cf39120a705f2dd45768e4f36e550b3e45f3ddf9e9175305212f7",
+      "blob_path": "foundry/blobs/blake3/307586e07b3cf39120a705f2dd45768e4f36e550b3e45f3ddf9e9175305212f7"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/shacl/malformed.ttl",
+      "git_object_id": "1e028dea513a9c7228f22f012ddd1450385b44ff",
+      "git_mode": "100644",
+      "byte_length": 145,
+      "blake3": "1c10cf4eb69bd16622fb830941ed614ff0cc895bc9813659366c3490023e6610",
+      "blob_path": "foundry/blobs/blake3/1c10cf4eb69bd16622fb830941ed614ff0cc895bc9813659366c3490023e6610"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/shacl/sabotage.ttl",
+      "git_object_id": "e89e878fbe7007d2db770832e7dc6d323788334c",
+      "git_mode": "100644",
+      "byte_length": 67,
+      "blake3": "ae8190d2af861fbfea28abef3f0a6a8349cad09e45d11b89600b9a2696c15094",
+      "blob_path": "foundry/blobs/blake3/ae8190d2af861fbfea28abef3f0a6a8349cad09e45d11b89600b9a2696c15094"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/shacl/trigger.ttl",
+      "git_object_id": "49be24efc77dfa0abfffdb784706461adeb610af",
+      "git_mode": "100644",
+      "byte_length": 317,
+      "blake3": "12e4798eca4ccb10463171f4818610d98d7f86dfa3a0221d977986527718a89e",
+      "blob_path": "foundry/blobs/blake3/12e4798eca4ccb10463171f4818610d98d7f86dfa3a0221d977986527718a89e"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/shacl/violates.ttl",
+      "git_object_id": "3c1bfb4c1896397e4f5e9447a066754fe900f224",
+      "git_mode": "100644",
+      "byte_length": 415,
+      "blake3": "e10c18cc49fe38aab040c4731d1240df4feafea2eee6d25ec188b6023dbd934a",
+      "blob_path": "foundry/blobs/blake3/e10c18cc49fe38aab040c4731d1240df4feafea2eee6d25ec188b6023dbd934a"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/shex/conforms.shex",
+      "git_object_id": "b039138f1cb99e6272a1575f91401aef84a83ea5",
+      "git_mode": "100644",
+      "byte_length": 284,
+      "blake3": "cd83abfdfca6402ab4d1193de59c380aaa193702ee316300637eeecb856038b3",
+      "blob_path": "foundry/blobs/blake3/cd83abfdfca6402ab4d1193de59c380aaa193702ee316300637eeecb856038b3"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/shex/malformed.shex",
+      "git_object_id": "80877a03056b0a5b559ace52524033a77ba18f27",
+      "git_mode": "100644",
+      "byte_length": 84,
+      "blake3": "69e73d3a8aa4ca7c79149f97a278cfd0e2921ba5478795ea89a3582f2672d6c8",
+      "blob_path": "foundry/blobs/blake3/69e73d3a8aa4ca7c79149f97a278cfd0e2921ba5478795ea89a3582f2672d6c8"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/shex/sabotage.shex",
+      "git_object_id": "75d6cb3c91d35eeac7fc733b12a65d9c972860d1",
+      "git_mode": "100644",
+      "byte_length": 52,
+      "blake3": "41210401d6b8968642cbb2f882e95b6d9702f4e8e68827b109df23fe4eec191d",
+      "blob_path": "foundry/blobs/blake3/41210401d6b8968642cbb2f882e95b6d9702f4e8e68827b109df23fe4eec191d"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/shex/trigger.shex",
+      "git_object_id": "c96a4e02ad5c6f05676c2125611794e3db173d68",
+      "git_mode": "100644",
+      "byte_length": 154,
+      "blake3": "df15ed4b4c27d428f1fac3812d6314801dbc16bede06532a5ecbe706503c50a7",
+      "blob_path": "foundry/blobs/blake3/df15ed4b4c27d428f1fac3812d6314801dbc16bede06532a5ecbe706503c50a7"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/shex/violates.shex",
+      "git_object_id": "f812bc5b41152e6cf50e40d3624327d1b46651ba",
+      "git_mode": "100644",
+      "byte_length": 172,
+      "blake3": "310bf8b6972ec063fab4975230c45b67a3cb0091e8da7e0f95f6d11cdd1e0105",
+      "blob_path": "foundry/blobs/blake3/310bf8b6972ec063fab4975230c45b67a3cb0091e8da7e0f95f6d11cdd1e0105"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/sparql/ask_fail.rq",
+      "git_object_id": "0b4fecfe797b071d2efd29e46bc1fbaf8aa630cc",
+      "git_mode": "100644",
+      "byte_length": 55,
+      "blake3": "28bddac1a0b5ee896733c8632dda018b7086e44ab6e224100e3fe4b1c5a9c8a2",
+      "blob_path": "foundry/blobs/blake3/28bddac1a0b5ee896733c8632dda018b7086e44ab6e224100e3fe4b1c5a9c8a2"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/sparql/ask_pass.rq",
+      "git_object_id": "c5fc027be17796fe7678b73c623335317b36d8be",
+      "git_mode": "100644",
+      "byte_length": 17,
+      "blake3": "69dd5317ebde13efff5f83c234841c058aaef677192d832cd81b1700a6f536e3",
+      "blob_path": "foundry/blobs/blake3/69dd5317ebde13efff5f83c234841c058aaef677192d832cd81b1700a6f536e3"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/sparql/construct_pass.rq",
+      "git_object_id": "b45dd80186cee473deb31c187507c63ab21cdd72",
+      "git_mode": "100644",
+      "byte_length": 50,
+      "blake3": "82878fccf0bf19e48f37e668f389b8320a1e2dd539b4adfb75be5f3e96d34bc7",
+      "blob_path": "foundry/blobs/blake3/82878fccf0bf19e48f37e668f389b8320a1e2dd539b4adfb75be5f3e96d34bc7"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/sparql/malformed.rq",
+      "git_object_id": "b97a7976ecc8226c153cd307f4a2f58de3df1bad",
+      "git_mode": "100644",
+      "byte_length": 24,
+      "blake3": "26210518143cb81194811cc3459c5a3251016a38630c08551d6a285de12509bd",
+      "blob_path": "foundry/blobs/blake3/26210518143cb81194811cc3459c5a3251016a38630c08551d6a285de12509bd"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/sparql/sabotage.rq",
+      "git_object_id": "2123de2435640aca9b44db6703f2612f1d48c654",
+      "git_mode": "100644",
+      "byte_length": 18,
+      "blake3": "6a69dfa37edd2cb218c73ad64623f9b6fdb000232d9ef540e56a20d82a583705",
+      "blob_path": "foundry/blobs/blake3/6a69dfa37edd2cb218c73ad64623f9b6fdb000232d9ef540e56a20d82a583705"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/sparql/select_pass.rq",
+      "git_object_id": "736f05c5e2ce432aa593da04ca7ea1fb1b3afcf2",
+      "git_mode": "100644",
+      "byte_length": 43,
+      "blake3": "c3e801b9e6324679765b7aa09d503aa52dc9f5b3878f3fe885fed737397a1a8d",
+      "blob_path": "foundry/blobs/blake3/c3e801b9e6324679765b7aa09d503aa52dc9f5b3878f3fe885fed737397a1a8d"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/fixtures/dialects/sparql/trigger.rq",
+      "git_object_id": "c5fc027be17796fe7678b73c623335317b36d8be",
+      "git_mode": "100644",
+      "byte_length": 17,
+      "blake3": "69dd5317ebde13efff5f83c234841c058aaef677192d832cd81b1700a6f536e3",
+      "blob_path": "foundry/blobs/blake3/69dd5317ebde13efff5f83c234841c058aaef677192d832cd81b1700a6f536e3"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/forbidden_surface.rs",
+      "git_object_id": "93138f3621f144de4d4817af01882cf0a2fd8aae",
+      "git_mode": "100644",
+      "byte_length": 5714,
+      "blake3": "803dc9c3c8e49b40e0c98e6b79e94477612268551f73d03a9134e65e673dcde2",
+      "blob_path": "foundry/blobs/blake3/803dc9c3c8e49b40e0c98e6b79e94477612268551f73d03a9134e65e673dcde2"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/hash_stability.rs",
+      "git_object_id": "05eaf1c74030ef7aa3f99cca1b15ca20365c2756",
+      "git_mode": "100644",
+      "byte_length": 2060,
+      "blake3": "f4df70f4a34213057473c7c00d57bd7ce762f784a561bdcba7aa373df01c0713",
+      "blob_path": "foundry/blobs/blake3/f4df70f4a34213057473c7c00d57bd7ce762f784a561bdcba7aa373df01c0713"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/hook_loader.rs",
+      "git_object_id": "38c81a66d5d3591b91785cbee0448ec0eab01d20",
+      "git_mode": "100644",
+      "byte_length": 7412,
+      "blake3": "c39888d35a3cfcdc854310f7d4dc4793b0e4359b2fa78a8c4046dc284257a45a",
+      "blob_path": "foundry/blobs/blake3/c39888d35a3cfcdc854310f7d4dc4793b0e4359b2fa78a8c4046dc284257a45a"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/hook_scheduler.rs",
+      "git_object_id": "417bb4f55c8467e2d6f9455f415ab4ce314761fd",
+      "git_mode": "100644",
+      "byte_length": 3275,
+      "blake3": "c6c62e77cd9c245f6a787c0735805eeeae5f217cc1f97f4f4e70c38f83f8cffa",
+      "blob_path": "foundry/blobs/blake3/c6c62e77cd9c245f6a787c0735805eeeae5f217cc1f97f4f4e70c38f83f8cffa"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/interchangeable_test.rs",
+      "git_object_id": "b2722598e1fc2fbf26feb886470cb8a888d20a5e",
+      "git_mode": "100644",
+      "byte_length": 5894,
+      "blake3": "9221bdb190d322c59fbe02462d55660d2616223be4ddea8eb3905197c6bee048",
+      "blob_path": "foundry/blobs/blake3/9221bdb190d322c59fbe02462d55660d2616223be4ddea8eb3905197c6bee048"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/ocel_diagnostics_doctor_test.rs",
+      "git_object_id": "e3256ae08bde548ec649687bac44e8ce76427d79",
+      "git_mode": "100644",
+      "byte_length": 6339,
+      "blake3": "ed5ee228df630ddb2791bf240a102abd575313b66353b523d4e20c9c31ce8cc9",
+      "blob_path": "foundry/blobs/blake3/ed5ee228df630ddb2791bf240a102abd575313b66353b523d4e20c9c31ce8cc9"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/ocel_self_audit.rs",
+      "git_object_id": "401870b543c461552fa4c7e363b535c66067fa7e",
+      "git_mode": "100644",
+      "byte_length": 4503,
+      "blake3": "fb33bc0f8157a78dc637b2f6b58bea1dfb7cf167b5ceadf034814952f635eca6",
+      "blob_path": "foundry/blobs/blake3/fb33bc0f8157a78dc637b2f6b58bea1dfb7cf167b5ceadf034814952f635eca6"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/post_chatman_coherence_integration.rs",
+      "git_object_id": "a871cdd48a4dc2f3ad04d49e5e4ec17e46d85926",
+      "git_mode": "100644",
+      "byte_length": 12944,
+      "blake3": "f9575afa4b4b12eec9afc4989961f6a4d2410802221e7b21d72372934ea7ce54",
+      "blob_path": "foundry/blobs/blake3/f9575afa4b4b12eec9afc4989961f6a4d2410802221e7b21d72372934ea7ce54"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/post_chatman_roundtrip_full_test.rs",
+      "git_object_id": "0525c37f86126abe640316e557e4d521084b786f",
+      "git_mode": "100644",
+      "byte_length": 25825,
+      "blake3": "f3480845592b5c78f7500c2945622d76d35d48fe51a73c61c68eebfc88422f55",
+      "blob_path": "foundry/blobs/blake3/f3480845592b5c78f7500c2945622d76d35d48fe51a73c61c68eebfc88422f55"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/receipt_replay.rs",
+      "git_object_id": "920e34d964333822181ac8569c8837c2e526b94d",
+      "git_mode": "100644",
+      "byte_length": 3672,
+      "blake3": "0e11a9b0a9cf314821f53b46ed36a32874dc669195810f91f97cac0d2b10310d",
+      "blob_path": "foundry/blobs/blake3/0e11a9b0a9cf314821f53b46ed36a32874dc669195810f91f97cac0d2b10310d"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/sparql_actuation.rs",
+      "git_object_id": "3637ea629668bc35b5c6381fa1bd4f02d1553f01",
+      "git_mode": "100644",
+      "byte_length": 12844,
+      "blake3": "f957b883bac0b6c4e517615cdb8fbc65470c243bade2a1e210027acc1ac2cdcb",
+      "blob_path": "foundry/blobs/blake3/f957b883bac0b6c4e517615cdb8fbc65470c243bade2a1e210027acc1ac2cdcb"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/vision2030_coverage.rs",
+      "git_object_id": "97f294c6e93cf244ab91eba940ed787a7fe61851",
+      "git_mode": "100644",
+      "byte_length": 2968,
+      "blake3": "90101bec1202a5795e4cfe54e86e4363a4bf050ef7cae6a77d1cbb2e8fdf87d6",
+      "blob_path": "foundry/blobs/blake3/90101bec1202a5795e4cfe54e86e4363a4bf050ef7cae6a77d1cbb2e8fdf87d6"
+    },
+    {
+      "git_path": "crates/ggen-graph/tests/vocab_projection.rs",
+      "git_object_id": "bf854fd379a8cb344d95d34d116d5c520d175f5b",
+      "git_mode": "100644",
+      "byte_length": 11673,
+      "blake3": "0f56da6ed5432849789fdac0ef346a2b172a584c42c0310d46deee8508189a70",
+      "blob_path": "foundry/blobs/blake3/0f56da6ed5432849789fdac0ef346a2b172a584c42c0310d46deee8508189a70"
+    }
+  ],
+  "semantic_evidence_path": "foundry/evidence/B/legacy-capabilities.ttl",
+  "semantic_evidence_digest": "c2cd766f27b9bc7f177190fcf98f54228c9b54af9e4e412fd7a7a2e0afb242f5",
+  "source_removed": false,
+  "recovery_command": "git show 3176f9a18be342f0c08554f5aef66208c741e169:crates/ggen-graph/"
+}
