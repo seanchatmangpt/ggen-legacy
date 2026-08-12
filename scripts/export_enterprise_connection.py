@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """Export admitted ggen-legacy foundry state as ConnectionEnvelope v1.
 
-This is a CONSTRUCT-only transport projection. Cross-repository checkouts bind
-committed admission reports whose SHA-256 digests are recorded by the
-canonical workstream state. `foundry/receipts/` is deliberately gitignored
-local/generated evidence, so a clean checkout may corroborate it when present
-but never requires it as transport authority.
+This is a CONSTRUCT-only transport projection. Native Foundry admission
+reports are verified with the same BLAKE3-over-canonical-report-byte law used
+by ggen's architecture-foundry producer. The Connection separately uses
+SHA-256 as transport content identity; those two digest domains are not
+interchangeable.
+
+`foundry/receipts/` is deliberately gitignored local/generated evidence, so a
+clean checkout may corroborate those receipts when present but never requires
+them as repository transport authority.
 """
 from __future__ import annotations
 
@@ -16,6 +20,11 @@ from pathlib import Path, PurePosixPath, PureWindowsPath
 import re
 from typing import Any
 
+try:
+    from blake3 import blake3
+except ImportError:  # pragma: no cover - exercised by the CLI refusal path
+    blake3 = None
+
 SCHEMA = "urn:ggen:enterprise-connection:v1"
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
@@ -25,8 +34,16 @@ class Refusal(ValueError):
     pass
 
 
-def _digest(data: bytes) -> str:
+def _transport_digest(data: bytes) -> str:
     return "sha256:" + hashlib.sha256(data).hexdigest()
+
+
+def _native_report_digest(data: bytes) -> str:
+    if blake3 is None:
+        raise Refusal(
+            "UNSUPPORTED:BLAKE3_BINDING:install requirements-connection.txt"
+        )
+    return blake3(data).hexdigest()
 
 
 def _canonical(value: Any) -> bytes:
@@ -76,7 +93,7 @@ def _artifact(
         "path": relative,
         "role": role,
         "media_type": media_type,
-        "digest": _digest(path.read_bytes()),
+        "digest": _transport_digest(path.read_bytes()),
     }
 
 
@@ -84,25 +101,27 @@ def _admission_report(
     root: Path,
     name: str,
     item: dict[str, Any],
-) -> tuple[dict[str, str], dict[str, Any]]:
+) -> tuple[dict[str, str], dict[str, Any], str]:
     expected = item.get("report_digest")
     if not isinstance(expected, str) or not HEX64.fullmatch(expected):
         raise Refusal(f"REFUSED:ADMITTED_WITHOUT_REPORT_DIGEST:{name}")
 
     relative = f"foundry/workstreams/{name}/admission-report.json"
+    path = root / relative
     artifact = _artifact(
         root,
         relative,
         f"ggen-legacy:workstream-{name}-admission-report",
         "application/json",
     )
-    actual = artifact["digest"].removeprefix("sha256:")
-    if actual != expected:
+    actual_native = _native_report_digest(path.read_bytes())
+    if actual_native != expected:
         raise Refusal(
-            f"REFUSED:ADMISSION_REPORT_DRIFT:{name}:expected={expected}:actual={actual}"
+            "REFUSED:ADMISSION_REPORT_DRIFT:"
+            f"{name}:algorithm=BLAKE3:expected={expected}:actual={actual_native}"
         )
 
-    report = _read_object(root / relative)
+    report = _read_object(path)
     if report.get("workstream_id") != name:
         raise Refusal(f"REFUSED:ADMISSION_REPORT_ID:{name}")
     predicates = report.get("predicates")
@@ -110,7 +129,7 @@ def _admission_report(
         raise Refusal(f"REFUSED:ADMISSION_REPORT_PREDICATES:{name}")
     if any(value is not True for value in predicates.values()):
         raise Refusal(f"REFUSED:ADMISSION_REPORT_FALSE_PREDICATE:{name}")
-    return artifact, report
+    return artifact, report, actual_native
 
 
 def export_connection(
@@ -167,15 +186,20 @@ def export_connection(
     ]
     evidence: list[dict[str, Any]] = []
     local_receipts_present: list[str] = []
+    native_report_digests: list[str] = []
 
     for name in admitted:
         item = workstreams[name]
-        report_artifact, report = _admission_report(root, name, item)
+        report_artifact, report, native_digest = _admission_report(root, name, item)
         artifacts.append(report_artifact)
+        native_report_digests.append(f"{name}={native_digest}")
         evidence.append(
             {
                 "kind": "foundry-workstream-admission-report",
-                "identity": f"{name}:ADMITTED:{report.get('verifier', 'unknown-verifier')}",
+                "identity": (
+                    f"{name}:ADMITTED:{report.get('verifier', 'unknown-verifier')}:"
+                    f"BLAKE3={native_digest}"
+                ),
                 "digest": report_artifact["digest"],
             }
         )
@@ -213,8 +237,8 @@ def export_connection(
     ):
         raise Refusal("REFUSED:INVARIANT_SET")
 
-    program_digest = _digest(program_path.read_bytes())
-    state_digest = _digest(state_path.read_bytes())
+    program_digest = _transport_digest(program_path.read_bytes())
+    state_digest = _transport_digest(state_path.read_bytes())
     env = {
         "schema": SCHEMA,
         "connection_id": connection_id
@@ -245,7 +269,7 @@ def export_connection(
         "standing": {
             "state": "PARTIAL_ALIVE" if admitted else "UNKNOWN",
             "claim": (
-                f"COMMITTED_ADMISSION_REPORTS_VERIFIED={','.join(admitted) or 'NONE'}; "
+                f"NATIVE_BLAKE3_ADMISSION_REPORTS_VERIFIED={','.join(admitted) or 'NONE'}; "
                 "LOCAL_RECEIPTS_ARE_OPTIONAL_IGNORED_EVIDENCE; "
                 "CONNECTION_EXPORT_EXECUTED; COMPLETE_A_K_AND_EXTERNAL_PRODUCTION_NOT_INFERRED"
             ),
@@ -258,11 +282,12 @@ def export_connection(
         "labels": {
             "program_status": str(program.get("status", "UNKNOWN")),
             "admitted_workstreams": ",".join(admitted),
-            "committed_admission_reports_verified": ",".join(admitted),
+            "native_report_digest_algorithm": "BLAKE3",
+            "native_report_digests_verified": ";".join(native_report_digests),
             "local_receipts_present": ",".join(local_receipts_present),
             "workstream_count": str(len(workstreams)),
-            "program_digest": program_digest,
-            "state_digest": state_digest,
+            "program_transport_digest": program_digest,
+            "state_transport_digest": state_digest,
         },
     }
     data = _canonical(env)
@@ -289,7 +314,7 @@ def main() -> int:
                 "standing": env["standing"]["state"],
                 "stage": env["stage"],
                 "out": str(args.out),
-                "digest": _digest(args.out.read_bytes()),
+                "digest": _transport_digest(args.out.read_bytes()),
                 "do_authority": False,
             },
             sort_keys=True,
