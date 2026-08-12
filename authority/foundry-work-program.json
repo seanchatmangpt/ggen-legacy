@@ -1,7 +1,11 @@
 {
-  "schema": "ggen.enterprise-architecture-foundry.work-program/1",
+  "schema_version": "ggen.enterprise-architecture-foundry.work-program/1",
   "program_id": "ggen-legacy-to-foundry",
   "program_name": "Enterprise Architecture Reconstitution and Manufacture",
+  "source_repository": "seanchatmangpt/ggen",
+  "corpus_repository": "seanchatmangpt/ggen-legacy",
+  "manufacturing_kernel": "0f39227c102e0ac7519f0f27561356227a518653",
+  "status": "IN_PROGRESS",
   "provenance": {
     "repository": "seanchatmangpt/ggen",
     "pull_request": 543,
@@ -16,7 +20,7 @@
     "head": "f831e4d9fa80fe345349ce5d6e0fff41e6eb2a4a",
     "base_head": "999db36647feeb2dfd0bd2250d2db2ef00b887c4",
     "path": "tools/architecture-foundry",
-    "status": "OPEN_DRAFT",
+    "status": "MERGED",
     "standing_transferred": false,
     "runtime_dependency_admitted": false,
     "dedicated_runtime_evidence": {
@@ -101,17 +105,193 @@
     "integration_agent"
   ],
   "workstreams": [
-    {"id": "A", "name": "Exact-head baseline", "role": "integration_agent", "dependencies": []},
-    {"id": "B", "name": "Exhaustive observation", "role": "observer_agent", "dependencies": ["A"]},
-    {"id": "C", "name": "Capability admission", "role": "disposition_agent", "dependencies": ["B"]},
-    {"id": "D", "name": "Kernel-corpus classification", "role": "disposition_agent", "dependencies": ["C"]},
-    {"id": "E", "name": "Cross-repository extraction", "role": "extraction_agent", "dependencies": ["D"]},
-    {"id": "F", "name": "Primitive generalization", "role": "primitive_generalization_agent", "dependencies": ["E"]},
-    {"id": "G", "name": "bblock and solution-pack composition", "role": "pack_composition_agent", "dependencies": ["F"]},
-    {"id": "H", "name": "Full equivalence closure", "role": "equivalence_agent", "dependencies": ["E", "F"]},
-    {"id": "I", "name": "Independent verification", "role": "independent_verifier_agent", "dependencies": ["G", "H"]},
-    {"id": "J", "name": "Clean-room manufacture and replay", "role": "integration_agent", "dependencies": ["I"]},
-    {"id": "K", "name": "Fortune-scale reference reconstitution", "role": "pack_composition_agent", "dependencies": ["J"]}
+    {
+      "id": "A",
+      "name": "Exact-head baseline",
+      "role": "integration_agent",
+      "dependencies": [],
+      "outputs": [
+        "foundry/workstreams/A/admission-report.json",
+        "foundry/receipts/workstream-A.json"
+      ],
+      "predicates": {
+        "source_worktree_clean": true,
+        "corpus_worktree_clean": true,
+        "foundry_manifest_authority_matched": true,
+        "corpus_lineage_intact": true,
+        "initialization_receipt_replayed": true
+      }
+    },
+    {
+      "id": "B",
+      "name": "Exhaustive observation",
+      "role": "observer_agent",
+      "dependencies": ["A"],
+      "outputs": [
+        "foundry/evidence/B/legacy-capabilities.ttl",
+        "foundry/evidence/B/observer-class-report.md",
+        "foundry/evidence/B/observer-reports.json",
+        "foundry/catalogs/capability-candidates.json",
+        "foundry/evidence/B/exclusion-records.json",
+        "foundry/workstreams/B/admission-report.json"
+      ],
+      "predicates": {
+        "workstream_a_admitted": true,
+        "evidence_capability_count_exact": 65,
+        "evidence_observer_class_count_exact": 20,
+        "evidence_observer_classes_fully_attempted": true
+      }
+    },
+    {
+      "id": "C",
+      "name": "Capability admission",
+      "role": "disposition_agent",
+      "dependencies": ["B"],
+      "outputs": [
+        "foundry/catalogs/capabilities.json",
+        "foundry/catalogs/disposition-obligations.json",
+        "foundry/catalogs/provenance.json",
+        "foundry/catalogs/subsystem-ownership.json",
+        "foundry/workstreams/C/admission-report.json",
+        "foundry/receipts/workstream-C.json"
+      ],
+      "predicates": {
+        "workstream_b_admitted": true,
+        "no_capability_property_empty": true,
+        "no_turtle_string_unterminated": true,
+        "no_unknown_disposition": true,
+        "no_replacement_owner_missing": true
+      }
+    },
+    {
+      "id": "D",
+      "name": "Kernel-corpus classification",
+      "role": "disposition_agent",
+      "dependencies": ["C"],
+      "outputs": [
+        "foundry/catalogs/component-classification.json",
+        "foundry/catalogs/migration-dependency-graph.json",
+        "foundry/catalogs/recovery-plans.json",
+        "foundry/workstreams/D/admission-report.json",
+        "foundry/receipts/workstream-D.json"
+      ],
+      "predicates": {
+        "workstream_c_admitted": true,
+        "no_classification_disposition_unknown": true
+      }
+    },
+    {
+      "id": "E",
+      "name": "Cross-repository extraction",
+      "role": "extraction_agent",
+      "dependencies": ["D"],
+      "outputs": [
+        "foundry/catalogs/extraction-ledger.json",
+        "foundry/workstreams/E/admission-report.json",
+        "foundry/receipts/workstream-E.json"
+      ],
+      "predicates": {
+        "workstream_d_admitted": true,
+        "no_classification_id_conflict": true,
+        "no_destination_path_escapes_corpus": true,
+        "no_destination_path_invalid": true,
+        "no_extraction_input_count_mismatch": true
+      }
+    },
+    {
+      "id": "F",
+      "name": "Primitive generalization",
+      "role": "primitive_generalization_agent",
+      "dependencies": ["E"],
+      "outputs": [
+        "foundry/evidence/F/primitive-witnesses.json",
+        "foundry/catalogs/primitives.json",
+        "foundry/workstreams/F/admission-report.json",
+        "foundry/receipts/workstream-F.json"
+      ],
+      "predicates": {
+        "workstream_e_admitted": true,
+        "no_pack_input_primitives_empty": true,
+        "no_primitive_admission_refused": true
+      }
+    },
+    {
+      "id": "G",
+      "name": "bblock and solution-pack composition",
+      "role": "pack_composition_agent",
+      "dependencies": ["F"],
+      "outputs": [
+        "foundry/catalogs/solution-packs.json",
+        "foundry/workstreams/G/admission-report.json",
+        "foundry/receipts/workstream-G.json"
+      ],
+      "predicates": {
+        "workstream_f_admitted": true,
+        "no_pack_input_primitives_empty": true
+      }
+    },
+    {
+      "id": "H",
+      "name": "Full equivalence closure",
+      "role": "equivalence_agent",
+      "dependencies": ["E", "F"],
+      "outputs": [
+        "foundry/catalogs/equivalence.json",
+        "foundry/workstreams/H/admission-report.json",
+        "foundry/receipts/workstream-H.json"
+      ],
+      "predicates": {
+        "workstream_g_admitted": true,
+        "no_equivalence_disposition_unknown": true
+      }
+    },
+    {
+      "id": "I",
+      "name": "Independent verification",
+      "role": "independent_verifier_agent",
+      "dependencies": ["G", "H"],
+      "outputs": [
+        "foundry/workstreams/I/admission-report.json",
+        "foundry/receipts/workstream-I.json"
+      ],
+      "predicates": {
+        "workstream_g_admitted": true,
+        "workstream_h_admitted": true,
+        "system_evidence_present": true,
+        "system_evidence_negative_control_passed": true,
+        "receipt_portfolio_complete": true,
+        "no_receipt_output_drift": true,
+        "no_receipt_subject_digest_invalid": true
+      }
+    },
+    {
+      "id": "J",
+      "name": "Clean-room manufacture and replay",
+      "role": "integration_agent",
+      "dependencies": ["I"],
+      "outputs": [
+        "foundry/workstreams/J/admission-report.json",
+        "foundry/receipts/workstream-J.json"
+      ],
+      "predicates": {
+        "workstream_i_admitted": true,
+        "no_clean_room_head_mismatch": true
+      }
+    },
+    {
+      "id": "K",
+      "name": "Fortune-scale reference reconstitution",
+      "role": "pack_composition_agent",
+      "dependencies": ["J"],
+      "outputs": [
+        "foundry/workstreams/K/admission-report.json",
+        "foundry/receipts/workstream-K.json"
+      ],
+      "predicates": {
+        "workstream_j_admitted": true,
+        "reference_pack_primitives_valid": true
+      }
+    }
   ],
   "initial_solution_packs": [
     "repository_manufacturing_platform",

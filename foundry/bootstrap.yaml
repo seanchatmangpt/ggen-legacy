@@ -54,7 +54,22 @@
     "foundry/receipts"
   ],
   "workstreams": [
-    {"id": "A", "status": "NOT_STARTED"},
+    {
+      "id": "A",
+      "status": "BLOCKED",
+      "blocked_reason": "PROGRAM_SCHEMA_MISSING_PREDICATES",
+      "blocked_evidence": {
+        "command": "ggen-foundry validate-program --program authority/foundry-work-program.json",
+        "runtime": "tools/architecture-foundry (seanchatmangpt/ggen, PR #544, MERGED)",
+        "run_date": "2026-08-12",
+        "real_error": "YAML decode failure: workstreams[0]: missing field `predicates` at line 106 column 5",
+        "fixed_in_this_pass": [
+          "added top-level source_repository=seanchatmangpt/ggen, corpus_repository=seanchatmangpt/ggen-legacy (both required by WorkProgram, both previously absent)",
+          "corrected runtime_provenance.status OPEN_DRAFT -> MERGED (stale; PR #544 confirmed MERGED via gh pr view)"
+        ],
+        "remaining_real_blocker": "workstream A now carries real predicates+outputs, grounded 1:1 in tools/architecture-foundry/src/bin/admit_baseline.rs's actual bail! guards (source_worktree_clean, corpus_worktree_clean, foundry_manifest_authority_matched, corpus_lineage_intact, initialization_receipt_replayed) and its real written output paths (foundry/workstreams/A/admission-report.json, foundry/receipts/workstream-A.json) -- verified: validate-program's decode error now advances past workstreams[0] (A) to workstreams[1] (B). Workstreams B-K still lack predicates/outputs and remain the real, precisely-named blocker. This is deliberately not fabricated here -- each of B-K's predicates must be grounded the same way A's were (in that workstream's own real verifier code, once it exists), not invented from the workstream's name alone; B-K's own admission logic (admit_workstream, not admit_baseline) doesn't exist yet as running code the way A's does."
+      }
+    },
     {"id": "B", "status": "NOT_STARTED"},
     {"id": "C", "status": "NOT_STARTED"},
     {"id": "D", "status": "NOT_STARTED"},
