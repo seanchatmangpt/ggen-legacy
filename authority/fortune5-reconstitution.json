@@ -11,6 +11,10 @@
   },
   "expected_workflow_count": 1,
   "external_claims": ["CLM-005", "CLM-006", "CLM-007", "CLM-008", "CLM-013"],
+  "evidence_exclusions": [
+    "scripts/reconstitute_fortune5.py",
+    "scripts/verify_fortune5_reconstitution.py"
+  ],
   "laws": [
     "ZERO_UNRECEIPTED_ACTUATION",
     "NO_SELF_CERTIFICATION",
