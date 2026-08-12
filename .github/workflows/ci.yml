@@ -68,3 +68,90 @@ jobs:
           path: evidence/ci/receipt.json
           if-no-files-found: error
           retention-days: 14
+
+  planning-replay:
+    name: bounded planning replay
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Verify combinatorial-max planning subsystem
+        run: python3 planning/v26.8.7/verify.py --strict --output /tmp/gl-plan-002-report.json
+      - name: Stable scikit-decide process witness
+        run: planning/v26.8.7/skdecide_classical_engine.py --help | head -n 1 | grep '^skdecide-classical-engine/26.8.7$'
+
+  dsrust-reconstitution:
+    name: GL-DSPY-001 exact dsrust reconstitution
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      DSRUST_SHA: f24adde08c1d8850e4d7079d019643bb40f905cb
+    steps:
+      - name: Checkout exact ggen-legacy subject
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Unit-test external reconstitution refusals and replay
+        run: python3 tools/v26.8.1/test_external_reconstitution.py
+      - name: Checkout frozen dsrust specimen
+        uses: actions/checkout@v4
+        with:
+          repository: seanchatmangpt/dsrust
+          ref: f24adde08c1d8850e4d7079d019643bb40f905cb
+          path: _subjects/dsrust
+          persist-credentials: false
+      - name: Verify exact specimen identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _subjects/dsrust rev-parse HEAD)" = "$DSRUST_SHA"
+          test -z "$(git -C _subjects/dsrust status --porcelain=v1 --untracked-files=no)"
+      - name: Install dsrust minimum supported Rust
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: 1.85.0
+      - name: Execute frozen legacy workspace baseline
+        working-directory: _subjects/dsrust
+        run: cargo test --workspace --all-targets --locked
+      - name: Manufacture deterministic observation evidence twice
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf evidence/reconstitution/dsrust
+          python3 tools/v26.8.1/external_reconstitution.py \
+            --source _subjects/dsrust \
+            --contract reconstitution/dsrust/source-contract.json \
+            --out evidence/reconstitution/dsrust/run1
+          python3 tools/v26.8.1/external_reconstitution.py \
+            --source _subjects/dsrust \
+            --contract reconstitution/dsrust/source-contract.json \
+            --out evidence/reconstitution/dsrust/run2
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          a = json.loads(Path('evidence/reconstitution/dsrust/run1/reconstitution-receipt.json').read_text())
+          b = json.loads(Path('evidence/reconstitution/dsrust/run2/reconstitution-receipt.json').read_text())
+          assert a['receipt_sha256'] == b['receipt_sha256'], (a['receipt_sha256'], b['receipt_sha256'])
+          assert a['artifacts_sha256'] == b['artifacts_sha256']
+          assert a['source']['exact_sha'] == 'f24adde08c1d8850e4d7079d019643bb40f905cb'
+          assert a['standing'] == 'ALIVE'
+          print(json.dumps({
+              'case_id': a['case_id'],
+              'source_sha': a['source']['exact_sha'],
+              'tracked_file_count': a['observed']['tracked_file_count'],
+              'rust_surface_count': a['observed']['rust_surface_count'],
+              'receipt_sha256': a['receipt_sha256'],
+              'standing': a['standing'],
+          }, sort_keys=True))
+          PY
+      - name: Upload exact-subject reconstitution evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: gl-dspy-001-dsrust-${{ github.run_id }}
+          path: evidence/reconstitution/dsrust/
+          if-no-files-found: error
+          retention-days: 14

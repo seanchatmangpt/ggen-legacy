@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "case_id": "GL-DSPY-001",
+  "source": {
+    "repo": "seanchatmangpt/dsrust",
+    "ref": "f24adde08c1d8850e4d7079d019643bb40f905cb",
+    "sha": "f24adde08c1d8850e4d7079d019643bb40f905cb",
+    "license_expression": "MIT OR Apache-2.0",
+    "expected_files": [
+      "Cargo.toml",
+      "Cargo.lock",
+      "LICENSE-MIT",
+      "LICENSE-APACHE",
+      "src/lib.rs",
+      "crates/dsrust-derive/Cargo.toml",
+      "bridge/Cargo.toml"
+    ]
+  },
+  "observation": {
+    "include_prefixes": ["src", "crates", "bridge"],
+    "exclude_prefixes": ["target"]
+  },
+  "baseline": {
+    "commands": [
+      "cargo metadata --format-version 1 --locked --no-deps",
+      "cargo test --workspace --all-targets --locked"
+    ]
+  },
+  "claim_boundary": {
+    "observation": "Exact Git/Cargo topology and conservative lexical Rust public surfaces are evidence only.",
+    "admission": "No recovered semantic concept is admitted by this contract.",
+    "manufacture": "No replacement implementation is manufactured by this contract.",
+    "equivalence": "No legacy/replacement behavioral equivalence is claimed by this contract."
+  }
+}
