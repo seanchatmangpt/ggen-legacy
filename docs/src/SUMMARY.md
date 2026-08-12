@@ -15,6 +15,8 @@
 - [Customer-Controlled Verifier Appliance](12-verifier-appliance.md)
 - [Independent Subsystem Evidence and Read-Only Crown](13-independent-crown.md)
 - [Enterprise Architecture Foundry Program](14-enterprise-architecture-foundry.md)
+  - [Completion PRD (Workstreams C-K)](15-foundry-completion-prd.md)
+  - [Completion ARD (Workstreams C-K)](16-foundry-completion-ard.md)
 - [Clean-Session Environment Prime](clean-session/00-prime.md)
   - [Equation, Foundation, and Calculus](clean-session/01-equation-calculus.md)
   - [Pipeline, Authority, and Standing](clean-session/02-pipeline-status.md)

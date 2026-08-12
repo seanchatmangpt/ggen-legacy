@@ -54,7 +54,13 @@ pass could close. Listed here so they aren't silently dropped:
   manufacture, equivalence, verification, replay, and standing systems are
   mostly `DOCUMENTED`/`PARTIAL_ALIVE`, not `TESTED`/`REFERENCE_CONFORMANT`.
   Closing this is the actual multi-month scope of "complete the A–K
-  foundry program," not something an 80/20 pass reaches.
+  foundry program," not something an 80/20 pass reaches. A and B are now
+  real-admitted (real receipts, real evidence commits); C is genuinely
+  blocked on an unresolved legacy-disposition question, not a schema gap;
+  D–K remain unattempted. See
+  [Completion PRD](../docs/src/15-foundry-completion-prd.md) and
+  [Completion ARD](../docs/src/16-foundry-completion-ard.md) for exactly
+  what each remaining workstream needs.
 - `lsp-max` dependency is pinned to an unmerged branch of
   `seanchatmangpt/lsp-max` (see the comment on that dependency in
   `Cargo.toml`) — unblocked by merging that branch upstream or cutting a
