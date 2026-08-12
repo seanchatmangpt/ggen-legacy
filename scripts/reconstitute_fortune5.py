@@ -160,7 +160,21 @@ def parse_workstreams(root: Path) -> list[ObjectRecord]:
     return rows
 
 
-def iter_text_files(root: Path) -> Iterable[Path]:
+def normalized_exclusions(root: Path, contract: dict[str, Any]) -> set[str]:
+    exclusions: set[str] = set()
+    for raw in contract.get("evidence_exclusions", []):
+        rel = str(raw)
+        if not rel or rel.startswith("/") or ".." in Path(rel).parts:
+            raise Refusal(f"REFUSED:INVALID_EVIDENCE_EXCLUSION:{rel}")
+        target = root / rel
+        if not target.is_file():
+            raise Refusal(f"REFUSED:MISSING_EVIDENCE_EXCLUSION:{rel}")
+        exclusions.add(Path(rel).as_posix())
+    return exclusions
+
+
+def iter_text_files(root: Path, excluded_paths: set[str] | None = None) -> Iterable[Path]:
+    excluded_paths = excluded_paths or set()
     for path in sorted(root.rglob("*")):
         if not path.is_file() or path.suffix.lower() not in TEXT_SUFFIXES:
             continue
@@ -168,7 +182,7 @@ def iter_text_files(root: Path) -> Iterable[Path]:
         rel = rel_path.as_posix()
         if any(part in SKIP_PARTS for part in rel_path.parts):
             continue
-        if rel.startswith(GENERATED_PREFIXES):
+        if rel.startswith(GENERATED_PREFIXES) or rel in excluded_paths:
             continue
         yield path
 
@@ -187,11 +201,11 @@ def evidence_class(rel: str) -> str:
     return "documentation"
 
 
-def build_index(root: Path, ids: list[str]) -> dict[str, dict[str, list[str]]]:
+def build_index(root: Path, ids: list[str], excluded_paths: set[str]) -> dict[str, dict[str, list[str]]]:
     needles = {i: re.compile(rf"(?<![A-Za-z0-9_-]){re.escape(i)}(?![A-Za-z0-9_-])") for i in ids}
     classes = ("implementation", "test", "workflow", "evidence", "authority", "documentation")
     out = {i: {k: [] for k in classes} for i in ids}
-    for path in iter_text_files(root):
+    for path in iter_text_files(root, excluded_paths):
         rel = path.relative_to(root).as_posix()
         text = read_text(path)
         if not text:
@@ -311,9 +325,10 @@ def build(root: Path, contract_path: Path) -> dict[str, Any]:
     if contract.get("ticket") != "GL-ERRC-003":
         raise Refusal("REFUSED:WRONG_RECONSTITUTION_TICKET")
     external_claims = set(contract.get("external_claims", []))
+    exclusions = normalized_exclusions(root, contract)
     objects = parse_requirements(root) + parse_claims(root, external_claims) + parse_maturity(root) + parse_workstreams(root)
     findings = source_invariants(root, contract, objects)
-    index = build_index(root, [o.object_id for o in objects])
+    index = build_index(root, [o.object_id for o in objects], exclusions)
     matrix: list[dict[str, Any]] = []
     queue: list[dict[str, Any]] = []
     for obj in sorted(objects, key=lambda x: x.object_id):
@@ -384,6 +399,8 @@ def build(root: Path, contract_path: Path) -> dict[str, Any]:
             "self_certification": False,
             "external_claims_auto_promoted": False,
             "generated_outputs_excluded_from_evidence": True,
+            "reconstitution_source_excluded_from_evidence": True,
+            "evidence_exclusions": sorted(exclusions),
         },
     }
 
@@ -433,6 +450,8 @@ def write_outputs(root: Path, output: Path, contract_path: Path) -> dict[str, An
         "AGENTS.md", "RELEASE_CONTROL.md", "product/PRD.md", "architecture/ARD.md",
         "governance/claims-register.md", "governance/enterprise-maturity-model.md",
         "governance/production-gaps.md", "foundry/bootstrap.yaml", contract_path.relative_to(root).as_posix(),
+        "scripts/reconstitute_fortune5.py", "scripts/verify_fortune5_reconstitution.py",
+        "tickets/GL-ERRC-003.md", ".github/workflows/ci.yml",
     ]
     source_manifest = {path: file_sha(root / path) for path in source_paths if (root / path).exists()}
     output_manifest = {path: sha256(data) for path, data in sorted(products.items())}
