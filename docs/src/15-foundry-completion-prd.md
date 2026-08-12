@@ -1,18 +1,20 @@
-# Enterprise Architecture Foundry — Completion PRD (Workstreams C–K)
+# Enterprise Architecture Foundry — Completion Record (Workstreams C–K)
 
-This chapter states what remains to finish the Enterprise Architecture Foundry
-program described in
-[Enterprise Architecture Foundry Program](14-enterprise-architecture-foundry.md),
-grounded only in real, executed evidence — no workstream past what has
-actually been run is described as done, and no unresolved gap is described as
-closed.
+This chapter records how the Enterprise Architecture Foundry program
+described in
+[Enterprise Architecture Foundry Program](14-enterprise-architecture-foundry.md)
+reached real, terminal `ALIVE` standing, grounded only in executed evidence.
+It began as a forward-looking requirements document while the program was
+still partial; the sections below are kept as the real historical record of
+what each workstream needed and how it was actually closed, now that all 11
+are genuinely admitted.
 
-## Real standing as of this pass
+## Terminal standing
 
 Using the real `tools/architecture-foundry` runtime (`~/ggen`, PR #544,
-merged) against this repo's `authority/foundry-work-program.json` and
-`foundry/workstreams/state.json` (the authoritative source per
-`foundry/bootstrap.yaml`'s own `workstreams_authority_note`):
+merged, plus 8 real fixes made during this pass — see the
+[Completion ARD](16-foundry-completion-ard.md)) against this repo's
+`authority/foundry-work-program.json`:
 
 | Workstream | Verifier binary | Real status |
 |---|---|---|
@@ -20,93 +22,78 @@ merged) against this repo's `authority/foundry-work-program.json` and
 | B — Exhaustive observation | `admit_observation` | `ADMITTED` |
 | C — Capability admission | `admit_capabilities` | `ADMITTED` |
 | D — Kernel-corpus classification | `admit_classification` | `ADMITTED` |
-| E — Cross-repository extraction | `admit_extraction` | `BLOCKED` |
-| F — Primitive generalization | `admit_products` (stage 1) | not attempted |
-| G — bblock/solution-pack composition | `admit_products` (stage 2) | not attempted |
-| H — Full equivalence closure | `admit_products` (stage 3) | not attempted |
-| I — Independent verification | `admit_verification` | not attempted |
-| J — Clean-room manufacture and replay | `admit_clean_room` | not attempted |
-| K — Fortune-scale reference reconstitution | `admit_reference` | not attempted |
+| E — Cross-repository extraction | `admit_extraction` | `ADMITTED` |
+| F — Primitive generalization | `admit_products primitives` | `ADMITTED` |
+| G — bblock/solution-pack composition | `admit_products packs` | `ADMITTED` |
+| H — Full equivalence closure | `admit_products equivalence` | `ADMITTED` |
+| I — Independent verification | `admit_verification` | `ADMITTED` |
+| J — Clean-room manufacture and replay | `admit_clean_room` | `ADMITTED` |
+| K — Fortune-scale reference reconstitution | `admit_reference` | `ADMITTED` |
 
-A, B, and C admitted for real, with real evidence commits and digest chains
-recorded in `foundry/bootstrap.yaml`'s `admitted_evidence` blocks and
-`foundry/receipts/workstream-{A,B,C}.json`.
+**Terminal theorem** (`admit_final`, `foundry/evidence/terminal-theorem.json`,
+`foundry/receipts/solution-admission.json`): `workstreams_admitted: 11`,
+`capabilities: 65`, `unknown_dispositions: 0`, `unknown_standings: 0`,
+`unassigned_verifiers: 0`, `missing_equivalence_cases: 0`,
+`equivalence_failures: 0`, `replay_differences: 0`,
+`cross_repository_receipts_valid: true`,
+`fortune_scale_reference_manufactured: true`, `receipts_replayed: 12`,
+**`standing: ALIVE`**, `solution_admission: true`. Independently
+recomputed by `admit_final` from durable artifacts alone, not asserted.
 
-## Closed: the two DISPOSITION_UNKNOWN capabilities
+## How C, D, and E closed: real per-capability investigation, never fabricated
 
-`admit_capabilities` originally refused with
-`UNKNOWN_DISPOSITION: DISPOSITION_UNKNOWN`. Two of the 65 real legacy
-capabilities carried `ggen:hasDisposition ggen:DISPOSITION_UNKNOWN`:
+`admit_capabilities` (C) originally refused with `UNKNOWN_DISPOSITION` on two
+capabilities. Resolved by real investigation of `~/ggen`'s current source —
+one **`ARCHIVED`** (a generation mode never carried into the live
+3-variant enum, no migration commit found), one **`REFUSED`** (a real
+codebase-wide search found the check genuinely dropped, not relocated).
 
-- A capability about a `mode = "Append"` generation-mode variant. Resolved
-  **`ARCHIVED`**: `~/ggen`'s current `GenerationMode` enum
-  (`crates/ggen-config/src/manifest/types.rs`) has exactly 3 variants
-  (Create/Overwrite/Merge), no Append; that file was created wholesale in
-  the ggen-core-retirement commit (`cbf173f82`), so Append was never
-  carried forward and no migration commit links it to a current variant.
-- A capability about a mutation-kill-rate/budget-threshold exit-code check.
-  Resolved **`REFUSED`**: a real search of `~/ggen`'s current codebase
-  found zero matches for the check under any name or exit code — genuinely
-  dropped in the v5 unified-sync consolidation, not relocated.
+`admit_classification` (D) admitted cleanly once a real tool bug was fixed
+(see ARD). `admit_extraction` (E) initially refused
+`REQUIRED_SOURCE_OBJECTS_UNRESOLVED` for all 17 real `REPLACED`/`SUBSUMED`
+capabilities. Closed by: three generic tool fixes (path normalization,
+removal-commit parent fallback, globstar matching) that resolved 16 of 17,
+plus one further tool fix (globstar zero-directory-level matching) for the
+last, plus 3 real `historicalSourceCommit`/`legacySourcePath` corrections
+made at the real evidence source after direct investigation of `~/ggen`'s
+actual git history — never a fabricated path or commit. Every resolution
+is cited by real commit hash in the ARD.
 
-Both resolutions were made at the real source
-(`~/ggen`'s `ontology/v26.8.1/legacy-capabilities.ttl`, commit `b7db94e8e`
-on `agent/v26.8.1-resolve-2-dispositions`), not by hand-editing the
-corpus's receipted transcription — an initial attempt to fix the corpus
-copy directly was caught by the tool itself (`RECEIPT_OUTPUT_DRIFT`) and
-reverted; see `foundry/bootstrap.yaml`'s workstream B `admitted_evidence`
-note for the full account. See the companion
-[Completion ARD](16-foundry-completion-ard.md) for the architecture lesson
-this drew out.
+Fixing C's evidence after B's initial admission required retracting and
+re-admitting B, C, D (and later, after further real fixes, E–H too) —
+documented as the real "fix at source, retract, re-admit" discipline in the
+ARD, learned the hard way after a first attempt hand-edited the corpus's
+receipted evidence transcription directly and was correctly caught by the
+tool itself (`RECEIPT_OUTPUT_DRIFT`).
 
-## D closed; the real, current blocker (E)
+## How F–K closed
 
-Workstream D admitted cleanly once a real tool bug was found and fixed:
-`replay_all_receipts` checked every receipt's output digests independently
-against current corpus state, so `initialize-corpus`'s stale seed-catalog
-digest for `capabilities.json` permanently conflicted with C's legitimate
-real replacement of that file. Fixed to check only the causally-latest
-receipt per output path (see ARD). D then admitted all 65 capabilities
-cleanly, zero unclassified, zero conflicts.
-
-`admit_extraction` (E) refuses `REQUIRED_SOURCE_OBJECTS_UNRESOLVED` for all
-17 real `REPLACED`/`SUBSUMED` capabilities. A second real tool bug was
-found and fixed along the way (a double-slash path-matching bug for
-directory-shaped source paths) but did not resolve any of the 17 — real
-investigation of one shows the deeper issue: several `historical_source_commit`
-values are the capability's *removal* commit, not a commit where the source
-still exists (content lives at the parent, a convention already encoded in
-`admit_classification.rs`'s `recovery_command()` but not applied by
-`admit_extraction.rs`'s tree resolution), and several `legacy_source_path`
-values are genuinely prose comparisons, not single literal git paths. See
-the [Completion ARD](16-foundry-completion-ard.md) for the full, real
-per-capability breakdown.
-
-## Requirement (now for E–K)
-
-Workstream E's real blocker requires per-capability investigation of the
-same character as C's two disposition unknowns, at larger scope (17
-capabilities, several genuinely ambiguous) — not a single code fix. F
-through K admit only when the same discipline already applied to A–D
-repeats: read the real verifier binary, determine what real evidence or
-real decision it requires, obtain that evidence for real (never hand-edit
-a receipted corpus artifact — fix at the real source and re-run the
-admitting binary; never invent a resolution to force a green run), run it,
-record the real result. This PRD does not pre-certify that F–K's real
-evidence exists; see the ARD.
+F, G, and H were fully self-feeding from C, D, and E's real outputs — no new
+external evidence needed. H's first attempt refused on 1 of 65 equivalence
+cases (a real missing `refusalCode`/`refusalRationale` pair, added at the
+real source). I, J, and K each required one further real tool fix — a
+missing `receipt-ownership.json` producer (I), `foundry/receipts/` being
+gitignored and breaking clean-room replay's independent clone (J), and
+`verify_corpus` needing the same latest-per-path receipt-checking fix as
+the admission gate it feeds (also J). K manufactured and twice compiled/
+tested a real minimal Rust crate from the admitted
+`repository_manufacturing_platform` pack, byte-identical across both runs.
+Full detail for every fix: [Completion ARD](16-foundry-completion-ard.md).
 
 ## Non-goals
 
-- This document does not resolve the two `DISPOSITION_UNKNOWN` capabilities.
-- This document does not assert D–K's real evidence requirements are known,
-  satisfiable, or currently available — that is exploration work, tracked in
-  the ARD, not assumed here.
-- This document does not change `authority/foundry-work-program.json`,
-  `foundry/bootstrap.yaml`, or run any `admit_*` binary.
+- This chapter is a record of what was done, not a claim about anything
+  beyond this program's own 11 workstreams — it does not certify the
+  broader `ggen`/`ggen-legacy` ecosystem, only this program's terminal
+  theorem.
+- Real tool fixes made along the way live in `~/ggen`
+  (`agent/foundry-replay-latest-receipt-per-path`,
+  `agent/v26.8.1-fix-extraction-source-paths`) — cite them, don't
+  re-derive them, if extending this program further.
 
 ## See also
 
 - [Enterprise Architecture Foundry Program](14-enterprise-architecture-foundry.md) — program overview, five corpus layers, repository topology.
-- [Completion ARD](16-foundry-completion-ard.md) — architecture/engineering requirements for closing each remaining workstream.
-- `governance/production-gaps.md` — this repo's general ledger of what remains and who/what closes it; this program's gap is cross-linked there.
-- `foundry/bootstrap.yaml` — the real, current per-workstream status (`workstreams` array, deferring to `foundry/workstreams/state.json` as authoritative).
+- [Completion ARD](16-foundry-completion-ard.md) — the full real fix history, per workstream.
+- `governance/production-gaps.md` / `governance/claims-register.md` (CLM-012) — this program's entry in the general ledger.
+- `foundry/bootstrap.yaml` — real per-workstream status, deferring to `foundry/workstreams/state.json` and `foundry/evidence/terminal-theorem.json` as authoritative.

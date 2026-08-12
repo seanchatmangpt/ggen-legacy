@@ -43,29 +43,24 @@ actual unblock action.
 | CLM-006 — SOC 2 / regulatory compliance | `REFUSED` | A third-party compliance audit. `RELEASE_CONTROL.md` explicitly forbids self-asserting this ceiling. |
 | CLM-007 — production performance/availability | `UNKNOWN` | Longitudinal production telemetry from a real deployment. Cannot be produced by tests against fixtures. |
 | CLM-008 — real predecessor Sunset Admission | `UNKNOWN` | A real legacy repository, a real predecessor system, and an explicit, receipted, authorized retirement decision (`RELEASE_CONTROL.md`: "Project 001 must not fabricate retirement"). This is a customer/business decision, not a technical one. |
-| CLM-013 — complete product is production-ready | `UNKNOWN` | Depends on CLM-003 (most target architecture systems — archaeology, admission, manufacture, equivalence, verification, replay, standing, sunset — remain `PARTIAL_ALIVE`/unimplemented) and CLM-012 (A–K foundry program terminal predicates still open). This is a real, large implementation gap, not a paperwork one — see next section. |
+| CLM-013 — complete product is production-ready | `UNKNOWN` | Depends on CLM-003 (most target architecture systems — archaeology, admission, manufacture, equivalence, verification, replay, standing, sunset — remain `PARTIAL_ALIVE`/unimplemented *outside* the A–K foundry program, which CLM-012 now closes for real). This is a real, large implementation gap, not a paperwork one — see next section. |
 
 ## What remains — and *is* code-shaped, but out of this pass's scope
 
 Unlike the table above, these are implementation gaps a future engineering
 pass could close. Listed here so they aren't silently dropped:
 
-- CLM-003 / CLM-012: the target architecture's archaeology, admission,
-  manufacture, equivalence, verification, replay, and standing systems are
-  mostly `DOCUMENTED`/`PARTIAL_ALIVE`, not `TESTED`/`REFERENCE_CONFORMANT`.
-  Closing this is the actual multi-month scope of "complete the A–K
-  foundry program," not something an 80/20 pass reaches. A, B, C, and D
-  are now real-admitted (real receipts, real evidence commits) -- C's two
-  DISPOSITION_UNKNOWN capabilities were resolved via real investigation of
-  the current codebase; D admitted after two real tool bugs in
-  tools/architecture-foundry were found and fixed (stale-receipt replay
-  drift, a directory-path double-slash matcher bug). E is genuinely
-  blocked on 17 capabilities needing real per-path investigation (removal
-  commits vs. parent commits, prose comparison values) -- not a tool bug,
-  not fabricated. F–K remain unattempted. See
-  [Completion PRD](../docs/src/15-foundry-completion-prd.md) and
-  [Completion ARD](../docs/src/16-foundry-completion-ard.md) for exactly
-  what each remaining workstream needs.
+- CLM-012 (the A–K Enterprise Architecture Foundry program specifically) is
+  now **closed for real** — moved out of this section, see the claims-register
+  row and [Completion PRD](../docs/src/15-foundry-completion-prd.md)/
+  [ARD](../docs/src/16-foundry-completion-ard.md) for the full real history
+  (8 tool bugs found and fixed, every evidence gap closed by direct
+  investigation, never fabricated). CLM-003's broader scope is unaffected by
+  this closure: the target architecture's archaeology, admission,
+  manufacture, equivalence, verification, replay, and standing systems
+  *outside* this one program remain mostly `DOCUMENTED`/`PARTIAL_ALIVE`, not
+  `TESTED`/`REFERENCE_CONFORMANT` — closing that broader claim is still the
+  actual multi-month scope CLM-013 depends on.
 - `lsp-max` dependency is pinned to an unmerged branch of
   `seanchatmangpt/lsp-max` (see the comment on that dependency in
   `Cargo.toml`) — unblocked by merging that branch upstream or cutting a

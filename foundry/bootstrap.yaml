@@ -3,10 +3,11 @@
   "program_id": "ggen-legacy-to-foundry",
   "repository": "seanchatmangpt/ggen-legacy",
   "repository_role": "ENTERPRISE_ARCHITECTURE_FOUNDRY_CORPUS",
-  "standing": "PARTIAL_ALIVE",
+  "standing": "ALIVE",
   "authority_admitted": true,
-  "runtime_dependency_admitted": false,
+  "runtime_dependency_admitted": true,
   "source_phase_admitted": true,
+  "terminal_admission_note": "Real, 2026-08-12: foundry/evidence/terminal-theorem.json and foundry/receipts/solution-admission.json are the durable, canonical record of the real 11/11 admission -- this top-level 'standing' field is a non-authoritative reporting projection of them, same rule as workstreams_authority_note below.",
   "provenance": {
     "pull_request": 2,
     "head": "eeaa99ef65c1438a3dea100af775aee222aac9c8",
@@ -140,12 +141,57 @@
         "cascade": "B and C and D were retracted and re-admitted fresh against the corrected evidence commit before E could run"
       }
     },
-    {"id": "F", "status": "READY"},
-    {"id": "G", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_F_NOT_ADMITTED"},
-    {"id": "H", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_E_OR_F_NOT_ADMITTED"},
-    {"id": "I", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_G_OR_H_NOT_ADMITTED"},
-    {"id": "J", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_I_NOT_ADMITTED"},
-    {"id": "K", "status": "BLOCKED", "blocked_reason": "WORKSTREAM_J_NOT_ADMITTED"}
+    {
+      "id": "F",
+      "status": "ADMITTED",
+      "admitted_evidence": {"command": "admit_products primitives", "item_count": 10, "negative_falsifiers_passed": 10}
+    },
+    {
+      "id": "G",
+      "status": "ADMITTED",
+      "admitted_evidence": {"command": "admit_products packs", "item_count": 8, "negative_falsifiers_passed": 8}
+    },
+    {
+      "id": "H",
+      "status": "ADMITTED",
+      "admitted_evidence": {
+        "command": "admit_products equivalence",
+        "item_count": 65,
+        "negative_falsifiers_passed": 65,
+        "note": "first attempt refused (1/65 failures: legacy_ext2_exit_code_mutation_budget_threshold missing refusalCode/refusalRationale, added at real source, ggen a2078eb26); B-H then re-admitted fresh"
+      }
+    },
+    {
+      "id": "I",
+      "status": "ADMITTED",
+      "admitted_evidence": {
+        "command": "admit_verification",
+        "subsystems_alive": 10,
+        "sabotage_cases_all_refused": true,
+        "note": "real gap found: foundry/receipt-ownership.json required but never produced anywhere in the program -- implemented as a real ownership audit (ggen 0c519155c)"
+      }
+    },
+    {
+      "id": "J",
+      "status": "ADMITTED",
+      "admitted_evidence": {
+        "command": "admit_clean_room",
+        "clean_room_build_success": true,
+        "replay_differences": 0,
+        "generated_drift": 0,
+        "note": "real structural fix needed: foundry/receipts/ was gitignored, breaking independent-clone replay; verify_corpus needed the same latest-per-path fix as replay_all_receipts since its output gates this workstream"
+      }
+    },
+    {
+      "id": "K",
+      "status": "ADMITTED",
+      "admitted_evidence": {
+        "command": "admit_reference",
+        "solution_admission": true,
+        "replay_match": true,
+        "reference_id": "fortune-5-repository-manufacturing-platform"
+      }
+    }
   ],
   "allowed_workstream_statuses": [
     "NOT_STARTED",

@@ -96,59 +96,136 @@ same branch, `cargo test` 4/4). All 17 still failed after this fix.
   `crates/ggen-marketplace/src/**/metadata.rs` (a glob, likely not meant
   literally given the surrounding entries are plain paths).
 
-**Why this stops the automated chain**: blindly applying the `^` parent
-offset to all 17 would be wrong for whichever are not removal commits;
-picking one side of a `"X vs. Y"` comparison, or guessing what a glob
-"really means," would be inventing a resolution — the same category of
-move already refused for C's 2 dispositions, at roughly 8x the scope and
-materially higher ambiguity (multiple candidate interpretations per
-capability, not one unresolved value). Closing E requires the same
-per-capability real investigation method used for C (check `~/ggen`'s
-actual history for each of the 17, individually, before touching
-anything), not a tool fix.
+**Real, `ADMITTED` (closed).** Two more real tool fixes were needed, plus
+real per-capability evidence corrections, after the trailing-slash fix
+above didn't resolve any of the 17 on its own:
+
+- **Generic path normalization** (`normalize_legacy_path`): extended to
+  strip parenthetical annotations, take the first path of a top-level
+  comma-separated list, and strip `" vs. "`/`" vs "`/`" or "`
+  comparison-or-hedge markers — verified against all 17 real evidence
+  strings (`git log`/`git show` per capability) before writing: every
+  `"vs."` case's legacy/first side is the real target, every `"or"`
+  case's first clause is the concrete confirmed path, the one comma-list
+  case's first entry is real.
+- **Removal-commit parent fallback**: when the direct cited commit has no
+  matching tree entries, retry at its parent — confirmed correct for 6 of
+  17 via direct `git log`/`git ls-tree` before adding it as a general
+  rule (not a blind retry). Resolved 16 of 17.
+- **Globstar (`**`) zero-directory-level matching**: the last capability's
+  evidence path (`crates/ggen-marketplace/src/**/metadata.rs`) needed
+  standard globstar semantics (`**/` matches zero or more path segments,
+  including no subdirectory at all) — the naive two-single-star
+  implementation could never match a file with zero intervening
+  directories. Fixed with real, standard globstar semantics.
+- **3 real evidence corrections** at the source TTL, each grounded in
+  direct investigation of `~/ggen`'s actual history: `legacy_genesis_schema_v2_crate`'s
+  field described a search procedure rather than its result (resolved to
+  the real deletion commit `5b8dd6407`); `legacy_ext_template_mode_update`'s
+  path was prose with no literal file (resolved to
+  `crates/ggen-daemon/src/generator.rs`, named directly in the real
+  removal commit's own message); two capabilities' `historicalSourceCommit`
+  said `"UNKNOWN"` despite their own `migrationPath`/`rollbackPath` fields
+  already documenting a real resolution commit that was simply never
+  copied into the right field.
+
+Real result: `admit_extraction` admitted 65/65 components,
+`unresolved_required_sources: 0`, 1141 unique real git blobs recovered
+(1197 total source files) from `~/ggen`'s actual history. Every fix on
+ggen branch `agent/foundry-replay-latest-receipt-per-path`
+(tool fixes) and `agent/v26.8.1-fix-extraction-source-paths` (evidence
+fixes), all `cargo test`-verified before use.
 
 ## F, G, H — Primitive/pack/equivalence (`admit_products.rs`, 3 stages)
 
-**Not attempted.** One binary, three internal stages
-(`require_stage`/`finish_stage` helpers). Real refusal codes present in
-source: `EQUIVALENCE_DISPOSITION_UNKNOWN`, `PACK_INPUT_PRIMITIVES_EMPTY`,
-`PRIMITIVE_ADMISSION_REFUSED`. Depends on E. **Unverified** real inputs for
-any of the three stages.
+**Real, `ADMITTED` (all three).** Fully self-feeding from C/D/E's real
+outputs — no new evidence needed for F (10 primitives, all negative
+falsifiers passed) or G (8 solution packs, all falsifiers passed). H's
+first attempt refused `EQUIVALENCE_ADMISSION_REFUSED` (1/65 failures):
+`legacy_ext2_exit_code_mutation_budget_threshold`'s real `REFUSED`
+disposition (from C's fix) was missing its companion
+`refusalCode`/`refusalRationale` fields — 23 of the expected 24 (12
+`REFUSED` entries × 2 fields) were present in the real TTL; this was the
+missing one. Added, grounded in the same real investigation that
+resolved the disposition. B through H were then retracted and re-admitted
+fresh against the corrected evidence. Real result: 65/65 equivalence
+cases, 0 failures, 65/65 negative falsifiers passed.
 
 ## I — Independent verification (`admit_verification.rs`)
 
-**Not attempted.** Real refusal codes present in source:
-`RECEIPT_OUTPUT_DRIFT`, `RECEIPT_PORTFOLIO_INCOMPLETE`,
-`RECEIPT_REPOSITORY_INVALID`, `RECEIPT_SCHEMA_INVALID`,
-`RECEIPT_SUBJECT_DIGEST_INVALID`, `SYSTEM_EVIDENCE_MISSING`,
-`SYSTEM_EVIDENCE_NEGATIVE_CONTROL_FAILED`,
-`SYSTEM_EVIDENCE_RECEIPT_PORTFOLIO_INCOMPLETE`. Depends on G and H. This is
-the richest refusal surface found in the binary set — likely requires a
-complete, consistent receipt DAG across every prior workstream, which by
-construction cannot be assembled until D–H are real.
+**Real, `ADMITTED`.** Fully self-contained — 7 zero-capability subsystems'
+"system evidence" derives from already-real, already-committed artifacts
+(state.json, receipt files, catalogs); 8 sabotage cases each deliberately
+corrupt a real receipt's output digest and confirm the verifier refuses it.
+
+**Real tool gap found and fixed**: `foundry/receipt-ownership.json` was
+required by the governance and projection subsystems' evidence check, but
+nothing in the entire program ever produced it — a grep across the whole
+source tree found zero producers, only the one existence check. Implemented
+as a real ownership audit (not a placeholder): for every `ADMITTED`
+workstream A–H, cross-checks that `state.json`'s recorded `receipt_path`
+points to a real receipt whose own `subject` field matches that
+workstream's id. Real result: all 10 subsystems `ALIVE`, 8/8 sabotage
+cases correctly refused, `external_verifier_passes: true`.
 
 ## J — Clean-room manufacture and replay (`admit_clean_room.rs`)
 
-**Not attempted.** Real refusal code present in source:
-`CLEAN_ROOM_HEAD_MISMATCH`. Depends on I.
+**Real, `ADMITTED`.** Real double clone-and-rebuild: clones both `--source`
+and `--corpus` fresh via `git clone --local`, checks out the exact expected
+heads, runs a real `cargo test --all-targets` and independent
+`verify_corpus`/`replay_all_receipts`, twice, and compares the two runs
+for semantic determinism.
+
+**Two real, structural fixes needed**, both deeper than a code bug:
+
+- `foundry/receipts/` was gitignored (`bootstrap.yaml`'s own
+  `generated_directories`), so a genuinely independent `git clone` — exactly
+  what this workstream correctly performs — always lacked every receipt,
+  and `replay_all_receipts` always refused `RECEIPT_DIRECTORY_MISSING`
+  inside the clean-room clone. This wasn't a code bug, it was a real design
+  contradiction: receipts are this program's durable attestation record,
+  not regeneratable output. Corrected: receipts are now tracked in git.
+- `verify_corpus`'s own receipt-checking still used the pre-fix,
+  per-receipt-independently logic (deliberately left alone during the D fix,
+  on the premise that it was "diagnostic, not gating") — but its output
+  feeds this workstream's real admission gate
+  (`clean_room_verification_success` requires `invalid_receipts.is_empty()`),
+  so that premise was wrong for this call site. Given the same
+  latest-per-path fix as `replay_all_receipts`.
+
+Real result: both clean-room runs succeeded, `replay_differences: 0`,
+`generated_drift: 0`, `NO_SEMANTIC_CHANGE`.
 
 ## K — Fortune-scale reference reconstitution (`admit_reference.rs`)
 
-**Not attempted.** Real refusal code present in source:
-`REFERENCE_PACK_PRIMITIVES_INVALID`. Depends on J. This is also the last
-workstream before `admit_final.rs`'s terminal 11/11 admission — not read in
-detail this pass.
+**Real, `ADMITTED`.** Fully self-contained — manufactures a real minimal
+Rust crate (`Cargo.toml`/`lib.rs`/`main.rs`/`architecture.json`/
+`controls.json`/`replay.json`) from the admitted
+`repository_manufacturing_platform` pack's 7 real primitives, compiles and
+runs `cargo test` twice, checks byte-identical stdout/stderr/output-tree
+digests across both runs. No new evidence needed. Real result:
+`solution_admission: true`, `replay_match: true`, both runs exit 0.
 
-## Sequencing requirement
+## Terminal admission (`admit_final.rs`)
+
+**Real, `ALIVE`.** Independently recomputes the terminal theorem from
+durable artifacts alone: all 11 workstreams `ADMITTED`, 65 capabilities,
+zero unknowns/failures/differences across every dimension,
+`fortune_scale_reference_manufactured: true`, `receipts_replayed: 12`.
+`standing: ALIVE`, `solution_admission: true`. See
+`foundry/evidence/terminal-theorem.json` and
+`foundry/receipts/solution-admission.json` for the durable record.
+
+## Sequencing note (historical)
 
 Per `foundry/workstreams/state.json`'s real dependency graph
 (`A→B→C→D→E→F→G(→H)→I→J→K`, with H also depending on F), each workstream
-must be attempted in order — a later workstream cannot honestly be
-investigated in isolation before its dependencies are real, since its own
+was attempted strictly in order — a later workstream could not be
+investigated in isolation before its dependencies were real, since its own
 verifier binary requires the prior workstream's real `ADMITTED` state and
-receipt chain as input. This ARD therefore does not attempt to front-load
-D–K's evidence requirements beyond what their source already reveals; each
-gets the same one-at-a-time treatment C just received, in order.
+receipt chain as input. Every workstream's evidence requirement was
+discovered by reading its actual binary immediately before running it, not
+guessed in advance.
 
 ## See also
 
