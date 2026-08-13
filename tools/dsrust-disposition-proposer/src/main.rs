@@ -19,7 +19,7 @@
 
 use anyhow::{Context, Result};
 use clap::Parser;
-use dsrust::{call, configure, predict, Prediction, LM};
+use dsrust::{call, configure, Prediction, Signature, LM};
 use serde::Serialize;
 
 #[derive(Debug, Parser)]
@@ -76,9 +76,24 @@ async fn main() -> Result<()> {
     // this repo's admit_capabilities.rs (tools/architecture-foundry) actually admits;
     // see governance's real disposition definitions in
     // foundry/evidence/B/legacy-capabilities.ttl for the vocabulary this mirrors.
-    let program = predict!(
+    //
+    // Real, verified fix (dsrust-pack v0.1.0): the plain `predict!` string macro has no
+    // typed enum hook, so an unconstrained `proposed_disposition` field, asked of a real
+    // model, does not reliably return one of the closed vocabulary's exact values (a real
+    // live Groq test returned "Deprecated" and a full sentence, not ARCHIVED/REFUSED). The
+    // fix is to write the allowed values directly into the Signature's real instructions
+    // text via dsrust's real `Signature::with_instructions`, then build the module via
+    // `Predict::from_signature` rather than the `predict!` macro.
+    let signature: Signature =
         "historical_source_commit, legacy_source_path, default_behavior, evidence_fixtures -> proposed_disposition, rationale"
+            .parse()
+            .context("real dsrust signature parse failed")?;
+    let mut instructions = signature.instructions.clone();
+    instructions.push_str(
+        " `proposed_disposition` must be exactly one of: ARCHIVED, REFUSED, REPLACED, SUBSUMED, PRESERVED.",
     );
+    let signature = signature.with_instructions(instructions);
+    let program = dsrust::Predict::from_signature(signature);
 
     let prediction = call!(
         program,
