@@ -1,0 +1,65 @@
+# Gate: invalid-doc-model
+# ASK true means refusal. The documentation graph is admitted only when all
+# generated pages and reconstitution targets have bounded authority metadata.
+PREFIX gdoc: <https://ggen.chatmangpt.com/ontology/docs-pack#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+
+ASK {
+  {
+    ?doc a gdoc:Document .
+    FILTER NOT EXISTS { ?doc gdoc:slug ?slug . }
+  }
+  UNION {
+    ?doc a gdoc:Document .
+    FILTER NOT EXISTS { ?doc dcterms:title ?title . }
+  }
+  UNION {
+    ?doc a gdoc:Document .
+    FILTER NOT EXISTS { ?doc gdoc:outputPath ?path . }
+  }
+  UNION {
+    ?doc a gdoc:Document ; gdoc:outputPath ?path .
+    FILTER(!STRSTARTS(STR(?path), "consumer/docs/") || !STRENDS(STR(?path), ".md"))
+  }
+  UNION {
+    ?left a gdoc:Document ; gdoc:outputPath ?path .
+    ?right a gdoc:Document ; gdoc:outputPath ?path .
+    FILTER(?left != ?right)
+  }
+  UNION {
+    ?doc a gdoc:Document .
+    FILTER NOT EXISTS { ?section a gdoc:DocumentSection ; gdoc:sectionOf ?doc . }
+  }
+  UNION {
+    ?doc a gdoc:Document .
+    FILTER NOT EXISTS { ?doc gdoc:sourcePath ?source . }
+  }
+  UNION {
+    ?doc a gdoc:Document ; gdoc:standingCeiling ?standing .
+    FILTER(?standing != "DOCUMENTED" && ?standing != "SCHEMA_VALIDATED" && ?standing != "GENERATED")
+  }
+  UNION {
+    ?target a gdoc:ReconstitutionTarget .
+    FILTER NOT EXISTS { ?target gdoc:observableContract ?observable . }
+  }
+  UNION {
+    ?target a gdoc:ReconstitutionTarget .
+    FILTER NOT EXISTS { ?target gdoc:verifier ?verifier . }
+  }
+  UNION {
+    ?target a gdoc:ReconstitutionTarget .
+    FILTER NOT EXISTS { ?target gdoc:falsifier ?falsifier . }
+  }
+  UNION {
+    ?target a gdoc:ReconstitutionTarget .
+    FILTER NOT EXISTS { ?target gdoc:recoveryPath ?recovery . }
+  }
+  UNION {
+    ?target a gdoc:ReconstitutionTarget .
+    FILTER NOT EXISTS { ?target gdoc:sourcePath ?source . }
+  }
+  UNION {
+    ?target a gdoc:ReconstitutionTarget ; gdoc:standingCeiling ?standing .
+    FILTER(?standing != "DOCUMENTED" && ?standing != "SCHEMA_VALIDATED" && ?standing != "GENERATED")
+  }
+}
