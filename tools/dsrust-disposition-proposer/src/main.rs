@@ -118,3 +118,65 @@ async fn main() -> Result<()> {
     println!("{}", serde_json::to_string_pretty(&proposal)?);
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use dsrust::Example;
+    use serde_json::json;
+
+    /// Real `dsrust::Example`/`Prediction` values (no mocking of dsrust's own types) --
+    /// verifies `text()` extracts a present string field.
+    #[test]
+    fn text_extracts_a_present_string_field() {
+        let example = Example::new([("proposed_disposition", json!("ARCHIVED"))]);
+        let prediction = Prediction::new(example, "raw model reply");
+
+        assert_eq!(text(&prediction, "proposed_disposition"), "ARCHIVED");
+    }
+
+    /// A field the model didn't return, or returned as a non-string value, must degrade to
+    /// an empty string rather than panicking -- this is what makes `text()` safe to call on
+    /// unconstrained real model output in `main()`.
+    #[test]
+    fn text_defaults_to_empty_string_when_field_is_missing() {
+        let example = Example::new([("rationale", json!("some rationale"))]);
+        let prediction = Prediction::new(example, "raw model reply");
+
+        assert_eq!(text(&prediction, "proposed_disposition"), "");
+    }
+
+    #[test]
+    fn text_defaults_to_empty_string_when_field_is_not_a_string() {
+        let example = Example::new([("proposed_disposition", json!(42))]);
+        let prediction = Prediction::new(example, "raw model reply");
+
+        assert_eq!(text(&prediction, "proposed_disposition"), "");
+    }
+
+    /// Regression test for the exact bug fixed in cbf4e5e: a real live Groq call against an
+    /// unconstrained signature returned "Deprecated" (not in the 5-value vocabulary) and a
+    /// full sentence. This asserts the constraint text that fixes it is actually present in
+    /// the instructions handed to the model, and lists all five real disposition values in
+    /// the exact vocabulary `admit_capabilities` (tools/architecture-foundry) admits.
+    #[test]
+    fn signature_instructions_constrain_proposed_disposition_to_the_five_value_vocabulary() {
+        let signature: Signature =
+            "historical_source_commit, legacy_source_path, default_behavior, evidence_fixtures -> proposed_disposition, rationale"
+                .parse()
+                .expect("real dsrust signature parse");
+        let mut instructions = signature.instructions.clone();
+        instructions.push_str(
+            " `proposed_disposition` must be exactly one of: ARCHIVED, REFUSED, REPLACED, SUBSUMED, PRESERVED.",
+        );
+
+        for value in ["ARCHIVED", "REFUSED", "REPLACED", "SUBSUMED", "PRESERVED"] {
+            assert!(
+                instructions.contains(value),
+                "instructions missing disposition value {value}: {instructions}"
+            );
+        }
+        // Guards against the exact failure mode from cbf4e5e's live-Groq repro.
+        assert!(!instructions.contains("Deprecated"));
+    }
+}
