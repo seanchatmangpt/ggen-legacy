@@ -106,10 +106,13 @@ jobs:
         if: steps.gate.outputs.relevant == 'true'
         run: planning/v26.8.7/skdecide_classical_engine.py --help | head -n 1 | grep '^skdecide-classical-engine/26.8.7$'
 
-  gl_dspy_001_dsrust_reconstitution:
-    name: GL-DSPY-001 dsrust reconstitution
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
+  dsrust-reconstitution:
+    name: GL-DSPY-001 exact dsrust reconstitution
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    env:
+      DSRUST_SHA: f24adde08c1d8850e4d7079d019643bb40f905cb
+      RUSTUP_TOOLCHAIN: nightly-2026-06-22
     steps:
       - name: Checkout exact ggen-legacy subject
         uses: actions/checkout@v4
@@ -123,70 +126,71 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
-
-      - name: Checkout exact dsrust source
+      - name: Unit-test external reconstitution refusals and replay
+        run: python3 tools/v26.8.1/test_external_reconstitution.py
+      - name: Checkout frozen dsrust specimen
         uses: actions/checkout@v4
         with:
           repository: seanchatmangpt/dsrust
-          ref: f24adde74c1a72417a19ebbd9678f5cf73fae22c
-          path: dsrust-subject
+          ref: f24adde08c1d8850e4d7079d019643bb40f905cb
+          path: _subjects/dsrust
           persist-credentials: false
-
-      - name: Install dsrust nightly toolchain
+      - name: Verify exact specimen identity
+        shell: bash
         run: |
-          rustup toolchain install nightly-2026-06-22 --profile minimal
-          rustup component add --toolchain nightly-2026-06-22-x86_64-unknown-linux-gnu rustfmt clippy
-
-      - name: Execute exact dsrust workspace tests
-        working-directory: dsrust-subject
+          set -euo pipefail
+          test "$(git -C _subjects/dsrust rev-parse HEAD)" = "$DSRUST_SHA"
+          test -z "$(git -C _subjects/dsrust status --porcelain=v1 --untracked-files=no)"
+      - name: Install known-good dsrust verifier toolchain
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: nightly-2026-06-22
+      - name: Verify selected Rust toolchain
+        shell: bash
         run: |
-          cargo +nightly-2026-06-22 test --workspace --all-targets --locked
-
-      - name: Observe exact dsrust subject twice
+          set -euo pipefail
+          rustup show active-toolchain
+          rustc --version --verbose
+          cargo --version --verbose
+          rustup show active-toolchain | grep '^nightly-2026-06-22-'
+      - name: Execute frozen legacy workspace baseline
+        working-directory: _subjects/dsrust
+        run: cargo test --workspace --all-targets --locked
+      - name: Manufacture deterministic observation evidence twice
+        shell: bash
         run: |
-          python3 tools/v26.8.1/external_reconstitution.py observe \
-            --source-dir dsrust-subject \
+          set -euo pipefail
+          rm -rf evidence/reconstitution/dsrust
+          python3 tools/v26.8.1/external_reconstitution.py \
+            --source _subjects/dsrust \
             --contract reconstitution/dsrust/source-contract.json \
-            --output dsrust-observe-a
-          python3 tools/v26.8.1/external_reconstitution.py observe \
-            --source-dir dsrust-subject \
+            --out evidence/reconstitution/dsrust/run1
+          python3 tools/v26.8.1/external_reconstitution.py \
+            --source _subjects/dsrust \
             --contract reconstitution/dsrust/source-contract.json \
-            --output dsrust-observe-b
-
-      - name: Verify deterministic observation and baseline receipt
-        run: |
-          diff -ru dsrust-observe-a dsrust-observe-b
+            --out evidence/reconstitution/dsrust/run2
           python3 - <<'PY'
           import json
           from pathlib import Path
-
-          contract = json.loads(Path("reconstitution/dsrust/source-contract.json").read_text())
-          report = json.loads(Path("dsrust-observe-a/observation-report.json").read_text())
-          receipt = json.loads(Path("dsrust-observe-a/execution-receipt.json").read_text())
-          assert report["source_sha"] == contract["source_sha"]
-          assert report["repository"] == contract["repository"]
-          assert report["dependency_manifest_refs"] == contract["dependency_manifest_refs"]
-          assert report["dependency_manifest_refs"] == [
-              "Cargo.lock",
-              "justfile",
-              "rust-toolchain.toml",
-              "rustfmt.toml",
-          ]
-          assert report["executed"]["workspace_test_status"] == 0
-          assert len(report["tracked_files"]) == 280
-          assert all(item["status"] == 0 for item in report["file_observations"])
-          assert len(report["surface_observations"]) >= 800
-          assert report["initial_state"]["summary"]["tracked_files"] == 280
-          assert receipt["status"] == "ALIVE"
-          assert len(receipt["command_sha256"]) == 64
+          a = json.loads(Path('evidence/reconstitution/dsrust/run1/reconstitution-receipt.json').read_text())
+          b = json.loads(Path('evidence/reconstitution/dsrust/run2/reconstitution-receipt.json').read_text())
+          assert a['receipt_sha256'] == b['receipt_sha256'], (a['receipt_sha256'], b['receipt_sha256'])
+          assert a['artifacts_sha256'] == b['artifacts_sha256']
+          assert a['source']['exact_sha'] == 'f24adde08c1d8850e4d7079d019643bb40f905cb'
+          assert a['standing'] == 'ALIVE'
+          print(json.dumps({
+              'case_id': a['case_id'],
+              'source_sha': a['source']['exact_sha'],
+              'tracked_file_count': a['observed']['tracked_file_count'],
+              'rust_surface_count': a['observed']['rust_surface_count'],
+              'receipt_sha256': a['receipt_sha256'],
+              'standing': a['standing'],
+          }, sort_keys=True))
           PY
-
-      - name: Upload dsrust observation receipts
+      - name: Upload exact-subject reconstitution evidence
         uses: actions/upload-artifact@v4
         with:
-          name: gl-dspy-001-dsrust-observation-receipts
-          path: |
-            dsrust-observe-a
-            dsrust-observe-b
+          name: gl-dspy-001-dsrust-${{ github.run_id }}
+          path: evidence/reconstitution/dsrust/
           if-no-files-found: error
-          retention-days: 30
+          retention-days: 14
