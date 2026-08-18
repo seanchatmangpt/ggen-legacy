@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "case_id": "GL-DSPY-001",
+  "source": {
+    "repo": "seanchatmangpt/dsrust",
+    "ref": "f24adde08c1d8850e4d7079d019643bb40f905cb",
+    "sha": "f24adde08c1d8850e4d7079d019643bb40f905cb",
+    "license_expression": "MIT OR Apache-2.0",
+    "expected_files": [
+      "Cargo.toml",
+      "Cargo.lock",
+      "LICENSE-MIT",
+      "LICENSE-APACHE",
+      "src/lib.rs",
+      "derive/Cargo.toml",
+      "bridge/Cargo.toml",
+      "tpe/Cargo.toml",
+      "pyrng/Cargo.toml",
+      "gepa/Cargo.toml"
+    ]
+  },
+  "observation": {
+    "include_prefixes": [],
+    "exclude_prefixes": ["target"]
+  },
+  "baseline": {
+    "toolchain": "nightly-2026-06-22",
+    "toolchain_authority": "known-good verifier observed executing the frozen workspace successfully; explicitly bound for replay and not asserted as source-declared MSRV",
+    "toolchain_discovery": [
+      {
+        "candidate": "1.85.0",
+        "result": "REFUSED",
+        "reason": "exact locked dependency graph contains ICU 2.2.0/idna_adapter packages requiring rustc 1.86"
+      },
+      {
+        "candidate": "1.86.0",
+        "result": "REFUSED",
+        "reason": "dsrust-derive derive/src/parse.rs uses let-chain syntax rejected with E0658 by rustc 1.86.0"
+      }
+    ],
+    "commands": [
+      "cargo metadata --format-version 1 --locked --no-deps",
+      "cargo test --workspace --all-targets --locked"
+    ]
+  },
+  "claim_boundary": {
+    "observation": "Exact Git/Cargo topology and conservative lexical Rust public surfaces are evidence only.",
+    "admission": "No recovered semantic concept is admitted by this contract.",
+    "manufacture": "No replacement implementation is manufactured by this contract.",
+    "equivalence": "No legacy/replacement behavioral equivalence is claimed by this contract."
+  }
+}
