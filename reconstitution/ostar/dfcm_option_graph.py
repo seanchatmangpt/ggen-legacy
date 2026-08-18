@@ -12,6 +12,7 @@ import argparse
 import hashlib
 import itertools
 import json
+import math
 import sys
 from pathlib import Path
 from typing import Any
@@ -191,6 +192,65 @@ def prune(graph: dict[str, Any], constraints: dict[str, Any]) -> dict[str, Any]:
     return _wrap(core, [graph["receipt"]["artifact_digest"], digest(constraints)])
 
 
+def frontier(graph: dict[str, Any]) -> dict[str, Any]:
+    """Rank reversible evidence targets by how much option topology they can split.
+
+    This is a SELECT-free query. It measures the partition induced by learning one
+    capability's final disposition, returns every tied maximal target, and grants
+    no authority to acquire evidence or choose a disposition.
+    """
+    verify(graph)
+    core = graph["core"]
+    options = core["options"]
+    total = len(options)
+    _require(total > 0, "DFCM_FRONTIER_EMPTY", "no retained options remain to partition")
+    records: list[dict[str, Any]] = []
+    for capability in core["capability_order"]:
+        counts = {disposition: 0 for disposition in DISPOSITIONS}
+        for option in options:
+            assignment = {item["capability"]: item["disposition"] for item in option["assignments"]}
+            counts[assignment[capability]] += 1
+        nonzero = [count for count in counts.values() if count]
+        probabilities = [count / total for count in nonzero]
+        entropy = -sum(probability * math.log2(probability) for probability in probabilities)
+        worst_case_remaining = max(nonzero)
+        records.append(
+            {
+                "capability": capability,
+                "support_counts": counts,
+                "supported_dispositions": len(nonzero),
+                "entropy_bits": round(entropy, 12),
+                "worst_case_remaining": worst_case_remaining,
+                "guaranteed_prunable": total - worst_case_remaining,
+                "evidence_authority": False,
+                "selection_authority": False,
+                "actuation_authority": False,
+            }
+        )
+    # Minimize the largest surviving partition first; entropy breaks any remaining
+    # tie. Preserve every equal best target instead of selecting one by name.
+    best_worst = min(record["worst_case_remaining"] for record in records)
+    candidates = [record for record in records if record["worst_case_remaining"] == best_worst]
+    best_entropy = max(record["entropy_bits"] for record in candidates)
+    maximal = sorted(
+        record["capability"]
+        for record in candidates
+        if record["entropy_bits"] == best_entropy
+    )
+    return {
+        "schema": "ggen.legacy.dfcm-evidence-frontier.v1",
+        "option_graph_digest": graph["receipt"]["artifact_digest"],
+        "option_count": total,
+        "targets": records,
+        "maximal_information_targets": maximal,
+        "selection_state": "UNSELECTED",
+        "claim_ceiling": "EVIDENCE_PARTITION_ONLY",
+        "evidence_authority": False,
+        "selection_authority": False,
+        "actuation_authority": False,
+    }
+
+
 def select(_: dict[str, Any], option_id: str) -> None:
     raise DfcmError(
         "DFCM_SELECTION_REQUIRES_ADMISSION",
@@ -221,6 +281,8 @@ def main(argv: list[str] | None = None) -> int:
     prune_parser.add_argument("--graph", required=True, type=Path)
     prune_parser.add_argument("--constraints", required=True, type=Path)
     prune_parser.add_argument("--out", required=True, type=Path)
+    frontier_parser = sub.add_parser("frontier")
+    frontier_parser.add_argument("--graph", required=True, type=Path)
     select_parser = sub.add_parser("select")
     select_parser.add_argument("--graph", required=True, type=Path)
     select_parser.add_argument("--option-id", required=True)
@@ -236,6 +298,8 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "prune":
             result = prune(load_json(args.graph, "DFCM_GRAPH_INVALID"), load_json(args.constraints, "DFCM_CONSTRAINTS_INVALID"))
             write_json(args.out, result)
+        elif args.command == "frontier":
+            result = frontier(load_json(args.graph, "DFCM_GRAPH_INVALID"))
         elif args.command == "select":
             select(load_json(args.graph, "DFCM_GRAPH_INVALID"), args.option_id)
             raise AssertionError("unreachable")
