@@ -73,6 +73,45 @@ class DfcmOptionGraphTests(unittest.TestCase):
             self.assertEqual(assignments["ostar-cli-load"], "REFUSED")
         module.verify(pruned)
 
+    def test_frontier_preserves_all_equally_maximal_evidence_targets(self) -> None:
+        graph = module.construct(study())
+        frontier = module.frontier(graph)
+        self.assertEqual(frontier["option_count"], 1800)
+        self.assertEqual(frontier["selection_state"], "UNSELECTED")
+        self.assertEqual(frontier["claim_ceiling"], "EVIDENCE_PARTITION_ONLY")
+        self.assertEqual(frontier["maximal_information_targets"], sorted(graph["core"]["capability_order"]))
+        for target in frontier["targets"]:
+            self.assertEqual(set(target["support_counts"].values()), {360})
+            self.assertEqual(target["supported_dispositions"], 5)
+            self.assertAlmostEqual(target["entropy_bits"], 2.321928094887, places=12)
+            self.assertEqual(target["worst_case_remaining"], 360)
+            self.assertEqual(target["guaranteed_prunable"], 1440)
+            self.assertFalse(target["evidence_authority"])
+            self.assertFalse(target["selection_authority"])
+            self.assertFalse(target["actuation_authority"])
+
+    def test_frontier_recalculates_after_reversible_pruning(self) -> None:
+        graph = module.construct(study())
+        constraints = {
+            "schema": module.CONSTRAINT_SCHEMA,
+            "selection_authority": False,
+            "actuation_authority": False,
+            "rules": [
+                {"capability": "ostar-cli-load", "allowed_dispositions": ["REFUSED"]},
+            ],
+        }
+        pruned = module.prune(graph, constraints)
+        frontier = module.frontier(pruned)
+        by_id = {target["capability"]: target for target in frontier["targets"]}
+        fixed = by_id["ostar-cli-load"]
+        self.assertEqual(fixed["supported_dispositions"], 1)
+        self.assertEqual(fixed["entropy_bits"], 0.0)
+        self.assertNotIn("ostar-cli-load", frontier["maximal_information_targets"])
+        self.assertGreater(len(frontier["maximal_information_targets"]), 0)
+        self.assertFalse(frontier["evidence_authority"])
+        self.assertFalse(frontier["selection_authority"])
+        self.assertFalse(frontier["actuation_authority"])
+
     def test_direct_selection_is_refused(self) -> None:
         graph = module.construct(study())
         with self.assertRaises(module.DfcmError) as caught:
