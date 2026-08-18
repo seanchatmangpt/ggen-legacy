@@ -1,0 +1,6 @@
+{
+  "schema": "ggen.legacy.dfcm-constraints.v1",
+  "selection_authority": false,
+  "actuation_authority": false,
+  "rules": []
+}
