@@ -194,3 +194,115 @@ jobs:
           path: evidence/reconstitution/dsrust/
           if-no-files-found: error
           retention-days: 14
+
+  docs-pack-reconstitution:
+    name: GL-DOCS-001 real ggen manufacture replay
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      GGEN_SHA: 59c95cac18d49c62533918c906524be0fc4063ec
+      RUSTUP_TOOLCHAIN: nightly-2026-06-22
+      PACK: packs/ggen-docs-reconstitution-pack
+    steps:
+      - name: Checkout exact ggen-legacy subject
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Admit exact subject and pack source
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          test -f "$PACK/ontology.ttl"
+          test -f "$PACK/ggen.toml"
+          test ! -e "$PACK/consumer/docs/SUMMARY.md"
+          count="$(find .github/workflows -maxdepth 1 -type f \( -name '*.yml' -o -name '*.yaml' \) | wc -l | tr -d ' ')"
+          test "$count" -eq 1
+      - name: Checkout frozen real ggen manufacturer
+        uses: actions/checkout@v4
+        with:
+          repository: seanchatmangpt/ggen
+          ref: 59c95cac18d49c62533918c906524be0fc4063ec
+          path: _tooling/ggen
+          persist-credentials: false
+      - name: Verify manufacturer identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _tooling/ggen rev-parse HEAD)" = "$GGEN_SHA"
+          test -z "$(git -C _tooling/ggen status --porcelain=v1 --untracked-files=no)"
+      - name: Install pinned ggen toolchain
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: nightly-2026-06-22
+      - name: Build admitted ggen CLI
+        working-directory: _tooling/ggen
+        run: cargo build --locked -p ggen-cli-lib --bin ggen
+      - name: Dry-run admission and refusal falsifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          GGEN="$GITHUB_WORKSPACE/_tooling/ggen/target/debug/ggen"
+          cp -a "$PACK" /tmp/docs-pack-admitted
+          (cd /tmp/docs-pack-admitted && "$GGEN" sync run --dry-run)
+          cp -a "$PACK" /tmp/docs-pack-refused
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('/tmp/docs-pack-refused/ontology.ttl')
+          s = p.read_text()
+          old = 'gdoc:outputPath "consumer/docs/00-governance.md"'
+          new = 'gdoc:outputPath "../escaped.md"'
+          assert old in s
+          p.write_text(s.replace(old, new, 1))
+          PY
+          if (cd /tmp/docs-pack-refused && "$GGEN" sync run --dry-run); then
+            echo 'REFUSAL_FAILED: invalid output path was admitted' >&2
+            exit 1
+          fi
+      - name: Manufacture twice and prove byte-stable projection
+        shell: bash
+        run: |
+          set -euo pipefail
+          GGEN="$GITHUB_WORKSPACE/_tooling/ggen/target/debug/ggen"
+          rm -rf /tmp/docs-pack-run1 /tmp/docs-pack-run2 evidence/reconstitution/docs-pack
+          cp -a "$PACK" /tmp/docs-pack-run1
+          cp -a "$PACK" /tmp/docs-pack-run2
+          (cd /tmp/docs-pack-run1 && "$GGEN" sync run)
+          (cd /tmp/docs-pack-run2 && "$GGEN" sync run)
+          test -f /tmp/docs-pack-run1/consumer/docs/SUMMARY.md
+          test -f /tmp/docs-pack-run1/consumer/docs/EVIDENCE.ttl
+          diff -ru /tmp/docs-pack-run1/consumer /tmp/docs-pack-run2/consumer
+          mkdir -p evidence/reconstitution/docs-pack
+          cp -a /tmp/docs-pack-run1/consumer evidence/reconstitution/docs-pack/consumer
+          python3 - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          root = Path('/tmp/docs-pack-run1/consumer')
+          rows = []
+          for p in sorted(x for x in root.rglob('*') if x.is_file()):
+              rel = p.relative_to(root).as_posix()
+              rows.append((rel, hashlib.sha256(p.read_bytes()).hexdigest()))
+          assert len(rows) == 14, rows
+          digest = hashlib.sha256(json.dumps(rows, separators=(',', ':'), sort_keys=True).encode()).hexdigest()
+          receipt = {
+              'case_id': 'GL-DOCS-001',
+              'ggen_sha': '59c95cac18d49c62533918c906524be0fc4063ec',
+              'artifact_count': len(rows),
+              'projection_sha256': digest,
+              'standing': 'ALIVE',
+              'authority_ceiling': 'GENERATED',
+          }
+          out = Path('evidence/reconstitution/docs-pack/replay-receipt.json')
+          out.write_text(json.dumps(receipt, indent=2, sort_keys=True) + '\n')
+          print(out.read_text())
+          PY
+      - name: Upload manufacture and replay evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: gl-docs-001-${{ github.run_id }}
+          path: evidence/reconstitution/docs-pack/
+          if-no-files-found: error
+          retention-days: 14
