@@ -67,6 +67,7 @@ Conventions used by the built-in surface checkers
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -80,6 +81,8 @@ from pathlib import Path
 from typing import Any
 
 SCHEMA = "ggen.legacy-equivalence.verifier-report.v1"
+RECEIPT_SCHEMA = "ggen.legacy-equivalence.semantic-receipt.v1"
+DISPOSITIONS = {"PRESERVED", "SUBSUMED", "REPLACED", "ARCHIVED", "REFUSED"}
 
 
 # ---------------------------------------------------------------------------
@@ -106,6 +109,90 @@ def normalize_text(text: str, policy: str) -> str:
             return text
         return json.dumps(parsed, sort_keys=True, separators=(",", ":"))
     raise ValueError(f"unknown normalization_policy: {policy!r}")
+
+
+def canonical_bytes(value: Any) -> bytes:
+    return (json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False) + "\n").encode("utf-8")
+
+
+def describe_claim(manifest: dict, require_bounded_scope: bool = False) -> dict:
+    """Classify the semantic ceiling without pretending to decide program meaning.
+
+    Historical manifests remain runnable, but their missing scope is reported as
+    UNKNOWN. A caller can require the Rice fence for admission-sensitive runs.
+    Explicitly unbounded claims are always REFUSED.
+    """
+    scope = manifest.get("semantic_scope")
+    cases = manifest.get("cases", [])
+    dispositions = sorted(
+        {
+            case.get("expected_disposition")
+            for case in cases
+            if isinstance(case, dict) and isinstance(case.get("expected_disposition"), str)
+        }
+    )
+    surfaces = sorted(
+        {
+            surface
+            for case in cases
+            if isinstance(case, dict)
+            for surface in case.get("observable_surfaces", [])
+            if isinstance(surface, str)
+        }
+    )
+    base = {
+        "mode": None,
+        "universal_equivalence_claimed": None,
+        "case_ids": sorted(case.get("case_id") for case in cases if isinstance(case, dict) and isinstance(case.get("case_id"), str)),
+        "dispositions": dispositions,
+        "observable_surfaces": surfaces,
+    }
+    if not isinstance(scope, dict):
+        if require_bounded_scope:
+            return {
+                **base,
+                "standing": "REFUSED",
+                "claim_ceiling": "REFUSED:RICE_SCOPE_MISSING",
+                "reason": "semantic_scope is required for admitted equivalence",
+            }
+        return {
+            **base,
+            "standing": "UNKNOWN",
+            "claim_ceiling": "LEGACY_UNSCOPED",
+            "reason": "semantic_scope was not declared; results cannot support an admitted equivalence claim",
+        }
+
+    base["mode"] = scope.get("mode")
+    base["universal_equivalence_claimed"] = scope.get("universal_equivalence_claimed")
+    if scope.get("mode") != "bounded-observable-surfaces" or scope.get("universal_equivalence_claimed") is not False:
+        return {
+            **base,
+            "standing": "REFUSED",
+            "claim_ceiling": "REFUSED:RICE_SCOPE_UNBOUNDED",
+            "reason": "only bounded-observable-surfaces with universal_equivalence_claimed=false is admissible",
+        }
+    if not cases or not surfaces:
+        return {
+            **base,
+            "standing": "REFUSED",
+            "claim_ceiling": "REFUSED:OBSERVABLE_CONTRACT_EMPTY",
+            "reason": "bounded equivalence requires cases and named observable surfaces",
+        }
+    unknown_dispositions = sorted(value for value in dispositions if value not in DISPOSITIONS)
+    unknown_surfaces = sorted(value for value in surfaces if value not in SURFACE_CHECKERS)
+    if unknown_dispositions or unknown_surfaces:
+        return {
+            **base,
+            "standing": "REFUSED",
+            "claim_ceiling": "REFUSED:OBSERVABLE_CONTRACT_INVALID",
+            "reason": f"unknown dispositions={unknown_dispositions} surfaces={unknown_surfaces}",
+        }
+    return {
+        **base,
+        "standing": "PARTIAL_ALIVE",
+        "claim_ceiling": "BOUNDED_OBSERVABLE_CONTRACT",
+        "reason": "only the declared cases and observable surfaces are in scope",
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -379,20 +466,47 @@ def run_case(case: dict, work_root: Path) -> dict:
     }
 
 
-def run_manifest(manifest: dict, work_root: Path) -> dict:
-    results = [run_case(case, work_root) for case in manifest.get("cases", [])]
+def semantic_receipt(claim: dict, results: list[dict], summary: dict) -> dict:
+    stable_results = [
+        {key: value for key, value in result.items() if key != "duration_ms"}
+        for result in results
+    ]
+    core = {
+        "schema": SCHEMA,
+        "claim": claim,
+        "results": stable_results,
+        "summary": summary,
+    }
+    return {
+        "schema": RECEIPT_SCHEMA,
+        "algorithm": "SHA-256",
+        "artifact_digest": hashlib.sha256(canonical_bytes(core)).hexdigest(),
+        "authority": False,
+        "epistemic_class": "OBSERVED",
+        "volatile_fields_excluded": ["generated_at", "results[].duration_ms", "manifest_path"],
+    }
+
+
+def run_manifest(manifest: dict, work_root: Path, require_bounded_scope: bool = False) -> dict:
+    claim = describe_claim(manifest, require_bounded_scope=require_bounded_scope)
+    # A refused semantic boundary is rejected before adapter execution. The
+    # equivalence court is an observer, not an ambient execution backdoor.
+    results = [] if claim["standing"] == "REFUSED" else [run_case(case, work_root) for case in manifest.get("cases", [])]
     summary = {
         "total": len(results),
         "passed": sum(1 for r in results if r["status"] == "PASS"),
         "failed": sum(1 for r in results if r["status"] == "FAIL"),
         "blocked": sum(1 for r in results if r["status"] == "BLOCKED"),
     }
-    return {
+    report = {
         "schema": SCHEMA,
         "generated_at": datetime.now(timezone.utc).isoformat(),
+        "claim": claim,
         "results": results,
         "summary": summary,
     }
+    report["semantic_receipt"] = semantic_receipt(claim, results, summary)
+    return report
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -400,6 +514,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--manifest", required=True, help="Path to case_manifest.json")
     parser.add_argument("--report", required=True, help="Path to write the verifier report JSON")
     parser.add_argument("--work-dir", default=None, help="Scratch directory for adapter EQV_OUT (default: fresh temp dir)")
+    parser.add_argument(
+        "--require-bounded-scope",
+        action="store_true",
+        help="Refuse manifests that omit the bounded-observable-surfaces Rice fence",
+    )
     args = parser.parse_args(argv)
 
     manifest_path = Path(args.manifest)
@@ -414,7 +533,7 @@ def main(argv: list[str] | None = None) -> int:
         cleanup = True
 
     try:
-        report = run_manifest(manifest, work_root)
+        report = run_manifest(manifest, work_root, require_bounded_scope=args.require_bounded_scope)
         report["manifest_path"] = str(manifest_path)
         report_path = Path(args.report)
         report_path.parent.mkdir(parents=True, exist_ok=True)
@@ -425,7 +544,8 @@ def main(argv: list[str] | None = None) -> int:
         summary = report["summary"]
         print(f"summary: {summary['passed']}/{summary['total']} passed, {summary['failed']} failed, {summary['blocked']} blocked")
 
-        return 0 if summary["failed"] == 0 and summary["blocked"] == 0 else 1
+        claim_refused = report["claim"]["standing"] == "REFUSED"
+        return 0 if summary["failed"] == 0 and summary["blocked"] == 0 and not claim_refused else 1
     finally:
         if cleanup:
             shutil.rmtree(work_root, ignore_errors=True)
