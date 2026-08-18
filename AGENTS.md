@@ -7,6 +7,7 @@ This file governs `seanchatmangpt/ggen-legacy`.
 - admitted reconstruction base: `70e599a599fedb7c62c965377cc2f80df1fa01ec`
 - active executable ticket: `GL-LSP-001`
 - concurrent executable ticket: `GL-PLAN-002`
+- concurrent reconstitution ticket: `GL-OSTAR-001`
 - protocol runtime: `lsp-max`
 - pinned runtime: `seanchatmangpt/lsp-max@220d3251e959f6a58ce0311e995b31a85f98240c`
 - received contract authority: `authority/lsp-contract.json`
@@ -39,6 +40,14 @@ benchmark observation → anti-leak goal reconstruction → finite reversible se
 → preserve all lawful planner/child edges → select bounded WIP child
 → construct-only manufacture intent → independent receipt → admit child
 → resume/replan parent → candidate POWL/MFW projections → replay
+```
+
+For `GL-OSTAR-001`:
+
+```text
+exact artifact census → contradictory observations → NO_AUTHORITY
+→ bounded Rice fence → explicit O* admission or typed refusal
+→ scoped equivalence → receipt → replay → EMPIRE candidate handoff
 ```
 
 The receiver may validate and execute a contract. It may not alter the producing ontology, certify the ggen kernel, or convert source agreement into runtime `ALIVE`.
@@ -180,6 +189,30 @@ Required behavior:
 9. Emit and deterministically replay a tamper-evident orchestration event chain.
 10. Never promote subsystem, repository, release, or production standing from planner success.
 
+## GL-OSTAR-001 concurrent authored boundary
+
+```text
+AGENTS.md                              # this admission extension only
+tickets/GL-OSTAR-001.md
+tools/v26.8.1/authority_vacuum.py
+tools/v26.8.1/test_authority_vacuum.py
+tools/v26.8.1/equivalence_runner.py    # bounded-scope metadata only
+reconstitution/ostar/**
+```
+
+Required behavior:
+
+1. Treat every OSTAR/OntoStar repository, checkout, document, and executable as an observation; none is canonical by discovery.
+2. Begin in `NO_AUTHORITY`; an observer may not name a canonical subject or self-promote evidence.
+3. Record contradictory observations without choosing a winner.
+4. Fence Rice's theorem precisely: no universal semantic decider or unrestricted equivalence claim.
+5. Admit only an explicitly authored, digest-bound O* contract over named observable surfaces.
+6. Require exact source coordinates and preserve unmaterialized subjects as `BLOCKED`/`UNKNOWN` topology.
+7. Close every admitted capability to exactly one of `PRESERVED`, `SUBSUMED`, `REPLACED`, `ARCHIVED`, or `REFUSED`; final admission contains no `UNKNOWN`.
+8. Treat a required-refusal study with no `REFUSED` disposition as `REFUSED:SCOPING_FAILURE_NO_REFUSAL`.
+9. Manufacture no consequential action; the output is an EMPIRE construction candidate only.
+10. Bind observation/admission artifacts to deterministic receipts and prove replay without volatile timestamps.
+
 ## Verification ladder
 
 ```text
@@ -200,6 +233,15 @@ python3 -m unittest discover -s planning/v26.8.7/tests -v
 → python3 planning/v26.8.7/verify.py --strict
 → planning/v26.8.7/skdecide_classical_engine.py --help
 → exact external planner/MFW replay when those runtimes/trees are observed available
+```
+
+For `GL-OSTAR-001`:
+
+```text
+python3 tools/v26.8.1/test_authority_vacuum.py -v
+→ python3 tools/v26.8.1/authority_vacuum.py observe --study reconstitution/ostar/study.json --subject-root ontostar-open-ontologies=<exact checkout> --out <report-a>
+→ repeat to <report-b>
+→ python3 tools/v26.8.1/authority_vacuum.py replay --left <report-a> --right <report-b>
 ```
 
 Hosted CI is not a substitute for local execution. `gh` and hosted CI are excluded for the original GL-LSP-001 task; GL-PLAN-002 may add a replay workflow as supplemental publication evidence, never as a substitute for local verification.

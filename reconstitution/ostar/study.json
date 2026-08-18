@@ -1,0 +1,129 @@
+{
+  "schema": "ggen.legacy.authority-vacuum.study.v1",
+  "study_id": "OSTAR-EMPIRE-001",
+  "initial_authority_state": "NO_AUTHORITY",
+  "direct_actuation": false,
+  "semantic_scope": {
+    "mode": "bounded-observable-surfaces",
+    "universal_equivalence_claimed": false,
+    "rice_boundary": "No general decision procedure is claimed for non-trivial semantic properties of arbitrary programs. Only exact artifact observations and explicitly named observable surfaces may receive bounded standing."
+  },
+  "controlled_predicates": [
+    {"predicate": "ostar.source.todo_allowed", "cardinality": "one"},
+    {"predicate": "ostar.observability.module", "cardinality": "one"}
+  ],
+  "subjects": [
+    {
+      "id": "ostar-private-a392e009",
+      "repo": "seanchatmangpt/ostar",
+      "exact_sha": "a392e009400c83d5e175b508c4e3008e189945d3",
+      "transport": "github-connector-partial",
+      "authority": false,
+      "artifacts": [
+        {"id": "ostar-readme", "path": "README.md", "git_blob_sha1": "451c0c69310487d625c6b31a4e5681822bdf019d"},
+        {"id": "ostar-agents", "path": "AGENTS.md", "git_blob_sha1": "ec4402d399d35d4cb9066403d7df4edb75633407"},
+        {"id": "ostar-claude", "path": "CLAUDE.md", "git_blob_sha1": "78bc546664c50daa14820fa9346945a91ea5751e"},
+        {"id": "ostar-pyproject", "path": "pyproject.toml", "git_blob_sha1": "f7533c4cab2df64c8d3480304e52dd4494728f2d"},
+        {"id": "ostar-cli", "path": "src/ostar/cli.py", "git_blob_sha1": "b55dac53deb0fbd8dce3d3b33d1782797e5dd6fa"},
+        {"id": "ostar-dteam-commands", "path": "src/ostar/manufacturing/dteam_commands.py", "git_blob_sha1": "5816f7a891fe79c56cef66c754b54bdc5a1aba3d"},
+        {"id": "ostar-dteam-client", "path": "src/ostar/manufacturing/dteam_client.py", "git_blob_sha1": "817cf6a89da220e46f9b0ad06310c0608cf65918"}
+      ]
+    },
+    {
+      "id": "ontostar-open-ontologies",
+      "repo": "seanchatmangpt/open-ontologies",
+      "exact_sha": "19110557537ffdbc7590a4243c36b1e5bfc1e58e",
+      "transport": "git-checkout",
+      "authority": false,
+      "artifacts": [
+        {"id": "ontostar-readme", "path": "README.md", "git_blob_sha1": "55a424b5f27203302f1e22edb40c68af64124c83"},
+        {"id": "ontostar-llm-boundary", "path": "docs/06-llm-boundary.md", "git_blob_sha1": "2c6f53b22e5572809202d57054c503ff9943d15f"},
+        {"id": "ontostar-manufacturing", "path": "src/manufacturing/mod.rs", "git_blob_sha1": "69c61f2a88ac601336dee0e89ad760a6e746fcb5"},
+        {"id": "ontostar-admission", "path": "src/admission.rs", "git_blob_sha1": "323c989e3cbeab723106ba9226697e5963bcf447"},
+        {"id": "ontostar-wasm4pm", "path": "ontology/ontostar-wasm4pm-integration.ttl", "git_blob_sha1": "ff612981f7f956bcbbf5d001b949a90f4a9eacff"}
+      ]
+    },
+    {
+      "id": "businessos-embedded-ostar",
+      "repo": "local:BusinessOS/extern/ostar",
+      "exact_sha": null,
+      "transport": "unmaterialized-local-reference",
+      "authority": false,
+      "artifacts": []
+    }
+  ],
+  "observations": [
+    {
+      "id": "ostar-policy-forbids-todo",
+      "subject": "ostar-private-a392e009",
+      "predicate": "ostar.source.todo_allowed",
+      "value": false,
+      "evidence": "ostar-agents",
+      "claim_ceiling": "OBSERVED_DECLARATION"
+    },
+    {
+      "id": "ostar-cli-contains-todo",
+      "subject": "ostar-private-a392e009",
+      "predicate": "ostar.source.todo_allowed",
+      "value": true,
+      "evidence": "ostar-cli",
+      "claim_ceiling": "OBSERVED_SOURCE"
+    },
+    {
+      "id": "ostar-policy-observability-v2-only",
+      "subject": "ostar-private-a392e009",
+      "predicate": "ostar.observability.module",
+      "value": "ostar.utils.observability_v2",
+      "evidence": "ostar-claude",
+      "claim_ceiling": "OBSERVED_DECLARATION"
+    },
+    {
+      "id": "ostar-cli-imports-observability-v1",
+      "subject": "ostar-private-a392e009",
+      "predicate": "ostar.observability.module",
+      "value": "ostar.utils.observability",
+      "evidence": "ostar-cli",
+      "claim_ceiling": "OBSERVED_SOURCE"
+    },
+    {
+      "id": "ostar-cli-imports-dteam-commands",
+      "subject": "ostar-private-a392e009",
+      "predicate": "ostar.import.dteam_commands",
+      "value": true,
+      "evidence": "ostar-cli",
+      "claim_ceiling": "OBSERVED_SOURCE"
+    },
+    {
+      "id": "ostar-dteam-commands-import-global-client",
+      "subject": "ostar-private-a392e009",
+      "predicate": "ostar.import.global_dteam_client",
+      "value": true,
+      "evidence": "ostar-dteam-commands",
+      "claim_ceiling": "OBSERVED_SOURCE"
+    },
+    {
+      "id": "ostar-dteam-client-requires-bridge",
+      "subject": "ostar-private-a392e009",
+      "predicate": "ostar.runtime.ostar_bridge_required_at_import",
+      "value": true,
+      "evidence": "ostar-dteam-client",
+      "claim_ceiling": "OBSERVED_SOURCE"
+    },
+    {
+      "id": "ontostar-declares-llm-candidate-only",
+      "subject": "ontostar-open-ontologies",
+      "predicate": "ontostar.llm_output_authority",
+      "value": "CANDIDATE_ONLY",
+      "evidence": "ontostar-llm-boundary",
+      "claim_ceiling": "OBSERVED_DECLARATION"
+    }
+  ],
+  "candidate_capabilities": [
+    {"id": "ostar-cli-load", "disposition": "UNKNOWN"},
+    {"id": "ostar-codemanufactory-manufacture", "disposition": "UNKNOWN"},
+    {"id": "ostar-governance-pipeline", "disposition": "UNKNOWN"},
+    {"id": "ostar-dteam-process-intelligence", "disposition": "UNKNOWN"},
+    {"id": "ostar-ggen-projection-contract", "disposition": "UNKNOWN"},
+    {"id": "ontostar-admission-manufacture", "disposition": "UNKNOWN"}
+  ]
+}
