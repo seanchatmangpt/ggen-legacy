@@ -1,0 +1,26 @@
+{%- set docs = sparql(query='PREFIX gdoc: <https://ggen.chatmangpt.com/ontology/docs-pack#> PREFIX dcterms: <http://purl.org/dc/terms/> SELECT ?slug ?title ?outputPath ?standing WHERE { ?d a gdoc:Document ; gdoc:slug ?slug ; dcterms:title ?title ; gdoc:outputPath ?outputPath ; gdoc:standingCeiling ?standing . } ORDER BY ?slug') -%}
+{%- set targets = sparql(query='PREFIX gdoc: <https://ggen.chatmangpt.com/ontology/docs-pack#> PREFIX dcterms: <http://purl.org/dc/terms/> SELECT ?id ?title ?source ?standing WHERE { ?t a gdoc:ReconstitutionTarget ; dcterms:identifier ?id ; dcterms:title ?title ; gdoc:sourcePath ?source ; gdoc:standingCeiling ?standing . } ORDER BY ?id') -%}
+@prefix ev: <https://ggen.chatmangpt.com/evidence/docs-pack#> .
+@prefix gdoc: <https://ggen.chatmangpt.com/ontology/docs-pack#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+
+# GENERATED projection inventory. This graph records declared projection and
+# reconstruction coordinates; execution receipts remain separate evidence.
+
+{% for d in docs -%}
+ev:projection-{{ d.slug }} a gdoc:DocumentationProjection ;
+  dcterms:title "{{ d.title }}" ;
+  gdoc:outputPath "{{ d.outputPath }}" ;
+  gdoc:standingCeiling "{{ d.standing }}" ;
+  prov:wasDerivedFrom <https://ggen.chatmangpt.com/ontology/docs-pack#{{ d.slug }}> .
+
+{% endfor -%}
+{% for t in targets -%}
+ev:target-{{ t.id }} a gdoc:ReconstitutionEvidenceRequirement ;
+  dcterms:identifier "{{ t.id }}" ;
+  dcterms:title "{{ t.title }}" ;
+  gdoc:sourcePath "{{ t.source }}" ;
+  gdoc:standingCeiling "{{ t.standing }}" .
+
+{% endfor -%}

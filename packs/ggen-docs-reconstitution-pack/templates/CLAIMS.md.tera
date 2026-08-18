@@ -1,0 +1,10 @@
+{%- set claims = sparql(query='PREFIX gdoc: <https://ggen.chatmangpt.com/ontology/docs-pack#> PREFIX dcterms: <http://purl.org/dc/terms/> SELECT ?order ?id ?kind ?text ?standing WHERE { ?c a gdoc:Claim ; gdoc:order ?order ; dcterms:identifier ?id ; gdoc:claimKind ?kind ; gdoc:claimText ?text ; gdoc:standingCeiling ?standing . } ORDER BY ?order ?id') -%}
+# Documentation Claims Register
+
+> **GENERATED** from `ontology.ttl`. Claims are bounded by their explicit standing ceiling.
+
+| ID | Kind | Claim | Ceiling |
+|---|---|---|---|
+{% for c in claims -%}
+| {{ c.id }} | {{ c.kind }} | {{ c.text | replace(from="|", to="\\|") }} | `{{ c.standing }}` |
+{% endfor %}

@@ -1,0 +1,8 @@
+{%- set docs = sparql(query='PREFIX gdoc: <https://ggen.chatmangpt.com/ontology/docs-pack#> PREFIX dcterms: <http://purl.org/dc/terms/> SELECT ?order ?title ?outputPath WHERE { ?doc a gdoc:Document ; gdoc:order ?order ; dcterms:title ?title ; gdoc:outputPath ?outputPath . } ORDER BY ?order ?title') -%}
+# Summary
+
+- [Reconstitution Map](RECONSTITUTION_MAP.md)
+- [Claims Register](CLAIMS.md)
+{% for d in docs -%}
+- [{{ d.title }}]({{ d.outputPath | replace(from="consumer/docs/", to="") }})
+{% endfor %}

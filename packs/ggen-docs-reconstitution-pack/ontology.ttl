@@ -1,0 +1,271 @@
+@prefix gdoc: <https://ggen.chatmangpt.com/ontology/docs-pack#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+# ggen-docs-reconstitution-pack
+#
+# Docs are admitted observations and projections, not runtime crown evidence.
+# The graph preserves enough authority, observables, falsifiers, and recovery
+# information to manufacture documentation first and then reconstruct the
+# executable system without converting narrative into ambient authority.
+
+gdoc:DocumentationCorpus a rdfs:Class .
+gdoc:Document a rdfs:Class .
+gdoc:DocumentSection a rdfs:Class .
+gdoc:ReconstitutionTarget a rdfs:Class .
+gdoc:Claim a rdfs:Class .
+
+gdoc:slug a rdf:Property .
+gdoc:outputPath a rdf:Property .
+gdoc:order a rdf:Property .
+gdoc:documentRole a rdf:Property .
+gdoc:standingCeiling a rdf:Property .
+gdoc:sourcePath a rdf:Property .
+gdoc:sectionOf a rdf:Property .
+gdoc:body a rdf:Property .
+gdoc:coversTarget a rdf:Property .
+gdoc:observableContract a rdf:Property .
+gdoc:verifier a rdf:Property .
+gdoc:falsifier a rdf:Property .
+gdoc:recoveryPath a rdf:Property .
+gdoc:claimKind a rdf:Property .
+gdoc:claimText a rdf:Property .
+gdoc:supportsClaim a rdf:Property .
+
+gdoc:ggenLegacyCorpus a gdoc:DocumentationCorpus ;
+  dcterms:title "ggen-legacy doc-first reconstitution corpus" ;
+  dcterms:description "A documentation-first, evidence-bounded reconstruction model for ggen-legacy. Generated docs may guide reconstruction but never certify runtime behavior." .
+
+gdoc:doc-governance a gdoc:Document ;
+  gdoc:slug "00-governance" ; dcterms:title "Governance and Authority" ;
+  dcterms:description "Authority precedence, standing vocabulary, generated-surface law, and change control." ;
+  gdoc:outputPath "consumer/docs/00-governance.md" ; gdoc:order 10 ;
+  gdoc:documentRole "GOVERNANCE" ; gdoc:standingCeiling "DOCUMENTED" ;
+  gdoc:sourcePath "docs/v26.8.1/00-governance/06-source-precedence.md" ;
+  gdoc:sourcePath "docs/v26.8.1/00-governance/07-generated-surface-authority.md" .
+
+gdoc:sec-gov-1 a gdoc:DocumentSection ; gdoc:sectionOf gdoc:doc-governance ; gdoc:order 10 ;
+  dcterms:title "Authority before prose" ;
+  gdoc:body "Resolve disagreement by enforced law, executable configuration, admitted ontology/schema/policy, implementation, verification evidence, receipts, generated documentation, narrative, then history. Documentation is evidence and projection unless a higher authority explicitly promotes it." .
+gdoc:sec-gov-2 a gdoc:DocumentSection ; gdoc:sectionOf gdoc:doc-governance ; gdoc:order 20 ;
+  dcterms:title "Generated surfaces are projections" ;
+  gdoc:body "Every generated document must name its canonical source, regeneration path, ownership boundary, deterministic equivalence rule, drift verifier, and recovery path. Output bytes and execution receipts remain distinct evidence objects." .
+
+gdoc:doc-system a gdoc:Document ;
+  gdoc:slug "10-system" ; dcterms:title "System Architecture" ;
+  dcterms:description "Repository topology, runtime boundaries, self-hosting, building blocks, and external actuation fences." ;
+  gdoc:outputPath "consumer/docs/10-system.md" ; gdoc:order 20 ;
+  gdoc:documentRole "ARCHITECTURE" ; gdoc:standingCeiling "DOCUMENTED" ;
+  gdoc:sourcePath "docs/v26.8.1/10-system/11-repository-topology.md" ;
+  gdoc:sourcePath "docs/v26.8.1/10-system/20-external-actuation-boundary.md" .
+
+gdoc:sec-system-1 a gdoc:DocumentSection ; gdoc:sectionOf gdoc:doc-system ; gdoc:order 10 ;
+  dcterms:title "Bounded manufacturing system" ;
+  gdoc:body "Model the repository as graph authority plus deterministic manufacture, admission, actuation, receipt, and replay boundaries. Preserve source ownership and prevent generated artifacts from becoming independent authority." .
+gdoc:sec-system-2 a gdoc:DocumentSection ; gdoc:sectionOf gdoc:doc-system ; gdoc:order 20 ;
+  dcterms:title "SELECT, CONSTRUCT, DO" ;
+  gdoc:body "Selection and construction are reversible graph-domain operations. Consequential mutation is a separate bounded operation that requires explicit authority and a receipt; templates, planners, and hooks do not inherit ambient execution authority." .
+
+gdoc:doc-engine a gdoc:Document ;
+  gdoc:slug "20-engine" ; dcterms:title "Sync and Manufacture Engine" ;
+  dcterms:description "Resolve, enrich, extract, render, write, receipt, dry-run, watch, and refusal ordering." ;
+  gdoc:outputPath "consumer/docs/20-engine.md" ; gdoc:order 30 ;
+  gdoc:documentRole "ENGINE" ; gdoc:standingCeiling "DOCUMENTED" ;
+  gdoc:sourcePath "docs/v26.8.1/20-engine/21-sync-pipeline.md" ;
+  gdoc:sourcePath "docs/v26.8.1/20-engine/30-failure-and-refusal-ordering.md" .
+
+gdoc:sec-engine-1 a gdoc:DocumentSection ; gdoc:sectionOf gdoc:doc-engine ; gdoc:order 10 ;
+  dcterms:title "Pipeline correspondence" ;
+  gdoc:body "Preserve graph -> query -> context -> template -> planned write -> actuation -> receipt -> replay correspondence. Each transition has a bounded input/output contract and a typed refusal rather than an implicit fallback." .
+gdoc:sec-engine-2 a gdoc:DocumentSection ; gdoc:sectionOf gdoc:doc-engine ; gdoc:order 20 ;
+  dcterms:title "Deterministic synchronization" ;
+  gdoc:body "A no-change rerun should converge to byte-identical projections and a replayable evidence chain for the same admitted source coordinate. Dry-run computes consequences without granting write authority." .
+
+gdoc:doc-graph a gdoc:Document ;
+  gdoc:slug "30-graph" ; dcterms:title "Graph and Semantic Admission" ;
+  dcterms:description "RDF authority, SPARQL contracts, validation, imports, graph hashing, and transition receipts." ;
+  gdoc:outputPath "consumer/docs/30-graph.md" ; gdoc:order 40 ;
+  gdoc:documentRole "SEMANTICS" ; gdoc:standingCeiling "DOCUMENTED" ;
+  gdoc:sourcePath "docs/v26.8.1/30-graph/31-rdf-authority-model.md" ;
+  gdoc:sourcePath "docs/v26.8.1/30-graph/34-sparql-contracts.md" .
+
+gdoc:sec-graph-1 a gdoc:DocumentSection ; gdoc:sectionOf gdoc:doc-graph ; gdoc:order 10 ;
+  dcterms:title "Ontology as possible lawful consequences" ;
+  gdoc:body "Use public vocabularies where they express the concept; retain a small domain namespace for properties that are genuinely ggen-specific. Observation becomes authority only after provenance, schema, policy, and contradiction checks." .
+gdoc:sec-graph-2 a gdoc:DocumentSection ; gdoc:sectionOf gdoc:doc-graph ; gdoc:order 20 ;
+  dcterms:title "Queries are contracts" ;
+  gdoc:body "SPARQL selections define bounded projection inputs. Deterministic queries state ordering explicitly, aggregate with collision-resistant separators, and fail closed when required bindings are absent." .
+
+gdoc:doc-projection a gdoc:Document ;
+  gdoc:slug "40-projection" ; dcterms:title "Projection and Template System" ;
+  dcterms:description "Tera integration, context construction, write modes, ownership, path safety, and render determinism." ;
+  gdoc:outputPath "consumer/docs/40-projection.md" ; gdoc:order 50 ;
+  gdoc:documentRole "PROJECTION" ; gdoc:standingCeiling "DOCUMENTED" ;
+  gdoc:sourcePath "docs/v26.8.1/40-projection/41-tera-integration.md" ;
+  gdoc:sourcePath "docs/v26.8.1/40-projection/49-render-determinism.md" .
+
+gdoc:sec-projection-1 a gdoc:DocumentSection ; gdoc:sectionOf gdoc:doc-projection ; gdoc:order 10 ;
+  dcterms:title "Templates render, they do not decide authority" ;
+  gdoc:body "Tera templates are deterministic projectors over admitted bindings. Branching in templates must not silently widen authority, invent missing facts, or bypass graph validation." .
+gdoc:sec-projection-2 a gdoc:DocumentSection ; gdoc:sectionOf gdoc:doc-projection ; gdoc:order 20 ;
+  dcterms:title "Output ownership and write modes" ;
+  gdoc:body "Overwrite is appropriate for fully generated surfaces; merge is appropriate only when ownership markers preserve manual regions. Output path safety and ownership are admission concerns, not convenience features." .
+
+gdoc:doc-evidence a gdoc:Document ;
+  gdoc:slug "50-evidence" ; dcterms:title "Evidence, Receipts, and Replay" ;
+  dcterms:description "Receipt schema, chain integrity, replay, observability, corroboration, and standing promotion." ;
+  gdoc:outputPath "consumer/docs/50-evidence.md" ; gdoc:order 60 ;
+  gdoc:documentRole "EVIDENCE" ; gdoc:standingCeiling "DOCUMENTED" ;
+  gdoc:sourcePath "docs/v26.8.1/50-evidence/51-receipt-schema.md" ;
+  gdoc:sourcePath "docs/v26.8.1/50-evidence/54-replay-protocol.md" .
+
+gdoc:sec-evidence-1 a gdoc:DocumentSection ; gdoc:sectionOf gdoc:doc-evidence ; gdoc:order 10 ;
+  dcterms:title "Receipt is not output" ;
+  gdoc:body "Generated bytes establish a projection. A receipt binds identity, admitted inputs, authority, consequences, hashes, execution outcome, and replay coordinates. A file named receipt is not evidence unless it satisfies that contract." .
+gdoc:sec-evidence-2 a gdoc:DocumentSection ; gdoc:sectionOf gdoc:doc-evidence ; gdoc:order 20 ;
+  dcterms:title "Standing is scoped" ;
+  gdoc:body "Documentation, schema, generation, compilation, tests, reference conformance, and production evidence are distinct ceilings. Lower-rung evidence cannot be phrased as a higher-rung claim." .
+
+gdoc:doc-products a gdoc:Document ;
+  gdoc:slug "60-products" ; dcterms:title "Product and Pack Surfaces" ;
+  dcterms:description "CLI, configuration, LSP, marketplace, pack kernel, composition, lockfile, A2A, and MCP surfaces." ;
+  gdoc:outputPath "consumer/docs/60-products.md" ; gdoc:order 70 ;
+  gdoc:documentRole "PRODUCT" ; gdoc:standingCeiling "DOCUMENTED" ;
+  gdoc:sourcePath "docs/v26.8.1/60-products/61-cli-surface.md" ;
+  gdoc:sourcePath "docs/v26.8.1/60-products/67-pack-kernel.md" .
+
+gdoc:sec-products-1 a gdoc:DocumentSection ; gdoc:sectionOf gdoc:doc-products ; gdoc:order 10 ;
+  dcterms:title "Pack as executable distribution theorem" ;
+  gdoc:body "A pack carries identity, version, semantic authority, templates, gates, bounded write scope, compatibility law, dependency disclosure, conformance evidence, recovery, and host-independent documentation." .
+gdoc:sec-products-2 a gdoc:DocumentSection ; gdoc:sectionOf gdoc:doc-products ; gdoc:order 20 ;
+  dcterms:title "Observable surfaces are reconstruction targets" ;
+  gdoc:body "CLI commands, diagnostics, configuration keys, LSP methods, marketplace behavior, receipts, and generated files are all observable contracts. Reconstitution closes them individually rather than inferring equivalence from architectural similarity." .
+
+gdoc:doc-verification a gdoc:Document ;
+  gdoc:slug "70-verification" ; dcterms:title "Verification Constitution" ;
+  dcterms:description "Unit, property, integration, CLI E2E, security, chaos, stress, benchmark, replay, and negative fixtures." ;
+  gdoc:outputPath "consumer/docs/70-verification.md" ; gdoc:order 80 ;
+  gdoc:documentRole "VERIFICATION" ; gdoc:standingCeiling "DOCUMENTED" ;
+  gdoc:sourcePath "docs/v26.8.1/70-verification/71-verification-constitution.md" ;
+  gdoc:sourcePath "docs/v26.8.1/70-verification/79-machine-readable-verifier-report.md" .
+
+gdoc:sec-verification-1 a gdoc:DocumentSection ; gdoc:sectionOf gdoc:doc-verification ; gdoc:order 10 ;
+  dcterms:title "Exact-subject verification" ;
+  gdoc:body "Inspection is not execution. A verifier names the exact source coordinate, runtime/toolchain, configuration, command, inputs, outputs, exit status, and evidence hashes that support its scoped judgment." .
+gdoc:sec-verification-2 a gdoc:DocumentSection ; gdoc:sectionOf gdoc:doc-verification ; gdoc:order 20 ;
+  dcterms:title "Falsifiers before crown" ;
+  gdoc:body "Each reconstructed behavior must state what observation would refute its standing. Negative fixtures target authority, ownership, closure, ordering, actuation, replay, and overclaim boundaries." .
+
+gdoc:doc-economics a gdoc:Document ;
+  gdoc:slug "80-economics" ; dcterms:title "Economics and Capacity" ;
+  dcterms:description "Pipeline cost, Little's Law, Amdahl constraints, coordination, capacity, and threats to validity." ;
+  gdoc:outputPath "consumer/docs/80-economics.md" ; gdoc:order 90 ;
+  gdoc:documentRole "ECONOMICS" ; gdoc:standingCeiling "DOCUMENTED" ;
+  gdoc:sourcePath "docs/v26.8.1/80-economics/83-integrated-pipeline-model.md" ;
+  gdoc:sourcePath "docs/v26.8.1/80-economics/84-littles-law.md" .
+
+gdoc:sec-economics-1 a gdoc:DocumentSection ; gdoc:sectionOf gdoc:doc-economics ; gdoc:order 10 ;
+  dcterms:title "Measure flow, not artifact count" ;
+  gdoc:body "Useful capacity is bounded by admitted throughput, WIP, lead time, verification cost, and failure recovery. Generated volume without closure evidence is inventory, not completed value." .
+gdoc:sec-economics-2 a gdoc:DocumentSection ; gdoc:sectionOf gdoc:doc-economics ; gdoc:order 20 ;
+  dcterms:title "Preserve uncertainty" ;
+  gdoc:body "Economic models must expose assumptions, ranges, bottlenecks, and threats to validity. Performance projections are not runtime measurements until executed against the exact admitted subject." .
+
+gdoc:doc-legacy a gdoc:Document ;
+  gdoc:slug "90-legacy" ; dcterms:title "Legacy Equivalence and Reconstitution" ;
+  dcterms:description "Legacy definition, Chesterton inventory, capability equivalence, migration, recovery, sunset gates, and final refusal." ;
+  gdoc:outputPath "consumer/docs/90-legacy.md" ; gdoc:order 100 ;
+  gdoc:documentRole "RECONSTITUTION" ; gdoc:standingCeiling "DOCUMENTED" ;
+  gdoc:sourcePath "docs/v26.8.1/90-legacy/91-ggen-legacy-definition.md" ;
+  gdoc:sourcePath "docs/v26.8.1/90-legacy/93-capability-equivalence-matrix.md" .
+
+gdoc:sec-legacy-1 a gdoc:DocumentSection ; gdoc:sectionOf gdoc:doc-legacy ; gdoc:order 10 ;
+  dcterms:title "Chesterton before replacement" ;
+  gdoc:body "Historical behavior is inventoried before deletion or substitution. Every capability receives an explicit disposition: preserved, subsumed, replaced, archived, or refused, with observable equivalence and recovery evidence where applicable." .
+gdoc:sec-legacy-2 a gdoc:DocumentSection ; gdoc:sectionOf gdoc:doc-legacy ; gdoc:order 20 ;
+  dcterms:title "Docs-first is not docs-only" ;
+  gdoc:body "Documentation supplies the first bounded observation graph. Reconstitution then moves each documented target through admission, construction, exact execution, receipt, and replay. A documented target remains DOCUMENTED until those later boundaries execute." .
+
+gdoc:target-manifest a gdoc:ReconstitutionTarget ; dcterms:identifier "R01" ; dcterms:title "Manifest contract" ; gdoc:order 10 ;
+  gdoc:standingCeiling "DOCUMENTED" ; gdoc:sourcePath "docs/v26.8.1/60-products/63-configuration-schemas.md" ;
+  gdoc:observableContract "ggen.toml project, ontology, packs, templates, law, validation, inference, and generation-rule surfaces parse with deterministic schema semantics." ;
+  gdoc:verifier "Parse representative manifests through every admitted manifest parser and compare shared-field semantics." ;
+  gdoc:falsifier "A valid legacy manifest parses differently, loses a field, or routes to a different generation behavior." ;
+  gdoc:recoveryPath "Retain the legacy parser/schema and migration fixture until parity is independently receipted." .
+
+gdoc:target-graph a gdoc:ReconstitutionTarget ; dcterms:identifier "R02" ; dcterms:title "RDF graph authority" ; gdoc:order 20 ;
+  gdoc:standingCeiling "DOCUMENTED" ; gdoc:sourcePath "docs/v26.8.1/30-graph/31-rdf-authority-model.md" ;
+  gdoc:observableContract "Turtle authority loads deterministically with declared prefixes/imports and preserves graph semantics used by downstream queries." ;
+  gdoc:verifier "Load positive and negative graph fixtures, compute normalized graph identity, and compare query-visible triples." ;
+  gdoc:falsifier "Equivalent source graphs produce divergent admitted triples or invalid graphs are silently accepted." ;
+  gdoc:recoveryPath "Keep the prior loader and normalized fixtures as an executable comparison oracle." .
+
+gdoc:target-query a gdoc:ReconstitutionTarget ; dcterms:identifier "R03" ; dcterms:title "SPARQL contract" ; gdoc:order 30 ;
+  gdoc:standingCeiling "DOCUMENTED" ; gdoc:sourcePath "docs/v26.8.1/30-graph/34-sparql-contracts.md" ;
+  gdoc:observableContract "SELECT, ASK, aggregation, ordering, and template-bound query results preserve documented semantics." ;
+  gdoc:verifier "Execute a fixed corpus of ordered queries against identical admitted graphs and compare bindings and refusal behavior." ;
+  gdoc:falsifier "Binding cardinality, ordering, datatype, ASK truth, or failure semantics diverge for the same graph." ;
+  gdoc:recoveryPath "Retain the predecessor query engine adapter and corpus until exact observable parity closes." .
+
+gdoc:target-template a gdoc:ReconstitutionTarget ; dcterms:identifier "R04" ; dcterms:title "Tera projection contract" ; gdoc:order 40 ;
+  gdoc:standingCeiling "DOCUMENTED" ; gdoc:sourcePath "docs/v26.8.1/40-projection/41-tera-integration.md" ;
+  gdoc:observableContract "Bound RDF query rows render deterministic Tera projections with the documented filters and context semantics." ;
+  gdoc:verifier "Render canonical templates twice from the same graph and compare bytes, paths, diagnostics, and missing-binding refusals." ;
+  gdoc:falsifier "Identical admitted inputs produce divergent bytes or an unsupported template construct is silently coerced." ;
+  gdoc:recoveryPath "Preserve legacy templates and renderer fixtures until deterministic replay is receipted." .
+
+gdoc:target-write a gdoc:ReconstitutionTarget ; dcterms:identifier "R05" ; dcterms:title "Write ownership and modes" ; gdoc:order 50 ;
+  gdoc:standingCeiling "DOCUMENTED" ; gdoc:sourcePath "docs/v26.8.1/40-projection/46-write-modes.md" ;
+  gdoc:observableContract "Overwrite, merge, path-safety, skip, and ownership behavior match documented filesystem consequences without unauthorized mutation." ;
+  gdoc:verifier "Execute write-mode fixtures in an isolated tree and compare before/after bytes, touched paths, refusals, and replay." ;
+  gdoc:falsifier "A generated write crosses its declared ownership boundary, mutates an unsafe path, or changes manual bytes outside a merge region." ;
+  gdoc:recoveryPath "Retain predecessor write-mode implementation and fixtures; never delete manual source during parity work." .
+
+gdoc:target-receipt a gdoc:ReconstitutionTarget ; dcterms:identifier "R06" ; dcterms:title "Receipt and replay chain" ; gdoc:order 60 ;
+  gdoc:standingCeiling "DOCUMENTED" ; gdoc:sourcePath "docs/v26.8.1/50-evidence/51-receipt-schema.md" ;
+  gdoc:observableContract "Every consequential generation binds admitted inputs, output hashes, prior chain state, outcome, and replay identity in a tamper-evident receipt." ;
+  gdoc:verifier "Generate, verify, tamper, and replay a receipt chain against the exact generated tree." ;
+  gdoc:falsifier "Tampering is undetected, replay cannot bind the same subject, or a write occurs without a corresponding receipt." ;
+  gdoc:recoveryPath "Preserve prior receipt logs and verifier implementation as immutable evidence during migration." .
+
+gdoc:target-cli a gdoc:ReconstitutionTarget ; dcterms:identifier "R07" ; dcterms:title "CLI surface" ; gdoc:order 70 ;
+  gdoc:standingCeiling "DOCUMENTED" ; gdoc:sourcePath "docs/v26.8.1/60-products/61-cli-surface.md" ;
+  gdoc:observableContract "Commands, default routing, flags, exit codes, stdout/stderr, diagnostics, and generated filesystem effects match declared legacy behavior." ;
+  gdoc:verifier "Run black-box CLI success, refusal, malformed-input, and dry-run fixtures against legacy and reconstructed binaries." ;
+  gdoc:falsifier "Any admitted command/flag is missing or produces a materially different observable result for the same input." ;
+  gdoc:recoveryPath "Keep the legacy binary/adapter addressable until command-by-command equivalence is independently closed." .
+
+gdoc:target-lsp a gdoc:ReconstitutionTarget ; dcterms:identifier "R08" ; dcterms:title "LSP surface" ; gdoc:order 80 ;
+  gdoc:standingCeiling "DOCUMENTED" ; gdoc:sourcePath "docs/v26.8.1/60-products/64-lsp-surface.md" ;
+  gdoc:observableContract "Advertised methods, capabilities, document synchronization, diagnostics, hierarchy behavior, framing, and refusal semantics match the received contract." ;
+  gdoc:verifier "Execute real stdio initialize/open/change/close/hierarchy exchanges plus malformed-message and refusal fixtures." ;
+  gdoc:falsifier "The server advertises an unimplemented capability, omits a required method/diagnostic, corrupts framing, or accepts a forbidden sync mode." ;
+  gdoc:recoveryPath "Retain the pinned protocol runtime and received contract projections until exact stdio replay closes." .
+
+gdoc:target-pack a gdoc:ReconstitutionTarget ; dcterms:identifier "R09" ; dcterms:title "Pack and marketplace kernel" ; gdoc:order 90 ;
+  gdoc:standingCeiling "DOCUMENTED" ; gdoc:sourcePath "docs/v26.8.1/60-products/67-pack-kernel.md" ;
+  gdoc:observableContract "Pack identity, ontology, template discovery, gates, dependencies, compatibility, bounded writes, and consumer behavior survive installation and substitution." ;
+  gdoc:verifier "Install representative packs into isolated consumers, run gated sync, inspect generated bytes/receipts, and exercise incompatible/refused cases." ;
+  gdoc:falsifier "A valid legacy pack cannot be consumed, an invalid pack bypasses a gate, or substitution changes declared observable behavior." ;
+  gdoc:recoveryPath "Retain pack archives, lock identities, and legacy marketplace metadata until portable replay is demonstrated." .
+
+gdoc:target-selfhost a gdoc:ReconstitutionTarget ; dcterms:identifier "R10" ; dcterms:title "Self-hosting manufacture" ; gdoc:order 100 ;
+  gdoc:standingCeiling "DOCUMENTED" ; gdoc:sourcePath "docs/v26.8.1/10-system/16-self-hosting-architecture.md" ;
+  gdoc:observableContract "ggen can manufacture its declared projections from its own admitted ontology without unauthorized writes, hidden manual repair, or circular self-certification." ;
+  gdoc:verifier "Run sync from a clean exact source coordinate, verify no unexpected diff, replay receipts, and independently inspect owned output boundaries." ;
+  gdoc:falsifier "A clean self-host run requires hand edits, mutates an unowned surface, or cannot reproduce its declared generated artifacts." ;
+  gdoc:recoveryPath "Keep the last independently verified source capsule and generated projections until clean self-host replay closes." .
+
+gdoc:claim-doc-first a gdoc:Claim ; dcterms:identifier "C01" ; gdoc:order 10 ;
+  gdoc:claimKind "METHOD" ; gdoc:standingCeiling "DOCUMENTED" ;
+  gdoc:claimText "Documentation can seed a finite reconstruction graph when every target is tied to authority, observable behavior, a verifier, a falsifier, and a recovery path." .
+gdoc:claim-no-crown a gdoc:Claim ; dcterms:identifier "C02" ; gdoc:order 20 ;
+  gdoc:claimKind "EXCLUSION" ; gdoc:standingCeiling "DOCUMENTED" ;
+  gdoc:claimText "Generated documentation does not prove implementation, runtime equivalence, release admission, production standing, or predecessor sunset." .
+gdoc:claim-projection a gdoc:Claim ; dcterms:identifier "C03" ; gdoc:order 30 ;
+  gdoc:claimKind "INVARIANT" ; gdoc:standingCeiling "DOCUMENTED" ;
+  gdoc:claimText "The ontology is the authored semantic surface for this pack; Markdown, mdBook navigation, claims, and evidence outputs are deterministic projections." .

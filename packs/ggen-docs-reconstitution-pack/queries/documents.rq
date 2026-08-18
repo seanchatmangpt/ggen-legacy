@@ -1,0 +1,19 @@
+PREFIX gdoc: <https://ggen.chatmangpt.com/ontology/docs-pack#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+
+SELECT ?doc ?slug ?title ?description ?outputPath ?order ?role ?standing
+       (GROUP_CONCAT(DISTINCT ?sourcePath; separator="%%GDOC_SEP%%") AS ?sourcePaths)
+WHERE {
+  ?doc a gdoc:Document ;
+       gdoc:slug ?slug ;
+       dcterms:title ?title ;
+       dcterms:description ?description ;
+       gdoc:outputPath ?outputPath ;
+       gdoc:order ?order ;
+       gdoc:documentRole ?role ;
+       gdoc:standingCeiling ?standing ;
+       gdoc:sourcePath ?sourcePath .
+}
+GROUP BY ?doc ?slug ?title ?description ?outputPath ?order ?role ?standing
+ORDER BY ?order ?slug

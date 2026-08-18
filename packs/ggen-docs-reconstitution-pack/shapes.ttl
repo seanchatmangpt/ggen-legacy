@@ -1,0 +1,35 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix gdoc: <https://ggen.chatmangpt.com/ontology/docs-pack#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# Portable SHACL mirror of the ggen ASK gate. ggen's native admission path is
+# gates/invalid-doc-model.rq; these shapes allow independent graph validators.
+
+gdoc:DocumentShape a sh:NodeShape ;
+  sh:targetClass gdoc:Document ;
+  sh:property [ sh:path gdoc:slug ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+  sh:property [ sh:path dcterms:title ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+  sh:property [ sh:path gdoc:outputPath ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:pattern "^consumer/docs/.+\\.md$" ] ;
+  sh:property [ sh:path gdoc:order ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:integer ] ;
+  sh:property [ sh:path gdoc:documentRole ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+  sh:property [ sh:path gdoc:standingCeiling ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "DOCUMENTED" "SCHEMA_VALIDATED" "GENERATED" ) ] ;
+  sh:property [ sh:path gdoc:sourcePath ; sh:minCount 1 ; sh:datatype xsd:string ] .
+
+gdoc:SectionShape a sh:NodeShape ;
+  sh:targetClass gdoc:DocumentSection ;
+  sh:property [ sh:path gdoc:sectionOf ; sh:minCount 1 ; sh:maxCount 1 ; sh:class gdoc:Document ] ;
+  sh:property [ sh:path gdoc:order ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:integer ] ;
+  sh:property [ sh:path dcterms:title ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+  sh:property [ sh:path gdoc:body ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] .
+
+gdoc:ReconstitutionTargetShape a sh:NodeShape ;
+  sh:targetClass gdoc:ReconstitutionTarget ;
+  sh:property [ sh:path dcterms:identifier ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+  sh:property [ sh:path dcterms:title ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+  sh:property [ sh:path gdoc:observableContract ; sh:minCount 1 ; sh:datatype xsd:string ] ;
+  sh:property [ sh:path gdoc:verifier ; sh:minCount 1 ; sh:datatype xsd:string ] ;
+  sh:property [ sh:path gdoc:falsifier ; sh:minCount 1 ; sh:datatype xsd:string ] ;
+  sh:property [ sh:path gdoc:recoveryPath ; sh:minCount 1 ; sh:datatype xsd:string ] ;
+  sh:property [ sh:path gdoc:sourcePath ; sh:minCount 1 ; sh:datatype xsd:string ] ;
+  sh:property [ sh:path gdoc:standingCeiling ; sh:minCount 1 ; sh:maxCount 1 ; sh:in ( "DOCUMENTED" "SCHEMA_VALIDATED" "GENERATED" ) ] .

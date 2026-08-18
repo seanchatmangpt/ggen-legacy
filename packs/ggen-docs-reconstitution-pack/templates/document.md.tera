@@ -1,0 +1,26 @@
+{# One output per gdoc:Document row selected by queries/documents.rq. #}
+{%- set sections_q = 'PREFIX gdoc: <https://ggen.chatmangpt.com/ontology/docs-pack#> PREFIX dcterms: <http://purl.org/dc/terms/> SELECT ?order ?title ?body WHERE { ?section a gdoc:DocumentSection ; gdoc:sectionOf <' ~ doc ~ '> ; gdoc:order ?order ; dcterms:title ?title ; gdoc:body ?body . } ORDER BY ?order ?title' -%}
+{%- set sections = sparql(query=sections_q) -%}
+# {{ title }}
+
+> **GENERATED** by `ggen-docs-reconstitution-pack` from `ontology.ttl`. Edit the graph, not this file.
+>
+> **Role:** `{{ role }}` · **standing ceiling:** `{{ standing }}` · **projection:** `{{ outputPath }}`
+
+{{ description }}
+
+## Source observations
+
+{% for source in sourcePaths | split(pat="%%GDOC_SEP%%") -%}
+- `{{ source }}`
+{% endfor %}
+
+{% for section in sections -%}
+## {{ section.title }}
+
+{{ section.body }}
+
+{% endfor -%}
+## Reconstruction rule
+
+This page is an admitted **documentation projection**, not execution evidence. Any runtime claim derived from it must identify the exact reconstruction target, execute its verifier against the admitted subject, preserve its falsifier, and bind the result to a receipt/replay coordinate.
