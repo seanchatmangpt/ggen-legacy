@@ -202,6 +202,7 @@ jobs:
     env:
       GGEN_SHA: 59c95cac18d49c62533918c906524be0fc4063ec
       RUSTUP_TOOLCHAIN: nightly-2026-06-22
+      RUSTC_WRAPPER: ""
       PACK: packs/ggen-docs-reconstitution-pack
     steps:
       - name: Checkout exact ggen-legacy subject
