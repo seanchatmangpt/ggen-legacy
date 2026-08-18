@@ -1,0 +1,5 @@
+[pack]
+name = "ggen-docs-reconstitution-pack"
+version = "26.8.1"
+description = "Doc-first repository reconstitution pack: RDF-authoritative documentation, deterministic Markdown/mdBook projections, claims/evidence ledgers, and a bounded documentation-to-runtime reconstruction map."
+category = "documentation"

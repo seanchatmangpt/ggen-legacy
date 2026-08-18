@@ -1,0 +1,78 @@
+[project]
+name = "ggen-docs-reconstitution-consumer"
+version = "26.8.1"
+description = "Generate a receiptable documentation corpus and doc-first reconstitution map from RDF authority"
+authors = ["Sean Chatman"]
+license = "MIT"
+
+[ontology]
+source = "ontology.ttl"
+base_iri = "https://ggen.chatmangpt.com/ontology/docs-pack#"
+imports = []
+
+[ontology.prefixes]
+gdoc = "https://ggen.chatmangpt.com/ontology/docs-pack#"
+rdf = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+rdfs = "http://www.w3.org/2000/01/rdf-schema#"
+xsd = "http://www.w3.org/2001/XMLSchema#"
+dcterms = "http://purl.org/dc/terms/"
+prov = "http://www.w3.org/ns/prov#"
+skos = "http://www.w3.org/2004/02/skos/core#"
+
+[validation]
+gates = ["gates/invalid-doc-model.rq"]
+
+[generation]
+output_dir = "."
+
+[[generation.rules]]
+name = "documentation-pages"
+query = { file = "queries/documents.rq" }
+template = { file = "templates/document.md.tera" }
+output_file = "{{ outputPath }}"
+skip_empty = false
+mode = "Overwrite"
+
+[[generation.rules]]
+name = "documentation-summary"
+query = { inline = """
+PREFIX gdoc: <https://ggen.chatmangpt.com/ontology/docs-pack#>
+SELECT ?corpus WHERE { ?corpus a gdoc:DocumentationCorpus . } ORDER BY ?corpus LIMIT 1
+""" }
+template = { file = "templates/SUMMARY.md.tera" }
+output_file = "consumer/docs/SUMMARY.md"
+skip_empty = false
+mode = "Overwrite"
+
+[[generation.rules]]
+name = "documentation-reconstitution-map"
+query = { inline = """
+PREFIX gdoc: <https://ggen.chatmangpt.com/ontology/docs-pack#>
+SELECT ?corpus WHERE { ?corpus a gdoc:DocumentationCorpus . } ORDER BY ?corpus LIMIT 1
+""" }
+template = { file = "templates/RECONSTITUTION_MAP.md.tera" }
+output_file = "consumer/docs/RECONSTITUTION_MAP.md"
+skip_empty = false
+mode = "Overwrite"
+
+[[generation.rules]]
+name = "documentation-claims-register"
+query = { inline = """
+PREFIX gdoc: <https://ggen.chatmangpt.com/ontology/docs-pack#>
+SELECT ?corpus WHERE { ?corpus a gdoc:DocumentationCorpus . } ORDER BY ?corpus LIMIT 1
+""" }
+template = { file = "templates/CLAIMS.md.tera" }
+output_file = "consumer/docs/CLAIMS.md"
+skip_empty = false
+mode = "Overwrite"
+
+[[generation.rules]]
+name = "documentation-evidence-graph"
+query = { inline = """
+PREFIX gdoc: <https://ggen.chatmangpt.com/ontology/docs-pack#>
+SELECT ?corpus WHERE { ?corpus a gdoc:DocumentationCorpus . } ORDER BY ?corpus LIMIT 1
+""" }
+template = { file = "templates/EVIDENCE.ttl.tera" }
+output_file = "consumer/docs/EVIDENCE.ttl"
+skip_empty = false
+mode = "Overwrite"
