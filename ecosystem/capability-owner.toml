@@ -3,11 +3,12 @@ version = "26.9.1"
 repository = "seanchatmangpt/ggen-legacy"
 owner_id = "repository:ggen-legacy"
 control_plane_repository = "seanchatmangpt/chatman-ecosystem"
-control_plane_subject = "git:475d36e9c716fbedb33db6b74b55b0edf6f73c71"
+control_plane_subject = "git:7430dfc9b3ca138e703430d25de7c6f48a8d6ade"
 base_sha = "93d2ecd18147acaff659bf1d9cc2d4313628305b"
 allowed_authorities = ["persist_control_plane"]
 simulation_only = false
 ambient_do = false
+automatic_irreversible_do = false
 
 [[capability]]
 id = "capability:reconstitute-project-protocol-suite"
