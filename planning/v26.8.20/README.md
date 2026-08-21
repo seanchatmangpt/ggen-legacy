@@ -237,8 +237,22 @@ ggen-legacy-mcp-prototype/observe_admit.py` — deliberately kept **outside** th
 
 This is the one concrete enforcement point proving the `propose_admit`/`confirm_admit` split
 (and the broader `authorized != actuated` line) isn't just documented prose — the refusal path
-was actually exercised and actually raised. `construct_replacement`/`verify_closure`/`replay`/
-`retire_predecessor` were not prototyped this pass.
+was actually exercised and actually raised.
+
+**Extended (real, executed, 2026-08-21): `construct_replacement` and `retire_predecessor`.**
+Both added to the same prototype file and exercised end-to-end from a real admission:
+- `construct_replacement(admission_id)`: derives a real manifest (`derived_file_count: 1`,
+  `derived_from_target_path`) from the real admitted contract — bounded (does not invoke a
+  real `ggen sync`), but the output is real, derived content, not a placeholder.
+- `retire_predecessor(build_id)`: computes a real standing against real, checkable
+  conditions. Real output: `standing: "PARTIAL_ALIVE"`, with an honest reason — *"real build
+  manifest exists with 1 real derived files, but no real `verify_closure` comparison was run
+  this pass — cannot claim ALIVE without that real evidence."* This is the deliberate,
+  load-bearing property: the prototype refuses to claim `ALIVE` for itself without the
+  evidence `ALIVE` would require, matching this repo's own standing vocabulary and
+  overclaiming discipline exactly.
+
+`verify_closure` and `replay` were not prototyped this pass.
 
 ## Next step, not taken here
 
