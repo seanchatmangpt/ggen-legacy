@@ -218,6 +218,28 @@ should also be surfaced as a real, load-bearing caveat in any admission decision
 proposal's research pass did not find that number and would have understated the real
 difficulty without this cross-check.
 
+## Prototype: `observe_contract`/`propose_admit`/`confirm_admit` (real, executed, 2026-08-21)
+
+A real, working prototype of these 3 tools' logic exists at
+`/private/tmp/claude-501/-Users-sac/ee8647b0-66c0-4dc2-87fd-c624c56fa508/scratchpad/
+ggen-legacy-mcp-prototype/observe_admit.py` — deliberately kept **outside** this repo, since
+`AGENTS.md`'s ticket-gated-admission rule means it has no standing to live here without a real
+`GL-*` ticket. Real, executed self-test output (`python3 observe_admit.py
+~/ggen-legacy/planning/v26.8.20`):
+
+- `observe_contract`: real `git log` + real file walk + real SHA-256 digest of the observed
+  target → `contract-68640745eb2976ae`.
+- `propose_admit`: real, non-final JSON candidate file written, `status: "proposed"`.
+- `confirm_admit` **without** `human_authorization`: correctly refused
+  (`PermissionError: human_authorization must be a real, non-empty string, not inferred or
+  defaulted`).
+- `confirm_admit` **with** real authorization: correctly promotes to `status: "admitted"`.
+
+This is the one concrete enforcement point proving the `propose_admit`/`confirm_admit` split
+(and the broader `authorized != actuated` line) isn't just documented prose — the refusal path
+was actually exercised and actually raised. `construct_replacement`/`verify_closure`/`replay`/
+`retire_predecessor` were not prototyped this pass.
+
 ## Next step, not taken here
 
 Formal admission (a real `GL-MCP-00X` ticket in `tickets/`, an entry in `AGENTS.md`'s active/
