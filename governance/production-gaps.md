@@ -28,7 +28,7 @@ These items were concrete, code-fixable blockers, not governance gaps:
   `main`, not a defect in the PR's own diff.
 - No single local command reproduced what CI gates — added a root
   `justfile` (`just ci-all`) mirroring
-  `.github/workflows/gl-lsp-001-runtime.yml`'s ladder exactly for both
+  `.github/workflows/ci.yml`'s ladder exactly for both
   workspaces.
 
 ## What remains — and who/what closes it
@@ -55,10 +55,11 @@ pass could close. Listed here so they aren't silently dropped:
   mostly `DOCUMENTED`/`PARTIAL_ALIVE`, not `TESTED`/`REFERENCE_CONFORMANT`.
   Closing this is the actual multi-month scope of "complete the A–K
   foundry program," not something an 80/20 pass reaches.
-- `lsp-max` dependency is pinned to an unmerged branch of
-  `seanchatmangpt/lsp-max` (see the comment on that dependency in
-  `Cargo.toml`) — unblocked by merging that branch upstream or cutting a
-  release tag, both of which are actions in that sibling repo, not this one.
+- `lsp-max` dependency is pinned to a commit rev on
+  `seanchatmangpt/lsp-max`'s `fix/wasm4pm-lsp-example-crates-io-dep` branch
+  (see the comment on that dependency in `Cargo.toml`) — that branch merged
+  upstream to `master` via PR #22 on 2026-08-04 (re-verified 2026-08-21). No
+  released tag exists yet, so the pin remains a commit-rev pin.
 - `scripts/ci/guard-verifier-proof.sh` is real and useful but stays a local
   dogfood gate, not CI, because it hard-depends on a sibling `~/ggen`
   checkout at a path only meaningful on this machine. Wiring it into CI

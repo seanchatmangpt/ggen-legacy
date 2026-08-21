@@ -226,14 +226,6 @@ pub fn write_coverage_csv(root: &Path, rows: &[CoverageRow]) -> Result<Vec<u8>> 
     Ok(bytes)
 }
 
-/// Read the current on-disk coverage-matrix.csv bytes verbatim (no
-/// deserialize/reserialize round-trip) so a byte-compare against a freshly
-/// serialized expectation is meaningful even for whitespace/ordering
-/// differences a `Vec<CoverageRow>` comparison alone would not catch.
-pub fn read_coverage_csv_bytes(root: &Path) -> Result<Vec<u8>> {
-    fs::read(root.join(COVERAGE_PATH)).with_context(|| format!("read {}", COVERAGE_PATH))
-}
-
 /// Resolve the repository root the same way every v26.8.1 binary does:
 /// explicit `--root <path>`, else walk up from cwd looking for the marker
 /// files.
@@ -282,6 +274,7 @@ pub fn run_subsystem_verifier(root: &Path) -> Result<Vec<SubsystemVerifierStandi
             "tools/v26.8.1/Cargo.toml",
             "--bin",
             "subsystem_verifier",
+            "--locked",
         ])
         .current_dir(root)
         .status()
@@ -409,13 +402,155 @@ pub fn check_provenance_receipt(
     Ok(None)
 }
 
+/// Resolves `git rev-parse HEAD` in `root`, distinguishing the 3 causally
+/// different ways this can fail instead of collapsing them into a single
+/// undifferentiated `"UNKNOWN"` sentinel (GL-ERRC-019).
+///
+/// The happy path (a real, healthy git repo whose `HEAD` resolves) returns
+/// the identical trimmed SHA string as before this ticket -- unchanged.
+/// Each of the 3 failure causes below returns a distinct
+/// `STALE_REFERENCE_UNVERIFIABLE:<CAUSE>` string, mirroring the same
+/// status shape GL-ERRC-011 and GL-ERRC-014 already established for the
+/// Python side of this repo:
+///
+/// - `STALE_REFERENCE_UNVERIFIABLE:SPAWN_FAILURE` -- `Command::output()`
+///   itself returned `io::Error` (e.g. `git` not on `PATH`, permission
+///   denied on `root`).
+/// - `STALE_REFERENCE_UNVERIFIABLE:NON_ZERO_EXIT` -- the process spawned
+///   but exited non-zero (e.g. `root` is not inside a git working tree, or
+///   is a bare/corrupt repo).
+/// - `STALE_REFERENCE_UNVERIFIABLE:NON_UTF8_STDOUT` -- the process exited
+///   zero but its stdout was not valid UTF-8.
+///
+/// Callers that need to react differently per cause can match on the
+/// returned string's prefix; callers that only need "did this resolve"
+/// can compare against `STALE_REFERENCE_UNVERIFIABLE:` as a whole.
 pub fn exact_head(root: &Path) -> String {
-    Command::new("git")
+    match Command::new("git")
         .args(["rev-parse", "HEAD"])
         .current_dir(root)
         .output()
-        .ok()
-        .filter(|output| output.status.success())
-        .map(|output| String::from_utf8_lossy(&output.stdout).trim().to_owned())
-        .unwrap_or_else(|| "UNKNOWN".into())
+    {
+        Err(_) => "STALE_REFERENCE_UNVERIFIABLE:SPAWN_FAILURE".into(),
+        Ok(output) if !output.status.success() => {
+            "STALE_REFERENCE_UNVERIFIABLE:NON_ZERO_EXIT".into()
+        }
+        Ok(output) => match String::from_utf8(output.stdout) {
+            Err(_) => "STALE_REFERENCE_UNVERIFIABLE:NON_UTF8_STDOUT".into(),
+            Ok(stdout) => stdout.trim().to_owned(),
+        },
+    }
+}
+
+#[cfg(test)]
+mod exact_head_tests {
+    use super::exact_head;
+    use std::path::Path;
+    use std::sync::Mutex;
+
+    /// `missing_git_binary_returns_distinct_spawn_failure_status` mutates
+    /// the process-global `PATH` env var. Rust runs `#[test]`s in parallel
+    /// threads within one process by default, so any other test in this
+    /// module that spawns a real `git` subprocess must serialize against
+    /// that mutation via this lock, or it can transiently observe the
+    /// cleared `PATH` and spawn-fail for a reason unrelated to what it is
+    /// actually testing.
+    static PATH_MUTATION_GUARD: Mutex<()> = Mutex::new(());
+
+    /// Happy path: this file's own worktree is a real, healthy git repo, so
+    /// `exact_head` must return the actual trimmed `HEAD` SHA -- identical
+    /// to what `git rev-parse HEAD` prints directly, not a status literal.
+    #[test]
+    fn happy_path_returns_real_head_sha_matching_git_directly() {
+        let _guard = PATH_MUTATION_GUARD
+            .lock()
+            .unwrap_or_else(|e| e.into_inner());
+        let root = Path::new(env!("CARGO_MANIFEST_DIR"));
+        let head = exact_head(root);
+
+        assert!(
+            !head.starts_with("STALE_REFERENCE_UNVERIFIABLE"),
+            "expected a real SHA for this repo's own worktree, got {head:?}"
+        );
+        assert_eq!(
+            head.len(),
+            40,
+            "git rev-parse HEAD SHA must be 40 hex chars: {head:?}"
+        );
+        assert!(
+            head.chars().all(|c| c.is_ascii_hexdigit()),
+            "expected all-hex SHA, got {head:?}"
+        );
+
+        let direct = std::process::Command::new("git")
+            .args(["rev-parse", "HEAD"])
+            .current_dir(root)
+            .output()
+            .expect("git must be runnable for this test to be meaningful");
+        assert!(direct.status.success());
+        let direct_sha = String::from_utf8(direct.stdout).unwrap().trim().to_owned();
+        assert_eq!(head, direct_sha);
+    }
+
+    /// Non-zero-exit failure mode: a real, freshly created temp directory
+    /// that is genuinely not inside any git working tree causes `git
+    /// rev-parse HEAD` to spawn successfully but exit non-zero. This must
+    /// be distinguishable from the happy path and from the other 2 failure
+    /// causes by its own distinct status string, not collapse into a bare
+    /// `"UNKNOWN"`.
+    #[test]
+    fn non_git_directory_returns_distinct_non_zero_exit_status() {
+        let _guard = PATH_MUTATION_GUARD
+            .lock()
+            .unwrap_or_else(|e| e.into_inner());
+        let dir = tempfile::tempdir().expect("create real temp dir");
+        // Guard against the (unlikely) case tempdir() lands inside an
+        // ancestor git worktree, which would make git walk up and find a
+        // real HEAD instead of failing -- that would falsify this test's
+        // premise, not the code under test.
+        let probe = std::process::Command::new("git")
+            .args(["rev-parse", "--is-inside-work-tree"])
+            .current_dir(dir.path())
+            .output()
+            .expect("git must be runnable for this test to be meaningful");
+        if probe.status.success() {
+            eprintln!(
+                "skipping: tempdir {:?} unexpectedly resolved inside a git worktree",
+                dir.path()
+            );
+            return;
+        }
+
+        let head = exact_head(dir.path());
+        assert_eq!(head, "STALE_REFERENCE_UNVERIFIABLE:NON_ZERO_EXIT");
+    }
+
+    /// Spawn-failure mode: pointing `PATH` at a directory with no `git`
+    /// binary makes `Command::output()` itself return `io::Error`, which
+    /// must surface as its own distinct status, not the same string as a
+    /// non-zero exit or non-UTF8 stdout.
+    #[test]
+    fn missing_git_binary_returns_distinct_spawn_failure_status() {
+        let _guard = PATH_MUTATION_GUARD
+            .lock()
+            .unwrap_or_else(|e| e.into_inner());
+        let empty_path_dir = tempfile::tempdir().expect("create real temp dir for empty PATH");
+        let original_path = std::env::var_os("PATH");
+        // SAFETY-equivalent: this mutates process-global PATH for the
+        // duration of this test. Rust test binaries run each #[test] in
+        // its own thread but share one process env; this test restores
+        // PATH immediately after the call below regardless of outcome to
+        // avoid poisoning any concurrently running test's ability to spawn
+        // real subprocesses.
+        std::env::set_var("PATH", empty_path_dir.path());
+        let root = tempfile::tempdir().expect("create real temp dir for cwd");
+        let head = exact_head(root.path());
+        if let Some(path) = original_path {
+            std::env::set_var("PATH", path);
+        } else {
+            std::env::remove_var("PATH");
+        }
+
+        assert_eq!(head, "STALE_REFERENCE_UNVERIFIABLE:SPAWN_FAILURE");
+    }
 }

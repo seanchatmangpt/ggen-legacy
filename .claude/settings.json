@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(just fmt)",
+      "Bash(just check)",
+      "Bash(just clippy)",
+      "Bash(just test)",
+      "Bash(just ci)",
+      "Bash(just v26-fmt)",
+      "Bash(just v26-check)",
+      "Bash(just v26-clippy)",
+      "Bash(just v26-test)",
+      "Bash(just v26-ci)",
+      "Bash(just ci-all)",
+      "Bash(just planning-max)",
+      "Bash(cargo fmt --all -- --check)",
+      "Bash(cargo check --all-targets --locked)",
+      "Bash(cargo clippy --all-targets --locked -- -D warnings)",
+      "Bash(cargo test --all-targets --locked -- --test-threads=1)",
+      "Bash(python3 planning/v26.8.7/verify.py --strict)",
+      "Bash(python3 scripts/verify_docs.py --strict)",
+      "Bash(python3 scripts/verify_foundry_provenance.py)",
+      "Bash(python3 scripts/verify_foundry_bootstrap.py)",
+      "Bash(python3 scripts/verify_offline_transport.py)",
+      "Bash(bash appliance/bin/run-reference-e2e.sh)",
+      "Bash(mdbook build docs)"
+    ]
+  }
+}

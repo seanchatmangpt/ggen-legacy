@@ -7,12 +7,10 @@ import json
 from pathlib import Path
 from typing import Any
 
+from _shared import sha256_file
+
 
 PROJECTOR_PATH = "appliance/bin/project-subsystem-coverage.py"
-
-
-def sha256_file(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def coverage_from_report(report: dict[str, Any], root: Path) -> dict[str, Any]:

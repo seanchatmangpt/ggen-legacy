@@ -7,9 +7,23 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 BOOTSTRAP = ROOT / "foundry" / "bootstrap.yaml"
+# EXPECTED_STABLE_SOURCE: claimed to represent the ggen manufacturing
+# repository's stable coordinate. Unreachable in this worktree
+# (`git cat-file -t` fails); producing-repo/commit not independently
+# confirmed. See tickets/GL-ERRC-011.md.
 EXPECTED_STABLE = "0f39227c102e0ac7519f0f27561356227a518653"
+# EXPECTED_PLAN_SOURCE: claimed to represent PR #543's plan-repo HEAD.
+# Unreachable in this worktree; producing-repo/commit not independently
+# confirmed. See tickets/GL-ERRC-011.md.
 EXPECTED_PLAN = "999db36647feeb2dfd0bd2250d2db2ef00b887c4"
+# EXPECTED_RECEIVING_RUNTIME_SOURCE: claimed to represent the receiving
+# boundary workflow's observed runtime HEAD. Unreachable in this worktree;
+# producing-repo/commit not independently confirmed. See
+# tickets/GL-ERRC-011.md.
 EXPECTED_RECEIVING_RUNTIME = "0175ead9748a7f41018ec037828865ae11cfe267"
+# EXPECTED_CURRENT_RUNTIME_SOURCE: claimed to represent PR #544's runtime-
+# repo HEAD candidate. Unreachable in this worktree; producing-repo/commit
+# not independently confirmed. See tickets/GL-ERRC-011.md.
 EXPECTED_CURRENT_RUNTIME = "f831e4d9fa80fe345349ce5d6e0fff41e6eb2a4a"
 EXPECTED_DISPOSITIONS = [
     "PRESERVED",
@@ -27,6 +41,17 @@ def nested(data: dict, *path: str):
             return None
         current = current.get(key)
     return current
+
+
+def stale_or(code: str) -> str:
+    """Distinguish a mismatch against a known-unreachable EXPECTED_* constant
+    (STALE_REFERENCE_UNVERIFIABLE) from a real bootstrap-coordinate
+    discrepancy. The 4 EXPECTED_* hash constants in this file are confirmed
+    unreachable git objects in this worktree (see tickets/GL-ERRC-011.md);
+    resolving the canonical value is a repo-owner decision out of this
+    ticket's scope.
+    """
+    return f"STALE_REFERENCE_UNVERIFIABLE:{code}"
 
 
 def main() -> int:
@@ -53,7 +78,24 @@ def main() -> int:
         "corpus_base": "3c6480eb8a9d4c84474fd0f99ca21787cb424f2f",
     }
     if coordinates != expected_coordinates:
-        errors.append("BOOTSTRAP_COORDINATE_DRIFT")
+        # corpus_base is not one of the EXPECTED_* constants in scope for
+        # GL-ERRC-011 (it is a distinct, separately-sourced literal); only
+        # the EXPECTED_*-backed keys get the stale-reference distinction.
+        stale_keys = {
+            "stable_manufacturing_kernel",
+            "foundry_plan",
+            "receiving_runtime_observed",
+            "current_runtime_candidate",
+        }
+        drifted_stale_keys = {
+            key
+            for key in stale_keys
+            if coordinates.get(key) != expected_coordinates.get(key)
+        }
+        if drifted_stale_keys:
+            errors.append(stale_or(f"BOOTSTRAP_COORDINATE_DRIFT:{','.join(sorted(drifted_stale_keys))}"))
+        if coordinates.get("corpus_base") != expected_coordinates.get("corpus_base"):
+            errors.append("BOOTSTRAP_COORDINATE_DRIFT:corpus_base")
 
     evidence = bootstrap.get("receiving_evidence", {})
     if evidence.get("real_git_tests") != 4 or evidence.get("real_git_failures") != 0:

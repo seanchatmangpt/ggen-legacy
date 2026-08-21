@@ -12,8 +12,5 @@ name = "ggen_verifier_cli_verify"
 path = "src/lib.rs"
 
 [dev-dependencies]
-# Path dependency into the separate ~/ggen repo, not the published crate:
-# the published chicago-tdd-tools doesn't yet include the `cli_proof` module
-# (`cli-proof` feature isn't published to crates.io yet) -- same gap
-# ~/ggen/examples/receiptctl and ~/ggen/examples/ggen-cli-verify work around.
-chicago-tdd-tools = { path = "/Users/sac/ggen/crates/chicago-tdd-tools", features = ["cli-proof"] }
+# Published crate + feature, matching this repo's own root Cargo.toml.
+chicago-tdd-tools = { version = "26.8.3", features = ["cli-proof"] }

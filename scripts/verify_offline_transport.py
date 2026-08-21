@@ -6,7 +6,13 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
+# EXPECTED_HEAD_SOURCE: claimed to represent PR #537's source-repo HEAD.
+# Unreachable in this worktree (`git cat-file -t` fails); producing-repo/
+# commit not independently confirmed. See tickets/GL-ERRC-011.md.
 EXPECTED_HEAD = "4bd2df69362c2708551f870c3dac36bce97898c2"
+# EXPECTED_WORKFLOW_RUN is a CI run-number identity claim, not a git SHA
+# object; it is not in scope for GL-ERRC-011's git-object-reachability
+# check and is left unannotated here.
 EXPECTED_WORKFLOW_RUN = 30654755433
 EXPECTED_PROPERTIES = [
     "exact_source_head",
@@ -32,7 +38,16 @@ def main() -> int:
     if provenance.get("pull_request") != 537:
         errors.append("PR_537_IDENTITY")
     if provenance.get("head") != EXPECTED_HEAD:
-        errors.append("PR_537_HEAD_DRIFT")
+        # EXPECTED_HEAD is a confirmed-unreachable git object in this
+        # worktree (see tickets/GL-ERRC-011.md): a mismatch cannot be
+        # distinguished from "the constant is stale" vs "the live value
+        # genuinely drifted" without repo-owner input, so it is reported
+        # as STALE_REFERENCE_UNVERIFIABLE rather than a bare
+        # PR_537_HEAD_DRIFT claim.
+        errors.append(
+            f"STALE_REFERENCE_UNVERIFIABLE:PR_537_HEAD_DRIFT:"
+            f"observed={provenance.get('head')}"
+        )
     if provenance.get("dedicated_workflow_run") != EXPECTED_WORKFLOW_RUN:
         errors.append("PR_537_WORKFLOW_IDENTITY")
     if provenance.get("dedicated_workflow_conclusion") != "success":

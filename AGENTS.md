@@ -7,6 +7,82 @@ This file governs `seanchatmangpt/ggen-legacy`.
 - admitted reconstruction base: `70e599a599fedb7c62c965377cc2f80df1fa01ec`
 - active executable ticket: `GL-LSP-001`
 - concurrent executable ticket: `GL-PLAN-002`
+- drafted tickets (see tickets/):
+  - `GL-ARCH-003`: admitted executable ticket
+  - `GL-AUTO-001`: `BLOCKED` — corrected 2026-08-21 by `GL-ERRC-023`. A fresh run of the
+  - `GL-CONTRACT-004`: admitted, `NOT_STARTED` — drafted this session, not executed
+  - `GL-ERRC-008`: admitted, `NOT_STARTED` — drafted by ultracode ERRC pass
+  - `GL-ERRC-009`: `EXECUTED` — fix applied and verified this session against the real
+  - `GL-ERRC-010`: admitted, `NOT_STARTED` — drafted by ultracode ERRC pass 3
+  - `GL-ERRC-011`: EXECUTED
+  - `GL-ERRC-012`: `EXECUTED` — planning-document split performed for real this
+  - `GL-ERRC-013`: `EXECUTED` — fix applied and verified: `AGENTS.md` gained a
+  - `GL-ERRC-014`: admitted, `NOT_STARTED` — drafted by ultracode ERRC pass 4
+  - `GL-ERRC-015`: EXECUTED
+  - `GL-ERRC-016`: EXECUTED
+  - `GL-ERRC-017`: admitted, `NOT_STARTED` — drafted by ultracode ERRC pass 5
+  - `GL-ERRC-018`: admitted, `NOT_STARTED` — drafted by ultracode ERRC pass 5
+  - `GL-ERRC-019`: `EXECUTED` — fixed and verified this session (see "Execution evidence" below)
+  - `GL-ERRC-020`: admitted, `NOT_STARTED` — drafted by standing ultracode exploration cron
+  - `GL-ERRC-022`: `EXECUTED` — real recipe added, real binary compiled and invoked, see
+  - `GL-ERRC-023`: `EXECUTED` — corrected `tickets/GL-AUTO-001.md` in place per Hard Laws 1-4
+  - `GL-EXP-001`: `EXECUTED` — real fix landed in the main checkout and re-verified there
+  - `GL-EXP-002`: `EXECUTED` — real fix landed in the main checkout and re-verified there
+  - `GL-EXP-003`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-004`: admitted, NOT_STARTED — drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-005`: EXECUTED -- drafted by standing ultracode exploration cron (GL-EXP namespace), executed this session
+  - `GL-EXP-006`: `EXECUTED` — real fix landed in the main checkout and re-verified there
+  - `GL-EXP-007`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron
+  - `GL-EXP-008`: admitted, NOT_STARTED — drafted by standing ultracode exploration cron
+  - `GL-EXP-009`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-010`: admitted, `NOT_STARTED` — drafted by standing ultracode exploration cron
+  - `GL-EXP-011`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-012`: admitted, NOT_STARTED — drafted by standing ultracode exploration cron
+  - `GL-EXP-013`: `EXECUTED` 2026-08-21 — real fix landed in the main checkout and re-verified there
+  - `GL-EXP-014`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron
+  - `GL-EXP-015`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-016`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron
+  - `GL-EXP-017`: `EXECUTED` 2026-08-21 — real fix landed in the main checkout and re-verified there
+  - `GL-EXP-018`: `EXECUTED` — the two rows this ticket specifies were added to
+  - `GL-EXP-019`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-020`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron
+  - `GL-EXP-021`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-022`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-023`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-024`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-025`: EXECUTED -- fix landed and verified this session in worktree
+  - `GL-EXP-026`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron
+  - `GL-EXP-027`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-028`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-029`: `EXECUTED` — dead field deleted, build and full test suite verified green
+  - `GL-EXP-030`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron
+  - `GL-EXP-031`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-032`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-033`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-034`: admitted, `NOT_STARTED` -- drafted by standing ultracode exploration cron
+  - `GL-EXP-035`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-036`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-037`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron
+  - `GL-EXP-038`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-039`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-040`: `EXECUTED` — both digests corrected in the main checkout and
+  - `GL-EXP-041`: admitted, `NOT_STARTED` — drafted by standing ultracode exploration cron
+  - `GL-EXP-042`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron
+  - `GL-EXP-043`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-044`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-045`: `EXECUTED` 2026-08-21 -- real fix landed in the main checkout and re-verified
+  - `GL-EXP-046`: `EXECUTED` -- real fix landed in the main checkout and re-verified
+  - `GL-EXP-047`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron (GL-EXP namespace)
+  - `GL-EXP-048`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron
+  - `GL-EXP-049`: `EXECUTED` 2026-08-21 -- real fix landed in the main checkout and re-verified
+  - `GL-EXP-050`: `EXECUTED` — re-run performed for real this session against the real
+  - `GL-EXP-051`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron
+  - `GL-EXP-052`: admitted, NOT_STARTED -- drafted by standing ultracode exploration cron
+  - `GL-LSP-001`: (no Status: line in ticket file)
+  - `GL-MANUFACTURE-005`: admitted, `NOT_STARTED` — drafted this session, not executed
+  - `GL-PLAN-002`: admitted concurrent executable ticket  
+  - `GL-RECEIPT-007`: admitted, `NOT_STARTED` — drafted this session, not executed
+  - `GL-VERIFY-006`: admitted, `NOT_STARTED` — drafted this session, not executed
 - protocol runtime: `lsp-max`
 - pinned runtime: `seanchatmangpt/lsp-max@220d3251e959f6a58ce0311e995b31a85f98240c`
 - received contract authority: `authority/lsp-contract.json`
