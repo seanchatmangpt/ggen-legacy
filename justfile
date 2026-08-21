@@ -40,3 +40,12 @@ ci-all: ci v26-ci
 # to ci-all because that target mirrors the pre-existing GL-LSP-001 workspace ladder.
 planning-max:
     python3 planning/v26.8.7/verify.py --strict
+
+# GL-ERRC-022: optional, suggestion-only wiring for the real
+# tools/dsrust-disposition-proposer crate's `propose-disposition` binary. Not part
+# of `ci`/`ci-all`/`v26-ci` and not invoked from any workflow -- a human runs this
+# by hand and reviews the proposal; it never writes to CATALOG, draft-candidates.json,
+# or any admission-workflow state, and it does not change any existing recipe.
+# Requires GROQ_API_KEY in the environment for a real proposal (not needed for --help).
+propose-disposition *ARGS:
+    cargo run --manifest-path tools/dsrust-disposition-proposer/Cargo.toml --bin propose-disposition -- {{ARGS}}
