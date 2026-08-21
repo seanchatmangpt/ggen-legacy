@@ -58,16 +58,34 @@ replay→retire chain (each stage consumes the prior stage's output), `parallel(
 `verify` for adversarial cross-checking (3-vote pattern — the same mechanism this proposal's
 own research claims were verified with).
 
-## `ggen-legacy-mcp`: 6 scoped tools, not a kitchen-sink server
+## `ggen-legacy-mcp`: 7 scoped tools (6 lifecycle stages, `admit` split in two — see below),
+## not a kitchen-sink server
 
 ```
-observe_contract(target_path) -> ContractId       # read-only
-admit_contract(contract_id) -> GraphAdmissionId   # write, scoped credentials
-construct_replacement(admission_id) -> BuildId    # invokes ggen sync
-verify_closure(build_id, contract_id) -> Receipt  # read-only, BLAKE3-chained
-replay(receipt_id, n) -> ReplayReport             # read-only
-retire_predecessor(receipt_id) -> Standing        # destructive, separate scope
+observe_contract(target_path) -> ContractId               # read-only
+propose_admit(contract_id) -> AdmissionCandidateId         # write, but non-final
+confirm_admit(candidate_id, human_authorization) -> GraphAdmissionId  # write, scoped credentials, requires explicit authorization
+construct_replacement(admission_id) -> BuildId              # invokes ggen sync
+verify_closure(build_id, contract_id) -> Receipt            # read-only, ggen.legacy.*.verifier.v1-shaped
+replay(receipt_id, n) -> ReplayReport                        # read-only
+retire_predecessor(receipt_id) -> Standing                   # destructive, separate scope
 ```
+
+**Prototyped split (2026-08-21):** the original single `admit_contract` tool was split into
+`propose_admit`/`confirm_admit` to close the deep-research pass's own open question ("does
+`admit` need to be split further into propose-admit and confirm-admit tools?"). Rationale:
+`admit_contract` writes to the graph — a real, standing-changing action — but this repo's own
+`candidate != verified != authorized != actuated` line (via
+[[combinatorial-maximalism-review]]'s framing, and this repo's own ticket-gated-admission rule
+in `AGENTS.md`) means a contract becoming a real graph admission should not be a single
+irreversible call. `propose_admit` writes a non-final `AdmissionCandidateId` (inspectable,
+diffable, revocable) without changing repo standing; `confirm_admit` requires an explicit
+`human_authorization` argument (not inferred from context) and is the only tool that actually
+changes admitted authority. This mirrors `retire_predecessor`'s existing destructive-tool
+scoping — both `confirm_admit` and `retire_predecessor` are the two truly irreversible-standing
+tools in this surface and should share the same credential scope, distinct from the four
+propose/read tools. Not yet implemented against a real MCP server — this is the tool-surface
+prototype, not a working server.
 
 Confirmed by 2+ independent sources (AWS MCP strategy guide, community MCP best-practice
 guides): a small, bounded, single-responsibility tool surface beats a kitchen-sink API — tool
@@ -119,13 +137,36 @@ it in an MCP tool surface specifically.
 
 ## Open gaps this proposal does not close
 
-1. **No bridge between BLAKE3 (a hash function) and SLSA-style signer/builder identity
-   attestation.** `verify_closure`'s receipt format needs its own design — this repo's real
-   receipt/replay machinery (`docs/src/07-verification.md`, `evidence/`) should be read and
-   reconciled against this before any admission, not assumed compatible.
+1. **Corrected 2026-08-21 (real, was wrong):** the original version of this gap assumed
+   `verify_closure` needed a bridge between BLAKE3 hashing (the wasm4pm repo's own convention,
+   not this repo's) and SLSA-style attestation. Checked `docs/src/07-verification.md` and a real
+   receipt on disk (`evidence/foundry-provenance-verifier.json`) directly: **ggen-legacy already
+   has its own native, git-commit-hash-based, schema-versioned receipt format**
+   (`schema: "ggen.legacy.<domain>.verifier.v1"`; fields include `exact_head`, `runtime_head`,
+   `workflow_run`, `standing`, and an explicit `nonclaims` array naming what is *not* claimed —
+   `docs/src/07-verification.md:47`: "A receipt binds run, project, exact source, authority
+   digest, toolchain, environment, inputs, outputs, actuator, exit status, verifier results,
+   time, lineage, and standing"). This is already structurally close to SLSA's
+   BuildDefinition/RunDetails split (source commit + builder/toolchain identity + outcome). The
+   real remaining gap is narrower than originally stated: `verify_closure` should emit a receipt
+   in **this existing `ggen.legacy.*.verifier.v1` family** (e.g.
+   `ggen.legacy.mcp.verify-closure.v1`), reusing `exact_head`/`standing`/`nonclaims`, not
+   BLAKE3 and not raw SLSA — no new format needs inventing, just a new schema instance in the
+   family that already exists.
 2. **No prior art found for a `workflow()`-composed strangler-fig traffic-replay loop**
    (incrementally re-routing and monitoring via workflow primitives specifically) — this would
-   be a novel application if pursued, not a confirmed pattern.
+   be a novel application if pursued, not a confirmed pattern. **Content-addressed build
+   caching as a closer replay analogue than SLSA specifically (researched 2026-08-21):** Nix's
+   and Bazel's remote-cache model (a deterministic input hash keys a cache entry; a cache hit
+   means "this exact input set was already built, replay the stored output instead of
+   rebuilding") maps onto the `replay` stage more directly than SLSA's attestation model does —
+   SLSA answers "can I trust who built this," Nix/Bazel-style caching answers "have I already
+   computed this exact result, so replay is a lookup, not re-execution." `replay(receipt_id, n)`
+   could key on the same `exact_head`+authority-digest inputs this repo's real receipts already
+   record, treating a matching prior receipt as a cache hit rather than re-running the full
+   `construct`→`verify` chain each time. This wasn't validated against a real implementation in
+   this pass — a design sketch, not a confirmed pattern, same evidentiary weight as the
+   strangler-fig-replay item above.
 
 ## Checked against `GL-LSP-001` / `GL-PLAN-002` (real, 2026-08-21) — no conflict, but a more
 ## authoritative prior-art source was found and should supersede parts of this proposal
