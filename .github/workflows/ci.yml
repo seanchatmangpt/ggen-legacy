@@ -307,3 +307,154 @@ jobs:
           path: evidence/reconstitution/docs-pack/
           if-no-files-found: error
           retention-days: 14
+
+  ash-paas-manufacture:
+    name: GL-PAAS-001 Ash/AshR2RML/Reactor runtime
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      GGEN_SHA: 1e9fcb9679a61460fbd641415cb72511c7e50b33
+      ASH_R2RML_SHA: 067954ad406fd637fd47646bdb10c4580809c79d
+      RUSTUP_TOOLCHAIN: nightly-2026-06-22
+      RUSTC_WRAPPER: ""
+      PACK: packs/ggen-ash-paas-pack
+    steps:
+      - name: Checkout exact ggen-legacy subject
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
+      - name: Admit exact subject and source-pack closure
+        shell: bash
+        env:
+          EXPECTED_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
+          count="$(find .github/workflows -maxdepth 1 -type f \( -name '*.yml' -o -name '*.yaml' \) | wc -l | tr -d ' ')"
+          test "$count" -eq 1
+          python3 "$PACK/gates/verify_pack.py"
+          test ! -e "$PACK/consumer/paas/mix.exs"
+      - name: Checkout exact canonical ggen manufacturer
+        uses: actions/checkout@v4
+        with:
+          repository: seanchatmangpt/ggen
+          ref: 1e9fcb9679a61460fbd641415cb72511c7e50b33
+          path: _tooling/ggen
+          persist-credentials: false
+      - name: Verify manufacturer identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git -C _tooling/ggen rev-parse HEAD)" = "$GGEN_SHA"
+          test -z "$(git -C _tooling/ggen status --porcelain=v1 --untracked-files=no)"
+      - name: Install pinned ggen toolchain
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: nightly-2026-06-22
+      - name: Build exact ggen CLI
+        working-directory: _tooling/ggen
+        run: cargo build --locked -p ggen-cli-lib --bin ggen
+      - name: Execute admission and BRCE falsifier
+        shell: bash
+        run: |
+          set -euo pipefail
+          GGEN="$GITHUB_WORKSPACE/_tooling/ggen/target/debug/ggen"
+          rm -rf /tmp/paas-admitted /tmp/paas-refused
+          cp -a "$PACK" /tmp/paas-admitted
+          (cd /tmp/paas-admitted && "$GGEN" sync run --dry-run)
+          cp -a "$PACK" /tmp/paas-refused
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('/tmp/paas-refused/ontology.ttl')
+          s = p.read_text()
+          old = 'paas:brceRequired true'
+          new = 'paas:brceRequired false'
+          assert old in s
+          p.write_text(s.replace(old, new, 1))
+          PY
+          if (cd /tmp/paas-refused && "$GGEN" sync run --dry-run); then
+            echo 'REFUSAL_FAILED: graph without mandatory BRCE was admitted' >&2
+            exit 1
+          fi
+      - name: Manufacture twice and prove deterministic projection
+        shell: bash
+        run: |
+          set -euo pipefail
+          GGEN="$GITHUB_WORKSPACE/_tooling/ggen/target/debug/ggen"
+          rm -rf /tmp/paas-run1 /tmp/paas-run2 evidence/reconstitution/ash-paas
+          cp -a "$PACK" /tmp/paas-run1
+          cp -a "$PACK" /tmp/paas-run2
+          (cd /tmp/paas-run1 && "$GGEN" sync run)
+          (cd /tmp/paas-run2 && "$GGEN" sync run)
+          diff -ru /tmp/paas-run1/consumer /tmp/paas-run2/consumer
+          mapfile -t generated < <(find /tmp/paas-run1/consumer/paas -type f | sort)
+          test "${#generated[@]}" -eq 3
+          test -f /tmp/paas-run1/consumer/paas/mix.exs
+          test -f /tmp/paas-run1/consumer/paas/lib/ggen_legacy_paas.ex
+          test -f /tmp/paas-run1/consumer/paas/test/ggen_legacy_paas_test.exs
+      - name: Install admitted BEAM runtime
+        uses: erlef/setup-beam@v1
+        with:
+          otp-version: '27.1'
+          elixir-version: '1.17.3'
+      - name: Execute exact generated Ash PaaS subject
+        working-directory: /tmp/paas-run1/consumer/paas
+        shell: bash
+        env:
+          MIX_ENV: test
+        run: |
+          set -euo pipefail
+          mix deps.get
+          test "$(git -C deps/ash_r2rml rev-parse HEAD)" = "$ASH_R2RML_SHA"
+          mix compile --warnings-as-errors
+          mix test --trace
+      - name: Emit digest-bound runtime receipt
+        shell: bash
+        env:
+          SUBJECT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p evidence/reconstitution/ash-paas
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          root = Path('/tmp/paas-run1/consumer/paas')
+          rows = []
+          for p in sorted(x for x in root.rglob('*') if x.is_file() and '_build' not in x.parts and 'deps' not in x.parts):
+              rel = p.relative_to(root).as_posix()
+              rows.append((rel, hashlib.sha256(p.read_bytes()).hexdigest()))
+          assert [r[0] for r in rows] == ['lib/ggen_legacy_paas.ex', 'mix.exs', 'test/ggen_legacy_paas_test.exs'], rows
+          digest = hashlib.sha256(json.dumps(rows, separators=(',', ':')).encode()).hexdigest()
+          receipt = {
+              'case_id': 'GL-PAAS-001',
+              'repository': os.environ['GITHUB_REPOSITORY'],
+              'subject_sha': os.environ['SUBJECT_SHA'],
+              'ggen_sha': os.environ['GGEN_SHA'],
+              'ash_r2rml_sha': os.environ['ASH_R2RML_SHA'],
+              'projection_sha256': digest,
+              'generated_artifact_count': len(rows),
+              'standing': 'ALIVE',
+              'scope': 'generated-provider-neutral-paas-kernel',
+              'external_provider_actuation': False,
+              'boundaries': [
+                  'ggen-admission-refusal',
+                  'deterministic-manufacture',
+                  'ash-resource-closure',
+                  'ash-r2rml-semantic-projection',
+                  'reactor-semantic-pipeline',
+                  'brce-bound-receipt',
+                  'unbound-receipt-refusal',
+              ],
+          }
+          out = Path('evidence/reconstitution/ash-paas/replay-receipt.json')
+          out.write_text(json.dumps(receipt, indent=2, sort_keys=True) + '\n')
+          print(out.read_text())
+          PY
+      - name: Upload PaaS manufacture and runtime evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: gl-paas-001-${{ github.run_id }}
+          path: evidence/reconstitution/ash-paas/
+          if-no-files-found: error
+          retention-days: 14
