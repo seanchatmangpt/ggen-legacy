@@ -1,0 +1,157 @@
+name: Dashboard contract reconstitution
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "tickets/GL-UI-001.md"
+      - "tools/v26.8.27/**"
+      - ".github/workflows/dashboard-reconstitution.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gl-ui-001-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  PRODUCER_REPO: seanchatmangpt/ggen-ui
+  PRODUCER_SHA: 34bb80e9c02326b49a866b0d2fbf02f6ff25404c
+  MARKETPLACE_REPO: seanchatmangpt/ggen-marketplace
+  MARKETPLACE_SHA: bba99ff12533b7c8da3d5eaa7e88e8d5fe0133c6
+
+jobs:
+  reconstitute:
+    name: Exact receive, independent verify, replay
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout exact receiver
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          path: ggen-legacy
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Checkout exact producer
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ env.PRODUCER_REPO }}
+          ref: ${{ env.PRODUCER_SHA }}
+          path: ggen-ui
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Checkout exact manufacturer
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: ${{ env.MARKETPLACE_REPO }}
+          ref: ${{ env.MARKETPLACE_SHA }}
+          path: ggen-marketplace
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Assert all subject identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          receiver_expected="${{ github.event.pull_request.head.sha || github.sha }}"
+          test "$(git -C ggen-legacy rev-parse HEAD)" = "$receiver_expected" || { echo "REFUSED:RECEIVER_HEAD_MISMATCH"; exit 2; }
+          test "$(git -C ggen-ui rev-parse HEAD)" = "$PRODUCER_SHA" || { echo "REFUSED:PRODUCER_HEAD_MISMATCH"; exit 2; }
+          test "$(git -C ggen-marketplace rev-parse HEAD)" = "$MARKETPLACE_SHA" || { echo "REFUSED:MARKETPLACE_HEAD_MISMATCH"; exit 2; }
+          echo "RECEIVER_SHA=$receiver_expected" >> "$GITHUB_ENV"
+
+      - name: Set up marketplace admission toolchain
+        uses: dtolnay/rust-toolchain@4360b52568e2003a75bf9bc1d59f33a8e3fc893c
+        with:
+          toolchain: nightly-2026-06-22
+          components: rustfmt
+
+      - name: Admit marketplace law and install its ggen runtime
+        shell: bash
+        working-directory: ggen-marketplace
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          bash scripts/admit-config.sh marketplace.toml "${RUNNER_TEMP}/admitted-config.json" >/dev/null
+          ggen_bin="$(bash scripts/install-ggen.sh "${RUNNER_TEMP}/admitted-config.json")"
+          echo "GGEN_BIN=$ggen_bin" >> "$GITHUB_ENV"
+          "$ggen_bin" --version > "${RUNNER_TEMP}/ggen-version.txt"
+
+      - name: Receive language-neutral producer consequence
+        shell: bash
+        working-directory: ggen-ui
+        run: |
+          set -euo pipefail
+          rm -rf src/generated
+          "$GGEN_BIN" sync run
+          test -s src/generated/dashboard-contract.json
+          cp src/generated/dashboard-contract.json "${RUNNER_TEMP}/dashboard-contract.json"
+          sha256sum "${RUNNER_TEMP}/dashboard-contract.json" > "${RUNNER_TEMP}/dashboard-contract.sha256"
+
+      - name: Run independent receiver unit falsifiers
+        working-directory: ggen-legacy
+        run: python3 tools/v26.8.27/test_dashboard_reconstitution.py -v
+
+      - name: Reconstitute twice and replay
+        shell: bash
+        working-directory: ggen-legacy
+        run: |
+          set -euo pipefail
+          python3 tools/v26.8.27/dashboard_reconstitution.py verify \
+            --contract "${RUNNER_TEMP}/dashboard-contract.json" \
+            --source-repo "$PRODUCER_REPO" --source-sha "$PRODUCER_SHA" \
+            --out "${RUNNER_TEMP}/ui-receipt-a.json"
+          python3 tools/v26.8.27/dashboard_reconstitution.py verify \
+            --contract "${RUNNER_TEMP}/dashboard-contract.json" \
+            --source-repo "$PRODUCER_REPO" --source-sha "$PRODUCER_SHA" \
+            --out "${RUNNER_TEMP}/ui-receipt-b.json"
+          cmp "${RUNNER_TEMP}/ui-receipt-a.json" "${RUNNER_TEMP}/ui-receipt-b.json"
+          python3 tools/v26.8.27/dashboard_reconstitution.py replay \
+            --left "${RUNNER_TEMP}/ui-receipt-a.json" \
+            --right "${RUNNER_TEMP}/ui-receipt-b.json"
+
+      - name: Execute authority falsifier
+        shell: bash
+        working-directory: ggen-legacy
+        run: |
+          set -euo pipefail
+          python3 - "${RUNNER_TEMP}/dashboard-contract.json" "${RUNNER_TEMP}/forged-contract.json" <<'PY'
+          import json, sys
+          from pathlib import Path
+          payload = json.loads(Path(sys.argv[1]).read_text())
+          payload["authorityStages"].append({"code":"MODEL","order":99,"label":"Model","allowsDo":True})
+          Path(sys.argv[2]).write_text(json.dumps(payload))
+          PY
+          if python3 tools/v26.8.27/dashboard_reconstitution.py verify \
+            --contract "${RUNNER_TEMP}/forged-contract.json" \
+            --source-repo "$PRODUCER_REPO" --source-sha "$PRODUCER_SHA" \
+            --out "${RUNNER_TEMP}/forged-receipt.json"; then
+            echo "::error title=REFUSED:FALSIFIER_SURVIVED::non-BRCE DO authority was accepted"
+            exit 2
+          fi
+
+      - name: Refuse receiver source mutation
+        shell: bash
+        working-directory: ggen-legacy
+        run: |
+          set -euo pipefail
+          test -z "$(git status --porcelain --untracked-files=all)" || { git status --short; exit 2; }
+
+      - name: Preserve receiver evidence
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: gl-ui-001-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            ${{ runner.temp }}/dashboard-contract.json
+            ${{ runner.temp }}/dashboard-contract.sha256
+            ${{ runner.temp }}/ggen-version.txt
+            ${{ runner.temp }}/ui-receipt-a.json
+            ${{ runner.temp }}/ui-receipt-b.json
+          if-no-files-found: warn
+          retention-days: 14
