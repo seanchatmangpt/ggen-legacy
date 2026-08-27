@@ -19,7 +19,6 @@ EXPECTED = {
     "pack.toml",
     "ggen.toml",
     "ontology.ttl",
-    "shapes.ttl",
     "gates/invalid-paas-model.rq",
     "gates/verify_pack.py",
     "queries/platform.rq",
@@ -62,7 +61,7 @@ def main() -> int:
     pack = tomllib.loads(text("pack.toml"))
     config = tomllib.loads(text("ggen.toml"))
     ontology = text("ontology.ttl")
-    shapes = text("shapes.ttl")
+    shapes = ontology
     gate = text("gates/invalid-paas-model.rq")
     runtime = text("templates/lib/ggen_legacy_paas.ex.tera")
     tests = text("templates/test/ggen_legacy_paas_test.exs.tera")
