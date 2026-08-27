@@ -1,0 +1,18 @@
+[pack]
+name = "ggen-legacy-ash-paas"
+version = "26.8.27"
+description = "Provider-neutral PaaS kernel manufactured by ggen from public-ontology-aligned RDF into Ash, AshR2RML and Reactor with BRCE receipt fencing."
+authority_ticket = "GL-PAAS-001"
+standing_ceiling = "PARTIAL_ALIVE"
+
+[construction]
+ggen_sha = "1e9fcb9679a61460fbd641415cb72511c7e50b33"
+ash_r2rml_sha = "067954ad406fd637fd47646bdb10c4580809c79d"
+source = "ontology.ttl"
+generated_root = "consumer/paas"
+request_time_ggen = false
+
+[authority]
+actuation_path = "BRCE"
+receipt_required = true
+odrl_grants_execution_authority = false

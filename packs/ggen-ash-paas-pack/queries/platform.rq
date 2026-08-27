@@ -1,0 +1,37 @@
+PREFIX paas: <https://ggen.chatmangpt.com/ontology/legacy-paas#>
+SELECT ?appName ?moduleName
+       (STR(?serviceClassIri) AS ?serviceClass)
+       (STR(?instanceClassIri) AS ?instanceClass)
+       (STR(?deploymentClassIri) AS ?deploymentClass)
+       (STR(?receiptClassIri) AS ?receiptClass)
+       (STR(?policyClassIri) AS ?policyClass)
+       (STR(?quantityClassIri) AS ?quantityClass)
+       (STR(?identifierPropertyIri) AS ?identifierProperty)
+       (STR(?titlePropertyIri) AS ?titleProperty)
+       (STR(?statusPropertyIri) AS ?statusProperty)
+       (STR(?derivedFromPropertyIri) AS ?derivedFromProperty)
+       (STR(?numericValuePropertyIri) AS ?numericValueProperty)
+       (STR(?unitPropertyIri) AS ?unitProperty)
+       (STR(?intentDigestPropertyIri) AS ?intentDigestProperty)
+WHERE {
+  ?profile a paas:PlatformProfile ;
+    paas:appName ?appName ;
+    paas:moduleName ?moduleName ;
+    paas:serviceClass ?serviceClassIri ;
+    paas:instanceClass ?instanceClassIri ;
+    paas:deploymentClass ?deploymentClassIri ;
+    paas:receiptClass ?receiptClassIri ;
+    paas:policyClass ?policyClassIri ;
+    paas:quantityClass ?quantityClassIri ;
+    paas:identifierProperty ?identifierPropertyIri ;
+    paas:titleProperty ?titlePropertyIri ;
+    paas:statusProperty ?statusPropertyIri ;
+    paas:derivedFromProperty ?derivedFromPropertyIri ;
+    paas:numericValueProperty ?numericValuePropertyIri ;
+    paas:unitProperty ?unitPropertyIri ;
+    paas:intentDigestProperty ?intentDigestPropertyIri ;
+    paas:brceRequired true ;
+    paas:requestTimeGgen false .
+}
+ORDER BY ?appName
+LIMIT 1

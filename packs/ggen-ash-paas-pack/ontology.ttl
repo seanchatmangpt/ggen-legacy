@@ -1,0 +1,69 @@
+@prefix paas: <https://ggen.chatmangpt.com/ontology/legacy-paas#> .
+@prefix schema: <https://schema.org/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix dcat: <http://www.w3.org/ns/dcat#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix qudt: <http://qudt.org/schema/qudt/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+paas: a owl:Ontology ;
+  dcterms:title "ggen-legacy Ash PaaS application profile" ;
+  dcterms:conformsTo <https://schema.org/> ,
+    <http://www.w3.org/ns/prov#> ,
+    <http://www.w3.org/ns/dcat#> ,
+    <http://purl.org/dc/terms/> ,
+    <http://www.w3.org/ns/odrl/2/> ,
+    <http://qudt.org/schema/qudt/> ,
+    <http://www.w3.org/2004/02/skos/core#> ,
+    <http://www.w3.org/ns/shacl#> ,
+    <http://www.w3.org/ns/r2rml#> .
+
+paas:PlatformProfile a owl:Class .
+paas:appName a owl:DatatypeProperty .
+paas:moduleName a owl:DatatypeProperty .
+paas:serviceClass a owl:ObjectProperty .
+paas:instanceClass a owl:ObjectProperty .
+paas:deploymentClass a owl:ObjectProperty .
+paas:receiptClass a owl:ObjectProperty .
+paas:policyClass a owl:ObjectProperty .
+paas:quantityClass a owl:ObjectProperty .
+paas:identifierProperty a owl:ObjectProperty .
+paas:titleProperty a owl:ObjectProperty .
+paas:statusProperty a owl:ObjectProperty .
+paas:derivedFromProperty a owl:ObjectProperty .
+paas:numericValueProperty a owl:ObjectProperty .
+paas:unitProperty a owl:ObjectProperty .
+paas:status a owl:DatatypeProperty .
+paas:intentDigest a owl:DatatypeProperty .
+paas:intentDigestProperty a owl:ObjectProperty .
+paas:brceRequired a owl:DatatypeProperty .
+paas:requestTimeGgen a owl:DatatypeProperty .
+
+paas:default a paas:PlatformProfile ;
+  paas:appName "ggen_legacy_paas" ;
+  paas:moduleName "GgenLegacyPaaS" ;
+  paas:serviceClass schema:Service ;
+  paas:instanceClass schema:SoftwareApplication ;
+  paas:deploymentClass prov:Activity ;
+  paas:receiptClass prov:Entity ;
+  paas:policyClass odrl:Policy ;
+  paas:quantityClass qudt:QuantityValue ;
+  paas:identifierProperty dcterms:identifier ;
+  paas:titleProperty dcterms:title ;
+  paas:statusProperty paas:status ;
+  paas:derivedFromProperty prov:wasDerivedFrom ;
+  paas:numericValueProperty qudt:numericValue ;
+  paas:unitProperty qudt:unit ;
+  paas:intentDigestProperty paas:intentDigest ;
+  paas:brceRequired true ;
+  paas:requestTimeGgen false .
+
+paas:ServiceTiers a skos:ConceptScheme ;
+  dcterms:title "PaaS service tiers" .
+paas:Development a skos:Concept ; skos:inScheme paas:ServiceTiers ; skos:prefLabel "development" .
+paas:Production a skos:Concept ; skos:inScheme paas:ServiceTiers ; skos:prefLabel "production" .

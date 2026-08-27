@@ -1,0 +1,17 @@
+@prefix paas: <https://ggen.chatmangpt.com/ontology/legacy-paas#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+paas:PlatformProfileShape a sh:NodeShape ;
+  sh:targetClass paas:PlatformProfile ;
+  sh:closed false ;
+  sh:property [ sh:path paas:appName ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+  sh:property [ sh:path paas:moduleName ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+  sh:property [ sh:path paas:serviceClass ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
+  sh:property [ sh:path paas:instanceClass ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
+  sh:property [ sh:path paas:deploymentClass ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
+  sh:property [ sh:path paas:receiptClass ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
+  sh:property [ sh:path paas:policyClass ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
+  sh:property [ sh:path paas:quantityClass ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ] ;
+  sh:property [ sh:path paas:brceRequired ; sh:minCount 1 ; sh:maxCount 1 ; sh:hasValue true ] ;
+  sh:property [ sh:path paas:requestTimeGgen ; sh:minCount 1 ; sh:maxCount 1 ; sh:hasValue false ] .
