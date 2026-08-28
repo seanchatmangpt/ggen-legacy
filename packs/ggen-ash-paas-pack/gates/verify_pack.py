@@ -37,7 +37,7 @@ PUBLIC_IRIS = {
     "http://www.w3.org/ns/shacl#",
     "http://www.w3.org/ns/r2rml#",
 }
-GGEN_SHA = "1e9fcb9679a61460fbd641415cb72511c7e50b33"
+GGEN_SHA = "59c95cac18d49c62533918c906524be0fc4063ec"
 ASH_R2RML_SHA = "067954ad406fd637fd47646bdb10c4580809c79d"
 
 
