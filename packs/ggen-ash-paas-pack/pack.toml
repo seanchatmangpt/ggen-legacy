@@ -6,7 +6,7 @@ authority_ticket = "GL-PAAS-001"
 standing_ceiling = "PARTIAL_ALIVE"
 
 [construction]
-ggen_sha = "1e9fcb9679a61460fbd641415cb72511c7e50b33"
+ggen_sha = "59c95cac18d49c62533918c906524be0fc4063ec"
 ash_r2rml_sha = "067954ad406fd637fd47646bdb10c4580809c79d"
 source = "ontology.ttl"
 generated_root = "consumer/paas"
