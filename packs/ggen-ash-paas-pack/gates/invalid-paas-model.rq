@@ -1,0 +1,68 @@
+# ASK true means REFUSED. This is an admission gate, not a linter.
+PREFIX paas: <https://ggen.chatmangpt.com/ontology/legacy-paas#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+
+ASK {
+  {
+    ?profile a paas:PlatformProfile .
+    FILTER NOT EXISTS { ?profile paas:appName ?appName }
+  }
+  UNION {
+    ?profile a paas:PlatformProfile .
+    FILTER NOT EXISTS { ?profile paas:moduleName ?moduleName }
+  }
+  UNION {
+    ?profile a paas:PlatformProfile .
+    FILTER NOT EXISTS { ?profile paas:brceRequired true }
+  }
+  UNION {
+    ?profile a paas:PlatformProfile .
+    FILTER NOT EXISTS { ?profile paas:requestTimeGgen false }
+  }
+  UNION {
+    ?profile a paas:PlatformProfile .
+    FILTER NOT EXISTS { ?profile paas:serviceClass ?serviceClass }
+  }
+  UNION {
+    ?profile a paas:PlatformProfile .
+    FILTER NOT EXISTS { ?profile paas:instanceClass ?instanceClass }
+  }
+  UNION {
+    ?profile a paas:PlatformProfile .
+    FILTER NOT EXISTS { ?profile paas:deploymentClass ?deploymentClass }
+  }
+  UNION {
+    ?profile a paas:PlatformProfile .
+    FILTER NOT EXISTS { ?profile paas:receiptClass ?receiptClass }
+  }
+  UNION {
+    ?profile a paas:PlatformProfile .
+    FILTER NOT EXISTS { ?profile paas:policyClass ?policyClass }
+  }
+  UNION {
+    ?profile a paas:PlatformProfile .
+    FILTER NOT EXISTS { ?profile paas:quantityClass ?quantityClass }
+  }
+  UNION {
+    ?profile a paas:PlatformProfile ; paas:appName ?name .
+    FILTER(!REGEX(STR(?name), "^[a-z][a-z0-9_]*$"))
+  }
+  UNION {
+    ?profile a paas:PlatformProfile ; paas:moduleName ?name .
+    FILTER(!REGEX(STR(?name), "^[A-Z][A-Za-z0-9]*$"))
+  }
+  UNION {
+    VALUES ?required {
+      <https://schema.org/>
+      <http://www.w3.org/ns/prov#>
+      <http://www.w3.org/ns/dcat#>
+      <http://purl.org/dc/terms/>
+      <http://www.w3.org/ns/odrl/2/>
+      <http://qudt.org/schema/qudt/>
+      <http://www.w3.org/2004/02/skos/core#>
+      <http://www.w3.org/ns/shacl#>
+      <http://www.w3.org/ns/r2rml#>
+    }
+    FILTER NOT EXISTS { <https://ggen.chatmangpt.com/ontology/legacy-paas#> dcterms:conformsTo ?required }
+  }
+}
