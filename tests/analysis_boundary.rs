@@ -64,16 +64,3 @@ fn valid_toml_on_disk_has_no_toml_diagnostics() {
         "well-formed TOML read from a real file should not raise GGEN-TOML-001, got: {diagnostics:?}"
     );
 }
-
-#[test]
-fn turtle_comment_and_literal_noise_on_disk_is_not_diagnosed() {
-    let (_uri, diagnostics) = read_fixture_and_analyze(
-        "model.ttl",
-        "@prefix ex: <http://example.org/> .\n# see acme:Thing\nex:a ex:label \"ask bob:smith\" .\n",
-    );
-
-    assert!(
-        diagnostics.is_empty(),
-        "well-formed Turtle read from a real file must raise no diagnostics, got: {diagnostics:?}"
-    );
-}

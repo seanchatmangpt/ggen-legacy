@@ -54,84 +54,6 @@ fn analyze_toml(uri: &Url, text: &str) -> Vec<Diagnostic> {
     }
 }
 
-/// Blank out Turtle regions in which a `prefix:name` token is not a prefixed
-/// name: comments, string literals, and absolute IRI references. The returned
-/// string has exactly the same byte length as `text` (masked bytes become
-/// ASCII spaces, newlines are preserved), so byte offsets computed against it
-/// remain valid offsets into the original document — diagnostic ranges stay
-/// correct.
-fn mask_turtle_noise(text: &str) -> String {
-    let bytes = text.as_bytes();
-    let mut out: Vec<u8> = bytes.to_vec();
-    let mut index = 0usize;
-
-    // Blank `out[from..to]`, keeping newlines so line/column math is unchanged.
-    let blank = |out: &mut Vec<u8>, from: usize, to: usize| {
-        for byte in &mut out[from..to.min(bytes.len())] {
-            if *byte != b'\n' && *byte != b'\r' {
-                *byte = b' ';
-            }
-        }
-    };
-
-    while index < bytes.len() {
-        match bytes[index] {
-            b'#' => {
-                let end = bytes[index..]
-                    .iter()
-                    .position(|byte| *byte == b'\n')
-                    .map_or(bytes.len(), |offset| index + offset);
-                blank(&mut out, index, end);
-                index = end;
-            }
-            quote @ (b'"' | b'\'') => {
-                let triple = bytes[index..].starts_with(&[quote, quote, quote]);
-                let delimiter_len = if triple { 3 } else { 1 };
-                let mut cursor = index + delimiter_len;
-                let end = loop {
-                    if cursor >= bytes.len() {
-                        break bytes.len();
-                    }
-                    if bytes[cursor] == b'\\' {
-                        cursor += 2;
-                        continue;
-                    }
-                    if !triple && bytes[cursor] == b'\n' {
-                        // An unterminated short literal does not span lines.
-                        break cursor;
-                    }
-                    if bytes[cursor] == quote
-                        && (!triple || bytes[cursor..].starts_with(&[quote, quote, quote]))
-                    {
-                        break cursor + delimiter_len;
-                    }
-                    cursor += 1;
-                };
-                blank(&mut out, index, end);
-                index = end;
-            }
-            b'<' => {
-                // An IRI reference contains no whitespace and closes on the
-                // same line; anything else is a real `<` token (e.g. a filter).
-                let close = bytes[index + 1..]
-                    .iter()
-                    .position(|byte| matches!(byte, b'>' | b'\n' | b' ' | b'\t' | b'\r'))
-                    .map(|offset| index + 1 + offset);
-                match close {
-                    Some(end) if bytes[end] == b'>' => {
-                        blank(&mut out, index, end + 1);
-                        index = end + 1;
-                    }
-                    _ => index += 1,
-                }
-            }
-            _ => index += 1,
-        }
-    }
-
-    String::from_utf8(out).expect("masking replaces whole ASCII bytes only")
-}
-
 fn analyze_turtle(text: &str) -> Vec<Diagnostic> {
     let declaration =
         Regex::new(r"(?im)^\s*(?:@prefix|prefix)\s+([A-Za-z][\w-]*):").expect("static regex");
@@ -149,13 +71,9 @@ fn analyze_turtle(text: &str) -> Vec<Diagnostic> {
         .map(str::to_owned),
     );
 
-    // Prefix *uses* are scanned over a masked copy so that comments, string
-    // literals, and IRI references cannot raise GGEN-TTL-001. Declarations are
-    // still read from the original text.
-    let scannable = mask_turtle_noise(text);
     let mut seen = HashSet::new();
     use_pattern
-        .captures_iter(&scannable)
+        .captures_iter(text)
         .filter_map(|captures| {
             let prefix = captures.get(1)?;
             let name = prefix.as_str();
