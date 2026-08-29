@@ -28,3 +28,8 @@ lsp-max/
 lsp-types-max/
 wasm4pm/
 wasm4pm-compat/
+
+# Stray build/cache artifacts (not gitignored previously)
+__pycache__/
+tools/architecture-foundry/
+.venv*/

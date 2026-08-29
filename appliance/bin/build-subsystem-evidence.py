@@ -8,18 +8,10 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
+from _shared import sha256_file, read_json, typed_canonical, digest_sources, check_map
+
 
 GENERATOR_PATH = "appliance/bin/build-subsystem-evidence.py"
-
-
-def canonical(value: Any) -> bytes:
-    return json.dumps(
-        value, sort_keys=True, separators=(",", ":"), ensure_ascii=False
-    ).encode("utf-8")
-
-
-def sha256_file(path: Path) -> str:
-    return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def exact_head(root: Path) -> str:
@@ -27,34 +19,6 @@ def exact_head(root: Path) -> str:
         ["git", "rev-parse", "HEAD"], cwd=root, capture_output=True, text=True
     )
     return completed.stdout.strip() if completed.returncode == 0 else "UNKNOWN"
-
-
-def read_json(path: Path) -> dict[str, Any]:
-    return json.loads(path.read_text())
-
-
-def digest_sources(root: Path, sources: list[str]) -> tuple[str, list[str]]:
-    digest = hashlib.sha256()
-    missing: list[str] = []
-    for rel in sorted(sources):
-        path = root / rel
-        digest.update(rel.encode("utf-8"))
-        digest.update(b"\0")
-        if path.is_file():
-            digest.update(path.read_bytes())
-        else:
-            missing.append(rel)
-            digest.update(b"MISSING")
-        digest.update(b"\0")
-    return digest.hexdigest(), missing
-
-
-def check_map(report: dict[str, Any]) -> dict[str, dict[str, Any]]:
-    return {
-        item["id"]: item
-        for item in report.get("checks", [])
-        if isinstance(item, dict) and isinstance(item.get("id"), str)
-    }
 
 
 def primary_result(
@@ -251,7 +215,7 @@ def main() -> int:
         },
         "subsystems": records,
     }
-    manifest["receipt_digest"] = hashlib.sha256(canonical(manifest)).hexdigest()
+    manifest["receipt_digest"] = hashlib.sha256(typed_canonical(manifest)).hexdigest()
 
     output = root / args.output
     output.parent.mkdir(parents=True, exist_ok=True)

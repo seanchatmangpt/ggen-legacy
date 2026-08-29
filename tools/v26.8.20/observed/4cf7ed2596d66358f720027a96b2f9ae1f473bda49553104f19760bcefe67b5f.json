@@ -1,0 +1,17 @@
+{
+  "command_result": null,
+  "contract_id": "4cf7ed2596d66358f720027a96b2f9ae1f473bda49553104f19760bcefe67b5f",
+  "git_head": "bb8064fb4ded333cce47a44349374abb90dc4d35",
+  "nonclaims": [
+    "correctness of the observed behavior",
+    "that this baseline is complete coverage of the target's real behavior",
+    "any standing (ALIVE/PARTIAL_ALIVE/UNKNOWN/REFUSED) for the target"
+  ],
+  "observed_at": "2026-08-21T04:04:09Z",
+  "repo": "/Users/sac/chatman-ecosystem/platform-console/services/ggen-marketplace/ggen-packs-src/wasm4pm-drift-reconciliation-pack",
+  "schema": "ggen.legacy.observe.v1",
+  "target": "playground/verify.py",
+  "target_b3": "b2a3f3877b462e6464fdab242ad1c510b8e8c3e0f7f2181473a01d39cdd9a9db",
+  "target_exists": true,
+  "target_size_bytes": 3177
+}

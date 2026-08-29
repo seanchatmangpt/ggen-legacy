@@ -3,19 +3,12 @@ from __future__ import annotations
 import argparse, hashlib, json, os, shutil, subprocess, sys, tempfile
 from pathlib import Path
 
+from _shared import sha256_file, read_json, write_json
+
 def canonical(obj):
     return json.dumps(obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
 
 def sha256_bytes(data): return hashlib.sha256(data).hexdigest()
-def sha256_file(path):
-    h=hashlib.sha256()
-    with open(path,"rb") as f:
-        for chunk in iter(lambda:f.read(1024*1024),b""): h.update(chunk)
-    return h.hexdigest()
-def read_json(path): return json.loads(Path(path).read_text())
-def write_json(path,obj):
-    p=Path(path); p.parent.mkdir(parents=True,exist_ok=True)
-    p.write_text(json.dumps(obj,indent=2,sort_keys=True)+"\n")
 def tree_inventory(root):
     root=Path(root); out=[]
     for p in sorted(x for x in root.rglob("*") if x.is_file()):

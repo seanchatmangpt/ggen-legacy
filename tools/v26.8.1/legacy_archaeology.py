@@ -1001,13 +1001,216 @@ def emit() -> None:
     print(f"Wrote {total} LegacyCapability individuals to {OUT_PATH}")
 
 
+@dataclass(frozen=True)
+class MinedCommit:
+    """A single structured commit record from pygit2, covering the same
+    path/filter scope as one entry in MINE_COMMANDS -- but as real fields
+    instead of a raw stdout line."""
+
+    short_hash: str
+    full_hash: str
+    author_name: str
+    author_time_iso: str
+    summary: str
+    deleted_paths: tuple[str, ...]
+    modified_paths: tuple[str, ...]
+    # GL-ARCH-003 item 15 (ultracode research: PyDriller/RepoDriller field
+    # comparison) -- triage signals a human needs to evaluate a draft
+    # candidate without re-running git themselves. All three are obtainable
+    # from pygit2 alone (no new dependency): is_merge distinguishes a real
+    # single-author deletion from a branch-merge artifact; insertions/
+    # deletions give a size signal (a 3-line stub vs. a 3000-line module
+    # sort completely differently for review priority).
+    is_merge: bool = False
+    insertions: int = 0
+    deletions: int = 0
+
+
+def _iso(sig_time: int, sig_offset: int) -> str:
+    import datetime
+
+    tz = datetime.timezone(datetime.timedelta(minutes=sig_offset))
+    return datetime.datetime.fromtimestamp(sig_time, tz=tz).isoformat()
+
+
+def mine_structured() -> list[MinedCommit]:
+    """GL-ARCH-003: structured equivalent of mine() using pygit2 instead of
+    shelling out to `git log`/`git tag`. Walks the same history MINE_COMMANDS
+    covers (full --all history, diff-filter=D deletions) and yields typed
+    MinedCommit records instead of raw stdout lines. Does not replace mine()
+    -- mine() remains the raw-evidence printer; this is additive.
+
+    Requires pygit2 (see requirements.txt); raises a clear ImportError-derived
+    message rather than a bare traceback if it isn't installed.
+    """
+    try:
+        import pygit2
+    except ImportError as exc:  # pragma: no cover - operator guidance path
+        raise SystemExit(
+            "mine-structured requires pygit2. Install it into a scoped venv:\n"
+            "  python3 -m venv tools/v26.8.1/.venv-archaeology\n"
+            "  tools/v26.8.1/.venv-archaeology/bin/pip install -r "
+            "tools/v26.8.1/requirements.txt\n"
+            "then re-run with that venv's python3."
+        ) from exc
+
+    repo = pygit2.Repository(str(ROOT))
+    seen: set[str] = set()
+    results: list[MinedCommit] = []
+
+    for ref_name in repo.references:
+        try:
+            ref = repo.references[ref_name]
+            target = ref.peel(pygit2.Commit)
+        except (pygit2.GitError, ValueError, KeyError):
+            continue
+        for commit in repo.walk(target.id, pygit2.GIT_SORT_TOPOLOGICAL):
+            commit_hash = str(commit.id)
+            if commit_hash in seen:
+                continue
+            seen.add(commit_hash)
+
+            # GL-ARCH-003 item 1 fix (ultracode audit, confirmed real):
+            # diffing only commit.parents[0] silently hides deletions that
+            # only show up relative to a merge's OTHER parent(s) -- e.g. a
+            # file present on parent[1]'s branch but absent from both
+            # parent[0] and the merge result never gets flagged. Union the
+            # diff against every parent instead of just the first.
+            deleted_set: set[str] = set()
+            modified_set: set[str] = set()
+            insertions = 0
+            deletions = 0
+            for parent in commit.parents or ():
+                diff = repo.diff(parent, commit)
+                # find_similar() enables rename/copy detection; without it
+                # every rename surfaces as an unrelated DELETE+ADD pair,
+                # which falsely reports plain renames as deleted legacy
+                # capabilities. Skip a delta whose status is genuinely a
+                # rename/copy -- it isn't a deletion.
+                diff.find_similar()
+                for delta in diff.deltas:
+                    if delta.status in (pygit2.GIT_DELTA_RENAMED, pygit2.GIT_DELTA_COPIED):
+                        continue
+                    if delta.status == pygit2.GIT_DELTA_DELETED:
+                        deleted_set.add(delta.old_file.path)
+                    else:
+                        modified_set.add(delta.new_file.path or delta.old_file.path)
+                stats = diff.stats
+                insertions += stats.insertions
+                deletions += stats.deletions
+            # A path added by one parent's diff and deleted by another's
+            # (both real within a merge) should read as deleted, not both --
+            # deletion is the observable-capability-loss signal this tool
+            # cares about, so it takes precedence.
+            modified_set -= deleted_set
+            deleted = list(deleted_set)
+            modified = list(modified_set)
+
+            results.append(
+                MinedCommit(
+                    short_hash=commit_hash[:9],
+                    full_hash=commit_hash,
+                    author_name=commit.author.name,
+                    author_time_iso=_iso(commit.author.time, commit.author.offset),
+                    summary=commit.message.splitlines()[0] if commit.message else "",
+                    deleted_paths=tuple(sorted(deleted)),
+                    modified_paths=tuple(sorted(modified)),
+                    is_merge=len(commit.parents) > 1,
+                    insertions=insertions,
+                    deletions=deletions,
+                )
+            )
+
+    return results
+
+
+def _catalog_covered_hashes() -> set[str]:
+    """Every historical_source_commit already published in CATALOG +
+    EXT_CATALOG + EXT_CATALOG2 (prefix-normalized to short hash), so
+    draft_candidates() can skip commits a human has already curated.
+
+    GL-ARCH-003 item 1 fix (ultracode audit, confirmed real): several
+    historical_source_commit fields are compound, e.g.
+    "9cef6e40f (delete) / cbf173f82 (disconnect, PR #255) / d0b9ff1c6..
+    (original crate history)" -- taking h[:9] of the whole string only
+    ever captured the FIRST hash, silently leaving every other hash in
+    that field out of `covered`. Extract every hex-hash-shaped token
+    (7-40 hex chars) from the field instead of assuming one hash per
+    field."""
+    import re
+
+    hash_token = re.compile(r"\b[0-9a-f]{7,40}\b")
+    covered: set[str] = set()
+    for cap in CATALOG + EXT_CATALOG + EXT_CATALOG2:
+        field = cap.historical_source_commit.strip()
+        if not field or field.upper() == "UNKNOWN":
+            continue
+        for token in hash_token.findall(field.lower()):
+            covered.add(token[:9])
+    return covered
+
+
+def draft_candidates() -> None:
+    """GL-ARCH-003: cross-reference mine_structured()'s diff-filter=D
+    deletions against paths not already covered by the published CATALOG,
+    and emit UNKNOWN-disposition drafts to a separate file. Never touches
+    the published CATALOG or legacy-capabilities.ttl -- a human/session
+    still promotes a draft into CATALOG after independently re-verifying
+    the commit, per this file's existing evidence discipline (see module
+    docstring)."""
+    import json
+
+    commits = mine_structured()
+    covered_hashes = _catalog_covered_hashes()
+
+    drafts = []
+    for c in commits:
+        if not c.deleted_paths:
+            continue
+        if c.short_hash in covered_hashes:
+            continue
+        drafts.append(
+            {
+                "slug": f"draft_{c.short_hash}",
+                "subsystem": "UNKNOWN",
+                "historical_source_commit": c.full_hash,
+                "legacy_source_path": ", ".join(c.deleted_paths),
+                "disposition": "UNKNOWN",
+                "standing": "UNKNOWN",
+                "is_merge": c.is_merge,
+                "insertions": c.insertions,
+                "deletions": c.deletions,
+                "notes": (
+                    f"Draft candidate from mine_structured(): commit "
+                    f"{c.short_hash} ({c.author_time_iso}) by {c.author_name} "
+                    f"deleted {len(c.deleted_paths)} path(s): "
+                    f"{', '.join(c.deleted_paths)!s}. Summary: {c.summary!r}. "
+                    "Not yet human-verified -- do not treat as admitted."
+                ),
+            }
+        )
+
+    out_path = ROOT / "tools" / "v26.8.1" / "draft-candidates.json"
+    out_path.write_text(json.dumps(drafts, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    print(
+        f"Wrote {len(drafts)} draft candidate(s) (of {len(commits)} commits "
+        f"walked, {len(covered_hashes)} already in CATALOG) to {out_path}"
+    )
+    print("legacy-capabilities.ttl was NOT modified -- drafts require human promotion into CATALOG.")
+
+
 def main(argv: list[str]) -> int:
     mode = argv[1] if len(argv) > 1 else "both"
     if mode in ("mine", "both"):
         mine()
     if mode in ("emit", "both"):
         emit()
-    if mode not in ("mine", "emit", "both"):
+    if mode == "mine-structured":
+        for c in mine_structured():
+            print(f"{c.short_hash} {c.author_time_iso} {c.summary}")
+    if mode == "draft-candidates":
+        draft_candidates()
+    if mode not in ("mine", "emit", "both", "mine-structured", "draft-candidates"):
         print(f"unknown mode: {mode}", file=sys.stderr)
         return 2
     return 0

@@ -1,0 +1,8 @@
+# Dependencies for tools/v26.8.1/legacy_archaeology.py's `mine-structured` and
+# `draft-candidates` modes (GL-ARCH-003). The `mine`/`emit` modes have no
+# dependency beyond stdlib and a `git` binary on PATH -- unchanged.
+#
+# Install into a scoped venv (kept out of git via `.venv*` in .gitignore):
+#   python3 -m venv tools/v26.8.1/.venv-archaeology
+#   tools/v26.8.1/.venv-archaeology/bin/pip install -r tools/v26.8.1/requirements.txt
+pygit2==1.20.0
