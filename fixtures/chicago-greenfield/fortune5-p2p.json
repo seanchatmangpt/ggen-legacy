@@ -1,0 +1,11 @@
+{
+  "architecture": {"linux_amd64": false, "linux_arm64": true},
+  "capabilities": ["supplier_onboarding","requisition","purchase_order","approval","goods_receipt","invoice","three_way_match","payment","audit_trail"],
+  "failure_injections": ["supplier_master_drift","approval_partition","duplicate_invoice","receipt_loss","payment_timeout"],
+  "immutable_subject": true,
+  "owners": {"approval":"owner:04","audit_trail":"owner:09","goods_receipt":"owner:05","invoice":"owner:06","payment":"owner:08","purchase_order":"owner:03","requisition":"owner:02","supplier_onboarding":"owner:01","three_way_match":"owner:07"},
+  "provenance": {"autofde_lab":"8ece5884c6e776093cd08beb80c5d1c9a8d05a3d","ggen_ecosystem":"f42aa25c4974a0d5a701ed0e08f3bce46d69d115","gymact":"dc8c8add4edd525e14815e44d03b84b347abfcc8"},
+  "scenario_id": "fortune5-p2p-chicago-001",
+  "schema": "https://ggen.chatmangpt.com/schema/dfcm-chicago/v1",
+  "strategies": ["big_bang","dual_run","canary"]
+}
