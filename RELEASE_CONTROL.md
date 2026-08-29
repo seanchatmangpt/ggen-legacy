@@ -30,6 +30,41 @@ Allowed: control defined, evidence field defined, exception identified, evidence
 
 Forbidden without independent evidence: compliant, certified, passed SOC 2, SOC 2-ready, guaranteed secure, zero risk, production-proven.
 
+## After Code Reading claim law
+
+The historical observation that an external practitioner publicly described not reading agent-written implementation has ceiling `DOCUMENTED_EXTERNAL_OBSERVATION`. It does not prove this repository's doctrine, implementation, endorsement, market adoption, or production standing.
+
+The phrases **After Manual Code**, **After Code Reading**, **Proof-Carrying Software Manufacturing**, and **Software Systems Manufacturer** are strategic and category authority at ceiling `DOCUMENTED` until their declared controls execute at an exact source identity.
+
+A bounded claim that software was manufactured without manual source inspection may rise only through the following ladder:
+
+| Ceiling | Required observation |
+|---|---|
+| `DOCUMENTED` | Human task removed and replacement controls are specified. |
+| `SCHEMA_VALIDATED` | Machine-readable authority and gates validate. |
+| `GENERATED` | Declared projectors manufacture the bounded product. |
+| `COMPILED` | Manufactured implementation compiles at an exact coordinate. |
+| `TESTED` | Positive witnesses and negative falsifiers execute. |
+| `REFERENCE_CONFORMANT` | An independent verifier confirms requirements, architecture, planning, actuation separation, operational evidence, receipt, and clean replay without requiring manual implementation reading for acceptance. |
+| `PRODUCTION_PROVEN` | Longitudinal external evidence shows the same bounded model operating in production. |
+
+The unqualified phrase “manufactured without reading code” is forbidden unless evidence records:
+
+- the exact product boundary;
+- manual source lines read and written;
+- human attention time;
+- admitted requirements and architecture;
+- planner and abstention behavior;
+- actuation authority;
+- producer-verifier separation;
+- witnesses and falsifiers;
+- operational evidence;
+- standing;
+- receipt validity;
+- clean replay.
+
+Tests alone do not satisfy the claim. A producer's own tests, reports, or confidence cannot promote the result. `ALIVE` remains impossible without exact-head independent verification and replay.
+
 ## Exact-head promotion
 
 Promotion requires a verifier report whose subject equals the candidate commit and tree. Workflows are read-only, pin external actions, do not repair or push source, and publish immutable evidence.

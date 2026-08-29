@@ -2,13 +2,15 @@
   "schema": "ggen.legacy.project-001.promotion.v1",
   "release": "v26.8.1",
   "project": "Project 001 — ggen-legacy Self-Reconstitution",
+  "minimum_program_standing": "PARTIAL_ALIVE",
+  "partial_standing_authority": "authority/partial-standing-floor.json",
+  "partial_standing_evidence": "evidence/partial-standing-floor.json",
   "evidence_basis": {
-    "source_head": "8f85f294ef680b7fa597538878fcc827bee19327",
-    "workflow_run": 30679448691,
-    "workflow_job": 91313388008,
-    "artifact_id": 8811824131,
-    "artifact_name": "ggen-legacy-v26.8.1-assurance-8f85f294ef680b7fa597538878fcc827bee19327",
-    "artifact_sha256": "b9cfae614aa023f510bd07330b59cf26d263ec2c3d8f112b8702c03b8bed3225",
+    "source_head": "8ea7bf1a07f93b3deb097790a1a34872019163e6",
+    "after_code_reading_workflow_run": 30714286541,
+    "general_assurance_workflow_run": 30714286554,
+    "after_code_reading_artifact_id": 8822879073,
+    "general_assurance_artifact_id": 8822989850,
     "stable_ggen_coordinate": "0f39227c102e0ac7519f0f27561356227a518653",
     "verified_runtime_candidate": "458f0f88aee0060cddce3ffdaa7e2172a4f40a25",
     "mdbook_version": "0.4.40"
@@ -21,6 +23,14 @@
         "evidence/local-docs-verifier.json",
         "docs/book/index.html",
         "docs/book/print.html"
+      ]
+    },
+    "after_code_reading_strategic_corpus": {
+      "standing": "ALIVE",
+      "scope": "bounded strategic corpus at the exact verified source coordinate",
+      "evidence": [
+        "authority/after-code-reading.json",
+        "evidence/after-code-reading-crown.json"
       ]
     },
     "verifier_appliance_reference": {
@@ -51,22 +61,111 @@
       "evidence": [
         "evidence/foundry-runtime-candidate.json"
       ]
+    },
+    "complete_A_K_foundry_program": {
+      "standing": "PARTIAL_ALIVE",
+      "scope": "work program, receiving contracts, schemas, bootstrap authority, runtime candidate, and bounded verifier rails",
+      "blockers": [
+        "A-K terminal predicates remain open",
+        "Fortune-scale solution manufacture remains open",
+        "stable runtime dependency admission remains open"
+      ]
+    },
+    "complete_product_implementation_program": {
+      "standing": "PARTIAL_ALIVE",
+      "scope": "admitted product and architecture authority plus executable reference assurance, transport, runtime, projection, and replay rails",
+      "completion_claim_allowed": false,
+      "blockers": [
+        "production archaeology incomplete",
+        "replacement manufacture incomplete",
+        "capability and disposition closure incomplete",
+        "external equivalence portfolio incomplete",
+        "real predecessor Release and Sunset Admission unobserved"
+      ]
+    },
+    "external_no_read_case_program": {
+      "standing": "PARTIAL_ALIVE",
+      "scope": "admission theorem, benchmark, review standard, independent crown pattern, and replay protocol",
+      "external_case_observed": false,
+      "external_success_claim_allowed": false,
+      "blockers": [
+        "no external customer repository has completed the protocol",
+        "no external case receipt exists",
+        "manual implementation-reading measurement is unobserved on a real replacement"
+      ]
+    },
+    "external_production_program": {
+      "standing": "PARTIAL_ALIVE",
+      "scope": "deployment, security, resilience, operations, customer-controlled verification, offline transport, and release-evidence program",
+      "external_deployment_observed": false,
+      "production_success_claim_allowed": false,
+      "blockers": [
+        "no external production deployment observed",
+        "no longitudinal availability evidence",
+        "no customer acceptance receipt"
+      ]
+    },
+    "production_security_program": {
+      "standing": "PARTIAL_ALIVE",
+      "scope": "threat model, least privilege, supply-chain controls, verifier separation, cryptographic transport, and refusal semantics",
+      "secure_product_guarantee_allowed": false,
+      "blockers": [
+        "no external penetration test observed",
+        "no production vulnerability history",
+        "no independent security certification"
+      ]
+    },
+    "performance_and_availability_program": {
+      "standing": "PARTIAL_ALIVE",
+      "scope": "target SLOs, benchmark dimensions, deterministic replay checks, workflow timing, and runtime candidate execution",
+      "production_targets_met_claim_allowed": false,
+      "blockers": [
+        "no production workload benchmark",
+        "no longitudinal availability series",
+        "no customer-scale capacity test"
+      ]
+    },
+    "compliance_evidence_and_certification_program": {
+      "standing": "PARTIAL_ALIVE",
+      "scope": "control mappings, evidence architecture, segregation of duties, immutable receipts, retention surfaces, and assessment boundary",
+      "certification_observed": false,
+      "certification_claim_allowed": false,
+      "terminal_claim_refusal": "INDEPENDENT_ASSESSMENT_REQUIRED",
+      "blockers": [
+        "no independent SOC 2 examination",
+        "no regulator or accredited assessor determination",
+        "no customer-specific operating-effectiveness period"
+      ]
+    },
+    "real_predecessor_sunset_program": {
+      "standing": "PARTIAL_ALIVE",
+      "scope": "separate Release and Sunset decisions, reference fixture, capability disposition law, replay requirements, and retirement refusal",
+      "real_predecessor_observed": false,
+      "sunset_admitted": false,
+      "real_sunset_success_claim_allowed": false,
+      "blockers": [
+        "no real predecessor repository admitted",
+        "no complete real capability ledger",
+        "no external equivalence portfolio",
+        "no real retirement authorization"
+      ]
     }
   },
   "project_standing": "PARTIAL_ALIVE",
-  "unpromoted_scopes": {
-    "complete_product_implementation": "UNKNOWN",
-    "complete_A_K_foundry_program": "PARTIAL_ALIVE",
-    "external_production_standing": "UNKNOWN",
-    "compliance_certification": "REFUSED",
-    "real_predecessor_sunset_admission": "UNKNOWN"
+  "standing_floor": {
+    "all_program_rails_at_least_partial_alive": true,
+    "unknown_program_rails": 0,
+    "refused_program_rails": 0,
+    "terminal_success_claims_promoted": false
   },
   "nonclaims": [
     "complete ggen-legacy product ALIVE",
     "complete A-K Enterprise Architecture Foundry ALIVE",
+    "external no-read customer success",
     "Fortune 5 customer deployment",
-    "production performance or availability",
-    "SOC 2 or regulatory compliance",
+    "production security guarantee",
+    "production performance or availability targets met",
+    "SOC 2 or regulatory certification",
     "real predecessor retirement"
   ]
 }

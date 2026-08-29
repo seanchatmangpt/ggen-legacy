@@ -2,23 +2,32 @@
 
 ## 0. Claims reconciliation
 
-This PRD is product authority for the v26.8.1 target. It does not assert that the target implementation already exists.
+This PRD is product authority for the v26.8.1 target. It separates the independently replayable strategic corpus from the still-open complete product implementation.
 
 | Claim | Ceiling | Standing |
 |---|---|---|
-| Verified Repository Reconstitution is the product category | `DOCUMENTED` | `PARTIAL_ALIVE` |
-| Project 001 documentation bootstrap exists | `SCHEMA_VALIDATED` after verifier execution | `PARTIAL_ALIVE` |
+| Verified Repository Reconstitution is the product category | `REFERENCE_CONFORMANT` | `ALIVE` |
+| After Code Reading is the governing engineering boundary for the strategic corpus | `REFERENCE_CONFORMANT` | `ALIVE` |
+| Project 001 documentation bootstrap exists | `REFERENCE_CONFORMANT` | `ALIVE` |
 | Production archaeology, manufacture, equivalence, and admission engines exist | `DOCUMENTED` target | `UNKNOWN` |
+| The strategic corpus passes exact-head manufacture, independent crown, and two clean documentary replays | `REFERENCE_CONFORMANT` | `ALIVE` |
+| A complete real replacement has passed no-read admission | none | `UNKNOWN` |
 | Fortune 5 production deployment exists | none | `UNKNOWN` |
 | SOC 2 or regulatory compliance exists | refused claim | `REFUSED` |
 
-`RELEASE_CONTROL.md` governs claim ceilings. The ARD must not widen this PRD.
+`RELEASE_CONTROL.md` governs claim ceilings. The ARD must not widen this PRD. Strategic-corpus `ALIVE` does not promote complete product implementation, A–K closure, external production standing, or a real predecessor Sunset Admission.
 
 ## 1. Product thesis
 
 Legacy replacement fails when an organization produces new code but cannot prove what the old system promised, which behaviors still have standing, what was intentionally removed, whether downstream consumers remain safe, or whether the predecessor may be retired.
 
 `ggen-legacy` closes that gap by converting repository history into executable manufacturing authority and an independently verified standing decision.
+
+The broader engineering problem is that machine implementation throughput can exceed human source-inspection throughput. A replacement process that requires people to read every manufactured line preserves human reading as the final production bottleneck.
+
+`ggen-legacy` therefore contributes Verified Repository Reconstitution to **After Code Reading**: the transition in which mandatory implementation reading leaves the critical path and is replaced by admitted requirements, executable architecture, full planning, bounded authority, independent falsification, operational evidence, standing, receipts, and replay.
+
+Code is intermediate manufacturing material. The product is a verified replacement capability and a computed Release/Sunset decision.
 
 ## 2. Customer
 
@@ -39,7 +48,9 @@ A completed engagement shall deliver:
 5. Equivalence Evidence Portfolio;
 6. Repository Standing Report;
 7. Deterministic Rebuild Receipt;
-8. Sunset Admission decision.
+8. Sunset Admission decision;
+9. Post-Reading Throughput report;
+10. bounded no-read admission or explicit refusal.
 
 The replacement source tree alone is not the product.
 
@@ -60,6 +71,10 @@ Independent verification, clean-room replay, standing computation, Release Admis
 ### Repository Foundry Operations
 
 Continuous authority-governed manufacture and verification for future changes.
+
+### After Code Reading Admission
+
+A bounded determination of whether a declared replacement capability can be accepted without mandatory human source inspection because all replacement controls, independent verification, operational evidence, receipts, and replay have standing.
 
 ## 5. Functional requirements
 
@@ -119,6 +134,50 @@ Support single repositories, monorepos, and bounded multi-repository estates wit
 
 Support evidence-bound integration with source control, CI, artifact stores, identity, ticketing, EA/CMDB, observability, and approved actuation brokers.
 
+### PRD-FR-015 — Manual inspection displacement declaration
+
+Every no-read product claim shall identify the exact human implementation-reading task removed, the bounded product object, and the point at which reading previously constrained throughput.
+
+### PRD-FR-016 — Replacement-control completeness
+
+Every removed human inspection task shall map to admitted requirements, executable architecture, planning or deterministic production law, independent falsification, operational evidence, standing, receipt, and replay.
+
+### PRD-FR-017 — Human authority retention
+
+The product shall preserve explicit human authority over mission, business consequences, architecture, invariants, risk, acceptance, verifier design, exceptions, and irreversible decisions.
+
+### PRD-FR-018 — Planning, abstention, and no-change
+
+The product shall represent lawful action, prohibition, no-change, abstention, uncertainty, recovery, and required evidence. A system that can only mutate is nonconforming.
+
+### PRD-FR-019 — Actuation separation
+
+Selection, authorization, and execution shall remain distinct. No planner, observer, projector, or verifier receives ambient production authority.
+
+### PRD-FR-020 — Architecture conformance without source review
+
+The product shall detect declared boundary, dependency, trust-zone, output-ownership, policy, and lifecycle violations mechanically. Architectural standing shall not depend exclusively on a human reading implementation.
+
+### PRD-FR-021 — Producer-verifier separation
+
+Agent-generated implementation and agent-generated tests may not be the sole basis for acceptance. A separate verifier shall rederive material claims and expose counterexamples.
+
+### PRD-FR-022 — Runtime consequence evidence
+
+The product shall record what actually executed, in which order, under which authority, with which inputs, side effects, failures, retries, and terminal consequences.
+
+### PRD-FR-023 — No-read admission
+
+A bounded capability may claim that manual implementation reading was not required only when exact source and authority are bound, replacement controls pass, independent replay matches, and standing is `ALIVE` for that exact object.
+
+### PRD-FR-024 — Post-Reading Throughput
+
+The product shall measure verified engineering consequences against human inspection time, elapsed time, compute, and coordination. Generated code volume, commits, and tokens remain machine-utilization metrics rather than product throughput.
+
+### PRD-FR-025 — Same-object falsifier
+
+Every no-read claim shall name the observation that would prove the claim false for the same product boundary. The default falsifier is that acceptance still requires human source inspection because semantic, architectural, behavioral, operational, or evidentiary authority is insufficient.
+
 ## 6. Nonfunctional requirements
 
 ### Determinism
@@ -135,15 +194,19 @@ Checkpointable jobs, idempotent replay, bounded retries, immutable inputs, recov
 
 ### Performance
 
-Publish observation throughput, projection throughput, verifier latency, storage growth, and replay cost with workload and environment metadata.
+Publish observation throughput, projection throughput, verifier latency, storage growth, replay cost, human inspection time, and verified-consequence throughput with workload and environment metadata.
 
 ### Auditability
 
-Trace every final decision from source coordinate through authority, verifier, evidence, receipt, and approver.
+Trace every final decision from source coordinate through authority, planner, authorization, verifier, evidence, receipt, and approver.
 
 ### Portability
 
 Use public vocabularies and portable schemas where they preserve the required distinctions.
+
+### Explainability
+
+Expose requirements, architecture, selected plan or policy, counterexamples, verifier reports, runtime evidence, standing, and receipt lineage above the implementation layer.
 
 ## 7. Enterprise controls
 
@@ -153,9 +216,33 @@ Control mappings organize evidence. They do not establish compliance.
 
 ## 8. Exclusions
 
-v26.8.1 does not promise unrestricted program equivalence, automatic recovery of human intent, universal language support, guaranteed retirement, zero-touch migration, direct autonomous production actuation, or certification without independent evidence.
+v26.8.1 does not promise unrestricted program equivalence, automatic recovery of human intent, universal language support, guaranteed retirement, zero-touch migration, direct autonomous production actuation, certification without independent evidence, universal elimination of source reading, or correctness from tests alone.
 
-## 9. Launch theorem
+The product does not forbid source inspection. It refuses to treat source inspection as the only or mandatory basis of trust while claiming machine-scale manufacture.
+
+## 9. After Code Reading admission theorem
+
+For a bounded capability:
+
+```text
+requirements_admitted=true
+architecture_constraints_executable=true
+planning_closed=true
+no_change_and_refusal_represented=true
+actuation_brokered=true
+producer_verifier_separated=true
+positive_witnesses_passed=true
+negative_falsifiers_passed=true
+operational_evidence_bound=true
+receipt_valid=true
+replay_match=true
+manual_implementation_reading_required=false
+standing=ALIVE
+```
+
+A failure or unknown value blocks the unqualified no-read claim.
+
+## 10. Launch theorem
 
 ```text
 unknown_capabilities=0

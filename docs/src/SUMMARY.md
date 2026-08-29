@@ -25,3 +25,4 @@
   - [Inspection and Implementation Law](clean-session/07-inspection-implementation.md)
   - [Verification, Capsules, and Publication](clean-session/08-verification-publication.md)
   - [Completion, Receipt, and Session Startup](clean-session/09-completion-receipt.md)
+- [After Code Reading](15-after-code-reading.md)

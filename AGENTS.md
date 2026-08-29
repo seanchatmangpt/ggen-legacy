@@ -259,3 +259,45 @@ Resolve exact base and head before writing. Preserve unrelated work. Use non-for
 Report repository/base/branch/head, producing ontology and projection identities, pinned lsp-max identity, transports, files changed, commands/exits, observed execution, replay, scoped standing, exclusions, and draft PR identity.
 
 For GL-PLAN-002 also report the pinned MFW producer identity, engine probe/execution states, blocked/unsupported planner edges, orchestration receipt-chain head, and explicit statement that planning has no actuation authority.
+
+## 21. After Code Reading law
+
+`ggen-legacy` operates within the broader transition in which mandatory human source inspection may leave the software-production critical path. The governing method is **Proof-Carrying Software Manufacturing**.
+
+Code is intermediate manufacturing material. The product is a verified business capability or conforming operational system.
+
+A no-read claim is lawful only when it names:
+
+1. the human implementation-reading task removed;
+2. the machine control replacing it;
+3. the authority defining intended consequences;
+4. the architecture rule preventing drift;
+5. planning, no-change, abstention, and refusal semantics;
+6. the separate actuation authority;
+7. the independent verifier;
+8. positive witnesses and negative falsifiers;
+9. runtime evidence;
+10. explicit standing;
+11. receipt and clean replay;
+12. the same-object falsifier.
+
+The human retains mission, architecture, invariants, risk, standards, acceptance, verifier design, evidence interpretation, exceptions, and irreversible decisions.
+
+Never translate “the human did not read the implementation” into “the implementation was trusted.” The only admissible translation is:
+
+```text
+manual inspection removed
+→ replacement controls admitted
+→ independent falsification executed
+→ evidence bound
+→ standing computed
+→ receipt valid
+→ replay matched
+```
+
+A no-read claim is falsified when acceptance still requires human source inspection because requirements, architecture, behavior, or evidence cannot establish the necessary distinction elsewhere.
+
+The strategic authority is `authority/after-code-reading.json`. Product and architecture projections are `product/AFTER_CODE_READING.md` and `architecture/AFTER_CODE_READING_ARCHITECTURE.md`.
+
+> Reconstruct the contract. Manufacture the repository. Prove the standing.
+>>>>>>> origin/agent/after-code-reading-pivot-v26.8.1
