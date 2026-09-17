@@ -8,6 +8,28 @@ This file governs `seanchatmangpt/ggen-legacy`.
 - active executable ticket: `GL-LSP-001`
 - concurrent executable ticket: `GL-PLAN-002`
 - concurrent reconstitution ticket: `GL-OSTAR-001`
+- drafted tickets (see tickets/):
+  - `GL-ARCH-003`: admitted executable ticket
+  - `GL-AUTO-001`: (no Status: line in ticket file)
+  - `GL-CONTRACT-004`: admitted, `NOT_STARTED` — drafted this session, not executed
+  - `GL-DSPY-001-dsrust-reconstitution`: (no Status: line in ticket file)
+  - `GL-ERRC-008`: admitted, `NOT_STARTED` — drafted by ultracode ERRC pass
+  - `GL-ERRC-009`: `EXECUTED` — fix applied and verified this session against the real
+  - `GL-ERRC-010`: admitted, `NOT_STARTED` — drafted by ultracode ERRC pass 3
+  - `GL-ERRC-011`: EXECUTED
+  - `GL-ERRC-012`: admitted, `NOT_STARTED` — drafted by ultracode ERRC pass 3
+  - `GL-ERRC-013`: `EXECUTED` — fix applied and verified: `AGENTS.md` gained a `drafted tickets (see tickets/):` field enumerating all 21 `tickets/GL-*.md` files present at execution time
+  - `GL-ERRC-014`: admitted, `NOT_STARTED` — drafted by ultracode ERRC pass 4
+  - `GL-ERRC-015`: EXECUTED
+  - `GL-ERRC-017`: admitted, `NOT_STARTED` — drafted by ultracode ERRC pass 5
+  - `GL-ERRC-018`: admitted, `NOT_STARTED` — drafted by ultracode ERRC pass 5
+  - `GL-ERRC-019`: admitted, `NOT_STARTED` — drafted by ultracode ERRC pass 5
+  - `GL-LSP-001`: (no Status: line in ticket file)
+  - `GL-MANUFACTURE-005`: admitted, `NOT_STARTED` — drafted this session, not executed
+  - `GL-OSTAR-001`: (no Status: line in ticket file)
+  - `GL-PLAN-002`: admitted concurrent executable ticket
+  - `GL-RECEIPT-007`: admitted, `NOT_STARTED` — drafted this session, not executed
+  - `GL-VERIFY-006`: admitted, `NOT_STARTED` — drafted this session, not executed
 - protocol runtime: `lsp-max`
 - pinned runtime: `seanchatmangpt/lsp-max@220d3251e959f6a58ce0311e995b31a85f98240c`
 - received contract authority: `authority/lsp-contract.json`
