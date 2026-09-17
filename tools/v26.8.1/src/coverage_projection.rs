@@ -282,6 +282,7 @@ pub fn run_subsystem_verifier(root: &Path) -> Result<Vec<SubsystemVerifierStandi
             "tools/v26.8.1/Cargo.toml",
             "--bin",
             "subsystem_verifier",
+            "--locked",
         ])
         .current_dir(root)
         .status()
