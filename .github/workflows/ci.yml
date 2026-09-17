@@ -31,8 +31,11 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
-          count="$(find .github/workflows -maxdepth 1 -type f \( -name '*.yml' -o -name '*.yaml' \) | wc -l | tr -d ' ')"
-          test "$count" -eq 1
+          expected="ci.yml
+          planning-v26-8-7.yml"
+          actual="$(find .github/workflows -maxdepth 1 -type f \( -name '*.yml' -o -name '*.yaml' \) -exec basename {} \; | sort)"
+          test "$actual" = "$(echo "$expected" | sort)"
+          count="$(echo "$actual" | wc -l | tr -d ' ')"
           printf 'subject_sha=%s workflow_count=%s\n' "$EXPECTED_SHA" "$count"
       - name: Verify received generated contract
         run: python3 scripts/verify_lsp_contract.py
