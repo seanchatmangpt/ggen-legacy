@@ -107,7 +107,14 @@ STATES = {
     "UNKNOWN",
     "UNSUPPORTED",
 }
+# EXPECTED_GGEN_SOURCE: claimed to represent the ggen manufacturing
+# repository's stable coordinate. Unreachable in this worktree
+# (`git cat-file -t` fails); producing-repo/commit not independently
+# confirmed. See tickets/GL-ERRC-011.md.
 EXPECTED_GGEN = "0f39227c102e0ac7519f0f27561356227a518653"
+# EXPECTED_RUNTIME_SOURCE: claimed to represent PR #544's runtime-repo
+# HEAD. Unreachable in this worktree; producing-repo/commit not
+# independently confirmed. See tickets/GL-ERRC-011.md.
 EXPECTED_RUNTIME = "f831e4d9fa80fe345349ce5d6e0fff41e6eb2a4a"
 
 
@@ -232,7 +239,17 @@ def main() -> int:
         if profile.get("source_phase_admitted") is not True:
             fail("SOURCE_PHASE_NOT_ADMITTED", "TICKET-011 must admit source phase")
         if profile.get("ggen_source_revision") != EXPECTED_GGEN:
-            fail("GGEN_COORDINATE_DRIFT", str(profile.get("ggen_source_revision")))
+            # EXPECTED_GGEN is a confirmed-unreachable git object in this
+            # worktree (see tickets/GL-ERRC-011.md): a mismatch here cannot
+            # be distinguished from "the constant is stale" vs "the live
+            # value genuinely drifted" without repo-owner input, so it is
+            # reported as STALE_REFERENCE_UNVERIFIABLE rather than a bare
+            # GGEN_COORDINATE_DRIFT claim.
+            fail(
+                "STALE_REFERENCE_UNVERIFIABLE",
+                f"GGEN_COORDINATE_DRIFT: observed={profile.get('ggen_source_revision')} "
+                f"expected(unverifiable)={EXPECTED_GGEN}",
+            )
         for key in (
             "documentation_standing",
             "implementation_standing",
@@ -260,7 +277,14 @@ def main() -> int:
             fail("OPEN_PLAN_STANDING_TRANSFER_REFUSED", "PR #543")
         runtime = foundry.get("runtime_provenance", {})
         if runtime.get("head") != EXPECTED_RUNTIME:
-            fail("FOUNDRY_RUNTIME_HEAD_DRIFT", str(runtime.get("head")))
+            # EXPECTED_RUNTIME is a confirmed-unreachable git object in
+            # this worktree (see tickets/GL-ERRC-011.md); same rationale
+            # as the EXPECTED_GGEN check above.
+            fail(
+                "STALE_REFERENCE_UNVERIFIABLE",
+                f"FOUNDRY_RUNTIME_HEAD_DRIFT: observed={runtime.get('head')} "
+                f"expected(unverifiable)={EXPECTED_RUNTIME}",
+            )
         if runtime.get("standing_transferred") is not False:
             fail("OPEN_RUNTIME_STANDING_TRANSFER_REFUSED", "PR #544")
         if runtime.get("runtime_dependency_admitted") is not False:
