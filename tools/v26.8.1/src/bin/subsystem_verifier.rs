@@ -34,6 +34,7 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
+use v26_8_1_tools::coverage_projection::resolve_root;
 
 const THIS_BINARY_SOURCE_REL: &str = "tools/v26.8.1/src/bin/subsystem_verifier.rs";
 const MANIFEST_REL: &str = ".ggen/v26.8.1/subsystem-evidence-manifest.json";
@@ -370,24 +371,6 @@ fn extract_quoted(s: &str) -> Option<String> {
     let rest = &s[start + 1..];
     let end = rest.find('"')?;
     Some(rest[..end].to_owned())
-}
-
-fn resolve_root(args: &[String]) -> Result<PathBuf> {
-    let explicit = args
-        .windows(2)
-        .find(|pair| pair[0] == "--root")
-        .map(|pair| PathBuf::from(&pair[1]));
-    let mut current = explicit.unwrap_or(env::current_dir()?);
-    loop {
-        if current.join("AGENTS.md").is_file() {
-            return current
-                .canonicalize()
-                .context("canonicalize repository root");
-        }
-        if !current.pop() {
-            bail!("repository root not found; pass --root <path>");
-        }
-    }
 }
 
 fn manifest_path(args: &[String], root: &Path) -> PathBuf {
