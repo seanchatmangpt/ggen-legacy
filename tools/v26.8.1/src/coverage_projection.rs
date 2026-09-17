@@ -226,14 +226,6 @@ pub fn write_coverage_csv(root: &Path, rows: &[CoverageRow]) -> Result<Vec<u8>> 
     Ok(bytes)
 }
 
-/// Read the current on-disk coverage-matrix.csv bytes verbatim (no
-/// deserialize/reserialize round-trip) so a byte-compare against a freshly
-/// serialized expectation is meaningful even for whitespace/ordering
-/// differences a `Vec<CoverageRow>` comparison alone would not catch.
-pub fn read_coverage_csv_bytes(root: &Path) -> Result<Vec<u8>> {
-    fs::read(root.join(COVERAGE_PATH)).with_context(|| format!("read {}", COVERAGE_PATH))
-}
-
 /// Resolve the repository root the same way every v26.8.1 binary does:
 /// explicit `--root <path>`, else walk up from cwd looking for the marker
 /// files.
