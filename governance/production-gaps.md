@@ -28,7 +28,7 @@ These items were concrete, code-fixable blockers, not governance gaps:
   `main`, not a defect in the PR's own diff.
 - No single local command reproduced what CI gates — added a root
   `justfile` (`just ci-all`) mirroring
-  `.github/workflows/gl-lsp-001-runtime.yml`'s ladder exactly for both
+  `.github/workflows/ci.yml`'s ladder exactly for both
   workspaces.
 
 ## What remains — and who/what closes it

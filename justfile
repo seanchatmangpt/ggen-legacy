@@ -1,7 +1,7 @@
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
 # Root ggen-legacy-lsp workspace ladder — mirrors
-# .github/workflows/gl-lsp-001-runtime.yml step for step (fmt, check,
+# .github/workflows/ci.yml step for step (fmt, check,
 # clippy, test), minus the receipt bookkeeping and toolchain install.
 fmt:
     cargo fmt --all -- --check
