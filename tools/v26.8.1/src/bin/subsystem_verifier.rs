@@ -48,9 +48,6 @@ struct Manifest {
     exact_source_head: String,
     verifier_identity: VerifierIdentity,
     subsystems: Vec<SubsystemRecord>,
-    #[serde(default)]
-    #[allow(dead_code)]
-    legacy_disposition_summary: serde_json::Value,
     receipt_digest: String,
 }
 
