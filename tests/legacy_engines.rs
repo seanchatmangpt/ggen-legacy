@@ -4,7 +4,7 @@ use ggen_legacy_lsp::legacy_engines::{
 use serde_json::json;
 
 fn receipt(ch: char) -> String {
-    std::iter::repeat_n(ch, 64).collect()
+    std::iter::repeat(ch).take(64).collect()
 }
 
 #[test]
