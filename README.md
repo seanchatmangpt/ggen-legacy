@@ -9,7 +9,7 @@
 ## v26.9.28 composed reconstitution
 
 v26.9.28 binds Verified Repository Reconstitution to the exact capability owners
-already implemented across the ecosystem instead of duplicating them here.
+already implemented across the ecosystem instead of duplicating them here. The manufacturing runtime is the published `ggen@ff96f04e…` v26.9.28 subject; marketplace content and runtime identity remain separate.
 `authority/v26.9.28/ecosystem-lock.json` pins the manufacturing, semantic,
 planning, trust, consequence, runtime, evidence, and replay planes by commit
 SHA. `authority/v26.9.28/reconstitution-contract.json` preserves the single
