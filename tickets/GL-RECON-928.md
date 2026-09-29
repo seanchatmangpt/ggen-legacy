@@ -31,6 +31,8 @@ required contract.
 
 ## Required owner boundaries
 
+- ggen: exact v26.9.28 manufacturing runtime (`ff96f04e8c7b851e5cca53f3faf5ce1d5f43ce6e`)
+
 - ggen-marketplace: semantic source and reusable manufacturing basis
 - ggen_igniter: provenance/projection
 - ash_r2rml: VKG/read plane, authority NONE
