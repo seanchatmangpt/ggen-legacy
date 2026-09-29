@@ -28,7 +28,8 @@
     "planner": "seanchatmangpt/ash_pplan",
     "process_runtime": "seanchatmangpt/beam4pm",
     "replan": "seanchatmangpt/ferroplan",
-    "event_semantics": "seanchatmangpt/unrdf"
+    "event_semantics": "seanchatmangpt/unrdf",
+    "manufacturing_runtime": "seanchatmangpt/ggen"
   },
   "invariants": [
     "generated output is a projection, never a second source of truth",
@@ -41,13 +42,14 @@
     "failure of one edge removes only that edge when another lawful route exists",
     "unknown outcome remains typed and blocks unsafe replay",
     "release admission and sunset admission are separate decisions",
-    "no human source-reading requirement may be removed without a named replacement control and independent verifier"
+    "no human source-reading requirement may be removed without a named replacement control and independent verifier",
+    "manufacturing runtime identity is pinned independently from marketplace content identity"
   ],
   "manufacture": {
     "strategy": "reuse_compose_extend_before_invent",
     "legacy_input": "any repository with a recoverable bounded observable contract",
     "semantic_basis": "ggen-marketplace exact-subject pack corpus",
-    "producer": "ggen/ggen_igniter",
+    "producer": "ggen@ff96f04e8c7b851e5cca53f3faf5ce1d5f43ce6e + ggen_igniter",
     "generated_files_hand_editable": false,
     "predecessor_source_required_as_runtime_dependency": false
   },
