@@ -1,10 +1,6 @@
 {
   "schema": "urn:chatman:ggen-legacy:reconstitution-contract:v26.9.28",
-  "release": {
-    "release_admitted": false,
-    "sunset_admitted": false,
-    "external_production_claim": false
-  },
+  "release": "v26.9.28",
   "standing": "PARTIAL_ALIVE",
   "claim_ceiling": "REFERENCE_CONFORMANT",
   "product": "Verified Repository Reconstitution",
@@ -74,5 +70,10 @@
     "unknown outcome is coerced to success",
     "release is admitted without clean replay",
     "sunset is admitted without a real predecessor receipt"
-  ]
+  ],
+  "release_decision": {
+    "release_admitted": false,
+    "sunset_admitted": false,
+    "external_production_claim": false
+  }
 }
