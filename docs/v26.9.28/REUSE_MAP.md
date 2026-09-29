@@ -4,6 +4,8 @@ v26.9.28 is intentionally a composition release.
 
 ## Reused without reimplementation
 
+- **ggen** — pinned v26.9.28 manufacturing runtime (`ff96f04e…`), kept distinct from marketplace content identity.
+
 - **ggen-marketplace** — reusable semantic manufacturing basis and pack
   composition. The marketplace is prior art, not copied templates.
 - **ggen_igniter** — provenance and deterministic projection.
@@ -31,3 +33,8 @@ The manufacturing basis grows without requiring ggen-legacy to grow a second
 implementation of every subsystem. Reconstitution therefore scales with
 **recoverable contracts + reusable semantic prior**, not with the amount of
 handwritten replacement code stored in this repository.
+
+## Candidate adjacency preserved
+
+- **ash_graphlaw** — current bridge repository from GraphLaw into the Ash ecosystem; recorded as `CANDIDATE` until its manufactured extension court establishes standing.
+- **ggen-ecosystem** — current governed distribution/composition root is v26.9.29 and reports `BLOCKED[REQUIRES_REPUBLISH]`; recorded as `CANDIDATE` evidence rather than imported standing into v26.9.28.
