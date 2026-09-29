@@ -14,43 +14,49 @@ gl:ggenRuntime a gl:CapabilityOwner ;
 
 gl:ggenMarketplace a gl:CapabilityOwner ;
   gl:repository "seanchatmangpt/ggen-marketplace" ;
-  gl:sha "20ac5c935e46b7f0ff1336e7876e7730c935ebde" ;
+  gl:sha "76d698ad996606822c0e4a9237d201ff6cfef8f5" ;
   gl:owns gl:SemanticManufacturingBasis ;
   gl:authority "CONSTRUCT_ONLY" .
 
 gl:ggenIgniter a gl:CapabilityOwner ;
   gl:repository "seanchatmangpt/ggen_igniter" ;
-  gl:sha "4c5eed22252203980060dbc757c447823179253f" ;
+  gl:sha "71a211e757c7dd49757f5d74308a4027486d1b47" ;
   gl:owns gl:ProjectionAndProvenance ;
   gl:authority "CONSTRUCT_ONLY" .
 
 gl:ashR2RML a gl:CapabilityOwner ;
   gl:repository "seanchatmangpt/ash_r2rml" ;
-  gl:sha "05b4a009376d63dc853f78636047240ec6aca1be" ;
+  gl:sha "d13555dbb564921ea9526f2d11a23d793daea41d" ;
   gl:owns gl:VirtualKnowledgeGraph ;
   gl:authority "NONE" .
 
 gl:graphlaw a gl:CapabilityOwner ;
   gl:repository "seanchatmangpt/graphlaw" ;
-  gl:sha "4e4873ca377d50af5268e8736be4afe6badeb862" ;
+  gl:sha "1a73410b2f1fc7007662f034837b0bff390dfeea" ;
   gl:owns gl:SemanticLaw ;
+  gl:authority "EVIDENCE_ONLY" .
+
+gl:ashGraphLaw a gl:CapabilityOwner ;
+  gl:repository "seanchatmangpt/ash_graphlaw" ;
+  gl:sha "20b2e8eca0bfd360f301270ff054317bc3a04ecc" ;
+  gl:owns gl:SemanticLawAshBridge ;
   gl:authority "EVIDENCE_ONLY" .
 
 gl:ashA2A a gl:CapabilityOwner ;
   gl:repository "seanchatmangpt/ash_a2a" ;
-  gl:sha "0f08b8c146841a45d35e7a5c2d0d0fde089628d6" ;
+  gl:sha "be5d9fafe4e212981eec706771820c53da0916d0" ;
   gl:owns gl:ConsequenceProtocol ;
   gl:authority "CONSTRUCT_ONLY" .
 
 gl:xaas a gl:CapabilityOwner ;
   gl:repository "seanchatmangpt/xaas" ;
-  gl:sha "f8ea07db9c588633ea6a2453dfd133977aa7a0d3" ;
+  gl:sha "e01656e975b36e9232e985ce7bb09996320e1a0f" ;
   gl:owns gl:ConsequentialDO ;
   gl:authority "CONSEQUENTIAL_DO" .
 
 gl:affidavit a gl:CapabilityOwner ;
   gl:repository "seanchatmangpt/affidavit" ;
-  gl:sha "7eaf86b796fccec4fe1c1c1c81d221501401a24d" ;
+  gl:sha "cedd662d8e3c9c0f36e4410798321ee2fea68835" ;
   gl:owns gl:CryptographicTrustPlane ;
   gl:authority "TRUST_ONLY" .
 
@@ -66,6 +72,7 @@ gl:v26928 a gl:ReconstitutionContract ;
   gl:projection gl:ggenIgniter ;
   gl:readPlane gl:ashR2RML ;
   gl:lawBoundary gl:graphlaw ;
+  gl:ashLawBridge gl:ashGraphLaw ;
   gl:consequenceProtocol gl:ashA2A ;
   gl:doAuthority gl:xaas ;
   gl:trustPlane gl:affidavit ;
