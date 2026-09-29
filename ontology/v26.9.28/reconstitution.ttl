@@ -32,13 +32,13 @@ gl:ashR2RML a gl:CapabilityOwner ;
 
 gl:graphlaw a gl:CapabilityOwner ;
   gl:repository "seanchatmangpt/graphlaw" ;
-  gl:sha "4acb6cb4929f1a851d1e266713d854caa3bc7015" ;
+  gl:sha "4e4873ca377d50af5268e8736be4afe6badeb862" ;
   gl:owns gl:SemanticLaw ;
   gl:authority "EVIDENCE_ONLY" .
 
 gl:ashA2A a gl:CapabilityOwner ;
   gl:repository "seanchatmangpt/ash_a2a" ;
-  gl:sha "e2e02ebd9d674a70f1d1cdc0e08fc22a07e4b108" ;
+  gl:sha "0f08b8c146841a45d35e7a5c2d0d0fde089628d6" ;
   gl:owns gl:ConsequenceProtocol ;
   gl:authority "CONSTRUCT_ONLY" .
 
