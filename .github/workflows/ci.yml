@@ -31,10 +31,9 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$EXPECTED_SHA"
-          expected="ci.yml
-          planning-v26-8-7.yml"
+          expected="$(sort .github/expected-workflows.txt)"
           actual="$(find .github/workflows -maxdepth 1 -type f \( -name '*.yml' -o -name '*.yaml' \) -exec basename {} \; | sort)"
-          test "$actual" = "$(echo "$expected" | sort)"
+          test "$actual" = "$expected"
           count="$(echo "$actual" | wc -l | tr -d ' ')"
           printf 'subject_sha=%s workflow_count=%s\n' "$EXPECTED_SHA" "$count"
       - name: Verify received generated contract
@@ -224,7 +223,7 @@ jobs:
           test -f "$PACK/ggen.toml"
           test ! -e "$PACK/consumer/docs/SUMMARY.md"
           count="$(find .github/workflows -maxdepth 1 -type f \( -name '*.yml' -o -name '*.yaml' \) | wc -l | tr -d ' ')"
-          test "$count" -eq 1
+          test "$count" -eq "$(wc -l < .github/expected-workflows.txt | tr -d ' ')"
       - name: Checkout frozen real ggen manufacturer
         uses: actions/checkout@v4
         with:
