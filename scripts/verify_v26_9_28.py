@@ -24,6 +24,7 @@ EXPECTED_PIPELINE = [
     "verify", "receipt", "replay", "release_admission", "sunset_admission",
 ]
 EXPECTED = {
+    "seanchatmangpt/ggen": ("manufacturing_runtime", "CONSTRUCT_ONLY"),
     "seanchatmangpt/ggen-marketplace": ("semantic_manufacturing_basis", "CONSTRUCT_ONLY"),
     "seanchatmangpt/ggen_igniter": ("projection_and_provenance", "CONSTRUCT_ONLY"),
     "seanchatmangpt/ash_r2rml": ("virtual_knowledge_graph", "NONE"),
@@ -160,6 +161,7 @@ def verify_contract(contract: dict[str, Any]) -> list[str]:
         errors.append("CONTRACT_PIPELINE_MISMATCH")
     ownership = contract.get("ownership", {})
     expected_ownership = {
+        "manufacturing_runtime": "seanchatmangpt/ggen",
         "semantic_source": "seanchatmangpt/ggen-marketplace",
         "projection": "seanchatmangpt/ggen_igniter",
         "read_federation": "seanchatmangpt/ash_r2rml",
