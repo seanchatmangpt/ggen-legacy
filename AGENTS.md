@@ -301,3 +301,39 @@ The strategic authority is `authority/after-code-reading.json`. Product and arch
 
 > Reconstruct the contract. Manufacture the repository. Prove the standing.
 >>>>>>> origin/agent/after-code-reading-pivot-v26.8.1
+
+
+## 22. v26.9.28 composed reconstitution law
+
+Concurrent executable ticket: `GL-RECON-928`.
+
+The v26.9.28 upgrade composes existing ecosystem owners rather than creating
+second implementations inside ggen-legacy. Its exact subjects are declared in
+`authority/v26.9.28/ecosystem-lock.json`.
+
+Required topology:
+
+```text
+legacy observation
+→ bounded contract
+→ admission/refusal
+→ HDDL/FOND planning
+→ ggen-marketplace composition
+→ ggen/ggen_igniter manufacture
+→ independent semantic/runtime verification
+→ receipt
+→ replay
+→ Release Admission
+→ separately authorized Sunset Admission
+```
+
+Ownership is strict. AshR2RML remains read-plane authority NONE. GraphLaw owns
+semantic law, not world actuation. AshA2A constructs consequence protocol
+objects but does not become a second BRCE. Affidavit establishes
+identity/integrity and cannot grant authorization. XaaS remains the only
+`CONSEQUENTIAL_DO` owner admitted by this release.
+
+Mutable refs are never authority. CANDIDATE work is topology only until
+independently admitted. Generated outputs are projections and may not be
+hand-promoted into semantic source. Failure of one external edge removes that
+edge; it does not terminate lawful reconstitution while another route remains.

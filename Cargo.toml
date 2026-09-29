@@ -1,6 +1,6 @@
 [package]
 name = "ggen-legacy-lsp"
-version = "26.8.5"
+version = "26.9.28"
 edition = "2021"
 rust-version = "1.82.0"
 license = "MIT"

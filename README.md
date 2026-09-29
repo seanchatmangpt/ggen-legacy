@@ -1,10 +1,37 @@
-# ggen-legacy v26.8.1
+# ggen-legacy v26.9.28
 
 **Verified Repository Reconstitution for the era after human code reading leaves the production critical path.**
 
 `ggen-legacy` reconstructs the observable contract of a legacy repository, admits that contract into machine-readable authority, manufactures a replacement repository, independently verifies behavioral closure, replays the result, and computes whether the predecessor may be retired.
 
 > Reconstruct the contract. Manufacture the repository. Prove the standing.
+
+## v26.9.28 composed reconstitution
+
+v26.9.28 binds Verified Repository Reconstitution to the exact capability owners
+already implemented across the ecosystem instead of duplicating them here. The manufacturing runtime is the published `ggen@ff96f04e…` v26.9.28 subject; marketplace content and runtime identity remain separate.
+`authority/v26.9.28/ecosystem-lock.json` pins the manufacturing, semantic,
+planning, trust, consequence, runtime, evidence, and replay planes by commit
+SHA. `authority/v26.9.28/reconstitution-contract.json` preserves the single
+consequential-DO boundary in XaaS while ggen-marketplace remains the reusable
+semantic manufacturing basis.
+
+The upgrade is executable through:
+
+```bash
+python3 -m unittest scripts/tests/test_v26_9_28_crown.py -v
+python3 scripts/verify_v26_9_28.py --root .
+python3 scripts/manufacture_v26_9_28_receipt.py \
+  --expected-revision "$(git rev-parse HEAD)" \
+  --output /tmp/v26928.json
+```
+
+The local source begins at `PARTIAL_ALIVE`; the exact-head v26.9.28 crown may
+promote only the bounded composition contract after exact external subject
+probes and deterministic replay. Candidate branches remain observations and do
+not widen released standing.
+
+See [v26.9.28](docs/v26.9.28/README.md).
 
 ## After Code Reading
 

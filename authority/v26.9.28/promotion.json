@@ -1,0 +1,28 @@
+{
+  "schema": "urn:chatman:ggen-legacy:promotion:v26.9.28",
+  "release": "v26.9.28",
+  "source_state": "PARTIAL_ALIVE",
+  "source_claim_ceiling": "DOCUMENTED",
+  "crown": {
+    "workflow": ".github/workflows/v26-9-28-crown.yml",
+    "independent_verifier": "scripts/verify_v26_9_28.py",
+    "producer": "scripts/manufacture_v26_9_28_receipt.py",
+    "clean_replays_required": 2,
+    "exact_external_subject_probe_required": true,
+    "negative_controls_required": true,
+    "producer_self_certification_allowed": false
+  },
+  "success": {
+    "standing": "ALIVE",
+    "claim_ceiling": "REFERENCE_CONFORMANT",
+    "release_admitted": true,
+    "sunset_admitted": false
+  },
+  "scope": "v26.9.28 composition authority, owner graph, manufacture/replay contract and exact external coordinates only",
+  "nonclaims": [
+    "complete external capability implementations are not recertified by this crown",
+    "external production deployment is not claimed",
+    "candidate branches do not widen released standing",
+    "no real predecessor retirement is admitted"
+  ]
+}

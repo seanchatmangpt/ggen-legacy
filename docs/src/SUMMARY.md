@@ -26,3 +26,4 @@
   - [Verification, Capsules, and Publication](clean-session/08-verification-publication.md)
   - [Completion, Receipt, and Session Startup](clean-session/09-completion-receipt.md)
 - [After Code Reading](15-after-code-reading.md)
+\n- [v26.9.28 Composed Repository Reconstitution](16-v26-9-28.md)\n

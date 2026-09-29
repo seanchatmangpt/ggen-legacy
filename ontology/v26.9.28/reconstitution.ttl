@@ -1,0 +1,82 @@
+@prefix gl: <urn:chatman:ggen-legacy:v26.9.28#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+gl:CapabilityOwner a gl:Class .
+gl:ExactSubject a gl:Class .
+gl:ReconstitutionContract a gl:Class .
+gl:AuthorityBoundary a gl:Class .
+
+gl:ggenRuntime a gl:CapabilityOwner ;
+  gl:repository "seanchatmangpt/ggen" ;
+  gl:sha "ff96f04e8c7b851e5cca53f3faf5ce1d5f43ce6e" ;
+  gl:owns gl:DeterministicManufacturingRuntime ;
+  gl:authority "CONSTRUCT_ONLY" .
+
+gl:ggenMarketplace a gl:CapabilityOwner ;
+  gl:repository "seanchatmangpt/ggen-marketplace" ;
+  gl:sha "76d698ad996606822c0e4a9237d201ff6cfef8f5" ;
+  gl:owns gl:SemanticManufacturingBasis ;
+  gl:authority "CONSTRUCT_ONLY" .
+
+gl:ggenIgniter a gl:CapabilityOwner ;
+  gl:repository "seanchatmangpt/ggen_igniter" ;
+  gl:sha "71a211e757c7dd49757f5d74308a4027486d1b47" ;
+  gl:owns gl:ProjectionAndProvenance ;
+  gl:authority "CONSTRUCT_ONLY" .
+
+gl:ashR2RML a gl:CapabilityOwner ;
+  gl:repository "seanchatmangpt/ash_r2rml" ;
+  gl:sha "d13555dbb564921ea9526f2d11a23d793daea41d" ;
+  gl:owns gl:VirtualKnowledgeGraph ;
+  gl:authority "NONE" .
+
+gl:graphlaw a gl:CapabilityOwner ;
+  gl:repository "seanchatmangpt/graphlaw" ;
+  gl:sha "1a73410b2f1fc7007662f034837b0bff390dfeea" ;
+  gl:owns gl:SemanticLaw ;
+  gl:authority "EVIDENCE_ONLY" .
+
+gl:ashGraphLaw a gl:CapabilityOwner ;
+  gl:repository "seanchatmangpt/ash_graphlaw" ;
+  gl:sha "20b2e8eca0bfd360f301270ff054317bc3a04ecc" ;
+  gl:owns gl:SemanticLawAshBridge ;
+  gl:authority "EVIDENCE_ONLY" .
+
+gl:ashA2A a gl:CapabilityOwner ;
+  gl:repository "seanchatmangpt/ash_a2a" ;
+  gl:sha "be5d9fafe4e212981eec706771820c53da0916d0" ;
+  gl:owns gl:ConsequenceProtocol ;
+  gl:authority "CONSTRUCT_ONLY" .
+
+gl:xaas a gl:CapabilityOwner ;
+  gl:repository "seanchatmangpt/xaas" ;
+  gl:sha "e01656e975b36e9232e985ce7bb09996320e1a0f" ;
+  gl:owns gl:ConsequentialDO ;
+  gl:authority "CONSEQUENTIAL_DO" .
+
+gl:affidavit a gl:CapabilityOwner ;
+  gl:repository "seanchatmangpt/affidavit" ;
+  gl:sha "cedd662d8e3c9c0f36e4410798321ee2fea68835" ;
+  gl:owns gl:CryptographicTrustPlane ;
+  gl:authority "TRUST_ONLY" .
+
+gl:ashPPlan a gl:CapabilityOwner ;
+  gl:repository "seanchatmangpt/ash_pplan" ;
+  gl:sha "b9da1ad7590d70afac5eace3bd7ba1a644f7249f" ;
+  gl:owns gl:PlannerAuthority ;
+  gl:authority "NONE" .
+
+gl:v26928 a gl:ReconstitutionContract ;
+  gl:manufacturingRuntime gl:ggenRuntime ;
+  gl:semanticSource gl:ggenMarketplace ;
+  gl:projection gl:ggenIgniter ;
+  gl:readPlane gl:ashR2RML ;
+  gl:lawBoundary gl:graphlaw ;
+  gl:ashLawBridge gl:ashGraphLaw ;
+  gl:consequenceProtocol gl:ashA2A ;
+  gl:doAuthority gl:xaas ;
+  gl:trustPlane gl:affidavit ;
+  gl:planner gl:ashPPlan ;
+  gl:generatedIsAuthority false ;
+  gl:releaseAdmitted false ;
+  gl:sunsetAdmitted false .

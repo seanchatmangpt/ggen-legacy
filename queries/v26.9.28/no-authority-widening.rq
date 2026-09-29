@@ -1,0 +1,6 @@
+PREFIX gl: <urn:chatman:ggen-legacy:v26.9.28#>
+ASK {
+  ?owner a gl:CapabilityOwner ;
+         gl:authority "CONSEQUENTIAL_DO" .
+  FILTER (?owner != gl:xaas)
+}

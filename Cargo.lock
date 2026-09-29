@@ -888,7 +888,7 @@ dependencies = [
 
 [[package]]
 name = "ggen-legacy-lsp"
-version = "26.8.5"
+version = "26.9.28"
 dependencies = [
  "anyhow",
  "chicago-tdd-tools",
