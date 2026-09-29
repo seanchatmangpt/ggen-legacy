@@ -1,4 +1,4 @@
-# ggen-legacy v26.8.1
+# ggen-legacy v26.9.28
 
 **Verified Repository Reconstitution for the era after human code reading leaves the production critical path.**
 
