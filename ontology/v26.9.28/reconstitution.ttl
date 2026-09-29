@@ -6,6 +6,12 @@ gl:ExactSubject a gl:Class .
 gl:ReconstitutionContract a gl:Class .
 gl:AuthorityBoundary a gl:Class .
 
+gl:ggenRuntime a gl:CapabilityOwner ;
+  gl:repository "seanchatmangpt/ggen" ;
+  gl:sha "ff96f04e8c7b851e5cca53f3faf5ce1d5f43ce6e" ;
+  gl:owns gl:DeterministicManufacturingRuntime ;
+  gl:authority "CONSTRUCT_ONLY" .
+
 gl:ggenMarketplace a gl:CapabilityOwner ;
   gl:repository "seanchatmangpt/ggen-marketplace" ;
   gl:sha "20ac5c935e46b7f0ff1336e7876e7730c935ebde" ;
@@ -55,6 +61,7 @@ gl:ashPPlan a gl:CapabilityOwner ;
   gl:authority "NONE" .
 
 gl:v26928 a gl:ReconstitutionContract ;
+  gl:manufacturingRuntime gl:ggenRuntime ;
   gl:semanticSource gl:ggenMarketplace ;
   gl:projection gl:ggenIgniter ;
   gl:readPlane gl:ashR2RML ;
