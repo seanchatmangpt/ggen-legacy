@@ -4,6 +4,7 @@
 
 | Plane | Canonical owner | ggen-legacy role |
 |---|---|---|
+| Manufacturing runtime | ggen | Execute the pinned deterministic manufacture semantics |
 | Semantic manufacturing basis | ggen-marketplace | Select/compose admitted packs |
 | Projection/provenance | ggen_igniter | Deterministic projection boundary |
 | Read federation | ash_r2rml | Consume VKG evidence with authority NONE |
