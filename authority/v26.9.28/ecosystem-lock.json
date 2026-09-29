@@ -30,7 +30,7 @@
     },
     {
       "repo": "seanchatmangpt/ggen-marketplace",
-      "sha": "20ac5c935e46b7f0ff1336e7876e7730c935ebde",
+      "sha": "76d698ad996606822c0e4a9237d201ff6cfef8f5",
       "role": "semantic_manufacturing_basis",
       "authority": "CONSTRUCT_ONLY",
       "capabilities": [
@@ -44,7 +44,7 @@
     },
     {
       "repo": "seanchatmangpt/ggen_igniter",
-      "sha": "4c5eed22252203980060dbc757c447823179253f",
+      "sha": "71a211e757c7dd49757f5d74308a4027486d1b47",
       "role": "projection_and_provenance",
       "authority": "CONSTRUCT_ONLY",
       "capabilities": [
@@ -56,7 +56,7 @@
     },
     {
       "repo": "seanchatmangpt/ash_r2rml",
-      "sha": "05b4a009376d63dc853f78636047240ec6aca1be",
+      "sha": "d13555dbb564921ea9526f2d11a23d793daea41d",
       "role": "virtual_knowledge_graph",
       "authority": "NONE",
       "capabilities": [
@@ -69,7 +69,7 @@
     },
     {
       "repo": "seanchatmangpt/graphlaw",
-      "sha": "4e4873ca377d50af5268e8736be4afe6badeb862",
+      "sha": "1a73410b2f1fc7007662f034837b0bff390dfeea",
       "role": "semantic_law_boundary",
       "authority": "EVIDENCE_ONLY",
       "capabilities": [
@@ -86,7 +86,7 @@
     },
     {
       "repo": "seanchatmangpt/ash_a2a",
-      "sha": "0f08b8c146841a45d35e7a5c2d0d0fde089628d6",
+      "sha": "be5d9fafe4e212981eec706771820c53da0916d0",
       "role": "consequence_protocol",
       "authority": "CONSTRUCT_ONLY",
       "capabilities": [
@@ -99,7 +99,7 @@
     },
     {
       "repo": "seanchatmangpt/xaas",
-      "sha": "f8ea07db9c588633ea6a2453dfd133977aa7a0d3",
+      "sha": "e01656e975b36e9232e985ce7bb09996320e1a0f",
       "role": "runtime_core_and_brce",
       "authority": "CONSEQUENTIAL_DO",
       "capabilities": [
@@ -115,7 +115,7 @@
     },
     {
       "repo": "seanchatmangpt/affidavit",
-      "sha": "7eaf86b796fccec4fe1c1c1c81d221501401a24d",
+      "sha": "cedd662d8e3c9c0f36e4410798321ee2fea68835",
       "role": "cryptographic_trust_plane",
       "authority": "TRUST_ONLY",
       "capabilities": [
@@ -155,7 +155,7 @@
     },
     {
       "repo": "seanchatmangpt/ferroplan",
-      "sha": "14b8903925248d4db4fc9ba3726708730c7a616e",
+      "sha": "2954d5a1045160b31510257d39386d5c36af73c3",
       "role": "replanning_engine",
       "authority": "NONE",
       "capabilities": [
@@ -168,7 +168,7 @@
     },
     {
       "repo": "seanchatmangpt/wasm4pm",
-      "sha": "818c405358d68a8bb54bb91fc14e649e51256937",
+      "sha": "6bf11ad0d1240d5b97bdae7ccaeebf087f45fae0",
       "role": "portable_runtime_evidence",
       "authority": "EVIDENCE_ONLY",
       "capabilities": [
@@ -180,7 +180,7 @@
     },
     {
       "repo": "seanchatmangpt/gymact",
-      "sha": "53d0675da1931a337e58a1122816bb26986b2cfe",
+      "sha": "d3eb5e848cb86952921d1b0083e0b7e7e1f53609",
       "role": "action_experiment_surface",
       "authority": "NONE",
       "capabilities": [
@@ -231,7 +231,7 @@
     },
     {
       "repo": "seanchatmangpt/gitvan",
-      "sha": "3428b7f05ad2e1567ceaa3aeeeb7ebd59fb85458",
+      "sha": "96f4ec42e71909c347158cb8633b55e254e54065",
       "role": "swarm_receipt_transport",
       "authority": "EVIDENCE_ONLY",
       "capabilities": [
@@ -240,33 +240,21 @@
         "least_authority"
       ],
       "probe_required": false
-    }
-  ],
-  "candidates": [
-    {
-      "repo": "seanchatmangpt/affidavit",
-      "sha": "2859c83cb8e06b204e3230affd4dc4a42f5ffb3d",
-      "source": "PR#102",
-      "state": "CANDIDATE",
-      "adds": [
-        "ML-DSA-65",
-        "JCS",
-        "key_custody",
-        "revocation",
-        "signed_envelopes"
-      ],
-      "authority_widening": false
     },
     {
       "repo": "seanchatmangpt/ash_graphlaw",
-      "sha": "3331f165ebc9a0e0c67943a85adeb6dbb3e76ce3",
-      "source": "PR#1",
-      "state": "CANDIDATE",
-      "adds": [
-        "GraphLaw_WASM_to_Ash_extension_boundary"
+      "sha": "20b2e8eca0bfd360f301270ff054317bc3a04ecc",
+      "role": "semantic_law_ash_bridge",
+      "authority": "EVIDENCE_ONLY",
+      "capabilities": [
+        "Ash_extension",
+        "GraphLaw_WASM_bridge",
+        "semantic_admission_bridge"
       ],
-      "authority_widening": false
-    },
+      "probe_required": true
+    }
+  ],
+  "candidates": [
     {
       "repo": "seanchatmangpt/ggen-ecosystem",
       "sha": "50fdfa20c84205a80c6eb94e916cffbedc4b816e",
@@ -276,56 +264,6 @@
         "governed_ecosystem_composition",
         "container_transport",
         "castle_profile"
-      ],
-      "authority_widening": false
-    },
-    {
-      "repo": "seanchatmangpt/ggen-marketplace",
-      "sha": "957932b1c85e47db365f4c139fd2e9e1714eb2f9",
-      "source": "PR#530",
-      "state": "CANDIDATE",
-      "adds": [
-        "repository-reconstitution-pack"
-      ],
-      "authority_widening": false
-    },
-    {
-      "repo": "seanchatmangpt/ash_r2rml",
-      "sha": "ffd2349b560e9c3463bc0920e4282c0708c6e18d",
-      "source": "PR#49",
-      "state": "CANDIDATE",
-      "adds": [
-        "VKG_exact_source_identity_court"
-      ],
-      "authority_widening": false
-    },
-    {
-      "repo": "seanchatmangpt/wasm4pm",
-      "sha": "d3f7c49d00b66bbd60767080c51191487fe3380a",
-      "source": "PR#648",
-      "state": "CANDIDATE",
-      "adds": [
-        "canonical_replan_envelope_schema"
-      ],
-      "authority_widening": false
-    },
-    {
-      "repo": "seanchatmangpt/gymact",
-      "sha": "2e6dca055673feb81620a2e39179a3d89db19c5b",
-      "source": "PR#155",
-      "state": "CANDIDATE",
-      "adds": [
-        "SA2A_exact_subject_conformance"
-      ],
-      "authority_widening": false
-    },
-    {
-      "repo": "seanchatmangpt/gitvan",
-      "sha": "ccdcbc9b5a18e5bc00e7fc7fd4359653d8f55f29",
-      "source": "PR#28",
-      "state": "CANDIDATE",
-      "adds": [
-        "exact_subject_Git_Notes_gateway"
       ],
       "authority_widening": false
     }
