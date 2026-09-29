@@ -16,6 +16,19 @@
   },
   "components": [
     {
+      "repo": "seanchatmangpt/ggen",
+      "sha": "ff96f04e8c7b851e5cca53f3faf5ce1d5f43ce6e",
+      "role": "manufacturing_runtime",
+      "authority": "CONSTRUCT_ONLY",
+      "capabilities": [
+        "ggen_sync",
+        "RDF_to_artifact",
+        "deterministic_manufacture",
+        "pack_runtime"
+      ],
+      "probe_required": true
+    },
+    {
       "repo": "seanchatmangpt/ggen-marketplace",
       "sha": "20ac5c935e46b7f0ff1336e7876e7730c935ebde",
       "role": "semantic_manufacturing_basis",
@@ -254,6 +267,28 @@
         "key_custody",
         "revocation",
         "signed_envelopes"
+      ],
+      "authority_widening": false
+    },
+    {
+      "repo": "seanchatmangpt/ash_graphlaw",
+      "sha": "287d2a9adf053310b1565b86af61bc23a83c49f4",
+      "source": "main",
+      "state": "CANDIDATE",
+      "adds": [
+        "GraphLaw_WASM_to_Ash_extension_boundary"
+      ],
+      "authority_widening": false
+    },
+    {
+      "repo": "seanchatmangpt/ggen-ecosystem",
+      "sha": "50fdfa20c84205a80c6eb94e916cffbedc4b816e",
+      "source": "main/v26.9.29-BLOCKED_REQUIRES_REPUBLISH",
+      "state": "CANDIDATE",
+      "adds": [
+        "governed_ecosystem_composition",
+        "container_transport",
+        "castle_profile"
       ],
       "authority_widening": false
     }
