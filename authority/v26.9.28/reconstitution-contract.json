@@ -29,7 +29,8 @@
     "process_runtime": "seanchatmangpt/beam4pm",
     "replan": "seanchatmangpt/ferroplan",
     "event_semantics": "seanchatmangpt/unrdf",
-    "manufacturing_runtime": "seanchatmangpt/ggen"
+    "manufacturing_runtime": "seanchatmangpt/ggen",
+    "semantic_law_ash_bridge": "seanchatmangpt/ash_graphlaw"
   },
   "invariants": [
     "generated output is a projection, never a second source of truth",
@@ -43,7 +44,8 @@
     "unknown outcome remains typed and blocks unsafe replay",
     "release admission and sunset admission are separate decisions",
     "no human source-reading requirement may be removed without a named replacement control and independent verifier",
-    "manufacturing runtime identity is pinned independently from marketplace content identity"
+    "manufacturing runtime identity is pinned independently from marketplace content identity",
+    "GraphLaw-to-Ash bridge remains evidence-only and cannot acquire DO authority"
   ],
   "manufacture": {
     "strategy": "reuse_compose_extend_before_invent",
