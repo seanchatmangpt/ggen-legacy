@@ -9,8 +9,8 @@
     "invariants",
     "manufacture",
     "verification",
-    "release",
-    "falsifiers"
+    "falsifiers",
+    "release_decision"
   ],
   "properties": {
     "release": {
@@ -32,6 +32,25 @@
     "falsifiers": {
       "type": "array",
       "minItems": 8
+    },
+    "release_decision": {
+      "type": "object",
+      "required": [
+        "release_admitted",
+        "sunset_admitted",
+        "external_production_claim"
+      ],
+      "properties": {
+        "release_admitted": {
+          "const": false
+        },
+        "sunset_admitted": {
+          "const": false
+        },
+        "external_production_claim": {
+          "const": false
+        }
+      }
     }
   }
 }
