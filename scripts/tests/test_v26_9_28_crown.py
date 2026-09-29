@@ -39,9 +39,10 @@ class V26928CrownTests(unittest.TestCase):
 
     def test_candidate_cannot_widen_authority(self):
         lock = copy.deepcopy(self.lock)
-        lock["candidates"][0]["authority_widening"] = True
+        target = lock["candidates"][0]
+        target["authority_widening"] = True
         self.assertIn(
-            "LOCK_CANDIDATE_AUTHORITY_WIDENING:seanchatmangpt/ash_a2a",
+            f"LOCK_CANDIDATE_AUTHORITY_WIDENING:{target['repo']}",
             VERIFY.verify_lock(lock),
         )
 
