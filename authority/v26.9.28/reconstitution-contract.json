@@ -2,7 +2,7 @@
   "schema": "urn:chatman:ggen-legacy:reconstitution-contract:v26.9.28",
   "release": "v26.9.28",
   "standing": "PARTIAL_ALIVE",
-  "claim_ceiling": "REFERENCE_CONFORMANT",
+  "claim_ceiling": "DOCUMENTED",
   "product": "Verified Repository Reconstitution",
   "equation": "A = mu(O*)",
   "pipeline": [
