@@ -45,3 +45,11 @@ handwritten replacement code stored in this repository.
 - **GraphLaw PR #16** landed the authority-free SA2A exact-subject evidence matrix; the lock now pins main at `4e4873c…`.
 - **AshA2A PRs #61–62** landed the C1 consequence runtime and portable RFC8785 PreparedEffect identity; the lock now pins main at `0f08b8c…`.
 - Open strengthening PRs remain CANDIDATE only: marketplace #530, AshR2RML #49, ash_graphlaw #1, Affidavit #102, WASM4PM #648, GymAct #155, and GitVan #28.
+
+
+## Final v26.9.28 landed owner cut
+
+The root lock now binds the landed main subjects for marketplace reconstitution (#530),
+VKG source identity (#49), ash_graphlaw (#1), Affidavit trust (#102), WASM4PM #648,
+GymAct #155, and GitVan #28. Those capabilities are no longer CANDIDATE. The
+GraphLaw→Ash bridge is now a first-class EVIDENCE_ONLY owner in the released composition.
