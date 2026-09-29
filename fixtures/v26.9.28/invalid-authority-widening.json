@@ -1,0 +1,6 @@
+{
+  "mutation": "read_plane_acquires_consequential_do",
+  "target": "seanchatmangpt/ash_r2rml",
+  "forbidden_authority": "CONSEQUENTIAL_DO",
+  "expected_refusal": "LOCK_AUTHORITY_MISMATCH"
+}

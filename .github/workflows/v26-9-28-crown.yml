@@ -1,0 +1,118 @@
+name: Crown ggen-legacy v26.9.28
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ggen-legacy-v26.9.28-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  crown:
+    name: exact-subject composition, replay, and independent crown
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out exact candidate
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Assert exact local subject
+        shell: bash
+        run: |
+          set -euo pipefail
+          HEAD_SHA='${{ github.event.pull_request.head.sha || github.sha }}'
+          test "$(git rev-parse HEAD)" = "$HEAD_SHA"
+          test -s authority/v26.9.28/ecosystem-lock.json
+          test -s authority/v26.9.28/reconstitution-contract.json
+          test -s ontology/v26.9.28/reconstitution.ttl
+          test -s planning/v26.9.28/domain.hddl
+          test -s scripts/verify_v26_9_28.py
+          test -s scripts/manufacture_v26_9_28_receipt.py
+
+      - name: Execute negative-control unit court
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m unittest scripts/tests/test_v26_9_28_crown.py -v
+
+      - name: Verify composition source before promotion
+        shell: bash
+        run: |
+          set -euo pipefail
+          HEAD_SHA='${{ github.event.pull_request.head.sha || github.sha }}'
+          python3 scripts/verify_v26_9_28.py             --root .             --expected-revision "$HEAD_SHA"             --output /tmp/v26928-pre-crown.json
+          python3 - <<'PY'
+          import json
+          r=json.load(open('/tmp/v26928-pre-crown.json'))
+          assert r['standing']=='PARTIAL_ALIVE', r
+          assert r['release_admitted'] is False, r
+          assert r['sunset_admitted'] is False, r
+          assert r['errors']==[], r
+          PY
+
+      - name: Manufacture two clean receipts
+        shell: bash
+        run: |
+          set -euo pipefail
+          HEAD_SHA='${{ github.event.pull_request.head.sha || github.sha }}'
+          rm -rf /tmp/ggen-legacy-v26928-a /tmp/ggen-legacy-v26928-b
+          git worktree add --detach /tmp/ggen-legacy-v26928-a "$HEAD_SHA"
+          git worktree add --detach /tmp/ggen-legacy-v26928-b "$HEAD_SHA"
+          for label in a b; do
+            root="/tmp/ggen-legacy-v26928-$label"
+            (
+              cd "$root"
+              python3 scripts/manufacture_v26_9_28_receipt.py                 --root .                 --expected-revision "$HEAD_SHA"                 --output "/tmp/v26928-$label.json"
+            )
+          done
+          cmp /tmp/v26928-a.json /tmp/v26928-b.json
+
+      - name: Probe exact external subjects and crown
+        shell: bash
+        run: |
+          set -euo pipefail
+          HEAD_SHA='${{ github.event.pull_request.head.sha || github.sha }}'
+          mkdir -p evidence
+          python3 scripts/verify_v26_9_28.py             --root .             --expected-revision "$HEAD_SHA"             --receipt-a /tmp/v26928-a.json             --receipt-b /tmp/v26928-b.json             --probe-remotes             --output evidence/v26.9.28-crown.json
+          python3 - <<'PY'
+          import json
+          r=json.load(open('evidence/v26.9.28-crown.json'))
+          assert r['standing']=='ALIVE', r
+          assert r['claim_ceiling']=='REFERENCE_CONFORMANT', r
+          assert r['release_admitted'] is True, r
+          assert r['sunset_admitted'] is False, r
+          assert r['replay_match'] is True, r
+          assert r['producer_verifier_separated'] is True, r
+          assert r['actuation_performed'] is False, r
+          assert r['errors']==[], r
+          assert all(p['passed'] for p in r['probes']), r
+          PY
+
+      - name: Bind evidence identities
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum             /tmp/v26928-pre-crown.json             /tmp/v26928-a.json             /tmp/v26928-b.json             evidence/v26.9.28-crown.json             > /tmp/v26928-evidence.sha256
+
+      - name: Upload v26.9.28 crown evidence
+        uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808
+        with:
+          name: ggen-legacy-v26.9.28-${{ github.event.pull_request.head.sha || github.sha }}
+          path: |
+            /tmp/v26928-pre-crown.json
+            /tmp/v26928-a.json
+            /tmp/v26928-b.json
+            /tmp/v26928-evidence.sha256
+            evidence/v26.9.28-crown.json
+          if-no-files-found: error
+          retention-days: 30

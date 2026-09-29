@@ -1,0 +1,261 @@
+{
+  "schema": "urn:chatman:ggen-legacy:ecosystem-lock:v26.9.28",
+  "release": "v26.9.28",
+  "subject": {
+    "repository": "seanchatmangpt/ggen-legacy",
+    "base": "16a5c4f1051ecb0a98b06897e89e4e956be4d9b0"
+  },
+  "policy": {
+    "mutable_refs_are_authority": false,
+    "vendored_engines_allowed": false,
+    "generated_output_is_authority": false,
+    "candidate_can_widen_standing": false,
+    "single_consequential_do_owner": "seanchatmangpt/xaas",
+    "read_plane_authority": "NONE",
+    "trust_plane_authorization_authority": false
+  },
+  "components": [
+    {
+      "repo": "seanchatmangpt/ggen-marketplace",
+      "sha": "20ac5c935e46b7f0ff1336e7876e7730c935ebde",
+      "role": "semantic_manufacturing_basis",
+      "authority": "CONSTRUCT_ONLY",
+      "capabilities": [
+        "packs",
+        "ontology",
+        "manufacture",
+        "qualification",
+        "composition"
+      ],
+      "probe_required": true
+    },
+    {
+      "repo": "seanchatmangpt/ggen_igniter",
+      "sha": "4c5eed22252203980060dbc757c447823179253f",
+      "role": "projection_and_provenance",
+      "authority": "CONSTRUCT_ONLY",
+      "capabilities": [
+        "provenance",
+        "projection",
+        "reconciliation"
+      ],
+      "probe_required": true
+    },
+    {
+      "repo": "seanchatmangpt/ash_r2rml",
+      "sha": "05b4a009376d63dc853f78636047240ec6aca1be",
+      "role": "virtual_knowledge_graph",
+      "authority": "NONE",
+      "capabilities": [
+        "R2RML",
+        "VKG",
+        "source_federation",
+        "read_plane"
+      ],
+      "probe_required": true
+    },
+    {
+      "repo": "seanchatmangpt/graphlaw",
+      "sha": "4acb6cb4929f1a851d1e266713d854caa3bc7015",
+      "role": "semantic_law_boundary",
+      "authority": "EVIDENCE_ONLY",
+      "capabilities": [
+        "RDF",
+        "N3",
+        "Datalog",
+        "SPARQL",
+        "SHACL",
+        "ShEx",
+        "OWL_RL",
+        "WASM"
+      ],
+      "probe_required": true
+    },
+    {
+      "repo": "seanchatmangpt/ash_a2a",
+      "sha": "e2e02ebd9d674a70f1d1cdc0e08fc22a07e4b108",
+      "role": "consequence_protocol",
+      "authority": "CONSTRUCT_ONLY",
+      "capabilities": [
+        "SA2A",
+        "CommandBus",
+        "replan_envelope",
+        "receipts"
+      ],
+      "probe_required": true
+    },
+    {
+      "repo": "seanchatmangpt/xaas",
+      "sha": "f8ea07db9c588633ea6a2453dfd133977aa7a0d3",
+      "role": "runtime_core_and_brce",
+      "authority": "CONSEQUENTIAL_DO",
+      "capabilities": [
+        "BRCE",
+        "actuation",
+        "provider_fabric",
+        "Trimtab",
+        "VKG_consumer",
+        "receipts",
+        "replay"
+      ],
+      "probe_required": true
+    },
+    {
+      "repo": "seanchatmangpt/affidavit",
+      "sha": "7eaf86b796fccec4fe1c1c1c81d221501401a24d",
+      "role": "cryptographic_trust_plane",
+      "authority": "TRUST_ONLY",
+      "capabilities": [
+        "keys",
+        "signatures",
+        "PQC",
+        "nonces",
+        "replay_protection"
+      ],
+      "probe_required": true
+    },
+    {
+      "repo": "seanchatmangpt/ash_pplan",
+      "sha": "b9da1ad7590d70afac5eace3bd7ba1a644f7249f",
+      "role": "planner_ownership",
+      "authority": "NONE",
+      "capabilities": [
+        "HDDL",
+        "FOND",
+        "TLA",
+        "planner_contracts"
+      ],
+      "probe_required": true
+    },
+    {
+      "repo": "seanchatmangpt/beam4pm",
+      "sha": "34ce4a23d0c59edab2391f149413bc5fb1e375c3",
+      "role": "beam_planning_runtime",
+      "authority": "NONE",
+      "capabilities": [
+        "process_intelligence",
+        "replanning",
+        "OCEL",
+        "OTP"
+      ],
+      "probe_required": false
+    },
+    {
+      "repo": "seanchatmangpt/ferroplan",
+      "sha": "14b8903925248d4db4fc9ba3726708730c7a616e",
+      "role": "replanning_engine",
+      "authority": "NONE",
+      "capabilities": [
+        "HDDL",
+        "FOND",
+        "POWL",
+        "recovery"
+      ],
+      "probe_required": false
+    },
+    {
+      "repo": "seanchatmangpt/wasm4pm",
+      "sha": "2ec870ef6f2411beab238f56859c3ca438455c1c",
+      "role": "portable_runtime_evidence",
+      "authority": "EVIDENCE_ONLY",
+      "capabilities": [
+        "WASM",
+        "portable_execution",
+        "runtime_evidence"
+      ],
+      "probe_required": false
+    },
+    {
+      "repo": "seanchatmangpt/gymact",
+      "sha": "dac36298462de98b1fc7a8f1f7bb6ec6bca09b70",
+      "role": "action_experiment_surface",
+      "authority": "NONE",
+      "capabilities": [
+        "GymAct",
+        "action_models",
+        "falsification"
+      ],
+      "probe_required": false
+    },
+    {
+      "repo": "seanchatmangpt/autofde-lab",
+      "sha": "d42a5af94481a3128bf3e35d5f2a0a9a70f22e41",
+      "role": "failure_and_research_court",
+      "authority": "EVIDENCE_ONLY",
+      "capabilities": [
+        "PTD",
+        "HDDL",
+        "FOND",
+        "GraphLaw_WASM",
+        "falsification"
+      ],
+      "probe_required": false
+    },
+    {
+      "repo": "seanchatmangpt/dspy-wasm",
+      "sha": "336482ce19464a3a752936f9c866ff6fea2780d3",
+      "role": "typed_model_portability",
+      "authority": "NONE",
+      "capabilities": [
+        "DSPy",
+        "WASM",
+        "typed_interfaces",
+        "capability_descriptors"
+      ],
+      "probe_required": false
+    },
+    {
+      "repo": "seanchatmangpt/unrdf",
+      "sha": "0550d9630da94b170c931f17a1580ea90091cbb4",
+      "role": "event_semantics_owner",
+      "authority": "EVIDENCE_ONLY",
+      "capabilities": [
+        "OCEL_2",
+        "RDF",
+        "event_admission"
+      ],
+      "probe_required": false
+    },
+    {
+      "repo": "seanchatmangpt/gitvan",
+      "sha": "3428b7f05ad2e1567ceaa3aeeeb7ebd59fb85458",
+      "role": "swarm_receipt_transport",
+      "authority": "EVIDENCE_ONLY",
+      "capabilities": [
+        "Git_Notes",
+        "swarm_receipts",
+        "least_authority"
+      ],
+      "probe_required": false
+    }
+  ],
+  "candidates": [
+    {
+      "repo": "seanchatmangpt/ash_a2a",
+      "sha": "6207dc833337a1d3eb9674ba087b00ca47a0d8c2",
+      "source": "factory-e/v26.9.29-c1-production-cutover-r1-checkpoint",
+      "state": "CANDIDATE",
+      "adds": [
+        "PreparedEffectStore",
+        "prepare_before_DO",
+        "claims",
+        "unknown_outcome"
+      ],
+      "authority_widening": false
+    },
+    {
+      "repo": "seanchatmangpt/affidavit",
+      "sha": "2859c83cb8e06b204e3230affd4dc4a42f5ffb3d",
+      "source": "PR#102",
+      "state": "CANDIDATE",
+      "adds": [
+        "ML-DSA-65",
+        "JCS",
+        "key_custody",
+        "revocation",
+        "signed_envelopes"
+      ],
+      "authority_widening": false
+    }
+  ]
+}

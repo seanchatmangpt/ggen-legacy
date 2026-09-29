@@ -1,0 +1,10 @@
+PREFIX gl: <urn:chatman:ggen-legacy:v26.9.28#>
+SELECT ?owner ?repo ?sha ?capability ?authority
+WHERE {
+  ?owner a gl:CapabilityOwner ;
+         gl:repository ?repo ;
+         gl:sha ?sha ;
+         gl:owns ?capability ;
+         gl:authority ?authority .
+}
+ORDER BY ?repo

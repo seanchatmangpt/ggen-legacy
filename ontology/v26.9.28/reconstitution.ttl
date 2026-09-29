@@ -1,0 +1,68 @@
+@prefix gl: <urn:chatman:ggen-legacy:v26.9.28#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+gl:CapabilityOwner a gl:Class .
+gl:ExactSubject a gl:Class .
+gl:ReconstitutionContract a gl:Class .
+gl:AuthorityBoundary a gl:Class .
+
+gl:ggenMarketplace a gl:CapabilityOwner ;
+  gl:repository "seanchatmangpt/ggen-marketplace" ;
+  gl:sha "20ac5c935e46b7f0ff1336e7876e7730c935ebde" ;
+  gl:owns gl:SemanticManufacturingBasis ;
+  gl:authority "CONSTRUCT_ONLY" .
+
+gl:ggenIgniter a gl:CapabilityOwner ;
+  gl:repository "seanchatmangpt/ggen_igniter" ;
+  gl:sha "4c5eed22252203980060dbc757c447823179253f" ;
+  gl:owns gl:ProjectionAndProvenance ;
+  gl:authority "CONSTRUCT_ONLY" .
+
+gl:ashR2RML a gl:CapabilityOwner ;
+  gl:repository "seanchatmangpt/ash_r2rml" ;
+  gl:sha "05b4a009376d63dc853f78636047240ec6aca1be" ;
+  gl:owns gl:VirtualKnowledgeGraph ;
+  gl:authority "NONE" .
+
+gl:graphlaw a gl:CapabilityOwner ;
+  gl:repository "seanchatmangpt/graphlaw" ;
+  gl:sha "4acb6cb4929f1a851d1e266713d854caa3bc7015" ;
+  gl:owns gl:SemanticLaw ;
+  gl:authority "EVIDENCE_ONLY" .
+
+gl:ashA2A a gl:CapabilityOwner ;
+  gl:repository "seanchatmangpt/ash_a2a" ;
+  gl:sha "e2e02ebd9d674a70f1d1cdc0e08fc22a07e4b108" ;
+  gl:owns gl:ConsequenceProtocol ;
+  gl:authority "CONSTRUCT_ONLY" .
+
+gl:xaas a gl:CapabilityOwner ;
+  gl:repository "seanchatmangpt/xaas" ;
+  gl:sha "f8ea07db9c588633ea6a2453dfd133977aa7a0d3" ;
+  gl:owns gl:ConsequentialDO ;
+  gl:authority "CONSEQUENTIAL_DO" .
+
+gl:affidavit a gl:CapabilityOwner ;
+  gl:repository "seanchatmangpt/affidavit" ;
+  gl:sha "7eaf86b796fccec4fe1c1c1c81d221501401a24d" ;
+  gl:owns gl:CryptographicTrustPlane ;
+  gl:authority "TRUST_ONLY" .
+
+gl:ashPPlan a gl:CapabilityOwner ;
+  gl:repository "seanchatmangpt/ash_pplan" ;
+  gl:sha "b9da1ad7590d70afac5eace3bd7ba1a644f7249f" ;
+  gl:owns gl:PlannerAuthority ;
+  gl:authority "NONE" .
+
+gl:v26928 a gl:ReconstitutionContract ;
+  gl:semanticSource gl:ggenMarketplace ;
+  gl:projection gl:ggenIgniter ;
+  gl:readPlane gl:ashR2RML ;
+  gl:lawBoundary gl:graphlaw ;
+  gl:consequenceProtocol gl:ashA2A ;
+  gl:doAuthority gl:xaas ;
+  gl:trustPlane gl:affidavit ;
+  gl:planner gl:ashPPlan ;
+  gl:generatedIsAuthority false ;
+  gl:releaseAdmitted false ;
+  gl:sunsetAdmitted false .

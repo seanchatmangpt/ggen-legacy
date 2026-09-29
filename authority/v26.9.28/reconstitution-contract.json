@@ -1,0 +1,78 @@
+{
+  "schema": "urn:chatman:ggen-legacy:reconstitution-contract:v26.9.28",
+  "release": {
+    "release_admitted": false,
+    "sunset_admitted": false,
+    "external_production_claim": false
+  },
+  "standing": "PARTIAL_ALIVE",
+  "claim_ceiling": "REFERENCE_CONFORMANT",
+  "product": "Verified Repository Reconstitution",
+  "equation": "A = mu(O*)",
+  "pipeline": [
+    "observe",
+    "recover_contract",
+    "admit_or_refuse",
+    "plan",
+    "manufacture",
+    "verify",
+    "receipt",
+    "replay",
+    "release_admission",
+    "sunset_admission"
+  ],
+  "ownership": {
+    "semantic_source": "seanchatmangpt/ggen-marketplace",
+    "projection": "seanchatmangpt/ggen_igniter",
+    "read_federation": "seanchatmangpt/ash_r2rml",
+    "semantic_law": "seanchatmangpt/graphlaw",
+    "consequence_protocol": "seanchatmangpt/ash_a2a",
+    "consequential_do": "seanchatmangpt/xaas",
+    "trust_plane": "seanchatmangpt/affidavit",
+    "planner": "seanchatmangpt/ash_pplan",
+    "process_runtime": "seanchatmangpt/beam4pm",
+    "replan": "seanchatmangpt/ferroplan",
+    "event_semantics": "seanchatmangpt/unrdf"
+  },
+  "invariants": [
+    "generated output is a projection, never a second source of truth",
+    "observation is not admission",
+    "planning is not authority",
+    "CONSTRUCT is not DO",
+    "only XaaS BRCE may own consequential DO",
+    "read-plane and semantic-law evidence cannot acquire DO authority",
+    "trust proves identity/integrity and does not grant authorization",
+    "failure of one edge removes only that edge when another lawful route exists",
+    "unknown outcome remains typed and blocks unsafe replay",
+    "release admission and sunset admission are separate decisions",
+    "no human source-reading requirement may be removed without a named replacement control and independent verifier"
+  ],
+  "manufacture": {
+    "strategy": "reuse_compose_extend_before_invent",
+    "legacy_input": "any repository with a recoverable bounded observable contract",
+    "semantic_basis": "ggen-marketplace exact-subject pack corpus",
+    "producer": "ggen/ggen_igniter",
+    "generated_files_hand_editable": false,
+    "predecessor_source_required_as_runtime_dependency": false
+  },
+  "verification": {
+    "producer_may_self_certify": false,
+    "exact_subject_required": true,
+    "positive_witnesses_required": true,
+    "negative_controls_required": true,
+    "deterministic_replay_required": true,
+    "receipt_binding_required": true
+  },
+  "falsifiers": [
+    "a required capability has no exact owner",
+    "a mutable ref is treated as authority",
+    "a candidate branch widens released standing",
+    "a read-plane component receives consequential DO authority",
+    "a trust-plane signature is treated as authorization",
+    "generated code becomes canonical authority",
+    "producer output is the only verifier",
+    "unknown outcome is coerced to success",
+    "release is admitted without clean replay",
+    "sunset is admitted without a real predecessor receipt"
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "mutation": "mutable_ref_used_as_subject",
+  "target": "seanchatmangpt/ggen-marketplace",
+  "forbidden_subject": "main",
+  "expected_refusal": "LOCK_MUTABLE_OR_INVALID_SUBJECT"
+}

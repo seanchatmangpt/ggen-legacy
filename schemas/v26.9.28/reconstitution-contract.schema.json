@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:chatman:ggen-legacy:reconstitution-contract-schema:v26.9.28",
+  "type": "object",
+  "required": [
+    "release",
+    "pipeline",
+    "ownership",
+    "invariants",
+    "manufacture",
+    "verification",
+    "release",
+    "falsifiers"
+  ],
+  "properties": {
+    "release": {
+      "const": "v26.9.28"
+    },
+    "pipeline": {
+      "type": "array",
+      "minItems": 10,
+      "uniqueItems": true
+    },
+    "ownership": {
+      "type": "object",
+      "minProperties": 8
+    },
+    "invariants": {
+      "type": "array",
+      "minItems": 10
+    },
+    "falsifiers": {
+      "type": "array",
+      "minItems": 8
+    }
+  }
+}
