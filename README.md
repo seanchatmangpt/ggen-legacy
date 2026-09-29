@@ -6,6 +6,33 @@
 
 > Reconstruct the contract. Manufacture the repository. Prove the standing.
 
+## v26.9.28 composed reconstitution
+
+v26.9.28 binds Verified Repository Reconstitution to the exact capability owners
+already implemented across the ecosystem instead of duplicating them here.
+`authority/v26.9.28/ecosystem-lock.json` pins the manufacturing, semantic,
+planning, trust, consequence, runtime, evidence, and replay planes by commit
+SHA. `authority/v26.9.28/reconstitution-contract.json` preserves the single
+consequential-DO boundary in XaaS while ggen-marketplace remains the reusable
+semantic manufacturing basis.
+
+The upgrade is executable through:
+
+```bash
+python3 -m unittest scripts/tests/test_v26_9_28_crown.py -v
+python3 scripts/verify_v26_9_28.py --root .
+python3 scripts/manufacture_v26_9_28_receipt.py \
+  --expected-revision "$(git rev-parse HEAD)" \
+  --output /tmp/v26928.json
+```
+
+The local source begins at `PARTIAL_ALIVE`; the exact-head v26.9.28 crown may
+promote only the bounded composition contract after exact external subject
+probes and deterministic replay. Candidate branches remain observations and do
+not widen released standing.
+
+See [v26.9.28](docs/v26.9.28/README.md).
+
 ## After Code Reading
 
 Machine implementation throughput can exceed human source-inspection throughput. An organization that uses agents to generate implementation but still requires people to read every line has accelerated one workstation while preserving the human inspection bottleneck that limits the factory.
