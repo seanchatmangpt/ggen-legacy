@@ -157,6 +157,10 @@ def verify_contract(contract: dict[str, Any]) -> list[str]:
     errors: list[str] = []
     if contract.get("release") != RELEASE:
         errors.append("CONTRACT_RELEASE_MISMATCH")
+    if contract.get("standing") != "PARTIAL_ALIVE":
+        errors.append("CONTRACT_INITIAL_STANDING_MISMATCH")
+    if contract.get("claim_ceiling") != "DOCUMENTED":
+        errors.append("CONTRACT_INITIAL_CEILING_MISMATCH")
     if contract.get("pipeline") != EXPECTED_PIPELINE:
         errors.append("CONTRACT_PIPELINE_MISMATCH")
     ownership = contract.get("ownership", {})
