@@ -38,3 +38,10 @@ handwritten replacement code stored in this repository.
 
 - **ash_graphlaw** — current bridge repository from GraphLaw into the Ash ecosystem; recorded as `CANDIDATE` until its manufactured extension court establishes standing.
 - **ggen-ecosystem** — current governed distribution/composition root is v26.9.29 and reports `BLOCKED[REQUIRES_REPUBLISH]`; recorded as `CANDIDATE` evidence rather than imported standing into v26.9.28.
+
+
+## Landed during the v26.9.28 composition cut
+
+- **GraphLaw PR #16** landed the authority-free SA2A exact-subject evidence matrix; the lock now pins main at `4e4873c…`.
+- **AshA2A PRs #61–62** landed the C1 consequence runtime and portable RFC8785 PreparedEffect identity; the lock now pins main at `0f08b8c…`.
+- Open strengthening PRs remain CANDIDATE only: marketplace #530, AshR2RML #49, ash_graphlaw #1, Affidavit #102, WASM4PM #648, GymAct #155, and GitVan #28.
