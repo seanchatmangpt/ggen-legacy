@@ -184,7 +184,7 @@ def verify_contract(contract: dict[str, Any]) -> list[str]:
             errors.append(f"CONTRACT_VERIFICATION_CONTROL_MISSING:{key}")
     if verification.get("producer_may_self_certify") is not False:
         errors.append("CONTRACT_SELF_CERTIFICATION_ALLOWED")
-    release = contract.get("release", {})
+    release = contract.get("release_decision", {})
     if release.get("release_admitted") is not False:
         errors.append("CONTRACT_PREMATURE_RELEASE")
     if release.get("sunset_admitted") is not False:
