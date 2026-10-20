@@ -1,0 +1,9 @@
+# Coverage gate: MUST return >= 1 row. Zero rows = the AssuranceLayer
+# census vanished from the canonical program graph (fail-closed coverage,
+# never a silent pass). The individuals live in the consumer repo's
+# ontology/assurance-program.ttl (the pack ships the vocabulary; the order
+# names the authority graph).
+PREFIX gla: <https://chatmangpt.com/ggen-legacy#>
+SELECT ?layer WHERE {
+  ?layer a gla:AssuranceLayer ; gla:required true .
+}
