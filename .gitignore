@@ -1,9 +1,12 @@
 # Rust build outputs
 target/
+**/target/
 debug/
 **/*.rs.bk
 *.pdb
 **/mutants.out*/
+rust_out
+**/rust_out
 
 # Generated projections and local evidence
 docs/book/
@@ -15,7 +18,9 @@ evidence/offline-transport-provenance.json
 evidence/appliance/
 evidence/offline-bundle/
 .ggen/
+**/.ggen/
 .ggen-v2/
+**/.ggen-v2/
 .ggen-packs/
 foundry/generated/
 foundry/reports/
@@ -31,5 +36,11 @@ wasm4pm-compat/
 
 # Stray build/cache artifacts (not gitignored previously)
 __pycache__/
+**/__pycache__/
+*.py[cod]
+.pytest_cache/
+**/.pytest_cache/
+.DS_Store
+**/.DS_Store
 tools/architecture-foundry/
 .venv*/
