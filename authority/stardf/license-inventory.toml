@@ -1,0 +1,71 @@
+# SPDX-FileCopyrightText: 2026 Sean Chatman
+# SPDX-License-Identifier: CC-BY-4.0
+
+# StarDF license-inventory — conjunct-notice carriage census (W1 lane 6).
+#
+# Ported from ~/purrdf/license-inventory.toml (upstream rev
+# 0da0578306983da851a9073337d57e2e2c41ab3a) per
+# stardf/docs/jira/v26.10.31/08-vendoring-plan.md checklist item 5: the
+# AND-conjunction licenses (Unicode-3.0, BSD-3-Clause) travel with the
+# specific files that carry them. These are the files the vendored tier
+# leaves WILL carry; every row is PLANNED — the copy has not executed.
+# Path segments use upstream purrdf crate layout; stardf-side directory
+# renames (crates/lex → crates/stardf-lex, etc.) are applied at copy time
+# without changing license expressions or pins.
+
+[vendor_pin]
+upstream = "purrdf"
+rev = "0da0578306983da851a9073337d57e2e2c41ab3a"
+verified = "git -C ~/purrdf rev-parse HEAD (2026-10-31, per 08-vendoring-plan.md)"
+
+# Unicode-3.0 per-file tables (purrdf [header_offers] rows under the nine
+# vendored crates; first-party grant beside Unicode-3.0).
+[[row]]
+file = "crates/lex/src/unicode_tables.rs"
+license = "(MIT OR Apache-2.0 OR MulanPSL-2.0) AND Unicode-3.0"
+upstream_source = "https://www.unicode.org/Public/17.0.0/ucd/ (UCD 17.0.0, generated tables) at purrdf rev 0da05783"
+carriage_status = "PLANNED"
+
+[[row]]
+file = "crates/lex/src/unicode/case_tables.rs"
+license = "(MIT OR Apache-2.0 OR MulanPSL-2.0) AND Unicode-3.0"
+upstream_source = "https://www.unicode.org/Public/17.0.0/ucd/ at purrdf rev 0da05783"
+carriage_status = "PLANNED"
+
+[[row]]
+file = "crates/iri/src/idna_tables.rs"
+license = "(MIT OR Apache-2.0 OR MulanPSL-2.0) AND Unicode-3.0"
+upstream_source = "https://www.unicode.org/Public/17.0.0/ucd/ at purrdf rev 0da05783"
+carriage_status = "PLANNED"
+
+[[row]]
+file = "crates/rdf-core/src/xsd_regex/blocks.rs"
+license = "(MIT OR Apache-2.0 OR MulanPSL-2.0) AND Unicode-3.0"
+upstream_source = "https://www.unicode.org/Public/17.0.0/ucd/ at purrdf rev 0da05783"
+carriage_status = "PLANNED"
+
+[[row]]
+file = "crates/rdf-core/src/xsd_regex/xpath/unicode_tables.rs"
+license = "(MIT OR Apache-2.0 OR MulanPSL-2.0) AND Unicode-3.0"
+upstream_source = "https://www.unicode.org/Public/17.0.0/ucd/ at purrdf rev 0da05783"
+carriage_status = "PLANNED"
+
+[[row]]
+file = "crates/rdf-core/src/xsd_regex/xpath/compatibility_tables.rs"
+license = "(MIT OR Apache-2.0 OR MulanPSL-2.0) AND Unicode-3.0"
+upstream_source = "https://www.unicode.org/Public/17.0.0/ucd/ at purrdf rev 0da05783"
+carriage_status = "PLANNED"
+
+# BSD-3-Clause WHATWG named character-reference data, carried by the
+# generated entities source. WHATWG html-build input is SHA-256-pinned in
+# upstream provenance; the pin below is the upstream commit pin transcribed
+# from 08-vendoring-plan.md item 5 and purrdf license-inventory.toml.
+[[row]]
+file = "crates/lex/src/html/entities.rs"
+license = "BSD-3-Clause"
+upstream_source = "https://github.com/whatwg/html-build/tree/283a3531a61106d07d9a7d9fb3e6f3b9bfd33d70/entities/out (commit pin 283a3531a61106d07d9a7d9fb3e6f3b9bfd33d70; 145,897 bytes per 08-vendoring-plan.md item 5) at purrdf rev 0da05783"
+carriage_status = "PLANNED"
+notice_files = [
+    "crates/lex/data/html/LICENSE-WHATWG",
+    "crates/lex/licenses/third-party/whatwg-html-references/0-LICENSE-WHATWG",
+]

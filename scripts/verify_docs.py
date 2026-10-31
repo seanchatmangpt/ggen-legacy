@@ -378,10 +378,12 @@ def main() -> int:
     )
 
     gates = sorted((ROOT / "packs/ggen-legacy-assurance-pack/gates").glob("*.rq"))
-    if len(gates) != 10:
-        fail("GATE_CARDINALITY", f"expected 10, observed {len(gates)}")
+    # c9f8028 moved the 9 inverted gates to verify/*.unbound.rq (GateVerify law);
+    # exactly the layer-census coverage gate remains in gates/.
+    if len(gates) != 1:
+        fail("GATE_CARDINALITY", f"expected 1, observed {len(gates)}")
     checks.append(
-        {"id": "assurance-gates", "passed": len(gates) == 10, "count": len(gates)}
+        {"id": "assurance-gates", "passed": len(gates) == 1, "count": len(gates)}
     )
 
     forbidden = [

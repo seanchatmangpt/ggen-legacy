@@ -1,0 +1,95 @@
+{
+  "$schema": "stardf.license-compat/v1",
+  "description": "StarDF license-compatibility register (P0-18 / P0-19 R1). dependency_licenses entries carry OBSERVED license strings only (read from the named source path at entry time); compatibility_receipts are legal-compatibility receipts and are NOT fabricated by this lane \u2014 absent receipts surface as gate FAIL rows, never silent passes.",
+  "dependency_licenses": [
+    {
+      "name": "blake3",
+      "version": "1.8.5",
+      "license": "CC0-1.0 OR Apache-2.0 OR Apache-2.0 WITH LLVM-exception",
+      "source": "~/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/blake3-1.8.5/Cargo.toml",
+      "observed": "2026-10-31",
+      "classification": "permissive-disjunctive",
+      "note": "Observed license string is 'CC0-1.0 OR Apache-2.0 OR Apache-2.0 WITH LLVM-exception'; the Apache-2.0 arm places blake3 in the gated MIT/Apache/MulanPSL class under R1."
+    },
+    {
+      "license": null,
+      "classification": "sovereign-fork-posture",
+      "name": "avec-arrow",
+      "note": "No license field declared in crates/avec-arrow/Cargo.toml at pinned rev 67c0ec1 (observed 2026-10-31). Fork posture per stardf/arrow/Cargo.toml [workspace.dependencies] comment: git-rev pinned, never published. Sovereign-to-sovereign, not a gated edge."
+    },
+    {
+      "name": "structured-zstd",
+      "version": "0.0.49",
+      "license": "Apache-2.0",
+      "source": "~/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/structured-zstd-0.0.49/Cargo.toml",
+      "observed": "2026-10-31",
+      "classification": "permissive",
+      "note": "Observed 2026-10-31 (landed with the columnar wave's structured-zstd workspace pin). Apache-2.0, gated class under R1; admission same Apache-arm basis as blake3."
+    }
+  ],
+  "compatibility_receipts": [
+    {
+      "consumer": "stardf-arrow-core",
+      "dependency": "blake3",
+      "dependency_version": "1.8.5",
+      "license_expression": "CC0-1.0 OR Apache-2.0 OR Apache-2.0 WITH LLVM-exception",
+      "license_expression_source": "~/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/blake3-1.8.5/Cargo.toml [package].license, independently verified by this lane 2026-10-31 (matches S3's dependency_licenses observation)",
+      "permissive_classification_rationale": "The expression is a disjunction with an Apache-2.0 arm; under license-token-containment (the R1 gate's own classifier) any arm landing in the gated MIT/Apache/MulanPSL class gates the edge. Apache-2.0 is a widely-deemed permissive license (OSI-approved, FSF free, GPL-compatible, no copyleft transmission on aggregation) \u2014 the same class the R1 gate already permits with a registered receipt. The CC0-1.0 arm alone would be sovereign-class (no attribution/notice requirement); the LLVM-exception arm is Apache-2.0 with an additional permission, strictly no more restrictive. Selecting the Apache-2.0 arm of the disjunction is lawful for a downstream consumer, so blake3 is consumable by P28-SIL on permissive terms.",
+      "notice_carriage_obligations": {
+        "mechanism": "Selecting the Apache-2.0 arm of the OR-expression carries Apache-2.0 \u00a74 notice obligations: retain (a) the license text and (b) all copyright/patent/trademark attribution notices from the work's source.",
+        "required_files": [
+          "~/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/blake3-1.8.5/LICENSE_A2 (Apache-2.0 full text, verified present)",
+          "~/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/blake3-1.8.5/LICENSE_A2LLVM (Apache-2.0 with 'LLVM Exceptions to the Apache 2.0 License' addendum at line 204, verified present)"
+        ],
+        "cargo_notice": "Cargo/vendored crates carry the LICENSE_A2/LICENSE_A2LLVM/LICENSE_CC0 files inside blake3-1.8.5/ automatically under standard vendoring; a shipped-binary redistribution must include the Apache-2.0 license text and blake3's copyright notices (LICENSE_A2 + LICENSE_A2LLVM; LICENSE_CC0 optional if the Apache arm is selected).",
+        "open_note_for_operator": "The CC0-1.0 arm of the disjunction imposes zero notice obligations; if the operator prefers, the receipt could instead cite CC0 selection, which would reclassify the edge sovereign-class \u2014 that is a legal-strategy decision above lane authority."
+      },
+      "verification_receipt": {
+        "observed": "2026-10-31",
+        "commands": [
+          "grep -A3 '^license' ~/.cargo/registry/src/*/blake3-1.8.5/Cargo.toml",
+          "head -5 .../LICENSE_CC0 LICENSE_A2 LICENSE_A2LLVM",
+          "grep -n 'LLVM Exceptions to the Apache 2.0 License' LICENSE_A2LLVM"
+        ],
+        "gate_run_pre_draft": "verify_stardf_licenses.py exit 1 (FAIL on edge stardf-arrow-core -> blake3, no registered receipt)"
+      },
+      "status": "ADMITTED \u2014 Apache-2.0 arm selected (operator sign-off 2026-10-31, OPERATOR-DECISIONS.md completion-wave block)",
+      "admitted": "2026-10-31"
+    },
+    {
+      "consumer": "stardf-columnar",
+      "dependency": "structured-zstd",
+      "dependency_version": "0.0.49",
+      "license_expression": "Apache-2.0",
+      "license_expression_source": "~/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/structured-zstd-0.0.49/Cargo.toml [package].license, observed 2026-10-31",
+      "permissive_classification_rationale": "Apache-2.0 exactly \u2014 the same permissive class the R1 gate permits with a registered receipt. NOTICE file carriage per Apache-2.0 \u00a74 (registry LICENSE file).",
+      "notice_carriage_obligations": {
+        "mechanism": "Apache-2.0 \u00a74: retain license text + attribution notices.",
+        "required_files": [
+          "~/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/structured-zstd-0.0.49/LICENSE"
+        ]
+      },
+      "status": "ADMITTED \u2014 operator blanket sign-off 2026-10-31 (same Apache-arm basis as the blake3 receipt)",
+      "admitted": "2026-10-31"
+    },
+    {
+      "consumer": "stardf-arrow",
+      "dependency": "structured-zstd",
+      "dependency_version": "0.0.49",
+      "license_expression": "Apache-2.0",
+      "license_expression_source": "~/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/structured-zstd-0.0.49/Cargo.toml [package].license, observed 2026-10-31",
+      "permissive_classification_rationale": "Apache-2.0 exactly \u2014 the same permissive class the R1 gate permits with a registered receipt. NOTICE file carriage per Apache-2.0 \u00a74 (registry LICENSE file).",
+      "notice_carriage_obligations": {
+        "mechanism": "Apache-2.0 \u00a74: retain license text + attribution notices.",
+        "required_files": [
+          "~/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/structured-zstd-0.0.49/LICENSE"
+        ]
+      },
+      "status": "ADMITTED \u2014 operator blanket sign-off 2026-10-31 (same Apache-arm basis as the blake3 receipt)",
+      "admitted": "2026-10-31",
+      "note": "Duplicate admission for the root-package edge (the workspace pin lives in stardf/arrow/Cargo.toml; the gate keys receipts by exact (consumer, dependency))."
+    }
+  ],
+  "compatibility_receipts_note": "blake3 receipt ADMITTED 2026-10-31 by operator sign-off (Apache-2.0 arm of the disjunction; notice carriage LICENSE_A2 + LICENSE_A2LLVM). Admission moved the W1-5 draft out of draft_receipts_pending_operator.",
+  "draft_receipts_pending_operator": []
+}
