@@ -189,9 +189,7 @@ prop_test! {
 /// asserting every pass produces the SAME bytes and the same `(label, scope)`
 /// set. Returns the (stable) document text.
 fn assert_stable_across_cycles(
-    dataset: &RdfDataset,
-    format: NativeRdfFormat,
-    cycles: usize,
+    dataset: &RdfDataset, format: NativeRdfFormat, cycles: usize,
 ) -> String {
     let expected_blanks = blank_nodes(dataset);
     let first = serialize(dataset, format);

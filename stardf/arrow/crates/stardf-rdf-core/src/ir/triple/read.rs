@@ -113,20 +113,14 @@ impl crate::SnapshotStatistics<TermId> for TripleRead<'_> {
     }
 
     fn predicate(
-        &self,
-        predicate: TermId,
-        graph: GraphMatch,
-        stream: crate::StatisticsStream,
+        &self, predicate: TermId, graph: GraphMatch, stream: crate::StatisticsStream,
     ) -> Option<crate::PredicateStatistics> {
         self.graph(graph).ok()?;
         crate::SnapshotStatistics::predicate(&self.dataset.statistics, predicate, graph, stream)
     }
 
     fn predicate_object(
-        &self,
-        predicate: TermId,
-        object: TermId,
-        graph: GraphMatch,
+        &self, predicate: TermId, object: TermId, graph: GraphMatch,
         stream: crate::StatisticsStream,
     ) -> Option<crate::StatisticCount> {
         self.graph(graph).ok()?;
@@ -140,12 +134,8 @@ impl crate::SnapshotStatistics<TermId> for TripleRead<'_> {
     }
 
     fn predicate_object_kind(
-        &self,
-        predicate: TermId,
-        kind: crate::RdfTermKind,
-        datatype: Option<TermId>,
-        graph: GraphMatch,
-        stream: crate::StatisticsStream,
+        &self, predicate: TermId, kind: crate::RdfTermKind, datatype: Option<TermId>,
+        graph: GraphMatch, stream: crate::StatisticsStream,
     ) -> Option<crate::StatisticCount> {
         self.graph(graph).ok()?;
         crate::SnapshotStatistics::predicate_object_kind(
@@ -159,9 +149,7 @@ impl crate::SnapshotStatistics<TermId> for TripleRead<'_> {
     }
 
     fn reifier_target_predicate(
-        &self,
-        predicate: TermId,
-        graph: GraphMatch,
+        &self, predicate: TermId, graph: GraphMatch,
     ) -> Option<crate::PredicateStatistics> {
         self.graph(graph).ok()?;
         crate::SnapshotStatistics::reifier_target_predicate(
@@ -172,19 +160,14 @@ impl crate::SnapshotStatistics<TermId> for TripleRead<'_> {
     }
 
     fn stream_rows(
-        &self,
-        graph: GraphMatch,
-        stream: crate::StatisticsStream,
+        &self, graph: GraphMatch, stream: crate::StatisticsStream,
     ) -> Option<crate::StatisticCount> {
         self.graph(graph).ok()?;
         crate::SnapshotStatistics::stream_rows(&self.dataset.statistics, graph, stream)
     }
 
     fn visit_distinct(
-        &self,
-        predicate: TermId,
-        graph: GraphMatch,
-        stream: crate::StatisticsStream,
+        &self, predicate: TermId, graph: GraphMatch, stream: crate::StatisticsStream,
         position: crate::StatisticsPosition,
         visit: &mut dyn FnMut(TermId) -> std::ops::ControlFlow<()>,
     ) -> Result<bool, super::super::pack::bits::PackBitsError> {
@@ -253,10 +236,7 @@ impl TripleRead<'_> {
     }
 
     fn planned_rows(
-        &self,
-        plan: TripleOrder,
-        pattern: [Option<TermId>; 3],
-        graph: GraphMatch,
+        &self, plan: TripleOrder, pattern: [Option<TermId>; 3], graph: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         let rows = self.graph(graph).and_then(|()| {
             self.dataset
@@ -272,9 +252,7 @@ impl TripleRead<'_> {
     }
 
     fn binding_rows(
-        &self,
-        reifier: Option<TermId>,
-        target: Option<TermId>,
+        &self, reifier: Option<TermId>, target: Option<TermId>,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         let rows = self.ready().and_then(|()| {
             self.dataset
@@ -285,8 +263,7 @@ impl TripleRead<'_> {
     }
 
     fn project_bindings<'a, I: Iterator<Item = TripleReifierRow> + 'a>(
-        &'a self,
-        rows: Result<I, TripleReadError>,
+        &'a self, rows: Result<I, TripleReadError>,
     ) -> impl Iterator<Item = QuadIds> + 'a {
         let predicate = self
             .dataset
@@ -300,9 +277,7 @@ impl TripleRead<'_> {
     }
 
     fn annotation_rows(
-        &self,
-        pattern: [Option<TermId>; 3],
-        graph: GraphMatch,
+        &self, pattern: [Option<TermId>; 3], graph: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         let rows = self.graph(graph).and_then(|()| {
             self.dataset
@@ -368,8 +343,7 @@ impl DatasetView for TripleRead<'_> {
     }
 
     fn reserve_workspace(
-        &self,
-        _: u64,
+        &self, _: u64,
     ) -> Result<impl WorkspaceReservation<Error = Self::ReadError> + '_, Self::ReadError> {
         self.ready()?;
         Ok(TripleReservation { read: self })
@@ -414,11 +388,7 @@ impl DatasetView for TripleRead<'_> {
     }
 
     fn quads_for_pattern(
-        &self,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         self.planned_rows(
             TripleOrder::selected([s.is_some(), p.is_some(), o.is_some()]),
@@ -428,11 +398,7 @@ impl DatasetView for TripleRead<'_> {
     }
 
     fn quads_for_pattern_with_plan(
-        &self,
-        plan: &Self::ProbePlan,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
+        &self, plan: &Self::ProbePlan, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
         g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         self.planned_rows(*plan, [s, p, o], g)
@@ -454,9 +420,7 @@ impl DatasetView for TripleRead<'_> {
     }
 
     fn reifier_quads_for_target(
-        &self,
-        target: TermId,
-        graph: GraphMatch,
+        &self, target: TermId, graph: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         let _ = self.graph(graph);
         self.binding_rows(None, Some(target))
@@ -473,10 +437,7 @@ impl DatasetView for TripleRead<'_> {
     }
 
     fn source_summary(
-        &self,
-        predicate: Self::Id,
-        graph: GraphMatch<Self::Id>,
-        stream: crate::StatisticsStream,
+        &self, predicate: Self::Id, graph: GraphMatch<Self::Id>, stream: crate::StatisticsStream,
     ) -> Result<Option<crate::source::SourceSummary>, Self::ReadError> {
         self.graph(graph)?;
         Ok(Some(
@@ -492,9 +453,7 @@ impl DatasetView for TripleRead<'_> {
     }
 
     fn statement_cardinality_estimate(
-        &self,
-        pattern: crate::ProbePattern,
-        components: [Option<TermId>; 3],
+        &self, pattern: crate::ProbePattern, components: [Option<TermId>; 3],
     ) -> Option<u64> {
         self.graph(pattern.g).ok()?;
         if self.dataset.reifiers.is_empty() && self.dataset.annotations.rows.is_empty() {
@@ -537,9 +496,7 @@ impl DatasetView for TripleRead<'_> {
     }
 
     fn reifier_quads_for_components(
-        &self,
-        components: [Option<TermId>; 3],
-        graph: GraphMatch,
+        &self, components: [Option<TermId>; 3], graph: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         let rows = self.graph(graph).and_then(|()| {
             self.dataset
@@ -550,17 +507,13 @@ impl DatasetView for TripleRead<'_> {
     }
 
     fn annotation_quads_for_pattern(
-        &self,
-        predicate: Option<TermId>,
-        object: Option<TermId>,
-        graph: GraphMatch,
+        &self, predicate: Option<TermId>, object: Option<TermId>, graph: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         self.annotation_rows([None, predicate, object], graph)
     }
 
     fn annotations_of_with_graph(
-        &self,
-        reifier: TermId,
+        &self, reifier: TermId,
     ) -> impl Iterator<Item = (TermId, TermId, Option<TermId>)> + '_ {
         self.annotation_rows([Some(reifier), None, None], GraphMatch::Any)
             .map(|quad| (quad.p, quad.o, quad.g))

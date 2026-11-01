@@ -163,10 +163,7 @@ impl VerifyingKey {
 
     /// Verify a pure-message signature under the supplied context.
     pub fn verify(
-        &self,
-        message: &[u8],
-        context: &[u8],
-        signature: &Signature,
+        &self, message: &[u8], context: &[u8], signature: &Signature,
     ) -> Result<(), Error> {
         let mu = representative(&self.public_hash(), message, context)?;
         let matrix = sampling::matrix(&self.0[..32])?;
@@ -322,10 +319,7 @@ impl SigningKey {
     /// obtained here, and no deterministic fallback occurs. Context checking
     /// precedes secret decoding. Caller randomizer storage is not cleared here.
     pub fn sign_hedged(
-        &self,
-        message: &[u8],
-        context: &[u8],
-        randomizer: &[u8; SEED_LENGTH],
+        &self, message: &[u8], context: &[u8], randomizer: &[u8; SEED_LENGTH],
     ) -> Result<Signature, Error> {
         let mu = representative(&self.encoded.0[64..128], message, context)?;
         let mut private_seed = SecretBytes::zeros(64);

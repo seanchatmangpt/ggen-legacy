@@ -222,12 +222,8 @@ mod native {
     /// `format!` panics when a `Debug` implementation reports an error, so a
     /// refused formatter state fails this check rather than passing silently.
     fn debug_specs_match_the_derives(
-        value: &dyn fmt::Debug,
-        expected: &dyn fmt::Debug,
-        label: &str,
-        kind: &str,
-        specs: &[(&'static str, Render)],
-        mismatches: &mut Vec<String>,
+        value: &dyn fmt::Debug, expected: &dyn fmt::Debug, label: &str, kind: &str,
+        specs: &[(&'static str, Render)], mismatches: &mut Vec<String>,
     ) {
         for (spec, render) in specs {
             if render(value) != render(expected) {

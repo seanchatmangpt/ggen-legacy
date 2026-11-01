@@ -104,10 +104,7 @@ impl SegmentedStackQuery<'_> {
     }
 
     pub(super) fn translate_pattern<D: DatasetView>(
-        &self,
-        source: &D,
-        origin: SegmentedStackSource,
-        pattern: ProbePattern<GlobalTermId>,
+        &self, source: &D, origin: SegmentedStackSource, pattern: ProbePattern<GlobalTermId>,
         local: impl Fn(u64) -> Result<D::Id, SegmentedError>,
         error: impl Fn(D::ReadError) -> SegmentedError,
     ) -> Result<Option<ProbePattern<D::Id>>, SegmentedError> {
@@ -158,11 +155,8 @@ impl SegmentedStackQuery<'_> {
     }
 
     fn rows_from<'a, D: DatasetView, R: Iterator<Item = QuadIds<D::Id>> + 'a>(
-        &'a self,
-        dataset: &'a D,
-        origin: SegmentedStackSource,
-        rows: impl Fn(ProbePattern<D::Id>) -> R + 'a,
-        pattern: ProbePattern<GlobalTermId>,
+        &'a self, dataset: &'a D, origin: SegmentedStackSource,
+        rows: impl Fn(ProbePattern<D::Id>) -> R + 'a, pattern: ProbePattern<GlobalTermId>,
         ids: (
             impl Fn(D::Id) -> u64 + Copy + 'a,
             impl Fn(u64) -> Result<D::Id, SegmentedError>,
@@ -192,20 +186,14 @@ impl SegmentedStackQuery<'_> {
     }
 
     fn physical_rows(
-        &self,
-        origin: SegmentedStackSource,
-        stream: Stream,
-        pattern: ProbePattern<GlobalTermId>,
+        &self, origin: SegmentedStackSource, stream: Stream, pattern: ProbePattern<GlobalTermId>,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + '_ {
         self.physical_rows_range(origin, stream, pattern, None)
     }
 
     fn physical_rows_range<'a>(
-        &'a self,
-        origin: SegmentedStackSource,
-        stream: Stream,
-        pattern: ProbePattern<GlobalTermId>,
-        values: Option<&'a crate::AnnotationValueRange<'a>>,
+        &'a self, origin: SegmentedStackSource, stream: Stream,
+        pattern: ProbePattern<GlobalTermId>, values: Option<&'a crate::AnnotationValueRange<'a>>,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + 'a {
         let session = match origin {
             SegmentedStackSource::Layer(index) => self.sessions.get(index),
@@ -364,10 +352,7 @@ impl SegmentedStackQuery<'_> {
     }
 
     fn declarations(
-        &self,
-        subject: GlobalTermId,
-        graph: Option<GlobalTermId>,
-        prefix: usize,
+        &self, subject: GlobalTermId, graph: Option<GlobalTermId>, prefix: usize,
     ) -> bool {
         let pattern = ProbePattern {
             s: Some(subject),
@@ -382,27 +367,19 @@ impl SegmentedStackQuery<'_> {
     }
 
     fn logical_rows(
-        &self,
-        kind: StatementKind,
-        pattern: ProbePattern<GlobalTermId>,
+        &self, kind: StatementKind, pattern: ProbePattern<GlobalTermId>,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + '_ {
         self.logical_rows_to(Some(kind), pattern, self.source_count())
     }
 
     fn logical_rows_to(
-        &self,
-        kind: Option<StatementKind>,
-        pattern: ProbePattern<GlobalTermId>,
-        sources: usize,
+        &self, kind: Option<StatementKind>, pattern: ProbePattern<GlobalTermId>, sources: usize,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + '_ {
         self.logical_rows_to_range(kind, pattern, sources, None)
     }
 
     fn logical_rows_to_range<'a>(
-        &'a self,
-        kind: Option<StatementKind>,
-        pattern: ProbePattern<GlobalTermId>,
-        sources: usize,
+        &'a self, kind: Option<StatementKind>, pattern: ProbePattern<GlobalTermId>, sources: usize,
         values: Option<&'a crate::AnnotationValueRange<'a>>,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + 'a {
         let mut seen = Seen::new(&self.operation);
@@ -452,16 +429,13 @@ impl SegmentedStackQuery<'_> {
     }
 
     fn reifiers(
-        &self,
-        pattern: ProbePattern<GlobalTermId>,
+        &self, pattern: ProbePattern<GlobalTermId>,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + '_ {
         self.reifiers_to(pattern, self.source_count())
     }
 
     fn reifiers_to(
-        &self,
-        pattern: ProbePattern<GlobalTermId>,
-        sources: usize,
+        &self, pattern: ProbePattern<GlobalTermId>, sources: usize,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + '_ {
         let mut seen = Seen::new(&self.operation);
         let end = sources.saturating_sub(1);
@@ -492,9 +466,7 @@ impl SegmentedStackQuery<'_> {
     }
 
     pub(super) fn source_rows(
-        &self,
-        family: crate::source::SourceFamily,
-        pattern: ProbePattern<GlobalTermId>,
+        &self, family: crate::source::SourceFamily, pattern: ProbePattern<GlobalTermId>,
         sources: usize,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + '_ {
         use crate::source::SourceFamily;
@@ -511,8 +483,7 @@ impl SegmentedStackQuery<'_> {
     }
 
     pub(super) fn physical_source_rows(
-        &self,
-        origin: SegmentedStackSource,
+        &self, origin: SegmentedStackSource,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + '_ {
         [Stream::Ordinary, Stream::Reifier, Stream::Annotation]
             .into_iter()
@@ -573,8 +544,7 @@ impl DatasetView for SegmentedStackQuery<'_> {
     }
 
     fn visit_source_changes<B>(
-        &self,
-        previous: &crate::source::SourceVersion,
+        &self, previous: &crate::source::SourceVersion,
         visit: impl FnMut(
             crate::source::SourceSide,
             crate::source::SourceFamily,
@@ -644,15 +614,13 @@ impl DatasetView for SegmentedStackQuery<'_> {
     }
 
     fn reserve_owned_workspace(
-        &self,
-        bytes: u64,
+        &self, bytes: u64,
     ) -> Option<Result<crate::OwnedWorkspaceReservation<Self::ReadError>, Self::ReadError>> {
         Some(self.operation.reserve_owned_workspace(bytes))
     }
 
     fn reserve_workspace(
-        &self,
-        bytes: u64,
+        &self, bytes: u64,
     ) -> Result<impl WorkspaceReservation<Error = Self::ReadError> + '_, Self::ReadError> {
         self.operation.reserve_workspace(bytes)
     }
@@ -765,10 +733,7 @@ impl DatasetView for SegmentedStackQuery<'_> {
     }
 
     fn quads_for_pattern(
-        &self,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         self.logical_rows(StatementKind::Ordinary, ProbePattern { s, p, o, g })
@@ -777,11 +742,7 @@ impl DatasetView for SegmentedStackQuery<'_> {
     fn probe_plan(&self, _: bool, _: bool, _: bool, _: GraphMatch<Self::Id>) {}
 
     fn quads_for_pattern_with_plan(
-        &self,
-        (): &(),
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, (): &(), s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         self.quads_for_pattern(s, p, o, g)
@@ -801,8 +762,7 @@ impl DatasetView for SegmentedStackQuery<'_> {
     }
 
     fn reifier_quads_in_graph(
-        &self,
-        g: GraphMatch<Self::Id>,
+        &self, g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         self.reifiers(ProbePattern {
             s: None,
@@ -817,8 +777,7 @@ impl DatasetView for SegmentedStackQuery<'_> {
     }
 
     fn annotations_of_with_graph(
-        &self,
-        reifier: Self::Id,
+        &self, reifier: Self::Id,
     ) -> impl Iterator<Item = (Self::Id, Self::Id, Option<Self::Id>)> + '_ {
         self.logical_rows(
             StatementKind::Annotation,
@@ -833,8 +792,7 @@ impl DatasetView for SegmentedStackQuery<'_> {
     }
 
     fn annotation_quads_in_graph(
-        &self,
-        g: GraphMatch<Self::Id>,
+        &self, g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         self.logical_rows(
             StatementKind::Annotation,
@@ -848,11 +806,8 @@ impl DatasetView for SegmentedStackQuery<'_> {
     }
 
     fn annotation_quads_for_range<'a>(
-        &'a self,
-        predicate: Option<Self::Id>,
-        object: Option<Self::Id>,
-        graph: GraphMatch<Self::Id>,
-        range: &'a crate::AnnotationValueRange<'a>,
+        &'a self, predicate: Option<Self::Id>, object: Option<Self::Id>,
+        graph: GraphMatch<Self::Id>, range: &'a crate::AnnotationValueRange<'a>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + 'a {
         self.logical_rows_to_range(
             Some(StatementKind::Annotation),

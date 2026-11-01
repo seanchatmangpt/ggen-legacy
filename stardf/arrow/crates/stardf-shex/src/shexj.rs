@@ -129,9 +129,7 @@ pub fn parse_shexj(input: &str, base: Option<&str>) -> Result<Schema> {
 /// [`crate::exact::saturated`]; without it, the bound is refused, as the AST cannot
 /// hold it.
 pub(crate) fn parse_shexj_exact(
-    input: &str,
-    base: Option<&str>,
-    saturate: bool,
+    input: &str, base: Option<&str>, saturate: bool,
 ) -> Result<(Schema, crate::exact::ExactTable)> {
     ShexError::admit_stack("ShExJ document")?;
     let value = json::read_with(input, SHEXJ_LIMITS).map_err(ShexError::JsonRead)?;
@@ -862,10 +860,7 @@ impl Reader {
     /// exponent makes it a double, a point a decimal, neither an integer (see
     /// [`crate::ExactSchema`]).
     fn numeric_facet(
-        obj: &mut Obj<'_>,
-        key: M,
-        exact: &mut Option<crate::exact::ExactBound>,
-        saturate: bool,
+        obj: &mut Obj<'_>, key: M, exact: &mut Option<crate::exact::ExactBound>, saturate: bool,
     ) -> Result<Option<NumericLiteral>> {
         let lexeme = match obj.map.get(key.name()) {
             Some(Value::Number(number)) => Some(number.lexeme().to_owned()),

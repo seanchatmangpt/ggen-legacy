@@ -297,7 +297,11 @@ pub mod duckdb {
 }
 
 /// Knowledge hooks (`kh:`): RDF-described, SPARQL-driven derivation rules ([`purrdf_hooks`]).
-#[cfg(feature = "hooks")]
+// LANED-EXCLUSION (G03 offline ladder, 2026-10-31): the `hooks` feature is not
+// declared — its crate stardf-hooks is excluded from the workspace as
+// upstream-broken at the pinned rev (see the root Cargo.toml members comment).
+// Parked cfg(any()), not deleted; unpark with the stardf-hooks vendoring lane.
+#[cfg(any())]
 pub mod hooks {
     pub use purrdf_hooks::*;
 }
@@ -318,11 +322,6 @@ pub mod branchless {
     pub use purrdf_branchless::*;
 }
 
-/// Process mining and planning ([`purrdf_process`]): POWL 2.0 models,
-/// OCEL 2.0 event logs, HTN/FOND synthesis, and the conformance turnstile.
-pub mod process {
-    pub use purrdf_process::*;
-}
 
 /// Notation3 ([`purrdf_n3`]): parsing, the forward/backward reasoner, and proof
 /// writing/checking over RDF 1.2 — N3 reads the syntaxes the facade already
@@ -547,9 +546,7 @@ mod tests {
                 None
             }
             fn selectivity_ppm(
-                &self,
-                _subject: &retrieval::Iri,
-                _term: &retrieval::RequestTerm,
+                &self, _subject: &retrieval::Iri, _term: &retrieval::RequestTerm,
             ) -> Option<u64> {
                 None
             }

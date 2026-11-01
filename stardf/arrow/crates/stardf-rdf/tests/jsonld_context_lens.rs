@@ -45,8 +45,7 @@ fn parse_nquads(source: &str) -> std::sync::Arc<purrdf_rdf::RdfDataset> {
 }
 
 fn serialize_with_context(
-    source: &str,
-    context: &Value,
+    source: &str, context: &Value,
 ) -> (std::sync::Arc<purrdf_rdf::RdfDataset>, String) {
     let dataset = parse_nquads(source);
     let compiled = CompiledJsonLdContext::compile(context, None).expect("compile context");

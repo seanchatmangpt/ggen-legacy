@@ -27,8 +27,7 @@ pub(crate) fn scratch_destination_count(limits: &crate::ExecutionLimits) -> usiz
 }
 
 pub(crate) fn scratch_limb_capacity(
-    source_bits: u64,
-    max_precision_bits: u32,
+    source_bits: u64, max_precision_bits: u32,
 ) -> Result<usize, GeoError> {
     let bits = u64::from(max_precision_bits)
         .checked_mul(4)
@@ -97,8 +96,7 @@ pub trait MetricWorkObserver {
     /// # Errors
     /// A bounded observer must implement the split at its concrete owner home.
     fn native_storage(
-        mut self: &mut Self,
-        producer: &mut dyn NativeStorageProducer,
+        mut self: &mut Self, producer: &mut dyn NativeStorageProducer,
     ) -> Result<(), GeoError> {
         if self.allocation().is_some() {
             return Err(GeoError::InvalidNativeStorage(
@@ -126,9 +124,7 @@ pub trait MetricWorkObserver {
     /// # Errors
     /// Preserves exact native physical or numerical refusal.
     fn retain_produced(
-        &mut self,
-        control: core::alloc::Layout,
-        producer: &mut dyn RetainedAllocationProducer,
+        &mut self, control: core::alloc::Layout, producer: &mut dyn RetainedAllocationProducer,
     ) -> Result<purrdf_lex::allocation::SharedOwned<()>, GeoError> {
         retain_produced_with_storage(control, producer, purrdf_lex::allocation::Resident)
             .map_err(RetainedProductionFailure::into_error)
@@ -151,8 +147,7 @@ pub trait MetricWorkObserver {
     /// A bounded observer must support transfer of its original live account;
     /// the resident default never substitutes for such a bounded account.
     fn retain_current(
-        &mut self,
-        control: core::alloc::Layout,
+        &mut self, control: core::alloc::Layout,
     ) -> Result<(purrdf_lex::allocation::SharedOwned<()>, usize), GeoError> {
         if self.allocation().is_some() {
             return Err(GeoError::InvalidNativeStorage(
@@ -196,9 +191,7 @@ pub trait MetricWorkObserver {
     /// # Errors
     /// Preserves exact capacity, physical allocator or admission refusal.
     fn prepare_integer_scratch(
-        &mut self,
-        buffers: usize,
-        limbs: usize,
+        &mut self, buffers: usize, limbs: usize,
     ) -> Result<LimbScratch, GeoError> {
         LimbScratch::new(buffers, limbs).map_err(GeoError::NumericalScratch)
     }
@@ -214,8 +207,7 @@ pub trait MetricWorkObserver {
     /// # Errors
     /// Preserves arithmetic, physical allocator, and original admission refusal.
     fn prepare_binary64(
-        &mut self,
-        math: &mut CoordinateMath,
+        &mut self, math: &mut CoordinateMath,
     ) -> Result<PreparedBinary64, MathError> {
         math.prepare_binary64()
     }
@@ -238,10 +230,7 @@ pub trait MetricWorkObserver {
     /// # Errors
     /// Preserves exact native physical or initializer refusal.
     fn prepare_taylor_scratch(
-        &mut self,
-        coefficients: usize,
-        jets: usize,
-        zero: purrdf_xsd::math::FixedInterval,
+        &mut self, coefficients: usize, jets: usize, zero: purrdf_xsd::math::FixedInterval,
     ) -> Result<TaylorScratch, GeoError> {
         TaylorScratch::new_with_storage(coefficients, jets, zero, purrdf_lex::allocation::Resident)
             .map_err(|(error, _)| GeoError::NumericalTaylorScratch(error))
@@ -276,15 +265,12 @@ impl<T: MetricWorkObserver + ?Sized> MetricWorkObserver for &mut T {
         (**self).retained_owner_layout()
     }
     fn retain_current(
-        &mut self,
-        control: core::alloc::Layout,
+        &mut self, control: core::alloc::Layout,
     ) -> Result<(purrdf_lex::allocation::SharedOwned<()>, usize), GeoError> {
         (**self).retain_current(control)
     }
     fn retain_produced(
-        &mut self,
-        control: core::alloc::Layout,
-        producer: &mut dyn RetainedAllocationProducer,
+        &mut self, control: core::alloc::Layout, producer: &mut dyn RetainedAllocationProducer,
     ) -> Result<purrdf_lex::allocation::SharedOwned<()>, GeoError> {
         (**self).retain_produced(control, producer)
     }
@@ -298,9 +284,7 @@ impl<T: MetricWorkObserver + ?Sized> MetricWorkObserver for &mut T {
         (**self).integer_scratch_layout(buffers, limbs)
     }
     fn prepare_integer_scratch(
-        &mut self,
-        buffers: usize,
-        limbs: usize,
+        &mut self, buffers: usize, limbs: usize,
     ) -> Result<LimbScratch, GeoError> {
         (**self).prepare_integer_scratch(buffers, limbs)
     }
@@ -308,8 +292,7 @@ impl<T: MetricWorkObserver + ?Sized> MetricWorkObserver for &mut T {
         (**self).binary64_layout()
     }
     fn prepare_binary64(
-        &mut self,
-        math: &mut CoordinateMath,
+        &mut self, math: &mut CoordinateMath,
     ) -> Result<PreparedBinary64, MathError> {
         (**self).prepare_binary64(math)
     }
@@ -317,10 +300,7 @@ impl<T: MetricWorkObserver + ?Sized> MetricWorkObserver for &mut T {
         (**self).taylor_scratch_layout(coefficients, jets)
     }
     fn prepare_taylor_scratch(
-        &mut self,
-        coefficients: usize,
-        jets: usize,
-        zero: purrdf_xsd::math::FixedInterval,
+        &mut self, coefficients: usize, jets: usize, zero: purrdf_xsd::math::FixedInterval,
     ) -> Result<TaylorScratch, GeoError> {
         (**self).prepare_taylor_scratch(coefficients, jets, zero)
     }
@@ -416,8 +396,7 @@ impl MetricWorkObserver for MetricWorkContinuation<'_> {
         result
     }
     fn retain_current(
-        &mut self,
-        control: core::alloc::Layout,
+        &mut self, control: core::alloc::Layout,
     ) -> Result<(purrdf_lex::allocation::SharedOwned<()>, usize), GeoError> {
         self.observer.retain_current(control)
     }
@@ -426,9 +405,7 @@ impl MetricWorkObserver for MetricWorkContinuation<'_> {
     }
 
     fn retain_produced(
-        &mut self,
-        control: core::alloc::Layout,
-        producer: &mut dyn RetainedAllocationProducer,
+        &mut self, control: core::alloc::Layout, producer: &mut dyn RetainedAllocationProducer,
     ) -> Result<purrdf_lex::allocation::SharedOwned<()>, GeoError> {
         self.observer.retain_produced(control, producer)
     }
@@ -470,9 +447,7 @@ impl MetricWorkObserver for MetricWorkContinuation<'_> {
         self.observer.integer_scratch_layout(buffers, limbs)
     }
     fn prepare_integer_scratch(
-        &mut self,
-        buffers: usize,
-        limbs: usize,
+        &mut self, buffers: usize, limbs: usize,
     ) -> Result<LimbScratch, GeoError> {
         self.observer.prepare_integer_scratch(buffers, limbs)
     }
@@ -485,16 +460,12 @@ impl MetricWorkObserver for MetricWorkContinuation<'_> {
     }
 
     fn prepare_binary64(
-        &mut self,
-        math: &mut CoordinateMath,
+        &mut self, math: &mut CoordinateMath,
     ) -> Result<PreparedBinary64, MathError> {
         self.observer.prepare_binary64(math)
     }
     fn prepare_taylor_scratch(
-        &mut self,
-        coefficients: usize,
-        jets: usize,
-        zero: purrdf_xsd::math::FixedInterval,
+        &mut self, coefficients: usize, jets: usize, zero: purrdf_xsd::math::FixedInterval,
     ) -> Result<TaylorScratch, GeoError> {
         self.observer
             .prepare_taylor_scratch(coefficients, jets, zero)
@@ -615,8 +586,7 @@ impl<'a> WorkProgress<'a> {
         Ok(producer.value.expect("completed native storage body"))
     }
     pub(crate) fn retain_current(
-        &mut self,
-        control: core::alloc::Layout,
+        &mut self, control: core::alloc::Layout,
     ) -> Result<(purrdf_lex::allocation::SharedOwned<()>, usize), GeoError> {
         match self.observer.as_deref_mut() {
             Some(observer) => observer.retain_current(control),
@@ -639,9 +609,7 @@ impl<'a> WorkProgress<'a> {
     }
 
     pub(crate) fn retain_produced(
-        &mut self,
-        control: core::alloc::Layout,
-        producer: &mut dyn RetainedAllocationProducer,
+        &mut self, control: core::alloc::Layout, producer: &mut dyn RetainedAllocationProducer,
     ) -> Result<purrdf_lex::allocation::SharedOwned<()>, GeoError> {
         match self.observer.as_deref_mut() {
             Some(observer) => observer.retain_produced(control, producer),
@@ -710,8 +678,7 @@ impl<'a> WorkProgress<'a> {
     /// Resident callers describe their existing buffers; that descriptor is
     /// never substituted for the bounded producer's original account total.
     pub(crate) fn with_storage<T, E>(
-        &mut self,
-        resident_bytes: usize,
+        &mut self, resident_bytes: usize,
         body: impl FnOnce(
             &mut purrdf_lex::allocation::Memory<'_, dyn purrdf_lex::allocation::Admission + '_>,
         ) -> Result<T, E>,
@@ -727,8 +694,7 @@ impl<'a> WorkProgress<'a> {
     }
 
     pub(crate) fn retain_text(
-        &mut self,
-        text: &str,
+        &mut self, text: &str,
     ) -> Result<purrdf_lex::allocation::SharedText, GeoError> {
         match self.observer.as_deref_mut() {
             Some(observer) => observer.retain_text(text),
@@ -747,8 +713,7 @@ impl<'a> WorkProgress<'a> {
     }
 
     fn with_arithmetic(
-        observer: Option<&'a mut dyn MetricWorkObserver>,
-        arithmetic: ObserverArithmetic,
+        observer: Option<&'a mut dyn MetricWorkObserver>, arithmetic: ObserverArithmetic,
     ) -> Self {
         Self {
             observer,
@@ -765,9 +730,7 @@ impl<'a> WorkProgress<'a> {
     }
 
     pub(crate) fn integer_scratch_layout(
-        &self,
-        buffers: usize,
-        limbs: usize,
+        &self, buffers: usize, limbs: usize,
     ) -> Result<usize, GeoError> {
         match &self.observer {
             Some(observer) => observer.integer_scratch_layout(buffers, limbs),
@@ -776,9 +739,7 @@ impl<'a> WorkProgress<'a> {
     }
 
     pub(crate) fn prepare_integer_scratch(
-        &mut self,
-        buffers: usize,
-        limbs: usize,
+        &mut self, buffers: usize, limbs: usize,
     ) -> Result<LimbScratch, GeoError> {
         if let Some(error) = &self.error {
             return Err(error.clone());
@@ -801,9 +762,7 @@ impl<'a> WorkProgress<'a> {
     }
 
     pub(crate) fn prepare_binary64(
-        &mut self,
-        math: &mut CoordinateMath,
-        policy: ExecutionPolicy,
+        &mut self, math: &mut CoordinateMath, policy: ExecutionPolicy,
     ) -> Result<PreparedBinary64, MathError> {
         if self.error.is_some() {
             return Err(MathError::Cancelled);
@@ -823,8 +782,7 @@ impl<'a> WorkProgress<'a> {
     }
 
     pub(crate) fn forward_binary64(
-        &mut self,
-        math: &mut CoordinateMath,
+        &mut self, math: &mut CoordinateMath,
     ) -> Result<PreparedBinary64, MathError> {
         if self.error.is_some() {
             return Err(MathError::Cancelled);
@@ -836,9 +794,7 @@ impl<'a> WorkProgress<'a> {
     }
 
     pub(crate) fn taylor_scratch_layout(
-        &self,
-        coefficients: usize,
-        jets: usize,
+        &self, coefficients: usize, jets: usize,
     ) -> Result<usize, GeoError> {
         match &self.observer {
             Some(observer) => observer.taylor_scratch_layout(coefficients, jets),
@@ -853,10 +809,7 @@ impl<'a> WorkProgress<'a> {
     }
 
     pub(crate) fn prepare_taylor_scratch(
-        &mut self,
-        coefficients: usize,
-        jets: usize,
-        zero: purrdf_xsd::math::FixedInterval,
+        &mut self, coefficients: usize, jets: usize, zero: purrdf_xsd::math::FixedInterval,
     ) -> Result<TaylorScratch, GeoError> {
         if let Some(error) = &self.error {
             return Err(error.clone());
@@ -917,10 +870,7 @@ impl<'a> WorkProgress<'a> {
     }
 
     fn charge_counts_with(
-        &mut self,
-        work: u64,
-        peak: u64,
-        arithmetic: ObserverArithmetic,
+        &mut self, work: u64, peak: u64, arithmetic: ObserverArithmetic,
     ) -> Result<(), GeoError> {
         // A refusal ends the invocation's external observation. Cleanup and
         // enclosing numerical phases may still account native work, but must
@@ -959,9 +909,7 @@ impl<'a> WorkProgress<'a> {
     /// products, reductions or temporary allocations. The caller separately
     /// retains result storage; this reservation covers the bounded computation.
     pub(crate) fn exact<T>(
-        &mut self,
-        context: &mut MetricContext,
-        cost: purrdf_xsd::integer::ExactArithmeticCost,
+        &mut self, context: &mut MetricContext, cost: purrdf_xsd::integer::ExactArithmeticCost,
         evaluate: impl FnOnce() -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         self.exact_context(context, cost, |_| evaluate())
@@ -970,9 +918,7 @@ impl<'a> WorkProgress<'a> {
     /// The same scoped admission when the body borrows an immutable source
     /// owned by the worker itself. No borrowed data escapes this closure.
     pub(crate) fn exact_context<T>(
-        &mut self,
-        context: &mut MetricContext,
-        cost: purrdf_xsd::integer::ExactArithmeticCost,
+        &mut self, context: &mut MetricContext, cost: purrdf_xsd::integer::ExactArithmeticCost,
         evaluate: impl FnOnce(&mut MetricContext) -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         self.exact_with(context, cost, |context, _| evaluate(context))
@@ -981,9 +927,7 @@ impl<'a> WorkProgress<'a> {
     /// The original scoped exact admission with native ownership available to
     /// its field factory. Work, callback and refusal ordering stay in one body.
     pub(crate) fn exact_with<T>(
-        &mut self,
-        context: &mut MetricContext,
-        cost: purrdf_xsd::integer::ExactArithmeticCost,
+        &mut self, context: &mut MetricContext, cost: purrdf_xsd::integer::ExactArithmeticCost,
         evaluate: impl FnOnce(&mut MetricContext, &mut Self) -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         // Reject an inadmissible operation before opening scratch that its body
@@ -1006,9 +950,7 @@ impl<'a> WorkProgress<'a> {
     /// output storage before either reservation changes a receipt. This does
     /// not charge work or allocate; `exact_context` still admits the body.
     pub(crate) fn preflight_exact(
-        &self,
-        context: &MetricContext,
-        cost: purrdf_xsd::integer::ExactArithmeticCost,
+        &self, context: &MetricContext, cost: purrdf_xsd::integer::ExactArithmeticCost,
         retained_bytes: u64,
     ) -> Result<(), GeoError> {
         if let Some(error) = self.latched_error() {
@@ -1041,9 +983,7 @@ impl<'a> WorkProgress<'a> {
     }
 
     pub(crate) fn retain_prepared_coefficients(
-        &mut self,
-        cache: Retained<crate::geodesic::WorkerCoefficientCache>,
-        bytes: u64,
+        &mut self, cache: Retained<crate::geodesic::WorkerCoefficientCache>, bytes: u64,
     ) -> Result<(), MathError> {
         let added = self
             .prepared_coefficients_added_bytes
@@ -1100,10 +1040,7 @@ impl<'a> WorkProgress<'a> {
     }
 
     pub(crate) fn nested(
-        &mut self,
-        work_base: u64,
-        workspace_base: u64,
-        peak_base: u64,
+        &mut self, work_base: u64, workspace_base: u64, peak_base: u64,
     ) -> impl MetricWorkObserver + '_ {
         NestedProgress {
             work_base: self.work.max(work_base),
@@ -1121,9 +1058,7 @@ impl<'a> WorkProgress<'a> {
     /// callback or changing its live retained/transient storage. The caller
     /// separately retains any returned owner.
     pub(crate) fn absorb_nested<T>(
-        &self,
-        context: &mut MetricContext,
-        result: Result<T, GeoError>,
+        &self, context: &mut MetricContext, result: Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         let accounting = (|| {
             context.charge_work(self.work.saturating_sub(context.work_items()))?;
@@ -1139,10 +1074,7 @@ impl<'a> WorkProgress<'a> {
     /// observed receipt. A prior observer refusal remains the first cause even
     /// if settling the child's later lineage or storage also refuses.
     pub(crate) fn absorb_child_result<T>(
-        &self,
-        context: &mut MetricContext,
-        child: &MetricContext,
-        result: Result<T, GeoError>,
+        &self, context: &mut MetricContext, child: &MetricContext, result: Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         self.absorb_child_result_with_baseline(context, child, 0, 0, result)
     }
@@ -1151,12 +1083,8 @@ impl<'a> WorkProgress<'a> {
     /// the parent invocation. Only the remaining original work/storage enters
     /// the same accounting and first-refusal reconciliation body.
     pub(crate) fn absorb_child_result_with_baseline<T>(
-        &self,
-        context: &mut MetricContext,
-        child: &MetricContext,
-        original_work: u64,
-        original_storage: u64,
-        result: Result<T, GeoError>,
+        &self, context: &mut MetricContext, child: &MetricContext, original_work: u64,
+        original_storage: u64, result: Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         let accounting = context.absorb_child_with_baseline(child, original_work, original_storage);
         let result = self.settle_result(result, accounting);
@@ -1164,9 +1092,7 @@ impl<'a> WorkProgress<'a> {
     }
 
     pub(crate) fn settle_result<T>(
-        &self,
-        result: Result<T, GeoError>,
-        accounting: Result<(), GeoError>,
+        &self, result: Result<T, GeoError>, accounting: Result<(), GeoError>,
     ) -> Result<T, GeoError> {
         if let Some(error) = self.latched_error() {
             return Err(error);
@@ -1203,8 +1129,7 @@ impl MetricWorkObserver for NestedProgress<'_, '_> {
             .with_native_storage(|memory, observer| producer.produce(memory, observer))
     }
     fn retain_current(
-        &mut self,
-        control: core::alloc::Layout,
+        &mut self, control: core::alloc::Layout,
     ) -> Result<(purrdf_lex::allocation::SharedOwned<()>, usize), GeoError> {
         self.parent.retain_current(control)
     }
@@ -1213,9 +1138,7 @@ impl MetricWorkObserver for NestedProgress<'_, '_> {
     }
 
     fn retain_produced(
-        &mut self,
-        control: core::alloc::Layout,
-        producer: &mut dyn RetainedAllocationProducer,
+        &mut self, control: core::alloc::Layout, producer: &mut dyn RetainedAllocationProducer,
     ) -> Result<purrdf_lex::allocation::SharedOwned<()>, GeoError> {
         self.parent.retain_produced(control, producer)
     }
@@ -1249,9 +1172,7 @@ impl MetricWorkObserver for NestedProgress<'_, '_> {
     }
 
     fn prepare_integer_scratch(
-        &mut self,
-        buffers: usize,
-        limbs: usize,
+        &mut self, buffers: usize, limbs: usize,
     ) -> Result<LimbScratch, GeoError> {
         self.parent.prepare_integer_scratch(buffers, limbs)
     }
@@ -1261,8 +1182,7 @@ impl MetricWorkObserver for NestedProgress<'_, '_> {
     }
 
     fn prepare_binary64(
-        &mut self,
-        math: &mut CoordinateMath,
+        &mut self, math: &mut CoordinateMath,
     ) -> Result<PreparedBinary64, MathError> {
         self.parent.forward_binary64(math)
     }
@@ -1272,10 +1192,7 @@ impl MetricWorkObserver for NestedProgress<'_, '_> {
     }
 
     fn prepare_taylor_scratch(
-        &mut self,
-        coefficients: usize,
-        jets: usize,
-        zero: purrdf_xsd::math::FixedInterval,
+        &mut self, coefficients: usize, jets: usize, zero: purrdf_xsd::math::FixedInterval,
     ) -> Result<TaylorScratch, GeoError> {
         self.parent.prepare_taylor_scratch(coefficients, jets, zero)
     }
@@ -1362,8 +1279,7 @@ impl MetricContext {
     /// # Errors
     /// Adds original reference work/storage refusal to [`Self::new`].
     pub fn from_reference(
-        reference: &GeographicReference,
-        policy: ExecutionPolicy,
+        reference: &GeographicReference, policy: ExecutionPolicy,
     ) -> Result<Self, GeoError> {
         Self::from_reference_observed(reference, policy, None)
     }
@@ -1373,16 +1289,14 @@ impl MetricContext {
     /// # Errors
     /// Adds observer refusal to [`Self::from_reference`].
     pub fn from_reference_metered(
-        reference: &GeographicReference,
-        policy: ExecutionPolicy,
+        reference: &GeographicReference, policy: ExecutionPolicy,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::from_reference_observed(reference, policy, Some(observer))
     }
 
     fn from_reference_observed(
-        reference: &GeographicReference,
-        policy: ExecutionPolicy,
+        reference: &GeographicReference, policy: ExecutionPolicy,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         validate_environment()?;
@@ -1443,15 +1357,13 @@ impl MetricContext {
     /// # Errors
     /// Adds observer refusal to [`Self::clone_reference_for_preparation`].
     pub fn clone_reference_for_preparation_metered(
-        &mut self,
-        observer: &mut dyn MetricWorkObserver,
+        &mut self, observer: &mut dyn MetricWorkObserver,
     ) -> Result<GeographicReference, GeoError> {
         self.clone_reference_observed(Some(observer))
     }
 
     fn clone_reference_observed(
-        &mut self,
-        observer: Option<&mut dyn MetricWorkObserver>,
+        &mut self, observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<GeographicReference, GeoError> {
         let mut progress = WorkProgress::new(observer);
         let bytes = persistent_numeric_bytes(&self.reference, &progress)?;
@@ -1490,9 +1402,7 @@ impl MetricContext {
     }
 
     pub(crate) fn remaining_child_with_baseline(
-        &self,
-        work: u64,
-        storage: u64,
+        &self, work: u64, storage: u64,
     ) -> Result<Self, GeoError> {
         if work > self.preparation_work_items || storage > self.retained_workspace_bytes {
             return Err(GeoError::retained_failure(
@@ -1552,10 +1462,7 @@ impl MetricContext {
     }
 
     pub(crate) fn absorb_child_with_baseline(
-        &mut self,
-        child: &Self,
-        original_work: u64,
-        original_storage: u64,
+        &mut self, child: &Self, original_work: u64, original_storage: u64,
     ) -> Result<(), GeoError> {
         if original_work > child.preparation_work_items()
             || original_storage > child.retained_workspace_bytes()
@@ -1695,8 +1602,7 @@ impl MetricContext {
     }
 
     pub(crate) fn retain_zero_conversion_bound(
-        &mut self,
-        value: PersistentNumeric<crate::Rat>,
+        &mut self, value: PersistentNumeric<crate::Rat>,
     ) -> Result<(), GeoError> {
         let bytes = value.workspace_bytes();
         // The immutable factory already admitted both limbs and their original
@@ -1709,9 +1615,7 @@ impl MetricContext {
     }
 
     pub(crate) fn retain_geodesic_coefficients(
-        &mut self,
-        coefficients: Retained<crate::geodesic::WorkerCoefficientCache>,
-        bytes: u64,
+        &mut self, coefficients: Retained<crate::geodesic::WorkerCoefficientCache>, bytes: u64,
     ) -> Result<(), GeoError> {
         let owned_bytes = self
             .geodesic_coefficients_owned_bytes
@@ -1735,8 +1639,7 @@ impl MetricContext {
     /// enclosing preparation owner. This context counts only a later local
     /// replacement; borrowing does not charge the same shared heap twice.
     pub(crate) fn set_borrowed_integer_scratch(
-        &mut self,
-        scratch: LimbScratch,
+        &mut self, scratch: LimbScratch,
     ) -> Result<(), GeoError> {
         self.checkpoint()?;
         if let Some(existing) = &self.integer_scratch {
@@ -1790,9 +1693,7 @@ impl MetricContext {
     /// # Errors
     /// Refuses cancellation, sizing overflow, or the actual overlap heap before allocation.
     pub fn prepare_integer_scratch_with_capacity(
-        &mut self,
-        source_bits: u64,
-        buffers: usize,
+        &mut self, source_bits: u64, buffers: usize,
     ) -> Result<(), GeoError> {
         self.prepare_integer_scratch_observed(
             source_bits,
@@ -1805,9 +1706,7 @@ impl MetricContext {
     }
 
     pub(crate) fn prepare_integer_scratch_for_observed(
-        &mut self,
-        source_bits: u64,
-        progress: &mut WorkProgress<'_>,
+        &mut self, source_bits: u64, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         self.prepare_integer_scratch_observed(
             source_bits,
@@ -1832,10 +1731,7 @@ impl MetricContext {
     /// A resource ceiling is not a request to allocate its maximum. Wider proof
     /// attempts grow here, with the old arena still charged until replacement.
     pub(crate) fn prepare_integer_scratch_at_precision_observed(
-        &mut self,
-        source_bits: u64,
-        precision_bits: u32,
-        progress: &mut WorkProgress<'_>,
+        &mut self, source_bits: u64, precision_bits: u32, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         if precision_bits > self.policy.limits().max_precision_bits {
             return Err(GeoError::PrecisionExhausted {
@@ -1860,9 +1756,7 @@ impl MetricContext {
     }
 
     pub(crate) fn prepare_integer_scratch_for_cost_observed(
-        &mut self,
-        cost: purrdf_xsd::integer::ExactArithmeticCost,
-        progress: &mut WorkProgress<'_>,
+        &mut self, cost: purrdf_xsd::integer::ExactArithmeticCost, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         let limbs = cost
             .destination_limbs()
@@ -1889,9 +1783,7 @@ impl MetricContext {
     /// The failed attempt's values must already have died. Resource/cancellation
     /// failures and a caller slot ceiling remain original operational failures.
     pub(crate) fn grow_requested_integer_scratch(
-        &mut self,
-        error: &GeoError,
-        progress: &mut WorkProgress<'_>,
+        &mut self, error: &GeoError, progress: &mut WorkProgress<'_>,
     ) -> Result<bool, GeoError> {
         let GeoError::NumericalScratch(LimbScratchError::Destinations { required, admitted }) =
             error.original()
@@ -1917,10 +1809,7 @@ impl MetricContext {
     }
 
     fn prepare_integer_scratch_observed(
-        &mut self,
-        source_bits: u64,
-        buffers: usize,
-        precision_bits: u32,
+        &mut self, source_bits: u64, buffers: usize, precision_bits: u32,
         progress: Option<&mut WorkProgress<'_>>,
     ) -> Result<(), GeoError> {
         self.checkpoint()?;
@@ -2075,15 +1964,13 @@ impl MetricContext {
     /// cancellation failure. Partial native producers retain their owners
     /// through destruction; no resident arena replaces a refused one.
     pub fn prepare_arithmetic_metered(
-        &mut self,
-        observer: &mut dyn MetricWorkObserver,
+        &mut self, observer: &mut dyn MetricWorkObserver,
     ) -> Result<PreparedBinary64, GeoError> {
         self.prepare_arithmetic_with_observer(Some(observer))
     }
 
     fn prepare_arithmetic_with_observer(
-        &mut self,
-        observer: Option<&mut dyn MetricWorkObserver>,
+        &mut self, observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<PreparedBinary64, GeoError> {
         self.begin(0)?;
         let policy = self.policy;
@@ -2117,16 +2004,13 @@ impl MetricContext {
     }
 
     pub(crate) fn install_arithmetic(
-        &mut self,
-        math: &mut CoordinateMath,
+        &mut self, math: &mut CoordinateMath,
     ) -> Result<(), MathError> {
         self.install_arithmetic_observed(math, None)
     }
 
     pub(crate) fn install_arithmetic_observed(
-        &mut self,
-        math: &mut CoordinateMath,
-        progress: Option<&mut WorkProgress<'_>>,
+        &mut self, math: &mut CoordinateMath, progress: Option<&mut WorkProgress<'_>>,
     ) -> Result<(), MathError> {
         math.set_binary64_backend(self.binary64_backend)?;
         if let Some(prepared) = &self.arithmetic {
@@ -2233,9 +2117,7 @@ impl MetricContext {
     /// End one checked immutable-source admission without erasing its work or
     /// peak receipt. Numerical preparation retained during the call remains live.
     pub(crate) fn release_preparation_admission(
-        &mut self,
-        work: u64,
-        bytes: u64,
+        &mut self, work: u64, bytes: u64,
     ) -> Result<(), GeoError> {
         if self.workspace_bytes != self.retained_workspace_bytes {
             return Err(GeoError::ArithmeticOverflow(
@@ -2402,11 +2284,8 @@ impl MetricContext {
     /// Refuses output, aggregate work/storage and cancellation before the body.
     /// A failed body or post-body observer releases its output allowance.
     pub fn produce_output_metered<T>(
-        &mut self,
-        cost: purrdf_xsd::integer::ExactArithmeticCost,
-        output_bytes: u64,
-        evaluate: impl FnOnce() -> Result<T, GeoError>,
-        observer: &mut dyn MetricWorkObserver,
+        &mut self, cost: purrdf_xsd::integer::ExactArithmeticCost, output_bytes: u64,
+        evaluate: impl FnOnce() -> Result<T, GeoError>, observer: &mut dyn MetricWorkObserver,
     ) -> Result<T, GeoError> {
         self.produce_output_observed(cost, output_bytes, |_| evaluate(), Some(observer))
     }
@@ -2421,9 +2300,7 @@ impl MetricContext {
     /// # Errors
     /// Preserves the first policy, observer, physical, or native-body refusal.
     pub fn produce_output_with_storage_metered<T>(
-        &mut self,
-        cost: purrdf_xsd::integer::ExactArithmeticCost,
-        output_bytes: u64,
+        &mut self, cost: purrdf_xsd::integer::ExactArithmeticCost, output_bytes: u64,
         evaluate: impl FnOnce(
             &mut purrdf_lex::allocation::Memory<'_, dyn purrdf_lex::allocation::Admission + '_>,
         ) -> Result<T, GeoError>,
@@ -2441,18 +2318,14 @@ impl MetricContext {
     /// Refuses cumulative work/storage, cancellation and the numerical
     /// environment before entering the pure output body.
     pub fn produce_output<T>(
-        &mut self,
-        cost: purrdf_xsd::integer::ExactArithmeticCost,
-        output_bytes: u64,
+        &mut self, cost: purrdf_xsd::integer::ExactArithmeticCost, output_bytes: u64,
         evaluate: impl FnOnce() -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         self.produce_output_observed(cost, output_bytes, |_| evaluate(), None)
     }
 
     fn produce_output_observed<T>(
-        &mut self,
-        cost: purrdf_xsd::integer::ExactArithmeticCost,
-        output_bytes: u64,
+        &mut self, cost: purrdf_xsd::integer::ExactArithmeticCost, output_bytes: u64,
         evaluate: impl FnOnce(
             &mut purrdf_lex::allocation::Memory<'_, dyn purrdf_lex::allocation::Admission + '_>,
         ) -> Result<T, GeoError>,
@@ -2516,9 +2389,7 @@ impl MetricContext {
 
     /// Admit storage and add it to the owner's checked retained allowance.
     pub(crate) fn retain_workspace(
-        &mut self,
-        bytes: u64,
-        retained: &mut u64,
+        &mut self, bytes: u64, retained: &mut u64,
     ) -> Result<(), GeoError> {
         let next = retained
             .checked_add(bytes)
@@ -2533,8 +2404,7 @@ impl MetricContext {
     /// results use their separately retained publication owners. Select the
     /// original failure before cleanup, including a refused later growth.
     pub(crate) fn with_metadata<'observer, T>(
-        &mut self,
-        progress: &mut WorkProgress<'observer>,
+        &mut self, progress: &mut WorkProgress<'observer>,
         body: impl FnOnce(&mut Self, &mut WorkProgress<'observer>, &mut u64) -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         let mut retained = 0;
@@ -2548,9 +2418,7 @@ impl MetricContext {
 
     /// Release a dropped phase and its owner's checked retained allowance.
     pub(crate) fn release_retained_workspace(
-        &mut self,
-        bytes: u64,
-        retained: &mut u64,
+        &mut self, bytes: u64, retained: &mut u64,
     ) -> Result<(), GeoError> {
         let next = retained
             .checked_sub(bytes)
@@ -2624,9 +2492,7 @@ impl MetricContext {
     }
 
     fn begin_with(
-        &mut self,
-        output_elements: usize,
-        arithmetic: ObserverArithmetic,
+        &mut self, output_elements: usize, arithmetic: ObserverArithmetic,
     ) -> Result<(), GeoError> {
         self.release_unused_integer_scratch()?;
         self.checkpoint_with(arithmetic)?;

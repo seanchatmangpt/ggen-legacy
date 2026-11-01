@@ -158,8 +158,7 @@ impl CandidateDepths {
     /// # Errors
     /// Returns the original key, arena or control refusal.
     pub fn clone_admitted(
-        &self,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<Self, purrdf_sparql_eval::EvalError> {
         if self.0.workspace().is_bounded() {
             return Ok(self.clone());
@@ -439,9 +438,7 @@ impl Eq for CandidatePlan {}
 /// Preserves the original planner's malformed-term/registry/placement errors,
 /// and refuses caller depths that do not name exactly the selected strata.
 pub fn plan_candidates(
-    terms: &[RequestTerm],
-    depths: &CandidateDepths,
-    registry: &PropertyFunctionRegistry<'_>,
+    terms: &[RequestTerm], depths: &CandidateDepths, registry: &PropertyFunctionRegistry<'_>,
     statistics: &impl Statistics,
 ) -> Result<CandidatePlan, CandidatePlanError> {
     let parts = crate::planner::plan_read(
@@ -490,8 +487,7 @@ impl CompiledCandidates {
 /// Preserves original semantic admission/placement errors and refuses forged
 /// candidate depth/declaration records before rendering any query.
 pub fn compile_candidates(
-    plan: &CandidatePlan,
-    env: &AdmissionEnvironment<'_>,
+    plan: &CandidatePlan, env: &AdmissionEnvironment<'_>,
 ) -> Result<CompiledCandidates, AdmissionError> {
     plan.certify()
         .map_err(|error| AdmissionError::MalformedPlan {
@@ -542,8 +538,7 @@ impl CompiledRead for CompiledCandidates {
         Ok(())
     }
     fn finish<'d>(
-        &self,
-        streams: purrdf_sparql_eval::AdmittedVec<ReadStratum<'d>>,
+        &self, streams: purrdf_sparql_eval::AdmittedVec<ReadStratum<'d>>,
         statuses: purrdf_sparql_eval::AdmittedOrderedMap<Iri, ProducerStatus>,
     ) -> Result<Self::Output<'d>, ExecutionError> {
         let workspace = streams.workspace().clone();

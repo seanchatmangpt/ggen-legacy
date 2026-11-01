@@ -294,12 +294,7 @@ impl<'a> Cursor<'a> {
     /// Consumes exactly `count` ASCII digits and answers their value, then
     /// checks it against `min..=max`, blaming the field's first byte.
     fn field(
-        &mut self,
-        count: usize,
-        expected: &'static str,
-        field: &'static str,
-        min: u32,
-        max: u32,
+        &mut self, count: usize, expected: &'static str, field: &'static str, min: u32, max: u32,
     ) -> Result<u32, ParseError> {
         let start = self.at;
         let mut value = 0_u32;
@@ -441,9 +436,7 @@ impl Time {
 /// [`ParseError`] names the first byte at which `text` stops being a
 /// `date-time` under `separator` and `leap_second`.
 pub fn parse(
-    text: &str,
-    separator: Separator,
-    leap_second: LeapSecond,
+    text: &str, separator: Separator, leap_second: LeapSecond,
 ) -> Result<(i64, u32), ParseError> {
     let mut cursor = Cursor::new(text.as_bytes());
     let (year, month, day) = cursor.full_date()?;

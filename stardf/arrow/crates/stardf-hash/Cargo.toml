@@ -6,19 +6,23 @@
 # 0da0578306983da851a9073337d57e2e2c41ab3a `crates/hash` (see
 # VENDOR-PROVENANCE.md for the per-file delta surface and sha256 receipts).
 name = "stardf-hash"
-description = "Native, zero-dependency hashing for PurRDF: BLAKE3, MD5, SHA-1, SHA-3/Keccak and CRC-32 digests, streaming and one-shot, the base16 codec and 32-byte digest value, the fixed-key table hasher, FNV-1a and SplitMix64"
-version = "26.9.29"
+# Lane 07-publish-metadata (2026-10-31): v26.11.1 first-class closure —
+# description/keywords/categories/repository now workspace-inherited.
+description.workspace = true
+# Lane 08-dual-key (2026-10-31): closure version inherits the workspace 26.11.1.
+version.workspace = true
 # Upstream-true value: purrdf workspace `[workspace.package] edition = "2024"`
 # (inherited upstream); the source legitimately uses 2024 let-chains
 # (src/blake3.rs). Edition is per-package; the stardf/arrow ROOT default
 # remains 2021 for the other members.
 edition = "2024"
-publish = false
-repository = "https://github.com/seanchatmangpt/ggen-legacy"
+publish = true
+repository.workspace = true
+homepage.workspace = true
 license = "MIT OR Apache-2.0 OR MulanPSL-2.0"
 rust-version = "1.98"
-keywords = ["blake3", "sha3", "crc32", "hash", "digest"]
-categories = ["algorithms", "cryptography", "encoding"]
+keywords.workspace = true
+categories.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true

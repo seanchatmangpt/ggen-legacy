@@ -389,8 +389,7 @@ fn dictionary_and_key_envelope_errors_keep_native_fields() {
 }
 
 fn refused_frame(
-    payload: purrdf_lex::cbor::Value,
-    codecs: Vec<purrdf_lex::cbor::Value>,
+    payload: purrdf_lex::cbor::Value, codecs: Vec<purrdf_lex::cbor::Value>,
 ) -> Vec<u8> {
     use purrdf_gts::{
         wire,

@@ -169,9 +169,7 @@ impl BlankLabels {
         })
     }
     fn insert_admitted(
-        &mut self,
-        label: &str,
-        workspace: &crate::WorkspaceCapability,
+        &mut self, label: &str, workspace: &crate::WorkspaceCapability,
     ) -> Result<bool, crate::EvalError> {
         if self.contains(label) {
             return Ok(false);
@@ -400,8 +398,7 @@ fn language_tags_with_storage(
 }
 
 fn admit_identity_walk(
-    value: &TermValue,
-    workspace: &crate::WorkspaceCapability,
+    value: &TermValue, workspace: &crate::WorkspaceCapability,
 ) -> Result<crate::WorkspaceAllocation, crate::EvalError> {
     let nodes = crate::retained::term_layout(value, workspace)?.nodes;
     let bytes =
@@ -489,8 +486,7 @@ impl ScratchInterner {
     /// Preserve concrete input identities when a user function starts a fresh
     /// computed-term table. Its counter is shared with the calling evaluation.
     pub(crate) fn fresh_for_user_function_admitted(
-        &mut self,
-        workspace: &crate::WorkspaceCapability,
+        &mut self, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, crate::EvalError> {
         self.track_blank_labels_admitted(workspace)?;
         let blank_labels = self.blank_labels.clone();
@@ -511,8 +507,7 @@ impl ScratchInterner {
     }
 
     fn track_blank_labels_admitted(
-        &mut self,
-        workspace: &crate::WorkspaceCapability,
+        &mut self, workspace: &crate::WorkspaceCapability,
     ) -> Result<(), crate::EvalError> {
         if !self.track_blank_labels {
             let shared = self.shared.as_deref();
@@ -540,9 +535,7 @@ impl ScratchInterner {
             .expect("resident blank identity index");
     }
     pub(crate) fn reserve_blank_identity_admitted(
-        &mut self,
-        label: &str,
-        scope: purrdf_core::BlankScope,
+        &mut self, label: &str, scope: purrdf_core::BlankScope,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<(), crate::EvalError> {
         if scope == purrdf_core::BlankScope::DEFAULT {
@@ -564,9 +557,7 @@ impl ScratchInterner {
             .expect("resident blank identity index")
     }
     pub(crate) fn blank_label_is_reserved_admitted(
-        &mut self,
-        label: &str,
-        workspace: &crate::WorkspaceCapability,
+        &mut self, label: &str, workspace: &crate::WorkspaceCapability,
     ) -> Result<bool, crate::EvalError> {
         self.track_blank_labels_admitted(workspace)?;
         Ok(self.blank_labels.contains(label))
@@ -651,18 +642,13 @@ impl ScratchInterner {
     /// alone, and every value the evaluator builds or receives at run time enters through
     /// this door or [`Self::intern_checked`] without being measured first.
     pub fn try_intern<D: DatasetView>(
-        &mut self,
-        dataset: &D,
-        value: TermValue,
+        &mut self, dataset: &D, value: TermValue,
     ) -> Result<SolutionTerm<D::Id>, D::ReadError> {
         self.intern_value(dataset, value)
     }
 
     pub(crate) fn try_intern_admitted<D: DatasetView>(
-        &mut self,
-        dataset: &D,
-        value: TermValue,
-        workspace: &crate::WorkspaceCapability,
+        &mut self, dataset: &D, value: TermValue, workspace: &crate::WorkspaceCapability,
     ) -> Result<SolutionTerm<D::Id>, crate::EvalError> {
         let _working = admit_identity_walk(&value, workspace)?;
         self.intern_value_with(
@@ -688,10 +674,7 @@ impl ScratchInterner {
     }
 
     pub(crate) fn try_intern_checked_admitted<D: DatasetView>(
-        &mut self,
-        dataset: &D,
-        value: TermValue,
-        workspace: &crate::WorkspaceCapability,
+        &mut self, dataset: &D, value: TermValue, workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<SolutionTerm<D::Id>>, crate::EvalError> {
         let _working = admit_identity_walk(&value, workspace)?;
         if !language_tags_with_storage(&value).map_err(|_| crate::EvalError::AllocationFailed {
@@ -704,10 +687,7 @@ impl ScratchInterner {
     }
 
     pub(crate) fn try_intern_checked_with_admission<D: DatasetView>(
-        &mut self,
-        dataset: &D,
-        value: TermValue,
-        workspace: &crate::WorkspaceCapability,
+        &mut self, dataset: &D, value: TermValue, workspace: &crate::WorkspaceCapability,
         lookup: impl FnOnce(&TermValue) -> Result<Option<D::Id>, crate::EvalError>,
     ) -> Result<Option<SolutionTerm<D::Id>>, crate::EvalError> {
         let _working = admit_identity_walk(&value, workspace)?;
@@ -736,8 +716,7 @@ impl ScratchInterner {
     }
 
     fn admit_storage_growth(
-        &mut self,
-        workspace: &crate::WorkspaceCapability,
+        &mut self, workspace: &crate::WorkspaceCapability,
     ) -> Result<(), crate::EvalError> {
         if !workspace.is_bounded() {
             return Ok(());
@@ -821,9 +800,7 @@ impl ScratchInterner {
     /// and [`TermValue::Blank`] carry none, so for them this is a discriminant
     /// test and the two doors are the same door.
     pub fn try_intern_checked<D: DatasetView>(
-        &mut self,
-        dataset: &D,
-        value: TermValue,
+        &mut self, dataset: &D, value: TermValue,
     ) -> Result<Option<SolutionTerm<D::Id>>, D::ReadError> {
         if !language_tags_well_formed(&value) {
             return Ok(None);
@@ -834,9 +811,7 @@ impl ScratchInterner {
     /// Intern an IRI. Infallible by construction: an IRI carries no language tag,
     /// so [`Self::intern_checked`]'s gate would have nothing to judge.
     pub fn try_intern_iri<D: DatasetView>(
-        &mut self,
-        dataset: &D,
-        iri: String,
+        &mut self, dataset: &D, iri: String,
     ) -> Result<SolutionTerm<D::Id>, D::ReadError> {
         self.intern_value(dataset, TermValue::Iri(iri))
     }
@@ -845,10 +820,7 @@ impl ScratchInterner {
     /// language tag, so [`Self::intern_checked`]'s gate would have nothing to
     /// judge.
     pub fn try_intern_blank<D: DatasetView>(
-        &mut self,
-        dataset: &D,
-        label: String,
-        scope: purrdf_core::BlankScope,
+        &mut self, dataset: &D, label: String, scope: purrdf_core::BlankScope,
     ) -> Result<SolutionTerm<D::Id>, D::ReadError> {
         self.intern_value(dataset, TermValue::Blank { label, scope })
     }
@@ -859,10 +831,7 @@ impl ScratchInterner {
     /// `xsd:string` / `xsd:integer` / `xsd:boolean` results without inventing a
     /// failure branch that cannot be taken.
     pub fn try_intern_datatyped<D: DatasetView>(
-        &mut self,
-        dataset: &D,
-        lexical_form: String,
-        datatype: String,
+        &mut self, dataset: &D, lexical_form: String, datatype: String,
     ) -> Result<SolutionTerm<D::Id>, D::ReadError> {
         self.intern_value(
             dataset,
@@ -930,9 +899,7 @@ impl ScratchInterner {
     /// Every public door above funnels here, so the promotion rule and the
     /// store-once rule have exactly one implementation.
     fn intern_value<D: DatasetView>(
-        &mut self,
-        dataset: &D,
-        value: TermValue,
+        &mut self, dataset: &D, value: TermValue,
     ) -> Result<SolutionTerm<D::Id>, D::ReadError> {
         self.intern_value_with(
             dataset,
@@ -954,12 +921,9 @@ impl ScratchInterner {
     }
 
     fn intern_value_with<D, E, H, Q, R, B>(
-        &mut self,
-        dataset: &D,
-        value: TermValue,
+        &mut self, dataset: &D, value: TermValue,
         lookup: impl FnOnce(&D, &TermValue) -> Result<Option<D::Id>, E>,
-        admit: impl FnOnce(&mut Self) -> Result<(), E>,
-        hooks: InternValueHooks<H, Q, R, B>,
+        admit: impl FnOnce(&mut Self) -> Result<(), E>, hooks: InternValueHooks<H, Q, R, B>,
     ) -> Result<SolutionTerm<D::Id>, E>
     where
         D: DatasetView,
@@ -1051,9 +1015,7 @@ impl ScratchInterner {
     /// are read from the scratch table. This is the egress boundary used to build
     /// `SparqlResult` rows.
     pub fn try_value_of<D: DatasetView>(
-        &self,
-        dataset: &D,
-        term: SolutionTerm<D::Id>,
+        &self, dataset: &D, term: SolutionTerm<D::Id>,
     ) -> Result<TermValue, purrdf_core::TermLookupError<D::ReadError>> {
         match term {
             SolutionTerm::Existing(id) => dataset.term_value(id),
@@ -1067,10 +1029,7 @@ impl ScratchInterner {
     /// # Errors
     /// Preserves the original source read or native allocation refusal.
     pub fn try_owned_value_of<D: DatasetView>(
-        &self,
-        dataset: &D,
-        term: SolutionTerm<D::Id>,
-        workspace: &crate::WorkspaceCapability,
+        &self, dataset: &D, term: SolutionTerm<D::Id>, workspace: &crate::WorkspaceCapability,
         source_error: impl Fn(D::ReadError) -> crate::EvalError,
     ) -> Result<crate::WorkspaceTerm, crate::EvalError> {
         if let SolutionTerm::Computed(id) = term {
@@ -1116,10 +1075,7 @@ impl ScratchInterner {
     }
 
     pub(crate) fn try_value_of_admitted<D: DatasetView>(
-        &self,
-        dataset: &D,
-        term: SolutionTerm<D::Id>,
-        workspace: &crate::WorkspaceCapability,
+        &self, dataset: &D, term: SolutionTerm<D::Id>, workspace: &crate::WorkspaceCapability,
         source_error: impl Fn(D::ReadError) -> crate::EvalError,
     ) -> Result<TermValue, crate::EvalError> {
         if !workspace.is_bounded() {
@@ -1162,9 +1118,7 @@ impl ScratchInterner {
     }
 
     fn find_with<E>(
-        &self,
-        hash: u64,
-        value: &TermValue,
+        &self, hash: u64, value: &TermValue,
         equal: &mut impl FnMut(&TermValue, &TermValue) -> Result<bool, E>,
     ) -> Result<Option<ScratchId>, E> {
         if let Some(sid) = self
@@ -1253,9 +1207,7 @@ impl ScratchInterner {
     }
     /// Promote and intern a value in a resident dataset.
     pub fn intern<D: DatasetView<ReadError = core::convert::Infallible>>(
-        &mut self,
-        dataset: &D,
-        value: TermValue,
+        &mut self, dataset: &D, value: TermValue,
     ) -> SolutionTerm<D::Id> {
         match self.try_intern(dataset, value) {
             Ok(term) => term,
@@ -1264,9 +1216,7 @@ impl ScratchInterner {
     }
     /// Judge language tags and intern a value in a resident dataset.
     pub fn intern_checked<D: DatasetView<ReadError = core::convert::Infallible>>(
-        &mut self,
-        dataset: &D,
-        value: TermValue,
+        &mut self, dataset: &D, value: TermValue,
     ) -> Option<SolutionTerm<D::Id>> {
         match self.try_intern_checked(dataset, value) {
             Ok(term) => term,
@@ -1275,9 +1225,7 @@ impl ScratchInterner {
     }
     /// Intern an IRI in a resident dataset.
     pub fn intern_iri<D: DatasetView<ReadError = core::convert::Infallible>>(
-        &mut self,
-        dataset: &D,
-        iri: String,
+        &mut self, dataset: &D, iri: String,
     ) -> SolutionTerm<D::Id> {
         match self.try_intern_iri(dataset, iri) {
             Ok(term) => term,
@@ -1286,10 +1234,7 @@ impl ScratchInterner {
     }
     /// Intern a blank node in a resident dataset.
     pub fn intern_blank<D: DatasetView<ReadError = core::convert::Infallible>>(
-        &mut self,
-        dataset: &D,
-        label: String,
-        scope: purrdf_core::BlankScope,
+        &mut self, dataset: &D, label: String, scope: purrdf_core::BlankScope,
     ) -> SolutionTerm<D::Id> {
         match self.try_intern_blank(dataset, label, scope) {
             Ok(term) => term,
@@ -1298,10 +1243,7 @@ impl ScratchInterner {
     }
     /// Intern a typed literal in a resident dataset.
     pub fn intern_datatyped<D: DatasetView<ReadError = core::convert::Infallible>>(
-        &mut self,
-        dataset: &D,
-        lexical: String,
-        datatype: String,
+        &mut self, dataset: &D, lexical: String, datatype: String,
     ) -> SolutionTerm<D::Id> {
         match self.try_intern_datatyped(dataset, lexical, datatype) {
             Ok(term) => term,
@@ -1310,9 +1252,7 @@ impl ScratchInterner {
     }
     /// Materialize a term in a resident dataset; foreign ids violate this contract.
     pub fn value_of<D: DatasetView<ReadError = core::convert::Infallible>>(
-        &self,
-        dataset: &D,
-        term: SolutionTerm<D::Id>,
+        &self, dataset: &D, term: SolutionTerm<D::Id>,
     ) -> TermValue {
         self.try_value_of(dataset, term)
             .expect("an id the view handed the evaluator resolves to a value")
@@ -1320,10 +1260,7 @@ impl ScratchInterner {
 }
 
 fn reserve_blank_label_admitted(
-    label: &str,
-    labels: &mut BlankLabels,
-    bytes: &mut u64,
-    workspace: &crate::WorkspaceCapability,
+    label: &str, labels: &mut BlankLabels, bytes: &mut u64, workspace: &crate::WorkspaceCapability,
 ) -> Result<(), crate::EvalError> {
     if labels.insert_admitted(label, workspace)? {
         *bytes = bytes
@@ -1343,9 +1280,7 @@ fn reserve_value_blanks(value: &TermValue, labels: &mut BlankLabels, bytes: &mut
     .expect("resident blank identity discovery");
 }
 fn reserve_value_blanks_admitted(
-    value: &TermValue,
-    labels: &mut BlankLabels,
-    bytes: &mut u64,
+    value: &TermValue, labels: &mut BlankLabels, bytes: &mut u64,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<(), crate::EvalError> {
     let mut frame = crate::workspace::LexicalFrame::new(workspace);
@@ -1380,8 +1315,7 @@ fn reserve_value_blanks_admitted(
 /// against.
 #[cfg(test)]
 pub(crate) fn term_id_to_value<D: DatasetView<ReadError = core::convert::Infallible>>(
-    dataset: &D,
-    id: D::Id,
+    dataset: &D, id: D::Id,
 ) -> TermValue {
     dataset
         .term_value(id)
@@ -1390,8 +1324,7 @@ pub(crate) fn term_id_to_value<D: DatasetView<ReadError = core::convert::Infalli
 
 /// Typed materialization for operationally fallible views.
 pub(crate) fn try_term_id_to_value<D: DatasetView>(
-    dataset: &D,
-    id: D::Id,
+    dataset: &D, id: D::Id,
 ) -> Result<TermValue, crate::EvalError> {
     dataset
         .term_value(id)

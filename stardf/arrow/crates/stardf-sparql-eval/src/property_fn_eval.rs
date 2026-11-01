@@ -118,8 +118,7 @@ use crate::witness::RelationWitness;
 // Out of line by design: see the thin-dispatcher invariant on `eval::eval_node`.
 #[inline(never)]
 pub(crate) fn eval_property_function<D: DatasetView + Sync>(
-    call: &PropertyFunctionCall,
-    ctx: &mut EvalCtx<'_, D>,
+    call: &PropertyFunctionCall, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let unit = SolutionSeq::unit_admitted(&ctx.growth)?;
     // This node IS the plan node being evaluated, so the ceiling that bounds its output
@@ -141,9 +140,7 @@ pub(crate) fn eval_property_function<D: DatasetView + Sync>(
 ///
 /// Propagates every failure [`eval_call_over`] raises.
 pub(crate) fn eval_lateral_property_function<D: DatasetView + Sync>(
-    call: &PropertyFunctionCall,
-    left: &SolutionSeq<D::Id>,
-    ceiling: Option<usize>,
+    call: &PropertyFunctionCall, left: &SolutionSeq<D::Id>, ceiling: Option<usize>,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     finish(eval_call_over(call, left, ceiling, ctx)?)
@@ -239,9 +236,7 @@ struct CallPlan {
 impl CallPlan {
     /// Compile `call` against the schema of the rows it will be driven over.
     fn compile_admitted(
-        call: &PropertyFunctionCall,
-        input: &VarSchema,
-        workspace: &crate::WorkspaceCapability,
+        call: &PropertyFunctionCall, input: &VarSchema, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let mut frame = crate::workspace::LexicalFrame::new(workspace);
         let mut memory = purrdf_lex::allocation::Memory::new(&mut frame);
@@ -321,9 +316,7 @@ impl CallPlan {
 /// visible to the relation as the value the engine will compare against) or unconstrained
 /// (and so always unifies).
 fn args_are_admission_transparent_native<S: purrdf_lex::allocation::Admission + ?Sized>(
-    args: &[Arg],
-    slot_count: usize,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    args: &[Arg], slot_count: usize, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<bool, EvalError> {
     fn walk(arg: &Arg, seen: &mut [bool]) -> bool {
         match arg {
@@ -363,9 +356,7 @@ fn args_are_admission_transparent_native<S: purrdf_lex::allocation::Admission + 
 /// question about the whole query, and this answer is deliberately confined to what
 /// the call itself states.
 fn unobserved_positions_native<S: purrdf_lex::allocation::Admission + ?Sized>(
-    args: &[Arg],
-    slot_cols: &[Option<usize>],
-    slot_seed: &[Option<usize>],
+    args: &[Arg], slot_cols: &[Option<usize>], slot_seed: &[Option<usize>],
     memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<Vec<bool>, EvalError> {
     // Every position of every argument, quoted-triple components included, over a
@@ -419,10 +410,8 @@ fn unobserved_positions_native<S: purrdf_lex::allocation::Admission + ?Sized>(
 fn compile_arg_native<S: purrdf_lex::allocation::Admission + ?Sized>(
     term: &TermPattern,
     slots_and_schema: (&mut crate::AdmittedMap<Variable, usize>, &mut VarSchema),
-    columns_and_seeds: (&mut Vec<Option<usize>>, &mut Vec<Option<usize>>),
-    input: &VarSchema,
-    workspace: &crate::WorkspaceCapability,
-    owners: &mut Vec<crate::WorkspaceAllocation>,
+    columns_and_seeds: (&mut Vec<Option<usize>>, &mut Vec<Option<usize>>), input: &VarSchema,
+    workspace: &crate::WorkspaceCapability, owners: &mut Vec<crate::WorkspaceAllocation>,
     memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<Arg, EvalError> {
     let (slots, schema) = slots_and_schema;
@@ -515,13 +504,10 @@ fn compile_arg_native<S: purrdf_lex::allocation::Admission + ?Sized>(
 /// The slot of `variable`, registering it (and its output column, when it is a real
 /// variable rather than a synthetic blank slot) on first sight.
 fn slot_for_native<S: purrdf_lex::allocation::Admission + ?Sized>(
-    variable: Variable,
-    projected: bool,
+    variable: Variable, projected: bool,
     slots_and_schema: (&mut crate::AdmittedMap<Variable, usize>, &mut VarSchema),
-    columns_and_seeds: (&mut Vec<Option<usize>>, &mut Vec<Option<usize>>),
-    input: &VarSchema,
-    workspace: &crate::WorkspaceCapability,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    columns_and_seeds: (&mut Vec<Option<usize>>, &mut Vec<Option<usize>>), input: &VarSchema,
+    workspace: &crate::WorkspaceCapability, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<usize, EvalError> {
     let (slots, schema) = slots_and_schema;
     let (slot_cols, slot_seed) = columns_and_seeds;
@@ -548,8 +534,7 @@ fn slot_for_native<S: purrdf_lex::allocation::Admission + ?Sized>(
 /// position of it, at any nesting depth, is a variable or a blank node, and every
 /// predicate is an IRI. The nested triples still to be read are kept on a work list.
 fn triple_is_ground_native<S: purrdf_lex::allocation::Admission + ?Sized>(
-    triple: &TriplePattern,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    triple: &TriplePattern, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<bool, EvalError> {
     let mut pending = Vec::new();
     call_push(&mut pending, triple, memory)?;
@@ -587,15 +572,12 @@ fn call_storage(error: purrdf_lex::allocation::StorageError) -> EvalError {
     }
 }
 fn call_push<T, S: purrdf_lex::allocation::Admission + ?Sized>(
-    values: &mut Vec<T>,
-    value: T,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    values: &mut Vec<T>, value: T, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<(), EvalError> {
     memory.push(values, value).map_err(call_storage)
 }
 fn constant_native<S: purrdf_lex::allocation::Admission + ?Sized>(
-    term: &TermPattern,
-    workspace: &crate::WorkspaceCapability,
+    term: &TermPattern, workspace: &crate::WorkspaceCapability,
     owners: &mut Vec<crate::WorkspaceAllocation>,
     memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<TermValue, EvalError> {
@@ -621,8 +603,7 @@ fn constant_native<S: purrdf_lex::allocation::Admission + ?Sized>(
     Ok(value)
 }
 fn named_constant_native<S: purrdf_lex::allocation::Admission + ?Sized>(
-    node: &NamedNode,
-    workspace: &crate::WorkspaceCapability,
+    node: &NamedNode, workspace: &crate::WorkspaceCapability,
     owners: &mut Vec<crate::WorkspaceAllocation>,
     memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<TermValue, EvalError> {
@@ -646,12 +627,8 @@ fn named_constant_native<S: purrdf_lex::allocation::Admission + ?Sized>(
 
 #[cfg(test)]
 fn compile_arg(
-    term: &TermPattern,
-    slots: &mut DetHashMap<Variable, usize>,
-    schema: &mut VarSchema,
-    slot_cols: &mut Vec<Option<usize>>,
-    slot_seed: &mut Vec<Option<usize>>,
-    input: &VarSchema,
+    term: &TermPattern, slots: &mut DetHashMap<Variable, usize>, schema: &mut VarSchema,
+    slot_cols: &mut Vec<Option<usize>>, slot_seed: &mut Vec<Option<usize>>, input: &VarSchema,
 ) -> Result<Arg, EvalError> {
     let workspace = crate::WorkspaceCapability::resident();
     let mut frame = crate::workspace::LexicalFrame::new(&workspace);
@@ -686,12 +663,8 @@ fn compile_arg(
 }
 #[cfg(test)]
 fn slot_for(
-    variable: Variable,
-    projected: bool,
-    slots: &mut DetHashMap<Variable, usize>,
-    schema: &mut VarSchema,
-    slot_cols: &mut Vec<Option<usize>>,
-    slot_seed: &mut Vec<Option<usize>>,
+    variable: Variable, projected: bool, slots: &mut DetHashMap<Variable, usize>,
+    schema: &mut VarSchema, slot_cols: &mut Vec<Option<usize>>, slot_seed: &mut Vec<Option<usize>>,
     input: &VarSchema,
 ) -> usize {
     let workspace = crate::WorkspaceCapability::resident();
@@ -758,10 +731,8 @@ fn unobserved_positions(args: &[Arg], cols: &[Option<usize>], seed: &[Option<usi
 ///
 /// Returns the output bag together with the governor that stopped it, if one did.
 fn seed_call<D: DatasetView + Sync>(
-    plan: &CallPlan,
-    row: &crate::solution::RetainedRow<D::Id>,
-    seed: &mut crate::AdmittedVec<Option<crate::WorkspaceTerm>>,
-    ctx: &EvalCtx<'_, D>,
+    plan: &CallPlan, row: &crate::solution::RetainedRow<D::Id>,
+    seed: &mut crate::AdmittedVec<Option<crate::WorkspaceTerm>>, ctx: &EvalCtx<'_, D>,
 ) -> Result<(), EvalError> {
     for (slot, column) in plan.slot_seed.iter().enumerate() {
         seed.as_mut_slice()[slot] = column
@@ -775,10 +746,8 @@ fn seed_call<D: DatasetView + Sync>(
 /// The one projection of a unified native producer row. Both ordinary cursors
 /// and certified expanded occurrence paths use this existing publication law.
 fn publish_unified<D: DatasetView + Sync>(
-    plan: &CallPlan,
-    values: &[Option<crate::WorkspaceTerm>],
-    input: &crate::solution::RetainedRow<D::Id>,
-    ctx: &mut EvalCtx<'_, D>,
+    plan: &CallPlan, values: &[Option<crate::WorkspaceTerm>],
+    input: &crate::solution::RetainedRow<D::Id>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<crate::solution::RetainedRow<D::Id>, EvalError> {
     let growth = ctx.growth.clone();
     let row = crate::solution::RetainedRow::try_build(plan.schema.len(), &growth, |row| {
@@ -802,9 +771,7 @@ pub(crate) struct OccurrenceCallPlans {
 }
 impl OccurrenceCallPlans {
     pub(crate) fn compile(
-        calls: &[&PropertyFunctionCall],
-        input: &VarSchema,
-        workspace: &crate::WorkspaceCapability,
+        calls: &[&PropertyFunctionCall], input: &VarSchema, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let mut schema = input.clone().shared_admitted(workspace)?;
         let mut plans = crate::AdmittedVec::with_capacity(calls.len(), workspace)?;
@@ -816,9 +783,7 @@ impl OccurrenceCallPlans {
         Ok(Self { plans, schema })
     }
     pub(crate) fn bind<D: DatasetView + Sync>(
-        &self,
-        input: &crate::solution::RetainedRow<D::Id>,
-        rows: &[crate::AdmittedPfRow],
+        &self, input: &crate::solution::RetainedRow<D::Id>, rows: &[crate::AdmittedPfRow],
         ctx: &mut EvalCtx<'_, D>,
     ) -> Result<Option<crate::solution::RetainedRow<D::Id>>, EvalError> {
         if rows.len() != self.plans.len() {
@@ -858,9 +823,7 @@ impl OccurrenceCallPlans {
 }
 
 fn eval_call_over<D: DatasetView + Sync>(
-    call: &PropertyFunctionCall,
-    input: &SolutionSeq<D::Id>,
-    ceiling: Option<usize>,
+    call: &PropertyFunctionCall, input: &SolutionSeq<D::Id>, ceiling: Option<usize>,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<(SolutionSeq<D::Id>, Option<TrippedGovernor>), EvalError> {
     let relation = resolve(call, ctx)?;
@@ -1404,8 +1367,7 @@ fn eval_call_over<D: DatasetView + Sync>(
 /// this before any governor charge; this is the backstop for a directly-built
 /// [`EvalCtx`], which never runs that step.
 fn resolve<'query, D: DatasetView + Sync>(
-    call: &PropertyFunctionCall,
-    ctx: &EvalCtx<'query, D>,
+    call: &PropertyFunctionCall, ctx: &EvalCtx<'query, D>,
 ) -> Result<&'query Arc<dyn PropertyFunction + 'query>, EvalError> {
     ctx.property_functions.resolve(&call.iri).ok_or_else(|| {
         crate::error::NativeDiagnostic::error(
@@ -1437,9 +1399,7 @@ fn resolve<'query, D: DatasetView + Sync>(
 /// [`PropertyFunction::admits`] states; it is restated here rather than called because
 /// the cached list, not a live relation reference, is what this check has to hand.
 fn admit_mode_admitted(
-    modes: &[BindingPattern],
-    iri: &str,
-    mode: BindingPattern,
+    modes: &[BindingPattern], iri: &str, mode: BindingPattern,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<(), EvalError> {
     if modes.iter().any(|declared| declared.subsumes(mode)) {
@@ -1483,9 +1443,7 @@ fn unbound_slot_admitted(iri: &str, workspace: &crate::WorkspaceCapability) -> E
 /// are built before the triple over a work list, so a term of any depth is built
 /// without a machine-stack frame per level.
 fn arg_value_admitted(
-    arg: &Arg,
-    seed: &[Option<crate::WorkspaceTerm>],
-    workspace: &crate::WorkspaceCapability,
+    arg: &Arg, seed: &[Option<crate::WorkspaceTerm>], workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
     /// One step of the build: value a position, or assemble a quoted triple from the
     /// three values built last — its object, its predicate, then its subject.
@@ -1556,9 +1514,7 @@ fn arg_value(arg: &Arg, seed: &[Option<TermValue>]) -> Option<TermValue> {
 /// an earlier occurrence of the same variable. `values` may have been partly written
 /// when that happens; the caller discards it (it is re-seeded per row).
 fn unify_row_admitted(
-    args: &[Arg],
-    emitted: &[TermValue],
-    values: &mut [Option<crate::WorkspaceTerm>],
+    args: &[Arg], emitted: &[TermValue], values: &mut [Option<crate::WorkspaceTerm>],
     workspace: &crate::WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     for (arg, value) in args.iter().zip(emitted) {
@@ -1577,9 +1533,7 @@ fn unify_row_admitted(
 /// are kept on a work list, so a term of any depth is matched without a machine-stack
 /// frame per level.
 fn unify_term_admitted(
-    arg: &Arg,
-    value: &TermValue,
-    values: &mut [Option<crate::WorkspaceTerm>],
+    arg: &Arg, value: &TermValue, values: &mut [Option<crate::WorkspaceTerm>],
     workspace: &crate::WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     let mut pending = crate::AdmittedVec::new(workspace);
@@ -1836,9 +1790,7 @@ pub(crate) struct FilterContext {
 impl FilterContext {
     /// A context over `dataset` configured as the materialised lane configures its own.
     fn context<'d, D: DatasetView + Sync>(
-        &self,
-        dataset: &'d D,
-        workspace: &crate::WorkspaceCapability,
+        &self, dataset: &'d D, workspace: &crate::WorkspaceCapability,
     ) -> Result<EvalCtx<'d, D>, EvalError> {
         // The seed is never read: the shape admits no predicate that reaches a
         // builtin drawing on it (`crate::parallel::function_is_builtin_stateful`).
@@ -2426,9 +2378,7 @@ impl CallContext<'_> {
     /// binds. `column` — the variable carrying the column, in the call's own scope —
     /// is never followed.
     fn driving(
-        &self,
-        seed: &[Variable],
-        column: Option<&Variable>,
+        &self, seed: &[Variable], column: Option<&Variable>,
     ) -> (Option<GraphPattern>, Vec<Variable>) {
         let conjuncts = self.conjuncts();
         let mut reached: Vec<Variable> = seed
@@ -2738,8 +2688,7 @@ impl<'q> ShapeWalk<'q> {
                   would be read in two places"
     )]
     fn walk(
-        &mut self,
-        pattern: &'q GraphPattern,
+        &mut self, pattern: &'q GraphPattern,
     ) -> (Vec<Provenance<'q>>, Result<OneCall<'q>, String>) {
         let mut frames: Vec<WalkFrame<'q>> = vec![WalkFrame::Enter(pattern)];
         let mut results: Vec<Walked<'q>> = Vec::new();
@@ -2758,9 +2707,7 @@ impl<'q> ShapeWalk<'q> {
     /// state, pushes the frame that finishes it and then its operands, the first
     /// operand on top.
     fn enter(
-        &mut self,
-        pattern: &'q GraphPattern,
-        frames: &mut Vec<WalkFrame<'q>>,
+        &mut self, pattern: &'q GraphPattern, frames: &mut Vec<WalkFrame<'q>>,
         results: &mut Vec<Walked<'q>>,
     ) {
         match pattern {
@@ -2972,9 +2919,7 @@ impl<'q> ShapeWalk<'q> {
     /// its own result — or, for a `LATERAL` whose left operand is done, add that
     /// operand's atoms and push the frames that walk the right one.
     fn resume(
-        &mut self,
-        resume: Resume<'q>,
-        frames: &mut Vec<WalkFrame<'q>>,
+        &mut self, resume: Resume<'q>, frames: &mut Vec<WalkFrame<'q>>,
         results: &mut Vec<Walked<'q>>,
     ) {
         let walked = match resume {
@@ -3339,9 +3284,7 @@ fn bind_column<'q>(columns: &mut Vec<Provenance<'q>>, column: Provenance<'q>) {
 /// depth is read without a machine-stack frame per level; the atoms are pushed in
 /// evaluation order, a driven call after every atom of the left operand that drives it.
 fn lateral_atoms<'q>(
-    pattern: &'q GraphPattern,
-    frame: usize,
-    graphs: &[NamedNodePattern],
+    pattern: &'q GraphPattern, frame: usize, graphs: &[NamedNodePattern],
     context: &mut Vec<ContextAtom<'q>>,
 ) {
     /// One node still to be cut, or a driven call to push once its left operand is.
@@ -3387,9 +3330,7 @@ fn lateral_atoms<'q>(
 /// the shape of a text read before any registry planned it is the shape of the plan
 /// it becomes.
 fn join_read<'q>(
-    pattern: &'q GraphPattern,
-    left: &GraphPattern,
-    right_read: Result<OneCall<'q>, String>,
+    pattern: &'q GraphPattern, left: &GraphPattern, right_read: Result<OneCall<'q>, String>,
 ) -> Result<OneCall<'q>, String> {
     if matches!(left, GraphPattern::Bgp { patterns } if patterns.is_empty()) {
         right_read
@@ -3404,8 +3345,7 @@ fn join_read<'q>(
 /// `read` with `operator` above it, where the operator passes rows through a read on
 /// demand.
 fn extended<'q>(
-    read: Result<OneCall<'q>, String>,
-    operator: &'q GraphPattern,
+    read: Result<OneCall<'q>, String>, operator: &'q GraphPattern,
 ) -> Result<OneCall<'q>, String> {
     read.map(|mut read| {
         read.operators.push(operator);
@@ -3644,8 +3584,7 @@ fn node_kind(pattern: &GraphPattern) -> String {
 /// kept on a work list, so a term of any depth is read without a machine-stack frame
 /// per level.
 fn call_variables<'q>(
-    term: &'q TermPattern,
-    visible: &mut Vec<(&'q Variable, Option<&'q Variable>)>,
+    term: &'q TermPattern, visible: &mut Vec<(&'q Variable, Option<&'q Variable>)>,
 ) {
     fn record<'q>(variable: &'q Variable, visible: &mut Vec<(&'q Variable, Option<&'q Variable>)>) {
         if !visible.iter().any(|(name, _)| *name == variable) {
@@ -3685,12 +3624,9 @@ fn call_variables<'q>(
 /// The shape's refusal, and every failure the governed lane raises before the
 /// invocation's first row.
 pub(crate) fn open_call_cursor<'query>(
-    shape: &CallReadShape<'_>,
-    registry: &crate::property_fn::PropertyFunctionRegistry<'query>,
-    filtering: FilterContext,
-    candidate_scope: Option<&dyn crate::CandidateScope>,
-    workspace: &crate::WorkspaceCapability,
-    geo: &purrdf_geo_kernel::GeoProfile,
+    shape: &CallReadShape<'_>, registry: &crate::property_fn::PropertyFunctionRegistry<'query>,
+    filtering: FilterContext, candidate_scope: Option<&dyn crate::CandidateScope>,
+    workspace: &crate::WorkspaceCapability, geo: &purrdf_geo_kernel::GeoProfile,
 ) -> Result<CallCursor<'query>, EvalError> {
     let read = shape
         .read
@@ -3924,10 +3860,8 @@ pub(crate) fn open_call_cursor<'query>(
 
 impl CallCursor<'_> {
     pub(crate) fn bind_search_evidence<I: purrdf_core::ViewTermId>(
-        &mut self,
-        source: &dyn crate::EvidenceSource<I>,
-        registry: &crate::PropertyFunctionRegistry<'_>,
-        scope: Option<&dyn crate::CandidateScope>,
+        &mut self, source: &dyn crate::EvidenceSource<I>,
+        registry: &crate::PropertyFunctionRegistry<'_>, scope: Option<&dyn crate::CandidateScope>,
     ) -> Result<(), EvalError> {
         let input = crate::evidence_exec::EvidenceInput::new(
             source,
@@ -4023,8 +3957,7 @@ impl CallCursor<'_> {
     /// declared arity, and whatever a `FILTER`'s evaluation raises as a hard error
     /// (the materialised lane raises it too). The read is not resumable past an error.
     pub fn next_row<D: DatasetView + Sync>(
-        &mut self,
-        dataset: &D,
+        &mut self, dataset: &D,
     ) -> Result<Option<Vec<Option<TermValue>>>, EvalError> {
         self.next_evidenced_row(dataset)?
             .map(|row| {
@@ -4046,8 +3979,7 @@ impl CallCursor<'_> {
     /// # Errors
     /// Returns the original producer, declaration, filtering or allocation failure.
     pub fn next_evidenced_row<D: DatasetView + Sync>(
-        &mut self,
-        dataset: &D,
+        &mut self, dataset: &D,
     ) -> Result<Option<EvidencedPropertyRow>, EvalError> {
         if self.workspace.is_bounded() {
             return Err(EvalError::WorkspaceUnpriced(
@@ -4086,8 +4018,7 @@ impl CallCursor<'_> {
     /// # Errors
     /// Returns the original producer, filtering or workspace admission failure.
     pub fn next_admitted_row<D: DatasetView + Sync>(
-        &mut self,
-        dataset: &D,
+        &mut self, dataset: &D,
     ) -> Result<Option<AdmittedPropertyRow>, EvalError> {
         let result = self.pull_admitted_row(dataset);
         if result.is_err() {
@@ -4097,8 +4028,7 @@ impl CallCursor<'_> {
     }
 
     fn pull_admitted_row<D: DatasetView + Sync>(
-        &mut self,
-        dataset: &D,
+        &mut self, dataset: &D,
     ) -> Result<Option<AdmittedPropertyRow>, EvalError> {
         // Built at most once per call, at the first `FILTER` a row reaches, and reused
         // for every row this call pulls past.
@@ -4304,8 +4234,7 @@ impl CallCursor<'_> {
     /// # Errors
     /// Returns original declaration failure or native receipt storage refusal.
     pub fn settle_admitted(
-        &self,
-        workspace: &crate::workspace::WorkspaceCapability,
+        &self, workspace: &crate::workspace::WorkspaceCapability,
     ) -> Result<RelationWitness, EvalError> {
         let generation =
             crate::property_fn::generation_contained_admitted(&*self.cursor, &self.iri, workspace)?;
@@ -4423,8 +4352,7 @@ fn reaches(root: ReachNode<'_>, kind: ReachKind) -> bool {
 }
 
 fn reaches_with_memory(
-    root: ReachNode<'_>,
-    kind: ReachKind,
+    root: ReachNode<'_>, kind: ReachKind,
     memory: &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
 ) -> Result<bool, EvalError> {
     use crate::governor::soundness::{
@@ -4587,9 +4515,7 @@ mod tests {
     /// Evaluate `query` over `dataset` with `registry` injected, in RESULT ORDER (never
     /// sorted — emission order is the property under test).
     fn run_on(
-        dataset: &Arc<RdfDataset>,
-        query: &str,
-        registry: &PropertyFunctionRegistry<'_>,
+        dataset: &Arc<RdfDataset>, query: &str, registry: &PropertyFunctionRegistry<'_>,
     ) -> Result<(Vec<String>, Vec<Vec<String>>), String> {
         let engine = NativeSparqlEngine::new();
         let result = engine
@@ -4740,9 +4666,7 @@ mod tests {
         }
 
         fn open<'cursor>(
-            &self,
-            args: &PfArgs<'_>,
-            _ceiling: Option<u64>,
+            &self, args: &PfArgs<'_>, _ceiling: Option<u64>,
         ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
         where
             Self: 'cursor,
@@ -4874,9 +4798,7 @@ mod tests {
         }
 
         fn open<'cursor>(
-            &self,
-            args: &PfArgs<'_>,
-            ceiling: Option<u64>,
+            &self, args: &PfArgs<'_>, ceiling: Option<u64>,
         ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
         where
             Self: 'cursor,
@@ -4932,9 +4854,7 @@ mod tests {
         }
 
         fn open<'cursor>(
-            &self,
-            args: &PfArgs<'_>,
-            _ceiling: Option<u64>,
+            &self, args: &PfArgs<'_>, _ceiling: Option<u64>,
         ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
         where
             Self: 'cursor,
@@ -5808,8 +5728,7 @@ mod tests {
 
     /// Evaluate `query` under `governors` with `registry` injected.
     fn run_governed(
-        query: &str,
-        registry: &PropertyFunctionRegistry<'_>,
+        query: &str, registry: &PropertyFunctionRegistry<'_>,
         governors: &crate::governor::QueryGovernors,
     ) -> crate::GovernedOutcome {
         let engine = NativeSparqlEngine::new();
@@ -6531,12 +6450,8 @@ mod walk_tests {
     // ── The recursive references ───────────────────────────────────────────────────
 
     fn reference_compile_arg(
-        term: &TermPattern,
-        slots: &mut DetHashMap<Variable, usize>,
-        schema: &mut VarSchema,
-        slot_cols: &mut Vec<Option<usize>>,
-        slot_seed: &mut Vec<Option<usize>>,
-        input: &VarSchema,
+        term: &TermPattern, slots: &mut DetHashMap<Variable, usize>, schema: &mut VarSchema,
+        slot_cols: &mut Vec<Option<usize>>, slot_seed: &mut Vec<Option<usize>>, input: &VarSchema,
     ) -> Result<Arg, EvalError> {
         match term {
             TermPattern::NamedNode(_) | TermPattern::Literal(_) => Ok(Arg::Constant(
@@ -6622,9 +6537,7 @@ mod walk_tests {
     }
 
     fn reference_unobserved_positions(
-        args: &[Arg],
-        slot_cols: &[Option<usize>],
-        slot_seed: &[Option<usize>],
+        args: &[Arg], slot_cols: &[Option<usize>], slot_seed: &[Option<usize>],
     ) -> Vec<bool> {
         fn count(arg: &Arg, occurrences: &mut [usize]) {
             match arg {
@@ -6671,9 +6584,7 @@ mod walk_tests {
     }
 
     fn reference_unify_term(
-        arg: &Arg,
-        value: &TermValue,
-        values: &mut [Option<TermValue>],
+        arg: &Arg, value: &TermValue, values: &mut [Option<TermValue>],
     ) -> bool {
         match arg {
             Arg::Constant(constant) => constant == value,
@@ -6696,9 +6607,7 @@ mod walk_tests {
     }
 
     fn reference_lateral_atoms<'q>(
-        pattern: &'q GraphPattern,
-        frame: usize,
-        graphs: &[NamedNodePattern],
+        pattern: &'q GraphPattern, frame: usize, graphs: &[NamedNodePattern],
         context: &mut Vec<super::ContextAtom<'q>>,
     ) {
         match pattern {
@@ -6748,12 +6657,10 @@ mod walk_tests {
     }
 
     fn reference_call_variables<'q>(
-        term: &'q TermPattern,
-        visible: &mut Vec<(&'q Variable, Option<&'q Variable>)>,
+        term: &'q TermPattern, visible: &mut Vec<(&'q Variable, Option<&'q Variable>)>,
     ) {
         fn record<'q>(
-            variable: &'q Variable,
-            visible: &mut Vec<(&'q Variable, Option<&'q Variable>)>,
+            variable: &'q Variable, visible: &mut Vec<(&'q Variable, Option<&'q Variable>)>,
         ) {
             if !visible.iter().any(|(name, _)| *name == variable) {
                 visible.push((variable, Some(variable)));
@@ -6774,8 +6681,7 @@ mod walk_tests {
 
     impl<'q> ShapeWalk<'q> {
         fn reference_walk(
-            &mut self,
-            pattern: &'q GraphPattern,
+            &mut self, pattern: &'q GraphPattern,
         ) -> (Vec<Provenance<'q>>, Result<OneCall<'q>, String>) {
             match pattern {
                 GraphPattern::PropertyFunction(call) => {
@@ -7399,8 +7305,7 @@ mod walk_tests {
     }
 
     fn compile_with(
-        terms: &[TermPattern],
-        input: &VarSchema,
+        terms: &[TermPattern], input: &VarSchema,
         compile: impl Fn(
             &TermPattern,
             &mut DetHashMap<Variable, usize>,
@@ -7716,8 +7621,7 @@ mod walk_tests {
     /// What a read-shape walk left, in a comparable form: the columns, the read, the
     /// calls met, their contexts, the dropped columns and the names taken.
     fn walk_key(
-        walk: &ShapeWalk<'_>,
-        (columns, read): &(Vec<Provenance<'_>>, Result<OneCall<'_>, String>),
+        walk: &ShapeWalk<'_>, (columns, read): &(Vec<Provenance<'_>>, Result<OneCall<'_>, String>),
     ) -> String {
         let read = read.as_ref().map(|read| {
             (

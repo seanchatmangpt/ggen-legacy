@@ -45,9 +45,7 @@ impl PreparedGeodesicCache {
     /// Preserves environment, reference, work, checked layout, allocator and
     /// original policy refusal; no failed preparation is cached.
     pub fn prepare(
-        &mut self,
-        reference: &GeographicReference,
-        context: &mut MetricContext,
+        &mut self, reference: &GeographicReference, context: &mut MetricContext,
     ) -> Result<PreparedGeodesic, GeoError> {
         if context.retained_workspace_bytes() < self.retained_bytes {
             return Err(GeoError::InvalidNativeStorage(
@@ -163,8 +161,7 @@ impl WorkerCoefficientCache {
     /// Retained identity proves allocation ownership; coefficient equality never
     /// substitutes for that proof or merges unrelated sibling allocations.
     pub(crate) fn lineage_bytes(
-        current: &Retained<Self>,
-        ancestor: Option<&Retained<Self>>,
+        current: &Retained<Self>, ancestor: Option<&Retained<Self>>,
     ) -> Option<u64> {
         let mut bytes = 0_u64;
         let mut next = Some(current);
@@ -186,8 +183,7 @@ impl WorkerCoefficientCache {
     }
 
     pub(super) fn lookup_cost(
-        &self,
-        parameter: &crate::Rat,
+        &self, parameter: &crate::Rat,
     ) -> Option<purrdf_xsd::integer::ExactArithmeticCost> {
         purrdf_xsd::integer::ExactArithmeticCost::for_operation(
             purrdf_xsd::integer::ExactOperation::Linear,
@@ -198,11 +194,7 @@ impl WorkerCoefficientCache {
     }
 
     pub(super) fn find(
-        &self,
-        inverse_flattening: &crate::Rat,
-        bits: u32,
-        order: usize,
-        request: CoefficientUse,
+        &self, inverse_flattening: &crate::Rat, bits: u32, order: usize, request: CoefficientUse,
     ) -> Option<&Retained<IntegralCoefficients>> {
         let mut next = Some(self);
         while let Some(entry) = next {
@@ -273,8 +265,7 @@ impl IntegralCoefficients {
     }
 
     pub(super) fn detached(
-        &self,
-        chunks: &mut ChunkObserver<'_, '_>,
+        &self, chunks: &mut ChunkObserver<'_, '_>,
     ) -> Result<Retained<Self>, SolveError> {
         let square_root = super::coefficients::detached_array(&self.square_root, chunks)?;
         let reciprocal = super::coefficients::detached_array(&self.reciprocal, chunks)?;
@@ -337,9 +328,7 @@ impl PreparedCoefficients {
         Ok(bytes)
     }
     pub(super) fn fixed_shared(
-        &self,
-        bits: u32,
-        order: usize,
+        &self, bits: u32, order: usize,
     ) -> Option<&Retained<IntegralCoefficients>> {
         let coefficients = if bits == self.bits {
             Some(&self.fixed)
@@ -356,12 +345,8 @@ impl PreparedCoefficients {
 /// Generate and detach one complete original coefficient record. Cache keys
 /// retain the exact flattening; interval overlap cannot alias different axes.
 pub(super) fn prepare_worker_coefficients(
-    ellipsoid: &crate::PreparedEllipsoid,
-    bits: u32,
-    order: usize,
-    request: CoefficientUse,
-    previous: Option<Retained<WorkerCoefficientCache>>,
-    chunks: &mut ChunkObserver<'_, '_>,
+    ellipsoid: &crate::PreparedEllipsoid, bits: u32, order: usize, request: CoefficientUse,
+    previous: Option<Retained<WorkerCoefficientCache>>, chunks: &mut ChunkObserver<'_, '_>,
     math: &mut CoordinateMath,
 ) -> Result<
     (
@@ -482,10 +467,7 @@ pub(super) fn prepare_worker_coefficients(
 
 impl PreparedGeodesic {
     pub(super) fn worker_coefficients(
-        &self,
-        bits: u32,
-        order: usize,
-        context: &mut MetricContext,
+        &self, bits: u32, order: usize, context: &mut MetricContext,
         chunks: &mut ChunkObserver<'_, '_>,
     ) -> Result<Option<Retained<IntegralCoefficients>>, GeoError> {
         if let Some(value) = self
@@ -604,8 +586,7 @@ impl PreparedGeodesic {
     /// Refuses reference mismatch, invalid floating environment, cancellation
     /// and numerical/resource exhaustion before publishing any preparation.
     pub fn prepare(
-        reference: GeographicReference,
-        context: &mut MetricContext,
+        reference: GeographicReference, context: &mut MetricContext,
     ) -> Result<Self, GeoError> {
         Self::prepare_observed(reference, context, None)
     }
@@ -615,16 +596,14 @@ impl PreparedGeodesic {
     /// # Errors
     /// Adds the external observer's refusals to [`Self::prepare`].
     pub fn prepare_metered(
-        reference: GeographicReference,
-        context: &mut MetricContext,
+        reference: GeographicReference, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::prepare_observed(reference, context, Some(observer))
     }
 
     fn prepare_observed(
-        reference: GeographicReference,
-        context: &mut MetricContext,
+        reference: GeographicReference, context: &mut MetricContext,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         context.begin(0)?;

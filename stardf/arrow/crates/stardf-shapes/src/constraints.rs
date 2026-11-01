@@ -172,8 +172,7 @@ impl ValueNode {
     /// other node. The direction is `None` for an `rdf:langString`, and
     /// `Some` for an RDF 1.2 `rdf:dirLangString`.
     fn language_and_direction<'a>(
-        &'a self,
-        ds: &'a impl ShaclRead,
+        &'a self, ds: &'a impl ShaclRead,
     ) -> Option<(&'a str, Option<RdfTextDirection>)> {
         match self {
             Self::Interned(id) => match ds.resolve_term(*id) {
@@ -328,11 +327,8 @@ impl<'a> ConstraintSource<'a> {
     /// declared at the surrounding shape".
     #[inline]
     fn annotated(
-        id: &'a Term,
-        severity: &'a Severity,
-        messages: &'a [Literal],
-        annotation: Option<&'a ConstraintAnnotation>,
-        profile: crate::profile::ShaclProfile,
+        id: &'a Term, severity: &'a Severity, messages: &'a [Literal],
+        annotation: Option<&'a ConstraintAnnotation>, profile: crate::profile::ShaclProfile,
     ) -> Self {
         // Constraint-statement reifiers are a draft report law. The REC report
         // uses the shape's declared severity/messages; Legacy retains its
@@ -375,9 +371,7 @@ impl<'a> ConstraintSource<'a> {
     /// The `which` constraint of the property shape `ps`.
     #[inline]
     fn of_property(
-        ps: &'a PropertyShape,
-        which: AnnotatedConstraint,
-        profile: crate::profile::ShaclProfile,
+        ps: &'a PropertyShape, which: AnnotatedConstraint, profile: crate::profile::ShaclProfile,
         edge: Option<&'a PropertyReference>,
     ) -> Self {
         let view = PropertyView { property: ps, edge };
@@ -583,9 +577,7 @@ trait ResultSink {
 trait DynamicSink {
     fn forward_truth(&mut self, conforms: bool) -> Result<Flow, crate::ShapesError>;
     fn forward_violation(
-        &mut self,
-        severity: &Severity,
-        build: &mut dyn FnMut() -> ResultRecord,
+        &mut self, severity: &Severity, build: &mut dyn FnMut() -> ResultRecord,
     ) -> Flow;
 }
 
@@ -594,9 +586,7 @@ impl<S: ResultSink> DynamicSink for S {
         self.reference_truth(conforms)
     }
     fn forward_violation(
-        &mut self,
-        severity: &Severity,
-        build: &mut dyn FnMut() -> ResultRecord,
+        &mut self, severity: &Severity, build: &mut dyn FnMut() -> ResultRecord,
     ) -> Flow {
         self.violation(severity, build)
     }
@@ -625,9 +615,7 @@ impl<const VALUES: bool, const EVIDENCE: bool> ResultSink for ReferenceSink<'_, 
 }
 
 fn walk_reference<S: ResultSink>(
-    context: ValidationContext<'_, '_>,
-    focus: &FocusNode,
-    sink: &mut S,
+    context: ValidationContext<'_, '_>, focus: &FocusNode, sink: &mut S,
 ) -> Result<Flow, crate::error::ShapesError> {
     if !S::RECORDS_RESULTS
         && let Some(fixed) = context.fixed
@@ -1043,9 +1031,7 @@ impl ConformanceMemo {
 /// with [`AnyViolation`] in place of [`Collect`]: the traversal cannot disagree
 /// with the report about conformance, because it is the same traversal.
 fn conforms_memoized<'a>(
-    context: ValidationContext<'a, '_>,
-    plan: ShapePlan<'a>,
-    focus: &FocusNode,
+    context: ValidationContext<'a, '_>, plan: ShapePlan<'a>, focus: &FocusNode,
 ) -> Result<bool, crate::error::ShapesError> {
     if let Some(fixed) = context.fixed {
         return fixed.ask_shape(plan, focus);
@@ -1109,9 +1095,7 @@ fn conforms_memoized<'a>(
 /// native engine cannot execute). Ordinary constraint violations are `Ok`
 /// results, never errors.
 pub fn validate_shape(
-    store: &ShaclData,
-    focus: &Term,
-    shape: &Shape,
+    store: &ShaclData, focus: &Term, shape: &Shape,
 ) -> Result<Vec<ValidationResult>, crate::error::ShapesError> {
     validate_shape_with(store, focus, shape, None)
 }
@@ -1129,10 +1113,7 @@ pub fn validate_shape(
 /// Returns `Err(String)` when a SHACL-SPARQL constraint fails to evaluate
 /// (see [`validate_shape`]).
 pub fn validate_shape_with(
-    store: &ShaclData,
-    focus: &Term,
-    shape: &Shape,
-    box_role_vocab: Option<&BoxRoleVocab>,
+    store: &ShaclData, focus: &Term, shape: &Shape, box_role_vocab: Option<&BoxRoleVocab>,
 ) -> Result<Vec<ValidationResult>, crate::error::ShapesError> {
     validate_shape_with_request(
         store,
@@ -1151,10 +1132,7 @@ pub fn validate_shape_with(
 /// Returns the original preparation, recursive work, storage or evaluation
 /// refusal instead of publishing a partial report.
 pub fn validate_shape_with_recursion(
-    store: &ShaclData,
-    focus: &Term,
-    shape: &Shape,
-    box_role_vocab: Option<&BoxRoleVocab>,
+    store: &ShaclData, focus: &Term, shape: &Shape, box_role_vocab: Option<&BoxRoleVocab>,
     recursion: &crate::recursion::RecursionOptions,
 ) -> Result<crate::recursion::RecursiveValidationReport, crate::error::ShapesError> {
     let outcome = crate::recursion::evidence::ReportOutcome::default();
@@ -1176,10 +1154,7 @@ pub fn validate_shape_with_recursion(
 }
 
 fn validate_shape_with_request(
-    store: &ShaclData,
-    focus: &Term,
-    shape: &Shape,
-    box_role_vocab: Option<&BoxRoleVocab>,
+    store: &ShaclData, focus: &Term, shape: &Shape, box_role_vocab: Option<&BoxRoleVocab>,
     options: &crate::engine::ValidationOptions,
     outcome: Option<&crate::recursion::evidence::ReportOutcome>,
 ) -> Result<Vec<ValidationResult>, crate::error::ShapesError> {
@@ -1192,11 +1167,8 @@ fn validate_shape_with_request(
 }
 
 pub(crate) fn validate_shape_with_plan_at(
-    store: &ShaclData,
-    focus: &FocusNode,
-    box_role_vocab: Option<&BoxRoleVocab>,
-    plan: ShapePlan<'_>,
-    outcome: Option<&crate::recursion::evidence::ReportOutcome>,
+    store: &ShaclData, focus: &FocusNode, box_role_vocab: Option<&BoxRoleVocab>,
+    plan: ShapePlan<'_>, outcome: Option<&crate::recursion::evidence::ReportOutcome>,
 ) -> Result<Vec<ValidationResult>, crate::error::ShapesError> {
     validate_shape_with_depth(store, focus, box_role_vocab, plan, 0, outcome)
 }
@@ -1225,9 +1197,7 @@ impl<'a> OneShotLowering<'a> {
     /// handed a bare [`Shape`] and have nothing to memoize against should reach
     /// it.
     fn of(
-        store: &ShaclData,
-        shape: &'a Shape,
-        options: &crate::engine::ValidationOptions,
+        store: &ShaclData, shape: &'a Shape, options: &crate::engine::ValidationOptions,
     ) -> Result<Self, crate::error::ShapesError> {
         crate::recursion::model::admit_shape(
             shape,
@@ -1265,12 +1235,8 @@ impl<'a> OneShotLowering<'a> {
 /// recursive filter/exists cycle fails closed here rather than overflowing the
 /// native stack.
 fn validate_shape_with_depth(
-    store: &ShaclData,
-    focus: &FocusNode,
-    box_role_vocab: Option<&BoxRoleVocab>,
-    plan: ShapePlan<'_>,
-    depth: u32,
-    outcome: Option<&crate::recursion::evidence::ReportOutcome>,
+    store: &ShaclData, focus: &FocusNode, box_role_vocab: Option<&BoxRoleVocab>,
+    plan: ShapePlan<'_>, depth: u32, outcome: Option<&crate::recursion::evidence::ReportOutcome>,
 ) -> Result<Vec<ValidationResult>, crate::error::ShapesError> {
     let memo = ConformanceMemo::default();
     let context = ValidationContext {
@@ -1312,8 +1278,7 @@ fn validate_shape_with_depth(
 /// [`walk_shape`] with the reporting sink: every result the focus node produces,
 /// in traversal order.
 fn collect_shape(
-    context: ValidationContext<'_, '_>,
-    focus: &FocusNode,
+    context: ValidationContext<'_, '_>, focus: &FocusNode,
 ) -> Result<Vec<ValidationResult>, crate::error::ShapesError> {
     let mut sink = Collect::default();
     walk_shape(context, focus, &mut sink)?;
@@ -1322,11 +1287,8 @@ fn collect_shape(
 
 /// Evidence-bearing entry into the existing shape walker.
 pub(crate) fn validate_shape_with_evidence_at<'a>(
-    store: &'a ShaclData,
-    focus: &FocusNode,
-    box_role_vocab: Option<&'a BoxRoleVocab>,
-    plan: ShapePlan<'a>,
-    capture: &'a crate::report::ReportCapture<'a>,
+    store: &'a ShaclData, focus: &FocusNode, box_role_vocab: Option<&'a BoxRoleVocab>,
+    plan: ShapePlan<'a>, capture: &'a crate::report::ReportCapture<'a>,
 ) -> Result<Vec<ResultRecord>, crate::error::ShapesError> {
     let local_capture = crate::report::ReportCapture::with_sources(
         capture.shapes,
@@ -1406,8 +1368,7 @@ pub(crate) fn validate_shape_with_evidence_at<'a>(
 /// Collect evaluated details in the enclosing sink's reporting mode. Filtering
 /// occurs while values and evidence are still paired, before their split.
 fn collect_details<S: ResultSink>(
-    context: ValidationContext<'_, '_>,
-    focus: &FocusNode,
+    context: ValidationContext<'_, '_>, focus: &FocusNode,
     retain: impl Fn(&ValidationResult) -> bool,
 ) -> Result<DetailResults, crate::error::ShapesError> {
     if S::RECORDS_EVIDENCE {
@@ -1441,9 +1402,7 @@ fn collect_details<S: ResultSink>(
 /// mutually recursive filter/exists cycle fails closed here rather than
 /// overflowing the native stack.
 fn walk_shape<S: ResultSink>(
-    context: ValidationContext<'_, '_>,
-    focus: &FocusNode,
-    sink: &mut S,
+    context: ValidationContext<'_, '_>, focus: &FocusNode, sink: &mut S,
 ) -> Result<Flow, crate::error::ShapesError> {
     let context = if S::RECORDS_RESULTS && context.fixed.is_some() {
         ValidationContext {
@@ -1468,9 +1427,7 @@ fn walk_shape<S: ResultSink>(
 }
 
 fn walk_shape_body<S: ResultSink>(
-    context: ValidationContext<'_, '_>,
-    focus: &FocusNode,
-    sink: &mut S,
+    context: ValidationContext<'_, '_>, focus: &FocusNode, sink: &mut S,
 ) -> Result<Flow, crate::error::ShapesError> {
     let plan = context.plan;
     let shape = plan.shape();
@@ -1657,13 +1614,9 @@ fn admit_validation(shape: &Term, depth: u32) -> Result<(), crate::error::Shapes
 /// against the focus term, because every quad this probe matches has the focus as
 /// its subject.
 fn eval_closed<S: ResultSink>(
-    context: ValidationContext<'_, '_>,
-    focus: &FocusNode,
-    source_roles: &[NamedNode],
-    source: ConstraintSource<'_>,
-    permitted: &FastSet<TermId>,
-    by_types: Option<crate::plan::ClosedByTypes<'_>>,
-    sink: &mut S,
+    context: ValidationContext<'_, '_>, focus: &FocusNode, source_roles: &[NamedNode],
+    source: ConstraintSource<'_>, permitted: &FastSet<TermId>,
+    by_types: Option<crate::plan::ClosedByTypes<'_>>, sink: &mut S,
 ) -> Flow {
     // A focus node this data graph does not intern has no outgoing quads at all,
     // so a closed shape has nothing to report against it — the same empty answer
@@ -1724,10 +1677,7 @@ fn eval_closed<S: ResultSink>(
 /// Whether some `rdf:type` value `T` of the focus node permits `predicate` under
 /// `sh:closed sh:ByTypes` — whether `collectProperties(T)` reaches it.
 fn permitted_by_types(
-    ds: &impl ShaclRead,
-    focus: TermId,
-    predicate: TermId,
-    by_types: crate::plan::ClosedByTypes<'_>,
+    ds: &impl ShaclRead, focus: TermId, predicate: TermId, by_types: crate::plan::ClosedByTypes<'_>,
 ) -> bool {
     let Some(rdf_type) = by_types.rdf_type else {
         return false;
@@ -1758,9 +1708,7 @@ fn permitted_by_types(
 /// Returns `Err(String)` when a SHACL-SPARQL constraint fails to evaluate
 /// (see [`validate_shape`]).
 pub fn conforms(
-    store: &ShaclData,
-    focus: &Term,
-    shape: &Shape,
+    store: &ShaclData, focus: &Term, shape: &Shape,
 ) -> Result<bool, crate::error::ShapesError> {
     conforms_with_request(
         store,
@@ -1777,10 +1725,7 @@ pub fn conforms(
 /// Returns the original preparation, recursive work, storage or evaluation
 /// refusal; a failed execution never becomes a conformance answer.
 pub fn conforms_with_recursion(
-    store: &ShaclData,
-    focus: &Term,
-    shape: &Shape,
-    recursion: &crate::recursion::RecursionOptions,
+    store: &ShaclData, focus: &Term, shape: &Shape, recursion: &crate::recursion::RecursionOptions,
 ) -> Result<bool, crate::error::ShapesError> {
     conforms_with_request(
         store,
@@ -1791,10 +1736,7 @@ pub fn conforms_with_recursion(
 }
 
 fn conforms_with_request(
-    store: &ShaclData,
-    focus: &Term,
-    shape: &Shape,
-    options: &crate::engine::ValidationOptions,
+    store: &ShaclData, focus: &Term, shape: &Shape, options: &crate::engine::ValidationOptions,
 ) -> Result<bool, crate::error::ShapesError> {
     let lowering = OneShotLowering::of(store, shape, options)?;
     conforms_with_id_depth(
@@ -1816,9 +1758,7 @@ fn conforms_with_request(
 /// Returns `Err(String)` when a constraint fails to evaluate (see
 /// [`validate_shape`]).
 pub(crate) fn conforms_with_plan(
-    store: &ShaclData,
-    focus: &Term,
-    plan: ShapePlan<'_>,
+    store: &ShaclData, focus: &Term, plan: ShapePlan<'_>,
 ) -> Result<bool, crate::error::ShapesError> {
     conforms_with_id_depth(
         store,
@@ -1836,10 +1776,7 @@ pub(crate) fn conforms_with_plan(
 /// recursive constraint arms go through [`conforms_memoized`] instead, which
 /// reuses the memo their ambient context already carries.
 pub(crate) fn conforms_with_id_depth(
-    store: &ShaclData,
-    focus: &FocusNode,
-    plan: ShapePlan<'_>,
-    depth: u32,
+    store: &ShaclData, focus: &FocusNode, plan: ShapePlan<'_>, depth: u32,
 ) -> Result<bool, crate::error::ShapesError> {
     crate::recursion::model::admit_plan(plan)?;
     let memo = ConformanceMemo::default();
@@ -1888,11 +1825,7 @@ pub(crate) fn conforms_with_id_depth(
 /// Returns an error when an expression's evaluation fails, or when it produces no
 /// node, several, or one that is no `xsd:boolean` literal.
 pub(crate) fn deactivated_at<'e>(
-    store: &ShaclData,
-    plan: ShapePlan<'_>,
-    depth: u32,
-    focus: &FocusNode,
-    owner: &Term,
+    store: &ShaclData, plan: ShapePlan<'_>, depth: u32, focus: &FocusNode, owner: &Term,
     exprs: impl Iterator<
         Item = (
             &'e crate::expression::NodeExpr,
@@ -1939,13 +1872,9 @@ pub(crate) fn deactivated_at<'e>(
 }
 
 fn eval_property_reference<'a, S: ResultSink>(
-    context: ValidationContext<'a, '_>,
-    focus: &FocusNode,
-    definition: ShapePlan<'a>,
-    edge: &'a PropertyReference,
-    deactivated_when: &'a [crate::plan::LoweredExpr],
-    parent_roles: &[NamedNode],
-    sink: &mut S,
+    context: ValidationContext<'a, '_>, focus: &FocusNode, definition: ShapePlan<'a>,
+    edge: &'a PropertyReference, deactivated_when: &'a [crate::plan::LoweredExpr],
+    parent_roles: &[NamedNode], sink: &mut S,
 ) -> Result<Flow, crate::error::ShapesError> {
     if !S::RECORDS_RESULTS
         && let Some(fixed) = context.fixed
@@ -2010,13 +1939,8 @@ fn eval_property_reference<'a, S: ResultSink>(
 }
 
 fn eval_referenced_property<'a, S: ResultSink>(
-    context: ValidationContext<'a, '_>,
-    focus: &FocusNode,
-    definition: ShapePlan<'a>,
-    property: &'a PropertyShape,
-    plan: PropertyPlan<'a>,
-    parent_roles: &[NamedNode],
-    sink: &mut S,
+    context: ValidationContext<'a, '_>, focus: &FocusNode, definition: ShapePlan<'a>,
+    property: &'a PropertyShape, plan: PropertyPlan<'a>, parent_roles: &[NamedNode], sink: &mut S,
 ) -> Result<Flow, crate::error::ShapesError> {
     let context = ValidationContext {
         plan: definition,
@@ -2077,12 +2001,8 @@ fn eval_referenced_property<'a, S: ResultSink>(
 /// Returns an error when evaluating the path or one of the constraints
 /// hard-fails.
 fn eval_property_shape<'a, S: ResultSink>(
-    context: ValidationContext<'a, '_>,
-    focus: &FocusNode,
-    ps: &'a PropertyShape,
-    property_plan: PropertyPlan<'a>,
-    parent_box_roles: &[NamedNode],
-    sink: &mut S,
+    context: ValidationContext<'a, '_>, focus: &FocusNode, ps: &'a PropertyShape,
+    property_plan: PropertyPlan<'a>, parent_box_roles: &[NamedNode], sink: &mut S,
 ) -> Result<Flow, crate::error::ShapesError> {
     let store = context.store;
     admit_validation(&ps.id, context.depth)?;
@@ -2296,10 +2216,7 @@ fn eval_property_shape<'a, S: ResultSink>(
 /// Returns an error when the path walk or an expression evaluation fails, or when
 /// the property shape and its lowering disagree.
 fn property_value_nodes(
-    store: &ShaclData,
-    focus: &FocusNode,
-    ps: &PropertyShape,
-    property_plan: PropertyPlan<'_>,
+    store: &ShaclData, focus: &FocusNode, ps: &PropertyShape, property_plan: PropertyPlan<'_>,
     depth: u32,
 ) -> Result<SmallVec<[ValueNode; 4]>, crate::error::ShapesError> {
     let lowered_path = property_plan.path();
@@ -2384,10 +2301,7 @@ fn property_value_nodes(
 ///
 /// As [`property_value_nodes`].
 pub(crate) fn property_value_terms(
-    store: &ShaclData,
-    focus: &Term,
-    ps: &PropertyShape,
-    property_plan: PropertyPlan<'_>,
+    store: &ShaclData, focus: &Term, ps: &PropertyShape, property_plan: PropertyPlan<'_>,
 ) -> Result<Vec<Term>, crate::error::ShapesError> {
     let ds = store.core_view();
     let focus = FocusNode::resolve(ds, focus);
@@ -2454,8 +2368,7 @@ impl ReifierEvalContext<'_, '_, '_> {
 /// [`AnyViolation`] and stops at the first inner violation instead of building
 /// the rest.
 fn eval_reifier_shapes<S: ResultSink>(
-    ctx: &ReifierEvalContext<'_, '_, '_>,
-    sink: &mut S,
+    ctx: &ReifierEvalContext<'_, '_, '_>, sink: &mut S,
 ) -> Result<Flow, crate::error::ShapesError> {
     let ReifierEvalContext {
         context,
@@ -2721,12 +2634,8 @@ fn first_messages(candidates: &[&Vec<Literal>]) -> Vec<Literal> {
 /// SHACL instances of sh:AbstractResult that can provide further details about
 /// the cause of the (parent) result."
 fn reifier_result(
-    ctx: &ReifierEvalContext<'_, '_, '_>,
-    value: &ValueNode,
-    source_roles: &[NamedNode],
-    source: &ConstraintSource<'_>,
-    messages: Vec<Literal>,
-    inner_source_roles: &[NamedNode],
+    ctx: &ReifierEvalContext<'_, '_, '_>, value: &ValueNode, source_roles: &[NamedNode],
+    source: &ConstraintSource<'_>, messages: Vec<Literal>, inner_source_roles: &[NamedNode],
     details: Vec<ValidationResult>,
 ) -> ValidationResult {
     let ds = ctx.context.store.core_view();
@@ -2765,9 +2674,7 @@ fn reifier_result(
 /// The subject-legality filter is the one the owned probe applied per row: a term
 /// that cannot occupy a subject position is not a reifier.
 fn reifier_ids<D: ShaclRead>(
-    ds: &D,
-    reifies: TermId,
-    triple: TermId,
+    ds: &D, reifies: TermId, triple: TermId,
 ) -> impl Iterator<Item = TermId> + '_ {
     quads_for_pattern_ids(
         ds,
@@ -2786,9 +2693,7 @@ fn reifier_ids<D: ShaclRead>(
 }
 
 fn path_box_roles(
-    store: &ShaclData,
-    path: &Path,
-    box_role_vocab: Option<&BoxRoleVocab>,
+    store: &ShaclData, path: &Path, box_role_vocab: Option<&BoxRoleVocab>,
 ) -> Vec<NamedNode> {
     // The box-role feature is caller-configured; with no vocab it is INACTIVE.
     let Some(vocab) = box_role_vocab else {
@@ -2825,8 +2730,7 @@ fn path_box_roles(
 /// identity — no role is minted, and the borrowed input is handed straight back
 /// rather than copied, so the inactive case costs nothing at all.
 fn with_cbox_role<'roles>(
-    source_roles: &'roles [NamedNode],
-    box_role_vocab: Option<&BoxRoleVocab>,
+    source_roles: &'roles [NamedNode], box_role_vocab: Option<&BoxRoleVocab>,
 ) -> Cow<'roles, [NamedNode]> {
     let Some(vocab) = box_role_vocab else {
         return Cow::Borrowed(source_roles);
@@ -2860,10 +2764,7 @@ fn merge_box_roles(left: &[NamedNode], right: &[NamedNode]) -> Vec<NamedNode> {
 /// for a shape that is right there in the index. That materialization runs only on
 /// the miss, which is either that case or the error path.
 fn indexed_shape_by_id<'a>(
-    plan: ShapePlan<'a>,
-    index: u32,
-    ds: &impl ShaclRead,
-    id: TermId,
+    plan: ShapePlan<'a>, index: u32, ds: &impl ShaclRead, id: TermId,
 ) -> Result<Option<ShapePlan<'a>>, crate::error::ShapesError> {
     if let Some(node) = plan.binding().indexed_node(index, id)? {
         return plan.indexed(index, node);
@@ -2883,12 +2784,8 @@ fn indexed_shape_by_id<'a>(
 ///
 /// `path` is `None` for node-level constraints, `Some` for property shapes.
 fn eval_constraint<'a, S: ResultSink>(
-    context: ValidationContext<'a, '_>,
-    focus_node: &FocusNode,
-    value_nodes: &[ValueNode],
-    constraint: PlannedConstraint<'a>,
-    path: Option<&Path>,
-    source: ConstraintSource<'_>,
+    context: ValidationContext<'a, '_>, focus_node: &FocusNode, value_nodes: &[ValueNode],
+    constraint: PlannedConstraint<'a>, path: Option<&Path>, source: ConstraintSource<'_>,
     sink: &mut S,
 ) -> Result<Flow, crate::error::ShapesError> {
     let store = context.store;
@@ -4475,8 +4372,7 @@ fn eval_constraint<'a, S: ResultSink>(
 ///
 /// [`Cow`]: std::borrow::Cow
 pub(crate) fn substitute_path_placeholder<'q>(
-    select: &'q str,
-    path: Option<&Path>,
+    select: &'q str, path: Option<&Path>,
 ) -> Cow<'q, str> {
     static PATH_PLACEHOLDER: OnceLock<regex::Regex> = OnceLock::new();
     let Some(path) = path else {
@@ -4693,9 +4589,7 @@ impl ListIds {
 
     /// The strict walk of the list headed by `head`, over every graph.
     fn walk<D: ShaclRead>(
-        self,
-        ds: &D,
-        head: TermId,
+        self, ds: &D, head: TermId,
     ) -> impl Iterator<Item = Result<TermId, ListFault<TermId>>> + '_ {
         RdfListWalk::new(
             head,
@@ -4927,8 +4821,7 @@ fn numeric_parts(lexical: &str, datatype: &str) -> Option<purrdf_xsd::XsdValue> 
 /// `None` reaches the same verdict it always did: a non-literal is neither numeric
 /// nor temporal, so it is incomparable, so it violates.
 fn range_facet_cmp(
-    value: Option<(&str, &str)>,
-    bound: RangeBound<'_>,
+    value: Option<(&str, &str)>, bound: RangeBound<'_>,
 ) -> Option<std::cmp::Ordering> {
     let (lexical, datatype) = value?;
     if let (Some(v), Some(b)) = (numeric_parts(lexical, datatype), bound.numeric()) {
@@ -4953,10 +4846,7 @@ fn range_facet_cmp(
 /// `xsd:dateTime`/`xsd:date`/`xsd:time` literal, when a lexical form is invalid,
 /// or when the XSD partial order is indeterminate.
 fn temporal_parts_cmp(
-    a_lexical: &str,
-    a_datatype: &str,
-    b_lexical: &str,
-    b_datatype: &str,
+    a_lexical: &str, a_datatype: &str, b_lexical: &str, b_datatype: &str,
 ) -> Option<std::cmp::Ordering> {
     const TEMPORAL: [&str; 3] = [XSD_DATE_TIME, XSD_DATE, XSD_TIME];
     if !TEMPORAL.contains(&a_datatype) || !TEMPORAL.contains(&b_datatype) {
@@ -5059,10 +4949,7 @@ impl PairComparands {
     /// Returns an error when the lowered path names a slot the walk never handed
     /// out — a defect in this crate, never in a caller's data.
     fn collect(
-        ds: &impl ShaclRead,
-        focus: &FocusNode,
-        other: PairPath<'_>,
-        binding: &DatasetBinding,
+        ds: &impl ShaclRead, focus: &FocusNode, other: PairPath<'_>, binding: &DatasetBinding,
     ) -> Result<Self, crate::error::ShapesError> {
         match other {
             PairPath::Predicate(pred) => Ok(Self::collect_predicate(ds, focus, pred)),
@@ -5234,10 +5121,7 @@ impl<'a> ValueNodeIds<'a> {
 /// returned `Vec` is `Vec::new()` until an offender exists, and `Vec::new()` does
 /// not allocate.
 fn pair_order_offenders(
-    ds: &impl ShaclRead,
-    value_nodes: &[ValueNode],
-    others: &PairComparands,
-    allow_equal: bool,
+    ds: &impl ShaclRead, value_nodes: &[ValueNode], others: &PairComparands, allow_equal: bool,
 ) -> Vec<Term> {
     let ordered = |right: Option<LiteralView<'_>>, left: Option<LiteralView<'_>>| {
         match compare_literal_views(left, right) {
@@ -5282,8 +5166,7 @@ fn pair_order_offenders(
 /// `None` on either side is a NON-LITERAL — an IRI, a blank node or a quoted
 /// triple — which is incomparable by the last rule above.
 fn compare_literal_views(
-    a: Option<LiteralView<'_>>,
-    b: Option<LiteralView<'_>>,
+    a: Option<LiteralView<'_>>, b: Option<LiteralView<'_>>,
 ) -> Option<std::cmp::Ordering> {
     const TEMPORAL: [&str; 3] = [XSD_DATE_TIME, XSD_DATE, XSD_TIME];
 
@@ -5365,8 +5248,7 @@ fn compare_literal_views(
 /// recorded in `docs/CONFORMANCE.md` and pinned by the first-party corpus under
 /// `crates/rdf-core/corpus/xsd-regex/`.
 pub(crate) fn build_regex(
-    pattern: &str,
-    flags: Option<&str>,
+    pattern: &str, flags: Option<&str>,
 ) -> Result<purrdf_core::xsd_regex::CompiledPattern, purrdf_core::xsd_regex::XsdRegexError> {
     purrdf_core::xsd_regex::compile(pattern, flags.unwrap_or(""))
 }
@@ -5612,9 +5494,7 @@ mod tests {
     /// error is a test bug. (An explicitly-defined item shadows the glob
     /// import from `use super::*`.)
     fn validate_shape(
-        store: &Arc<RdfDataset>,
-        focus: &Term,
-        shape: &Shape,
+        store: &Arc<RdfDataset>, focus: &Term, shape: &Shape,
     ) -> Vec<ValidationResult> {
         super::validate_shape(&shacl_data(store), focus, shape)
             .expect("constraint evaluation must not error")
@@ -5629,9 +5509,7 @@ mod tests {
     /// Result-unwrapping shim over [`super::validate_shape_with`], with the
     /// test box-role vocabulary configured.
     fn validate_shape_with_roles(
-        store: &Arc<RdfDataset>,
-        focus: &Term,
-        shape: &Shape,
+        store: &Arc<RdfDataset>, focus: &Term, shape: &Shape,
     ) -> Vec<ValidationResult> {
         validate_shape_with(&shacl_data(store), focus, shape, Some(&meta_vocab()))
             .expect("constraint evaluation must not error")
@@ -8149,10 +8027,7 @@ mod tests {
     // ── Qualified value shapes (§4.5.4–4.5.5) ──────────────────────────────────
 
     fn qualified_constraint(
-        class_local: &str,
-        siblings: Vec<Shape>,
-        min_count: Option<u64>,
-        max_count: Option<u64>,
+        class_local: &str, siblings: Vec<Shape>, min_count: Option<u64>, max_count: Option<u64>,
         disjoint: bool,
     ) -> Constraint {
         Constraint::QualifiedValueShape {

@@ -176,9 +176,7 @@ pub fn compare_failure(case: &SparqlTestCase, message: &str) -> Result<(), Strin
 /// Returns a human-readable mismatch description; `Ok(())` means the results are
 /// equal under the chosen comparison.
 pub fn compare_results(
-    left: &SparqlResult,
-    right: &SparqlResult,
-    ordered: bool,
+    left: &SparqlResult, right: &SparqlResult, ordered: bool,
 ) -> Result<(), CompareError> {
     match (left, right) {
         (SparqlResult::Boolean(l), SparqlResult::Boolean(r)) if l == r => Ok(()),
@@ -302,10 +300,7 @@ impl<'a> EvalRef<'a> {
 /// `SELECT`'s solution rows are then compared as an ordered *sequence* rather
 /// than a multiset (see [`compare_solutions`]).
 fn compare_eval(
-    case: &SparqlTestCase,
-    result: EvalRef<'_>,
-    ordered: bool,
-    query_form: &str,
+    case: &SparqlTestCase, result: EvalRef<'_>, ordered: bool, query_form: &str,
 ) -> Result<(), CompareError> {
     match (&case.expected, result) {
         (ExpectedResult::Srx(path) | ExpectedResult::Srj(path), EvalRef::Boolean(actual)) => {
@@ -387,11 +382,8 @@ fn compare_eval(
 
 /// Apply the manifest's explicit REDUCED cardinality rule, otherwise exact equality.
 fn compare_case_solutions(
-    case: &SparqlTestCase,
-    variables: &[String],
-    rows: &[Vec<Option<TermValue>>],
-    expected: &ParsedSolutions,
-    ordered: bool,
+    case: &SparqlTestCase, variables: &[String], rows: &[Vec<Option<TermValue>>],
+    expected: &ParsedSolutions, ordered: bool,
 ) -> Result<(), CompareError> {
     if !case.lax_cardinality {
         return compare_solutions(variables, rows, expected, ordered);
@@ -497,9 +489,7 @@ fn row_multiplicities(rows: &[Vec<Option<TermValue>>]) -> Vec<(&Vec<Option<TermV
 /// into the canonical output — the comparison becomes an ordered-sequence match
 /// while blank-node identity stays global-bijection-normalized.
 fn compare_solutions(
-    variables: &[String],
-    rows: &[Vec<Option<TermValue>>],
-    expected: &ParsedSolutions,
+    variables: &[String], rows: &[Vec<Option<TermValue>>], expected: &ParsedSolutions,
     ordered: bool,
 ) -> Result<(), CompareError> {
     let actual_canon = encode_solution_set(variables, rows, ordered, Literals::ByValue)?;
@@ -579,10 +569,7 @@ use purrdf_core::datatype::XSD_INTEGER;
 /// subject/predicate position from a crafted fixture) — propagated rather than
 /// panicked, honoring the harness's never-panic intent.
 fn encode_solution_set(
-    variables: &[String],
-    rows: &[Vec<Option<TermValue>>],
-    ordered: bool,
-    literals: Literals,
+    variables: &[String], rows: &[Vec<Option<TermValue>>], ordered: bool, literals: Literals,
 ) -> Result<String, CompareError> {
     let mut builder = RdfDatasetBuilder::new();
     let index_predicate = builder
@@ -652,9 +639,7 @@ fn encode_solution_set(
 /// Returns the freeze diagnostic if the cells do not form a structurally valid
 /// dataset.
 pub fn canonical_solutions(
-    variables: &[String],
-    rows: &[Vec<Option<TermValue>>],
-    ordered: bool,
+    variables: &[String], rows: &[Vec<Option<TermValue>>], ordered: bool,
 ) -> Result<String, CompareError> {
     // Exact: a trace that records this string must see the lexical forms the
     // evaluator produced, so a change in how it spells a number still moves it.
@@ -682,9 +667,7 @@ enum Literals {
 /// A triple term is interned over [`try_fold_nested`]'s work list: its subject,
 /// predicate and object, each fully before the next, then the triple itself.
 fn intern_term_value(
-    builder: &mut RdfDatasetBuilder,
-    term: &TermValue,
-    literals: Literals,
+    builder: &mut RdfDatasetBuilder, term: &TermValue, literals: Literals,
 ) -> Result<TermId, purrdf_lex::allocation::StorageError> {
     try_fold_nested(
         term,

@@ -467,9 +467,7 @@ pub fn media_type_for_path(path: &Path) -> &'static str {
 /// fallback, so the loader holds its list and never a second extension table.
 #[must_use]
 pub fn media_type_for_path_among(
-    path: &Path,
-    accepted: &[&'static str],
-    fallback: &'static str,
+    path: &Path, accepted: &[&'static str], fallback: &'static str,
 ) -> &'static str {
     let guessed = media_type_for_path(path);
     accepted
@@ -480,10 +478,7 @@ pub fn media_type_for_path_among(
 }
 
 fn write_blob_pub_map<W: Write>(
-    writer: &mut W,
-    digest: &str,
-    media_type: Option<&str>,
-    representation: Option<&str>,
+    writer: &mut W, digest: &str, media_type: Option<&str>, representation: Option<&str>,
 ) -> std::io::Result<()> {
     let len = 1 + u64::from(media_type.is_some()) + u64::from(representation.is_some());
     write_head(writer, MAP, len)?;
@@ -500,9 +495,7 @@ fn write_blob_pub_map<W: Write>(
 }
 
 fn copy_counted_and_hash<R: Read, W: Write>(
-    mut reader: R,
-    writer: &mut W,
-    expected_size: u64,
+    mut reader: R, writer: &mut W, expected_size: u64,
 ) -> std::io::Result<(String, u64)> {
     let mut digest = purrdf_hash::blake3::Hasher::new();
     let mut written = 0_u64;
@@ -529,11 +522,7 @@ fn copy_counted_and_hash<R: Read, W: Write>(
 }
 
 fn write_blob_preimage<R: Read, W: Write>(
-    writer: &mut W,
-    reader: R,
-    size: u64,
-    media_type: Option<&str>,
-    representation: Option<&str>,
+    writer: &mut W, reader: R, size: u64, media_type: Option<&str>, representation: Option<&str>,
     prev: &[u8],
 ) -> std::io::Result<String> {
     write_head(writer, MAP, 4)?;
@@ -559,9 +548,7 @@ struct BlobFrameMeta<'a> {
 }
 
 fn write_blob_frame<R: Read, W: Write>(
-    writer: &mut W,
-    reader: R,
-    meta: &BlobFrameMeta<'_>,
+    writer: &mut W, reader: R, meta: &BlobFrameMeta<'_>,
 ) -> std::io::Result<()> {
     write_head(writer, MAP, 5)?;
     write_text(writer, "d")?;
@@ -587,10 +574,7 @@ fn write_blob_frame<R: Read, W: Write>(
 }
 
 fn append_blob_path<W: Write>(
-    writer: &mut W,
-    prev: &mut Vec<u8>,
-    source: &FileBlobSource,
-    expected_digest: &str,
+    writer: &mut W, prev: &mut Vec<u8>, source: &FileBlobSource, expected_digest: &str,
 ) -> Result<(), FileError> {
     let media_type = source.media_type.as_deref();
     let representation = source.representation.as_deref();
@@ -647,10 +631,7 @@ fn append_blob_path<W: Write>(
 }
 
 fn append_blob_bytes<W: Write>(
-    writer: &mut W,
-    prev: &mut Vec<u8>,
-    source: FileBlobBytes<'_>,
-    expected_digest: &str,
+    writer: &mut W, prev: &mut Vec<u8>, source: FileBlobBytes<'_>, expected_digest: &str,
 ) -> Result<(), FileError> {
     let mut hasher = purrdf_hash::blake3::Hasher::new();
     let digest = {
@@ -695,10 +676,7 @@ fn append_blob_bytes<W: Write>(
 }
 
 fn append_blob_range<R: Read + Seek, W: Write>(
-    writer: &mut W,
-    prev: &mut Vec<u8>,
-    reader: &mut R,
-    source: FileBlobRange<'_>,
+    writer: &mut W, prev: &mut Vec<u8>, reader: &mut R, source: FileBlobRange<'_>,
     expected_digest: &str,
 ) -> Result<(), FileError> {
     let mut hasher = purrdf_hash::blake3::Hasher::new();
@@ -758,8 +736,7 @@ fn append_blob_range<R: Read + Seek, W: Write>(
 }
 
 pub(crate) fn digest_blob_range<R: Read + Seek>(
-    reader: &mut R,
-    source: FileBlobRange<'_>,
+    reader: &mut R, source: FileBlobRange<'_>,
 ) -> Result<String, FileError> {
     reader
         .seek(SeekFrom::Start(source.offset))
@@ -953,8 +930,7 @@ pub fn pack_entries_v2(entries: &[FileEntry]) -> Result<Vec<u8>, FileError> {
 
 /// Author an opt-in files-profile v2 archive directly to a writer.
 pub fn pack_entries_v2_to_writer<W: Write>(
-    entries: &[FileEntry],
-    mut output: W,
+    entries: &[FileEntry], mut output: W,
 ) -> Result<(), FileError> {
     let (writer, blobs) = build_entries_v2_prefix(entries)?;
     let mut prev = writer.head().to_vec();
@@ -982,9 +958,7 @@ pub fn pack_entries_v2_to_writer<W: Write>(
 
 /// Author a files-profile v2 archive from typed entries and borrowed blob bytes.
 pub fn pack_entries_v2_with_blob_bytes<W: Write>(
-    entries: &[FileEntry],
-    blob_sources: &BTreeMap<String, FileBlobBytes<'_>>,
-    mut output: W,
+    entries: &[FileEntry], blob_sources: &BTreeMap<String, FileBlobBytes<'_>>, mut output: W,
 ) -> Result<(), FileError> {
     let (writer, _inline_blobs) = build_entries_v2_prefix(entries)?;
     let mut prev = writer.head().to_vec();
@@ -1003,9 +977,7 @@ pub fn pack_entries_v2_with_blob_bytes<W: Write>(
 
 /// Author a files-profile v2 archive from typed entries and seekable blob ranges.
 pub fn pack_entries_v2_with_blob_ranges<R: Read + Seek, W: Write>(
-    entries: &[FileEntry],
-    reader: &mut R,
-    blob_sources: &BTreeMap<String, FileBlobRange<'_>>,
+    entries: &[FileEntry], reader: &mut R, blob_sources: &BTreeMap<String, FileBlobRange<'_>>,
     mut output: W,
 ) -> Result<(), FileError> {
     let (writer, _inline_blobs) = build_entries_v2_prefix(entries)?;
@@ -1029,9 +1001,7 @@ pub fn pack_entries_v2_with_blob_ranges<R: Read + Seek, W: Write>(
 /// still collected and sorted in memory, while regular-file payload frames are
 /// hashed and written from the supplied paths in bounded chunks.
 pub fn pack_entries_v2_with_blob_paths<W: Write>(
-    entries: &[FileEntry],
-    blob_sources: &BTreeMap<String, FileBlobSource>,
-    mut output: W,
+    entries: &[FileEntry], blob_sources: &BTreeMap<String, FileBlobSource>, mut output: W,
 ) -> Result<(), FileError> {
     let (writer, _inline_blobs) = build_entries_v2_prefix(entries)?;
     let mut prev = writer.head().to_vec();
@@ -1404,8 +1374,7 @@ pub fn read_file_entries(
 }
 
 fn read_xattrs(
-    subject: usize,
-    direct: &BTreeMap<usize, BTreeMap<String, String>>,
+    subject: usize, direct: &BTreeMap<usize, BTreeMap<String, String>>,
     links: &BTreeMap<usize, Vec<usize>>,
 ) -> Result<Vec<FileXattr>, FileError> {
     let mut out = Vec::new();
@@ -1434,8 +1403,7 @@ fn read_xattrs(
 }
 
 fn read_pax_records(
-    subject: usize,
-    direct: &BTreeMap<usize, BTreeMap<String, String>>,
+    subject: usize, direct: &BTreeMap<usize, BTreeMap<String, String>>,
     links: &BTreeMap<usize, Vec<usize>>,
 ) -> Result<Vec<FilePaxRecord>, FileError> {
     let mut out = Vec::new();
@@ -1466,8 +1434,7 @@ fn read_pax_records(
 /// The integer at `key`, when present: `size`, `uid` and the device numbers
 /// are `u64`, `mode` is `u32`.
 fn parse_optional_integer<T>(
-    fields: &BTreeMap<String, String>,
-    key: &str,
+    fields: &BTreeMap<String, String>, key: &str,
 ) -> Result<Option<T>, FileError>
 where
     T: std::str::FromStr<Err = core::num::ParseIntError>,
@@ -1613,9 +1580,7 @@ pub fn unpack(graph: &Graph, dest: &Path, include_suppressed: bool) -> Result<()
 
 /// Extract FileEntry quads from a folded graph into dest using an explicit safety policy.
 pub fn unpack_with_options(
-    graph: &Graph,
-    dest: &Path,
-    options: &UnpackOptions,
+    graph: &Graph, dest: &Path, options: &UnpackOptions,
 ) -> Result<(), FileError> {
     let entries = read_entries(graph)?;
     let suppressed = if options.include_suppressed {
@@ -1770,9 +1735,7 @@ pub fn unpack_with_options(
 }
 
 fn write_file_without_following_symlink(
-    target: &Path,
-    data: &[u8],
-    archive_path: &str,
+    target: &Path, data: &[u8], archive_path: &str,
 ) -> Result<(), FileError> {
     let parent = target.parent().ok_or_else(|| FsRefusal::MissingParent {
         path: target.to_path_buf(),
@@ -1987,9 +1950,7 @@ fn create_special_node(target: &Path, entry: &FileEntry) -> Result<(), FileError
 }
 
 fn restore_path_metadata(
-    target: &Path,
-    entry: &FileEntry,
-    options: &UnpackOptions,
+    target: &Path, entry: &FileEntry, options: &UnpackOptions,
 ) -> Result<(), FileError> {
     restore_owner(target, entry, options)?;
 
@@ -2067,9 +2028,7 @@ fn open_for_set_times(target: &Path) -> std::io::Result<fs::File> {
 }
 
 fn restore_owner(
-    _target: &Path,
-    entry: &FileEntry,
-    options: &UnpackOptions,
+    _target: &Path, entry: &FileEntry, options: &UnpackOptions,
 ) -> Result<(), FileError> {
     if options.same_owner && (entry.uid.is_some() || entry.gid.is_some()) {
         return Err(FsRefusal::UnsupportedOwner {

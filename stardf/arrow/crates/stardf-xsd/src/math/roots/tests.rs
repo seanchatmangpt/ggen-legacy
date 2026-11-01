@@ -13,9 +13,7 @@ struct PolynomialSystem {
 
 impl RootSystem2 for PolynomialSystem {
     fn image(
-        &mut self,
-        domain: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, domain: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<RootBox2, MathError> {
         let x = if self.squared {
             domain[0].square(math)?
@@ -30,9 +28,7 @@ impl RootSystem2 for PolynomialSystem {
         Ok([value, domain[1].clone()])
     }
     fn jacobian(
-        &mut self,
-        domain: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, domain: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<RootJacobian2, MathError> {
         let zero = FixedInterval::from_i64(0, math)?;
         let one = FixedInterval::from_i64(1, math)?;
@@ -44,9 +40,7 @@ impl RootSystem2 for PolynomialSystem {
         Ok([[dx, zero.clone()], [zero, one]])
     }
     fn complete(
-        &mut self,
-        enclosure: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, enclosure: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<bool, MathError> {
         for value in enclosure {
             let (lower, upper) = value.round_decimal(15, math)?;
@@ -116,36 +110,28 @@ const LIMITS: RootIsolationLimits = RootIsolationLimits {
 struct ExactBoundarySystem;
 impl RootSystem2 for ExactBoundarySystem {
     fn image(
-        &mut self,
-        domain: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, domain: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<RootBox2, MathError> {
         // This valid outward image hides the exact source-defined root at 0.
         let uncertainty = FixedInterval::from_bounds(Int::from_i128(-1), Int::from_i128(1), math)?;
         Ok([domain[0].add(&uncertainty, math)?, domain[1].clone()])
     }
     fn jacobian(
-        &mut self,
-        _domain: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, _domain: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<RootJacobian2, MathError> {
         let one = FixedInterval::from_i64(1, math)?;
         let zero = FixedInterval::from_i64(0, math)?;
         Ok([[one.clone(), zero.clone()], [zero, one]])
     }
     fn exact_root(
-        &mut self,
-        domain: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, domain: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<Option<RootBox2>, MathError> {
         let zero = FixedInterval::from_i64(0, math)?;
         let witness = [zero.clone(), zero];
         Ok(subset(&witness, domain).then_some(witness))
     }
     fn complete(
-        &mut self,
-        enclosure: &RootBox2,
-        _math: &mut CoordinateMath,
+        &mut self, enclosure: &RootBox2, _math: &mut CoordinateMath,
     ) -> Result<bool, MathError> {
         Ok(enclosure
             .iter()

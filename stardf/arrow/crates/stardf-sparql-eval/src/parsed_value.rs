@@ -64,9 +64,7 @@ impl ParsedValue {
     /// Retain a native result whose actual payload was already admitted by its
     /// operation frame. This factory admits only its newly needed shared control.
     pub(crate) fn from_admitted(
-        value: XsdValue,
-        mut allocation: Option<WorkspaceAllocation>,
-        admitted_bytes: usize,
+        value: XsdValue, mut allocation: Option<WorkspaceAllocation>, admitted_bytes: usize,
     ) -> Result<Self, EvalError> {
         let Some(bytes) = value.owned_heap_bytes() else {
             drop(value);
@@ -113,19 +111,13 @@ impl ParsedValue {
     }
 
     pub(crate) fn parse(
-        lexical: &str,
-        datatype: XsdDatatype,
-        xsd10: bool,
-        workspace: &WorkspaceCapability,
+        lexical: &str, datatype: XsdDatatype, xsd10: bool, workspace: &WorkspaceCapability,
     ) -> Result<Option<Self>, EvalError> {
         Ok(Self::parse_coded(lexical, datatype, xsd10, workspace)?.ok())
     }
 
     pub(crate) fn parse_coded(
-        lexical: &str,
-        datatype: XsdDatatype,
-        xsd10: bool,
-        workspace: &WorkspaceCapability,
+        lexical: &str, datatype: XsdDatatype, xsd10: bool, workspace: &WorkspaceCapability,
     ) -> Result<Result<Self, Option<purrdf_xsd::ErrorCode>>, EvalError> {
         let mut frame = crate::workspace::LexicalFrame::new(workspace);
         let (parsed, live) = {
@@ -189,10 +181,7 @@ impl<K: Copy + Eq + Hash> ParsedCache<K> {
     }
 
     pub(crate) fn insert_admitted(
-        &mut self,
-        key: K,
-        value: Option<ParsedValue>,
-        workspace: &WorkspaceCapability,
+        &mut self, key: K, value: Option<ParsedValue>, workspace: &WorkspaceCapability,
     ) -> Result<(), EvalError> {
         if self.entries.get(&key).is_some() {
             return Ok(());

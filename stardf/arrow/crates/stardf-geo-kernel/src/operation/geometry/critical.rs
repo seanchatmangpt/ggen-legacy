@@ -80,10 +80,7 @@ impl super::OperationChain {
     /// An unresolved critical cell is actually subdivided; an approximate box
     /// can never satisfy this exact preparation request.
     pub(crate) fn visit_exact_area_cells(
-        &self,
-        rings: &Rings,
-        epoch: Option<&Rat>,
-        context: &mut MetricContext,
+        &self, rings: &Rings, epoch: Option<&Rat>, context: &mut MetricContext,
         progress: &mut WorkProgress<'_>,
         mut visit: impl FnMut(
             &[Coord],
@@ -119,9 +116,7 @@ impl super::OperationChain {
 
 impl ImageWorker<'_, '_, '_, '_> {
     pub(super) fn folded_area(
-        &mut self,
-        dim: CoordDim,
-        rings: &Rings,
+        &mut self, dim: CoordDim, rings: &Rings,
     ) -> Result<Geometry, GeoError> {
         if dim != CoordDim::Xy {
             // No interior height/measure interpolation is declared by a polygon
@@ -241,9 +236,7 @@ impl ImageWorker<'_, '_, '_, '_> {
     }
 
     fn visit_source_cells(
-        &mut self,
-        rings: &Rings,
-        goal: CellGoal,
+        &mut self, rings: &Rings, goal: CellGoal,
         mut visit: impl FnMut(&mut Self, &[Coord], ImageCell) -> Result<(), GeoError>,
     ) -> Result<(), GeoError> {
         // Metadata scans, edge-table storage and every original result remain
@@ -265,11 +258,7 @@ impl ImageWorker<'_, '_, '_, '_> {
     }
 
     fn visit_source_cells_inner(
-        &mut self,
-        rings: &Rings,
-        goal: CellGoal,
-        edge_count: u64,
-        temporary: &mut u64,
+        &mut self, rings: &Rings, goal: CellGoal, edge_count: u64, temporary: &mut u64,
         visit: &mut impl FnMut(&mut Self, &[Coord], ImageCell) -> Result<(), GeoError>,
     ) -> Result<(), GeoError> {
         let mut edges = RetainedBuilder::default();
@@ -415,9 +404,7 @@ impl ImageWorker<'_, '_, '_, '_> {
         })()
     }
     fn image_cell(
-        &mut self,
-        vertices: &[Coord],
-        goal: CellGoal,
+        &mut self, vertices: &[Coord], goal: CellGoal,
     ) -> Result<(ImageCell, u64), GeoError> {
         let rectangle = matches!(goal, CellGoal::Exact)
             && crate::atlas::is_rectangle_cycle(vertices, self.context, self.progress)?;
@@ -758,13 +745,9 @@ fn contains_zero(value: &FixedInterval) -> bool {
 /// Retain outward walls only for a complete cell in the canonical nonpolar
 /// angular chart. These proof bounds do not replace its original image curves.
 fn cell_certificate(
-    orientation: i8,
-    (physical_chart, goal): (bool, CellGoal),
-    coordinates: &[FixedInterval],
-    endpoints: Option<[&[FixedInterval]; 2]>,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    orientation: i8, (physical_chart, goal): (bool, CellGoal), coordinates: &[FixedInterval],
+    endpoints: Option<[&[FixedInterval]; 2]>, math: &mut CoordinateMath,
+    progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<AreaCellCertificate, MathError> {
     let bounds = if matches!(goal, CellGoal::Exact) && physical_chart {
         let west_limit = FixedInterval::from_i64(-180, math)?;
@@ -842,8 +825,7 @@ fn weak_diagonal_monotonicity(jac: &RootJacobian2) -> bool {
     })
 }
 fn certify_injective_box(
-    jac: &RootJacobian2,
-    math: &mut CoordinateMath,
+    jac: &RootJacobian2, math: &mut CoordinateMath,
 ) -> Result<Option<i8>, MathError> {
     let determinant = jac[0][0]
         .mul(&jac[1][1], math)?
@@ -881,9 +863,7 @@ fn certify_injective_box(
     }))
 }
 fn cell_bounds<'a>(
-    vertices: &'a [Coord],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    vertices: &'a [Coord], context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<[&'a Rat; 4], GeoError> {
     let first = vertices.first().expect("nonempty original convex cell");
     let mut bounds = [first.x(), first.x(), first.y(), first.y()];
@@ -903,9 +883,7 @@ fn cell_bounds<'a>(
     Ok(bounds)
 }
 fn cell_operands<'a>(
-    vertices: &'a [Coord],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    vertices: &'a [Coord], context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<purrdf_core::SmallVec<[&'a Rat; 16]>, GeoError> {
     // The original arrangement produces convex quadrilaterals. Subsequent
     // x/y cuts add at most the four supporting walls of an axis-aligned box,
@@ -923,11 +901,8 @@ fn cell_operands<'a>(
 }
 
 fn split_owned(
-    vertices: &[Coord],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
-    critical_chain: Option<&super::OperationChain>,
+    vertices: &[Coord], context: &mut MetricContext, progress: &mut WorkProgress<'_>,
+    retained: &mut u64, critical_chain: Option<&super::OperationChain>,
 ) -> Result<[Cell; 2], GeoError> {
     let _ = cell_operands(vertices, context, progress)?;
     let mut temporary = 0;
@@ -981,12 +956,8 @@ fn split_owned(
 }
 
 fn split(
-    vertices: &[Coord],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
-    storage: &mut [u64; 2],
-    critical_chain: Option<&super::OperationChain>,
+    vertices: &[Coord], context: &mut MetricContext, progress: &mut WorkProgress<'_>,
+    retained: &mut u64, storage: &mut [u64; 2], critical_chain: Option<&super::OperationChain>,
 ) -> Result<[RetainedBuilder<Coord>; 2], GeoError> {
     let bounds = cell_bounds(vertices, context, progress)?;
     let critical = if let Some(chain) = critical_chain
@@ -1122,9 +1093,7 @@ fn split(
     Ok(halves)
 }
 fn copy_coord(
-    point: &Coord,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    point: &Coord, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     retained: Option<&mut u64>,
 ) -> Result<Coord, GeoError> {
     let mut admission = ExactAdmission::new(context, progress);
@@ -1148,8 +1117,7 @@ fn copy_coord(
 }
 
 fn normalize_cell(
-    vertices: &mut RetainedBuilder<Coord>,
-    context: &mut MetricContext,
+    vertices: &mut RetainedBuilder<Coord>, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     vertices.dedup_by(|last, point| {

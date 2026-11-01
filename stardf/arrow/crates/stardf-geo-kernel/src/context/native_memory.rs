@@ -49,8 +49,7 @@ impl Admission for PolicyAdmission<'_, '_> {
 /// or buffer implementation is created. Native Memory records each allocation
 /// before birth and each refund after destruction.
 pub(crate) fn with_policy_memory<T>(
-    context: &RefCell<&mut MetricContext>,
-    outer: &mut Memory<'_, dyn Admission + '_>,
+    context: &RefCell<&mut MetricContext>, outer: &mut Memory<'_, dyn Admission + '_>,
     body: impl FnOnce(&mut Memory<'_, dyn Admission + '_>) -> Result<T, GeoError>,
 ) -> Result<T, GeoError> {
     outer.with_account(|native, admitted| {
@@ -76,9 +75,7 @@ pub(crate) fn with_policy_memory<T>(
 
 /// Continue an already owned native buffer account under the same policy.
 pub(crate) fn native_memory<T>(
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    resident: &mut usize,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>, resident: &mut usize,
     body: impl FnOnce(&mut Memory<'_, dyn Admission + '_>) -> Result<T, GeoError>,
 ) -> Result<T, GeoError> {
     let (result, admitted) = progress

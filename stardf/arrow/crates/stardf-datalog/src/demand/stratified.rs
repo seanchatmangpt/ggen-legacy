@@ -15,11 +15,8 @@ use crate::dictionary::{DictionaryError, DictionaryTerm};
 use purrdf_lex::allocation::{Memory, Resident};
 
 pub(super) fn evaluate<D: TermDictionary, const N: usize>(
-    rules: &[DlClause<N>],
-    goal: &ClauseAtom<N>,
-    mut edb: RelationStore<D, N>,
-    options: &EvalOptions,
-    stop: Option<&dyn StopSignal>,
+    rules: &[DlClause<N>], goal: &ClauseAtom<N>, mut edb: RelationStore<D, N>,
+    options: &EvalOptions, stop: Option<&dyn StopSignal>,
 ) -> Result<DemandAnswer<D, N>, DemandError<D::Error>>
 where
     Arity<N>: StoreShape<N>,
@@ -100,10 +97,7 @@ fn shadow<const N: usize>(atom: &ClauseAtom<N>, shadows: &BTreeMap<&str, &str>) 
 }
 
 fn transform_exact<const N: usize>(
-    rules: &[DlClause<N>],
-    goal: &ClauseAtom<N>,
-    descriptors: &[Descriptor],
-    names: &[String],
+    rules: &[DlClause<N>], goal: &ClauseAtom<N>, descriptors: &[Descriptor], names: &[String],
     shadows: &BTreeMap<&str, &str>,
 ) -> Vec<DlClause<N>> {
     // Namespace allocation always reserves the final ordinal for the unit.
@@ -171,8 +165,7 @@ fn transform_exact<const N: usize>(
 }
 
 fn seed<D: TermDictionary, const N: usize>(
-    edb: &mut RelationStore<D, N>,
-    shadows: &BTreeMap<&str, &str>,
+    edb: &mut RelationStore<D, N>, shadows: &BTreeMap<&str, &str>,
 ) -> Result<Preparation, DemandError<D::Error>>
 where
     Arity<N>: StoreShape<N>,

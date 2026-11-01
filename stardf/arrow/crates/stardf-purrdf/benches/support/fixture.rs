@@ -124,5 +124,5 @@ pub(crate) fn serialize_json(result: &SparqlResult) -> Vec<u8> {
     .bytes
 }
 
+use purrdf::SparqlRequest;
 use purrdf::sparql::{ResultProvenance, SparqlResult, SparqlResultsFormat, serialize};
-use purrdf::{SparqlRequest, parse_dataset};

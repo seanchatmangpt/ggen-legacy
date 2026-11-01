@@ -67,9 +67,7 @@ impl RdfLiteral {
     /// Refuses missing language tags, datatype/direction mismatches, and any
     /// language tag the grammar does not accept — including the empty tag.
     pub fn validate_components(
-        datatype: &str,
-        language: Option<&str>,
-        direction: Option<RdfTextDirection>,
+        datatype: &str, language: Option<&str>, direction: Option<RdfTextDirection>,
     ) -> Result<(), &'static str> {
         Self::diagnose_components(datatype, language, direction).map_err(|(_code, message)| message)
     }
@@ -83,9 +81,7 @@ impl RdfLiteral {
     /// under the grammar's OWN code rather than collapsing every literal refusal
     /// into one.
     pub(crate) fn diagnose_components(
-        datatype: &str,
-        language: Option<&str>,
-        direction: Option<RdfTextDirection>,
+        datatype: &str, language: Option<&str>, direction: Option<RdfTextDirection>,
     ) -> Result<(), (&'static str, &'static str)> {
         if let Some(language) = language {
             // The grammar first: a datatype/direction mismatch on a tag that is
@@ -240,8 +236,7 @@ impl RdfTerm {
     ///
     /// The first error `leaf`, `predicate` or `triple` returns.
     pub fn try_fold<T, E>(
-        &self,
-        mut leaf: impl FnMut(&Self) -> Result<T, E>,
+        &self, mut leaf: impl FnMut(&Self) -> Result<T, E>,
         mut predicate: impl FnMut(&str) -> Result<T, E>,
         mut triple: impl FnMut(T, T, T) -> Result<T, E>,
     ) -> Result<T, E> {

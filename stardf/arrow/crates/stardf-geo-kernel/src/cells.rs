@@ -87,9 +87,7 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Refuses invalid resolution or incomplete integer resource admission.
     pub fn physical_scale_bounds_in_policy(
-        self,
-        level: u8,
-        policy: ExecutionPolicy,
+        self, level: u8, policy: ExecutionPolicy,
     ) -> Result<CellScaleBounds, GeoError> {
         physical_scale_bounds_in_policy(&self.profile.ellipsoid(), level, policy)
     }
@@ -98,10 +96,7 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Adds observer refusal to complete scale admission.
     pub fn physical_scale_bounds_in_policy_metered(
-        self,
-        level: u8,
-        policy: ExecutionPolicy,
-        observer: &mut dyn MetricWorkObserver,
+        self, level: u8, policy: ExecutionPolicy, observer: &mut dyn MetricWorkObserver,
     ) -> Result<CellScaleBounds, GeoError> {
         physical_scale_bounds_in_policy_metered(&self.profile.ellipsoid(), level, policy, observer)
     }
@@ -110,10 +105,7 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Preserves invalid target, level and complete resource refusals.
     pub fn physical_scale_bounds_and_level_in_policy(
-        self,
-        level: u8,
-        target: Option<&Metres>,
-        policy: ExecutionPolicy,
+        self, level: u8, target: Option<&Metres>, policy: ExecutionPolicy,
     ) -> Result<(CellScaleBounds, Option<u8>), GeoError> {
         physical_scale_bounds_and_level_in_policy(&self.profile.ellipsoid(), level, target, policy)
     }
@@ -122,10 +114,7 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Preserves complete scale/selection admission and observer refusal.
     pub fn physical_scale_bounds_and_level_in_policy_metered(
-        self,
-        level: u8,
-        target: Option<&Metres>,
-        policy: ExecutionPolicy,
+        self, level: u8, target: Option<&Metres>, policy: ExecutionPolicy,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<(CellScaleBounds, Option<u8>), GeoError> {
         physical_scale_bounds_and_level_in_policy_metered(
@@ -141,9 +130,7 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Refuses invalid target or incomplete integer resource admission.
     pub fn level_for_max_edge_length_in_policy(
-        self,
-        target: &Metres,
-        policy: ExecutionPolicy,
+        self, target: &Metres, policy: ExecutionPolicy,
     ) -> Result<u8, GeoError> {
         level_for_max_edge_length_in_policy(&self.profile.ellipsoid(), target, policy)
     }
@@ -152,10 +139,7 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Adds observer refusal to complete physical target admission.
     pub fn level_for_max_edge_length_in_policy_metered(
-        self,
-        target: &Metres,
-        policy: ExecutionPolicy,
-        observer: &mut dyn MetricWorkObserver,
+        self, target: &Metres, policy: ExecutionPolicy, observer: &mut dyn MetricWorkObserver,
     ) -> Result<u8, GeoError> {
         level_for_max_edge_length_in_policy_metered(
             &self.profile.ellipsoid(),
@@ -186,10 +170,7 @@ impl CubeHilbertQ62V1 {
     ///
     /// Refuses an invalid level, mismatched output length or arithmetic failure.
     pub fn assign_batch(
-        self,
-        points: &[LonLat],
-        level: u8,
-        output: &mut [CellId],
+        self, points: &[LonLat], level: u8, output: &mut [CellId],
     ) -> Result<(), GeoError> {
         self.assign_batch_with(points.iter(), level, output, &mut fixed::PureAssignment)
     }
@@ -200,10 +181,7 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Adds complete work, memory and output refusal to [`Self::assign`].
     pub fn assign_in_policy(
-        self,
-        point: &LonLat,
-        level: u8,
-        policy: ExecutionPolicy,
+        self, point: &LonLat, level: u8, policy: ExecutionPolicy,
     ) -> Result<CellId, GeoError> {
         self.assign_in_admission(point, level, policy, None)
     }
@@ -213,20 +191,14 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Adds observer refusal to [`Self::assign_in_policy`].
     pub fn assign_in_policy_metered(
-        self,
-        point: &LonLat,
-        level: u8,
-        policy: ExecutionPolicy,
+        self, point: &LonLat, level: u8, policy: ExecutionPolicy,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<CellId, GeoError> {
         self.assign_in_admission(point, level, policy, Some(observer))
     }
 
     fn assign_in_admission(
-        self,
-        point: &LonLat,
-        level: u8,
-        policy: ExecutionPolicy,
+        self, point: &LonLat, level: u8, policy: ExecutionPolicy,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<CellId, GeoError> {
         let mut admission = assignment_admission(policy, 1, observer)?;
@@ -244,10 +216,7 @@ impl CubeHilbertQ62V1 {
     /// On a later arithmetic or dishonest iterator error, earlier buffer slots
     /// may have been written; callers publish the buffer only after success.
     pub fn assign_batch_in_policy<'a>(
-        self,
-        points: impl ExactSizeIterator<Item = &'a LonLat>,
-        level: u8,
-        output: &mut [CellId],
+        self, points: impl ExactSizeIterator<Item = &'a LonLat>, level: u8, output: &mut [CellId],
         policy: ExecutionPolicy,
     ) -> Result<(), GeoError> {
         self.assign_batch_in_admission(points, level, output, policy, None)
@@ -258,23 +227,15 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Adds cancellation/observer refusal to [`Self::assign_batch_in_policy`].
     pub fn assign_batch_in_policy_metered<'a>(
-        self,
-        points: impl ExactSizeIterator<Item = &'a LonLat>,
-        level: u8,
-        output: &mut [CellId],
-        policy: ExecutionPolicy,
-        observer: &mut dyn MetricWorkObserver,
+        self, points: impl ExactSizeIterator<Item = &'a LonLat>, level: u8, output: &mut [CellId],
+        policy: ExecutionPolicy, observer: &mut dyn MetricWorkObserver,
     ) -> Result<(), GeoError> {
         self.assign_batch_in_admission(points, level, output, policy, Some(observer))
     }
 
     fn assign_batch_in_admission<'a>(
-        self,
-        points: impl ExactSizeIterator<Item = &'a LonLat>,
-        level: u8,
-        output: &mut [CellId],
-        policy: ExecutionPolicy,
-        observer: Option<&mut dyn MetricWorkObserver>,
+        self, points: impl ExactSizeIterator<Item = &'a LonLat>, level: u8, output: &mut [CellId],
+        policy: ExecutionPolicy, observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<(), GeoError> {
         let mut admission = assignment_admission(policy, points.len(), observer)?;
         self.assign_batch_with(points, level, output, &mut admission)?;
@@ -282,11 +243,8 @@ impl CubeHilbertQ62V1 {
     }
 
     fn assign_batch_with<'a>(
-        self,
-        mut points: impl ExactSizeIterator<Item = &'a LonLat>,
-        level: u8,
-        output: &mut [CellId],
-        admission: &mut impl fixed::IntegerAdmission,
+        self, mut points: impl ExactSizeIterator<Item = &'a LonLat>, level: u8,
+        output: &mut [CellId], admission: &mut impl fixed::IntegerAdmission,
     ) -> Result<(), GeoError> {
         validate_level(level)?;
         let expected = points.len();
@@ -315,18 +273,13 @@ impl CubeHilbertQ62V1 {
         Self::assign_leaf_admitted(point, profile, &mut fixed::PureAssignment)
     }
     fn assign_admitted(
-        self,
-        point: &LonLat,
-        level: u8,
-        admission: &mut impl fixed::IntegerAdmission,
+        self, point: &LonLat, level: u8, admission: &mut impl fixed::IntegerAdmission,
     ) -> Result<CellId, GeoError> {
         validate_level(level)?;
         Self::assign_leaf_admitted(point, self.profile_id(), admission)?.ancestor(level)
     }
     fn assign_leaf_admitted(
-        point: &LonLat,
-        profile: GridProfileId,
-        admission: &mut impl fixed::IntegerAdmission,
+        point: &LonLat, profile: GridProfileId, admission: &mut impl fixed::IntegerAdmission,
     ) -> Result<CellId, GeoError> {
         // At most fifty fixed-width rounded products, sixty-two exact bin trials,
         // thirty Hilbert digits, six face trials and bounded encoding remain.
@@ -358,9 +311,7 @@ impl CubeHilbertQ62V1 {
 }
 
 fn assignment_admission(
-    policy: ExecutionPolicy,
-    count: usize,
-    observer: Option<&mut dyn MetricWorkObserver>,
+    policy: ExecutionPolicy, count: usize, observer: Option<&mut dyn MetricWorkObserver>,
 ) -> Result<cover::CoverBudget<'_>, GeoError> {
     let metered = observer.is_some();
     let mut progress = crate::context::WorkProgress::integer(observer);

@@ -160,11 +160,7 @@ impl<'a> OkfWriter<'a> {
     }
 
     fn push_annotation(
-        &mut self,
-        reifier: TermId,
-        predicate: TermId,
-        object: TermId,
-        graph: Option<TermId>,
+        &mut self, reifier: TermId, predicate: TermId, object: TermId, graph: Option<TermId>,
     ) {
         let ordinal = self.annotations.len();
         self.annotations.push(AnnotationEvent {
@@ -219,11 +215,7 @@ impl RdfDatasetVisitor for OkfWriter<'_> {
     }
 
     fn annotation_in_graph(
-        &mut self,
-        reifier: TermId,
-        predicate: TermId,
-        object: TermId,
-        graph: Option<TermId>,
+        &mut self, reifier: TermId, predicate: TermId, object: TermId, graph: Option<TermId>,
     ) {
         if self.stream_error.is_none() {
             self.push_annotation(reifier, predicate, object, graph);
@@ -237,8 +229,7 @@ impl RdfDatasetVisitor for OkfWriter<'_> {
 ///
 /// Returns the same [`OkfError`] conditions as [`OkfWriter::finish`].
 pub fn write_okf_bundle(
-    dataset: &RdfDataset,
-    config: &OkfConfig,
+    dataset: &RdfDataset, config: &OkfConfig,
 ) -> Result<OkfWriteOutcome, OkfError> {
     let mut writer = OkfWriter::new(config);
     dataset.emit(&mut writer);
@@ -256,10 +247,7 @@ struct DocumentAccumulator {
 
 /// Fill a subject's single-valued `what` slot, refusing a second value.
 fn set_once(
-    slot: &mut Option<String>,
-    value: String,
-    subject: TermId,
-    what: &str,
+    slot: &mut Option<String>, value: String, subject: TermId, what: &str,
 ) -> Result<(), OkfError> {
     if slot.replace(value).is_some() {
         return Err(OkfError::new(format!(
@@ -335,11 +323,8 @@ struct Projector<'a> {
 
 impl<'a> Projector<'a> {
     fn new(
-        config: &'a OkfConfig,
-        terms: Vec<OwnedTerm>,
-        quads: Vec<(usize, QuadIds)>,
-        reifiers: Vec<ReifierEvent>,
-        annotations: Vec<AnnotationEvent>,
+        config: &'a OkfConfig, terms: Vec<OwnedTerm>, quads: Vec<(usize, QuadIds)>,
+        reifiers: Vec<ReifierEvent>, annotations: Vec<AnnotationEvent>,
     ) -> Self {
         Self {
             config,
@@ -477,8 +462,7 @@ impl<'a> Projector<'a> {
     }
 
     fn finalize_documents(
-        &self,
-        documents: BTreeMap<TermId, DocumentAccumulator>,
+        &self, documents: BTreeMap<TermId, DocumentAccumulator>,
     ) -> Result<BTreeMap<String, FinalDocument>, OkfError> {
         let mut by_path = BTreeMap::new();
         for (_, mut document) in documents {
@@ -548,8 +532,7 @@ impl<'a> Projector<'a> {
     }
 
     fn expected_links(
-        &self,
-        documents: &BTreeMap<String, FinalDocument>,
+        &self, documents: &BTreeMap<String, FinalDocument>,
     ) -> Result<Vec<ExpectedLink>, OkfError> {
         let subjects: BTreeMap<&str, TermId> = documents
             .iter()
@@ -580,9 +563,7 @@ impl<'a> Projector<'a> {
     }
 
     fn reconcile_link_quads(
-        &mut self,
-        link_quads: &[(usize, QuadIds)],
-        expected_links: &[ExpectedLink],
+        &mut self, link_quads: &[(usize, QuadIds)], expected_links: &[ExpectedLink],
     ) -> Result<(), OkfError> {
         let expected_pairs: BTreeSet<(TermId, TermId)> = expected_links
             .iter()
@@ -623,8 +604,7 @@ impl<'a> Projector<'a> {
     }
 
     fn reconcile_statement_layer(
-        &mut self,
-        expected_links: &[ExpectedLink],
+        &mut self, expected_links: &[ExpectedLink],
     ) -> Result<(), OkfError> {
         let expected_by_label: BTreeMap<String, &ExpectedLink> = expected_links
             .iter()
@@ -701,9 +681,7 @@ impl<'a> Projector<'a> {
     }
 
     fn match_link_reifier(
-        &self,
-        reifier: &ReifierEvent,
-        expected_by_label: &BTreeMap<String, &ExpectedLink>,
+        &self, reifier: &ReifierEvent, expected_by_label: &BTreeMap<String, &ExpectedLink>,
         annotations_by_reifier: &BTreeMap<TermId, Vec<AnnotationEvent>>,
         matched_labels: &BTreeSet<String>,
     ) -> Result<Option<(String, Vec<usize>)>, OkfError> {
@@ -767,8 +745,7 @@ impl<'a> Projector<'a> {
     }
 
     fn render_bundle(
-        &self,
-        documents: BTreeMap<String, FinalDocument>,
+        &self, documents: BTreeMap<String, FinalDocument>,
     ) -> Result<OkfBundle, OkfError> {
         let mut bundle = OkfBundle::default();
         for (path, document) in documents {
@@ -901,10 +878,7 @@ impl<'a> Projector<'a> {
     }
 
     fn plain_literal(
-        &self,
-        id: TermId,
-        expected_datatype: &str,
-        label: &str,
+        &self, id: TermId, expected_datatype: &str, label: &str,
     ) -> Result<&str, OkfError> {
         let OwnedTerm::Literal {
             lexical,
@@ -1000,10 +974,7 @@ fn parse_known_xsd(lexical: &str, datatype: &str) -> Result<purrdf_xsd::XsdValue
 
 fn validate_yaml_fields(fields: &BTreeMap<String, YamlValue>, path: &str) -> Result<(), OkfError> {
     fn visit(
-        value: &YamlValue,
-        depth: usize,
-        nodes: &mut usize,
-        path: &str,
+        value: &YamlValue, depth: usize, nodes: &mut usize, path: &str,
     ) -> Result<(), OkfError> {
         if depth > super::MAX_OKF_YAML_DEPTH {
             return Err(OkfError::new(format!(
@@ -1054,12 +1025,8 @@ fn term_subject(terms: &[OwnedTerm], subject: TermId) -> String {
 /// Record the writer loss `code` (with its contract `note`) for the `kind`
 /// event at `ordinal`, located on its subject term.
 fn record_writer_loss(
-    ledger: &mut LossLedger,
-    terms: &[OwnedTerm],
-    (kind, ordinal): (&str, usize),
-    subject: TermId,
-    code: &'static str,
-    note: &'static str,
+    ledger: &mut LossLedger, terms: &[OwnedTerm], (kind, ordinal): (&str, usize), subject: TermId,
+    code: &'static str, note: &'static str,
 ) {
     ledger.record(LossEntry {
         code: Cow::Borrowed(code),

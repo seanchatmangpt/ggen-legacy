@@ -133,8 +133,7 @@ impl ProvenanceNamespace {
     ///   and `xmlns:{prefix}="{iri}"` has no defined behavior for a relative
     ///   `iri` in the XML Namespaces spec.
     pub fn new(
-        prefix: impl Into<String>,
-        iri: impl Into<String>,
+        prefix: impl Into<String>, iri: impl Into<String>,
     ) -> Result<Self, crate::error::Error> {
         let prefix = prefix.into();
         let iri = iri.into();

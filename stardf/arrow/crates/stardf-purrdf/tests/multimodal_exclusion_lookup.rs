@@ -131,8 +131,7 @@ fn vector_space() -> Arc<HnswSpace> {
 /// function touches is `exclusion`, which is what makes the two runs below a differential
 /// pair rather than two different registrations.
 fn registry(
-    dataset: &RdfDataset,
-    basis: ExclusionBasis,
+    dataset: &RdfDataset, basis: ExclusionBasis,
 ) -> (
     PropertyFunctionRegistry<'static>,
     Arc<SearchObservations>,

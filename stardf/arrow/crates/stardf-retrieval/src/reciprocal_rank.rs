@@ -182,9 +182,7 @@ pub fn weighted_contribution(weight: Score, rank: u64, k: u32) -> Result<Score, 
 /// Whatever the selected rule refuses: see [`contribution`] and
 /// [`weighted_contribution`].
 pub fn contribution_under(
-    decay: DecayRule,
-    weight: Score,
-    rank: u64,
+    decay: DecayRule, weight: Score, rank: u64,
 ) -> Result<Score, FusionError> {
     match decay {
         DecayRule::ReciprocalRank { k } => contribution(weight, rank, k),
@@ -465,10 +463,7 @@ impl CrossingRank {
 /// positive, [`FusionError::Overflow`] if the sum leaves the fixed-point range,
 /// and whatever [`contribution_under`] refuses for the rank.
 pub fn threshold_at(
-    decay: DecayRule,
-    precision: Precision,
-    weights: &[Score],
-    rank: u64,
+    decay: DecayRule, precision: Precision, weights: &[Score], rank: u64,
 ) -> Result<Score, FusionError> {
     // Even an empty sum is evaluated under a real law and a positive rank.
     denominator(rank, decay.k())?;
@@ -528,11 +523,7 @@ pub fn threshold_at(
 /// Whatever [`threshold_at`] refuses — a non-positive weight in either list, a
 /// rank the rule cannot evaluate, or an out-of-range sum.
 pub fn crossing_rank_at(
-    decay: DecayRule,
-    precision: Precision,
-    naming: &[Score],
-    at_rank: u64,
-    sharing: &[Score],
+    decay: DecayRule, precision: Precision, naming: &[Score], at_rank: u64, sharing: &[Score],
 ) -> Result<CrossingRank, FusionError> {
     let lower = threshold_at(decay, precision, naming, at_rank)?;
     // The shallow end first, so a candidate every sharer named — the ordinary
@@ -669,10 +660,7 @@ pub(crate) fn monotone_depth(decay: DecayRule, weight: Score) -> Result<u64, Fus
 /// claim this function can make — "every adjacent pair below here is distinct" —
 /// at exactly the point where no pair was compared at all.
 fn first_collision(
-    weight: Score,
-    k: u32,
-    start: u64,
-    value: fn(Score, u64, u32) -> Result<Score, FusionError>,
+    weight: Score, k: u32, start: u64, value: fn(Score, u64, u32) -> Result<Score, FusionError>,
 ) -> Result<u64, FusionError> {
     let mut rank = start;
     let mut current = value(weight, rank, k)?;
@@ -731,9 +719,7 @@ fn first_collision(
 /// it because the arithmetic failed would be a false claim about the quality of
 /// an answer, made exactly where no answer was computed at all.
 pub(crate) fn class_width(
-    decay: DecayRule,
-    weight: Score,
-    rank: u64,
+    decay: DecayRule, weight: Score, rank: u64,
 ) -> Result<ClassWidth, FusionError> {
     // The law before the question, and stated here rather than left to the
     // anchor's own arithmetic: the three entry points over this file must agree
@@ -888,9 +874,7 @@ pub(crate) fn class_width(
 /// measured to deliver, and returning it as one would quote a resolution
 /// nothing established.
 pub(crate) fn deepest_rank_within_width(
-    decay: DecayRule,
-    weight: Score,
-    max_width: u64,
+    decay: DecayRule, weight: Score, max_width: u64,
 ) -> Result<ToleratedDepth, FusionError> {
     // The law before the question. [`monotone_depth`] below refuses an unusable
     // constant too, so this is not what makes the refusal reachable; it is what
@@ -1335,9 +1319,7 @@ fn heaviest_counting_bound(decay: DecayRule, scale: u128, narrowest: u64, widest
 /// candidate steps between the bound and it are correspondingly fine and there
 /// are a great many of them.
 pub(crate) fn minimum_weight_for_depth(
-    decay: DecayRule,
-    precision: Precision,
-    depth: u64,
+    decay: DecayRule, precision: Precision, depth: u64,
 ) -> Result<Score, FusionError> {
     // The law before the question. A rule with a zero smoothing constant is not
     // a rule to price a depth under, and the two ways this reads without the

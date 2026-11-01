@@ -165,8 +165,7 @@ impl<D> Inference<D> {
 
     /// One classification/publication pass for either inferred-only carrier.
     fn publish_inferred<B: rules::RuleFactSink>(
-        &self,
-        builder: B,
+        &self, builder: B,
     ) -> Result<Arc<B::Dataset>, crate::error::ShapesError> {
         let reifiers = rules::reifier_subjects(self.inferred.iter());
         rules::publish_inference(builder, &self.inferred, &[], &reifiers)
@@ -283,10 +282,7 @@ inference_dataset!(TripleDataset, TripleDatasetBuilder);
 /// that fails, a rule-evaluation limit passed (naming the host's knob that raises it), or
 /// the fixed term-arena ceiling passed — each named by the rule it concerns.
 pub fn evaluate(
-    set: &RuleSet<'_>,
-    data: &ShaclData,
-    shapes: &Shapes,
-    options: &rules::RuleOptions,
+    set: &RuleSet<'_>, data: &ShaclData, shapes: &Shapes, options: &rules::RuleOptions,
 ) -> Result<Inference, rules::RulesError> {
     evaluate_with(set, data, shapes, options, Reexecution::Incremental, None)
 }
@@ -306,12 +302,8 @@ pub(crate) enum Reexecution {
 
 /// [`evaluate`], re-executing shape rules as `reexecution` says.
 pub(crate) fn evaluate_with(
-    set: &RuleSet<'_>,
-    data: &ShaclData,
-    shapes: &Shapes,
-    options: &rules::RuleOptions,
-    reexecution: Reexecution,
-    stop: Option<&dyn purrdf_core::StopSignal>,
+    set: &RuleSet<'_>, data: &ShaclData, shapes: &Shapes, options: &rules::RuleOptions,
+    reexecution: Reexecution, stop: Option<&dyn purrdf_core::StopSignal>,
 ) -> Result<Inference, rules::RulesError> {
     evaluate_shape::<4, RdfDataset, _>(set, shapes, options, reexecution, stop, || {
         let base = data.core_arc()?;
@@ -339,9 +331,7 @@ pub(crate) fn evaluate_with(
 /// Parsed RL documents contain Elements, never SHACL Producer guards or expected
 /// predicates. Their expression guards use the existing empty expression context.
 pub(crate) fn evaluate_triples(
-    set: &RuleSet<'_>,
-    base: &TripleRead<'_>,
-    options: &rules::RuleOptions,
+    set: &RuleSet<'_>, base: &TripleRead<'_>, options: &rules::RuleOptions,
     stop: Option<&dyn purrdf_core::StopSignal>,
 ) -> Result<Inference<TripleDataset>, rules::RulesError> {
     evaluate_shape::<3, TripleDataset, _>(
@@ -402,10 +392,7 @@ struct PreparedRuleSource<'a, F> {
 
 /// Evaluate the selected physical carrier through the same rule and guard engine.
 fn evaluate_shape<'a, const N: usize, D, F>(
-    set: &RuleSet<'_>,
-    shapes: &Shapes,
-    options: &rules::RuleOptions,
-    reexecution: Reexecution,
+    set: &RuleSet<'_>, shapes: &Shapes, options: &rules::RuleOptions, reexecution: Reexecution,
     stop: Option<&dyn purrdf_core::StopSignal>,
     prepare: impl FnOnce() -> Result<PreparedRuleSource<'a, F>, rules::RulesError>,
 ) -> Result<Inference<D>, rules::RulesError>
@@ -682,8 +669,7 @@ where
 
 /// Keep publication cancellation on the same native stopped-error path.
 fn check_stop(
-    stop: Option<&dyn purrdf_core::StopSignal>,
-    usage: &purrdf_datalog::seminaive::BudgetReport,
+    stop: Option<&dyn purrdf_core::StopSignal>, usage: &purrdf_datalog::seminaive::BudgetReport,
 ) -> Result<(), rules::RulesError> {
     if purrdf_core::governor::is_stopped(stop) {
         return Err(rules::RulesError::Stopped {
@@ -950,10 +936,7 @@ struct LiveView {
 impl LiveView {
     /// A view with no delta over the compacted `core` and `sparql` datasets.
     fn compacted<const N: usize>(
-        generation: u64,
-        rows: u64,
-        core: Arc<RdfDataset>,
-        sparql: Arc<RdfDataset>,
+        generation: u64, rows: u64, core: Arc<RdfDataset>, sparql: Arc<RdfDataset>,
         engine: &Engine<'_, '_, N>,
     ) -> Result<Self, crate::error::ShapesError>
     where
@@ -1136,9 +1119,7 @@ where
 
     /// The evaluation graph rebuilt from the whole store.
     fn compact(
-        &self,
-        model: &RuleStore<N>,
-        generation: u64,
+        &self, model: &RuleStore<N>, generation: u64,
     ) -> Result<LiveView, crate::error::ShapesError> {
         let facts = self.model_facts(model)?;
         let reifiers = rules::reifier_subjects(facts.iter());
@@ -1160,9 +1141,7 @@ where
     /// `view` extended by the store rows committed since it was built, or `None` when
     /// they call for a compaction (see [`Self::view`]).
     fn extend(
-        &self,
-        view: &mut LiveView,
-        model: &RuleStore<N>,
+        &self, view: &mut LiveView, model: &RuleStore<N>,
     ) -> Result<Option<Rc<ShaclData>>, crate::error::ShapesError> {
         let rows = model.row_slots();
         let reifies = Term::NamedNode(NamedNode::from(rdf::REIFIES));
@@ -1285,8 +1264,7 @@ where
     Arity<N>: RuleShape<N>,
 {
     fn evaluate(
-        &self,
-        call: &GuardCall<'_, TermInterner, N>,
+        &self, call: &GuardCall<'_, TermInterner, N>,
     ) -> Result<purrdf_datalog::guard::GuardRows, purrdf_datalog::guard::CallbackError> {
         let implementation = self
             .guards
@@ -1397,11 +1375,8 @@ where
     ///
     /// An internal-invariant breach: a store surface the codec never saw.
     fn focus_selection<'m>(
-        &self,
-        records: &'m mut FastMap<usize, Option<ProducerRecord>>,
-        rule: usize,
-        producer: &super::ir::ShaclProducer<'_>,
-        model: &RuleStore<N>,
+        &self, records: &'m mut FastMap<usize, Option<ProducerRecord>>, rule: usize,
+        producer: &super::ir::ShaclProducer<'_>, model: &RuleStore<N>,
     ) -> Result<rules::FocusSelection<'m>, String> {
         if self.reexecution == Reexecution::Full || producer.shapes.is_empty() {
             return Ok(rules::FocusSelection::Every);
@@ -1452,9 +1427,7 @@ where
 
     /// The SPARQL pre-bindings of a scalar query: canonical names with decoded values.
     fn arguments(
-        &self,
-        variables: &[String],
-        inputs: &[&str],
+        &self, variables: &[String], inputs: &[&str],
     ) -> Result<Vec<(String, Term)>, String> {
         variables
             .iter()
@@ -1466,9 +1439,7 @@ where
 
 /// Match `term` against the triple term pattern, extending `known`.
 fn match_triple<'n>(
-    pattern: &'n LoweredTriple,
-    term: &Term,
-    known: &mut BTreeMap<&'n str, Term>,
+    pattern: &'n LoweredTriple, term: &Term, known: &mut BTreeMap<&'n str, Term>,
 ) -> bool {
     let Term::Triple(triple) = term else {
         return false;
@@ -1610,9 +1581,7 @@ where
 {
     /// "Compute the expected derived triples for all rules in the layer".
     fn assume(
-        &mut self,
-        layer: usize,
-        model: &RuleStore<N>,
+        &mut self, layer: usize, model: &RuleStore<N>,
     ) -> Result<Vec<RuleFact<N>>, purrdf_datalog::guard::CallbackError> {
         let expected = &self.engine.expectations[layer];
         if expected.is_empty() {
@@ -1633,10 +1602,7 @@ where
     /// goes, and a reifier left reifying nothing is no reifier, so every inferred triple
     /// about it goes too. Nothing the base graph asserts is touched.
     fn retract(
-        &mut self,
-        _layer: usize,
-        model: &RuleStore<N>,
-        withdrawn: &[RuleFact<N>],
+        &mut self, _layer: usize, model: &RuleStore<N>, withdrawn: &[RuleFact<N>],
     ) -> Result<Vec<RuleFact<N>>, purrdf_datalog::guard::CallbackError> {
         self.engine.generation.set(self.engine.generation.get() + 1);
         if withdrawn.is_empty() {
@@ -1659,8 +1625,7 @@ where
     /// inferred triple for which the inference graph contains a reifier with the value
     /// sh:tempTriple true."
     fn finish(
-        &mut self,
-        model: &RuleStore<N>,
+        &mut self, model: &RuleStore<N>,
     ) -> Result<Vec<RuleFact<N>>, purrdf_datalog::guard::CallbackError> {
         self.engine.generation.set(self.engine.generation.get() + 1);
         let facts = self.engine.model_facts(model)?;

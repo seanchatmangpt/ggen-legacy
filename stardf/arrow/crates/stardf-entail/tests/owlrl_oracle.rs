@@ -178,10 +178,7 @@ const fn t(s: &'static str, p: &'static str, o: &'static str) -> Quad {
 
 /// A triple whose object is a datatyped literal.
 const fn t_lit(
-    s: &'static str,
-    p: &'static str,
-    lexical: &'static str,
-    datatype: &'static str,
+    s: &'static str, p: &'static str, lexical: &'static str, datatype: &'static str,
 ) -> Quad {
     Quad {
         s,
@@ -1272,11 +1269,8 @@ fn load_ledger() -> Vec<Divergence> {
     let mut description = None;
 
     fn flush(
-        entries: &mut Vec<Divergence>,
-        id: &mut Option<String>,
-        rule_id: &mut Option<String>,
-        citation: &mut Option<String>,
-        description: &mut Option<String>,
+        entries: &mut Vec<Divergence>, id: &mut Option<String>, rule_id: &mut Option<String>,
+        citation: &mut Option<String>, description: &mut Option<String>,
     ) {
         if let Some(id) = id.take() {
             entries.push(Divergence {

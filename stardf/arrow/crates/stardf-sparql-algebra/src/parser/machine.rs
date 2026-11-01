@@ -60,8 +60,7 @@ type Lifted = (Variable, AggregateExpression);
 /// rejects — the grouping constraint's witness for a SELECT expression of an
 /// aggregate query — or `None` when every variable it reads is readable.
 fn first_projection_read<'a, S: purrdf_lex::allocation::Admission + ?Sized>(
-    expression: &'a Expression,
-    readable: impl Fn(&Variable) -> bool,
+    expression: &'a Expression, readable: impl Fn(&Variable) -> bool,
     memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> std::result::Result<Option<&'a Variable>, purrdf_lex::allocation::StorageError> {
     use crate::walk::NodeRef;
@@ -135,8 +134,7 @@ enum Prefix {
 
 impl Prefix {
     fn apply(
-        self,
-        operand: Expression,
+        self, operand: Expression,
         memory: &mut purrdf_lex::allocation::Memory<'_, dyn super::ParserAdmission + '_>,
     ) -> Result<Expression> {
         let operand = Child::try_new(operand, memory)?;
@@ -196,9 +194,7 @@ impl Infix {
     }
 
     fn apply(
-        self,
-        left: Expression,
-        right: Expression,
+        self, left: Expression, right: Expression,
         memory: &mut purrdf_lex::allocation::Memory<'_, dyn super::ParserAdmission + '_>,
     ) -> Result<Expression> {
         let (l, r) = match self {
@@ -534,8 +530,7 @@ pub(super) struct Machine {
 
 impl Machine {
     pub(super) fn release<S: purrdf_lex::allocation::Admission + ?Sized>(
-        self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> std::result::Result<(), purrdf_lex::allocation::StorageError> {
         debug_assert!(
             self.ctl.is_empty()
@@ -587,8 +582,7 @@ impl<const RDFLIB: bool> Parser<'_, '_, '_, '_, RDFLIB> {
     /// Read a solution-modifier list, appending the aggregates it lifts to
     /// `aggregates`.
     pub(super) fn parse_solution_modifiers(
-        &mut self,
-        aggregates: &mut Vec<Lifted>,
+        &mut self, aggregates: &mut Vec<Lifted>,
     ) -> Result<Modifiers> {
         let step = self.start_modifiers(std::mem::take(aggregates))?;
         match self.run(step)? {
@@ -1041,10 +1035,7 @@ impl<const RDFLIB: bool> Parser<'_, '_, '_, '_, RDFLIB> {
 
     /// `left [NOT] IN ( items )`, whose `)` was read: it closes its relational level.
     fn finish_in(
-        &mut self,
-        left: Expression,
-        negated: bool,
-        items: Vec<Expression>,
+        &mut self, left: Expression, negated: bool, items: Vec<Expression>,
     ) -> Result<Step> {
         let expr = Expression::In(Child::try_new(left, self.memory)?, items.into());
         Ok(Step::Operator(
@@ -1700,10 +1691,7 @@ impl<const RDFLIB: bool> Parser<'_, '_, '_, '_, RDFLIB> {
 
     /// `{ SELECT … }`, read: its pattern, and the variables its projection puts in scope.
     fn sub_select_group(
-        &mut self,
-        sub: Query,
-        intro: bool,
-        inherited_scope: Option<VarScope>,
+        &mut self, sub: Query, intro: bool, inherited_scope: Option<VarScope>,
     ) -> Result<GroupValue> {
         // Destructured field by field rather than through `..`: a sub-select keeps only
         // the pattern, and the other three have to be accounted for HERE, where the
@@ -2241,9 +2229,7 @@ impl<const RDFLIB: bool> Parser<'_, '_, '_, '_, RDFLIB> {
 
     /// A `SELECT` at its keyword: its projection is read next.
     fn start_select(
-        &mut self,
-        base_iri: Option<NamedNode>,
-        position: SelectPosition,
+        &mut self, base_iri: Option<NamedNode>, position: SelectPosition,
         enclosing_brace: Option<usize>,
     ) -> Result<Step> {
         self.expect_kw("SELECT")?;
@@ -2487,10 +2473,7 @@ impl<const RDFLIB: bool> Parser<'_, '_, '_, '_, RDFLIB> {
     /// A `SELECT` whose solution modifiers are read: check it, read its trailing
     /// `VALUES`, and build its algebra (§18.2.4 ordering).
     fn finish_select(
-        &mut self,
-        state: SelectState,
-        mut modifiers: Modifiers,
-        mut aggregates: Vec<Lifted>,
+        &mut self, state: SelectState, mut modifiers: Modifiers, mut aggregates: Vec<Lifted>,
     ) -> Result<Step> {
         let SelectState {
             base_iri,
@@ -2964,10 +2947,7 @@ impl<const RDFLIB: bool> Parser<'_, '_, '_, '_, RDFLIB> {
 
     /// Replace scalar reads outside aggregates and EXISTS with SAMPLE outputs.
     fn sample_contextual_reads(
-        &mut self,
-        expression: &mut Expression,
-        target: Option<&Variable>,
-        lifted: &[Variable],
+        &mut self, expression: &mut Expression, target: Option<&Variable>, lifted: &[Variable],
         aggregates: &mut Vec<Lifted>,
     ) -> Result<()> {
         let counter = &mut self.agg_counter;

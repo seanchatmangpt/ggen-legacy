@@ -26,13 +26,8 @@ use super::{ChunkObserver, SolveError, coefficients};
 
 #[cfg(test)]
 pub(super) fn evaluate(
-    sigma1: &FixedInterval,
-    sigma2: &FixedInterval,
-    q: &FixedInterval,
-    c: &FixedInterval,
-    order: usize,
-    chunks: &mut ChunkObserver<'_, '_>,
-    math: &mut CoordinateMath,
+    sigma1: &FixedInterval, sigma2: &FixedInterval, q: &FixedInterval, c: &FixedInterval,
+    order: usize, chunks: &mut ChunkObserver<'_, '_>, math: &mut CoordinateMath,
 ) -> Result<(FixedInterval, FixedInterval), SolveError> {
     evaluate_with(
         sigma1,
@@ -47,12 +42,7 @@ pub(super) fn evaluate(
 }
 
 pub(super) fn evaluate_with<I: CertifiedInterval>(
-    sigma1: &I,
-    sigma2: &I,
-    q: &I,
-    c: &I,
-    order: usize,
-    chunks: &mut ChunkObserver<'_, '_>,
+    sigma1: &I, sigma2: &I, q: &I, c: &I, order: usize, chunks: &mut ChunkObserver<'_, '_>,
     math: &mut IntervalContext<'_>,
 ) -> Result<(I, I, I), SolveError> {
     let bits = [sigma1, sigma2, q, c]
@@ -95,9 +85,7 @@ struct CenteredInputs<'a, I: CertifiedInterval> {
 
 impl<I: CertifiedInterval> CenteredInputs<'_, I> {
     fn evaluate(
-        &self,
-        chunks: &mut ChunkObserver<'_, '_>,
-        math: &mut IntervalContext<'_>,
+        &self, chunks: &mut ChunkObserver<'_, '_>, math: &mut IntervalContext<'_>,
     ) -> Result<(I, I, I), SolveError> {
         let Self {
             sigma1,
@@ -214,10 +202,7 @@ struct CenteredSeries<'a, I: CertifiedInterval> {
 
 impl<I: CertifiedInterval> CenteredSeries<'_, I> {
     fn evaluate(
-        &self,
-        sigma1: &I,
-        sigma2: &I,
-        chunks: &mut ChunkObserver<'_, '_>,
+        &self, sigma1: &I, sigma2: &I, chunks: &mut ChunkObserver<'_, '_>,
         math: &mut IntervalContext<'_>,
     ) -> Result<(I, I, I), SolveError> {
         let Self {
@@ -299,12 +284,8 @@ mod tests {
     use super::{ChunkObserver, SolveError};
 
     fn evaluate(
-        sigma1: &FixedInterval,
-        sigma2: &FixedInterval,
-        q: &FixedInterval,
-        c: &FixedInterval,
-        order: usize,
-        math: &mut CoordinateMath,
+        sigma1: &FixedInterval, sigma2: &FixedInterval, q: &FixedInterval, c: &FixedInterval,
+        order: usize, math: &mut CoordinateMath,
     ) -> Result<(FixedInterval, FixedInterval), SolveError> {
         super::evaluate(
             sigma1,
@@ -666,9 +647,7 @@ mod tests {
         }
         impl crate::MetricWorkObserver for StopDuringGeneration {
             fn charge_chunk(
-                &mut self,
-                work: u64,
-                _workspace_growth: u64,
+                &mut self, work: u64, _workspace_growth: u64,
             ) -> Result<(), crate::GeoError> {
                 self.calls += 1;
                 self.work += work;

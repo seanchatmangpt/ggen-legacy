@@ -125,9 +125,7 @@ pub fn loop_governors() -> [(&'static str, Option<QueryGovernors>); 3] {
 
 /// All original group cells, canonicalized only outside measurement.
 pub fn grouped_answer(
-    engine: &NativeSparqlEngine,
-    ds: &Arc<RdfDataset>,
-    governors: Option<&QueryGovernors>,
+    engine: &NativeSparqlEngine, ds: &Arc<RdfDataset>, governors: Option<&QueryGovernors>,
 ) -> Vec<SolutionRow> {
     let request = SparqlRequest {
         query: GROUPED,

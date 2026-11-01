@@ -27,9 +27,7 @@ pub(crate) struct CellCarrierBounds {
 /// Reuse the native footprint, atlas cap, exact arithmetic and numerical homes.
 /// This borrows the active invocation and never resets cumulative work.
 pub(crate) fn cell_carrier_bounds(
-    cell: CellId,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    cell: CellId, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<CellCarrierBounds, GeoError> {
     context.prepare_integer_scratch_for_observed(128, progress)?;
     let occupied = context
@@ -70,9 +68,7 @@ pub(crate) fn cell_carrier_bounds(
 }
 
 fn enclose(
-    cell: CellId,
-    context: &MetricContext,
-    budget: &mut CoverBudget<'_>,
+    cell: CellId, context: &MetricContext, budget: &mut CoverBudget<'_>,
 ) -> Result<CellCarrierBounds, GeoError> {
     let mut retained = 0;
     let result = enclose_inner(cell, context, budget, &mut retained);
@@ -84,10 +80,7 @@ fn enclose(
 }
 
 fn enclose_inner(
-    cell: CellId,
-    context: &MetricContext,
-    budget: &mut CoverBudget<'_>,
-    retained: &mut u64,
+    cell: CellId, context: &MetricContext, budget: &mut CoverBudget<'_>, retained: &mut u64,
 ) -> Result<CellCarrierBounds, GeoError> {
     let footprint = Footprint::new_admitted(cell, budget)?;
     let ChartBounds {
@@ -127,12 +120,7 @@ fn enclose_inner(
 }
 
 fn physical_radius<A: Arithmetic>(
-    axis: &LonLat,
-    south: &Rat,
-    north: &Rat,
-    walls: &[(Rat, Rat)],
-    upper: &Rat,
-    arithmetic: &mut A,
+    axis: &LonLat, south: &Rat, north: &Rat, walls: &[(Rat, Rat)], upper: &Rat, arithmetic: &mut A,
 ) -> Result<A::Number, A::Error> {
     let latitude = arithmetic.original(axis.latitude())?;
     let south = arithmetic.original(south)?;

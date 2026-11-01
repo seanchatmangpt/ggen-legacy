@@ -97,15 +97,15 @@ const TRAILING_PADDING: u64 = 64;
 /// with [`TRAILING_PADDING`] zero bytes.
 mod kind {
     /// An IRI cell.
-    pub const IRI: u8 = 0;
+    pub(crate) const IRI: u8 = 0;
     /// A blank-node cell.
-    pub const BLANK_NODE: u8 = 1;
+    pub(crate) const BLANK_NODE: u8 = 1;
     /// A literal cell.
-    pub const LITERAL: u8 = 2;
+    pub(crate) const LITERAL: u8 = 2;
     /// A nested triple-term cell.
-    pub const TRIPLE: u8 = 3;
+    pub(crate) const TRIPLE: u8 = 3;
     /// The `None` sentinel: the cell is unbound.
-    pub const UNBOUND: u8 = 0xFF;
+    pub(crate) const UNBOUND: u8 = 0xFF;
 }
 
 /// The term-kind discriminant of a bound cell.
@@ -222,8 +222,7 @@ struct Measured {
 /// lexical token is computed and dropped immediately; only its length and
 /// digest contribution are retained.
 fn measure_solutions(
-    variables: &[String],
-    rows: &[Vec<Option<TermValue>>],
+    variables: &[String], rows: &[Vec<Option<TermValue>>],
 ) -> Result<Measured, Error> {
     let mut triples = blake3::Hasher::new();
     let mut payload = TRAILING_PADDING;
@@ -276,8 +275,7 @@ fn measure_solutions(
 /// BLAKE3, plus the trailing padding — without writing anything. Bounded the
 /// same way pass 1 is: one slab staged at a time.
 fn digest_payload(
-    variables: &[String],
-    rows: &[Vec<Option<TermValue>>],
+    variables: &[String], rows: &[Vec<Option<TermValue>>],
 ) -> Result<[u8; 32], Error> {
     let mut payload = blake3::Hasher::new();
     for batch in rows.chunks(ROWS_PER_BATCH) {
@@ -305,9 +303,7 @@ fn digest_payload(
 /// failures surface at the caller's `finish()`; a failure may leave a PREFIX
 /// of the frame already written, and the caller must discard the target.
 pub(crate) fn write_canon_arrow(
-    result: &SparqlResult,
-    provenance: &crate::ResultProvenance,
-    out: &mut TextSink<'_>,
+    result: &SparqlResult, provenance: &crate::ResultProvenance, out: &mut TextSink<'_>,
 ) -> Result<(), Error> {
     let _ = provenance;
     emit_into(result, out)
@@ -397,9 +393,7 @@ fn emit_into(result: &SparqlResult, out: &mut TextSink<'_>) -> Result<(), Error>
 
 /// The three bounded passes over a non-empty `Solutions` result.
 fn emit_solutions(
-    variables: &[String],
-    rows: &[Vec<Option<TermValue>>],
-    out: &mut TextSink<'_>,
+    variables: &[String], rows: &[Vec<Option<TermValue>>], out: &mut TextSink<'_>,
 ) -> Result<(), Error> {
     // Pass 1: measure and take the triples-side witness.
     let measured = measure_solutions(variables, rows)?;

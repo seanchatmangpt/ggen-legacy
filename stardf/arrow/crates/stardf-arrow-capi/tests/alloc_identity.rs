@@ -2,13 +2,13 @@
 //! stardf-arrow-capi membrane.
 //!
 //! Lifecycle under court: mint (arena_new → intern → append_quad) →
-//! export (stardf_avec_export_stream) → consume (get_schema/get_next,
+//! export (stardf_cgap_export_stream) → consume (get_schema/get_next,
 //! releasing the handed-out array) → release (stream_free + arena_free).
 //!
 //! ## Why a test-local counting allocator (Chicago, real collaborators)
 //!
-//! The avec-audit CountingAlloc counts allocs only — dealloc is a bare
-//! pass-through (avec/crates/audit/src/alloc_counter.rs :65-67, "frees are
+//! The cgap-audit CountingAlloc counts allocs only — dealloc is a bare
+//! pass-through (cgap/crates/audit/src/alloc_counter.rs :65-67, "frees are
 //! not allocations"), so it cannot prove the FREE side of identity. This
 //! court mints its own #[global_allocator] counting alloc AND dealloc
 //! separately.
@@ -42,7 +42,7 @@
 //!
 //! Single-threaded by construction: the tracking window is process-global,
 //! so lifecycle tests serialize on LIFECYCLE (SLOTS mutex idiom,
-//! avec/crates/avec-ffi/tests/alloc_courts.rs :30); warm-up runs OUTSIDE
+//! cgap/crates/cgap-ffi/tests/alloc_courts.rs :30); warm-up runs OUTSIDE
 //! the window (:73-97 idiom).
 
 use std::alloc::{GlobalAlloc, Layout, System};
@@ -50,8 +50,8 @@ use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering::Relaxed};
 use std::sync::Mutex;
 
 use stardf_arrow_capi::{
-    stardf_arena_free, stardf_arena_intern, stardf_arena_new, stardf_avec_export_stream,
-    stardf_batch_append_quad, stardf_stream_free, ArrowArray, ArrowArrayStream, ArrowSchema,
+    stardf_arena_free, stardf_arena_intern, stardf_arena_new, stardf_batch_append_quad,
+    stardf_cgap_export_stream, stardf_stream_free, ArrowArray, ArrowArrayStream, ArrowSchema,
     StardfArena, StardfBatch,
 };
 
@@ -200,7 +200,7 @@ unsafe fn mint_and_export(quads: usize) -> (*mut StardfArena, *mut ArrowArrayStr
     }
     let mut stream: *mut ArrowArrayStream = core::ptr::null_mut();
     // SAFETY: live batch handle, valid out slot.
-    let status = stardf_avec_export_stream(batch, &mut stream);
+    let status = stardf_cgap_export_stream(batch, &mut stream);
     assert_eq!(status, 0, "export_stream failed: status {status}");
     assert!(!stream.is_null());
     (arena, stream)

@@ -48,8 +48,7 @@ impl fmt::Display for ReadError {
 macro_rules! release_entry {
     () => {
         pub(crate) fn release_with_memory(
-            self,
-            memory: &mut $crate::memory::Memory<'_>,
+            self, memory: &mut $crate::memory::Memory<'_>,
         ) -> Result<(), $crate::memory::StorageError> {
             let bytes = self.owned_bytes()?;
             drop(self);
@@ -139,9 +138,7 @@ impl Storage for ChildStorage<'_, '_> {
 /// Execute the existing parser under a native parent computation. Its own
 /// scratch release and surviving payload updates belong to the original grant.
 pub(crate) fn parse_cdt_in_memory(
-    lexical: &str,
-    datatype: crate::CdtDatatype,
-    memory: &mut Memory<'_>,
+    lexical: &str, datatype: crate::CdtDatatype, memory: &mut Memory<'_>,
 ) -> Result<Option<CdtValue>, StorageError> {
     let mut child = ChildStorage::new(memory);
     match crate::parse::try_parse_cdt(lexical, datatype, &mut child) {

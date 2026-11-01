@@ -17,9 +17,7 @@ const RECORD: Domain = Domain::new(b"purrdf/source-record/v1");
 const SOURCE_VERSION: Domain = Domain::new(b"purrdf/source-version/v1");
 
 pub(crate) fn resident_snapshot(
-    records: Multiset256,
-    graphs: Multiset256,
-    dictionary: [u8; 32],
+    records: Multiset256, graphs: Multiset256, dictionary: [u8; 32],
 ) -> purrdf_hash::hex::Digest32 {
     const ROWS: Domain = Domain::new(b"purrdf-core/snapshot/rows/v1");
     const GRAPHS: Domain = Domain::new(b"purrdf-core/snapshot/graphs/v1");
@@ -62,8 +60,7 @@ pub struct SourceRowRef<'a> {
 
 impl SourceRowRef<'_> {
     pub(crate) fn hashes<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> Result<[[u8; 32]; 2], StorageError> {
         let mut row = SourceRowHasher::with_graph(self.graph, memory)?;
         for term in [self.subject, self.predicate, self.object] {
@@ -222,8 +219,7 @@ impl LiteralSourceRow<'_> {
     /// Returns original traversal-storage refusal. No digest is returned for a
     /// partially encoded row.
     pub fn hashes_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> Result<[[u8; 32]; 2], StorageError> {
         let mut row = SourceRowHasher::with_graph(self.graph, memory)?;
         for term in [self.subject, self.predicate] {
@@ -249,8 +245,7 @@ pub(crate) struct SourceRowHasher {
 
 impl SourceRowHasher {
     fn with_graph<S: Admission + ?Sized>(
-        graph: Option<&TermValue>,
-        memory: &mut Memory<'_, S>,
+        graph: Option<&TermValue>, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         let mut row = Self::new(graph.is_some());
         if let Some(graph) = graph {

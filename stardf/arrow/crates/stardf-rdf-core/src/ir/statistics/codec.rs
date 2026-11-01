@@ -192,17 +192,12 @@ impl<I: StatisticsId> PredicateRecord<I> {
     }
 
     pub(in crate::ir) fn compare_scope(
-        self,
-        relation: Relation,
-        graph: GraphMatch<I>,
+        self, relation: Relation, graph: GraphMatch<I>,
     ) -> std::cmp::Ordering {
         (self.relation, self.scope).cmp(&(relation, scope_of(graph)))
     }
     pub(in crate::ir) fn compare_key(
-        self,
-        relation: Relation,
-        graph: GraphMatch<I>,
-        predicate: I,
+        self, relation: Relation, graph: GraphMatch<I>, predicate: I,
     ) -> std::cmp::Ordering {
         (self.relation, self.scope, self.predicate).cmp(&(relation, scope_of(graph), predicate))
     }
@@ -290,9 +285,7 @@ impl<I: StatisticsId> LocalStatistics<I> {
     }
 
     pub(super) fn record_words(
-        &self,
-        section: StatisticsSection,
-        index: usize,
+        &self, section: StatisticsSection, index: usize,
     ) -> Option<RecordWords> {
         let mut words = RecordWords {
             values: [0; 30],
@@ -321,10 +314,7 @@ impl<I: StatisticsId> LocalStatistics<I> {
     }
 
     pub(in crate::ir) fn encode_records(
-        &self,
-        section: StatisticsSection,
-        first: usize,
-        output: &mut [u8],
+        &self, section: StatisticsSection, first: usize, output: &mut [u8],
     ) -> Result<(), PackBitsError> {
         if !output.len().is_multiple_of(section.width()) {
             return Err(invalid("partial statistics output record"));
@@ -353,10 +343,7 @@ impl<I: StatisticsId> LocalStatistics<I> {
     }
 
     fn encode_record(
-        &self,
-        section: StatisticsSection,
-        index: usize,
-        output: &mut [u8],
+        &self, section: StatisticsSection, index: usize, output: &mut [u8],
     ) -> Result<(), PackBitsError> {
         if output.len() != section.width() {
             return Err(invalid("wrong statistics output width"));

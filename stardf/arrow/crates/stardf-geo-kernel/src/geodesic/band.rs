@@ -25,10 +25,7 @@ impl<'a> DistanceGoal<'a> {
         }
     }
     pub(super) fn decisive<I: CertifiedInterval>(
-        self,
-        distance: &I,
-        physical: Option<&I>,
-        math: &mut IntervalContext<'_>,
+        self, distance: &I, physical: Option<&I>, math: &mut IntervalContext<'_>,
     ) -> Result<bool, MathError> {
         match self {
             Self::Point(_) => point_decisive_with(distance, physical, math),
@@ -38,9 +35,7 @@ impl<'a> DistanceGoal<'a> {
         }
     }
     pub(super) fn enclosure_decisive<I: CertifiedInterval>(
-        self,
-        value: &I,
-        math: &mut IntervalContext<'_>,
+        self, value: &I, math: &mut IntervalContext<'_>,
     ) -> Result<bool, MathError> {
         let Self::ArcProof(bits) = self else {
             return Ok(true);

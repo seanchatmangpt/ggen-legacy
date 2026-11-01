@@ -189,11 +189,7 @@ pub(crate) struct Absorption {
 /// makes the whole inclusion internalized rather than a panic — one fewer absorbed axiom,
 /// never an invented guard.
 pub(crate) fn absorb<E>(
-    table: &mut ConceptTable,
-    tbox: &[(u32, u32)],
-    top: u32,
-    bottom: u32,
-    encoding: Encoding,
+    table: &mut ConceptTable, tbox: &[(u32, u32)], top: u32, bottom: u32, encoding: Encoding,
     mut poll: impl FnMut() -> Result<(), E>,
 ) -> Result<Absorption, E> {
     let mut out = Absorption::default();
@@ -223,10 +219,7 @@ pub(crate) fn absorb<E>(
 /// again. Each step strictly shrinks the syntax tree of the pair it replaces, so the queue
 /// drains.
 fn rewrite<E>(
-    table: &mut ConceptTable,
-    tbox: &[(u32, u32)],
-    top: u32,
-    bottom: u32,
+    table: &mut ConceptTable, tbox: &[(u32, u32)], top: u32, bottom: u32,
     poll: &mut impl FnMut() -> Result<(), E>,
 ) -> Result<Vec<(u32, u32, usize)>, E> {
     /// Which rewrite one inclusion admits.
@@ -288,12 +281,7 @@ fn rewrite<E>(
 /// Dispose of one rewritten inclusion: a guarded clause where the antecedent is faithful, the
 /// internalized disjunction where it is not.
 fn dispose(
-    table: &mut ConceptTable,
-    out: &mut Absorption,
-    sub: u32,
-    sup: u32,
-    top: u32,
-    source: usize,
+    table: &mut ConceptTable, out: &mut Absorption, sub: u32, sup: u32, top: u32, source: usize,
 ) {
     // `rdfs:range`: `⊤ ⊑ ∀r.C` becomes the edge clause, so the universal never enters a label
     // and never widens a blocking signature. Blocking then blocks strictly more, which
@@ -344,12 +332,7 @@ fn dispose(
 /// would put an id in every blocking signature for an axiom that says nothing, so it is
 /// dropped rather than recorded.
 fn internalize(
-    table: &mut ConceptTable,
-    out: &mut Absorption,
-    sub: u32,
-    sup: u32,
-    top: u32,
-    source: usize,
+    table: &mut ConceptTable, out: &mut Absorption, sub: u32, sup: u32, top: u32, source: usize,
 ) {
     let antecedent = table.concept(sub).clone();
     let consequent = table.concept(sup).clone();
@@ -452,10 +435,7 @@ pub(crate) fn generating(table: &ConceptTable, clauses: &[GuardedClause]) -> Vec
 /// Whether `id` is generating GIVEN what `known` already establishes — one step of
 /// [`generating`]'s fixpoint.
 fn forces_at_least(
-    table: &ConceptTable,
-    heads: &BTreeMap<u32, Vec<u32>>,
-    known: &[bool],
-    id: u32,
+    table: &ConceptTable, heads: &BTreeMap<u32, Vec<u32>>, known: &[bool], id: u32,
 ) -> bool {
     let structural = match *table.decomp(id) {
         // `≥0 r.C` is `⊤` and is folded away by the normal form, so every surviving `Min` is a
@@ -578,10 +558,7 @@ fn emit(nodes: &[GuardNode], head: u32) -> GuardedClause {
 
 /// Emit `at`'s own atoms, then bind and walk every variable it is joined to.
 fn walk(
-    nodes: &[GuardNode],
-    at: usize,
-    body: &mut Vec<BodyAtom>,
-    var_of: &mut Vec<Option<Var>>,
+    nodes: &[GuardNode], at: usize, body: &mut Vec<BodyAtom>, var_of: &mut Vec<Option<Var>>,
     next: &mut Var,
 ) {
     let var = var_of[at].expect("a variable is numbered before it is walked");
@@ -604,13 +581,8 @@ fn walk(
 /// Bind `other` through a `role`-edge from `var` and continue the walk, unless the walk has
 /// already been there — which, over a tree, is only ever the variable it arrived from.
 fn join(
-    nodes: &[GuardNode],
-    var: Var,
-    role: Role,
-    other: usize,
-    body: &mut Vec<BodyAtom>,
-    var_of: &mut Vec<Option<Var>>,
-    next: &mut Var,
+    nodes: &[GuardNode], var: Var, role: Role, other: usize, body: &mut Vec<BodyAtom>,
+    var_of: &mut Vec<Option<Var>>, next: &mut Var,
 ) {
     if var_of[other].is_some() {
         return;

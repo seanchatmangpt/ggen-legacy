@@ -55,8 +55,7 @@ impl Iri {
     /// # Errors
     /// Returns the original layout, admission or allocator refusal.
     pub fn clone_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> core::result::Result<Self, purrdf_lex::allocation::StorageError> {
         Ok(Self {
             text: memory.string(&self.text)?,
@@ -425,8 +424,7 @@ impl std::error::Error for IriReadError {
 /// # Errors
 /// Returns the original grammar failure or typed physical refusal.
 pub fn is_absolute_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-    s: &str,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    s: &str, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> core::result::Result<bool, IriReadError> {
     let memory = core::cell::RefCell::new(memory);
     let render = |message: core::fmt::Arguments<'_>| memory.borrow_mut().format(&message);
@@ -441,16 +439,14 @@ pub fn is_absolute_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
 /// # Errors
 /// Returns the original grammar error or a physical storage refusal.
 pub fn parse_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-    s: &str,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    s: &str, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> core::result::Result<Iri, IriReadError> {
     let spans = scan_admitted(s, memory)?;
     Ok(iri_from_spans(memory.string(s)?, spans))
 }
 
 pub(crate) fn parse_owned_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-    text: String,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    text: String, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> core::result::Result<Iri, IriReadError> {
     match scan_admitted(&text, memory) {
         Ok(spans) => Ok(iri_from_spans(text, spans)),
@@ -462,8 +458,7 @@ pub(crate) fn parse_owned_with_memory<S: purrdf_lex::allocation::Admission + ?Si
 }
 
 fn scan_admitted<S: purrdf_lex::allocation::Admission + ?Sized>(
-    text: &str,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    text: &str, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> core::result::Result<Spans, IriReadError> {
     let memory = core::cell::RefCell::new(memory);
     let render = |message: core::fmt::Arguments<'_>| memory.borrow_mut().format(&message);
@@ -495,8 +490,7 @@ pub(crate) enum Diagnostics<'a> {
 
 impl Diagnostics<'_> {
     pub(crate) fn message(
-        self,
-        message: core::fmt::Arguments<'_>,
+        self, message: core::fmt::Arguments<'_>,
     ) -> core::result::Result<String, IriReadError> {
         match self {
             Self::Owned => Ok(message.to_string()),
@@ -540,9 +534,7 @@ fn scan(s: &str, mode: Mode) -> Result<Spans> {
 }
 
 fn scan_with(
-    s: &str,
-    mode: Mode,
-    diagnostics: Diagnostics<'_>,
+    s: &str, mode: Mode, diagnostics: Diagnostics<'_>,
 ) -> core::result::Result<Spans, IriReadError> {
     if s.is_empty() {
         return Err(IriError::Empty.into());
@@ -634,8 +626,7 @@ fn find_scheme_colon(s: &str) -> Option<usize> {
 }
 
 fn validate_scheme_with(
-    s: &str,
-    diagnostics: Diagnostics<'_>,
+    s: &str, diagnostics: Diagnostics<'_>,
 ) -> core::result::Result<(), IriReadError> {
     let b = s.as_bytes();
     if b.is_empty() {
@@ -770,11 +761,7 @@ fn iri_extra_ok(c: char, allow_iprivate: bool, mode: Mode) -> bool {
 /// non-ASCII byte (a UTF-8 lead byte, always a char boundary here) is decoded to a
 /// `char` and routed through the `ucschar`/`iprivate` range test.
 pub(crate) fn validate_component(
-    s: &str,
-    base_off: usize,
-    extra_mask: u8,
-    allow_iprivate: bool,
-    mode: Mode,
+    s: &str, base_off: usize, extra_mask: u8, allow_iprivate: bool, mode: Mode,
 ) -> Result<()> {
     debug_assert!(
         extra_mask & !COMPONENT_EXTRAS == 0,
@@ -921,10 +908,7 @@ fn clean_prefix_len(word: &[u8; CLEAN_WORD], extra_mask: u8) -> usize {
 }
 
 fn validate_authority_with(
-    s: &str,
-    base_off: usize,
-    mode: Mode,
-    diagnostics: Diagnostics<'_>,
+    s: &str, base_off: usize, mode: Mode, diagnostics: Diagnostics<'_>,
 ) -> core::result::Result<(), IriReadError> {
     // authority = [ userinfo "@" ] host [ ":" port ]
     // Userinfo cannot contain an unescaped '@', so the first '@' delimits it.
@@ -1032,8 +1016,7 @@ mod tests {
         }
         impl purrdf_lex::allocation::Admission for Grant {
             fn resize(
-                &mut self,
-                live: usize,
+                &mut self, live: usize,
             ) -> core::result::Result<(), purrdf_lex::allocation::StorageError> {
                 if self.refuse && live != 0 {
                     return Err(purrdf_lex::allocation::StorageError::AdmissionFailed);
@@ -1154,11 +1137,7 @@ mod tests {
     /// `validate_component` as it was before the clean-run precheck: the
     /// per-byte loop alone, kept as the oracle the precheck must not move.
     fn validate_component_reference(
-        s: &str,
-        base_off: usize,
-        extra_mask: u8,
-        allow_iprivate: bool,
-        mode: Mode,
+        s: &str, base_off: usize, extra_mask: u8, allow_iprivate: bool, mode: Mode,
     ) -> Result<()> {
         let bytes = s.as_bytes();
         let allowed = UNRESERVED | SUB_DELIMS | extra_mask;

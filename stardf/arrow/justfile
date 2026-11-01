@@ -1,4 +1,4 @@
-# stardf-arrow — one-command DX recipes (modeled on avec justfile conventions)
+# stardf-arrow — one-command DX recipes (modeled on cgap justfile conventions)
 #
 #   just build    - debug build of all workspace members
 #   just check    - cargo check across the workspace

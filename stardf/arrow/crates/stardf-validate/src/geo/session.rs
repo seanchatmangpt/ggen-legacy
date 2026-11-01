@@ -57,8 +57,7 @@ impl GeoSession {
     /// # Errors
     /// Returns a typed configuration/work/storage refusal before publishing a session.
     pub fn try_new(
-        profile: GeoProfile,
-        compile_policy: ExecutionPolicy,
+        profile: GeoProfile, compile_policy: ExecutionPolicy,
     ) -> Result<Self, GeoCallError> {
         Self::try_new_in_budget(profile, PreparationBudget::new(compile_policy))
     }
@@ -70,8 +69,7 @@ impl GeoSession {
     /// Refuses source copies or identity compilation before their allocations
     /// exceed the same admitted work and storage budget.
     pub fn try_from_profile(
-        profile: &GeoProfile,
-        compile_policy: ExecutionPolicy,
+        profile: &GeoProfile, compile_policy: ExecutionPolicy,
     ) -> Result<Self, GeoCallError> {
         let mut budget = PreparationBudget::new(compile_policy);
         let profile = profile.clone_in_budget(&mut budget)?;
@@ -79,8 +77,7 @@ impl GeoSession {
     }
 
     fn try_new_in_budget(
-        profile: GeoProfile,
-        mut budget: PreparationBudget,
+        profile: GeoProfile, mut budget: PreparationBudget,
     ) -> Result<Self, GeoCallError> {
         let identity = compile_identity(&profile, &mut budget)?;
         Ok(Self {
@@ -110,8 +107,7 @@ impl GeoSession {
     /// # Errors
     /// Refuses malformed profiles and cumulative configuration work/storage exhaustion.
     pub fn from_profile_str_with_policy(
-        text: &str,
-        compile_policy: ExecutionPolicy,
+        text: &str, compile_policy: ExecutionPolicy,
     ) -> Result<Self, GeoCallError> {
         let (profile, budget) = super::profile::profile_with_budget(text, compile_policy)?;
         Self::try_new_in_budget(profile, budget)
@@ -149,10 +145,7 @@ impl GeoSession {
     }
 
     fn call_with_preparation(
-        &self,
-        request: &GeoRequest,
-        budget: PreparationBudget,
-        invocation: &Invocation,
+        &self, request: &GeoRequest, budget: PreparationBudget, invocation: &Invocation,
         decode: &super::decode::Decode<'_, '_, '_, '_>,
     ) -> Result<Value, GeoCallError> {
         let mut budget = invocation.track_budget(budget);
@@ -1042,9 +1035,7 @@ impl GeoSession {
     }
 
     fn context<'a>(
-        &self,
-        crs: &purrdf_geo_kernel::Crs,
-        mut budget: PreparationBudget,
+        &self, crs: &purrdf_geo_kernel::Crs, mut budget: PreparationBudget,
         invocation: &'a Invocation,
     ) -> Result<(PreparedGeodesic, super::invocation::Context<'a>), GeoError> {
         let reference = self.profile.reference(crs)?;
@@ -1073,8 +1064,7 @@ impl GeoSession {
 }
 
 fn compile_identity(
-    profile: &GeoProfile,
-    budget: &mut PreparationBudget,
+    profile: &GeoProfile, budget: &mut PreparationBudget,
 ) -> Result<GeoQueryIdentity, GeoError> {
     admit_session_storage(budget)?;
     purrdf_geo_kernel::binding::standard_vocabulary_in_budget(budget)?;
@@ -1096,9 +1086,7 @@ fn admit_session_storage(budget: &mut PreparationBudget) -> Result<(), GeoError>
 // the complete allocation and initialization before Vec construction; native
 // batch entry keeps these actual preparation counts instead of resetting them.
 fn batch_output<T>(
-    count: usize,
-    context: &mut MetricContext,
-    decode: &super::decode::Decode<'_, '_, '_, '_>,
+    count: usize, context: &mut MetricContext, decode: &super::decode::Decode<'_, '_, '_, '_>,
 ) -> Result<Vec<Option<T>>, GeoCallError> {
     let bytes = core::alloc::Layout::array::<Option<T>>(count)
         .map_err(|_| GeoError::Storage(StorageError::SizeOverflow))?
@@ -1131,10 +1119,8 @@ fn batch_output<T>(
 // already retains that graph, so admit the constructor against the same source
 // allowance and retain only its additional radius/identity storage afterwards.
 fn prepare_offset(
-    geometry: purrdf_geo_kernel::PreparedGeometry,
-    radius: &purrdf_geo_kernel::Metres,
-    budget: &mut PreparationBudget,
-    invocation: &Invocation,
+    geometry: purrdf_geo_kernel::PreparedGeometry, radius: &purrdf_geo_kernel::Metres,
+    budget: &mut PreparationBudget, invocation: &Invocation,
 ) -> Result<purrdf_geo_kernel::OffsetRegion, GeoCallError> {
     let mut phase = invocation.phase(*budget);
     budget

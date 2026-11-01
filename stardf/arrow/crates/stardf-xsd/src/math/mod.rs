@@ -215,15 +215,13 @@ impl CoordinateMath {
     /// # Errors
     /// Adds destination capacity/exhaustion to [`Self::new`]'s refusals.
     pub fn new_with_borrowed_limb_scratch(
-        limits: MathLimits,
-        scratch: crate::integer::LimbScratch,
+        limits: MathLimits, scratch: crate::integer::LimbScratch,
     ) -> Result<Self, MathError> {
         Self::new_using(limits, Some(scratch))
     }
 
     fn new_using(
-        limits: MathLimits,
-        scratch: Option<crate::integer::LimbScratch>,
+        limits: MathLimits, scratch: Option<crate::integer::LimbScratch>,
     ) -> Result<Self, MathError> {
         if !(16..=8192).contains(&limits.precision_bits) {
             return Err(MathError::PrecisionExhausted);
@@ -271,8 +269,7 @@ impl CoordinateMath {
     /// # Errors
     /// Refuses an already installed arena or an excessive workspace reservation.
     pub fn set_limb_scratch(
-        &mut self,
-        scratch: crate::integer::LimbScratch,
+        &mut self, scratch: crate::integer::LimbScratch,
     ) -> Result<(), MathError> {
         self.install_limb_scratch(scratch, true)
     }
@@ -284,16 +281,13 @@ impl CoordinateMath {
     /// # Errors
     /// Refuses replacing a previously installed arena.
     pub fn set_borrowed_limb_scratch(
-        &mut self,
-        scratch: crate::integer::LimbScratch,
+        &mut self, scratch: crate::integer::LimbScratch,
     ) -> Result<(), MathError> {
         self.install_limb_scratch(scratch, false)
     }
 
     fn install_limb_scratch(
-        &mut self,
-        scratch: crate::integer::LimbScratch,
-        owns_receipt: bool,
+        &mut self, scratch: crate::integer::LimbScratch, owns_receipt: bool,
     ) -> Result<(), MathError> {
         if self.limb_scratch.is_some() {
             return Err(MathError::Domain("integer scratch already installed"));
@@ -369,9 +363,7 @@ impl CoordinateMath {
         }
     }
     pub(crate) fn integer_div_rem(
-        &self,
-        a: &Int,
-        b: &Int,
+        &self, a: &Int, b: &Int,
     ) -> Result<Option<(Int, Int)>, MathError> {
         match &self.limb_scratch {
             Some(scratch) => a.div_rem_in(b, scratch).map_err(MathError::LimbScratch),
@@ -403,10 +395,7 @@ impl CoordinateMath {
         }
     }
     pub(crate) fn integer_product_div_rem(
-        &self,
-        a: &Int,
-        b: &Int,
-        d: &Int,
+        &self, a: &Int, b: &Int, d: &Int,
     ) -> Result<Option<(Int, Int)>, MathError> {
         match &self.limb_scratch {
             Some(scratch) => a
@@ -416,11 +405,7 @@ impl CoordinateMath {
         }
     }
     pub(crate) fn compare_products(
-        &self,
-        a: &Int,
-        b: &Int,
-        c: &Int,
-        d: &Int,
+        &self, a: &Int, b: &Int, c: &Int, d: &Int,
     ) -> Result<core::cmp::Ordering, MathError> {
         use crate::integer::Int;
         match &self.limb_scratch {
@@ -469,9 +454,7 @@ impl CoordinateMath {
     /// # Errors
     /// Refuses cancelled or exhausted work/workspace before exact operations.
     pub fn admit_exact(
-        &mut self,
-        arithmetic_items: u64,
-        max_operand_bits: usize,
+        &mut self, arithmetic_items: u64, max_operand_bits: usize,
     ) -> Result<(), MathError> {
         self.charge(arithmetic_items, max_operand_bits)
     }
@@ -482,8 +465,7 @@ impl CoordinateMath {
     /// # Errors
     /// Refuses cancellation or exhausted/overflowing work and workspace atomically.
     pub fn admit_exact_cost(
-        &mut self,
-        cost: crate::integer::ExactArithmeticCost,
+        &mut self, cost: crate::integer::ExactArithmeticCost,
     ) -> Result<(), MathError> {
         let bits = usize::try_from(cost.output_bits).map_err(|_| MathError::WorkspaceExhausted)?;
         let bytes =

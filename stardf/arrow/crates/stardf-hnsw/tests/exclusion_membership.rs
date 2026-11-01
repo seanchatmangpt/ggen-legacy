@@ -137,9 +137,7 @@ fn declaration(relation: &HnswRelation) -> RankedDeclaration {
 /// questions an invocation asks: `Some` is the ranked read, `None` is the membership
 /// lookup. Every call site below says which one it means.
 fn drain<A: Arithmetic>(
-    relation: &HnswRelation<A>,
-    seed: Option<&TermValue>,
-    k: Option<&str>,
+    relation: &HnswRelation<A>, seed: Option<&TermValue>, k: Option<&str>,
     neighbour: Option<&TermValue>,
 ) -> (Vec<PfRow>, u64) {
     let count = k.map(|k| TermValue::typed_literal(k, XSD_INTEGER));

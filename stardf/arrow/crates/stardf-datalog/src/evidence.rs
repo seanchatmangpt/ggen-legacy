@@ -64,8 +64,7 @@ impl<S: Admission> DerivationEvidence<S> {
     /// # Errors
     /// Refuses invalid rows before construction, then original record/storage errors.
     pub fn seed(
-        &mut self,
-        row: RowId,
+        &mut self, row: RowId,
         factory: impl FnOnce(&mut Memory<'_, S>) -> Result<EvidenceRecord, EvidenceRecordError>,
     ) -> Result<EvidenceId, EvidenceWorkspaceError> {
         self.rows
@@ -81,8 +80,7 @@ impl<S: Admission> DerivationEvidence<S> {
     /// # Errors
     /// Returns invalid source rows or original combination/refusal errors.
     pub fn conjunction(
-        &mut self,
-        sources: impl IntoIterator<Item = RowId>,
+        &mut self, sources: impl IntoIterator<Item = RowId>,
     ) -> Result<EvidenceId, EvidenceWorkspaceError> {
         let mut combined = EvidenceId::DEFAULT;
         for source in sources {
@@ -102,9 +100,7 @@ impl<S: Admission> DerivationEvidence<S> {
     /// # Errors
     /// Refuses out-of-order row publication, unknown ids or original storage failure.
     pub fn push_derived(
-        &mut self,
-        row: RowId,
-        id: EvidenceId,
+        &mut self, row: RowId, id: EvidenceId,
     ) -> Result<(), EvidenceWorkspaceError> {
         if row.address()? != self.rows.len() {
             return Err(EvidenceWorkspaceError::Column(
@@ -123,9 +119,7 @@ impl<S: Admission> DerivationEvidence<S> {
     /// # Errors
     /// Returns alignment/combination errors or original physical refusal.
     pub fn coalesce(
-        &mut self,
-        row: RowId,
-        witness: EvidenceId,
+        &mut self, row: RowId, witness: EvidenceId,
     ) -> Result<bool, EvidenceWorkspaceError> {
         let previous = self
             .rows
@@ -161,10 +155,7 @@ impl<S: Admission> DerivationEvidence<S> {
     /// # Errors
     /// Returns unknown ids or original record/table/admission failure.
     pub fn absence(
-        &mut self,
-        existential: EvidenceId,
-        closure_declared: bool,
-        missing_scope: ReasonId,
+        &mut self, existential: EvidenceId, closure_declared: bool, missing_scope: ReasonId,
     ) -> Result<EvidenceId, EvidenceWorkspaceError> {
         self.workspace.transform(existential, |record, memory| {
             if record.completeness().admits_absence(closure_declared) {
@@ -186,8 +177,7 @@ impl<S: Admission> DerivationEvidence<S> {
     /// # Errors
     /// Returns unknown ids or original native transformation failure.
     pub fn found_path(
-        &mut self,
-        witness: EvidenceId,
+        &mut self, witness: EvidenceId,
     ) -> Result<EvidenceId, EvidenceWorkspaceError> {
         self.workspace.transform(witness, |record, memory| {
             record.with_completeness(SearchCompleteness::Complete, None, memory)
@@ -199,9 +189,7 @@ impl<S: Admission> DerivationEvidence<S> {
     /// # Errors
     /// Returns unknown ids, conflicting certificates or original physical refusal.
     pub fn aggregate(
-        &mut self,
-        input: EvidenceId,
-        columns: &[(Digest32, AggregateBound)],
+        &mut self, input: EvidenceId, columns: &[(Digest32, AggregateBound)],
     ) -> Result<EvidenceId, EvidenceWorkspaceError> {
         self.workspace.transform(input, |record, memory| {
             record.with_aggregate_bounds(columns, memory)

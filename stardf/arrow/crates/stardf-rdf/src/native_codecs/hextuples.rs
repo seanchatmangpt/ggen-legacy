@@ -56,9 +56,7 @@ impl RdfCodec for HexTuplesCodec {
     }
 
     fn serialize_into(
-        &self,
-        graph: &SerGraph,
-        out: &mut TextSink<'_>,
+        &self, graph: &SerGraph, out: &mut TextSink<'_>,
     ) -> Result<(), RdfDiagnostic> {
         // Appended row by row. HexTuples is NDJSON — one flat array per line, with no
         // document-scope structure at all — so the writer never needs to know what
@@ -84,8 +82,7 @@ const LOCAL_ID: &str = "localId";
 
 /// Parse HexTuples `text` into a frozen [`RdfDataset`].
 pub(super) fn parse_hextuples_to_dataset(
-    text: &str,
-    base: &purrdf_iri::BaseScope,
+    text: &str, base: &purrdf_iri::BaseScope,
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
     let mut parser = HexTuplesStreamParser::new(base.clone());
     for line in text.lines() {
@@ -138,9 +135,7 @@ fn line_fields(line: &str) -> Result<Vec<String>, String> {
 /// with the same 1-based `lineno`, so a malformed line produces the same diagnostic
 /// whichever way the document arrived.
 fn parse_hextuples_line(
-    line: &str,
-    lineno: u64,
-    base: &purrdf_iri::BaseScope,
+    line: &str, lineno: u64, base: &purrdf_iri::BaseScope,
 ) -> Result<Option<ClassicRow>, RdfDiagnostic> {
     if is_blank_json_line(line) {
         return Ok(None);
@@ -253,11 +248,7 @@ fn validate_language_tag(language: &str, lineno: u64) -> Result<(), RdfDiagnosti
 /// `lineno` is carried for the language-tag DIAGNOSTIC only — see
 /// [`validate_language_tag`].
 fn object_term(
-    value: &str,
-    datatype: &str,
-    language: &str,
-    base: &purrdf_iri::BaseScope,
-    lineno: u64,
+    value: &str, datatype: &str, language: &str, base: &purrdf_iri::BaseScope, lineno: u64,
 ) -> Result<ClassicTerm, RdfDiagnostic> {
     match datatype {
         GLOBAL_ID => {
@@ -360,8 +351,7 @@ fn validate_blank_label(label: &str) -> Result<(), RdfDiagnostic> {
 /// A quoted-triple (RDF-1.2) term is a HARD error — HexTuples has no triple-term
 /// surface.
 fn write_hextuples<W: TextOut + ?Sized>(
-    graph: &SerGraph,
-    out: &mut W,
+    graph: &SerGraph, out: &mut W,
 ) -> Result<(), RdfDiagnostic> {
     for &(s, p, o, g) in &graph.quads {
         if out.failed() {
@@ -387,12 +377,7 @@ fn write_hextuples<W: TextOut + ?Sized>(
 }
 
 fn write_line<W: TextOut + ?Sized>(
-    out: &mut W,
-    graph: &SerGraph,
-    s: usize,
-    p: usize,
-    o: usize,
-    g: Option<usize>,
+    out: &mut W, graph: &SerGraph, s: usize, p: usize, o: usize, g: Option<usize>,
 ) -> Result<(), RdfDiagnostic> {
     // Every field is a `Cow` borrowed from the term table (or a constant) except the
     // `_:` blank forms, which are the only ones that need building. Each is written

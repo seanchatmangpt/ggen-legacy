@@ -48,10 +48,8 @@ impl OkfCategory {
     /// Returns a configuration error for an unsafe directory, empty type/heading,
     /// multiline index metadata, or invalid classifier.
     pub fn new(
-        directory: impl Into<String>,
-        document_type: impl Into<String>,
-        index_heading: impl Into<String>,
-        index_description: impl Into<String>,
+        directory: impl Into<String>, document_type: impl Into<String>,
+        index_heading: impl Into<String>, index_description: impl Into<String>,
         selector: OkfConceptSelector,
     ) -> Result<Self, ProjectionError> {
         let category = Self {
@@ -125,8 +123,7 @@ impl OkfPathStrategy {
     ///
     /// Returns a configuration error unless the predicate is an absolute IRI.
     pub fn predicate(
-        predicate: impl Into<String>,
-        rendering: OkfTermRendering,
+        predicate: impl Into<String>, rendering: OkfTermRendering,
     ) -> Result<Self, ProjectionError> {
         let strategy = Self::Predicate {
             predicate: predicate.into(),
@@ -224,9 +221,7 @@ impl OkfFieldMapping {
     ///
     /// Returns a configuration error for an empty predicate set or relative IRI.
     pub fn new(
-        predicates: BTreeSet<String>,
-        cardinality: OkfCardinality,
-        value_mode: OkfValueMode,
+        predicates: BTreeSet<String>, cardinality: OkfCardinality, value_mode: OkfValueMode,
     ) -> Result<Self, ProjectionError> {
         let mapping = Self {
             predicates,
@@ -274,9 +269,7 @@ impl OkfFieldMapping {
     }
 
     fn validate_mode(
-        &self,
-        field: &str,
-        expected: fn(OkfValueMode) -> bool,
+        &self, field: &str, expected: fn(OkfValueMode) -> bool,
     ) -> Result<(), ProjectionError> {
         if !expected(self.value_mode) {
             return Err(ProjectionError::configuration(format!(
@@ -349,12 +342,9 @@ impl OkfFrontmatterMappings {
     /// unsafe key, invalid nested mapping, incompatible value mode, or incompatible
     /// cardinality.
     pub fn new(
-        title: Option<OkfFieldMapping>,
-        description: Option<OkfFieldMapping>,
-        resource: OkfResourceMapping,
-        tags: Option<OkfFieldMapping>,
-        timestamp: Option<OkfFieldMapping>,
-        extensions: BTreeMap<String, OkfFieldMapping>,
+        title: Option<OkfFieldMapping>, description: Option<OkfFieldMapping>,
+        resource: OkfResourceMapping, tags: Option<OkfFieldMapping>,
+        timestamp: Option<OkfFieldMapping>, extensions: BTreeMap<String, OkfFieldMapping>,
     ) -> Result<Self, ProjectionError> {
         validated(
             Self {
@@ -476,9 +466,7 @@ impl OkfBodySection {
     /// Returns a configuration error for an empty predicate set, relative predicate,
     /// or empty/multiline heading.
     pub fn new(
-        heading: Option<String>,
-        predicates: BTreeSet<String>,
-        style: OkfBodyStyle,
+        heading: Option<String>, predicates: BTreeSet<String>, style: OkfBodyStyle,
         value_mode: OkfBodyValueMode,
     ) -> Result<Self, ProjectionError> {
         validated(
@@ -571,12 +559,8 @@ impl OkfLinkSection {
         reason = "each mandatory link-rendering axis is independent caller policy"
     )]
     pub fn new(
-        heading: Option<String>,
-        predicates: BTreeSet<String>,
-        relation_label: Option<String>,
-        style: OkfLinkStyle,
-        path_style: OkfLinkPathStyle,
-        targets: OkfLinkTargetMode,
+        heading: Option<String>, predicates: BTreeSet<String>, relation_label: Option<String>,
+        style: OkfLinkStyle, path_style: OkfLinkPathStyle, targets: OkfLinkTargetMode,
     ) -> Result<Self, ProjectionError> {
         validated(
             Self {
@@ -650,10 +634,8 @@ impl OkfIndexConfig {
     /// Returns a configuration error for an empty/multiline heading or empty loss
     /// declaration.
     pub fn new(
-        root_heading: impl Into<String>,
-        categories_heading: impl Into<String>,
-        fidelity_heading: impl Into<String>,
-        loss_declaration: impl Into<String>,
+        root_heading: impl Into<String>, categories_heading: impl Into<String>,
+        fidelity_heading: impl Into<String>, loss_declaration: impl Into<String>,
     ) -> Result<Self, ProjectionError> {
         let index = Self {
             root_heading: root_heading.into(),
@@ -732,16 +714,10 @@ impl OkfGenerationConfig {
         reason = "the constructor requires every independent semantic and resource policy"
     )]
     pub fn new(
-        graph_selection: OkfGraphSelection,
-        categories: BTreeMap<String, OkfCategory>,
-        path_strategy: OkfPathStrategy,
-        frontmatter: OkfFrontmatterMappings,
-        body_sections: Vec<OkfBodySection>,
-        link_sections: Vec<OkfLinkSection>,
-        index: OkfIndexConfig,
-        limits: ProjectionLimits,
-        max_records: usize,
-        max_concepts: usize,
+        graph_selection: OkfGraphSelection, categories: BTreeMap<String, OkfCategory>,
+        path_strategy: OkfPathStrategy, frontmatter: OkfFrontmatterMappings,
+        body_sections: Vec<OkfBodySection>, link_sections: Vec<OkfLinkSection>,
+        index: OkfIndexConfig, limits: ProjectionLimits, max_records: usize, max_concepts: usize,
         max_values_per_field: usize,
     ) -> Result<Self, ProjectionError> {
         let config = Self {

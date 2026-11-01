@@ -60,18 +60,12 @@ impl DataCiteControlledValues {
     // slot explicit prevents an omitted argument from becoming library policy.
     #[allow(clippy::too_many_arguments)]
     pub fn new(
-        identifier_type: impl Into<String>,
-        resource_type_general: impl Into<String>,
-        creator_name_type: impl Into<String>,
-        agent_identifier_scheme: impl Into<String>,
-        agent_identifier_scheme_uri: impl Into<String>,
-        related_identifier_type: impl Into<String>,
-        landing_page_relation_type: impl Into<String>,
-        resource_relation_type: impl Into<String>,
-        activity_relation_type: impl Into<String>,
-        record_set_relation_type: impl Into<String>,
-        issued_date_type: impl Into<String>,
-        modified_date_type: impl Into<String>,
+        identifier_type: impl Into<String>, resource_type_general: impl Into<String>,
+        creator_name_type: impl Into<String>, agent_identifier_scheme: impl Into<String>,
+        agent_identifier_scheme_uri: impl Into<String>, related_identifier_type: impl Into<String>,
+        landing_page_relation_type: impl Into<String>, resource_relation_type: impl Into<String>,
+        activity_relation_type: impl Into<String>, record_set_relation_type: impl Into<String>,
+        issued_date_type: impl Into<String>, modified_date_type: impl Into<String>,
         description_type: impl Into<String>,
     ) -> Result<Self, ProjectionError> {
         let values = Self {
@@ -234,10 +228,8 @@ impl DataCiteConfig {
     /// Every namespace/schema identity must be absolute. No namespace or
     /// controlled value is supplied by the library.
     pub fn new(
-        common: ResearchObjectConfig,
-        namespace_iri: impl Into<String>,
-        xml_schema_instance_iri: impl Into<String>,
-        schema_location: impl Into<String>,
+        common: ResearchObjectConfig, namespace_iri: impl Into<String>,
+        xml_schema_instance_iri: impl Into<String>, schema_location: impl Into<String>,
         controlled: DataCiteControlledValues,
     ) -> Result<Self, ProjectionError> {
         let namespace_iri = namespace_iri.into();
@@ -303,8 +295,7 @@ purrdf_lex::json_record!(impl ToJson for DataCiteConfig {
 /// Requires a document identifier, title, creator, publisher, and issued date;
 /// none is synthesized. Returns typed mapping, XML, or resource-limit failures.
 pub fn project_datacite<D: DatasetView>(
-    view: &D,
-    config: &DataCiteConfig,
+    view: &D, config: &DataCiteConfig,
 ) -> Result<ResearchObjectPackageProjection, ProjectionError> {
     let projection = project_research_object(view, DATACITE_PROFILE, config.common())?;
     let mut ledger = projection.loss_ledger;
@@ -327,8 +318,7 @@ pub fn project_datacite<D: DatasetView>(
 /// singleton elements, controlled-value drift, missing required metadata, or
 /// configured resource-limit excesses.
 pub fn read_datacite(
-    package: &ProjectionPackage,
-    config: &DataCiteConfig,
+    package: &ProjectionPackage, config: &DataCiteConfig,
 ) -> Result<ResearchObjectReadOutcome, ProjectionError> {
     let bytes = require_artifact(package, DATACITE_ARTIFACT, config.common())?;
     let contract = research_object_to_rdf_loss_ledger(DATACITE_PROFILE);
@@ -360,10 +350,7 @@ fn validate_controlled_token(value: &str, field: &str) -> Result<(), ProjectionE
 use purrdf_iri::vocab::xml::NS as XML_NAMESPACE;
 
 fn parse_datacite(
-    bytes: &[u8],
-    config: &DataCiteConfig,
-    contract: &LossLedger,
-    ledger: &mut LossLedger,
+    bytes: &[u8], config: &DataCiteConfig, contract: &LossLedger, ledger: &mut LossLedger,
 ) -> Result<ResearchObjectModel, ProjectionError> {
     let text = std::str::from_utf8(bytes).map_err(|error| {
         ProjectionError::syntax(format!("DataCite XML is not UTF-8: {error}"))
@@ -610,11 +597,7 @@ impl DataCiteParser<'_> {
     }
 
     fn require_attribute(
-        &self,
-        node: Node<'_, '_>,
-        name: &str,
-        expected: &str,
-        path: &str,
+        &self, node: Node<'_, '_>, name: &str, expected: &str, path: &str,
     ) -> Result<(), ProjectionError> {
         match node.attribute(name) {
             Some(actual) if actual == expected => Ok(()),
@@ -630,20 +613,14 @@ impl DataCiteParser<'_> {
     }
 
     fn parse_plain_text(
-        &mut self,
-        node: Node<'_, '_>,
-        path: &str,
-        expected_attributes: &[(Option<&str>, &str)],
+        &mut self, node: Node<'_, '_>, path: &str, expected_attributes: &[(Option<&str>, &str)],
     ) -> Result<String, ProjectionError> {
         record_unknown_attributes(node, expected_attributes, path, self.contract, self.ledger);
         simple_element_text(node, path)
     }
 
     fn parse_research_text(
-        &mut self,
-        node: Node<'_, '_>,
-        path: &str,
-        expected_attributes: &[(Option<&str>, &str)],
+        &mut self, node: Node<'_, '_>, path: &str, expected_attributes: &[(Option<&str>, &str)],
     ) -> Result<ResearchText, ProjectionError> {
         let mut expected = expected_attributes.to_vec();
         expected.push((Some(XML_NAMESPACE), "lang"));
@@ -669,9 +646,7 @@ impl DataCiteParser<'_> {
     }
 
     fn parse_identifier(
-        &mut self,
-        node: Node<'_, '_>,
-        path: &str,
+        &mut self, node: Node<'_, '_>, path: &str,
     ) -> Result<ResearchValue, ProjectionError> {
         self.require_attribute(
             node,
@@ -690,9 +665,7 @@ impl DataCiteParser<'_> {
     }
 
     fn parse_creators(
-        &mut self,
-        node: Node<'_, '_>,
-        path: &str,
+        &mut self, node: Node<'_, '_>, path: &str,
     ) -> Result<Vec<String>, ProjectionError> {
         record_unknown_attributes(node, &[], path, self.contract, self.ledger);
         let mut creators = Vec::new();
@@ -764,9 +737,7 @@ impl DataCiteParser<'_> {
     }
 
     fn require_agent_identifier_attributes(
-        &self,
-        node: Node<'_, '_>,
-        path: &str,
+        &self, node: Node<'_, '_>, path: &str,
     ) -> Result<(), ProjectionError> {
         self.require_attribute(
             node,
@@ -783,9 +754,7 @@ impl DataCiteParser<'_> {
     }
 
     fn parse_publisher(
-        &mut self,
-        node: Node<'_, '_>,
-        path: &str,
+        &mut self, node: Node<'_, '_>, path: &str,
     ) -> Result<String, ProjectionError> {
         self.require_attribute(
             node,
@@ -834,10 +803,7 @@ impl DataCiteParser<'_> {
     }
 
     fn parse_text_group(
-        &mut self,
-        node: Node<'_, '_>,
-        expected_child: &str,
-        path: &str,
+        &mut self, node: Node<'_, '_>, expected_child: &str, path: &str,
         expected_child_attributes: &[(Option<&str>, &str)],
     ) -> Result<Vec<ResearchText>, ProjectionError> {
         record_unknown_attributes(node, &[], path, self.contract, self.ledger);
@@ -860,9 +826,7 @@ impl DataCiteParser<'_> {
     }
 
     fn parse_dates(
-        &mut self,
-        node: Node<'_, '_>,
-        path: &str,
+        &mut self, node: Node<'_, '_>, path: &str,
     ) -> Result<(Vec<ResearchText>, Vec<ResearchText>), ProjectionError> {
         record_unknown_attributes(node, &[], path, self.contract, self.ledger);
         let mut issued = Vec::new();
@@ -899,9 +863,7 @@ impl DataCiteParser<'_> {
     }
 
     fn parse_alternate_identifiers(
-        &mut self,
-        node: Node<'_, '_>,
-        path: &str,
+        &mut self, node: Node<'_, '_>, path: &str,
     ) -> Result<Vec<ResearchValue>, ProjectionError> {
         record_unknown_attributes(node, &[], path, self.contract, self.ledger);
         let mut values = Vec::new();
@@ -933,9 +895,7 @@ impl DataCiteParser<'_> {
     }
 
     fn parse_related_identifiers(
-        &mut self,
-        node: Node<'_, '_>,
-        path: &str,
+        &mut self, node: Node<'_, '_>, path: &str,
     ) -> Result<RelatedEntities, ProjectionError> {
         record_unknown_attributes(node, &[], path, self.contract, self.ledger);
         let mut related = RelatedEntities::default();
@@ -995,9 +955,7 @@ impl DataCiteParser<'_> {
     }
 
     fn parse_rights(
-        &mut self,
-        node: Node<'_, '_>,
-        path: &str,
+        &mut self, node: Node<'_, '_>, path: &str,
     ) -> Result<Vec<ResearchValue>, ProjectionError> {
         record_unknown_attributes(node, &[], path, self.contract, self.ledger);
         let mut rights = Vec::new();
@@ -1026,9 +984,7 @@ impl DataCiteParser<'_> {
     }
 
     fn parse_descriptions(
-        &mut self,
-        node: Node<'_, '_>,
-        path: &str,
+        &mut self, node: Node<'_, '_>, path: &str,
     ) -> Result<Vec<ResearchText>, ProjectionError> {
         record_unknown_attributes(node, &[], path, self.contract, self.ledger);
         let mut values = Vec::new();
@@ -1155,9 +1111,7 @@ fn research_value(value: String, xsd_string: &str) -> Result<ResearchValue, Proj
 }
 
 fn require_datacite_element(
-    node: Node<'_, '_>,
-    local: &str,
-    config: &DataCiteConfig,
+    node: Node<'_, '_>, local: &str, config: &DataCiteConfig,
 ) -> Result<(), ProjectionError> {
     require_datacite_namespace(node, config)?;
     if node.tag_name().name() != local {
@@ -1171,8 +1125,7 @@ fn require_datacite_element(
 }
 
 fn require_datacite_namespace(
-    node: Node<'_, '_>,
-    config: &DataCiteConfig,
+    node: Node<'_, '_>, config: &DataCiteConfig,
 ) -> Result<(), ProjectionError> {
     if node.tag_name().namespace() != Some(config.namespace_iri()) {
         return Err(ProjectionError::integrity(format!(
@@ -1185,10 +1138,7 @@ fn require_datacite_namespace(
 }
 
 fn record_unknown_attributes(
-    node: Node<'_, '_>,
-    expected: &[(Option<&str>, &str)],
-    path: &str,
-    contract: &LossLedger,
+    node: Node<'_, '_>, expected: &[(Option<&str>, &str)], path: &str, contract: &LossLedger,
     ledger: &mut LossLedger,
 ) {
     for attribute in node.attributes() {
@@ -1248,9 +1198,7 @@ fn missing_datacite(name: &str) -> ProjectionError {
 }
 
 fn write_datacite(
-    model: &ResearchObjectModel,
-    config: &DataCiteConfig,
-    ledger: &mut LossLedger,
+    model: &ResearchObjectModel, config: &DataCiteConfig, ledger: &mut LossLedger,
 ) -> Result<Vec<u8>, ProjectionError> {
     let dataset = &model.dataset;
     // The dataset identity is mandatory caller/document data and is therefore
@@ -1504,11 +1452,8 @@ fn write_datacite(
 }
 
 fn write_creator(
-    output: &mut XmlOutput,
-    agent: &ResearchAgent,
-    config: &DataCiteConfig,
-    ledger: &mut LossLedger,
-    contract: &LossLedger,
+    output: &mut XmlOutput, agent: &ResearchAgent, config: &DataCiteConfig,
+    ledger: &mut LossLedger, contract: &LossLedger,
 ) -> Result<(), ProjectionError> {
     let name = agent.names.first().ok_or_else(|| {
         ProjectionError::integrity(format!("DataCite creator `{}` requires a name", agent.id))
@@ -1544,11 +1489,8 @@ fn write_creator(
 }
 
 fn write_publisher(
-    output: &mut XmlOutput,
-    agent: &ResearchAgent,
-    config: &DataCiteConfig,
-    ledger: &mut LossLedger,
-    contract: &LossLedger,
+    output: &mut XmlOutput, agent: &ResearchAgent, config: &DataCiteConfig,
+    ledger: &mut LossLedger, contract: &LossLedger,
 ) -> Result<(), ProjectionError> {
     let name = agent.names.first().ok_or_else(|| {
         ProjectionError::integrity(format!("DataCite publisher `{}` requires a name", agent.id))
@@ -1583,9 +1525,7 @@ fn write_publisher(
 }
 
 fn collect_related<'a>(
-    model: &'a ResearchObjectModel,
-    config: &'a DataCiteConfig,
-    ledger: &mut LossLedger,
+    model: &'a ResearchObjectModel, config: &'a DataCiteConfig, ledger: &mut LossLedger,
     contract: &LossLedger,
 ) -> Vec<(String, &'a str)> {
     let mut values = Vec::new();
@@ -1732,9 +1672,7 @@ fn extract_year(value: &str) -> Option<&str> {
 }
 
 fn text_element(
-    name: &str,
-    value: &ResearchText,
-    attributes: &[(&str, &str)],
+    name: &str, value: &ResearchText, attributes: &[(&str, &str)],
 ) -> Result<String, ProjectionError> {
     let mut output = format!("<{name}");
     for (attribute, value) in attributes {
@@ -1758,10 +1696,7 @@ fn text_element(
 }
 
 fn record_text_fidelity(
-    value: &ResearchText,
-    config: &DataCiteConfig,
-    ledger: &mut LossLedger,
-    contract: &LossLedger,
+    value: &ResearchText, config: &DataCiteConfig, ledger: &mut LossLedger, contract: &LossLedger,
     subject: &str,
 ) {
     let roles = config.common().roles();

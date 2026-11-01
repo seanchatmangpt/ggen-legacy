@@ -1091,8 +1091,7 @@ pub fn decide(case: &RlCase, imports: &purrdf_entail::ImportMap) -> Answer {
 /// unresolvable `owl:imports`, an inconsistent premise, an exhausted ceiling. Those are the
 /// [`Answer::Withheld`] cases, and they have no certificate because no run completed.
 pub fn certify(
-    case: &RlCase,
-    imports: &purrdf_entail::ImportMap,
+    case: &RlCase, imports: &purrdf_entail::ImportMap,
 ) -> Result<EntailmentCertificate, String> {
     let base = format!("http://example.org/w3c-owl2-rl/{}", case.name);
     let premise = parse(&case.premise, &base)?;

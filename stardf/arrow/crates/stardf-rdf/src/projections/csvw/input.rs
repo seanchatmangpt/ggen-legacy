@@ -45,9 +45,7 @@ impl CsvwInput {
     /// resources, duplicate keys (before construction), or configured size/count
     /// breaches.
     pub fn new(
-        action: CsvwAction,
-        resources: BTreeMap<String, Vec<u8>>,
-        limits: ProjectionLimits,
+        action: CsvwAction, resources: BTreeMap<String, Vec<u8>>, limits: ProjectionLimits,
     ) -> Result<Self, ProjectionError> {
         if resources.is_empty() {
             return Err(ProjectionError::package(
@@ -142,9 +140,7 @@ pub struct CsvwWarning {
 
 impl CsvwWarning {
     pub(crate) fn new(
-        kind: CsvwWarningKind,
-        resource: impl Into<String>,
-        location: impl Into<String>,
+        kind: CsvwWarningKind, resource: impl Into<String>, location: impl Into<String>,
         message: impl Into<String>,
     ) -> Self {
         Self {

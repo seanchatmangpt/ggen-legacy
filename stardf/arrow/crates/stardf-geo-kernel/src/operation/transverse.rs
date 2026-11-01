@@ -130,9 +130,7 @@ impl TransverseMercator {
     /// Refuses an invalid declared projection/source domain, a singular polar
     /// differential, and incomplete arithmetic or resource admission.
     pub fn differential_enclosure(
-        &self,
-        point: &OperationPoint,
-        math: &mut CoordinateMath,
+        &self, point: &OperationPoint, math: &mut CoordinateMath,
     ) -> Result<ProjectionDifferential, GeoError> {
         let mut validation = WorkProgress::integer(None);
         if let Err(error) = self
@@ -178,9 +176,7 @@ impl TransverseMercator {
     }
 
     pub(super) fn validate_with(
-        &self,
-        values: &crate::numerical::ExactValues<'_>,
-        progress: &mut WorkProgress<'_>,
+        &self, values: &crate::numerical::ExactValues<'_>, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         if !values
             .compare(&self.scale, &Rat::zero())
@@ -250,9 +246,7 @@ impl TransverseMercator {
         Ok(())
     }
     pub(super) fn validate_point(
-        &self,
-        point: &OperationPoint,
-        progress: &mut WorkProgress<'_>,
+        &self, point: &OperationPoint, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         crate::LonLat::new(point.x.clone(), point.y.clone())?;
         if (self.hemisphere == Hemisphere::North && point.y < Rat::zero())
@@ -334,8 +328,7 @@ impl TransverseMercator {
     }
 
     pub(super) fn parameters(
-        &self,
-        fields: &mut (impl ParameterSink + ?Sized),
+        &self, fields: &mut (impl ParameterSink + ?Sized),
     ) -> Result<(), GeoError> {
         fields.bytes(&[
             match self.family {
@@ -360,12 +353,8 @@ impl TransverseMercator {
         Ok(())
     }
     pub(super) fn evaluate(
-        &self,
-        point: &OperationPoint,
-        coordinates: &[FixedInterval],
-        source_is_exact: bool,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, point: &OperationPoint, coordinates: &[FixedInterval], source_is_exact: bool,
+        math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<OperationCoordinates, MathError> {
         Ok(self
             .evaluate_with_derivative(point, coordinates, source_is_exact, false, math, progress)?
@@ -373,12 +362,8 @@ impl TransverseMercator {
     }
 
     pub(super) fn evaluate_differential(
-        &self,
-        point: &OperationPoint,
-        coordinates: &[FixedInterval],
-        source_is_exact: bool,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, point: &OperationPoint, coordinates: &[FixedInterval], source_is_exact: bool,
+        math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<(OperationCoordinates, [[FixedInterval; 2]; 2]), MathError> {
         let (image, derivative) = self.evaluate_with_derivative(
             point,
@@ -393,13 +378,8 @@ impl TransverseMercator {
 
     #[allow(clippy::too_many_arguments)] // One value/derivative recurrence shares its admitted operands.
     fn evaluate_with_derivative(
-        &self,
-        point: &OperationPoint,
-        coordinates: &[FixedInterval],
-        source_is_exact: bool,
-        derivative: bool,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, point: &OperationPoint, coordinates: &[FixedInterval], source_is_exact: bool,
+        derivative: bool, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<TransverseEvaluation, MathError> {
         if !source_is_exact {
             self.validate_interval(coordinates)?;
@@ -476,20 +456,10 @@ impl TransverseMercator {
 
     #[allow(clippy::too_many_arguments)] // Original ODE operands and admitted scratch remain explicit.
     fn series(
-        &self,
-        _point: &OperationPoint,
-        coordinates: &[FixedInterval],
-        lambda: &FixedInterval,
-        ratio: &FixedInterval,
-        sine: &FixedInterval,
-        cosine: &FixedInterval,
-        e2: &FixedInterval,
-        one: &FixedInterval,
-        a: &FixedInterval,
-        order: usize,
-        derivative: bool,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, _point: &OperationPoint, coordinates: &[FixedInterval], lambda: &FixedInterval,
+        ratio: &FixedInterval, sine: &FixedInterval, cosine: &FixedInterval, e2: &FixedInterval,
+        one: &FixedInterval, a: &FixedInterval, order: usize, derivative: bool,
+        math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<TransverseEvaluation, MathError> {
         with_taylor_workspace_observed_with_storage(
             order,

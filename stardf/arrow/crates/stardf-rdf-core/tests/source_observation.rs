@@ -74,15 +74,13 @@ fn sealed(dataset: &RdfDataset) -> Arc<purrdf_core::SegmentedLayer> {
 }
 
 fn sealed_where(
-    dataset: &RdfDataset,
-    keep: impl Fn(purrdf_core::QuadIds) -> bool,
+    dataset: &RdfDataset, keep: impl Fn(purrdf_core::QuadIds) -> bool,
 ) -> Arc<purrdf_core::SegmentedLayer> {
     sealed_with_metadata(dataset, keep, SegmentedLayerMetadata::default())
 }
 
 fn sealed_with_metadata(
-    dataset: &RdfDataset,
-    keep: impl Fn(purrdf_core::QuadIds) -> bool,
+    dataset: &RdfDataset, keep: impl Fn(purrdf_core::QuadIds) -> bool,
     metadata: SegmentedLayerMetadata,
 ) -> Arc<purrdf_core::SegmentedLayer> {
     let mut builder = purrdf_core::SegmentedBuilder::new(
@@ -132,9 +130,7 @@ fn sealed_with_metadata(
 }
 
 fn sealed_partition(
-    dataset: &RdfDataset,
-    buckets: usize,
-    selected: &[usize],
+    dataset: &RdfDataset, buckets: usize, selected: &[usize],
 ) -> Arc<purrdf_core::SegmentedLayer> {
     sealed_where(dataset, |row| {
         let purrdf_core::TermRef::Iri(subject) = dataset.resolve(row.s) else {

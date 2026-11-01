@@ -36,8 +36,7 @@ const BACKREFERENCE: &str = r#"
 "#;
 
 fn parsed(
-    text: &str,
-    options: &ValidationOptions,
+    text: &str, options: &ValidationOptions,
 ) -> Result<Arc<purrdf_shapes::shapes::Shapes>, CompleteValidationError> {
     engine::parse_shapes_with_options(
         &format!("{PREFIXES}{text}"),

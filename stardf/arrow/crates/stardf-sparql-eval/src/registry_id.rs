@@ -203,9 +203,7 @@ pub(crate) fn digest_framed_part(out: &mut sha2::Sha256, label: &str, value: &[u
 
 /// Admit the exact native frame destination before the existing encoder writes.
 pub(crate) fn append_framed_part_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-    output: &mut Vec<u8>,
-    label: &str,
-    value: &[u8],
+    output: &mut Vec<u8>, label: &str, value: &[u8],
     memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<(), purrdf_lex::allocation::StorageError> {
     let frame = purrdf_hash::frame::frame_be_labelled_len(label, value)

@@ -586,11 +586,8 @@ impl LintReport {
 /// the vendored `shacl-shacl.ttl` itself fails to load or to validate — an internal defect,
 /// never a verdict about `dataset`.
 pub fn lint(
-    dataset: &Arc<RdfDataset>,
-    doc_prefixes: &[(String, String)],
-    box_role_vocab: Option<BoxRoleVocab>,
-    shapes_graph: Option<String>,
-    imports: &ShapesImports,
+    dataset: &Arc<RdfDataset>, doc_prefixes: &[(String, String)],
+    box_role_vocab: Option<BoxRoleVocab>, shapes_graph: Option<String>, imports: &ShapesImports,
 ) -> Result<LintReport, ShapesError> {
     let resolved = resolve_shapes_imports(dataset, doc_prefixes, &[], imports)?;
     let unanchored_imports = imports
@@ -698,8 +695,7 @@ pub fn lint(
 /// `shacl-shacl.ttl`'s `sh:minListLength` result on a shape's `sh:in` or `sh:xone` path,
 /// for a shape the diagnostics list under that parameter's rule.
 fn diagnosed_by(
-    result: &ShaclShaclResult,
-    diagnostics: &[MandatoryDiagnostic],
+    result: &ShaclShaclResult, diagnostics: &[MandatoryDiagnostic],
 ) -> Option<&'static str> {
     // `sh:MinListLengthConstraintComponent` is the component `shacl-shacl.ttl`
     // reports an empty `sh:in` or `sh:xone` list under.

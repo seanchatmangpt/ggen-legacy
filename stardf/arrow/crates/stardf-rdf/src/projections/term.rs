@@ -112,9 +112,7 @@ impl ProjectionTerm {
     /// Returns [`ProjectionTerm::from_view`]'s refusal, or a limit error when
     /// the term's canonical JSON exceeds the artifact bound.
     pub(crate) fn resolve_cached<D: DatasetView>(
-        view: &D,
-        id: D::Id,
-        limits: ProjectionLimits,
+        view: &D, id: D::Id, limits: ProjectionLimits,
         cache: &mut std::collections::BTreeMap<D::Id, Self>,
     ) -> Result<Self, ProjectionError> {
         if let Some(term) = cache.get(&id) {
@@ -132,8 +130,7 @@ impl ProjectionTerm {
     ///
     /// Returns an integrity error when a triple term's predicate is not an IRI.
     pub(crate) fn intern(
-        &self,
-        builder: &mut purrdf_core::RdfDatasetBuilder,
+        &self, builder: &mut purrdf_core::RdfDatasetBuilder,
     ) -> Result<purrdf_core::TermId, ProjectionError> {
         Ok(match self {
             Self::Iri { value } => builder.intern_iri(value)?,
@@ -175,9 +172,7 @@ impl ProjectionTerm {
     /// Returns a term error for structurally invalid datatype/predicate positions or
     /// cycles, and a resource-limit error when triple nesting exceeds the bound.
     pub fn from_view<D: DatasetView>(
-        view: &D,
-        id: D::Id,
-        limits: ProjectionLimits,
+        view: &D, id: D::Id, limits: ProjectionLimits,
     ) -> Result<Self, ProjectionError> {
         let mut active = BTreeSet::new();
         let term = view
@@ -188,11 +183,7 @@ impl ProjectionTerm {
     }
 
     fn from_view_inner<D: DatasetView>(
-        view: &D,
-        id: D::Id,
-        limits: ProjectionLimits,
-        depth: usize,
-        active: &mut BTreeSet<D::Id>,
+        view: &D, id: D::Id, limits: ProjectionLimits, depth: usize, active: &mut BTreeSet<D::Id>,
     ) -> Result<Self, ProjectionError> {
         if !active.insert(id) {
             return Err(ProjectionError::term("cyclic triple-term component graph"));
@@ -257,8 +248,7 @@ impl ProjectionTerm {
     /// Returns a typed term or resource-limit error when `value` is not a valid,
     /// bounded RDF 1.2 term.
     pub fn from_term_value(
-        value: &TermValue,
-        limits: ProjectionLimits,
+        value: &TermValue, limits: ProjectionLimits,
     ) -> Result<Self, ProjectionError> {
         let term = Self::from_term_value_inner(value, limits, 0)?;
         term.validate(limits)?;
@@ -266,9 +256,7 @@ impl ProjectionTerm {
     }
 
     fn from_term_value_inner(
-        value: &TermValue,
-        limits: ProjectionLimits,
-        depth: usize,
+        value: &TermValue, limits: ProjectionLimits, depth: usize,
     ) -> Result<Self, ProjectionError> {
         Ok(match value {
             TermValue::Iri(value) => Self::Iri {
@@ -359,8 +347,7 @@ impl ProjectionTerm {
     /// Returns a syntax error for invalid/non-canonical JSON and a typed term or limit
     /// error for an invalid RDF value.
     pub fn from_canonical_json(
-        bytes: &[u8],
-        limits: ProjectionLimits,
+        bytes: &[u8], limits: ProjectionLimits,
     ) -> Result<Self, ProjectionError> {
         if bytes.len() > limits.max_artifact_bytes() {
             return Err(ProjectionError::limit(format!(
@@ -402,9 +389,7 @@ impl ProjectionTerm {
     }
 
     fn validate_inner(
-        &self,
-        limits: ProjectionLimits,
-        depth: usize,
+        &self, limits: ProjectionLimits, depth: usize,
     ) -> Result<(), ProjectionError> {
         match self {
             Self::Iri { value } => validate_absolute_iri(value, "term IRI")

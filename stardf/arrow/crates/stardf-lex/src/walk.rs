@@ -185,9 +185,7 @@ impl<T, const N: usize> WorkList<T, N> {
     /// # Errors
     /// Returns the original storage, layout or allocator refusal.
     pub fn try_push_admitted<S: crate::allocation::Admission + ?Sized>(
-        &mut self,
-        value: T,
-        memory: &mut crate::allocation::Memory<'_, S>,
+        &mut self, value: T, memory: &mut crate::allocation::Memory<'_, S>,
     ) -> Result<(), crate::allocation::StorageError> {
         if self.held == N {
             memory.push(&mut self.spill, value)?;
@@ -204,8 +202,7 @@ impl<T, const N: usize> WorkList<T, N> {
     /// # Errors
     /// Returns the original caller's shrink refusal or layout overflow.
     pub fn release_admitted<S: crate::allocation::Admission + ?Sized>(
-        self,
-        memory: &mut crate::allocation::Memory<'_, S>,
+        self, memory: &mut crate::allocation::Memory<'_, S>,
     ) -> Result<(), crate::allocation::StorageError> {
         let Self { inline, spill, .. } = self;
         drop(inline);
@@ -224,8 +221,7 @@ impl<T, const N: usize> WorkList<T, N> {
     /// # Errors
     /// Returns the actual allocator refusal before changing entries.
     pub fn try_reserve_heap_exact(
-        &mut self,
-        capacity: usize,
+        &mut self, capacity: usize,
     ) -> Result<(), std::collections::TryReserveError> {
         if capacity > self.spill.capacity() {
             self.spill.try_reserve_exact(capacity - self.spill.len())?;
@@ -238,9 +234,7 @@ impl<T, const N: usize> WorkList<T, N> {
     /// # Errors
     /// Returns checked layout, admission or native allocator refusal.
     pub fn try_reserve_heap_admitted<S: crate::allocation::Admission + ?Sized>(
-        &mut self,
-        capacity: usize,
-        memory: &mut crate::allocation::Memory<'_, S>,
+        &mut self, capacity: usize, memory: &mut crate::allocation::Memory<'_, S>,
     ) -> Result<(), crate::allocation::StorageError> {
         memory.reserve(&mut self.spill, capacity)
     }
@@ -585,8 +579,7 @@ impl<T: Dismantle, C> Nested<T, C> {
     /// # Errors
     /// Returns layout, admission or physical allocation refusal.
     pub fn try_new<S: crate::allocation::Admission + ?Sized>(
-        value: T,
-        memory: &mut crate::allocation::Memory<'_, S>,
+        value: T, memory: &mut crate::allocation::Memory<'_, S>,
     ) -> Result<Self, crate::allocation::StorageError> {
         memory.boxed(value).map(Self::from)
     }
@@ -764,9 +757,7 @@ pub enum Tok<N, L> {
 /// When the script is unbalanced: a field outside a struct, or a close with
 /// nothing open.
 pub fn write_debug<N, L: fmt::Debug, const K: usize>(
-    f: &mut fmt::Formatter<'_>,
-    root: N,
-    mut script: impl FnMut(N, &mut WorkList<Tok<N, L>, K>),
+    f: &mut fmt::Formatter<'_>, root: N, mut script: impl FnMut(N, &mut WorkList<Tok<N, L>, K>),
 ) -> fmt::Result {
     write_debug_with(
         f,
@@ -818,8 +809,7 @@ pub fn write_debug_with_memory<
     const K: usize,
     S: crate::allocation::Admission + ?Sized,
 >(
-    f: &mut fmt::Formatter<'_>,
-    root: N,
+    f: &mut fmt::Formatter<'_>, root: N,
     script: impl FnMut(
         N,
         &mut WorkList<Tok<N, L>, K>,
@@ -833,16 +823,14 @@ pub fn write_debug_with_memory<
 /// The sole traversal and container writer; each entry supplies only its leaves,
 /// written at the current position of the indenting writer.
 fn write_debug_with<N, L, const K: usize, S: crate::allocation::Admission + ?Sized>(
-    f: &mut fmt::Formatter<'_>,
-    root: N,
+    f: &mut fmt::Formatter<'_>, root: N,
     mut script: impl FnMut(
         N,
         &mut WorkList<Tok<N, L>, K>,
         &mut crate::allocation::Memory<'_, S>,
     ) -> Result<(), crate::allocation::StorageError>,
     mut render_leaf: impl FnMut(L, &mut Pad<'_, '_>) -> fmt::Result,
-    memory: &mut crate::allocation::Memory<'_, S>,
-    admitted_stack: bool,
+    memory: &mut crate::allocation::Memory<'_, S>, admitted_stack: bool,
 ) -> Result<(), DebugWriteError> {
     let pretty = f.alternate();
     let mut out = Pad {
@@ -979,10 +967,7 @@ impl Pad<'_, '_> {
     /// A container starts as a value of the innermost open one: write what
     /// separates it, then its opening (`name` for a struct or tuple, `[` for a list).
     fn open<S: crate::allocation::Admission + ?Sized>(
-        &mut self,
-        open: &mut WorkList<Open, 16>,
-        opening: &str,
-        kind: OpenKind,
+        &mut self, open: &mut WorkList<Open, 16>, opening: &str, kind: OpenKind,
         memory: &mut crate::allocation::Memory<'_, S>,
     ) -> Result<(), DebugWriteError> {
         self.begin(open)?;

@@ -823,8 +823,7 @@ pub fn parse_integer(s: &str) -> Result<crate::exact::Integer, XsdError> {
 /// Returns a lexical error for a non-integer spelling or an out-of-range
 /// error for a derived-type facet violation.
 pub fn parse_integer_typed(
-    lexical: &str,
-    datatype: XsdDatatype,
+    lexical: &str, datatype: XsdDatatype,
 ) -> Result<crate::exact::Integer, XsdError> {
     if !is_integer_lexical(lexical) {
         return Err(XsdError::invalid(
@@ -1266,8 +1265,7 @@ pub fn canonical_float_text(value: f32) -> CanonicalFloatText {
 }
 
 fn xpath_ieee_text(
-    value: f64,
-    plain: impl FnOnce(&mut CanonicalFloatText) -> std::fmt::Result,
+    value: f64, plain: impl FnOnce(&mut CanonicalFloatText) -> std::fmt::Result,
     canonical: impl FnOnce() -> CanonicalFloatText,
 ) -> CanonicalFloatText {
     use std::fmt::Write;
@@ -1362,9 +1360,7 @@ pub fn canonical_float(value: f32) -> String {
 }
 
 fn canonical_ieee(
-    is_nan: bool,
-    is_inf: bool,
-    is_neg: bool,
+    is_nan: bool, is_inf: bool, is_neg: bool,
     scientific: impl FnOnce(&mut CanonicalFloatText) -> std::fmt::Result,
 ) -> CanonicalFloatText {
     use std::fmt::Write;
@@ -1421,8 +1417,7 @@ pub fn numeric_cmp(a: &XsdValue, b: &XsdValue) -> Option<Ordering> {
 /// # Errors
 /// Returns native admission or allocation failure independently of incomparability.
 pub fn numeric_cmp_admitted(
-    a: &XsdValue,
-    b: &XsdValue,
+    a: &XsdValue, b: &XsdValue,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1543,8 +1538,7 @@ pub fn numeric_total_cmp(a: &XsdValue, b: &XsdValue) -> Option<Ordering> {
 /// # Errors
 /// Returns admission/allocation refusal separately from NaN incomparability.
 pub fn numeric_total_cmp_admitted(
-    a: &XsdValue,
-    b: &XsdValue,
+    a: &XsdValue, b: &XsdValue,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1553,9 +1547,7 @@ pub fn numeric_total_cmp_admitted(
 }
 
 fn numeric_total_cmp_using(
-    a: &XsdValue,
-    b: &XsdValue,
-    storage: &impl crate::bigint::scratch::Allocate,
+    a: &XsdValue, b: &XsdValue, storage: &impl crate::bigint::scratch::Allocate,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1595,9 +1587,7 @@ fn numeric_total_cmp_using(
 }
 
 fn exact_vs_ieee_numeric_using(
-    exact: &XsdValue,
-    ieee: f64,
-    storage: &impl crate::bigint::scratch::Allocate,
+    exact: &XsdValue, ieee: f64, storage: &impl crate::bigint::scratch::Allocate,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1652,9 +1642,7 @@ fn dyadic_magnitude(value: f64) -> (u64, i32) {
 /// widening `f32 → f64` is lossless; the integer branch of the tower arrives as a
 /// scale-0 [`Decimal`]. `None` only for `NaN`.
 fn exact_vs_ieee_using(
-    exact: &Decimal,
-    ieee: f64,
-    storage: &impl crate::bigint::scratch::Allocate,
+    exact: &Decimal, ieee: f64, storage: &impl crate::bigint::scratch::Allocate,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1720,10 +1708,7 @@ fn exact_vs_ieee_using(
 ///    genuinely exceeds 128 bits, which needs the two magnitudes to differ by
 ///    enough that step 1 nearly caught them.
 fn magnitude_cmp_using(
-    mantissa: u128,
-    scale: u8,
-    ieee: f64,
-    storage: &impl crate::bigint::scratch::Allocate,
+    mantissa: u128, scale: u8, ieee: f64, storage: &impl crate::bigint::scratch::Allocate,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1776,10 +1761,7 @@ fn shl_exact(value: u128, shift: u32) -> Option<u128> {
 
 /// The exact cross-multiplication once a product has outgrown `u128`.
 fn big_magnitude_cmp_using(
-    mantissa: u128,
-    scale: u8,
-    significand: u128,
-    exponent: i32,
+    mantissa: u128, scale: u8, significand: u128, exponent: i32,
     storage: &impl crate::bigint::scratch::Allocate,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
@@ -1934,10 +1916,7 @@ pub fn numeric_to_f32_admitted(
 /// # Errors
 /// Preserves all existing F&O/precision failures separately from storage refusal.
 pub fn numeric_binary_admitted(
-    a: &XsdValue,
-    b: &XsdValue,
-    op: NumericBinaryOperator,
-    policy: DivisionPolicy,
+    a: &XsdValue, b: &XsdValue, op: NumericBinaryOperator, policy: DivisionPolicy,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -2027,8 +2006,7 @@ pub enum NumericUnaryOperator {
 /// # Errors
 /// Numerical/type failures are distinct from native destination refusal.
 pub fn numeric_unary_admitted(
-    value: &XsdValue,
-    op: NumericUnaryOperator,
+    value: &XsdValue, op: NumericUnaryOperator,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -2102,8 +2080,7 @@ pub fn numeric_unary_admitted(
 /// # Errors
 /// Physical admission/refusal is separate from an out-of-domain cast (None).
 pub fn numeric_cast_admitted(
-    source: &XsdValue,
-    target: XsdDatatype,
+    source: &XsdValue, target: XsdDatatype,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -2451,9 +2428,7 @@ pub fn numeric_div(a: &XsdValue, b: &XsdValue) -> Result<XsdValue, XsdError> {
 /// # Ok::<(), purrdf_xsd::XsdError>(())
 /// ```
 pub fn numeric_div_with_policy(
-    a: &XsdValue,
-    b: &XsdValue,
-    policy: DivisionPolicy,
+    a: &XsdValue, b: &XsdValue, policy: DivisionPolicy,
 ) -> Result<XsdValue, XsdError> {
     if a.is_exact_numeric() && b.is_exact_numeric() {
         return exact_path::div(a, b, policy);

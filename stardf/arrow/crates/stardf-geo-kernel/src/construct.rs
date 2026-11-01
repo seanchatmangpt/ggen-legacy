@@ -99,9 +99,7 @@ impl DerivedGeometry {
 /// Preserves selected output/work/precision/physical limits, cancellation and
 /// exact native errors. No partial construction or resident fallback escapes.
 pub fn derive_metered(
-    operation: Derivation,
-    literal: &GeometryLiteral,
-    context: &mut MetricContext,
+    operation: Derivation, literal: &GeometryLiteral, context: &mut MetricContext,
     observer: &mut dyn MetricWorkObserver,
 ) -> Result<DerivedGeometry, GeoError> {
     produce_metered(
@@ -121,9 +119,7 @@ pub fn derive_metered(
 /// # Errors
 /// Preserves original physical, policy, arithmetic and cancellation failures.
 pub fn member_metered(
-    literal: &GeometryLiteral,
-    index: usize,
-    context: &mut MetricContext,
+    literal: &GeometryLiteral, index: usize, context: &mut MetricContext,
     observer: &mut dyn MetricWorkObserver,
 ) -> Result<Option<DerivedGeometry>, GeoError> {
     produce_metered(
@@ -137,9 +133,7 @@ pub fn member_metered(
 }
 
 fn produce_metered(
-    literal: &GeometryLiteral,
-    context: &mut MetricContext,
-    observer: &mut dyn MetricWorkObserver,
+    literal: &GeometryLiteral, context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     produce: impl FnOnce(
         &Geometry,
         &mut Memory<'_, dyn Admission + '_>,
@@ -215,9 +209,7 @@ fn resident<T>(body: impl FnOnce(&mut Memory<'_, dyn Admission>) -> Result<T, Ge
 }
 
 fn derive_inner<S: Admission + ?Sized>(
-    operation: Derivation,
-    geometry: &Geometry,
-    memory: &mut Memory<'_, S>,
+    operation: Derivation, geometry: &Geometry, memory: &mut Memory<'_, S>,
     arithmetic: &Arithmetic<'_, '_, '_>,
 ) -> Result<Geometry, GeoError> {
     match operation {
@@ -243,9 +235,7 @@ fn planar(body: GeometryBody, arithmetic: &Arithmetic<'_, '_, '_>) -> Result<Geo
 }
 
 fn run<S: Admission + ?Sized>(
-    points: &[Coord],
-    memory: &mut Memory<'_, S>,
-    arithmetic: &Arithmetic<'_, '_, '_>,
+    points: &[Coord], memory: &mut Memory<'_, S>, arithmetic: &Arithmetic<'_, '_, '_>,
 ) -> Result<CoordSeq, GeoError> {
     arithmetic.output(points.len())?;
     memory.try_map(points, |point, _| arithmetic.plane(point))
@@ -260,9 +250,7 @@ pub fn boundary(geometry: &Geometry) -> Geometry {
 }
 
 fn boundary_inner<S: Admission + ?Sized>(
-    geometry: &Geometry,
-    memory: &mut Memory<'_, S>,
-    arithmetic: &Arithmetic<'_, '_, '_>,
+    geometry: &Geometry, memory: &mut Memory<'_, S>, arithmetic: &Arithmetic<'_, '_, '_>,
 ) -> Result<Geometry, GeoError> {
     crate::geom::try_fold_with_memory(
         geometry,
@@ -274,9 +262,7 @@ fn boundary_inner<S: Admission + ?Sized>(
 }
 
 fn member_boundary<S: Admission + ?Sized>(
-    geometry: &Geometry,
-    memory: &mut Memory<'_, S>,
-    arithmetic: &Arithmetic<'_, '_, '_>,
+    geometry: &Geometry, memory: &mut Memory<'_, S>, arithmetic: &Arithmetic<'_, '_, '_>,
 ) -> Result<Geometry, GeoError> {
     arithmetic.visit()?;
     match geometry.body() {
@@ -316,8 +302,7 @@ fn member_boundary<S: Admission + ?Sized>(
 }
 
 fn surface_boundary<'a, S: Admission + ?Sized>(
-    polygons: impl Iterator<Item = &'a [CoordSeq]>,
-    memory: &mut Memory<'_, S>,
+    polygons: impl Iterator<Item = &'a [CoordSeq]>, memory: &mut Memory<'_, S>,
     arithmetic: &Arithmetic<'_, '_, '_>,
 ) -> Result<Geometry, GeoError> {
     let mut rings = Vec::new();
@@ -340,9 +325,7 @@ pub fn envelope(geometry: &Geometry) -> Geometry {
 }
 
 fn borrowed_bounds<'a, S: Admission + ?Sized>(
-    geometry: &'a Geometry,
-    memory: &mut Memory<'_, S>,
-    arithmetic: &Arithmetic<'_, '_, '_>,
+    geometry: &'a Geometry, memory: &mut Memory<'_, S>, arithmetic: &Arithmetic<'_, '_, '_>,
 ) -> Result<Option<crate::measure::BorrowedBounds<'a>>, GeoError> {
     use core::ops::ControlFlow;
     let mut bounds: Option<crate::measure::BorrowedBounds<'a>> = None;
@@ -381,9 +364,7 @@ fn borrowed_bounds<'a, S: Admission + ?Sized>(
 }
 
 fn envelope_inner<S: Admission + ?Sized>(
-    geometry: &Geometry,
-    memory: &mut Memory<'_, S>,
-    arithmetic: &Arithmetic<'_, '_, '_>,
+    geometry: &Geometry, memory: &mut Memory<'_, S>, arithmetic: &Arithmetic<'_, '_, '_>,
 ) -> Result<Geometry, GeoError> {
     let Some(crate::measure::BorrowedBounds {
         west,
@@ -442,9 +423,7 @@ pub fn convex_hull(geometry: &Geometry) -> Geometry {
 }
 
 fn convex_hull_inner<S: Admission + ?Sized>(
-    geometry: &Geometry,
-    memory: &mut Memory<'_, S>,
-    arithmetic: &Arithmetic<'_, '_, '_>,
+    geometry: &Geometry, memory: &mut Memory<'_, S>, arithmetic: &Arithmetic<'_, '_, '_>,
 ) -> Result<Geometry, GeoError> {
     use core::ops::ControlFlow;
     let mut points = Vec::new();
@@ -510,9 +489,7 @@ fn convex_hull_inner<S: Admission + ?Sized>(
 }
 
 fn monotone_chain<'a, S: Admission + ?Sized>(
-    points: &[&'a Coord],
-    memory: &mut Memory<'_, S>,
-    arithmetic: &Arithmetic<'_, '_, '_>,
+    points: &[&'a Coord], memory: &mut Memory<'_, S>, arithmetic: &Arithmetic<'_, '_, '_>,
 ) -> Result<Vec<&'a Coord>, GeoError> {
     let mut lower = half_chain(points.iter().copied(), memory, arithmetic)?;
     let mut upper = half_chain(points.iter().rev().copied(), memory, arithmetic)?;
@@ -533,8 +510,7 @@ fn monotone_chain<'a, S: Admission + ?Sized>(
 }
 
 fn half_chain<'a, S: Admission + ?Sized>(
-    points: impl Iterator<Item = &'a Coord>,
-    memory: &mut Memory<'_, S>,
+    points: impl Iterator<Item = &'a Coord>, memory: &mut Memory<'_, S>,
     arithmetic: &Arithmetic<'_, '_, '_>,
 ) -> Result<Vec<&'a Coord>, GeoError> {
     let mut chain = Vec::new();
@@ -558,9 +534,7 @@ pub fn centroid(geometry: &Geometry) -> Option<Coord> {
 }
 
 fn centroid_inner<S: Admission + ?Sized>(
-    geometry: &Geometry,
-    memory: &mut Memory<'_, S>,
-    arithmetic: &Arithmetic<'_, '_, '_>,
+    geometry: &Geometry, memory: &mut Memory<'_, S>, arithmetic: &Arithmetic<'_, '_, '_>,
 ) -> Result<Option<Coord>, GeoError> {
     let parts = BorrowedParts::with_memory(geometry, memory).map_err(GeoError::Storage)?;
     let result = match areal_centroid(&parts, arithmetic)? {
@@ -578,8 +552,7 @@ fn centroid_inner<S: Admission + ?Sized>(
 }
 
 fn mean<'a>(
-    points: impl Iterator<Item = &'a Coord>,
-    arithmetic: &Arithmetic<'_, '_, '_>,
+    points: impl Iterator<Item = &'a Coord>, arithmetic: &Arithmetic<'_, '_, '_>,
 ) -> Result<Option<Coord>, GeoError> {
     let mut count = 0_i64;
     let mut sum_x = Rat::zero();
@@ -602,8 +575,7 @@ fn mean<'a>(
 }
 
 fn areal_centroid(
-    parts: &BorrowedParts<'_>,
-    arithmetic: &Arithmetic<'_, '_, '_>,
+    parts: &BorrowedParts<'_>, arithmetic: &Arithmetic<'_, '_, '_>,
 ) -> Result<Option<Coord>, GeoError> {
     let mut area = Rat::zero();
     let mut moment_x = Rat::zero();
@@ -640,11 +612,7 @@ fn areal_centroid(
 }
 
 fn accumulate_ring(
-    ring: &[Coord],
-    additive: bool,
-    area: &mut Rat,
-    moment_x: &mut Rat,
-    moment_y: &mut Rat,
+    ring: &[Coord], additive: bool, area: &mut Rat, moment_x: &mut Rat, moment_y: &mut Rat,
     arithmetic: &Arithmetic<'_, '_, '_>,
 ) -> Result<(), GeoError> {
     let signed = arithmetic.ring_area(ring)?;
@@ -684,8 +652,7 @@ fn accumulate_ring(
 }
 
 fn linear_centroid(
-    parts: &BorrowedParts<'_>,
-    arithmetic: &Arithmetic<'_, '_, '_>,
+    parts: &BorrowedParts<'_>, arithmetic: &Arithmetic<'_, '_, '_>,
 ) -> Result<Option<Coord>, GeoError> {
     let half = Rat::new(Int::one(), Int::from_i64(2)).expect("two is not zero");
     let mut weight = Int::zero();

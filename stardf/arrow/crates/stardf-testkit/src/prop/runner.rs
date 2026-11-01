@@ -347,12 +347,7 @@ impl Runner {
     }
 
     fn shrink<S, F>(
-        &self,
-        strategy: &S,
-        test: &F,
-        values: Vec<u64>,
-        message: String,
-        passed: u32,
+        &self, strategy: &S, test: &F, values: Vec<u64>, message: String, passed: u32,
     ) -> Failure
     where
         S: Strategy + ?Sized,

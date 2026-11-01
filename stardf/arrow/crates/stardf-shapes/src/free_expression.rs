@@ -147,8 +147,7 @@ pub(crate) fn parse(
 
 /// Evaluate `expr`, parsed from `request` with its `shapes` by [`parse`].
 pub(crate) fn evaluate_parsed(
-    request: &FreeExpression<'_>,
-    shapes: &crate::shapes::Shapes,
+    request: &FreeExpression<'_>, shapes: &crate::shapes::Shapes,
     expr: &crate::expression::NodeExpr,
 ) -> Result<NodeExprEvaluation, ShapesError> {
     let projected = crate::engine::project_dataset(request.data)?;
@@ -176,12 +175,8 @@ pub(crate) fn evaluate_parsed(
 
 /// Push `bindings` onto `scope`, first binding outermost, and evaluate.
 fn eval_bound(
-    data: &crate::data::ShaclData,
-    focus: &Term,
-    expr: &crate::expression::NodeExpr,
-    guard: &mut RecursionGuard,
-    bindings: &[(String, Term)],
-    scope: Scope<'_>,
+    data: &crate::data::ShaclData, focus: &Term, expr: &crate::expression::NodeExpr,
+    guard: &mut RecursionGuard, bindings: &[(String, Term)], scope: Scope<'_>,
 ) -> Result<Vec<Term>, ShapesError> {
     match bindings.split_first() {
         None => eval_node_expr_in_scope(data, focus, expr, guard, scope),

@@ -109,9 +109,7 @@ impl PropertyFunction for Expand {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -220,11 +218,8 @@ fn run_over(data: &RdfDataset, variant: Variant, body: &str) -> Outcome {
 /// Run `body` as `SELECT ?q ?out WHERE { body }` over `data`, with `relation`
 /// registered at `iri` and recording into `invocations`.
 fn run_relation(
-    data: &RdfDataset,
-    iri: &str,
-    relation: Arc<dyn PropertyFunction>,
-    invocations: &Mutex<Vec<String>>,
-    body: &str,
+    data: &RdfDataset, iri: &str, relation: Arc<dyn PropertyFunction>,
+    invocations: &Mutex<Vec<String>>, body: &str,
 ) -> Outcome {
     run_relation_with(
         data,
@@ -239,12 +234,8 @@ fn run_relation(
 
 /// [`run_relation`], with `substitutions` bound under `lane`.
 fn run_relation_with(
-    data: &RdfDataset,
-    iri: &str,
-    relation: Arc<dyn PropertyFunction>,
-    invocations: &Mutex<Vec<String>>,
-    body: &str,
-    substitutions: &[(String, TermValue)],
+    data: &RdfDataset, iri: &str, relation: Arc<dyn PropertyFunction>,
+    invocations: &Mutex<Vec<String>>, body: &str, substitutions: &[(String, TermValue)],
     lane: ShaclPrebinding,
 ) -> Outcome {
     let mut registry = PropertyFunctionRegistry::new();
@@ -256,12 +247,8 @@ fn run_relation_with(
 /// Run `body` as `SELECT ?q ?out WHERE { body }` over `data` in `env`, whose relation
 /// records into `invocations`.
 fn run_in(
-    env: &ExtensionEnv<'static>,
-    data: &RdfDataset,
-    invocations: &Mutex<Vec<String>>,
-    body: &str,
-    substitutions: &[(String, TermValue)],
-    lane: ShaclPrebinding,
+    env: &ExtensionEnv<'static>, data: &RdfDataset, invocations: &Mutex<Vec<String>>, body: &str,
+    substitutions: &[(String, TermValue)], lane: ShaclPrebinding,
 ) -> Outcome {
     let query = format!("SELECT ?q ?out WHERE {{ {body} }}");
     let answer = NativeSparqlEngine::new()
@@ -1034,9 +1021,7 @@ impl PropertyFunction for Pairs {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -1084,10 +1069,7 @@ fn run_pairs(modes: &[&str], body: &str) -> Outcome {
 /// Run `body` against [`Pairs`] declaring `modes` — or, with `ignores_input`, against
 /// the bottom-up reference — with `substitutions` bound under `lane`.
 fn run_pairs_with(
-    modes: &[&str],
-    ignores_input: bool,
-    body: &str,
-    substitutions: &[(String, TermValue)],
+    modes: &[&str], ignores_input: bool, body: &str, substitutions: &[(String, TermValue)],
     lane: ShaclPrebinding,
 ) -> Outcome {
     let invocations = Arc::new(Mutex::new(Vec::new()));

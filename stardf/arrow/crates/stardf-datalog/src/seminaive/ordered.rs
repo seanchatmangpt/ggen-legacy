@@ -26,12 +26,8 @@ where
 {
     /// Freeze this guard-bounded region's original seed and physical steps once.
     fn new<D: TermDictionary<Id = I>>(
-        entry: RuleEntry<'_, N>,
-        snapshot: JoinSnapshot<'_, D, N>,
-        strategy: JoinStrategy,
-        scan: JoinScan,
-        body: std::ops::Range<usize>,
-        inputs: Vec<SlotSolution<I, N>>,
+        entry: RuleEntry<'_, N>, snapshot: JoinSnapshot<'_, D, N>, strategy: JoinStrategy,
+        scan: JoinScan, body: std::ops::Range<usize>, inputs: Vec<SlotSolution<I, N>>,
     ) -> Self {
         let plan = entry.plan;
         let cyclic = !matches!(scan, JoinScan::Uniform(_))
@@ -121,9 +117,7 @@ where
 {
     /// Freeze the original body-change decision and anchor range before any guard.
     pub(super) fn new<D: TermDictionary<Id = I>>(
-        entry: RuleEntry<'_, N>,
-        snapshot: JoinSnapshot<'_, D, N>,
-        strategy: JoinStrategy,
+        entry: RuleEntry<'_, N>, snapshot: JoinSnapshot<'_, D, N>, strategy: JoinStrategy,
     ) -> Result<Self, EvalError<D::Error>> {
         snapshot
             .rel
@@ -175,11 +169,8 @@ where
 
     /// Continue the same native segment or returned guard batch at its next credit.
     pub(super) fn advance<D: TermDictionary<Id = I>>(
-        &mut self,
-        entry: RuleEntry<'_, N>,
-        snapshot: JoinSnapshot<'_, D, N>,
-        guards: &dyn GuardEvaluator<D, N>,
-        governor: &mut StepGovernor<'_>,
+        &mut self, entry: RuleEntry<'_, N>, snapshot: JoinSnapshot<'_, D, N>,
+        guards: &dyn GuardEvaluator<D, N>, governor: &mut StepGovernor<'_>,
     ) -> Result<(), EvalError<D::Error>> {
         snapshot
             .rel
@@ -330,8 +321,7 @@ mod tests {
         Arity<N>: StoreShape<N>,
     {
         fn evaluate(
-            &self,
-            call: &GuardCall<'_, HostDictionary, N>,
+            &self, call: &GuardCall<'_, HostDictionary, N>,
         ) -> Result<GuardRows<u64>, CallbackError<SourceLost>> {
             let ids = call
                 .inputs
@@ -419,8 +409,7 @@ mod tests {
     }
 
     fn rule<const N: usize>(
-        cyclic: bool,
-        atom: impl Fn(&str, &str, &str) -> ClauseAtom<N>,
+        cyclic: bool, atom: impl Fn(&str, &str, &str) -> ClauseAtom<N>,
     ) -> DlClause<N> {
         use BodyLiteral::{Atom, Guard as Compute};
         if cyclic {
@@ -446,8 +435,7 @@ mod tests {
     }
 
     fn check_cuts<const N: usize>(
-        entry: RuleEntry<'_, N>,
-        snapshot: JoinSnapshot<'_, HostDictionary, N>,
+        entry: RuleEntry<'_, N>, snapshot: JoinSnapshot<'_, HostDictionary, N>,
         strategy: JoinStrategy,
     ) -> Vec<SlotSolution<u64, N>>
     where
@@ -777,8 +765,7 @@ mod tests {
 
     /// Compare the original whole rule, including the barrier before head emission.
     fn check_whole_rule<const N: usize>(
-        entry: RuleEntry<'_, N>,
-        snapshot: super::super::RoundSnapshot<'_, HostDictionary, N>,
+        entry: RuleEntry<'_, N>, snapshot: super::super::RoundSnapshot<'_, HostDictionary, N>,
         strategy: JoinStrategy,
     ) where
         Arity<N>: StoreShape<N>,
@@ -930,8 +917,7 @@ mod tests {
     }
 
     fn phase_rules<const N: usize>(
-        atom: impl Fn(&str, &str, &str) -> ClauseAtom<N>,
-        unit: ClauseAtom<N>,
+        atom: impl Fn(&str, &str, &str) -> ClauseAtom<N>, unit: ClauseAtom<N>,
     ) -> [DlClause<N>; 6]
     where
         Arity<N>: StoreShape<N>,
@@ -970,8 +956,7 @@ mod tests {
     }
 
     fn check_rule_phases<const N: usize>(
-        atom: impl Fn(&str, &str, &str) -> ClauseAtom<N>,
-        unit: ClauseAtom<N>,
+        atom: impl Fn(&str, &str, &str) -> ClauseAtom<N>, unit: ClauseAtom<N>,
     ) where
         Arity<N>: StoreShape<N>,
     {
@@ -1014,11 +999,8 @@ mod tests {
     }
 
     fn check_whole_round<const N: usize>(
-        entries: &[RuleEntry<'_, N>],
-        snapshot: super::super::RoundSnapshot<'_, HostDictionary, N>,
-        strategy: JoinStrategy,
-        execution: super::super::RoundExecution,
-        evidenced: bool,
+        entries: &[RuleEntry<'_, N>], snapshot: super::super::RoundSnapshot<'_, HostDictionary, N>,
+        strategy: JoinStrategy, execution: super::super::RoundExecution, evidenced: bool,
     ) where
         Arity<N>: StoreShape<N>,
     {
@@ -1174,8 +1156,7 @@ mod tests {
     }
 
     fn check_round_phases<const N: usize>(
-        rules: &[DlClause<N>; 6],
-        store: &RelationStore<HostDictionary, N>,
+        rules: &[DlClause<N>; 6], store: &RelationStore<HostDictionary, N>,
     ) where
         Arity<N>: StoreShape<N>,
     {
@@ -1229,9 +1210,7 @@ mod tests {
     }
 
     fn check_round_callback_failure<const N: usize>(
-        rules: &[DlClause<N>],
-        plans: &[RulePlan<N>],
-        runtimes: &[RuleRuntime<N>],
+        rules: &[DlClause<N>], plans: &[RulePlan<N>], runtimes: &[RuleRuntime<N>],
         store: &RelationStore<HostDictionary, N>,
     ) where
         Arity<N>: StoreShape<N>,
@@ -1471,8 +1450,7 @@ mod tests {
             Arity<N>: StoreShape<N>,
         {
             fn evaluate(
-                &self,
-                call: &GuardCall<'_, TermInterner, N>,
+                &self, call: &GuardCall<'_, TermInterner, N>,
             ) -> Result<GuardRows, CallbackError> {
                 assert_eq!(call.guard.name(), "fixed");
                 Ok(vec![vec![DictionaryValue::Surface("\"generated\"".into())]])

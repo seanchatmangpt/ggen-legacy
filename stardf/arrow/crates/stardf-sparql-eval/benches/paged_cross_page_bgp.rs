@@ -221,8 +221,7 @@ fn build_declared_empty_page(graphs: &[TermValue]) -> Arc<RdfDataset> {
 /// graphs declared with no quads — the whole-dataset counterpart of
 /// [`build_multi_graph_dataset`] plus [`build_declared_empty_page`].
 fn build_multi_graph_dataset_with_empties(
-    graphs: &[(TermValue, Vec<Triple>)],
-    declared_empty: &[TermValue],
+    graphs: &[(TermValue, Vec<Triple>)], declared_empty: &[TermValue],
 ) -> Arc<RdfDataset> {
     let mut b = RdfDatasetBuilder::new();
     for (graph, triples) in graphs {

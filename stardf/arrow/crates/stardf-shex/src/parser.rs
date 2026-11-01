@@ -87,9 +87,7 @@ pub fn parse_shexc(input: &str, base: Option<&str>) -> Result<Schema> {
 /// [`crate::exact::saturated`]; without it, the bound is refused, as the AST cannot
 /// hold it.
 pub(crate) fn parse_shexc_exact(
-    input: &str,
-    base: Option<&str>,
-    saturate: bool,
+    input: &str, base: Option<&str>, saturate: bool,
 ) -> Result<(Schema, crate::exact::ExactTable)> {
     ShexError::admit_stack("ShExC document")?;
     let tokens = tokenize(input)?;
@@ -666,9 +664,7 @@ impl Parser<'_> {
     /// `xsFacet*` — string facets always; numeric facets only when
     /// `allow_numeric`. Duplicate facets are a syntax error (spec §6).
     fn parse_facets(
-        &mut self,
-        nc: &mut NodeConstraint,
-        allow_numeric: bool,
+        &mut self, nc: &mut NodeConstraint, allow_numeric: bool,
     ) -> Result<[Option<usize>; 10]> {
         let mut exact = crate::exact::ExactBounds::default();
         // Original occurrence indices are retained by the parser that admits
@@ -787,10 +783,7 @@ impl Parser<'_> {
     }
 
     fn numeric_operand(
-        &self,
-        pos: usize,
-        value: NumericLiteral,
-        bound: crate::exact::ExactBound,
+        &self, pos: usize, value: NumericLiteral, bound: crate::exact::ExactBound,
     ) -> NumericFacetOperand {
         NumericFacetOperand::new(
             self.tokens[pos].clone(),
@@ -801,10 +794,7 @@ impl Parser<'_> {
     }
 
     fn parse_unsigned(
-        &mut self,
-        expected: GrammarExpectation,
-        facet_pos: usize,
-        kind: FacetKind,
+        &mut self, expected: GrammarExpectation, facet_pos: usize, kind: FacetKind,
     ) -> Result<u64> {
         let Some(Token::Integer(lexical)) = self.peek().cloned() else {
             return Err(self.grammar(GrammarReason::FacetValue {
@@ -826,8 +816,7 @@ impl Parser<'_> {
     }
 
     fn parse_numeric_literal(
-        &mut self,
-        facet_pos: usize,
+        &mut self, facet_pos: usize,
     ) -> Result<(NumericLiteral, crate::exact::ExactBound)> {
         let Some(Token::Integer(lexical) | Token::Decimal(lexical) | Token::Double(lexical)) =
             self.peek().cloned()
@@ -851,10 +840,7 @@ impl Parser<'_> {
     /// Numeric facets demand a numeric datatype when one is given (the
     /// `1unknowndatatypeMaxInclusive` conformance rule).
     fn check_numeric_facet_datatype(
-        &mut self,
-        nc: &mut NodeConstraint,
-        datatype_pos: usize,
-        first: &[Option<usize>; 10],
+        &mut self, nc: &mut NodeConstraint, datatype_pos: usize, first: &[Option<usize>; 10],
         exact_index: usize,
     ) -> Result<()> {
         let ranges = [
@@ -1412,9 +1398,7 @@ pub(crate) fn resolve_iri(base: &BaseScope, reference: &str) -> Result<String> {
 /// wrapping in a singleton `EachOf` when `inner` already carries its own
 /// modifiers (so `(x{2}){3}` keeps both cardinalities).
 fn apply_group_modifiers(
-    inner: TripleExpr,
-    cardinality: Option<(i64, i64)>,
-    annotations: Vec<Annotation>,
+    inner: TripleExpr, cardinality: Option<(i64, i64)>, annotations: Vec<Annotation>,
     sem_acts: Vec<SemAct>,
 ) -> TripleExpr {
     let (min, max) = cardinality.map_or((None, None), |(a, b)| (Some(a), Some(b)));

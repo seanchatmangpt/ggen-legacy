@@ -74,10 +74,7 @@ impl Estimates {
     /// `iterations_per_sample` iterations), with the bootstrap seeded at
     /// `seed`.
     pub fn from_samples(
-        samples: Vec<f64>,
-        iterations_per_sample: u64,
-        throughput: Option<Throughput>,
-        seed: u64,
+        samples: Vec<f64>, iterations_per_sample: u64, throughput: Option<Throughput>, seed: u64,
     ) -> Self {
         let median = stats::median(&samples);
         let interval = stats::bootstrap_median(&samples, RESAMPLES, CONFIDENCE, seed);
@@ -241,9 +238,7 @@ pub struct CountReport {
 impl CountReport {
     /// Summarize fixed-work samples with the existing statistical implementation.
     pub fn from_samples(
-        context: CountContext,
-        raw_samples: Vec<i64>,
-        seed: u64,
+        context: CountContext, raw_samples: Vec<i64>, seed: u64,
     ) -> Result<Self, EstimatesError> {
         if context.work == 0 || context.threads == 0 || raw_samples.is_empty() {
             return Err(EstimatesError(
@@ -318,10 +313,7 @@ impl CountReport {
     /// Compare matching count records with a positive baseline. Signed or
     /// zero-baseline changes must instead be reported in absolute units.
     pub fn compare(
-        &self,
-        record: &str,
-        base: &Self,
-        seed: u64,
+        &self, record: &str, base: &Self, seed: u64,
     ) -> Result<super::Change, EstimatesError> {
         self.check_compatible(base)?;
         if base.raw_samples.iter().any(|sample| *sample <= 0) {
@@ -566,8 +558,7 @@ impl<'a> Reader<'a> {
     /// An object whose members are exactly `names`, in any order; `member`
     /// reads each value.
     fn object(
-        &mut self,
-        names: &[&str],
+        &mut self, names: &[&str],
         mut member: impl FnMut(&mut Self, usize) -> Result<(), EstimatesError>,
     ) -> Result<(), EstimatesError> {
         self.expect(b'{')?;

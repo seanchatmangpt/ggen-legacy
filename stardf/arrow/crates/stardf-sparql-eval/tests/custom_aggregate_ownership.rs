@@ -80,8 +80,7 @@ impl AggregateAccumulator for LastPair {
         Ok(self.last.map(|value| (*value).clone()))
     }
     fn finish_admitted(
-        self: Box<Self>,
-        _: &WorkspaceCapability,
+        self: Box<Self>, _: &WorkspaceCapability,
     ) -> Result<Option<WorkspaceTerm>, EvalError> {
         Ok(self.last)
     }
@@ -121,9 +120,7 @@ impl CustomAggregate for LastPairAggregate {
         })
     }
     fn init_admitted(
-        &self,
-        scalarvals: &[(String, TermValue)],
-        _: DivisionPolicy,
+        &self, scalarvals: &[(String, TermValue)], _: DivisionPolicy,
         workspace: &WorkspaceCapability,
     ) -> Result<WorkspaceAccumulator, EvalError> {
         WorkspaceAccumulator::new(
@@ -137,10 +134,7 @@ impl CustomAggregate for LastPairAggregate {
         )
     }
     fn exact_numeric_cost_admitted(
-        &self,
-        _: &[Vec<TermValue>],
-        _: &[(String, TermValue)],
-        _: DivisionPolicy,
+        &self, _: &[Vec<TermValue>], _: &[(String, TermValue)], _: DivisionPolicy,
         _: &WorkspaceCapability,
     ) -> Result<Cost, EvalError> {
         Ok(Cost::ZERO)

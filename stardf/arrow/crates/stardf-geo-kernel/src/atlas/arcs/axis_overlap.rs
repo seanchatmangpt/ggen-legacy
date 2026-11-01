@@ -22,9 +22,7 @@ struct Span<'a> {
 }
 
 pub(super) fn intersections(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    context: &mut MetricContext,
+    left: &PreparedEdge, right: &PreparedEdge, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<ContactList>, GeoError> {
     context.with_metadata(progress, |context, progress, retained| {
@@ -164,9 +162,7 @@ pub(super) fn intersections(
 }
 
 fn span_edge<'a>(
-    edge: &'a PreparedEdge,
-    axis: &Axis,
-    admission: &mut ExactAdmission<'_, '_>,
+    edge: &'a PreparedEdge, axis: &Axis, admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<Option<Span<'a>>, GeoError> {
     if let PreparedEdge::ShortestGeodesic(arc) = edge {
         return span(arc, axis, admission);
@@ -198,9 +194,7 @@ fn span_edge<'a>(
 }
 
 fn source_phases(
-    line: &crate::SourceLinearEdge,
-    axis: &Axis,
-    admission: &mut ExactAdmission<'_, '_>,
+    line: &crate::SourceLinearEdge, axis: &Axis, admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<Option<[Rat; 2]>, GeoError> {
     let a = line.start().point();
     let b = line.end().point();
@@ -261,11 +255,7 @@ fn source_phases(
 }
 
 fn edge_parameter(
-    edge: &PreparedEdge,
-    point: &LonLat,
-    phase: &Rat,
-    axis: &Axis,
-    context: &mut MetricContext,
+    edge: &PreparedEdge, point: &LonLat, phase: &Rat, axis: &Axis, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<(Rat, Rat), GeoError> {
     if let PreparedEdge::ShortestGeodesic(arc) = edge {
@@ -305,8 +295,7 @@ fn edge_parameter(
 }
 
 fn axis(
-    arc: &ShortestGeodesicArc,
-    admission: &mut ExactAdmission<'_, '_>,
+    arc: &ShortestGeodesicArc, admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<Option<Axis>, GeoError> {
     let a = arc.start().point();
     let b = arc.end().point();
@@ -350,9 +339,7 @@ fn same_plane(a: &Rat, b: &Rat, admission: &mut ExactAdmission<'_, '_>) -> Resul
 }
 
 fn phase(
-    point: &LonLat,
-    axis: &Axis,
-    admission: &mut ExactAdmission<'_, '_>,
+    point: &LonLat, axis: &Axis, admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<Option<Rat>, GeoError> {
     match axis {
         Axis::Equator => {
@@ -405,9 +392,7 @@ fn phase(
 }
 
 fn span<'a>(
-    arc: &'a ShortestGeodesicArc,
-    axis: &Axis,
-    admission: &mut ExactAdmission<'_, '_>,
+    arc: &'a ShortestGeodesicArc, axis: &Axis, admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<Option<Span<'a>>, GeoError> {
     let a = arc.start().point();
     let b = arc.end().point();
@@ -458,20 +443,15 @@ fn span<'a>(
 }
 
 pub(super) fn parameter(
-    arc: &ShortestGeodesicArc,
-    point: &LonLat,
-    context: &mut MetricContext,
+    arc: &ShortestGeodesicArc, point: &LonLat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<(Rat, Rat), GeoError> {
     parameter_with_precision(arc, point, None, context, progress)
 }
 
 pub(super) fn parameter_with_precision(
-    arc: &ShortestGeodesicArc,
-    point: &LonLat,
-    refinement: Option<u32>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    arc: &ShortestGeodesicArc, point: &LonLat, refinement: Option<u32>,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(Rat, Rat), GeoError> {
     let known = ExactAdmission::new(context, progress).rational(
         Linear,
@@ -534,9 +514,7 @@ pub(super) fn parameter_with_precision(
 /// ellipsoid scale cancels before arithmetic. No numerical distance output or
 /// approximate endpoint is an input to this ratio.
 fn equator_parameter(
-    arc: &ShortestGeodesicArc,
-    point: &LonLat,
-    context: &mut MetricContext,
+    arc: &ShortestGeodesicArc, point: &LonLat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<(Rat, Rat)>, GeoError> {
     let mut admission = ExactAdmission::new(context, progress);
@@ -607,9 +585,7 @@ fn equator_parameter(
 /// unique equatorial branch. This is the inverse of equator_parameter's same
 /// lifted span equation; no quantized direct endpoint enters the atlas.
 pub(super) fn equator_point(
-    arc: &ShortestGeodesicArc,
-    parameter: &Rat,
-    context: &mut MetricContext,
+    arc: &ShortestGeodesicArc, parameter: &Rat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<LonLat>, GeoError> {
     let longitude = {
@@ -645,9 +621,7 @@ pub(super) fn equator_point(
 /// The unique equatorial arc's exact lifted span then admits or excludes that
 /// physical point, including long written paths and identified seam aliases.
 fn equator_source_contacts(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    context: &mut MetricContext,
+    left: &PreparedEdge, right: &PreparedEdge, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<ContactList>, GeoError> {
     let (arc, line, reversed) = match (left, right) {
@@ -728,11 +702,8 @@ fn equator_source_contacts(
 }
 
 fn refined_view(
-    geodesic: &crate::geodesic::PreparedGeodesic,
-    arc: &ShortestGeodesicArc,
-    point: Option<&LonLat>,
-    bits: u32,
-    context: &mut MetricContext,
+    geodesic: &crate::geodesic::PreparedGeodesic, arc: &ShortestGeodesicArc,
+    point: Option<&LonLat>, bits: u32, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<crate::geodesic::ArcIntervalView, GeoError> {
     let view = in_child(context, progress, |child, observer| {
@@ -754,8 +725,7 @@ fn refined_view(
 }
 
 fn in_child<T>(
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     evaluate: impl FnOnce(&mut MetricContext, &mut dyn crate::MetricWorkObserver) -> Result<T, GeoError>,
 ) -> Result<T, GeoError> {
     let mut child = context.remaining_child()?;
@@ -773,11 +743,8 @@ fn in_child<T>(
 }
 
 fn ratio(
-    distance: (&crate::Metres, &crate::Metres),
-    length: (&crate::Metres, &crate::Metres),
-    bits: u32,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    distance: (&crate::Metres, &crate::Metres), length: (&crate::Metres, &crate::Metres),
+    bits: u32, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(Rat, Rat), GeoError> {
     let policy = context.policy();
     crate::numerical::with_math(context, progress, bits, 0, |math, progress| {

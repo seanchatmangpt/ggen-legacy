@@ -25,8 +25,7 @@ use crate::{NativeRdfFormat, RdfDataset, parse_dataset};
 /// and a reifier subject's other triples become annotations (matching the GTS
 /// producer's `add_rdf12` pass structure).
 pub fn dataset_from_bytes(
-    bytes: &[u8],
-    format: NativeRdfFormat,
+    bytes: &[u8], format: NativeRdfFormat,
 ) -> Result<Arc<RdfDataset>, String> {
     let media_type = format.media_type();
     parse_dataset(bytes, media_type, None).map_err(|e| format!("parse error: {e}"))

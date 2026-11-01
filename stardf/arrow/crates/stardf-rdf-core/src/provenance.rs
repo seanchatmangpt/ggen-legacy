@@ -276,12 +276,8 @@ impl OriginCapacity {
 }
 
 fn intern_origin<K: Eq + Hash, V: Copy>(
-    values: &mut Vec<K>,
-    index: &mut FastMap<K, V>,
-    key: K,
-    space: CapacitySpace,
-    capacity: OriginCapacity,
-    mint: impl FnOnce(u32) -> V,
+    values: &mut Vec<K>, index: &mut FastMap<K, V>, key: K, space: CapacitySpace,
+    capacity: OriginCapacity, mint: impl FnOnce(u32) -> V,
     copy: impl FnOnce(&K, &mut Memory<'_, Resident>) -> Result<K, StorageError>,
 ) -> Result<V, StorageError> {
     if let Some(&found) = index.get(&key) {
@@ -444,8 +440,7 @@ impl OriginSetInterner {
     /// interning, so insertion order is irrelevant. Idempotent: the same set
     /// of pairs always yields the same `OriginSetId`.
     pub fn intern(
-        &mut self,
-        mut pairs: Vec<(UnitId, ArtifactId)>,
+        &mut self, mut pairs: Vec<(UnitId, ArtifactId)>,
     ) -> Result<OriginSetId, StorageError> {
         pairs.sort_unstable();
         pairs.dedup();
@@ -524,9 +519,7 @@ impl DatasetProvenance {
     /// Returns the `UnitId`. If the name was already interned the existing id
     /// is returned and `kind` is ignored (the first registration wins).
     pub fn register_unit(
-        &mut self,
-        name: impl Into<String>,
-        kind: OriginKind,
+        &mut self, name: impl Into<String>, kind: OriginKind,
     ) -> Result<UnitId, StorageError> {
         let name = name.into();
         if let Some(&id) = self.units.index.get(&name) {
@@ -551,8 +544,7 @@ impl DatasetProvenance {
     ///
     /// Returns the `ArtifactId`. Equal logical paths always yield the same id.
     pub fn register_artifact(
-        &mut self,
-        path: impl Into<String>,
+        &mut self, path: impl Into<String>,
     ) -> Result<ArtifactId, StorageError> {
         self.artifacts.intern(path)
     }
@@ -563,11 +555,7 @@ impl DatasetProvenance {
     /// MUST supply a concrete `unit` and `artifact`; there is no way to
     /// represent an unknown origin in the occurrence table.
     pub fn record_occurrence(
-        &mut self,
-        quad: QuadHandle,
-        unit: UnitId,
-        artifact: ArtifactId,
-        location: Option<String>,
+        &mut self, quad: QuadHandle, unit: UnitId, artifact: ArtifactId, location: Option<String>,
     ) {
         self.occurrences.push(AssertionOccurrence {
             quad,
@@ -581,8 +569,7 @@ impl DatasetProvenance {
     ///
     /// Canonicalizes (sorts + dedups) the `pairs` vector before interning.
     pub fn intern_origin_set(
-        &mut self,
-        pairs: Vec<(UnitId, ArtifactId)>,
+        &mut self, pairs: Vec<(UnitId, ArtifactId)>,
     ) -> Result<OriginSetId, StorageError> {
         self.origin_sets.intern(pairs)
     }
@@ -749,8 +736,7 @@ impl std::error::Error for ProvenanceError {}
 ///
 /// Returns all violations found (not just the first).
 pub fn check_provenance(
-    prov: &DatasetProvenance,
-    dataset_quads: &[QuadHandle],
+    prov: &DatasetProvenance, dataset_quads: &[QuadHandle],
 ) -> Result<(), Vec<ProvenanceError>> {
     let mut errors: Vec<ProvenanceError> = Vec::new();
 

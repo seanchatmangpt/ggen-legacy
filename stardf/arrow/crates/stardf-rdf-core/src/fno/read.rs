@@ -28,8 +28,7 @@ impl FnoCatalog {
     /// Returns original source failures, native list causes and owned original
     /// field operands. A failed or truncated source never publishes a catalog.
     pub fn from_dataset<D: DatasetView>(
-        view: &D,
-        ontology_iri: &str,
+        view: &D, ontology_iri: &str,
     ) -> ReadResult<Self, D::ReadError> {
         view.checked_read(|view| read(view, ontology_iri))
             .map_err(|cause| Box::new(FnoReadError::Source(cause)))?
@@ -132,10 +131,7 @@ impl<D: DatasetView> Reader<'_, D> {
     }
 
     fn field(
-        &self,
-        subject: &TermValue,
-        predicate: &str,
-        expected: Field,
+        &self, subject: &TermValue, predicate: &str, expected: Field,
     ) -> Box<FnoReadError<D::ReadError>> {
         Box::new(FnoReadError::Field {
             subject: subject.clone(),
@@ -166,10 +162,7 @@ impl<D: DatasetView> Reader<'_, D> {
     }
 
     fn scalar(
-        &mut self,
-        subject: &TermValue,
-        predicate: &str,
-        required: bool,
+        &mut self, subject: &TermValue, predicate: &str, required: bool,
     ) -> ReadResult<Option<TermValue>, D::ReadError> {
         let mut values = self.objects(subject, predicate);
         if values.len() > 1 || (required && values.is_empty()) {
@@ -198,9 +191,7 @@ impl<D: DatasetView> Reader<'_, D> {
     }
 
     fn optional_iri(
-        &mut self,
-        subject: &TermValue,
-        predicate: &str,
+        &mut self, subject: &TermValue, predicate: &str,
     ) -> ReadResult<Option<String>, D::ReadError> {
         match self.scalar(subject, predicate, false)? {
             None => Ok(None),
@@ -210,10 +201,7 @@ impl<D: DatasetView> Reader<'_, D> {
     }
 
     fn literal(
-        &mut self,
-        subject: &TermValue,
-        predicate: &str,
-        required: bool,
+        &mut self, subject: &TermValue, predicate: &str, required: bool,
     ) -> ReadResult<Option<TermValue>, D::ReadError> {
         let value = self.scalar(subject, predicate, required)?;
         if value
@@ -226,9 +214,7 @@ impl<D: DatasetView> Reader<'_, D> {
     }
 
     fn text(
-        &mut self,
-        subject: &TermValue,
-        predicate: &str,
+        &mut self, subject: &TermValue, predicate: &str,
     ) -> ReadResult<TermValue, D::ReadError> {
         Ok(self
             .literal(subject, predicate, true)?
@@ -316,9 +302,7 @@ impl<D: DatasetView> Reader<'_, D> {
     }
 
     fn list(
-        &mut self,
-        subject: &TermValue,
-        predicate: &str,
+        &mut self, subject: &TermValue, predicate: &str,
     ) -> ReadResult<Vec<TermValue>, D::ReadError> {
         let head = self
             .scalar(subject, predicate, true)?

@@ -446,8 +446,7 @@ impl AdmittedResolvedBindings {
         }
     }
     pub(crate) fn from_native(
-        bindings: ResolvedBindings,
-        frame: crate::workspace::LexicalFrame,
+        bindings: ResolvedBindings, frame: crate::workspace::LexicalFrame,
         workspace: &crate::WorkspaceCapability,
     ) -> Self {
         Self {
@@ -512,9 +511,7 @@ pub struct AdmittedRemoteError {
 }
 impl AdmittedRemoteError {
     fn new(
-        error: RemoteError,
-        storage: ServiceStorage,
-        workspace: &crate::WorkspaceCapability,
+        error: RemoteError, storage: ServiceStorage, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let bytes = purrdf_core::small::Shared::<RemoteErrorPayload>::allocation_layout().size();
         let control = workspace
@@ -530,15 +527,13 @@ impl AdmittedRemoteError {
         Ok(Self { payload })
     }
     pub(crate) fn native(
-        error: RemoteError,
-        frame: crate::workspace::LexicalFrame,
+        error: RemoteError, frame: crate::workspace::LexicalFrame,
     ) -> Result<Self, EvalError> {
         let workspace = frame.workspace().clone();
         Self::new(error, ServiceStorage::Native(frame), &workspace)
     }
     pub(crate) fn certified(
-        error: RemoteError,
-        allocation: crate::WorkspaceAllocation,
+        error: RemoteError, allocation: crate::WorkspaceAllocation,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         Self::new(error, ServiceStorage::Certified(allocation), workspace)
@@ -552,8 +547,7 @@ impl AdmittedRemoteError {
     /// # Errors
     /// Returns original admission or allocator refusal.
     pub fn message(
-        kind: purrdf_core::SilencedKind,
-        message: impl fmt::Display,
+        kind: purrdf_core::SilencedKind, message: impl fmt::Display,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let mut frame = crate::workspace::LexicalFrame::new(workspace);
@@ -641,9 +635,7 @@ pub struct RetainedServiceFailure {
 }
 impl RetainedServiceFailure {
     pub(crate) fn new(
-        endpoint: &str,
-        error: AdmittedRemoteError,
-        workspace: &crate::WorkspaceCapability,
+        endpoint: &str, error: AdmittedRemoteError, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         Ok(Self {
             endpoint: workspace.authored_text(&endpoint)?,
@@ -815,8 +807,7 @@ pub trait ServiceResolver {
     /// returned bindings and dynamic errors, before opaque host dispatch. Native
     /// implementations override `resolve_admitted` and need no certificate.
     fn workspace_certificate(
-        &self,
-        _request: ServiceRequest<'_>,
+        &self, _request: ServiceRequest<'_>,
     ) -> Option<ServiceWorkspaceCertificate> {
         None
     }
@@ -826,9 +817,7 @@ pub trait ServiceResolver {
     /// # Errors
     /// Preserves typed physical refusal and retained invocation failure.
     fn resolve_admitted(
-        &self,
-        request: ServiceRequest<'_>,
-        workspace: crate::WorkspaceCapability,
+        &self, request: ServiceRequest<'_>, workspace: crate::WorkspaceCapability,
     ) -> Result<AdmittedResolvedBindings, ServiceResolutionError> {
         if let Some(trip) = request.stop_trip() {
             return Err(invocation_error(trip, &workspace)?);
@@ -936,8 +925,7 @@ fn sanitize_forwarded_body(pattern: &GraphPattern) -> GraphPattern {
 }
 
 fn service_storage(
-    error: purrdf_lex::allocation::StorageError,
-    memory: &mut crate::expr::CorrelatedMemory<'_>,
+    error: purrdf_lex::allocation::StorageError, memory: &mut crate::expr::CorrelatedMemory<'_>,
 ) -> EvalError {
     memory
         .admission_mut()
@@ -945,8 +933,7 @@ fn service_storage(
 }
 
 fn service_child<T: purrdf_sparql_algebra::Subtree + purrdf_lex::walk::Dismantle>(
-    value: T,
-    memory: &mut crate::expr::CorrelatedMemory<'_>,
+    value: T, memory: &mut crate::expr::CorrelatedMemory<'_>,
 ) -> Result<Child<T>, EvalError> {
     let layout = core::alloc::Layout::new::<T>();
     memory
@@ -960,8 +947,7 @@ fn service_child<T: purrdf_sparql_algebra::Subtree + purrdf_lex::walk::Dismantle
 }
 
 fn clone_service_slice<T, U>(
-    values: &[T],
-    memory: &mut crate::expr::CorrelatedMemory<'_>,
+    values: &[T], memory: &mut crate::expr::CorrelatedMemory<'_>,
     mut clone: impl FnMut(
         &T,
         &mut crate::expr::CorrelatedMemory<'_>,
@@ -978,8 +964,7 @@ fn clone_service_slice<T, U>(
 }
 
 fn sanitize_forwarded_body_with_memory(
-    pattern: &GraphPattern,
-    memory: &mut crate::expr::CorrelatedMemory<'_>,
+    pattern: &GraphPattern, memory: &mut crate::expr::CorrelatedMemory<'_>,
 ) -> Result<GraphPattern, EvalError> {
     struct Frame<'a> {
         node: &'a GraphPattern,
@@ -1064,8 +1049,7 @@ fn nth_child_pattern(node: &GraphPattern, index: usize) -> Option<&GraphPattern>
 /// `node`, rebuilt from `children` — the sanitized copies of its child patterns, in
 /// [`nth_child_pattern`]'s order — for [`sanitize_forwarded_body_with_memory`].
 fn rebuild_sanitized_with_memory(
-    node: &GraphPattern,
-    children: Vec<GraphPattern>,
+    node: &GraphPattern, children: Vec<GraphPattern>,
     memory: &mut crate::expr::CorrelatedMemory<'_>,
 ) -> Result<GraphPattern, EvalError> {
     let child_bytes = core::alloc::Layout::array::<GraphPattern>(children.capacity())
@@ -1247,8 +1231,7 @@ fn rebuild_sanitized_with_memory(
 /// always an IRI, so only the two nested positions are inspected, subject before
 /// object, over a work list that ends at the first blank node found.
 fn ground_term_has_blank_node_with_memory(
-    term: &GroundTerm,
-    memory: &mut crate::expr::CorrelatedMemory<'_>,
+    term: &GroundTerm, memory: &mut crate::expr::CorrelatedMemory<'_>,
 ) -> Result<bool, EvalError> {
     let mut pending = purrdf_lex::walk::WorkList::<_, 8>::with(term);
     let mut found = false;
@@ -1288,8 +1271,7 @@ type ForwardedValues = (Vec<Variable>, Vec<Vec<Option<GroundTerm>>>);
 /// there is no column to remove, so `keep` is all-`true` and the filter below is a no-op
 /// pass.
 fn strip_blank_columns_with_memory(
-    variables: &[Variable],
-    bindings: &[Vec<Option<GroundTerm>>],
+    variables: &[Variable], bindings: &[Vec<Option<GroundTerm>>],
     memory: &mut crate::expr::CorrelatedMemory<'_>,
 ) -> Result<ForwardedValues, EvalError> {
     let mut keep = Vec::new();
@@ -1354,9 +1336,7 @@ fn strip_blank_columns_with_memory(
 /// A block joined beside a filtered pattern is moved beneath its filters where that
 /// changes no answer — see [`sink_values_under_filters_with_memory`].
 fn join_dropping_empty_values_with_memory(
-    left: GraphPattern,
-    right: GraphPattern,
-    memory: &mut crate::expr::CorrelatedMemory<'_>,
+    left: GraphPattern, right: GraphPattern, memory: &mut crate::expr::CorrelatedMemory<'_>,
 ) -> Result<GraphPattern, EvalError> {
     Ok(if is_join_identity_values(&right) {
         left
@@ -1397,9 +1377,7 @@ fn join_dropping_empty_values_with_memory(
 /// reads the variable itself: every row there already binds each of the block's
 /// variables to the block's own value, so joining the block again is the identity.
 fn sink_values_under_filters_with_memory(
-    filtered: GraphPattern,
-    values: GraphPattern,
-    memory: &mut crate::expr::CorrelatedMemory<'_>,
+    filtered: GraphPattern, values: GraphPattern, memory: &mut crate::expr::CorrelatedMemory<'_>,
 ) -> Result<GraphPattern, EvalError> {
     let GraphPattern::Values {
         variables: block_vars,
@@ -1451,8 +1429,7 @@ fn sink_values_under_filters_with_memory(
 
 /// Whether `expr` mentions any of `vars`, an `EXISTS` pattern's variables included.
 fn mentions_any_admitted(
-    expr: &purrdf_sparql_algebra::Expression,
-    vars: &[Variable],
+    expr: &purrdf_sparql_algebra::Expression, vars: &[Variable],
     memory: &mut crate::expr::CorrelatedMemory<'_>,
 ) -> Result<bool, EvalError> {
     let mentioned = crate::expr::expr_vars_admitted(expr, memory.admission_mut().workspace())?;
@@ -1463,9 +1440,7 @@ fn mentions_any_admitted(
 /// a one-row block binding every one of its variables — so every row of `pattern` already
 /// binds them to exactly the block's values. See [`sink_values_under_filters_with_memory`].
 fn joins_identical_block_with_memory(
-    pattern: &GraphPattern,
-    values: &GraphPattern,
-    memory: &mut crate::expr::CorrelatedMemory<'_>,
+    pattern: &GraphPattern, values: &GraphPattern, memory: &mut crate::expr::CorrelatedMemory<'_>,
 ) -> Result<bool, EvalError> {
     let GraphPattern::Values { bindings, .. } = values else {
         return Ok(false);
@@ -1516,9 +1491,7 @@ fn is_join_identity_values(pattern: &GraphPattern) -> bool {
 /// `SILENT` swallows none of those four.
 // Out of line by design: see the thin-dispatcher invariant on `eval::eval_node`.
 fn service_reaches(
-    pattern: &GraphPattern,
-    aggregate: bool,
-    workspace: &crate::WorkspaceCapability,
+    pattern: &GraphPattern, aggregate: bool, workspace: &crate::WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     let mut frame = crate::workspace::LexicalFrame::new(workspace);
     let mut memory = purrdf_lex::allocation::Memory::new(&mut frame);
@@ -1546,10 +1519,7 @@ fn service_unsupported(message: &'static str, workspace: &crate::WorkspaceCapabi
 
 #[inline(never)]
 pub(crate) fn eval_service<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    name: &NamedNodePattern,
-    inner: &GraphPattern,
-    silent: bool,
+    node: &GraphPattern, name: &NamedNodePattern, inner: &GraphPattern, silent: bool,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     // A property-function call inside a forwarded body is a HARD refusal, and it is
@@ -1616,8 +1586,7 @@ pub(crate) struct AdmittedSilencedInvocation {
 
 impl AdmittedSilencedInvocation {
     pub(crate) fn record<D: DatasetView + Sync>(
-        self,
-        ctx: &EvalCtx<'_, D>,
+        self, ctx: &EvalCtx<'_, D>,
     ) -> Result<(), EvalError> {
         ctx.record_silenced(self.invocation)
     }
@@ -1626,10 +1595,7 @@ impl AdmittedSilencedInvocation {
 /// A failed invocation of `endpoint`: under `SILENT`, [`Invocation::Silenced`] carrying
 /// the record of `kind` and `error`; otherwise `error`.
 pub(crate) fn failed_invocation<I: ViewTermId>(
-    endpoint: &str,
-    kind: purrdf_core::SilencedKind,
-    error: EvalError,
-    silent: bool,
+    endpoint: &str, kind: purrdf_core::SilencedKind, error: EvalError, silent: bool,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<Invocation<I>, EvalError> {
     if !silent
@@ -1671,10 +1637,7 @@ pub(crate) fn failed_invocation<I: ViewTermId>(
 /// request is refused, and [`EvalError::Remote`] when the endpoint fails; with or
 /// without it, the typed stack refusals.
 pub(crate) fn invoke_service<D: DatasetView + Sync>(
-    endpoint: &str,
-    inner: &GraphPattern,
-    silent: bool,
-    ctx: &mut EvalCtx<'_, D>,
+    endpoint: &str, inner: &GraphPattern, silent: bool, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Invocation<D::Id>, EvalError> {
     use purrdf_core::SilencedKind;
     let workspace = ctx.growth.clone();
@@ -1890,9 +1853,7 @@ type ResponseBlanks = crate::AdmittedMap<
 
 /// Carry the original copied cell plus every new remap allocation to scratch.
 fn response_blank_value_admitted<D: DatasetView + Sync>(
-    value: crate::WorkspaceTerm,
-    blanks: &mut ResponseBlanks,
-    ctx: &mut EvalCtx<'_, D>,
+    value: crate::WorkspaceTerm, blanks: &mut ResponseBlanks, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
     let workspace = ctx.growth.clone();
     let mut frame = crate::workspace::LexicalFrame::new(&workspace);
@@ -2027,8 +1988,7 @@ fn remote_error_for(error: EvalError) -> RemoteError {
 /// same capability gate as the outer one: threading a bare dataset map instead would let a
 /// nested clause reach an endpoint the catalog refuses at the top level.
 pub(crate) fn build_error(
-    error: ServiceBuildError,
-    mut frame: crate::workspace::LexicalFrame,
+    error: ServiceBuildError, mut frame: crate::workspace::LexicalFrame,
 ) -> ServiceResolutionError {
     if let Some(error) = frame.take_failure() {
         return ServiceResolutionError::Operational(error);
@@ -2072,8 +2032,7 @@ pub(crate) fn resident_resolution(
 }
 
 pub(crate) fn invocation_error(
-    error: RemoteError,
-    workspace: &crate::WorkspaceCapability,
+    error: RemoteError, workspace: &crate::WorkspaceCapability,
 ) -> Result<ServiceResolutionError, EvalError> {
     Ok(ServiceResolutionError::Invocation(
         AdmittedRemoteError::native(error, crate::workspace::LexicalFrame::new(workspace))?,
@@ -2081,8 +2040,7 @@ pub(crate) fn invocation_error(
 }
 
 fn service_evaluation_error(
-    error: crate::engine::EvaluationFailure,
-    workspace: &crate::WorkspaceCapability,
+    error: crate::engine::EvaluationFailure, workspace: &crate::WorkspaceCapability,
 ) -> ServiceResolutionError {
     match error {
         crate::engine::EvaluationFailure::Evaluation(EvalError::RetainedServiceFailure(error))
@@ -2148,9 +2106,7 @@ fn service_evaluation_error(
 }
 
 fn ingest_admitted<D: DatasetView + Sync>(
-    resolved: &AdmittedResolvedBindings,
-    endpoint: Option<&str>,
-    discard_bindings: bool,
+    resolved: &AdmittedResolvedBindings, endpoint: Option<&str>, discard_bindings: bool,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<(SolutionSeq<D::Id>, Option<TrippedGovernor>), EvalError> {
     let response = resolved.bindings();
@@ -2256,8 +2212,7 @@ fn ingest_admitted<D: DatasetView + Sync>(
 
 #[cfg(test)]
 fn ingest<D: DatasetView + Sync>(
-    resolved: ResolvedBindings,
-    ctx: &mut EvalCtx<'_, D>,
+    resolved: ResolvedBindings, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<(SolutionSeq<D::Id>, Option<TrippedGovernor>), EvalError> {
     assert!(
         !ctx.growth.is_bounded(),
@@ -2274,9 +2229,7 @@ fn ingest<D: DatasetView + Sync>(
 /// The same native parser, blank-scope and normalization producers, sharing the
 /// calling query's original capability through output and every error path.
 pub(crate) fn evaluate_in_memory_admitted(
-    dataset: &RdfDataset,
-    request: ServiceRequest<'_>,
-    nested: &(dyn ServiceResolver + Sync),
+    dataset: &RdfDataset, request: ServiceRequest<'_>, nested: &(dyn ServiceResolver + Sync),
     workspace: &crate::WorkspaceCapability,
 ) -> Result<AdmittedResolvedBindings, ServiceResolutionError> {
     use crate::workspace::LexicalFrame;
@@ -2462,8 +2415,7 @@ fn ground_term_has_blank_node(term: &GroundTerm) -> bool {
 }
 #[cfg(test)]
 fn strip_blank_columns(
-    variables: &[Variable],
-    bindings: &[Vec<Option<GroundTerm>>],
+    variables: &[Variable], bindings: &[Vec<Option<GroundTerm>>],
 ) -> (Vec<Variable>, Vec<Vec<Option<GroundTerm>>>) {
     strip_blank_columns_with_memory(
         variables,
@@ -2487,9 +2439,7 @@ fn join_dropping_empty_values(left: GraphPattern, right: GraphPattern) -> GraphP
 }
 #[cfg(test)]
 pub(crate) fn evaluate_in_memory(
-    dataset: &RdfDataset,
-    request: ServiceRequest<'_>,
-    nested: &(dyn ServiceResolver + Sync),
+    dataset: &RdfDataset, request: ServiceRequest<'_>, nested: &(dyn ServiceResolver + Sync),
 ) -> Result<ResolvedBindings, RemoteError> {
     resident_resolution(evaluate_in_memory_admitted(
         dataset,
@@ -2541,9 +2491,7 @@ mod tests {
     }
 
     fn run_with_source(
-        ds: &Arc<RdfDataset>,
-        source: &(dyn ServiceResolver + Sync),
-        query: &str,
+        ds: &Arc<RdfDataset>, source: &(dyn ServiceResolver + Sync), query: &str,
     ) -> Result<SparqlResult, EvalError> {
         use crate::eval::evaluate_query;
         let parsed = purrdf_sparql_algebra::SparqlParser::new()
@@ -2569,9 +2517,7 @@ mod tests {
     /// [`run_with_source`] under a metering governor, with `source` optional, returning
     /// the silenced invocations the evidence records beside the result.
     fn run_recorded(
-        ds: &Arc<RdfDataset>,
-        source: Option<&(dyn ServiceResolver + Sync)>,
-        query: &str,
+        ds: &Arc<RdfDataset>, source: Option<&(dyn ServiceResolver + Sync)>, query: &str,
     ) -> (
         Result<SparqlResult, EvalError>,
         purrdf_core::SilencedEvidence,
@@ -2700,8 +2646,7 @@ mod tests {
         struct DenyingInner;
         impl ServiceResolver for DenyingInner {
             fn resolve(
-                &self,
-                request: ServiceRequest<'_>,
+                &self, request: ServiceRequest<'_>,
             ) -> Result<ResolvedBindings, RemoteError> {
                 if request.endpoint == INNER_EP {
                     return Err(RemoteError::HostDenied {
@@ -2754,8 +2699,7 @@ mod tests {
         struct BothForward;
         impl ServiceResolver for BothForward {
             fn resolve(
-                &self,
-                request: ServiceRequest<'_>,
+                &self, request: ServiceRequest<'_>,
             ) -> Result<ResolvedBindings, RemoteError> {
                 let ds = if request.endpoint == INNER_EP {
                     endpoint()
@@ -3516,9 +3460,7 @@ mod tests {
 
     /// Evaluate `pattern` over an empty dataset under `governors`, with `source` injected.
     fn run_governed(
-        pattern: &GraphPattern,
-        source: &(dyn ServiceResolver + Sync),
-        governors: &QueryGovernors,
+        pattern: &GraphPattern, source: &(dyn ServiceResolver + Sync), governors: &QueryGovernors,
     ) -> GovernedRun {
         let dataset = empty_dataset();
         let state = Arc::new(GovernorState::new(governors));

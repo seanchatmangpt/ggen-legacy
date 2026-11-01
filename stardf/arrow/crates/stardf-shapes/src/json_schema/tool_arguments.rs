@@ -364,8 +364,7 @@ impl ToolPolicy {
         }
     }
     fn native<T>(
-        &mut self,
-        operation: impl FnOnce(&mut Memory<'_, Self>) -> Result<T, StorageError>,
+        &mut self, operation: impl FnOnce(&mut Memory<'_, Self>) -> Result<T, StorageError>,
     ) -> Option<T> {
         if self.error.is_some() {
             return None;
@@ -424,9 +423,7 @@ impl ToolPolicy {
 
 /// Keep the original RDF path while nested scalar compilation uses a bound member.
 pub(super) fn with_predicate<'ns, T>(
-    ctx: &mut Ctx<'ns>,
-    predicate: &str,
-    operation: impl FnOnce(&mut Ctx<'ns>) -> T,
+    ctx: &mut Ctx<'ns>, predicate: &str, operation: impl FnOnce(&mut Ctx<'ns>) -> T,
 ) -> T {
     if ctx.tool.is_none() || predicate.is_empty() {
         return operation(ctx);
@@ -448,8 +445,7 @@ pub(super) fn format_text(ctx: &mut Ctx<'_>, arguments: std::fmt::Arguments<'_>)
 }
 
 pub(super) fn format_policy(
-    tool: &mut Option<ToolPolicy>,
-    arguments: std::fmt::Arguments<'_>,
+    tool: &mut Option<ToolPolicy>, arguments: std::fmt::Arguments<'_>,
 ) -> String {
     match tool {
         Some(policy) => policy
@@ -460,10 +456,7 @@ pub(super) fn format_policy(
 }
 
 pub(super) fn insert_entry(
-    ctx: &mut Ctx<'_>,
-    target: &mut Map<String, Value>,
-    name: &str,
-    value: Value,
+    ctx: &mut Ctx<'_>, target: &mut Map<String, Value>, name: &str, value: Value,
 ) -> Option<Value> {
     if let Some(policy) = &mut ctx.tool
         && (!policy.charge(1) || !policy.admit_size(name.len(), 1))
@@ -590,9 +583,7 @@ pub(super) fn push_entry<T>(ctx: &mut Ctx<'_>, target: &mut Vec<T>, value: T) {
 }
 
 pub(super) fn extend<T>(
-    ctx: &mut Ctx<'_>,
-    target: &mut Vec<T>,
-    values: impl IntoIterator<Item = T>,
+    ctx: &mut Ctx<'_>, target: &mut Vec<T>, values: impl IntoIterator<Item = T>,
 ) {
     for value in values {
         push_entry(ctx, target, value);
@@ -713,8 +704,7 @@ pub(super) fn native_value(ctx: &mut Ctx<'_>, source: impl IntoJsonNative) -> Va
 }
 
 pub(super) fn native_object<'a>(
-    ctx: &mut Ctx<'_>,
-    members: impl IntoIterator<Item = (&'a str, Value)>,
+    ctx: &mut Ctx<'_>, members: impl IntoIterator<Item = (&'a str, Value)>,
 ) -> Value {
     let policy = ctx
         .tool
@@ -990,9 +980,7 @@ fn native_pretty(value: &Value, policy: &mut ToolPolicy) -> Option<String> {
     reason = "retain the native compiler cause without allocating while reporting refusal"
 )]
 pub fn compile_tool_arguments(
-    shapes: &Shapes,
-    namespaces: &Namespaces,
-    profile: &ToolArgumentProfile,
+    shapes: &Shapes, namespaces: &Namespaces, profile: &ToolArgumentProfile,
     limits: &ToolSchemaLimits,
 ) -> Result<CompiledSchema, ToolSchemaError> {
     let mut policy = ToolPolicy {
@@ -1342,10 +1330,7 @@ pub(super) fn admit_property_storage(constraints: &[Constraint], ctx: &mut Ctx<'
 }
 
 pub(super) fn admit_property(
-    constraints: &[&Constraint],
-    shape: &str,
-    key: &str,
-    ctx: &mut Ctx<'_>,
+    constraints: &[&Constraint], shape: &str, key: &str, ctx: &mut Ctx<'_>,
 ) -> bool {
     let Some(policy) = &mut ctx.tool else {
         return true;
@@ -1612,10 +1597,7 @@ pub(super) fn pattern_input(ctx: &mut Ctx<'_>, regex: &str, flags: &str) -> bool
 }
 
 pub(super) fn exact_plain_constraint(
-    constraint: &Constraint,
-    siblings: &[Constraint],
-    ctx: &mut Ctx<'_>,
-    location: (&str, &str),
+    constraint: &Constraint, siblings: &[Constraint], ctx: &mut Ctx<'_>, location: (&str, &str),
 ) -> Option<bool> {
     ctx.tool.as_ref()?;
     let mut domain = |accepted: fn(&str) -> bool| {
@@ -1839,10 +1821,7 @@ fn admit_expansion(constraints: &[Constraint], policy: &mut ToolPolicy) -> bool 
 // Keep the original translator refusal; an unsupported exact translation still
 // follows the shared compiler's source-specific loss path.
 pub(super) fn pattern_resource_refusal(
-    ctx: &mut Ctx<'_>,
-    shape: &str,
-    property: &str,
-    error: &purrdf_core::xsd_regex::Ecma262Error,
+    ctx: &mut Ctx<'_>, shape: &str, property: &str, error: &purrdf_core::xsd_regex::Ecma262Error,
 ) -> bool {
     let Some(policy) = &mut ctx.tool else {
         return false;

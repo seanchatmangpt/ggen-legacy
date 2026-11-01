@@ -79,10 +79,8 @@ impl GraphqlConfig {
     /// Returns [`GraphqlError`] for invalid names, blank prose, or unsupported
     /// control characters.
     pub fn new(
-        schema_name: impl Into<String>,
-        package_docstring: impl Into<String>,
-        module_docstring: impl Into<String>,
-        fallback_scalar_name: impl Into<String>,
+        schema_name: impl Into<String>, package_docstring: impl Into<String>,
+        module_docstring: impl Into<String>, fallback_scalar_name: impl Into<String>,
     ) -> Result<Self, GraphqlError> {
         let schema_name = schema_name.into();
         validate_graphql_name("schema name", &schema_name)?;
@@ -338,10 +336,7 @@ impl GraphqlPackage {
     }
 
     fn translate_definition(
-        &self,
-        definition: &str,
-        value: &Value,
-        direction: CodecDirection,
+        &self, definition: &str, value: &Value, direction: CodecDirection,
     ) -> Result<Value, GraphqlError> {
         ensure_value_size(value)?;
         let schema = self.source_definitions.get(definition).ok_or_else(|| {
@@ -375,8 +370,7 @@ purrdf_lex::message_error! {
 /// value exceeds a fixed resource limit, or an artifact exceeds the bound
 /// derived from the input ([`crate::limits::emitted_bytes_bound`]).
 pub fn emit_graphql(
-    compiled: &CompiledSchema,
-    config: &GraphqlConfig,
+    compiled: &CompiledSchema, config: &GraphqlConfig,
 ) -> Result<GraphqlPackage, GraphqlError> {
     let catalog = CompiledSchemaCatalog::parse(compiled)
         .map_err(|error| GraphqlError::new(error.to_string()))?;
@@ -444,8 +438,7 @@ pub fn emit_graphql(
 /// schema, SDL/name-map artifacts, typed name/value map, or forward ledger
 /// differs from deterministic re-emission, or when shared schema import fails.
 pub fn import_graphql_package(
-    package: &GraphqlPackage,
-    config: &SchemaImportConfig,
+    package: &GraphqlPackage, config: &SchemaImportConfig,
 ) -> Result<ImportedShapes, GraphqlError> {
     if package.names.dialect != GRAPHQL_DIALECT {
         return Err(GraphqlError::new(format!(
@@ -681,11 +674,7 @@ impl<'a> Planner<'a> {
     }
 
     fn plan_schema(
-        &mut self,
-        schema: &Value,
-        path: &str,
-        base: &str,
-        depth: usize,
+        &mut self, schema: &Value, path: &str, base: &str, depth: usize,
     ) -> Result<(), GraphqlError> {
         limits::ensure_depth(depth, path, "GraphQL").map_err(GraphqlError::new)?;
         if self.representations.contains_key(path) {
@@ -957,10 +946,7 @@ impl<'a> Planner<'a> {
     }
 
     fn audit_schema(
-        &mut self,
-        schema: &Value,
-        path: &str,
-        depth: usize,
+        &mut self, schema: &Value, path: &str, depth: usize,
     ) -> Result<(), GraphqlError> {
         limits::ensure_depth(depth, path, "GraphQL").map_err(GraphqlError::new)?;
         let representation = self
@@ -1154,10 +1140,7 @@ impl<'a> Planner<'a> {
     /// `anyOf` that judges one JSON kind is recorded only when an alternative
     /// admits that kind (otherwise no value it could judge passes `anyOf`).
     fn audit_union(
-        &mut self,
-        object: &Object,
-        path: &str,
-        depth: usize,
+        &mut self, object: &Object, path: &str, depth: usize,
     ) -> Result<(), GraphqlError> {
         let members = self.unions.get(path).cloned().unwrap_or_default();
         let admits = |class: ValueClass| members.iter().any(|member| member.class == class);
@@ -1215,10 +1198,7 @@ impl<'a> Planner<'a> {
     }
 
     fn audit_object(
-        &mut self,
-        object: &Object,
-        path: &str,
-        depth: usize,
+        &mut self, object: &Object, path: &str, depth: usize,
     ) -> Result<(), GraphqlError> {
         if !matches!(object.get("additionalProperties"), Some(Value::Bool(false))) {
             self.record(
@@ -1303,10 +1283,7 @@ impl<'a> Planner<'a> {
     }
 
     fn audit_array(
-        &mut self,
-        object: &Object,
-        path: &str,
-        depth: usize,
+        &mut self, object: &Object, path: &str, depth: usize,
     ) -> Result<(), GraphqlError> {
         self.record(
             "singleton-list-coercion-widened",
@@ -1386,10 +1363,7 @@ impl<'a> Planner<'a> {
     }
 
     fn type_expression(
-        &self,
-        schema: &Value,
-        path: &str,
-        position: TypePosition,
+        &self, schema: &Value, path: &str, position: TypePosition,
     ) -> Result<String, GraphqlError> {
         let representation = self
             .representations
@@ -1622,10 +1596,7 @@ impl<'a> Planner<'a> {
     }
 
     fn render_object_type(
-        &self,
-        output: &mut String,
-        path: &str,
-        position: TypePosition,
+        &self, output: &mut String, path: &str, position: TypePosition,
     ) -> Result<(), GraphqlError> {
         let schema = self
             .schemas
@@ -1775,12 +1746,7 @@ struct InputEdge {
 
 impl GraphqlPackage {
     fn translate_value(
-        &self,
-        schema: &Value,
-        path: &str,
-        value: &Value,
-        direction: CodecDirection,
-        depth: usize,
+        &self, schema: &Value, path: &str, value: &Value, direction: CodecDirection, depth: usize,
     ) -> Result<Value, GraphqlError> {
         limits::ensure_depth(depth, path, "GraphQL").map_err(GraphqlError::new)?;
         let representation = self
@@ -1878,9 +1844,7 @@ impl GraphqlPackage {
     /// tag key it carries. `Ok(None)` for a value of a kind no alternative
     /// admits.
     fn select_member<'m>(
-        members: &'m [UnionMember],
-        path: &str,
-        value: &Value,
+        members: &'m [UnionMember], path: &str, value: &Value,
     ) -> Result<Option<&'m UnionMember>, GraphqlError> {
         let Some(class) = ValueClass::of(value) else {
             return Ok(None);
@@ -1918,12 +1882,7 @@ impl GraphqlPackage {
     }
 
     fn translate_union(
-        &self,
-        schema: &Value,
-        path: &str,
-        value: &Value,
-        direction: CodecDirection,
-        depth: usize,
+        &self, schema: &Value, path: &str, value: &Value, direction: CodecDirection, depth: usize,
     ) -> Result<Value, GraphqlError> {
         let members = self
             .unions
@@ -2029,10 +1988,7 @@ impl GraphqlPackage {
     }
 
     fn translate_enum(
-        &self,
-        path: &str,
-        value: &Value,
-        direction: CodecDirection,
+        &self, path: &str, value: &Value, direction: CodecDirection,
     ) -> Result<Value, GraphqlError> {
         let mappings =
             self.names.enum_values.get(path).ok_or_else(|| {
@@ -2067,12 +2023,7 @@ impl GraphqlPackage {
     }
 
     fn translate_object(
-        &self,
-        schema: &Value,
-        path: &str,
-        value: &Value,
-        direction: CodecDirection,
-        depth: usize,
+        &self, schema: &Value, path: &str, value: &Value, direction: CodecDirection, depth: usize,
     ) -> Result<Value, GraphqlError> {
         let value = value.as_object().ok_or_else(|| {
             GraphqlError::new(format!("GraphQL value at {path} must be a JSON object"))
@@ -2138,9 +2089,7 @@ enum JsonKind {
 }
 
 fn classify_schema(
-    schema: &Value,
-    path: &str,
-    definitions: &Object,
+    schema: &Value, path: &str, definitions: &Object,
 ) -> Result<(Representation, Option<Vec<UnionMember>>), GraphqlError> {
     let Value::Object(object) = schema else {
         return Ok((Representation::Fallback, None));
@@ -2241,9 +2190,7 @@ struct Alternative {
 /// the value is valid under the `anyOf` exactly when it is valid under the
 /// alternative it selects. `None` when the alternatives overlap.
 fn union_members(
-    object: &Object,
-    path: &str,
-    definitions: &Object,
+    object: &Object, path: &str, definitions: &Object,
 ) -> Result<Option<Vec<UnionMember>>, GraphqlError> {
     let Some(branches) = object.get("anyOf").and_then(Value::as_array) else {
         return Ok(None);
@@ -2344,9 +2291,7 @@ fn union_members(
 /// direct `$defs` references; `None` when the alternative admits `null`, more
 /// than one kind, or kinds it does not declare.
 fn analyse_alternative(
-    branch: &Value,
-    path: &str,
-    definitions: &Object,
+    branch: &Value, path: &str, definitions: &Object,
 ) -> Result<Option<Alternative>, GraphqlError> {
     if schema_allows_null(branch, definitions, &mut BTreeSet::new())? {
         return Ok(None);
@@ -2781,9 +2726,7 @@ fn required_names(object: &Object, path: &str) -> Result<BTreeSet<String>, Graph
 }
 
 fn schema_allows_null(
-    schema: &Value,
-    definitions: &Object,
-    active_references: &mut BTreeSet<String>,
+    schema: &Value, definitions: &Object, active_references: &mut BTreeSet<String>,
 ) -> Result<bool, GraphqlError> {
     let mut current = schema;
     loop {
@@ -2834,9 +2777,7 @@ fn schema_allows_null(
 }
 
 fn find_cycle_edge(
-    objects: &BTreeMap<String, ObjectNames>,
-    edges: &[InputEdge],
-    relaxed: &BTreeSet<String>,
+    objects: &BTreeMap<String, ObjectNames>, edges: &[InputEdge], relaxed: &BTreeSet<String>,
 ) -> Option<String> {
     let mut adjacency = objects
         .keys()

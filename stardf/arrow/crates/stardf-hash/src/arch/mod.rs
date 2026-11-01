@@ -169,9 +169,7 @@ mod blake3_sse2;
 mod blake3_wasm;
 
 pub(crate) fn blake3_four(
-    bytes: &[u8],
-    counter: u64,
-    mode: crate::blake3::Mode,
+    bytes: &[u8], counter: u64, mode: crate::blake3::Mode,
 ) -> Option<[[u32; 8]; 4]> {
     if bytes.is_empty() || bytes.len() > 4096 {
         return None;
@@ -221,9 +219,7 @@ pub(crate) fn blake3_four(
 #[cfg(target_arch = "x86_64")]
 mod blake3_avx2;
 pub(crate) fn blake3_eight(
-    bytes: &[u8],
-    counter: u64,
-    mode: crate::blake3::Mode,
+    bytes: &[u8], counter: u64, mode: crate::blake3::Mode,
 ) -> Option<[[u32; 8]; 8]> {
     #[cfg(target_arch = "x86_64")]
     if !bytes.is_empty() && bytes.len() <= 8192 && std::is_x86_feature_detected!("avx2") {
@@ -235,11 +231,7 @@ pub(crate) fn blake3_eight(
 }
 
 pub(crate) fn blake3_compress4<const OUTPUT: usize>(
-    cv: [u32; 8],
-    words: &[u32; 16],
-    counter: u64,
-    length: u32,
-    flags: u32,
+    cv: [u32; 8], words: &[u32; 16], counter: u64, length: u32, flags: u32,
 ) -> Option<[u32; OUTPUT]> {
     #[cfg(target_arch = "x86")]
     {
@@ -285,11 +277,7 @@ pub(crate) fn blake3_compress4<const OUTPUT: usize>(
 
 #[inline]
 pub(crate) fn blake3_compress_on<const OUTPUT: usize>(
-    backend: crate::blake3::Backend,
-    cv: [u32; 8],
-    words: &[u32; 16],
-    counter: u64,
-    length: u32,
+    backend: crate::blake3::Backend, cv: [u32; 8], words: &[u32; 16], counter: u64, length: u32,
     flags: u32,
 ) -> Option<[u32; OUTPUT]> {
     use crate::blake3::Backend;
@@ -322,8 +310,7 @@ pub(crate) fn blake3_compress_on<const OUTPUT: usize>(
 }
 
 pub(crate) fn blake3_parents4(
-    children: &[[u32; 8]; 8],
-    mode: crate::blake3::Mode,
+    children: &[[u32; 8]; 8], mode: crate::blake3::Mode,
 ) -> Option<[[u32; 8]; 4]> {
     #[cfg(target_arch = "x86")]
     {
@@ -367,8 +354,7 @@ pub(crate) fn blake3_parents4(
     }
 }
 pub(crate) fn blake3_parents8(
-    children: &[[u32; 8]; 16],
-    mode: crate::blake3::Mode,
+    children: &[[u32; 8]; 16], mode: crate::blake3::Mode,
 ) -> Option<[[u32; 8]; 8]> {
     #[cfg(target_arch = "x86_64")]
     if std::is_x86_feature_detected!("avx2") {
@@ -382,9 +368,7 @@ pub(crate) fn blake3_parents8(
 /// Four live chunks with AVX-512VL rotations and 128-bit transposes.
 #[cfg(target_arch = "x86_64")]
 pub(crate) fn blake3_four_avx512(
-    bytes: &[u8],
-    counter: u64,
-    mode: crate::blake3::Mode,
+    bytes: &[u8], counter: u64, mode: crate::blake3::Mode,
 ) -> Option<[[u32; 8]; 4]> {
     if std::is_x86_feature_detected!("avx512f") && std::is_x86_feature_detected!("avx512vl") {
         // SAFETY: both required features were detected; the kernel checks
@@ -403,8 +387,7 @@ pub(crate) fn blake3_four_avx512(
 
 #[cfg(target_arch = "x86_64")]
 pub(crate) fn blake3_parents4_avx512(
-    children: &[[u32; 8]; 8],
-    mode: crate::blake3::Mode,
+    children: &[[u32; 8]; 8], mode: crate::blake3::Mode,
 ) -> Option<[[u32; 8]; 4]> {
     if std::is_x86_feature_detected!("avx512f") && std::is_x86_feature_detected!("avx512vl") {
         // SAFETY: features were detected; every load reads a full input array.
@@ -420,8 +403,7 @@ mod blake3_parents2;
 /// Two parents packed into two independent four-word SIMD groups.
 #[cfg(target_arch = "x86_64")]
 pub(crate) fn blake3_parents2_avx512(
-    children: &[[u32; 8]; 4],
-    mode: crate::blake3::Mode,
+    children: &[[u32; 8]; 4], mode: crate::blake3::Mode,
 ) -> Option<[[u32; 8]; 2]> {
     if std::is_x86_feature_detected!("avx2")
         && std::is_x86_feature_detected!("avx512f")
@@ -442,9 +424,7 @@ mod blake3_rows;
 /// This entry avoids the partial-chunk kernel's padding frame entirely.
 #[cfg(target_arch = "x86_64")]
 pub(crate) fn blake3_subtree_four(
-    bytes: &[u8; 4096],
-    counter: u64,
-    mode: crate::blake3::Mode,
+    bytes: &[u8; 4096], counter: u64, mode: crate::blake3::Mode,
 ) -> Option<[[u32; 8]; 2]> {
     if std::is_x86_feature_detected!("avx2")
         && std::is_x86_feature_detected!("avx512f")

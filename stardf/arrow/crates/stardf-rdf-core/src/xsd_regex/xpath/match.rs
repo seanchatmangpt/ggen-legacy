@@ -63,10 +63,7 @@ impl Captures {
 pub type OwnedCaptures<S> = super::OwnedPatternValue<Option<Captures>, S>;
 
 fn owned_execution<S: purrdf_lex::allocation::Admission, T>(
-    program: &CompiledPattern,
-    input: &str,
-    limits: Limits,
-    mut storage: S,
+    program: &CompiledPattern, input: &str, limits: Limits, mut storage: S,
     leg: impl FnOnce(&mut Vm<'_>) -> Result<(T, usize), Error>,
 ) -> Result<super::OwnedPatternValue<T, S>, super::OwnedPatternError<S>> {
     let verdict = (|| {
@@ -98,10 +95,7 @@ impl CompiledPattern {
     /// Retains the original typed account on language, work, layout, allocator
     /// or physical-capacity refusal. No partial match is published.
     pub fn is_match_with_storage<S: purrdf_lex::allocation::Admission>(
-        &self,
-        input: &str,
-        limits: Limits,
-        storage: S,
+        &self, input: &str, limits: Limits, storage: S,
     ) -> Result<super::OwnedPatternValue<bool, S>, super::OwnedPatternError<S>> {
         owned_execution(self, input, limits, storage, |vm| {
             Ok((vm.is_match_from(0)?, 0))
@@ -113,10 +107,7 @@ impl CompiledPattern {
     /// # Errors
     /// Preserves the same native verdict and original physical account.
     pub fn find_with_storage<S: purrdf_lex::allocation::Admission>(
-        &self,
-        input: &str,
-        limits: Limits,
-        storage: S,
+        &self, input: &str, limits: Limits, storage: S,
     ) -> Result<OwnedCaptures<S>, super::OwnedPatternError<S>> {
         owned_execution(self, input, limits, storage, |vm| {
             let found = vm.find_from(0)?;
@@ -281,11 +272,7 @@ impl Attempt {
     /// stretch as it is.
     #[inline]
     fn exceeded(
-        &mut self,
-        start: usize,
-        position: usize,
-        spent: u64,
-        quiet: Option<bool>,
+        &mut self, start: usize, position: usize, spent: u64, quiet: Option<bool>,
     ) -> Option<Refusal> {
         self.furthest = self.furthest.max(position);
         let quiet = quiet.map(|quiet| quiet && self.large);
@@ -369,9 +356,7 @@ impl<'a> Vm<'a> {
     }
 
     pub(super) fn with_storage(
-        program: &'a CompiledPattern,
-        input: &'a str,
-        limits: Limits,
+        program: &'a CompiledPattern, input: &'a str, limits: Limits,
         storage: &'a mut dyn purrdf_lex::allocation::Admission,
     ) -> Self {
         Self::with_context(Ctx::with_budget(
@@ -382,9 +367,7 @@ impl<'a> Vm<'a> {
     }
 
     pub(super) fn with_budget(
-        program: &'a CompiledPattern,
-        input: &'a str,
-        budget: Budget<'a>,
+        program: &'a CompiledPattern, input: &'a str, budget: Budget<'a>,
     ) -> Self {
         Self::with_context(Ctx::with_budget(program, input, budget))
     }
@@ -425,9 +408,7 @@ impl<'a> Vm<'a> {
     /// The backtracking machine alone, which every program can run on.
     #[cfg(all(test, not(target_arch = "wasm32")))]
     pub(super) fn backtracking(
-        program: &'a CompiledPattern,
-        input: &'a str,
-        limits: Limits,
+        program: &'a CompiledPattern, input: &'a str, limits: Limits,
     ) -> Self {
         Self {
             machine: Machine::Backtrack {
@@ -634,10 +615,7 @@ impl<'a> Ctx<'a> {
     }
 
     fn push<T, const N: usize>(
-        &mut self,
-        stack: &mut WorkList<T, N>,
-        value: T,
-        slots: u64,
+        &mut self, stack: &mut WorkList<T, N>, value: T, slots: u64,
     ) -> Result<(), Error> {
         let required = self.live_slots + u128::from(slots);
         self.budget.limits().admit(Resource::MatchSlots, required)?;
@@ -1254,10 +1232,7 @@ impl<'a> Backtrack<'a> {
     /// its allowance at every stop it passes, so a run scanned back over the
     /// whole input is abandoned as soon as it is not linear.
     fn stop(
-        &mut self,
-        start: usize,
-        mut position: usize,
-        run: Run,
+        &mut self, start: usize, mut position: usize, run: Run,
     ) -> Result<Option<usize>, Error> {
         let Some(follow) = run.follow else {
             return Ok(Some(position));
@@ -1501,11 +1476,7 @@ impl<'a> Backtrack<'a> {
     }
 
     fn repeat(
-        &mut self,
-        state: &mut State,
-        node: usize,
-        count: u64,
-        stalled: bool,
+        &mut self, state: &mut State, node: usize, count: u64, stalled: bool,
     ) -> Result<bool, Error> {
         let Node::Repeat {
             body,
@@ -1591,11 +1562,7 @@ impl<'a> Backtrack<'a> {
     /// over. Any other run is left to that allowance: the set machine decides
     /// it from repeated states.
     fn greedy_run(
-        &mut self,
-        state: &mut State,
-        body: Body,
-        min: Count,
-        max: Option<Count>,
+        &mut self, state: &mut State, body: Body, min: Count, max: Option<Count>,
         follow: Option<Follow>,
     ) -> Result<bool, Error> {
         let Body {
@@ -1701,11 +1668,7 @@ impl<'a> Backtrack<'a> {
     /// `origin`, moving the scan's cursors there. None when the scan holds no
     /// character from `origin` on, or no cursor where the run needs one.
     fn known(
-        &mut self,
-        single: usize,
-        origin: usize,
-        min: Option<u64>,
-        max: u64,
+        &mut self, single: usize, origin: usize, min: Option<u64>, max: u64,
     ) -> Result<Option<Known>, Error> {
         let Some(mut scan) = self.scan else {
             return Ok(None);
@@ -1834,11 +1797,7 @@ impl<'a> Backtrack<'a> {
     /// Continue a greedy run scanned from `origin` to the state's position at
     /// its longest viable stop, if it has one.
     fn run_stop(
-        &mut self,
-        state: &mut State,
-        floor: Option<usize>,
-        follow: Option<Follow>,
-        origin: usize,
+        &mut self, state: &mut State, floor: Option<usize>, follow: Option<Follow>, origin: usize,
         capture: Option<usize>,
     ) -> Result<bool, Error> {
         let Some(floor) = floor else {
@@ -1954,11 +1913,7 @@ impl<'a> Backtrack<'a> {
     }
 
     fn iteration(
-        &mut self,
-        state: &mut State,
-        node: usize,
-        body: usize,
-        count: u64,
+        &mut self, state: &mut State, node: usize, body: usize, count: u64,
     ) -> Result<(), Error> {
         self.action(
             state,
@@ -3531,8 +3486,7 @@ mod tests {
 
     /// The least bound of `resource` under which `run` succeeds, by bisection.
     fn requirement(
-        run: &dyn Fn(Limits) -> Result<Option<Captures>, Error>,
-        resource: Resource,
+        run: &dyn Fn(Limits) -> Result<Option<Captures>, Error>, resource: Resource,
     ) -> u64 {
         let at = |limit| Limits::new().with(resource, limit);
         let (mut refused, mut admitted) = (0, Limits::new().limit(resource));

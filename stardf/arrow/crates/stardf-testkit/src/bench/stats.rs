@@ -169,11 +169,7 @@ pub fn bootstrap_median(samples: &[f64], resamples: usize, confidence: f64, seed
 /// from `resamples` independent resamples of both sets from one RNG stream at `confidence`, seeded at
 /// `seed`.
 pub fn bootstrap_change(
-    new: &[f64],
-    base: &[f64],
-    resamples: usize,
-    confidence: f64,
-    seed: u64,
+    new: &[f64], base: &[f64], resamples: usize, confidence: f64, seed: u64,
 ) -> (f64, Interval) {
     assert!(
         !new.is_empty() && !base.is_empty(),

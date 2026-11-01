@@ -923,11 +923,7 @@ impl<'a> Reader<'a> {
     /// Check `text[start..end]` for scalars outside `Char` and normalize its
     /// line ends when it comes from the document.
     fn checked(
-        &self,
-        text: &str,
-        in_doc: bool,
-        start: usize,
-        end: usize,
+        &self, text: &str, in_doc: bool, start: usize, end: usize,
     ) -> Result<Cow<'a, str>, XmlError> {
         let bytes = &text.as_bytes()[..end];
         let mut at = start;
@@ -1118,10 +1114,7 @@ impl<'a> Reader<'a> {
 
     /// The start tag at `pos`.
     fn start_tag(
-        &mut self,
-        text: &str,
-        in_doc: bool,
-        pos: usize,
+        &mut self, text: &str, in_doc: bool, pos: usize,
     ) -> Result<Event<'_, 'a>, XmlError> {
         let depth = self.open.len() + 1;
         if depth > self.options.max_depth {
@@ -1406,10 +1399,7 @@ impl<'a> Reader<'a> {
 
     /// The attribute value whose opening quote is at `pos`, and its end.
     fn attribute_value(
-        &mut self,
-        text: &str,
-        in_doc: bool,
-        pos: usize,
+        &mut self, text: &str, in_doc: bool, pos: usize,
     ) -> Result<(Cow<'a, str>, usize), XmlError> {
         let bytes = text.as_bytes();
         let quote = match bytes.get(pos) {
@@ -1485,10 +1475,7 @@ impl<'a> Reader<'a> {
     /// `pos` inside an attribute value, to `out` (XML 1.0 §3.3.3: nested
     /// references expanded, each whitespace character a SPACE, no `<`).
     fn expand_in_attribute(
-        &mut self,
-        entity: usize,
-        pos: usize,
-        out: &mut String,
+        &mut self, entity: usize, pos: usize, out: &mut String,
     ) -> Result<(), XmlError> {
         let mut stack: Vec<(usize, usize)> = Vec::new();
         let push = |this: &mut Self, stack: &mut Vec<(usize, usize)>, entity: usize| {

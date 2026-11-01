@@ -37,9 +37,7 @@ const TIME: &str = "https://example.org/time";
 
 /// Execute the original property-function seam with either physical corpus law.
 fn corpus_query<D, P>(
-    dataset: &D,
-    index: Arc<TextIndex<P>>,
-    query: &str,
+    dataset: &D, index: Arc<TextIndex<P>>, query: &str,
 ) -> purrdf_sparql_eval::RetainedSparqlResult
 where
     D: purrdf_core::FallibleDatasetView + Sync,
@@ -330,9 +328,7 @@ impl Fixture {
         shaped
     }
     pub(crate) fn report(
-        &self,
-        query: &str,
-        operator: &str,
+        &self, query: &str, operator: &str,
     ) -> purrdf_sparql_eval::QueryExplanation {
         let report = engine(false)
             .explain_query_with_options(
@@ -1227,15 +1223,12 @@ impl purrdf_sparql_eval::AggregateAccumulator for DigestAccumulator {
         Ok(())
     }
     fn step_admitted(
-        &mut self,
-        args: &[TermValue],
-        _: &WorkspaceCapability,
+        &mut self, args: &[TermValue], _: &WorkspaceCapability,
     ) -> Result<(), EvalError> {
         self.step(args)
     }
     fn combine(
-        &mut self,
-        other: Box<dyn purrdf_sparql_eval::AggregateAccumulator>,
+        &mut self, other: Box<dyn purrdf_sparql_eval::AggregateAccumulator>,
     ) -> Result<(), EvalError> {
         let other = other
             .into_any()
@@ -1249,8 +1242,7 @@ impl purrdf_sparql_eval::AggregateAccumulator for DigestAccumulator {
         Ok(())
     }
     fn combine_admitted(
-        &mut self,
-        other: Box<dyn purrdf_sparql_eval::AggregateAccumulator>,
+        &mut self, other: Box<dyn purrdf_sparql_eval::AggregateAccumulator>,
         _: &WorkspaceCapability,
     ) -> Result<(), EvalError> {
         self.combine(other)
@@ -1265,8 +1257,7 @@ impl purrdf_sparql_eval::AggregateAccumulator for DigestAccumulator {
         )))
     }
     fn finish_admitted(
-        self: Box<Self>,
-        workspace: &WorkspaceCapability,
+        self: Box<Self>, workspace: &WorkspaceCapability,
     ) -> Result<Option<purrdf_sparql_eval::WorkspaceTerm>, EvalError> {
         workspace
             .literal(self.value, purrdf_xsd::datatype::XSD_INTEGER)
@@ -1290,19 +1281,14 @@ impl purrdf_sparql_eval::CustomAggregate for OrderedDigest {
         Box::new(DigestAccumulator { value: 0, shift: 1 })
     }
     fn init_admitted(
-        &self,
-        _: &[(String, TermValue)],
-        _: purrdf_xsd::exact::DivisionPolicy,
+        &self, _: &[(String, TermValue)], _: purrdf_xsd::exact::DivisionPolicy,
         workspace: &WorkspaceCapability,
     ) -> Result<WorkspaceAccumulator, EvalError> {
         WorkspaceAccumulator::new(DigestAccumulator { value: 0, shift: 1 }, workspace)
     }
     fn exact_numeric_cost_admitted(
-        &self,
-        _: &[Vec<TermValue>],
-        _: &[(String, TermValue)],
-        _: purrdf_xsd::exact::DivisionPolicy,
-        _: &WorkspaceCapability,
+        &self, _: &[Vec<TermValue>], _: &[(String, TermValue)],
+        _: purrdf_xsd::exact::DivisionPolicy, _: &WorkspaceCapability,
     ) -> Result<purrdf_xsd::exact::Cost, EvalError> {
         Ok(purrdf_xsd::exact::Cost::ZERO)
     }
@@ -1369,9 +1355,7 @@ pub(crate) fn bucket_custom_and_parallel_order() {
 struct InvalidShape(u8);
 impl ShapeProvider for InvalidShape {
     fn offer(
-        &self,
-        request: ShapeRequest<'_>,
-        workspace: &WorkspaceCapability,
+        &self, request: ShapeRequest<'_>, workspace: &WorkspaceCapability,
     ) -> Result<Option<ShapeOffer>, EvalError> {
         if !matches!(request.pattern, GraphPattern::Values { .. }) {
             return Ok(None);
@@ -1723,9 +1707,7 @@ struct CompileProbe {
 }
 impl ShapeProvider for CompileProbe {
     fn offer(
-        &self,
-        request: ShapeRequest<'_>,
-        workspace: &WorkspaceCapability,
+        &self, request: ShapeRequest<'_>, workspace: &WorkspaceCapability,
     ) -> Result<Option<ShapeOffer>, EvalError> {
         if !matches!(request.pattern, GraphPattern::Values { .. }) {
             return Ok(None);
@@ -1885,9 +1867,7 @@ struct Passthrough {
 struct CopyRows(Arc<AtomicUsize>);
 impl ShapeProvider for Passthrough {
     fn offer(
-        &self,
-        request: ShapeRequest<'_>,
-        workspace: &WorkspaceCapability,
+        &self, request: ShapeRequest<'_>, workspace: &WorkspaceCapability,
     ) -> Result<Option<ShapeOffer>, EvalError> {
         if !matches!(request.pattern, GraphPattern::Values { .. }) {
             return Ok(None);
@@ -2045,8 +2025,7 @@ struct DeclaredClaims {
 impl DeclaredClaims {
     fn new(
         information: purrdf_core::evidence::Information,
-        complete: purrdf_core::evidence::SearchCompleteness,
-        closed: bool,
+        complete: purrdf_core::evidence::SearchCompleteness, closed: bool,
     ) -> Self {
         use purrdf_core::evidence::{EvidenceRecord, Frame, InformationMap};
         use purrdf_lex::allocation::{Memory, Resident};
@@ -2068,8 +2047,7 @@ impl DeclaredClaims {
 }
 impl purrdf_sparql_eval::evidence_exec::EvidenceSource<purrdf_core::TermId> for DeclaredClaims {
     fn claim(
-        &self,
-        _: &purrdf_core::QuadIds<purrdf_core::TermId>,
+        &self, _: &purrdf_core::QuadIds<purrdf_core::TermId>,
     ) -> Result<Option<&purrdf_core::evidence::EvidenceRecord>, EvalError> {
         if self.fail {
             return Err(EvalError::config("the original claim declaration refused"));
@@ -2077,8 +2055,7 @@ impl purrdf_sparql_eval::evidence_exec::EvidenceSource<purrdf_core::TermId> for 
         Ok(Some(&self.record))
     }
     fn scope(
-        &self,
-        _: purrdf_core::GraphMatch<purrdf_core::TermId>,
+        &self, _: purrdf_core::GraphMatch<purrdf_core::TermId>,
     ) -> Result<purrdf_sparql_eval::evidence_exec::EvidenceScope, EvalError> {
         Ok(purrdf_sparql_eval::evidence_exec::EvidenceScope {
             completeness: self.complete,
@@ -2087,8 +2064,7 @@ impl purrdf_sparql_eval::evidence_exec::EvidenceSource<purrdf_core::TermId> for 
         })
     }
     fn reason(
-        &self,
-        _: purrdf_core::evidence::ReasonId,
+        &self, _: purrdf_core::evidence::ReasonId,
     ) -> Result<Option<purrdf_core::evidence::ReasonDescription<'_>>, EvalError> {
         Ok(None)
     }
@@ -2107,9 +2083,7 @@ struct EvidenceAnswer {
 // RowEvidence deliberately has no global numeric-ID equality. Keep the original
 // handle separately and compare canonical records across independent executions.
 fn evidence_answer(
-    dataset: &RdfDataset,
-    query: &str,
-    options: QueryOptions<'_, '_>,
+    dataset: &RdfDataset, query: &str, options: QueryOptions<'_, '_>,
     claims: &dyn purrdf_sparql_eval::evidence_exec::EvidenceSource<purrdf_core::TermId>,
     disabled: bool,
 ) -> EvidenceAnswer {
@@ -2167,9 +2141,7 @@ fn evidence_answer(
         .unwrap()
 }
 fn equal_evidence(
-    dataset: &RdfDataset,
-    query: &str,
-    options: QueryOptions<'_, '_>,
+    dataset: &RdfDataset, query: &str, options: QueryOptions<'_, '_>,
     claims: &dyn purrdf_sparql_eval::evidence_exec::EvidenceSource<purrdf_core::TermId>,
 ) -> EvidenceAnswer {
     let literal = evidence_answer(dataset, query, options, claims, true);
@@ -2245,20 +2217,17 @@ impl ExpressionGaps {
 }
 impl purrdf_sparql_eval::evidence_exec::EvidenceSource<purrdf_core::TermId> for ExpressionGaps {
     fn claim(
-        &self,
-        quad: &purrdf_core::QuadIds<purrdf_core::TermId>,
+        &self, quad: &purrdf_core::QuadIds<purrdf_core::TermId>,
     ) -> Result<Option<&purrdf_core::evidence::EvidenceRecord>, EvalError> {
         purrdf_sparql_eval::evidence_exec::EvidenceSource::claim(&self.claims, quad)
     }
     fn scope(
-        &self,
-        graph: purrdf_core::GraphMatch<purrdf_core::TermId>,
+        &self, graph: purrdf_core::GraphMatch<purrdf_core::TermId>,
     ) -> Result<purrdf_sparql_eval::evidence_exec::EvidenceScope, EvalError> {
         purrdf_sparql_eval::evidence_exec::EvidenceSource::scope(&self.claims, graph)
     }
     fn reason(
-        &self,
-        reason: purrdf_core::evidence::ReasonId,
+        &self, reason: purrdf_core::evidence::ReasonId,
     ) -> Result<Option<purrdf_core::evidence::ReasonDescription<'_>>, EvalError> {
         Ok(
             (reason == self.reason).then_some(purrdf_core::evidence::ReasonDescription {
@@ -2271,8 +2240,7 @@ impl purrdf_sparql_eval::evidence_exec::EvidenceSource<purrdf_core::TermId> for 
         )
     }
     fn expression_gap(
-        &self,
-        expression: &purrdf_sparql_algebra::Expression,
+        &self, expression: &purrdf_sparql_algebra::Expression,
         schema: &[purrdf_sparql_algebra::Variable],
         row: &[Option<purrdf_sparql_eval::SolutionTerm<purrdf_core::TermId>>],
         _: purrdf_core::GraphMatch<purrdf_core::TermId>,
@@ -2433,9 +2401,7 @@ pub(crate) fn false_expression_gaps_keep_original_traversal() {
 struct EvidencePassthrough(Arc<AtomicUsize>);
 impl ShapeProvider for EvidencePassthrough {
     fn offer(
-        &self,
-        request: ShapeRequest<'_>,
-        workspace: &WorkspaceCapability,
+        &self, request: ShapeRequest<'_>, workspace: &WorkspaceCapability,
     ) -> Result<Option<ShapeOffer>, EvalError> {
         if !matches!(request.pattern, GraphPattern::Bgp { .. }) {
             return Ok(None);

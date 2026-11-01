@@ -354,11 +354,8 @@ impl EmbeddingSpace {
     /// nothing would say so. The coverage check runs here, once, where a host can fix it —
     /// which also means no invocation can fail this way.
     pub fn from_artifact(
-        artifact: &[u8],
-        target_set: TargetSetId,
-        vector_space: VectorSpaceId,
-        bindings: Vec<(TargetId, TermValue)>,
-        guard: KnnGuard,
+        artifact: &[u8], target_set: TargetSetId, vector_space: VectorSpaceId,
+        bindings: Vec<(TargetId, TermValue)>, guard: KnnGuard,
     ) -> Result<Self, EvalError> {
         // The float environment first: every number this constructor computes (the norms
         // a cosine space divides by) is already arithmetic under it.
@@ -480,9 +477,7 @@ impl EmbeddingSpace {
     /// environment is not the IEEE one the norms are computed under, as
     /// [`Self::from_artifact`] refuses it.
     pub fn from_vectors(
-        metric: &DistanceMetric,
-        dimension: usize,
-        rows: Vec<(TermValue, Vec<f64>)>,
+        metric: &DistanceMetric, dimension: usize, rows: Vec<(TermValue, Vec<f64>)>,
         guard: KnnGuard,
     ) -> Result<Self, EvalError> {
         // The float environment first, as `from_artifact` checks it: the norms a cosine
@@ -636,10 +631,7 @@ impl EmbeddingSpace {
     /// [`Self::search_admitted`] raises it, when the calling thread's floating-point environment
     /// is not the IEEE one the arithmetic defines.
     fn row_distance<A: Arithmetic>(
-        &self,
-        declared: Option<Selected<A>>,
-        query_row: usize,
-        row: usize,
+        &self, declared: Option<Selected<A>>, query_row: usize, row: usize,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<f64, EvalError> {
         let arithmetic = resolve_here(declared)?;
@@ -657,10 +649,7 @@ impl EmbeddingSpace {
     }
 
     fn distance_refusal(
-        &self,
-        query_row: usize,
-        row: usize,
-        cause: NonFinite,
+        &self, query_row: usize, row: usize, cause: NonFinite,
         workspace: &crate::WorkspaceCapability,
     ) -> EvalError {
         crate::RetainedNativeFailure::error(
@@ -722,10 +711,7 @@ impl EmbeddingSpace {
     /// The same exhaustive batch kernel, with its actual buffers admitted before
     /// allocation and the selected rows retaining their heap allocation.
     fn search_admitted<A: Arithmetic>(
-        &self,
-        declared: Option<Selected<A>>,
-        query_row: usize,
-        k: usize,
+        &self, declared: Option<Selected<A>>, query_row: usize, k: usize,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<(crate::AdmittedVec<Ranked>, u64), EvalError> {
         if k == 0 {
@@ -829,9 +815,7 @@ fn resolve_here<A: Arithmetic>(declared: Option<Selected<A>>) -> Result<Resolved
 /// declaring one: a host comparing two answers' evidence is comparing the
 /// indexes, not the runs.
 fn space_generation(
-    projection: ProjectionContentDigest,
-    family: FamilyContractDigest,
-    terms: &[TermValue],
+    projection: ProjectionContentDigest, family: FamilyContractDigest, terms: &[TermValue],
 ) -> Arc<str> {
     let mut bytes = Vec::new();
     crate::registry_id::append_framed_part(
@@ -871,10 +855,7 @@ const VECTORS_GENERATION_DOMAIN: Domain =
 /// two generations. No clock, no counter, no RNG: two processes handed the same rows
 /// attest the same generation.
 fn vectors_generation(
-    metric: &DistanceMetric,
-    dimension: usize,
-    vectors: &[f64],
-    terms: &[TermValue],
+    metric: &DistanceMetric, dimension: usize, vectors: &[f64], terms: &[TermValue],
 ) -> Arc<str> {
     let mut bytes = Vec::new();
     crate::registry_id::append_framed_part(
@@ -912,9 +893,7 @@ fn vectors_generation(
 ///
 /// `exact` is the handle a normalized projection's rows are computed under.
 fn read_vectors(
-    effective: &purrdf_core::EffectiveMatrixView<'_>,
-    row_count: usize,
-    dimension: usize,
+    effective: &purrdf_core::EffectiveMatrixView<'_>, row_count: usize, dimension: usize,
     exact: Resolved<Exact>,
 ) -> Result<Vec<f64>, EvalError> {
     let dtype = effective
@@ -961,11 +940,7 @@ fn read_vectors(
 
 /// Every row's L2 norm, for a kernel that divides by one; empty otherwise.
 fn read_norms(
-    exact: Resolved<Exact>,
-    kernel: Kernel,
-    vectors: &[f64],
-    dimension: usize,
-    row_count: usize,
+    exact: Resolved<Exact>, kernel: Kernel, vectors: &[f64], dimension: usize, row_count: usize,
 ) -> Result<Vec<f64>, EvalError> {
     if !kernel.needs_norms() {
         return Ok(Vec::new());
@@ -1015,9 +990,7 @@ fn read_norms(
 /// bytes would be assuming exactly what a fail-closed borrowed-view design exists to stop
 /// assuming. The check is one integer comparison per guard, at construction, once.
 fn check_index_guards(
-    view: &EmbeddingView<'_>,
-    target_set: TargetSetId,
-    vector_space: VectorSpaceId,
+    view: &EmbeddingView<'_>, target_set: TargetSetId, vector_space: VectorSpaceId,
     effective: &purrdf_core::EffectiveMatrixView<'_>,
 ) -> Result<(), EvalError> {
     let matrix = effective.matrix().id();
@@ -1441,11 +1414,7 @@ impl<A: Arithmetic> EmbeddingKnnRelation<A> {
     /// exactly.
     #[must_use]
     pub fn ranked_declaration(
-        &self,
-        stratum: Iri,
-        seed: TermKind,
-        depth_datatype: String,
-        fidelity: RankFidelity,
+        &self, stratum: Iri, seed: TermKind, depth_datatype: String, fidelity: RankFidelity,
         domains: CandidateDomains,
     ) -> RankedDeclaration {
         RankedDeclaration {
@@ -1663,9 +1632,7 @@ impl<A: Arithmetic> PropertyFunction for EmbeddingKnnRelation<A> {
     /// does the cutting, spending the licence only on rows it emits. The membership
     /// answer is at most one row and needs no such care.
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -1675,10 +1642,7 @@ impl<A: Arithmetic> PropertyFunction for EmbeddingKnnRelation<A> {
     }
 
     fn open_admitted<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
-        workspace: crate::WorkspaceCapability,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>, workspace: crate::WorkspaceCapability,
     ) -> Result<crate::WorkspaceCursor<'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -1740,9 +1704,7 @@ struct KnnSource<A: Arithmetic> {
 
 impl<A: Arithmetic> RankSource for KnnSource<A> {
     fn candidates_admitted(
-        &self,
-        query_row: usize,
-        workspace: &crate::WorkspaceCapability,
+        &self, query_row: usize, workspace: &crate::WorkspaceCapability,
     ) -> Result<(crate::AdmittedVec<Ranked>, u64), EvalError> {
         // The original batch distance kernel and total order generate the full
         // native candidate domain; scope precedes the invocation's own depth.
@@ -1755,10 +1717,7 @@ impl<A: Arithmetic> RankSource for KnnSource<A> {
     }
 
     fn search_admitted(
-        &self,
-        query_row: usize,
-        select_k: usize,
-        workspace: &crate::WorkspaceCapability,
+        &self, query_row: usize, select_k: usize, workspace: &crate::WorkspaceCapability,
     ) -> Result<(crate::AdmittedVec<Ranked>, u64), EvalError> {
         self.observations.scans.fetch_add(1, Ordering::Relaxed);
         let (ranked, examined) =
@@ -1776,10 +1735,7 @@ impl<A: Arithmetic> RankSource for KnnSource<A> {
     }
 
     fn distance_admitted(
-        &self,
-        query_row: usize,
-        row: usize,
-        workspace: &crate::WorkspaceCapability,
+        &self, query_row: usize, row: usize, workspace: &crate::WorkspaceCapability,
     ) -> Result<f64, EvalError> {
         self.observations
             .membership_distances

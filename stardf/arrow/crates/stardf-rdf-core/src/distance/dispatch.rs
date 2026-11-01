@@ -56,11 +56,7 @@ pub(crate) mod portable {
     /// See [`exact::distances`].
     #[inline(never)]
     pub(crate) fn distances<Q: Scalar, T: Scalar>(
-        ops: Binary64<'_>,
-        measure: Measure,
-        query: &[Q],
-        query_norm: f64,
-        rows: RowsRef<'_, T>,
+        ops: Binary64<'_>, measure: Measure, query: &[Q], query_norm: f64, rows: RowsRef<'_, T>,
         out: &mut [Result<f64, NonFinite>],
     ) {
         exact::distances(ops, measure, query, query_norm, rows, out);
@@ -69,13 +65,8 @@ pub(crate) mod portable {
     /// See [`exact::distances_indexed`].
     #[inline(never)]
     pub(crate) fn distances_indexed<Q: Scalar, T: Scalar>(
-        ops: Binary64<'_>,
-        measure: Measure,
-        query: &[Q],
-        query_norm: f64,
-        rows: RowsRef<'_, T>,
-        ids: &[usize],
-        out: &mut [Result<f64, NonFinite>],
+        ops: Binary64<'_>, measure: Measure, query: &[Q], query_norm: f64, rows: RowsRef<'_, T>,
+        ids: &[usize], out: &mut [Result<f64, NonFinite>],
     ) {
         exact::distances_indexed(ops, measure, query, query_norm, rows, ids, out);
     }
@@ -83,12 +74,7 @@ pub(crate) mod portable {
     /// See [`exact::distance`].
     #[inline(never)]
     pub(crate) fn distance<Q: Scalar, T: Scalar>(
-        ops: Binary64<'_>,
-        measure: Measure,
-        a: &[Q],
-        a_norm: f64,
-        b: &[T],
-        b_norm: f64,
+        ops: Binary64<'_>, measure: Measure, a: &[Q], a_norm: f64, b: &[T], b_norm: f64,
     ) -> Result<f64, NonFinite> {
         exact::distance(ops, measure, a, a_norm, b, b_norm)
     }
@@ -96,12 +82,7 @@ pub(crate) mod portable {
     /// See [`exact::distance_bounded`].
     #[inline(never)]
     pub(crate) fn distance_bounded<Q: Scalar, T: Scalar>(
-        ops: Binary64<'_>,
-        measure: Measure,
-        a: &[Q],
-        a_norm: f64,
-        b: &[T],
-        b_norm: f64,
+        ops: Binary64<'_>, measure: Measure, a: &[Q], a_norm: f64, b: &[T], b_norm: f64,
         bound: Bound,
     ) -> Bounded {
         exact::distance_bounded(ops, measure, a, a_norm, b, b_norm, bound)
@@ -124,11 +105,7 @@ pub(crate) mod avx2 {
     /// See [`exact::distances`].
     #[target_feature(enable = "avx2")]
     pub(crate) fn distances<Q: Scalar, T: Scalar>(
-        ops: Binary64<'_>,
-        measure: Measure,
-        query: &[Q],
-        query_norm: f64,
-        rows: RowsRef<'_, T>,
+        ops: Binary64<'_>, measure: Measure, query: &[Q], query_norm: f64, rows: RowsRef<'_, T>,
         out: &mut [Result<f64, NonFinite>],
     ) {
         exact::distances(ops, measure, query, query_norm, rows, out);
@@ -137,13 +114,8 @@ pub(crate) mod avx2 {
     /// See [`exact::distances_indexed`].
     #[target_feature(enable = "avx2")]
     pub(crate) fn distances_indexed<Q: Scalar, T: Scalar>(
-        ops: Binary64<'_>,
-        measure: Measure,
-        query: &[Q],
-        query_norm: f64,
-        rows: RowsRef<'_, T>,
-        ids: &[usize],
-        out: &mut [Result<f64, NonFinite>],
+        ops: Binary64<'_>, measure: Measure, query: &[Q], query_norm: f64, rows: RowsRef<'_, T>,
+        ids: &[usize], out: &mut [Result<f64, NonFinite>],
     ) {
         exact::distances_indexed(ops, measure, query, query_norm, rows, ids, out);
     }
@@ -151,12 +123,7 @@ pub(crate) mod avx2 {
     /// See [`exact::distance`].
     #[target_feature(enable = "avx2")]
     pub(crate) fn distance<Q: Scalar, T: Scalar>(
-        ops: Binary64<'_>,
-        measure: Measure,
-        a: &[Q],
-        a_norm: f64,
-        b: &[T],
-        b_norm: f64,
+        ops: Binary64<'_>, measure: Measure, a: &[Q], a_norm: f64, b: &[T], b_norm: f64,
     ) -> Result<f64, NonFinite> {
         exact::distance(ops, measure, a, a_norm, b, b_norm)
     }
@@ -164,12 +131,7 @@ pub(crate) mod avx2 {
     /// See [`exact::distance_bounded`].
     #[target_feature(enable = "avx2")]
     pub(crate) fn distance_bounded<Q: Scalar, T: Scalar>(
-        ops: Binary64<'_>,
-        measure: Measure,
-        a: &[Q],
-        a_norm: f64,
-        b: &[T],
-        b_norm: f64,
+        ops: Binary64<'_>, measure: Measure, a: &[Q], a_norm: f64, b: &[T], b_norm: f64,
         bound: Bound,
     ) -> Bounded {
         exact::distance_bounded(ops, measure, a, a_norm, b, b_norm, bound)
@@ -188,11 +150,7 @@ pub(crate) mod avx512f {
     /// See [`exact::distances`].
     #[target_feature(enable = "avx512f")]
     pub(crate) fn distances<Q: Scalar, T: Scalar>(
-        ops: Binary64<'_>,
-        measure: Measure,
-        query: &[Q],
-        query_norm: f64,
-        rows: RowsRef<'_, T>,
+        ops: Binary64<'_>, measure: Measure, query: &[Q], query_norm: f64, rows: RowsRef<'_, T>,
         out: &mut [Result<f64, NonFinite>],
     ) {
         exact::distances(ops, measure, query, query_norm, rows, out);
@@ -201,13 +159,8 @@ pub(crate) mod avx512f {
     /// See [`exact::distances_indexed`].
     #[target_feature(enable = "avx512f")]
     pub(crate) fn distances_indexed<Q: Scalar, T: Scalar>(
-        ops: Binary64<'_>,
-        measure: Measure,
-        query: &[Q],
-        query_norm: f64,
-        rows: RowsRef<'_, T>,
-        ids: &[usize],
-        out: &mut [Result<f64, NonFinite>],
+        ops: Binary64<'_>, measure: Measure, query: &[Q], query_norm: f64, rows: RowsRef<'_, T>,
+        ids: &[usize], out: &mut [Result<f64, NonFinite>],
     ) {
         exact::distances_indexed(ops, measure, query, query_norm, rows, ids, out);
     }
@@ -215,12 +168,7 @@ pub(crate) mod avx512f {
     /// See [`exact::distance`].
     #[target_feature(enable = "avx512f")]
     pub(crate) fn distance<Q: Scalar, T: Scalar>(
-        ops: Binary64<'_>,
-        measure: Measure,
-        a: &[Q],
-        a_norm: f64,
-        b: &[T],
-        b_norm: f64,
+        ops: Binary64<'_>, measure: Measure, a: &[Q], a_norm: f64, b: &[T], b_norm: f64,
     ) -> Result<f64, NonFinite> {
         exact::distance(ops, measure, a, a_norm, b, b_norm)
     }
@@ -228,12 +176,7 @@ pub(crate) mod avx512f {
     /// See [`exact::distance_bounded`].
     #[target_feature(enable = "avx512f")]
     pub(crate) fn distance_bounded<Q: Scalar, T: Scalar>(
-        ops: Binary64<'_>,
-        measure: Measure,
-        a: &[Q],
-        a_norm: f64,
-        b: &[T],
-        b_norm: f64,
+        ops: Binary64<'_>, measure: Measure, a: &[Q], a_norm: f64, b: &[T], b_norm: f64,
         bound: Bound,
     ) -> Bounded {
         exact::distance_bounded(ops, measure, a, a_norm, b, b_norm, bound)
@@ -249,11 +192,7 @@ fn not_exact(path: Path) -> ! {
 
 /// [`exact::distances`] along `path`.
 pub(crate) fn distances<Q: Scalar, T: Scalar>(
-    path: Path,
-    measure: Measure,
-    query: &[Q],
-    query_norm: f64,
-    rows: RowsRef<'_, T>,
+    path: Path, measure: Measure, query: &[Q], query_norm: f64, rows: RowsRef<'_, T>,
     out: &mut [Result<f64, NonFinite>],
 ) {
     let precision = Precision::enter();
@@ -278,13 +217,8 @@ pub(crate) fn distances<Q: Scalar, T: Scalar>(
 
 /// [`exact::distances_indexed`] along `path`.
 pub(crate) fn distances_indexed<Q: Scalar, T: Scalar>(
-    path: Path,
-    measure: Measure,
-    query: &[Q],
-    query_norm: f64,
-    rows: RowsRef<'_, T>,
-    ids: &[usize],
-    out: &mut [Result<f64, NonFinite>],
+    path: Path, measure: Measure, query: &[Q], query_norm: f64, rows: RowsRef<'_, T>,
+    ids: &[usize], out: &mut [Result<f64, NonFinite>],
 ) {
     let precision = Precision::enter();
     let ops = precision.binary64();
@@ -309,12 +243,7 @@ pub(crate) fn distances_indexed<Q: Scalar, T: Scalar>(
 
 /// [`exact::distance`] along `path`.
 pub(crate) fn distance<Q: Scalar, T: Scalar>(
-    path: Path,
-    measure: Measure,
-    a: &[Q],
-    a_norm: f64,
-    b: &[T],
-    b_norm: f64,
+    path: Path, measure: Measure, a: &[Q], a_norm: f64, b: &[T], b_norm: f64,
 ) -> Result<f64, NonFinite> {
     let precision = Precision::enter();
     let ops = precision.binary64();
@@ -333,13 +262,7 @@ pub(crate) fn distance<Q: Scalar, T: Scalar>(
 
 /// [`exact::distance_bounded`] along `path`.
 pub(crate) fn distance_bounded<Q: Scalar, T: Scalar>(
-    path: Path,
-    measure: Measure,
-    a: &[Q],
-    a_norm: f64,
-    b: &[T],
-    b_norm: f64,
-    bound: Bound,
+    path: Path, measure: Measure, a: &[Q], a_norm: f64, b: &[T], b_norm: f64, bound: Bound,
 ) -> Bounded {
     let precision = Precision::enter();
     let ops = precision.binary64();

@@ -70,10 +70,7 @@ fn masked_key(components: [TermId; 3], mask: usize) -> [Option<TermId>; 3] {
 }
 
 pub(super) fn compare_masked<T: Ord>(
-    a: &T,
-    b: &T,
-    mask: usize,
-    components: &impl Fn(&T) -> [TermId; 3],
+    a: &T, b: &T, mask: usize, components: &impl Fn(&T) -> [TermId; 3],
 ) -> Ordering {
     masked_key(components(a), mask)
         .cmp(&masked_key(components(b), mask))
@@ -82,10 +79,7 @@ pub(super) fn compare_masked<T: Ord>(
 
 /// One mask order preserves the frozen row order within every matching key.
 pub(super) fn masked_permutation<'a, T: Ord>(
-    cell: &'a OnceLock<Box<[u32]>>,
-    rows: &[T],
-    capacity: LocalCapacity,
-    mask: usize,
+    cell: &'a OnceLock<Box<[u32]>>, rows: &[T], capacity: LocalCapacity, mask: usize,
     components: impl Fn(&T) -> [TermId; 3],
 ) -> Result<&'a [u32], StorageError> {
     cached_permutation(cell, rows, capacity, |a, b| {
@@ -118,9 +112,7 @@ impl<T: Copy> Iterator for OrdinalRows<'_, T> {
 impl<T: Copy> ExactSizeIterator for OrdinalRows<'_, T> {}
 
 pub(super) fn ordinal_range<'a, T>(
-    rows: &'a [T],
-    ordinals: Option<&'a [u32]>,
-    compare: impl Fn(&T) -> Ordering,
+    rows: &'a [T], ordinals: Option<&'a [u32]>, compare: impl Fn(&T) -> Ordering,
 ) -> OrdinalRows<'a, T> {
     let (lower, upper) = match ordinals {
         Some(order) => (
@@ -140,11 +132,8 @@ pub(super) fn ordinal_range<'a, T>(
 }
 
 pub(super) fn masked_rows<'a, T: Copy + Ord>(
-    rows: &'a [T],
-    cell: Option<&'a OnceLock<Box<[u32]>>>,
-    capacity: LocalCapacity,
-    pattern: [Option<TermId>; 3],
-    components: impl Fn(&T) -> [TermId; 3],
+    rows: &'a [T], cell: Option<&'a OnceLock<Box<[u32]>>>, capacity: LocalCapacity,
+    pattern: [Option<TermId>; 3], components: impl Fn(&T) -> [TermId; 3],
 ) -> Result<OrdinalRows<'a, T>, StorageError> {
     let mask = component_mask(pattern);
     let ordinals = cell
@@ -224,9 +213,7 @@ impl TripleTable {
     }
 
     fn probe_ordered(
-        &self,
-        order: TripleOrder,
-        pattern: [Option<TermId>; 3],
+        &self, order: TripleOrder, pattern: [Option<TermId>; 3],
     ) -> Result<TripleRows<'_>, StorageError> {
         let ordinals = self.permutation(order)?;
         let ordered = order.ordered(pattern);
@@ -372,10 +359,7 @@ impl TripleDataset {
     /// # Errors
     /// Returns physical allocation or typed ordinal-capacity refusal.
     pub fn triples_for_pattern(
-        &self,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
+        &self, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
     ) -> Result<TripleRows<'_>, StorageError> {
         self.triples.probe([s, p, o])
     }
@@ -390,9 +374,7 @@ impl TripleDataset {
     /// # Errors
     /// Returns the original ordinal capacity or allocation refusal.
     pub fn reifiers_for_pattern(
-        &self,
-        reifier: Option<TermId>,
-        target: Option<TermId>,
+        &self, reifier: Option<TermId>, target: Option<TermId>,
     ) -> Result<impl Iterator<Item = TripleReifierRow> + '_, StorageError> {
         let ordinals = if reifier.is_none() && target.is_some() {
             Some(cached_permutation(
@@ -430,8 +412,7 @@ impl TripleDataset {
     /// # Errors
     /// Returns typed ordinal-capacity or physical allocation refusal.
     pub fn reifiers_for_components(
-        &self,
-        pattern: [Option<TermId>; 3],
+        &self, pattern: [Option<TermId>; 3],
     ) -> Result<impl ExactSizeIterator<Item = TripleReifierRow> + '_, StorageError> {
         let mask = component_mask(pattern);
         masked_rows(
@@ -454,10 +435,7 @@ impl TripleDataset {
     /// # Errors
     /// Returns the original ordinal capacity or allocation refusal.
     pub fn annotations_for_pattern(
-        &self,
-        reifier: Option<TermId>,
-        predicate: Option<TermId>,
-        object: Option<TermId>,
+        &self, reifier: Option<TermId>, predicate: Option<TermId>, object: Option<TermId>,
     ) -> Result<TripleRows<'_>, StorageError> {
         self.annotations.probe([reifier, predicate, object])
     }

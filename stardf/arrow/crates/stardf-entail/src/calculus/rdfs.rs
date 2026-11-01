@@ -152,9 +152,7 @@ pub(super) fn resource_typed() -> Vec<DlClause> {
 /// `A → ∃y. r(x,y)` and `A → ∃y. C(y)` are two rules minting two unrelated witnesses, and
 /// `A → ∃y. (r(x,y) ∧ C(y))` is one rule minting one.
 fn surrogate_family(
-    observed: &'static str,
-    surrogate: &'static str,
-    substitute: bool,
+    observed: &'static str, surrogate: &'static str, substitute: bool,
 ) -> Vec<DlClause> {
     let mint = DlClause::new(
         vec![HeadDisjunct::new(vec![

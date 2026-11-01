@@ -408,9 +408,7 @@ fn load(shapes: &str, profile: purrdf_shapes::ShaclProfile) -> Result<(), String
 /// The focus nodes `data` reports against `shapes` under `profile`, sorted, or the
 /// refusal.
 fn reported_under(
-    profile: purrdf_shapes::ShaclProfile,
-    data: &str,
-    shapes: &str,
+    profile: purrdf_shapes::ShaclProfile, data: &str, shapes: &str,
 ) -> Result<Vec<String>, String> {
     use purrdf_shapes::ShapesImports;
     use purrdf_shapes::engine::{ValidationOptions, validate_graphs_with_options};

@@ -77,19 +77,14 @@ impl<'a> FixedPoint<'a> {
     }
 
     pub(super) fn ask_shape(
-        &self,
-        plan: ShapePlan<'a>,
-        focus: &FocusNode,
+        &self, plan: ShapePlan<'a>, focus: &FocusNode,
     ) -> Result<bool, ShapesError> {
         self.ask(Body::Shape(runtime::original(plan)?), focus)
     }
 
     pub(super) fn ask_property(
-        &self,
-        definition: ShapePlan<'a>,
-        edge: &'a PropertyReference,
-        deactivation: &'a [LoweredExpr],
-        focus: &FocusNode,
+        &self, definition: ShapePlan<'a>, edge: &'a PropertyReference,
+        deactivation: &'a [LoweredExpr], focus: &FocusNode,
     ) -> Result<bool, ShapesError> {
         if edge.deactivated {
             return Ok(true);
@@ -108,9 +103,7 @@ impl<'a> FixedPoint<'a> {
     }
 
     pub(super) fn solve(
-        &self,
-        context: ValidationContext<'a, '_>,
-        focus: &FocusNode,
+        &self, context: ValidationContext<'a, '_>, focus: &FocusNode,
     ) -> Result<bool, ShapesError> {
         let source = Shared::try_new(context.store.retained())
             .map_err(|_| StorageError::AllocationFailed)?;
@@ -159,10 +152,7 @@ impl<'a> FixedPoint<'a> {
     }
 
     pub(super) fn enter_report(
-        &self,
-        store: &ShaclData,
-        plan: ShapePlan<'_>,
-        focus: &FocusNode,
+        &self, store: &ShaclData, plan: ShapePlan<'_>, focus: &FocusNode,
         edge: Option<(&Arc<crate::shapes::ModelOwner>, usize, usize)>,
     ) -> Result<bool, ShapesError> {
         let owner = plan
@@ -242,9 +232,7 @@ impl<'a> FixedPoint<'a> {
     }
 
     pub(super) fn publish_report(
-        &self,
-        outcome: Option<&crate::recursion::evidence::ReportOutcome>,
-        conforms: bool,
+        &self, outcome: Option<&crate::recursion::evidence::ReportOutcome>, conforms: bool,
         finite_leaf: bool,
     ) -> Result<(), ShapesError> {
         if !conforms && !finite_leaf && self.report_cycles.borrow().is_empty() {

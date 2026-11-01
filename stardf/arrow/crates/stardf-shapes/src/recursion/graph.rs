@@ -33,8 +33,7 @@ pub(crate) struct Source {
 
 impl Source {
     pub(crate) fn new(
-        owner: &Arc<crate::shapes::ModelOwner>,
-        analysis: Analysis,
+        owner: &Arc<crate::shapes::ModelOwner>, analysis: Analysis,
     ) -> Result<Option<Shared<Self>>, ShapesError> {
         if analysis.state.is_none() {
             return Ok(None);
@@ -47,9 +46,7 @@ impl Source {
         .map_err(|_| StorageError::AllocationFailed.into())
     }
     pub(crate) fn admit(
-        &self,
-        owner: &Arc<crate::shapes::ModelOwner>,
-        semantics: Option<RecursionSemantics>,
+        &self, owner: &Arc<crate::shapes::ModelOwner>, semantics: Option<RecursionSemantics>,
     ) -> Result<(), ShapesError> {
         if self.owner.as_ptr() == Arc::as_ptr(owner) {
             self.analysis.admit(semantics)
@@ -143,10 +140,8 @@ impl Analysis {
 }
 
 pub(crate) fn analyze(
-    adjacency: &[Vec<usize>],
-    dependencies: &[Dependency],
-    label: impl Fn(usize) -> Result<String, ShapesError>,
-    shape: impl Fn(usize) -> bool,
+    adjacency: &[Vec<usize>], dependencies: &[Dependency],
+    label: impl Fn(usize) -> Result<String, ShapesError>, shape: impl Fn(usize) -> bool,
     definition: impl Fn(usize) -> Result<super::closed::WeakDefinition, ShapesError>,
 ) -> Result<Analysis, ShapesError> {
     let mut resident = Resident;

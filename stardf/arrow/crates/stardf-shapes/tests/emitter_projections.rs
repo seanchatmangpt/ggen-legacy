@@ -23,6 +23,11 @@
 //! Schema validator, that each projection accepts and rejects what SHACL
 //! validation does.
 
+// LANED-EXCLUSION (G03 offline ladder, 2026-10-31, D17): `purrdf_jsonschema` is
+// loudly absent from this tree (crates/jsonschema/DISPOSITION.md), so the
+// metaschema support module and the `observed` module consuming it (34 tests)
+// are cfg(any())-parked below, not deleted. Unpark = vendor purrdf-jsonschema.
+#[cfg(any())]
 #[cfg(not(target_arch = "wasm32"))]
 #[path = "../examples/support/metaschemas.rs"]
 mod metaschemas;
@@ -3256,6 +3261,10 @@ fn linkml_projects_reifier_severity() {
 // against the compiled `Holder` definition, so a projection is shown to accept
 // and reject exactly what validation does.
 
+// LANED-EXCLUSION (G03 offline ladder, 2026-10-31, D17): every test in this
+// module judges projections with the excluded `purrdf_jsonschema` validator
+// (rationale at the `mod metaschemas` park above).
+#[cfg(any())]
 #[cfg(not(target_arch = "wasm32"))]
 mod observed {
     use super::metaschemas::metaschemas;

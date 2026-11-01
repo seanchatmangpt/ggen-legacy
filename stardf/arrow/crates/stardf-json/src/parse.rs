@@ -14,8 +14,7 @@ use purrdf_lex::json_pointer;
 use crate::{Bounds, JsonError, Kind, Value};
 
 pub(crate) fn parse(
-    text: &str,
-    bounds: Bounds,
+    text: &str, bounds: Bounds,
 ) -> Result<(Vec<Value>, Vec<Range<usize>>), JsonError> {
     let limits = Limits {
         max_depth: usize::from(bounds.max_depth),

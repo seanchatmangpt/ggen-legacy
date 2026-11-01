@@ -189,11 +189,7 @@ const DEFINITION_MEMO_ARMS: (&str, &str) = (
 /// Bench one query/dataset twice (memo off vs on) under `group_name`, with arm
 /// labels describing what the pair actually measures for that shape.
 fn bench_pair_labeled(
-    c: &mut Bench,
-    group_name: &str,
-    ds: &RdfDataset,
-    query: &str,
-    arm_labels: (&str, &str),
+    c: &mut Bench, group_name: &str, ds: &RdfDataset, query: &str, arm_labels: (&str, &str),
 ) {
     let (off_label, on_label) = arm_labels;
     let mut group = c.benchmark_group(group_name);

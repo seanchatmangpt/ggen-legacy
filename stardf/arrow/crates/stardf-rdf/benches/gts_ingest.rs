@@ -77,9 +77,7 @@ impl IngestShape {
 /// `stage_count` contributions, each in its own graph. `space` maps a stage index
 /// onto its term space.
 fn stage_plan(
-    stage_count: usize,
-    rows: usize,
-    space: impl Fn(usize) -> usize,
+    stage_count: usize, rows: usize, space: impl Fn(usize) -> usize,
 ) -> Vec<(String, Arc<RdfDataset>)> {
     (0..stage_count)
         .map(|index| {
@@ -161,9 +159,7 @@ fn delta_carrier(shape: &IngestShape, limits: ViewLimits) -> PipelineViewBundle<
 /// path's memory shows up at all, since `retained_bytes` is by construction the
 /// LEDGER's deduplicated figure and stays comparable across the three variants.
 fn observation(
-    report: &ViewAccountingReport,
-    scratch_bytes: usize,
-    frozen_bytes: usize,
+    report: &ViewAccountingReport, scratch_bytes: usize, frozen_bytes: usize,
 ) -> Observation {
     Observation::from_report(report, scratch_bytes.saturating_add(frozen_bytes))
 }

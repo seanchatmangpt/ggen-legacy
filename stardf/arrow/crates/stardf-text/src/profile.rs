@@ -210,9 +210,7 @@ impl AnalyzerProfile {
     /// # Errors
     /// Refuses code lengths outside 1..=64 or distances above 64.
     pub fn with_phonetics(
-        mut self,
-        code_length: usize,
-        edit_distance: usize,
+        mut self, code_length: usize, edit_distance: usize,
     ) -> Result<Self, TextError> {
         crate::phonetic::DoubleMetaphone::new(code_length)?;
         if edit_distance > crate::phonetic::MAX_EDIT_DISTANCE {

@@ -111,10 +111,8 @@ impl ParseProvenance {
     /// back the ability to assert an identity for shapes that were never parsed
     /// that way, which is the whole failure mode.
     pub(crate) fn new(
-        base: Option<String>,
-        doc_prefixes: Vec<(String, String)>,
-        box_role_vocab: Option<BoxRoleVocab>,
-        shapes_graph: Option<String>,
+        base: Option<String>, doc_prefixes: Vec<(String, String)>,
+        box_role_vocab: Option<BoxRoleVocab>, shapes_graph: Option<String>,
     ) -> Self {
         Self {
             base,

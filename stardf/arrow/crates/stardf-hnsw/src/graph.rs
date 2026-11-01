@@ -337,12 +337,7 @@ impl VectorMatrix {
     /// handle it returns, so none is computed on a thread that was not checked. The handle
     /// is `Copy`, and passing it costs nothing per pair.
     pub fn distance<A: Arithmetic>(
-        &self,
-        arithmetic: Resolved<A>,
-        kernel: Kernel,
-        a: usize,
-        a_norm: f64,
-        b: usize,
+        &self, arithmetic: Resolved<A>, kernel: Kernel, a: usize, a_norm: f64, b: usize,
         b_norm: f64,
     ) -> core::result::Result<f64, NonFinite> {
         let (a_start, b_start) = (a * self.dims, b * self.dims);
@@ -374,12 +369,7 @@ impl VectorMatrix {
     /// `arithmetic` is the checked handle [`VectorMatrix::distance`] takes, for the same
     /// reason.
     pub fn distance_from_query<A: Arithmetic>(
-        &self,
-        arithmetic: Resolved<A>,
-        kernel: Kernel,
-        query: &[f64],
-        query_norm: f64,
-        row: usize,
+        &self, arithmetic: Resolved<A>, kernel: Kernel, query: &[f64], query_norm: f64, row: usize,
         row_norm: f64,
     ) -> core::result::Result<f64, NonFinite> {
         let start = row * self.dims;
@@ -410,14 +400,8 @@ impl VectorMatrix {
                   the bound are each an independent input of one distance"
     )]
     pub fn distance_bounded<A: Arithmetic>(
-        &self,
-        arithmetic: Resolved<A>,
-        kernel: Kernel,
-        a: usize,
-        a_norm: f64,
-        b: usize,
-        b_norm: f64,
-        bound: Bound,
+        &self, arithmetic: Resolved<A>, kernel: Kernel, a: usize, a_norm: f64, b: usize,
+        b_norm: f64, bound: Bound,
     ) -> Bounded {
         let (a_start, b_start) = (a * self.dims, b * self.dims);
         let measure = kernel.measure();
@@ -452,14 +436,8 @@ impl VectorMatrix {
                   table, the ids and the output are each an independent input of one batch"
     )]
     pub(crate) fn distances_from_row<A: Arithmetic>(
-        &self,
-        arithmetic: Resolved<A>,
-        kernel: Kernel,
-        seed: usize,
-        seed_norm: f64,
-        norms: &[f64],
-        ids: &[usize],
-        out: &mut [core::result::Result<f64, NonFinite>],
+        &self, arithmetic: Resolved<A>, kernel: Kernel, seed: usize, seed_norm: f64, norms: &[f64],
+        ids: &[usize], out: &mut [core::result::Result<f64, NonFinite>],
     ) {
         let start = seed * self.dims;
         let measure = kernel.measure();
@@ -491,14 +469,8 @@ impl VectorMatrix {
                   table, the ids and the output are each an independent input of one batch"
     )]
     pub(crate) fn distances_from_query<A: Arithmetic>(
-        &self,
-        arithmetic: Resolved<A>,
-        kernel: Kernel,
-        query: &[f64],
-        query_norm: f64,
-        norms: &[f64],
-        ids: &[usize],
-        out: &mut [core::result::Result<f64, NonFinite>],
+        &self, arithmetic: Resolved<A>, kernel: Kernel, query: &[f64], query_norm: f64,
+        norms: &[f64], ids: &[usize], out: &mut [core::result::Result<f64, NonFinite>],
     ) {
         let measure = kernel.measure();
         match &self.data {
@@ -523,9 +495,7 @@ impl VectorMatrix {
 
     /// This matrix's buffer as the batch kernels' row view.
     fn rows_ref<'a, T: purrdf_core::distance::Scalar>(
-        &self,
-        data: &'a [T],
-        norms: &'a [f64],
+        &self, data: &'a [T], norms: &'a [f64],
     ) -> RowsRef<'a, T> {
         RowsRef::new(data, self.rows, self.dims, norms).expect(
             "a validated matrix holds rows * dims values, and its norm table is empty or \
@@ -673,11 +643,7 @@ impl Graph {
     /// Eviction takes the farthest **unprotected** entry, which keeps the degree bound
     /// exact and keeps every edge a previous repair depended on.
     pub(crate) fn link_protected(
-        &mut self,
-        host: usize,
-        layer: u32,
-        neighbor: Ranked,
-        bound: usize,
+        &mut self, host: usize, layer: u32, neighbor: Ranked, bound: usize,
         protected: &BTreeSet<usize>,
     ) -> bool {
         let list = &mut self.layers[host][layer as usize];
@@ -707,10 +673,7 @@ impl Graph {
     /// image code of the arithmetic and dispatch path its distances were computed
     /// on, and the build shape of one whose bits depend on the build -- in the header.
     pub(crate) fn canonical_image(
-        &self,
-        kernel: Kernel,
-        params: &Params,
-        arithmetic: Recorded,
+        &self, kernel: Kernel, params: &Params, arithmetic: Recorded,
     ) -> Vec<u8> {
         let mut out = Vec::new();
         out.extend_from_slice(&IMAGE_MAGIC);
@@ -810,9 +773,7 @@ impl Graph {
 
     /// Reconstruct a graph from its decoded parts, rejecting anything malformed.
     pub(crate) fn from_decoded(
-        levels: Vec<u32>,
-        layers: Vec<Vec<Vec<Ranked>>>,
-        recorded_entry: Option<usize>,
+        levels: Vec<u32>, layers: Vec<Vec<Vec<Ranked>>>, recorded_entry: Option<usize>,
     ) -> Result<Self> {
         let n = levels.len();
         if layers.len() != n {

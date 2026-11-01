@@ -354,8 +354,7 @@ impl Dataset {
     /// All `(predicate-IRI, Object)` pairs of `<subject> ?p ?o` in the default graph,
     /// in dataset order. Used to scan a single subject's outgoing edges.
     pub fn predicate_objects_of(
-        &self,
-        subject_iri: &str,
+        &self, subject_iri: &str,
     ) -> Result<Vec<(String, Object)>, SliceError> {
         self.graph(GraphSel::Default)
             .predicate_objects_of(subject_iri)
@@ -371,10 +370,7 @@ impl Dataset {
     /// its own §5.1.3 retrieval IRI. A relative reference with no base in scope is a hard
     /// error either way — never a silently interned relative IRI.
     pub fn parse(
-        bytes: &[u8],
-        media_type: &str,
-        base: Option<&str>,
-        context: &str,
+        bytes: &[u8], media_type: &str, base: Option<&str>, context: &str,
     ) -> Result<Self, SliceError> {
         let ds = parse_dataset(bytes, media_type, base)
             .map_err(|error| SliceError::rdf(error, &format!("syntax error in {context}")))?;
@@ -406,9 +402,7 @@ impl Dataset {
     /// Parse Turtle text into a fresh dataset, resolving relative IRI references against
     /// `base` (see [`Self::parse`]).
     pub fn parse_turtle(
-        bytes: &[u8],
-        base: Option<&str>,
-        context: &str,
+        bytes: &[u8], base: Option<&str>, context: &str,
     ) -> Result<Self, SliceError> {
         Self::parse(bytes, NativeRdfFormat::Turtle.media_type(), base, context)
     }
@@ -433,9 +427,7 @@ impl Dataset {
     /// The distinct object terms of `<subject> <pred> ?o` in the default graph (subject may be
     /// a blank node).
     pub fn objects_of_subject(
-        &self,
-        subject: &Subject,
-        pred: &str,
+        &self, subject: &Subject, pred: &str,
     ) -> Result<Vec<Object>, SliceError> {
         self.graph(GraphSel::Default)
             .objects_of_subject(subject, pred)
@@ -443,9 +435,7 @@ impl Dataset {
 
     /// The first object of `<subject> <pred> ?o` in the default graph, or `None`.
     pub fn first_object(
-        &self,
-        subject_iri: &str,
-        pred: &str,
+        &self, subject_iri: &str, pred: &str,
     ) -> Result<Option<Object>, SliceError> {
         self.graph(GraphSel::Default)
             .first_object(subject_iri, pred)
@@ -454,9 +444,7 @@ impl Dataset {
     /// The first IRI object of `<subject> <pred> ?o`, or `None` when the first object
     /// is not an IRI (mirrors `graph.value(...)` restricted to a URIRef).
     pub fn first_object_iri(
-        &self,
-        subject_iri: &str,
-        pred: &str,
+        &self, subject_iri: &str, pred: &str,
     ) -> Result<Option<String>, SliceError> {
         self.graph(GraphSel::Default)
             .first_object_iri(subject_iri, pred)
@@ -464,9 +452,7 @@ impl Dataset {
 
     /// The first literal-object lexical value of `<subject> <pred> ?o`, or `None`.
     pub fn object_literal(
-        &self,
-        subject_iri: &str,
-        pred: &str,
+        &self, subject_iri: &str, pred: &str,
     ) -> Result<Option<String>, SliceError> {
         self.graph(GraphSel::Default)
             .object_literal(subject_iri, pred)
@@ -479,9 +465,7 @@ impl Dataset {
 
     /// Every IRI subject of `?s <pred> <object>` in the default graph.
     pub fn subjects_with_object(
-        &self,
-        pred: &str,
-        object_iri: &str,
+        &self, pred: &str, object_iri: &str,
     ) -> Result<Vec<String>, SliceError> {
         self.graph(GraphSel::Default)
             .subjects_with_object(pred, object_iri)
@@ -490,8 +474,7 @@ impl Dataset {
     /// Every `(subject-IRI, object-IRI)` pair of `?s <pred> ?o` in the default graph
     /// where both are named nodes.
     pub fn subject_object_iri_pairs(
-        &self,
-        pred: &str,
+        &self, pred: &str,
     ) -> Result<Vec<(String, String)>, SliceError> {
         self.graph(GraphSel::Default).subject_object_iri_pairs(pred)
     }
@@ -598,8 +581,7 @@ impl GraphView<'_> {
     /// All `(predicate-IRI, Object)` pairs of `<subject> ?p ?o` in this graph, in
     /// dataset order. Used to scan a single subject's outgoing edges.
     pub fn predicate_objects_of(
-        &self,
-        subject_iri: &str,
+        &self, subject_iri: &str,
     ) -> Result<Vec<(String, Object)>, SliceError> {
         let (Some(graph), Some(s)) = (self.graph, iri_id(self.ds, subject_iri)) else {
             return Ok(Vec::new());
@@ -653,9 +635,7 @@ impl GraphView<'_> {
     /// be a blank node), in [`DatasetView::objects`] order: a statement asserted in
     /// several graphs of an `Any` view is one object.
     pub fn objects_of_subject(
-        &self,
-        subject: &Subject,
-        pred: &str,
+        &self, subject: &Subject, pred: &str,
     ) -> Result<Vec<Object>, SliceError> {
         let (Some(graph), Some(s), Some(p)) = (
             self.graph,
@@ -674,9 +654,7 @@ impl GraphView<'_> {
 
     /// The first object of `<subject> <pred> ?o` in this graph, or `None`.
     pub fn first_object(
-        &self,
-        subject_iri: &str,
-        pred: &str,
+        &self, subject_iri: &str, pred: &str,
     ) -> Result<Option<Object>, SliceError> {
         Ok(self.objects(subject_iri, pred)?.into_iter().next())
     }
@@ -684,9 +662,7 @@ impl GraphView<'_> {
     /// The first IRI object of `<subject> <pred> ?o`, or `None` when the first object
     /// is not an IRI (mirrors `graph.value(...)` restricted to a URIRef).
     pub fn first_object_iri(
-        &self,
-        subject_iri: &str,
-        pred: &str,
+        &self, subject_iri: &str, pred: &str,
     ) -> Result<Option<String>, SliceError> {
         match self.first_object(subject_iri, pred)? {
             Some(Object::Named(iri)) => Ok(Some(iri)),
@@ -696,9 +672,7 @@ impl GraphView<'_> {
 
     /// The first literal-object lexical value of `<subject> <pred> ?o`, or `None`.
     pub fn object_literal(
-        &self,
-        subject_iri: &str,
-        pred: &str,
+        &self, subject_iri: &str, pred: &str,
     ) -> Result<Option<String>, SliceError> {
         match self.first_object(subject_iri, pred)? {
             Some(Object::Literal { value, .. }) => Ok(Some(value)),
@@ -720,9 +694,7 @@ impl GraphView<'_> {
 
     /// Every IRI subject of `?s <pred> <object>` in this graph.
     pub fn subjects_with_object(
-        &self,
-        pred: &str,
-        object_iri: &str,
+        &self, pred: &str, object_iri: &str,
     ) -> Result<Vec<String>, SliceError> {
         let (Some(graph), Some(p), Some(o)) = (
             self.graph,
@@ -743,8 +715,7 @@ impl GraphView<'_> {
     /// Every `(subject-IRI, object-IRI)` pair of `?s <pred> ?o` in this graph where
     /// both are named nodes.
     pub fn subject_object_iri_pairs(
-        &self,
-        pred: &str,
+        &self, pred: &str,
     ) -> Result<Vec<(String, String)>, SliceError> {
         let (Some(graph), Some(p)) = (self.graph, iri_id(self.ds, pred)) else {
             return Ok(Vec::new());
@@ -872,11 +843,7 @@ impl DatasetAccumulator {
     /// scope. `context` labels parse errors; `base` is the RFC-3986 §5.1.2 caller base
     /// (see [`Dataset::parse`]).
     pub fn add(
-        &mut self,
-        bytes: &[u8],
-        media_type: &str,
-        base: Option<&str>,
-        context: &str,
+        &mut self, bytes: &[u8], media_type: &str, base: Option<&str>, context: &str,
     ) -> Result<(), SliceError> {
         let parsed = parse_dataset(bytes, media_type, base)
             .map_err(|error| SliceError::rdf(error, &format!("syntax error in {context}")))?;
@@ -898,10 +865,7 @@ impl DatasetAccumulator {
 
     /// Parse Turtle `bytes` under `base` and merge them in under a fresh blank scope.
     pub fn add_turtle(
-        &mut self,
-        bytes: &[u8],
-        base: Option<&str>,
-        context: &str,
+        &mut self, bytes: &[u8], base: Option<&str>, context: &str,
     ) -> Result<(), SliceError> {
         self.add(bytes, NativeRdfFormat::Turtle.media_type(), base, context)
     }

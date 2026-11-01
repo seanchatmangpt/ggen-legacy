@@ -40,10 +40,7 @@ const CONTROL_GATE: f64 = 0.001;
 
 /// Run `operation` on `term` `iterations` times, or only prepare for it.
 fn run<T: Clone + Eq + Hash + std::fmt::Debug>(
-    term: &T,
-    operation: &str,
-    iterations: usize,
-    active: bool,
+    term: &T, operation: &str, iterations: usize, active: bool,
 ) {
     let other = term.clone();
     let mut rendered = String::new();
@@ -123,12 +120,7 @@ fn collected(binary: &str, arguments: &[String]) -> u64 {
 
 /// The median per-operation instructions of one case on `binary`.
 fn per_operation(
-    binary: &str,
-    case: &str,
-    operation: &str,
-    implementation: &str,
-    iterations: usize,
-    runs: usize,
+    binary: &str, case: &str, operation: &str, implementation: &str, iterations: usize, runs: usize,
 ) -> f64 {
     let mut samples: Vec<f64> = (0..runs)
         .map(|_| {

@@ -100,8 +100,7 @@ impl Found {
         }
     }
     fn capture<S: Admission + ?Sized>(
-        value: &Value,
-        memory: &mut Memory<'_, S>,
+        value: &Value, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         Ok(match value {
             Value::Null => Self::Null,
@@ -240,8 +239,7 @@ impl DecodeError {
     /// # Errors
     /// Returns checked layout overflow or the original account's shrink refusal.
     pub fn release_with_memory<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         let fields = self.failure.owned_bytes()?;
         let bytes = self
@@ -254,8 +252,7 @@ impl DecodeError {
         memory.release_bytes(bytes)
     }
     pub(super) fn from_reason_native(
-        reason: DecodeReason<'_>,
-        allocation: Option<&dyn RecordAllocation>,
+        reason: DecodeReason<'_>, allocation: Option<&dyn RecordAllocation>,
     ) -> Self {
         let result = match allocation {
             Some(allocation) => allocation.diagnostic(reason),
@@ -271,8 +268,7 @@ impl DecodeError {
     /// # Errors
     /// Returns the first physical admission, allocation or presentation failure.
     pub fn capture_with_memory<S: Admission + ?Sized>(
-        reason: DecodeReason<'_>,
-        memory: &mut Memory<'_, S>,
+        reason: DecodeReason<'_>, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         if let DecodeReason::Json(cause) = reason {
             let failure = Failure::Json(cause);

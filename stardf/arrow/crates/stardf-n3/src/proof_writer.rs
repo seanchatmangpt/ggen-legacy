@@ -152,13 +152,10 @@ pub(crate) enum ProofEntry<'a> {
 /// loses nothing: a step names what it used by those premises' own
 /// triples, so a reader finds them wherever they are.
 pub(crate) fn collect_all_proof_entries<'a>(
-    roots: &[&'a DerivedFact],
-    other_claims: &[&'a Triple],
+    roots: &[&'a DerivedFact], other_claims: &[&'a Triple],
     derived_by_fact: &BTreeMap<&'a Triple, Vec<&'a DerivedFact>>,
-    explicit_facts: &'a BTreeSet<Triple>,
-    explicit_sources: &'a BTreeMap<Triple, SourceRef>,
-    base_facts: &'a [Triple],
-    rules: &'a [Rule],
+    explicit_facts: &'a BTreeSet<Triple>, explicit_sources: &'a BTreeMap<Triple, SourceRef>,
+    base_facts: &'a [Triple], rules: &'a [Rule],
 ) -> Vec<ProofEntry<'a>> {
     let mut collector = ProofCollector {
         derived_by_fact,
@@ -322,10 +319,7 @@ impl<'a> ProofCollector<'a, '_> {
     }
 
     fn visit_premise(
-        &mut self,
-        premise: &Triple,
-        parent: Option<&Triple>,
-        pending: &mut Vec<PendingProof<'a>>,
+        &mut self, premise: &Triple, parent: Option<&Triple>, pending: &mut Vec<PendingProof<'a>>,
     ) {
         if let Some(candidates) = self.derived_by_fact.get(premise) {
             if let Some(child) = candidates
@@ -581,9 +575,7 @@ fn outdent(block: &str) -> String {
 }
 
 fn render_entry(
-    entry: &ProofEntry<'_>,
-    numbering: &RuleNumbering<'_>,
-    prefixes: &BTreeMap<String, String>,
+    entry: &ProofEntry<'_>, numbering: &RuleNumbering<'_>, prefixes: &BTreeMap<String, String>,
 ) -> String {
     match entry {
         ProofEntry::Rule(proof) => render_rule_entry(proof, numbering, prefixes),
@@ -623,9 +615,7 @@ fn render_entry(
 }
 
 fn render_rule_entry(
-    proof: &DerivedFact,
-    numbering: &RuleNumbering<'_>,
-    prefixes: &BTreeMap<String, String>,
+    proof: &DerivedFact, numbering: &RuleNumbering<'_>, prefixes: &BTreeMap<String, String>,
 ) -> String {
     let subject = graph_for_triple(&proof.fact, prefixes);
     let mut groups = Vec::<(String, Vec<String>)>::new();
@@ -690,9 +680,7 @@ fn render_binding_items(proof: &DerivedFact, prefixes: &BTreeMap<String, String>
 }
 
 pub(crate) fn render_predicate_objects(
-    predicate: &str,
-    objects: &[String],
-    is_last: bool,
+    predicate: &str, objects: &[String], is_last: bool,
 ) -> Vec<String> {
     let end = if is_last { "." } else { ";" };
     if objects.len() == 1 && !objects[0].contains('\n') {
@@ -736,9 +724,7 @@ fn graph_for_triple(triple: &Triple, prefixes: &BTreeMap<String, String>) -> Str
 /// statement, so the proof contains a step deriving it, and a checker can
 /// hold the citation to that (`docs/proof-checking.md` §5.1).
 pub(crate) fn rule_reference(
-    rule: &Rule,
-    numbering: &RuleNumbering<'_>,
-    prefixes: &BTreeMap<String, String>,
+    rule: &Rule, numbering: &RuleNumbering<'_>, prefixes: &BTreeMap<String, String>,
 ) -> String {
     if rule.source.is_some() {
         if let Some(number) = numbering.number(rule) {
@@ -831,9 +817,7 @@ fn is_builtin_premise(triple: &Triple) -> bool {
 }
 
 fn used_prefixes_for_proof(
-    prefixes: &BTreeMap<String, String>,
-    claims: &[&Triple],
-    entries: &[ProofEntry<'_>],
+    prefixes: &BTreeMap<String, String>, claims: &[&Triple], entries: &[ProofEntry<'_>],
 ) -> BTreeSet<String> {
     let mut used = BTreeSet::new();
     used.insert("pe".to_string());
@@ -860,9 +844,7 @@ fn used_prefixes_for_proof(
 }
 
 pub(crate) fn collect_prefixes_triple(
-    triple: &Triple,
-    prefixes: &BTreeMap<String, String>,
-    used: &mut BTreeSet<String>,
+    triple: &Triple, prefixes: &BTreeMap<String, String>, used: &mut BTreeSet<String>,
 ) {
     collect_prefixes_term(&triple.s, prefixes, used);
     collect_prefixes_term(&triple.p, prefixes, used);
@@ -870,9 +852,7 @@ pub(crate) fn collect_prefixes_triple(
 }
 
 pub(crate) fn collect_prefixes_term(
-    term: &Term,
-    prefixes: &BTreeMap<String, String>,
-    used: &mut BTreeSet<String>,
+    term: &Term, prefixes: &BTreeMap<String, String>, used: &mut BTreeSet<String>,
 ) {
     match term {
         Term::Iri(iri) => {
@@ -916,8 +896,7 @@ pub(crate) fn datatype_renders_without_prefix(datatype: &str, value: &str) -> bo
 }
 
 pub(crate) fn best_prefix_for_iri(
-    iri: &str,
-    prefixes: &BTreeMap<String, String>,
+    iri: &str, prefixes: &BTreeMap<String, String>,
 ) -> Option<String> {
     let mut best: Option<(&str, &str)> = None;
     for (prefix, base) in prefixes {

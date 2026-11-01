@@ -11,7 +11,7 @@
 //! court is this Rust file.
 //!
 //! Drives: `stardf_arrow_version`, `stardf_arena_new`, `stardf_arena_intern`
-//! (2 terms), `stardf_batch_append_quad` (3 quads), `stardf_avec_export_stream`,
+//! (2 terms), `stardf_batch_append_quad` (3 quads), `stardf_cgap_export_stream`,
 //! then the `ArrowArrayStream` vtable (`get_schema` / `get_next` / `release`),
 //! asserting: schema format non-null, exactly one batch of 3 rows, then EOF,
 //! and a clean release.
@@ -67,7 +67,7 @@ int main(void) {
 
   /* 5. export the ArrowArrayStream. */
   struct ArrowArrayStream* stream = NULL;
-  int32_t rc = stardf_avec_export_stream(batch, &stream);
+  int32_t rc = stardf_cgap_export_stream(batch, &stream);
   assert(rc == STARDF_OK);
   assert(stream != NULL);
 

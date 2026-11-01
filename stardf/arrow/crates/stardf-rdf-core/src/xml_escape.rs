@@ -146,9 +146,7 @@ const HELD_REFERENCES: usize = 32;
 /// Returns the first scalar excluded by XML 1.0 §2.2 production `[2]` — the same
 /// scalar, at the same byte offset, that the single-pass form reported.
 pub fn push_into<W: fmt::Write + ?Sized>(
-    value: &str,
-    context: Context,
-    output: &mut W,
+    value: &str, context: Context, output: &mut W,
 ) -> Result<(), InvalidXmlChar> {
     let bytes = value.as_bytes();
     let mut held = [(0_usize, ""); HELD_REFERENCES];
@@ -224,9 +222,7 @@ mod tests {
     /// The two-pass escaper `push_into` replaced, kept verbatim as the oracle:
     /// a whole validation pass, then a per-`char` replacement pass.
     fn reference_push_into<W: fmt::Write + ?Sized>(
-        value: &str,
-        context: Context,
-        output: &mut W,
+        value: &str, context: Context, output: &mut W,
     ) -> Result<(), InvalidXmlChar> {
         for (offset, character) in value.char_indices() {
             if !is_xml_char(character) {

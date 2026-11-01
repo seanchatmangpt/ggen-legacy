@@ -64,8 +64,7 @@ impl ExecutionReceiptCapture {
 
 impl purrdf_sparql_eval::ExecutionCoordinateObserver for ExecutionReceiptCapture {
     fn observe(
-        &self,
-        coordinates: &purrdf_sparql_eval::QueryCoordinates,
+        &self, coordinates: &purrdf_sparql_eval::QueryCoordinates,
     ) -> Result<(), purrdf_sparql_eval::EvalError> {
         let mut captured = self.0.lock().map_err(|_| {
             purrdf_sparql_eval::EvalError::Invariant(
@@ -104,9 +103,7 @@ impl CoordinateInputs {
     /// coordinates leave the native clock and entropy defaults intact.
     #[must_use]
     pub fn into_rule_options(
-        self,
-        limits: &purrdf_shapes::RuleLimits,
-        knobs: purrdf_shapes::LimitKnobs,
+        self, limits: &purrdf_shapes::RuleLimits, knobs: purrdf_shapes::LimitKnobs,
     ) -> purrdf_shapes::RuleOptions {
         let mut options = limits.rule_options(knobs);
         if let Some(now) = self.now {
@@ -124,8 +121,7 @@ impl CoordinateInputs {
     /// # Errors
     /// Returns the corresponding typed native parse error for invalid input.
     pub fn from_parts(
-        now: Option<&str>,
-        entropy_seed: Option<&str>,
+        now: Option<&str>, entropy_seed: Option<&str>,
     ) -> Result<Self, CoordinateInputError> {
         let mut inputs = Self::from_time_and_seed(now, None)?;
         inputs.entropy_seed = entropy_seed
@@ -144,8 +140,7 @@ impl CoordinateInputs {
     /// # Errors
     /// Returns [`CoordinateInputError::Now`] for an invalid native `xsd:dateTime`.
     pub fn from_time_and_seed(
-        now: Option<&str>,
-        entropy_seed: Option<u64>,
+        now: Option<&str>, entropy_seed: Option<u64>,
     ) -> Result<Self, CoordinateInputError> {
         Ok(Self {
             now: now
@@ -163,8 +158,7 @@ impl CoordinateInputs {
     /// exact caller-owned time, which execution admits through its native path.
     #[must_use]
     pub fn apply<'a, 'providers>(
-        &'a self,
-        mut options: QueryOptions<'a, 'providers>,
+        &'a self, mut options: QueryOptions<'a, 'providers>,
     ) -> QueryOptions<'a, 'providers> {
         options.now = self.now.as_ref();
         options.entropy_seed = self.entropy_seed;

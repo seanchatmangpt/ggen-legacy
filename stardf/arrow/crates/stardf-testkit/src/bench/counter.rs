@@ -199,9 +199,7 @@ impl CounterControl {
 /// receipts. `directory` must be new, so an older sample cannot be overwritten.
 #[cfg(target_os = "linux")]
 pub fn collect_instructions(
-    executable: &std::path::Path,
-    args: &[std::ffi::OsString],
-    directory: &std::path::Path,
+    executable: &std::path::Path, args: &[std::ffi::OsString], directory: &std::path::Path,
 ) -> Result<InstructionSample, String> {
     use std::process::Command;
     std::fs::create_dir(directory).map_err(|error| format!("{}: {error}", directory.display()))?;
@@ -258,9 +256,7 @@ pub fn collect_instructions(
 /// Save explicit count units through the benchmark store's atomic writer.
 #[cfg(not(target_arch = "wasm32"))]
 pub fn save_report(
-    report: &CountReport,
-    components: &[&str],
-    record: &str,
+    report: &CountReport, components: &[&str], record: &str,
 ) -> Result<std::path::PathBuf, String> {
     let store = super::store::Store::resolve(std::env::var(super::store::HOME_VARIABLE).ok(), None);
     store.write_text(

@@ -95,9 +95,7 @@ impl PropertyFunction for AttestingRelation {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -204,9 +202,7 @@ fn request(query: &str) -> SparqlRequest<'_> {
 /// Drive `query` through the governed entry `query_prepared_governed_view` under
 /// `QueryGovernors::UNBOUNDED` — the lane whose outcome carries a witness.
 fn governed(
-    engine: &NativeSparqlEngine,
-    env: &ExtensionEnv<'static>,
-    query: &str,
+    engine: &NativeSparqlEngine, env: &ExtensionEnv<'static>, query: &str,
 ) -> GovernedOutcome {
     let dataset = dataset();
     let prepared = engine
@@ -225,9 +221,7 @@ fn governed(
 
 /// Drive `query` through the UNGOVERNED entry, whose result type has no witness slot.
 fn ungoverned(
-    engine: &NativeSparqlEngine,
-    env: &ExtensionEnv<'static>,
-    query: &str,
+    engine: &NativeSparqlEngine, env: &ExtensionEnv<'static>, query: &str,
 ) -> Result<SparqlResult, purrdf_core::RdfDiagnostic> {
     let dataset = dataset();
     engine.query_with_options_view(&*dataset, request(query), with_env(env))
@@ -717,8 +711,7 @@ fn the_declarations_are_identical_across_runs_and_across_the_fork() {
 
     /// What one run declared, per relation, with the schedule-dependent count left out.
     fn declarations(
-        engine: &NativeSparqlEngine,
-        env: &ExtensionEnv<'static>,
+        engine: &NativeSparqlEngine, env: &ExtensionEnv<'static>,
     ) -> Vec<(String, BTreeSet<IndexGeneration>, BTreeSet<String>)> {
         governed(engine, env, UNION_CALL)
             .relations()
@@ -945,8 +938,7 @@ fn an_attestation_collected_on_a_row_loop_worker_reaches_the_receipt() {
     /// Drive `FILTER_EXISTS_CALL` over the wide fixture on `engine`, returning what the
     /// relation attested.
     fn attested_over_wide_rows(
-        engine: &NativeSparqlEngine,
-        env: &ExtensionEnv<'static>,
+        engine: &NativeSparqlEngine, env: &ExtensionEnv<'static>,
     ) -> RelationAttestations {
         let dataset = wide_dataset();
         let prepared = engine

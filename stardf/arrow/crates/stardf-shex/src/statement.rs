@@ -66,10 +66,7 @@ use purrdf_iri::vocab::rdf::REIFIES as RDF_REIFIES;
 /// A dataset with no statement layer costs nothing: `rdf:reifies` is unknown
 /// (so the reifier gate short-circuits) and the annotation table is empty.
 pub(crate) fn visit_quads(
-    data: &RdfDataset,
-    s: Option<TermId>,
-    p: Option<TermId>,
-    o: Option<TermId>,
+    data: &RdfDataset, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
     mut emit: impl FnMut(TermId, TermId, TermId),
 ) {
     // ── reifier rows: (reifier, rdf:reifies, <<triple>>) ────────────────────

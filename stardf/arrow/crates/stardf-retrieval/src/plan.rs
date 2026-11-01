@@ -1091,8 +1091,7 @@ impl Plan {
     /// # Errors
     /// Preserves scratch/output allocation and admission refusal.
     pub fn unserved_evidence_admitted(
-        &self,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<purrdf_sparql_eval::AdmittedVec<UnservedTerm>, purrdf_sparql_eval::EvalError> {
         unserved_evidence_admitted(
             self.request_terms.len(),
@@ -1105,9 +1104,7 @@ impl Plan {
 
 /// Derive the same per-term loss for either planning policy.
 pub(crate) fn unserved_evidence(
-    request_terms: usize,
-    bindings: &[ProducerBinding],
-    unserved_terms: &[UnservedTerm],
+    request_terms: usize, bindings: &[ProducerBinding], unserved_terms: &[UnservedTerm],
 ) -> Vec<UnservedTerm> {
     unserved_evidence_admitted(
         request_terms,
@@ -1121,9 +1118,7 @@ pub(crate) fn unserved_evidence(
 }
 
 pub(crate) fn unserved_evidence_admitted(
-    request_terms: usize,
-    bindings: &[ProducerBinding],
-    unserved_terms: &[UnservedTerm],
+    request_terms: usize, bindings: &[ProducerBinding], unserved_terms: &[UnservedTerm],
     workspace: &purrdf_sparql_eval::WorkspaceCapability,
 ) -> Result<purrdf_sparql_eval::AdmittedVec<UnservedTerm>, purrdf_sparql_eval::EvalError> {
     let mut served = purrdf_sparql_eval::AdmittedVec::from_iter_admitted(
@@ -1257,8 +1252,7 @@ fn unserved_from_tag(tag: u8) -> Result<UnservedReason, PlanError> {
 /// emits it ascending by request-term index, and the encoding reproduces the
 /// field rather than imposing an order the value does not have.
 pub(crate) fn write_unserved_terms(
-    writer: &mut Writer<impl crate::canonical::CanonicalSink>,
-    terms: &[UnservedTerm],
+    writer: &mut Writer<impl crate::canonical::CanonicalSink>, terms: &[UnservedTerm],
 ) {
     writer.u64(terms.len() as u64);
     for term in terms {
@@ -1569,8 +1563,7 @@ pub(crate) fn read_request_terms(reader: &mut Reader<'_>) -> Result<Vec<RequestT
 /// [`write_iri`] because a plan carries the registry's key byte-exactly — what
 /// the host registered under, not a re-canonicalized spelling of it.
 pub(crate) fn write_bindings(
-    writer: &mut Writer<impl crate::canonical::CanonicalSink>,
-    bindings: &[ProducerBinding],
+    writer: &mut Writer<impl crate::canonical::CanonicalSink>, bindings: &[ProducerBinding],
 ) {
     writer.u64(bindings.len() as u64);
     for binding in bindings {
@@ -1615,8 +1608,7 @@ pub(crate) fn read_bindings(reader: &mut Reader<'_>) -> Result<Vec<ProducerBindi
 /// plan's account of why the answer is the shape it is, and an encoding that
 /// kept only the selections would make two different plans hash alike.
 pub(crate) fn write_decisions(
-    writer: &mut Writer<impl crate::canonical::CanonicalSink>,
-    decisions: &[ProducerDecision],
+    writer: &mut Writer<impl crate::canonical::CanonicalSink>, decisions: &[ProducerDecision],
 ) {
     writer.u64(decisions.len() as u64);
     for decision in decisions {
@@ -1694,9 +1686,7 @@ pub(crate) fn write_depths(writer: &mut Writer, depths: &FastMap<Iri, u32>) {
 /// what it means depends on what the key indexes, so each caller supplies its
 /// own.
 fn require_ascending(
-    section: CanonicalSection,
-    previous: Option<&str>,
-    key: &str,
+    section: CanonicalSection, previous: Option<&str>, key: &str,
     duplicate: impl FnOnce(String) -> PlanError,
 ) -> Result<(), PlanError> {
     let Some(previous) = previous else {
@@ -1731,9 +1721,7 @@ fn require_ascending(
 /// decidable only against [`Plan::request_terms`], and it is
 /// [`Plan::certify`]'s.
 fn require_ascending_terms(
-    section: CanonicalSection,
-    subject: &str,
-    terms: &[u32],
+    section: CanonicalSection, subject: &str, terms: &[u32],
 ) -> Result<(), PlanError> {
     for pair in terms.windows(2) {
         match pair[1].cmp(&pair[0]) {
@@ -1801,9 +1789,7 @@ pub(crate) fn read_depths(reader: &mut Reader<'_>) -> Result<FastMap<Iri, u32>, 
 /// one is a snapshot that forgot a subject, the other a snapshot that
 /// contradicts one.
 fn reconcile(
-    stratum: &Iri,
-    inputs: &DepthInputs,
-    snapshot: &StatisticsSnapshot,
+    stratum: &Iri, inputs: &DepthInputs, snapshot: &StatisticsSnapshot,
 ) -> Result<(), PlanError> {
     let Some(entry) = snapshot.entries.get_subject(stratum.as_str()) else {
         return Err(PlanError::DerivationWithoutStatisticsEntry {
@@ -1860,9 +1846,7 @@ fn reconcile(
 /// the decoder would also make a legal [`Plan`] value — every field of which is
 /// public — one that its own canonical bytes could not be read back into.
 fn require_addressable(
-    subject: &str,
-    terms: &[u32],
-    request_terms: usize,
+    subject: &str, terms: &[u32], request_terms: usize,
 ) -> Result<(), PlanError> {
     for index in terms {
         if *index as usize >= request_terms {

@@ -166,9 +166,7 @@ pub fn parse_cdt(lexical: &str, datatype: CdtDatatype) -> Result<CdtValue, CdtEr
 /// # Errors
 /// The existing lexical diagnostic or a distinct native physical failure.
 pub fn try_parse_cdt(
-    lexical: &str,
-    datatype: CdtDatatype,
-    storage: &mut impl Storage,
+    lexical: &str, datatype: CdtDatatype, storage: &mut impl Storage,
 ) -> Result<(CdtValue, usize), ReadError> {
     if lexical.len() > MAX_LEXICAL_BYTES {
         return Err(CdtError::InputTooLarge {
@@ -1079,8 +1077,7 @@ fn push_item(stack: &mut [Frame], term: CdtTerm, memory: &mut Memory<'_>) -> Res
 
 /// Sort a map's entries into key order and reject duplicate keys.
 fn finish_map(
-    mut entries: Vec<(usize, CdtEntry)>,
-    memory: &mut Memory<'_>,
+    mut entries: Vec<(usize, CdtEntry)>, memory: &mut Memory<'_>,
 ) -> Result<CdtValue, ReadError> {
     // Offsets strictly follow authoring order. This total tie-break reproduces
     // stable key sorting (including the exact first duplicate diagnostic) with

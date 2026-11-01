@@ -88,8 +88,7 @@ impl LossProfile {
     /// meanings. Failure returns the original rejected definition and exposes
     /// no partially extended profile.
     pub fn extend(
-        mut self,
-        definitions: impl IntoIterator<Item = LossDefinition>,
+        mut self, definitions: impl IntoIterator<Item = LossDefinition>,
     ) -> Result<Self, LossProfileError> {
         for definition in definitions {
             let exact = self.description(&definition.from, &definition.to, &definition.code);

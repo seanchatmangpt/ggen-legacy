@@ -1334,11 +1334,11 @@ fn a_malformed_shapes_graph_is_a_named_usage_error() {
 // would otherwise report `conforms true / results 0` against no shapes at all.
 
 /// The W3C SHACL 1.2 core vocabulary, vendored beside the shapes engine.
-const SHACL_TTL: &str = include_str!("../../shapes/spec/shacl.ttl");
+const SHACL_TTL: &str = include_str!("../../stardf-shapes/spec/shacl.ttl");
 /// The W3C SHACL 1.2 node-expression vocabulary; it `owl:imports <sh:>`.
-const SHNEX_TTL: &str = include_str!("../../shapes/spec/shnex.ttl");
+const SHNEX_TTL: &str = include_str!("../../stardf-shapes/spec/shnex.ttl");
 /// The W3C SHACL 1.2 SPARQL node-expression vocabulary; it `owl:imports <shnex:>`.
-const SHNEX_SPARQL_TTL: &str = include_str!("../../shapes/spec/shnex-sparql.ttl");
+const SHNEX_SPARQL_TTL: &str = include_str!("../../stardf-shapes/spec/shnex-sparql.ttl");
 
 /// A root shapes document that is nothing but an ontology header importing `shapes-a`.
 const IMPORT_ROOT: &str = concat!(

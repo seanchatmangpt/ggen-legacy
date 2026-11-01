@@ -1515,9 +1515,7 @@ pub(crate) fn scalar_call_query(call: &FnCall) -> String {
 /// the caller must propagate it when the outer form does not mask it. An empty
 /// argument is separately `Ok(None)`, and never becomes an invented failure.
 fn eval_sparql_arguments(
-    store: &ShaclData,
-    query: &str,
-    args: &[Result<Option<Term>, crate::error::ShapesError>],
+    store: &ShaclData, query: &str, args: &[Result<Option<Term>, crate::error::ShapesError>],
 ) -> Result<Option<Term>, crate::error::ShapesError> {
     let bound: Vec<_> = args
         .iter()
@@ -1547,9 +1545,7 @@ fn eval_sparql_arguments(
 /// remains empty even when its unselected branch failed. Processor failures have
 /// already escaped before this boundary and are never stored as operands.
 fn finish_sparql_arguments(
-    store: &ShaclData,
-    form: SparqlCallForm,
-    query: &str,
+    store: &ShaclData, form: SparqlCallForm, query: &str,
     args: Vec<Result<Option<Term>, crate::error::ShapesError>>,
 ) -> Result<Option<Term>, crate::error::ShapesError> {
     if form == SparqlCallForm::Call("IF") {
@@ -1599,10 +1595,7 @@ fn finish_sparql_arguments(
 /// unresolved function IRI). A function call over multi-valued arguments is the
 /// cartesian product of the argument value-sets, not an error.
 pub fn eval_node_expr(
-    store: &ShaclData,
-    focus: &Term,
-    expr: &NodeExpr,
-    guard: &mut RecursionGuard,
+    store: &ShaclData, focus: &Term, expr: &NodeExpr, guard: &mut RecursionGuard,
 ) -> Result<Vec<Term>, crate::error::ShapesError> {
     eval_node_expr_in_scope(store, focus, expr, guard, Scope::EMPTY)
 }
@@ -1617,11 +1610,7 @@ pub fn eval_node_expr(
 ///
 /// As [`eval_node_expr`], plus an error when `lowered` does not describe `expr`.
 pub(crate) fn eval_planned_node_expr(
-    store: &ShaclData,
-    focus: &Term,
-    expr: &NodeExpr,
-    lowered: &LoweredExpr,
-    plan: ShapePlan<'_>,
+    store: &ShaclData, focus: &Term, expr: &NodeExpr, lowered: &LoweredExpr, plan: ShapePlan<'_>,
     guard: &mut RecursionGuard,
 ) -> Result<Vec<Term>, crate::error::ShapesError> {
     eval_planned_node_expr_in_scope(store, focus, expr, lowered, plan, guard, Scope::EMPTY)
@@ -1683,10 +1672,7 @@ pub(crate) enum ShapeNodes<'a> {
 /// As [`eval_planned_node_expr`] for the kinds it answers — i.e. only when
 /// `lowered` does not describe `expr`.
 pub(crate) fn eval_planned_shape_nodes<'a>(
-    store: &ShaclData,
-    focus_id: TermId,
-    expr: &'a NodeExpr,
-    lowered: &LoweredExpr,
+    store: &ShaclData, focus_id: TermId, expr: &'a NodeExpr, lowered: &LoweredExpr,
     plan: ShapePlan<'_>,
 ) -> Result<Option<ShapeNodes<'a>>, crate::error::ShapesError> {
     Ok(match expr {
@@ -1716,13 +1702,8 @@ pub(crate) fn eval_planned_shape_nodes<'a>(
 ///
 /// As [`eval_planned_node_expr`].
 pub(crate) fn eval_planned_node_expr_in_scope(
-    store: &ShaclData,
-    focus: &Term,
-    expr: &NodeExpr,
-    lowered: &LoweredExpr,
-    plan: ShapePlan<'_>,
-    guard: &mut RecursionGuard,
-    scope: Scope<'_>,
+    store: &ShaclData, focus: &Term, expr: &NodeExpr, lowered: &LoweredExpr, plan: ShapePlan<'_>,
+    guard: &mut RecursionGuard, scope: Scope<'_>,
 ) -> Result<Vec<Term>, crate::error::ShapesError> {
     guard
         .request
@@ -1747,13 +1728,8 @@ pub(crate) fn eval_planned_node_expr_in_scope(
 /// judges conformance exactly as the rest of the run does; a public entry point
 /// that is not part of a validation run passes the default request.
 fn eval_unlowered(
-    store: &ShaclData,
-    focus: &Term,
-    expr: &NodeExpr,
-    guard: &mut RecursionGuard,
-    scope: Scope<'_>,
-    request: &crate::engine::ValidationRequest,
-    model: Option<&Arc<crate::shapes::ModelOwner>>,
+    store: &ShaclData, focus: &Term, expr: &NodeExpr, guard: &mut RecursionGuard, scope: Scope<'_>,
+    request: &crate::engine::ValidationRequest, model: Option<&Arc<crate::shapes::ModelOwner>>,
 ) -> Result<Vec<Term>, crate::error::ShapesError> {
     let lowering = crate::plan::lower_standalone_expression(expr, model)?;
     let mut binding = lowering.bind(store.core_view());
@@ -1780,11 +1756,7 @@ fn eval_unlowered(
 ///
 /// As [`eval_node_expr`].
 pub fn eval_node_expr_in_scope(
-    store: &ShaclData,
-    focus: &Term,
-    expr: &NodeExpr,
-    guard: &mut RecursionGuard,
-    scope: Scope<'_>,
+    store: &ShaclData, focus: &Term, expr: &NodeExpr, guard: &mut RecursionGuard, scope: Scope<'_>,
 ) -> Result<Vec<Term>, crate::error::ShapesError> {
     let request = guard.request.clone();
     eval_unlowered(store, focus, expr, guard, scope, &request, None)
@@ -1800,10 +1772,7 @@ pub fn eval_node_expr_in_scope(
 ///
 /// As [`eval_node_expr`].
 pub(crate) fn eval_node_expr_in_run(
-    store: &ShaclData,
-    focus: &Term,
-    expr: &NodeExpr,
-    request: &crate::engine::ValidationRequest,
+    store: &ShaclData, focus: &Term, expr: &NodeExpr, request: &crate::engine::ValidationRequest,
     model: Option<&Arc<crate::shapes::ModelOwner>>,
 ) -> Result<Vec<Term>, crate::error::ShapesError> {
     eval_unlowered(
@@ -1828,8 +1797,7 @@ pub(crate) fn eval_node_expr_in_run(
 /// A class the data graph does not intern (`None`) has no instances — an empty
 /// contribution, not a failure.
 fn eval_instances_of(
-    store: &ShaclData,
-    classes: impl IntoIterator<Item = Option<TermId>>,
+    store: &ShaclData, classes: impl IntoIterator<Item = Option<TermId>>,
 ) -> Vec<Term> {
     store.prepare_class_membership();
     let mut out: Vec<Term> = Vec::new();
@@ -1891,13 +1859,8 @@ fn is_true_term(term: &Term) -> bool {
               hide the exhaustive spec-to-arm correspondence this match exists to show"
 )]
 fn eval_node_expr_at_depth(
-    store: &ShaclData,
-    focus: &Term,
-    expr: &NodeExpr,
-    lowered: &LoweredExpr,
-    plan: ShapePlan<'_>,
-    guard: &mut RecursionGuard,
-    scope: Scope<'_>,
+    store: &ShaclData, focus: &Term, expr: &NodeExpr, lowered: &LoweredExpr, plan: ShapePlan<'_>,
+    guard: &mut RecursionGuard, scope: Scope<'_>,
 ) -> Result<Vec<Term>, crate::error::ShapesError> {
     // Every recursive descent reads the sub-lowering the WALK made for the operand
     // it is descending into, by the position the walk assigned in declaration
@@ -2711,13 +2674,8 @@ fn more_than_one_output_node(func: &CustomFunction, count: usize) -> crate::erro
 /// SPARQL call turns any count but one into a SPARQL error
 /// ([`eval_custom_function_call`]).
 fn eval_custom_call(
-    store: &ShaclData,
-    focus: &Term,
-    func: &CustomFunction,
-    scope: Scope<'_>,
-    body_lowered: &LoweredExpr,
-    plan: ShapePlan<'_>,
-    guard: &mut RecursionGuard,
+    store: &ShaclData, focus: &Term, func: &CustomFunction, scope: Scope<'_>,
+    body_lowered: &LoweredExpr, plan: ShapePlan<'_>, guard: &mut RecursionGuard,
 ) -> Result<Vec<Term>, crate::error::ShapesError> {
     let body = func.body()?;
     guard.enter_call(func.iri.as_str())?;
@@ -2766,11 +2724,8 @@ fn eval_custom_call(
 /// classifies it with [`crate::error::ShapesError::failure_class`]; only an
 /// evaluation failure is the call's SPARQL error.
 pub fn eval_custom_function_call(
-    store: &ShaclData,
-    owner: &Arc<crate::shapes::ModelOwner>,
-    func: &Arc<CustomFunction>,
-    args: &[Option<Term>],
-    guard: &mut RecursionGuard,
+    store: &ShaclData, owner: &Arc<crate::shapes::ModelOwner>, func: &Arc<CustomFunction>,
+    args: &[Option<Term>], guard: &mut RecursionGuard,
 ) -> Result<Option<Term>, crate::error::ShapesError> {
     if !owner
         .function(&func.iri)
@@ -2816,10 +2771,7 @@ pub fn eval_custom_function_call(
 /// The guard is exited BEFORE the verdict is propagated, so an erroring
 /// sub-validation never leaves a stale in-flight entry behind.
 fn conforms_guarded(
-    store: &ShaclData,
-    node: &Term,
-    shape: ShapePlan<'_>,
-    guard: &mut RecursionGuard,
+    store: &ShaclData, node: &Term, shape: ShapePlan<'_>, guard: &mut RecursionGuard,
 ) -> Result<bool, crate::error::ShapesError> {
     let shape_id = shape.shape().id.to_string();
     let node_key = node.to_string();
@@ -2858,11 +2810,7 @@ struct AggregateOperand<'a, 'guard> {
 /// its lowering, the plan that lowering belongs to and the guard — as one argument
 /// rather than four, because they only ever travel together.
 fn aggregate(
-    store: &ShaclData,
-    focus: &Term,
-    operand: AggregateOperand<'_, '_>,
-    agg: &str,
-    scope: Scope<'_>,
+    store: &ShaclData, focus: &Term, operand: AggregateOperand<'_, '_>, agg: &str, scope: Scope<'_>,
 ) -> Result<Vec<Term>, crate::error::ShapesError> {
     let AggregateOperand {
         of,

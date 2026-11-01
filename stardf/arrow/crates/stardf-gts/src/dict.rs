@@ -249,9 +249,7 @@ impl Drop for RestoreFastrandSeed {
 /// Returns [`DictError`] when the corpus is empty or too small for FastCOVER to
 /// train a dictionary of the requested size.
 pub fn trained_dict(
-    corpus: &[&[u8]],
-    target_len: usize,
-    seed: DictSeed,
+    corpus: &[&[u8]], target_len: usize, seed: DictSeed,
 ) -> Result<Vec<u8>, DictError> {
     let concat = canonical_concat(corpus);
     if concat.is_empty() {

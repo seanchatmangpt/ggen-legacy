@@ -39,9 +39,7 @@ impl LpgConfig {
     /// Returns a configuration error when `rdf_type`, `scope`, or the execution
     /// limits are invalid.
     pub fn new(
-        rdf_type: impl Into<String>,
-        scope: LpgScope,
-        limits: ProjectionLimits,
+        rdf_type: impl Into<String>, scope: LpgScope, limits: ProjectionLimits,
         execution_limits: LpgExecutionLimits,
     ) -> Result<Self, ProjectionError> {
         let rdf_type = rdf_type.into();
@@ -105,10 +103,7 @@ impl LpgExecutionLimits {
     /// Returns a configuration error when any bound is zero or exceeds the
     /// portable `u32` counter space used by every host surface.
     pub fn new(
-        max_input_records: usize,
-        max_model_records: usize,
-        max_nodes: usize,
-        max_edges: usize,
+        max_input_records: usize, max_model_records: usize, max_nodes: usize, max_edges: usize,
     ) -> Result<Self, ProjectionError> {
         for (name, value) in [
             ("max_input_records", max_input_records),
@@ -207,9 +202,7 @@ impl<T: Ord> LpgSelection<T> {
     /// Check every member with `check`, and refuse a member both included and
     /// excluded; `names` are the sets' names in the refusal.
     fn validate(
-        &self,
-        description: &str,
-        names: (&str, &str),
+        &self, description: &str, names: (&str, &str),
         mut check: impl FnMut(&T) -> Result<(), ProjectionError>,
     ) -> Result<(), ProjectionError> {
         let (include, exclude) = self.sets();
@@ -238,9 +231,7 @@ impl<T: Ord + FromJson> LpgSelection<T> {
     /// `{"mode": "all", <exclude>}` or `{"mode": "only", <include>, <exclude>}`,
     /// the sets named by `names`.
     fn read(
-        value: &Value,
-        expecting: &str,
-        (include, exclude): (&'static str, &'static str),
+        value: &Value, expecting: &str, (include, exclude): (&'static str, &'static str),
     ) -> Result<Self, JsonError> {
         let mut fields = Fields::new(value, expecting)?;
         let selection = match fields.tag("mode", SELECTION_MODES)? {
@@ -387,11 +378,8 @@ impl LpgScope {
     /// Validation against the configured recursive-term bound occurs when the scope
     /// is installed in [`LpgConfig`].
     pub fn select(
-        include_default_graph: bool,
-        named_graphs: LpgNamedGraphSelection,
-        predicates: LpgIriSelection,
-        node_types: LpgIriSelection,
-        edge_types: LpgIriSelection,
+        include_default_graph: bool, named_graphs: LpgNamedGraphSelection,
+        predicates: LpgIriSelection, node_types: LpgIriSelection, edge_types: LpgIriSelection,
     ) -> Self {
         Self::Select {
             include_default_graph,
@@ -657,11 +645,8 @@ pub struct LpgGraph {
 
 impl LpgGraph {
     pub(super) fn new(
-        nodes: Vec<LpgNode>,
-        edges: Vec<LpgEdge>,
-        reifiers: Vec<LpgReifier>,
-        annotations: Vec<LpgAnnotation>,
-        named_graphs: Vec<ProjectionTerm>,
+        nodes: Vec<LpgNode>, edges: Vec<LpgEdge>, reifiers: Vec<LpgReifier>,
+        annotations: Vec<LpgAnnotation>, named_graphs: Vec<ProjectionTerm>,
     ) -> Self {
         Self {
             schema_version: LPG_SCHEMA_VERSION,
@@ -972,30 +957,26 @@ impl LpgGraph {
 }
 
 pub(super) fn node_identifier(
-    term: &ProjectionTerm,
-    limits: ProjectionLimits,
+    term: &ProjectionTerm, limits: ProjectionLimits,
 ) -> Result<String, ProjectionError> {
     let bytes = term.to_canonical_json(limits)?;
     stable_identifier("node", &bytes)
 }
 
 pub(super) fn statement_identifier(
-    quad: &LpgRdfQuad,
-    limits: ProjectionLimits,
+    quad: &LpgRdfQuad, limits: ProjectionLimits,
 ) -> Result<String, ProjectionError> {
     record_identifier("statement", quad, limits, "LPG RDF statement")
 }
 
 pub(super) fn edge_identifier(
-    quad: &LpgRdfQuad,
-    limits: ProjectionLimits,
+    quad: &LpgRdfQuad, limits: ProjectionLimits,
 ) -> Result<String, ProjectionError> {
     record_identifier("edge", quad, limits, "LPG edge statement")
 }
 
 pub(super) fn reifier_identifier(
-    row: &LpgReifier,
-    limits: ProjectionLimits,
+    row: &LpgReifier, limits: ProjectionLimits,
 ) -> Result<String, ProjectionError> {
     let key = Object::new()
         .with("reifier", row.reifier.to_json())
@@ -1005,8 +986,7 @@ pub(super) fn reifier_identifier(
 }
 
 pub(super) fn annotation_identifier(
-    row: &LpgAnnotation,
-    limits: ProjectionLimits,
+    row: &LpgAnnotation, limits: ProjectionLimits,
 ) -> Result<String, ProjectionError> {
     let key = Object::new()
         .with("reifier", row.reifier.to_json())
@@ -1022,10 +1002,7 @@ pub(super) fn annotation_identifier(
 }
 
 fn record_identifier<T: ToJson + ?Sized>(
-    prefix: &str,
-    value: &T,
-    limits: ProjectionLimits,
-    description: &str,
+    prefix: &str, value: &T, limits: ProjectionLimits, description: &str,
 ) -> Result<String, ProjectionError> {
     let bytes = canonical_json_bounded(value, limits, description)?;
     stable_identifier(prefix, &bytes)
@@ -1103,9 +1080,7 @@ fn parse_float(lexical: &str) -> Option<f64> {
 }
 
 fn require_id_order<T>(
-    rows: &[T],
-    id: impl Fn(&T) -> &str,
-    description: &str,
+    rows: &[T], id: impl Fn(&T) -> &str, description: &str,
 ) -> Result<(), ProjectionError> {
     if rows.windows(2).any(|pair| id(&pair[0]) >= id(&pair[1])) {
         return Err(ProjectionError::integrity(format!(
@@ -1120,9 +1095,7 @@ fn validate_iri_data(value: &str, field: &str) -> Result<(), ProjectionError> {
 }
 
 fn validate_resource(
-    term: &ProjectionTerm,
-    limits: ProjectionLimits,
-    field: &str,
+    term: &ProjectionTerm, limits: ProjectionLimits, field: &str,
 ) -> Result<(), ProjectionError> {
     term.validate(limits)?;
     if matches!(term, ProjectionTerm::Literal { .. }) {
@@ -1135,9 +1108,7 @@ fn validate_resource(
 }
 
 fn validate_asserted_resource(
-    term: &ProjectionTerm,
-    limits: ProjectionLimits,
-    field: &str,
+    term: &ProjectionTerm, limits: ProjectionLimits, field: &str,
 ) -> Result<(), ProjectionError> {
     validate_resource(term, limits, field)?;
     if matches!(term, ProjectionTerm::Triple { .. }) {
@@ -1149,9 +1120,7 @@ fn validate_asserted_resource(
 }
 
 fn validate_graph_name(
-    term: &ProjectionTerm,
-    limits: ProjectionLimits,
-    field: &str,
+    term: &ProjectionTerm, limits: ProjectionLimits, field: &str,
 ) -> Result<(), ProjectionError> {
     term.validate(limits)?;
     if !matches!(
@@ -1166,9 +1135,7 @@ fn validate_graph_name(
 }
 
 fn validate_context(
-    context: &LpgGraphContext,
-    limits: ProjectionLimits,
-    named_graphs: &BTreeSet<ProjectionTerm>,
+    context: &LpgGraphContext, limits: ProjectionLimits, named_graphs: &BTreeSet<ProjectionTerm>,
 ) -> Result<(), ProjectionError> {
     if let LpgGraphContext::Named { name } = context {
         validate_graph_name(name, limits, "LPG graph context")?;
@@ -1182,9 +1149,7 @@ fn validate_context(
 }
 
 fn validate_rdf_quad(
-    quad: &LpgRdfQuad,
-    limits: ProjectionLimits,
-    named_graphs: &BTreeSet<ProjectionTerm>,
+    quad: &LpgRdfQuad, limits: ProjectionLimits, named_graphs: &BTreeSet<ProjectionTerm>,
 ) -> Result<(), ProjectionError> {
     validate_asserted_resource(&quad.subject, limits, "RDF statement subject")?;
     validate_iri_data(&quad.predicate, "RDF statement predicate")?;
@@ -1194,10 +1159,7 @@ fn validate_rdf_quad(
 }
 
 fn insert_statement(
-    id: &str,
-    quad: &LpgRdfQuad,
-    ids: &mut BTreeSet<String>,
-    quads: &mut BTreeSet<LpgRdfQuad>,
+    id: &str, quad: &LpgRdfQuad, ids: &mut BTreeSet<String>, quads: &mut BTreeSet<LpgRdfQuad>,
 ) -> Result<(), ProjectionError> {
     if !ids.insert(id.to_owned()) || !quads.insert(quad.clone()) {
         return Err(ProjectionError::integrity(

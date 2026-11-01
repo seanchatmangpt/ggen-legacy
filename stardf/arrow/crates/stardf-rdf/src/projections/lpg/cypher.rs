@@ -42,8 +42,7 @@ const HEADER: &str = "// PurRDF deterministic openCypher profile 1\n// Exact RDF
 /// Returns a typed model, identifier, serialization, package, or resource-limit
 /// failure.
 pub fn write_lpg_cypher(
-    graph: &LpgGraph,
-    config: &LpgConfig,
+    graph: &LpgGraph, config: &LpgConfig,
 ) -> Result<ProjectionPackage, ProjectionError> {
     let mut sink = ProjectionPackageSink::new(config.limits());
     write_lpg_cypher_to_sink(graph, config, &mut sink, &mut IgnoreProgress)?;
@@ -57,10 +56,7 @@ pub fn write_lpg_cypher(
 /// Returns a typed model, sink, observer, serialization, or resource-limit failure.
 /// The sink transaction is aborted on every failure.
 pub fn write_lpg_cypher_to_sink<S, O>(
-    graph: &LpgGraph,
-    config: &LpgConfig,
-    sink: &mut S,
-    observer: &mut O,
+    graph: &LpgGraph, config: &LpgConfig, sink: &mut S, observer: &mut O,
 ) -> Result<(), ProjectionError>
 where
     S: ProjectionArtifactSink,
@@ -75,8 +71,7 @@ where
 ///
 /// Returns any canonical LPG projection or openCypher/package encoding failure.
 pub fn project_lpg_cypher<D: DatasetView>(
-    view: &D,
-    config: &LpgConfig,
+    view: &D, config: &LpgConfig,
 ) -> Result<LpgPackageProjection, ProjectionError> {
     let LpgProjection {
         graph,
@@ -99,10 +94,7 @@ pub fn project_lpg_cypher<D: DatasetView>(
 /// Returns a typed mapping, sink, observer, serialization, or resource-limit
 /// failure. The sink transaction is aborted on every failure.
 pub fn project_lpg_cypher_to_sink<D, S, O>(
-    view: &D,
-    config: &LpgConfig,
-    sink: &mut S,
-    observer: &mut O,
+    view: &D, config: &LpgConfig, sink: &mut S, observer: &mut O,
 ) -> Result<LpgStreamProjection, ProjectionError>
 where
     D: DatasetView,
@@ -122,10 +114,7 @@ where
 }
 
 fn stream_lpg_cypher<S, O>(
-    graph: &LpgGraph,
-    config: &LpgConfig,
-    sink: &mut S,
-    observer: &mut O,
+    graph: &LpgGraph, config: &LpgConfig, sink: &mut S, observer: &mut O,
     report: LpgProjectionReport,
 ) -> Result<(), ProjectionError>
 where
@@ -157,8 +146,7 @@ where
 /// Rejects malformed/non-canonical packages, scripts outside the emitted grammar,
 /// inconsistent manifests, invalid LPG data, and resource-limit breaches.
 pub fn read_lpg_cypher(
-    package: &ProjectionPackage,
-    config: &LpgConfig,
+    package: &ProjectionPackage, config: &LpgConfig,
 ) -> Result<LpgGraph, ProjectionError> {
     validate_package_bounds(package, config.limits())?;
     let schema_version = super::carrier_util::read_manifest(
@@ -196,9 +184,7 @@ fn render_cypher(graph: &LpgGraph, config: &LpgConfig) -> Result<Vec<u8>, Projec
 }
 
 fn render_cypher_into<W: LpgTextWriter + ?Sized>(
-    output: &mut W,
-    graph: &LpgGraph,
-    config: &LpgConfig,
+    output: &mut W, graph: &LpgGraph, config: &LpgConfig,
 ) -> Result<(), ProjectionError> {
     output.push(HEADER)?;
     let pattern_count = graph
@@ -248,9 +234,7 @@ fn render_cypher_into<W: LpgTextWriter + ?Sized>(
 }
 
 fn push_node_pattern<W: LpgTextWriter + ?Sized>(
-    output: &mut W,
-    node: &LpgNode,
-    config: &LpgConfig,
+    output: &mut W, node: &LpgNode, config: &LpgConfig,
 ) -> Result<(), ProjectionError> {
     let labels = native_labels(&node.labels)?;
     output.push(&format!("(`{}`", escape_cypher_identifier(&node.id)))?;
@@ -285,9 +269,7 @@ fn push_node_pattern<W: LpgTextWriter + ?Sized>(
 }
 
 fn push_native_property<W: LpgTextWriter + ?Sized>(
-    output: &mut W,
-    properties: &[LpgProperty],
-    iri: &str,
+    output: &mut W, properties: &[LpgProperty], iri: &str,
 ) -> Result<(), ProjectionError> {
     let values: Vec<_> = properties
         .iter()
@@ -310,8 +292,7 @@ fn push_native_property<W: LpgTextWriter + ?Sized>(
 }
 
 fn push_native_atom<W: LpgTextWriter + ?Sized>(
-    output: &mut W,
-    atom: &LpgPropertyAtom,
+    output: &mut W, atom: &LpgPropertyAtom,
 ) -> Result<(), ProjectionError> {
     match atom {
         LpgPropertyAtom::Boolean { value } => output.push(if *value { "true" } else { "false" }),
@@ -333,8 +314,7 @@ fn push_native_atom<W: LpgTextWriter + ?Sized>(
 }
 
 fn push_string_literal<W: LpgTextWriter + ?Sized>(
-    output: &mut W,
-    value: &str,
+    output: &mut W, value: &str,
 ) -> Result<(), ProjectionError> {
     output.push("'")?;
     output.push(&escape_cypher_string(value))?;
@@ -436,9 +416,7 @@ mod tests {
     }
 
     fn replace_artifact(
-        package: &ProjectionPackage,
-        path: &str,
-        replacement: &[u8],
+        package: &ProjectionPackage, path: &str, replacement: &[u8],
     ) -> ProjectionPackage {
         ProjectionPackage::from_artifacts(
             package.limits(),

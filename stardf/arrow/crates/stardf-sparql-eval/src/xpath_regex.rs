@@ -80,9 +80,7 @@ impl<T, S: FailureOwner> xpath::Publication<xpath::Error, S> for ErrorPublicatio
     type Output = Option<T>;
     type Error = EvalError;
     fn publish(
-        self,
-        value: &mut Option<xpath::Error>,
-        storage: &mut S,
+        self, value: &mut Option<xpath::Error>, storage: &mut S,
     ) -> Result<Option<T>, EvalError> {
         if let Some(error) = storage.take_failure() {
             return Err(error);
@@ -141,10 +139,7 @@ impl NativePattern {
         reason = "the original native error and allocation frame return inline; boxing after physical refusal would require another allocation"
     )]
     fn is_match_with_storage(
-        &self,
-        input: &str,
-        limits: xpath::Limits,
-        storage: LexicalFrame,
+        &self, input: &str, limits: xpath::Limits, storage: LexicalFrame,
     ) -> Result<xpath::OwnedPatternValue<bool, LexicalFrame>, xpath::OwnedPatternError<LexicalFrame>>
     {
         match self {
@@ -157,11 +152,7 @@ impl NativePattern {
         reason = "matcher and output frames retain their original grants on error; boxing a refusal would allocate after admission has already failed"
     )]
     fn replace_all_with_storage<'h>(
-        &self,
-        input: &'h str,
-        replacement: &str,
-        limits: xpath::Limits,
-        matcher: LexicalFrame,
+        &self, input: &'h str, replacement: &str, limits: xpath::Limits, matcher: LexicalFrame,
         output: LexicalFrame,
     ) -> Result<
         xpath::OwnedReplacement<'h, LexicalFrame, LexicalFrame>,
@@ -198,9 +189,7 @@ impl<T> xpath::Publication<T, LexicalFrame> for ProgramPublication<T> {
     type Output = Shared<NativeProgram>;
     type Error = EvalError;
     fn publish(
-        self,
-        value: &mut Option<T>,
-        storage: &mut LexicalFrame,
+        self, value: &mut Option<T>, storage: &mut LexicalFrame,
     ) -> Result<Self::Output, EvalError> {
         let control = Shared::<NativeProgram>::allocation_layout().size();
         let total = storage
@@ -222,10 +211,7 @@ impl<T> xpath::Publication<T, LexicalFrame> for ProgramPublication<T> {
 }
 
 fn compile_owned(
-    profile: xpath::Profile,
-    pattern: &str,
-    flags: &str,
-    limits: xpath::Limits,
+    profile: xpath::Profile, pattern: &str, flags: &str, limits: xpath::Limits,
     workspace: &WorkspaceCapability,
 ) -> Result<Option<Shared<NativeProgram>>, EvalError> {
     let publication = ProgramPublication {
@@ -244,10 +230,7 @@ fn compile_owned(
 }
 
 fn compile_compatibility_owned(
-    pattern: &str,
-    flags: &str,
-    limits: xpath::Limits,
-    workspace: &WorkspaceCapability,
+    pattern: &str, flags: &str, limits: xpath::Limits, workspace: &WorkspaceCapability,
 ) -> Result<Option<Shared<NativeProgram>>, EvalError> {
     let publication = ProgramPublication {
         wrap: NativePattern::Compatibility,
@@ -290,9 +273,7 @@ impl<'h> xpath::Publication<Cow<'h, str>, (LexicalFrame, LexicalFrame)>
     type Output = WorkspaceTerm;
     type Error = EvalError;
     fn publish(
-        self,
-        value: &mut Option<Cow<'h, str>>,
-        storage: &mut (LexicalFrame, LexicalFrame),
+        self, value: &mut Option<Cow<'h, str>>, storage: &mut (LexicalFrame, LexicalFrame),
     ) -> Result<WorkspaceTerm, EvalError> {
         if let Some(error) = storage.take_failure() {
             return Err(error);
@@ -347,9 +328,7 @@ impl<'h> xpath::Publication<Cow<'h, str>, (LexicalFrame, LexicalFrame)>
 impl Program {
     #[inline(never)]
     pub(crate) fn is_match(
-        &self,
-        text: &str,
-        workspace: &WorkspaceCapability,
+        &self, text: &str, workspace: &WorkspaceCapability,
     ) -> Result<Option<bool>, EvalError> {
         match self.compiled.pattern.is_match_with_storage(
             text,
@@ -363,12 +342,8 @@ impl Program {
 
     #[inline(never)]
     pub(crate) fn replace_literal(
-        &self,
-        text: &str,
-        replacement: &str,
-        language: Option<&str>,
-        direction: Option<RdfTextDirection>,
-        workspace: &WorkspaceCapability,
+        &self, text: &str, replacement: &str, language: Option<&str>,
+        direction: Option<RdfTextDirection>, workspace: &WorkspaceCapability,
     ) -> Result<Option<WorkspaceTerm>, EvalError> {
         match self.compiled.pattern.replace_all_with_storage(
             text,
@@ -395,9 +370,7 @@ pub(crate) struct LinkedPattern {
 }
 impl LinkedPattern {
     pub(crate) fn link<D: DatasetView + Sync>(
-        ctx: &mut EvalCtx<'_, D>,
-        pattern: &str,
-        flags: &str,
+        ctx: &mut EvalCtx<'_, D>, pattern: &str, flags: &str,
     ) -> Self {
         Self {
             verdict: cached(ctx, pattern, flags),
@@ -414,10 +387,7 @@ fn request(selection: Option<Selection>) -> (Option<xpath::Profile>, xpath::Limi
 
 #[inline(never)]
 pub(crate) fn resolve<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    pattern: &str,
-    flags: &str,
-    linked: Option<&LinkedPattern>,
+    ctx: &mut EvalCtx<'_, D>, pattern: &str, flags: &str, linked: Option<&LinkedPattern>,
 ) -> Result<Option<Program>, EvalError> {
     let (profile, limits) = request(ctx.xpath_regex);
     limits
@@ -443,9 +413,7 @@ pub(crate) fn resolve<D: DatasetView + Sync>(
 }
 
 fn cached<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    pattern: &str,
-    flags: &str,
+    ctx: &mut EvalCtx<'_, D>, pattern: &str, flags: &str,
 ) -> Result<Option<Program>, EvalError> {
     let (profile, limits) = request(ctx.xpath_regex);
     limits

@@ -60,8 +60,7 @@ struct KeyDecl {
 /// Returns a typed model, XML-character, serialization, package, or resource-limit
 /// failure.
 pub fn write_lpg_graphml(
-    graph: &LpgGraph,
-    config: &LpgConfig,
+    graph: &LpgGraph, config: &LpgConfig,
 ) -> Result<ProjectionPackage, ProjectionError> {
     let mut sink = ProjectionPackageSink::new(config.limits());
     write_lpg_graphml_to_sink(graph, config, &mut sink, &mut IgnoreProgress)?;
@@ -75,10 +74,7 @@ pub fn write_lpg_graphml(
 /// Returns a typed model, sink, observer, XML, serialization, or resource-limit
 /// failure. The sink transaction is aborted on every failure.
 pub fn write_lpg_graphml_to_sink<S, O>(
-    graph: &LpgGraph,
-    config: &LpgConfig,
-    sink: &mut S,
-    observer: &mut O,
+    graph: &LpgGraph, config: &LpgConfig, sink: &mut S, observer: &mut O,
 ) -> Result<(), ProjectionError>
 where
     S: ProjectionArtifactSink,
@@ -93,8 +89,7 @@ where
 ///
 /// Returns any canonical LPG projection or GraphML/package encoding failure.
 pub fn project_lpg_graphml<D: DatasetView>(
-    view: &D,
-    config: &LpgConfig,
+    view: &D, config: &LpgConfig,
 ) -> Result<LpgPackageProjection, ProjectionError> {
     let LpgProjection {
         graph,
@@ -117,10 +112,7 @@ pub fn project_lpg_graphml<D: DatasetView>(
 /// Returns a typed mapping, sink, observer, XML, serialization, or resource-limit
 /// failure. The sink transaction is aborted on every failure.
 pub fn project_lpg_graphml_to_sink<D, S, O>(
-    view: &D,
-    config: &LpgConfig,
-    sink: &mut S,
-    observer: &mut O,
+    view: &D, config: &LpgConfig, sink: &mut S, observer: &mut O,
 ) -> Result<LpgStreamProjection, ProjectionError>
 where
     D: DatasetView,
@@ -140,10 +132,7 @@ where
 }
 
 fn stream_lpg_graphml<S, O>(
-    graph: &LpgGraph,
-    config: &LpgConfig,
-    sink: &mut S,
-    observer: &mut O,
+    graph: &LpgGraph, config: &LpgConfig, sink: &mut S, observer: &mut O,
     report: LpgProjectionReport,
 ) -> Result<(), ProjectionError>
 where
@@ -168,8 +157,7 @@ where
 /// dangling ids, unknown graph children, non-canonical payloads, extra artifacts,
 /// semantic LPG inconsistency, and all configured resource-limit breaches.
 pub fn read_lpg_graphml(
-    package: &ProjectionPackage,
-    config: &LpgConfig,
+    package: &ProjectionPackage, config: &LpgConfig,
 ) -> Result<LpgGraph, ProjectionError> {
     validate_package_bounds(package, config.limits())?;
     let schema_version = read_manifest(
@@ -363,9 +351,7 @@ fn render_graphml(graph: &LpgGraph, config: &LpgConfig) -> Result<Vec<u8>, Proje
 }
 
 fn render_graphml_into<W: LpgTextWriter + ?Sized>(
-    output: &mut W,
-    graph: &LpgGraph,
-    config: &LpgConfig,
+    output: &mut W, graph: &LpgGraph, config: &LpgConfig,
 ) -> Result<(), ProjectionError> {
     output.push("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")?;
     output.push(&format!(
@@ -490,9 +476,7 @@ fn key(id: &str, target: &str, name: &str) -> KeyDecl {
 }
 
 fn push_hex_data<W: LpgTextWriter + ?Sized>(
-    output: &mut W,
-    key: &str,
-    bytes: &[u8],
+    output: &mut W, key: &str, bytes: &[u8],
 ) -> Result<(), ProjectionError> {
     output.push(&format!(
         "      <data key=\"{}\">",
@@ -611,9 +595,7 @@ mod tests {
     }
 
     fn replace_artifact(
-        package: &ProjectionPackage,
-        path: &str,
-        replacement: &[u8],
+        package: &ProjectionPackage, path: &str, replacement: &[u8],
     ) -> ProjectionPackage {
         ProjectionPackage::from_artifacts(
             package.limits(),

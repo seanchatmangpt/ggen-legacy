@@ -63,9 +63,7 @@ pub fn extract_report(dataset: &RdfDataset, root: TermId) -> Result<Arc<RdfDatas
 /// Returns typed malformed/mismatch/kernel refusals. Missing declared detail,
 /// annotation, source constraint and message obligations remain mismatches.
 pub fn compare_with_policy(
-    expected: ReportContext<'_>,
-    actual: ReportContext<'_>,
-    policy: ReportPolicy,
+    expected: ReportContext<'_>, actual: ReportContext<'_>, policy: ReportPolicy,
 ) -> Result<(), GradeError> {
     if policy.format == ReportFormat::Exact {
         return compare_contextual(expected, actual);
@@ -212,8 +210,7 @@ fn result_nodes(dataset: &RdfDataset, root: TermId) -> Result<Vec<TermId>, Grade
 }
 
 fn optional_patterns(
-    dataset: &RdfDataset,
-    root: TermId,
+    dataset: &RdfDataset, root: TermId,
 ) -> Result<BTreeMap<TermId, OptionalFields>, GradeError> {
     let reader = crate::graph::Reader {
         dataset,
@@ -324,12 +321,8 @@ fn core_predicate(predicate: &str) -> bool {
 }
 
 fn project(
-    dataset: &RdfDataset,
-    root: TermId,
-    expectation: Option<&RdfDataset>,
-    policy: ReportPolicy,
-    selected: Option<&BTreeMap<TermId, OptionalFields>>,
-    include_orphans: bool,
+    dataset: &RdfDataset, root: TermId, expectation: Option<&RdfDataset>, policy: ReportPolicy,
+    selected: Option<&BTreeMap<TermId, OptionalFields>>, include_orphans: bool,
 ) -> Result<Arc<RdfDataset>, GradeError> {
     if dataset.quads().any(|quad| quad.g.is_some()) {
         return Err(GradeError::Malformed(
@@ -475,11 +468,8 @@ fn fresh_blank(occupied: &mut BTreeSet<super::BlankIdentity>, ordinal: &mut usiz
 }
 
 fn clone_path(
-    dataset: &RdfDataset,
-    root: TermId,
-    builder: &mut RdfDatasetBuilder,
-    occupied: &mut BTreeSet<super::BlankIdentity>,
-    fresh: &mut usize,
+    dataset: &RdfDataset, root: TermId, builder: &mut RdfDatasetBuilder,
+    occupied: &mut BTreeSet<super::BlankIdentity>, fresh: &mut usize,
 ) -> Result<TermValue, GradeError> {
     if !matches!(dataset.term_value(root), TermValue::Blank { .. }) {
         return Ok(dataset.term_value(root));
@@ -529,9 +519,7 @@ fn clone_path(
 }
 
 fn copy_path(
-    dataset: &RdfDataset,
-    root: TermId,
-    builder: &mut RdfDatasetBuilder,
+    dataset: &RdfDataset, root: TermId, builder: &mut RdfDatasetBuilder,
 ) -> Result<(), GradeError> {
     let mut work: WorkList<TermId, 16> = WorkList::with(root);
     let mut visited = BTreeSet::new();

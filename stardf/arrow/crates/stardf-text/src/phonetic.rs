@@ -846,11 +846,7 @@ fn trim_equal_ends<'a>(a: &'a [char], b: &'a [char]) -> (&'a [char], &'a [char])
 }
 
 fn banded(
-    a: &[char],
-    b: &[char],
-    k: usize,
-    previous: &mut Vec<usize>,
-    current: &mut Vec<usize>,
+    a: &[char], b: &[char], k: usize, previous: &mut Vec<usize>, current: &mut Vec<usize>,
 ) -> Option<usize> {
     let m = a.len();
     let n = b.len();
@@ -917,9 +913,7 @@ fn banded(
 /// # Errors
 /// Refuses thresholds above 64 and either input above 2,048 scalars.
 pub fn bounded_edit_distance(
-    a: &str,
-    b: &str,
-    threshold: usize,
+    a: &str, b: &str, threshold: usize,
 ) -> Result<Option<usize>, TextError> {
     PreparedDistance::new(a, threshold)?.distance(b)
 }

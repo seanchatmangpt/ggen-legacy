@@ -525,9 +525,7 @@ impl ClauseSet {
         }
     }
     pub(crate) fn role_source(
-        &self,
-        index: usize,
-        program: &super::roles::RoleProgram,
+        &self, index: usize, program: &super::roles::RoleProgram,
     ) -> Option<super::roles::RoleClause> {
         self.role_clauses
             .contains(&index)
@@ -536,17 +534,14 @@ impl ClauseSet {
     }
     /// The clause at `index`.
     pub(crate) fn schema_class(
-        &self,
-        index: usize,
-        schema: &super::bounds::Preparation,
+        &self, index: usize, schema: &super::bounds::Preparation,
     ) -> Option<u32> {
         let ordinal = index.checked_sub(self.clauses.len())?;
         schema.guards.get(ordinal).map(|(class, _)| *class)
     }
 
     pub(crate) fn schema_clauses<'a>(
-        &'a self,
-        schema: &'a super::bounds::Preparation,
+        &'a self, schema: &'a super::bounds::Preparation,
     ) -> impl Iterator<Item = (usize, u32)> + 'a {
         schema
             .guards
@@ -556,9 +551,7 @@ impl ClauseSet {
     }
 
     pub(crate) fn clause<'a>(
-        &'a self,
-        index: usize,
-        schema: &'a super::bounds::Preparation,
+        &'a self, index: usize, schema: &'a super::bounds::Preparation,
     ) -> &'a DlClause {
         if let Some(clause) = self.clauses.get(index) {
             clause
@@ -574,9 +567,7 @@ impl ClauseSet {
 
     /// The clauses `concept` can make applicable, in derivation order.
     pub(crate) fn triggered_by<'a>(
-        &'a self,
-        concept: u32,
-        schema: &'a super::bounds::Preparation,
+        &'a self, concept: u32, schema: &'a super::bounds::Preparation,
     ) -> impl Iterator<Item = usize> + 'a {
         self.by_trigger
             .get(&concept)

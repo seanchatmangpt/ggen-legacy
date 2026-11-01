@@ -112,7 +112,7 @@ StardfBatch* stardf_batch_append_quad(StardfArena* arena, uint32_t s,
 /**
  * stardf_avec_export_stream(batch, out_stream) — export the batch as an owned
  * ArrowArrayStream (contract fn_avec_export_stream, downstreamSubstrate
- * avec). Returns STARDF_OK (0) and stores a non-NULL stream into *out_stream
+ * cgap). Returns STARDF_OK (0) and stores a non-NULL stream into *out_stream
  * on success; STARDF_NULL_POINTER (1) otherwise. Free with
  * stardf_stream_free or the stream's own release callback (exactly once).
  */

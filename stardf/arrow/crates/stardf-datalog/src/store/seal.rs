@@ -19,8 +19,7 @@ pub(super) struct Shape {
 
 impl Shape {
     pub(super) fn of<I: TermIdentity>(
-        relation: &Relation<I>,
-        additional: usize,
+        relation: &Relation<I>, additional: usize,
     ) -> Result<Self, StorageError> {
         let rows = relation
             .tail
@@ -124,11 +123,7 @@ impl<I: TermIdentity> Preparation<I> {
     }
 
     pub(super) fn reserve<A: Admission + ?Sized>(
-        &mut self,
-        shape: Shape,
-        objects: bool,
-        memory: &mut Memory<'_, A>,
-        retired: &mut usize,
+        &mut self, shape: Shape, objects: bool, memory: &mut Memory<'_, A>, retired: &mut usize,
     ) -> Result<(), StorageError> {
         assert_eq!(self.shape, shape, "preparation pins the original relation");
         self.objects = objects;
@@ -148,9 +143,7 @@ impl<I: TermIdentity> Preparation<I> {
     /// Prepare only existing identities. A refused dictionary transaction can
     /// roll back its new identities without invalidating retained sorting work.
     pub(super) fn resume(
-        &mut self,
-        tail: &super::Tail<I>,
-        batches: &[Batch<(), I>],
+        &mut self, tail: &super::Tail<I>, batches: &[Batch<(), I>],
         mut allow: impl FnMut(usize) -> bool,
     ) -> Result<bool, StorageError> {
         loop {
@@ -279,9 +272,7 @@ impl<I: TermIdentity> Preparation<I> {
 
     /// Commit the admitted suffix without allocation or another source callback.
     pub(super) fn publish(
-        mut self: Box<Self>,
-        relation: &mut Relation<I>,
-        incoming: Option<(I, I, RowId)>,
+        mut self: Box<Self>, relation: &mut Relation<I>, incoming: Option<(I, I, RowId)>,
     ) {
         assert_eq!(self.phase, Phase::Ready);
         assert_eq!(usize::from(incoming.is_some()), self.shape.additional);

@@ -52,11 +52,7 @@ struct Filtered<const SCAN: u8, const COLUMN: u8, I: TermIdentity> {
 
 impl<const SCAN: u8, const COLUMN: u8, I: TermIdentity> Filtered<SCAN, COLUMN, I> {
     fn new(
-        rel: &Relation<I>,
-        other: Option<I>,
-        delta: Delta,
-        work: &Work,
-        governor: &StepGovernor<'_>,
+        rel: &Relation<I>, other: Option<I>, delta: Delta, work: &Work, governor: &StepGovernor<'_>,
     ) -> Self {
         let mut cursor = Self {
             rows: ValuePosition::new(rel, other),
@@ -68,11 +64,7 @@ impl<const SCAN: u8, const COLUMN: u8, I: TermIdentity> Filtered<SCAN, COLUMN, I
     }
 
     fn fill(
-        &mut self,
-        rel: &Relation<I>,
-        prior: Option<I>,
-        work: &Work,
-        governor: &StepGovernor<'_>,
+        &mut self, rel: &Relation<I>, prior: Option<I>, work: &Work, governor: &StepGovernor<'_>,
     ) -> Option<I> {
         self.current = None;
         loop {
@@ -92,11 +84,7 @@ impl<const SCAN: u8, const COLUMN: u8, I: TermIdentity> Filtered<SCAN, COLUMN, I
     }
 
     fn seek(
-        &mut self,
-        rel: &Relation<I>,
-        target: I,
-        work: &Work,
-        governor: &StepGovernor<'_>,
+        &mut self, rel: &Relation<I>, target: I, work: &Work, governor: &StepGovernor<'_>,
     ) -> Option<I> {
         work.record(Probe::FilterSeek);
         if self.current.is_some_and(|value| value >= target) {
@@ -108,10 +96,7 @@ impl<const SCAN: u8, const COLUMN: u8, I: TermIdentity> Filtered<SCAN, COLUMN, I
     }
 
     fn advance(
-        &mut self,
-        rel: &Relation<I>,
-        work: &Work,
-        governor: &StepGovernor<'_>,
+        &mut self, rel: &Relation<I>, work: &Work, governor: &StepGovernor<'_>,
     ) -> Option<I> {
         self.fill(rel, self.current, work, governor)
     }
@@ -138,11 +123,7 @@ struct Cursor<I: TermIdentity> {
 impl<I: TermIdentity> Cursor<I> {
     /// Retain subject-ordered progress in this original partition and scan mode.
     fn subject<const N: usize>(
-        partition: PartitionRef<'_, I, N>,
-        other: Option<I>,
-        scan: Scan,
-        delta: Delta,
-        work: &Work,
+        partition: PartitionRef<'_, I, N>, other: Option<I>, scan: Scan, delta: Delta, work: &Work,
         governor: &StepGovernor<'_>,
     ) -> Self
     where
@@ -166,11 +147,7 @@ impl<I: TermIdentity> Cursor<I> {
 
     /// Retain object-ordered progress in this original partition and scan mode.
     fn object<const N: usize>(
-        partition: PartitionRef<'_, I, N>,
-        other: Option<I>,
-        scan: Scan,
-        delta: Delta,
-        work: &Work,
+        partition: PartitionRef<'_, I, N>, other: Option<I>, scan: Scan, delta: Delta, work: &Work,
         governor: &StepGovernor<'_>,
     ) -> Self
     where
@@ -206,8 +183,7 @@ impl<I: TermIdentity> Cursor<I> {
 
     /// Reborrow the original immutable arrangement, never a reconstructed trie.
     fn relation<'r, D: TermDictionary<Id = I>, const N: usize>(
-        &self,
-        run: &'r LeapfrogRun<'_, D, N>,
+        &self, run: &'r LeapfrogRun<'_, D, N>,
     ) -> &'r Relation<I>
     where
         Arity<N>: StoreShape<N>,
@@ -228,11 +204,7 @@ impl<I: TermIdentity> Cursor<I> {
     }
 
     fn seek<D: TermDictionary<Id = I>, const N: usize>(
-        &mut self,
-        run: &LeapfrogRun<'_, D, N>,
-        target: I,
-        work: &Work,
-        governor: &StepGovernor<'_>,
+        &mut self, run: &LeapfrogRun<'_, D, N>, target: I, work: &Work, governor: &StepGovernor<'_>,
     ) -> Option<I>
     where
         Arity<N>: StoreShape<N>,
@@ -249,10 +221,7 @@ impl<I: TermIdentity> Cursor<I> {
     }
 
     fn advance<D: TermDictionary<Id = I>, const N: usize>(
-        &mut self,
-        run: &LeapfrogRun<'_, D, N>,
-        work: &Work,
-        governor: &StepGovernor<'_>,
+        &mut self, run: &LeapfrogRun<'_, D, N>, work: &Work, governor: &StepGovernor<'_>,
     ) -> Option<I>
     where
         Arity<N>: StoreShape<N>,
@@ -278,10 +247,7 @@ struct Intersection<I: TermIdentity> {
 impl<I: TermIdentity> Intersection<I> {
     /// Find a common value, advancing the first cursor before returning it.
     fn next<D: TermDictionary<Id = I>, const N: usize>(
-        &mut self,
-        run: &LeapfrogRun<'_, D, N>,
-        work: &Work,
-        governor: &StepGovernor<'_>,
+        &mut self, run: &LeapfrogRun<'_, D, N>, work: &Work, governor: &StepGovernor<'_>,
     ) -> Option<I>
     where
         Arity<N>: StoreShape<N>,
@@ -308,11 +274,7 @@ impl<I: TermIdentity> Intersection<I> {
 
     /// Check an external binding against every original native value cursor.
     fn contains<D: TermDictionary<Id = I>, const N: usize>(
-        &mut self,
-        run: &LeapfrogRun<'_, D, N>,
-        wanted: I,
-        work: &Work,
-        governor: &StepGovernor<'_>,
+        &mut self, run: &LeapfrogRun<'_, D, N>, wanted: I, work: &Work, governor: &StepGovernor<'_>,
     ) -> bool
     where
         Arity<N>: StoreShape<N>,
@@ -331,10 +293,7 @@ enum Level<I: TermIdentity> {
 
 impl<I: TermIdentity> Level<I> {
     fn next<D: TermDictionary<Id = I>, const N: usize>(
-        &mut self,
-        run: &LeapfrogRun<'_, D, N>,
-        work: &Work,
-        governor: &StepGovernor<'_>,
+        &mut self, run: &LeapfrogRun<'_, D, N>, work: &Work, governor: &StepGovernor<'_>,
     ) -> Option<I>
     where
         Arity<N>: StoreShape<N>,
@@ -405,9 +364,7 @@ where
 
     /// Drive until the next leaf credit refuses or every input is exhausted.
     pub(super) fn advance<D: TermDictionary<Id = I>>(
-        &mut self,
-        run: &LeapfrogRun<'_, D, N>,
-        governor: &mut StepGovernor<'_>,
+        &mut self, run: &LeapfrogRun<'_, D, N>, governor: &mut StepGovernor<'_>,
     ) -> Result<(), D::Error> {
         run.rel.interner().check_read()?;
         while !governor.spent() {
@@ -469,11 +426,8 @@ where
 
 /// Prepare the original level intersection, preserving an external binding as fixed.
 fn make_level<D: TermDictionary, const N: usize>(
-    run: &LeapfrogRun<'_, D, N>,
-    variable_position: usize,
-    solution: &SlotSolution<D::Id, N>,
-    work: &Work,
-    governor: &StepGovernor<'_>,
+    run: &LeapfrogRun<'_, D, N>, variable_position: usize, solution: &SlotSolution<D::Id, N>,
+    work: &Work, governor: &StepGovernor<'_>,
 ) -> Result<Option<Level<D::Id>>, D::Error>
 where
     Arity<N>: StoreShape<N>,
@@ -540,8 +494,7 @@ mod tests {
     use std::sync::atomic::Ordering;
 
     fn check_cuts<D: TermDictionary, const N: usize>(
-        run: &LeapfrogRun<'_, D, N>,
-        inputs: &[SlotSolution<D::Id, N>],
+        run: &LeapfrogRun<'_, D, N>, inputs: &[SlotSolution<D::Id, N>],
     ) -> Vec<SlotSolution<D::Id, N>>
     where
         Arity<N>: StoreShape<N>,

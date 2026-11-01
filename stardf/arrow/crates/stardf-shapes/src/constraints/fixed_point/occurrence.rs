@@ -15,8 +15,7 @@ use crate::shapes::link::{ModelWalk, ShapeIndexRef};
 use crate::shapes::{Constraint, ModelOwner, Shape};
 
 pub(crate) fn property(
-    owner: &Arc<ModelOwner>,
-    address: usize,
+    owner: &Arc<ModelOwner>, address: usize,
 ) -> Result<&Constraint, ShapesError> {
     Find::search(owner, Position::Property(address))?.constraint.ok_or_else(|| {
         ShapesError::internal(
@@ -34,8 +33,7 @@ pub(crate) fn shape(owner: &Arc<ModelOwner>, address: usize) -> Result<&Shape, S
 }
 
 pub(crate) fn maybe_shape(
-    owner: &Arc<ModelOwner>,
-    address: usize,
+    owner: &Arc<ModelOwner>, address: usize,
 ) -> Result<Option<&Shape>, ShapesError> {
     Ok(Find::search(owner, Position::Shape(address))?.shape)
 }
@@ -118,8 +116,7 @@ impl<'model> ModelWalk<'model> for Find<'model> {
     }
 
     fn first_declaration(
-        &mut self,
-        function: &'model Arc<CustomFunction>,
+        &mut self, function: &'model Arc<CustomFunction>,
     ) -> Result<bool, ShapesProductError> {
         if self.finished() {
             return Ok(false);
@@ -174,8 +171,7 @@ pub(super) struct Index {
 
 impl Index {
     fn owner(
-        &mut self,
-        owner: &Arc<ModelOwner>,
+        &mut self, owner: &Arc<ModelOwner>,
     ) -> Result<SharedView<Arc<ModelOwner>, Arc<ModelOwner>>, ShapesError> {
         let key = Arc::as_ptr(owner).addr();
         if let Some(found) = self.owners.get(&key) {
@@ -197,9 +193,7 @@ impl Index {
         Ok(shared)
     }
     pub(super) fn shape(
-        &mut self,
-        owner: &Arc<ModelOwner>,
-        address: usize,
+        &mut self, owner: &Arc<ModelOwner>, address: usize,
     ) -> Result<ShapeOccurrence, ShapesError> {
         let key = (Arc::as_ptr(owner).addr(), address);
         if let Some(found) = self.shapes.get(&key) {
@@ -232,9 +226,7 @@ impl Index {
         Ok(found)
     }
     pub(super) fn property(
-        &mut self,
-        owner: &Arc<ModelOwner>,
-        address: usize,
+        &mut self, owner: &Arc<ModelOwner>, address: usize,
     ) -> Result<PropertyOccurrence, ShapesError> {
         let key = (Arc::as_ptr(owner).addr(), address);
         if let Some(found) = self.properties.get(&key) {

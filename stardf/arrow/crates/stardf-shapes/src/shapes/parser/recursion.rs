@@ -20,8 +20,7 @@ use crate::term::Term;
 /// source edge must move strictly in one direction through the dataset's finite
 /// term order. Lists, implicit sibling edges and expressions use the full graph.
 pub(crate) fn source_rank_proves_acyclic(
-    dataset: &purrdf_rdf::RdfDataset,
-    owner: &Arc<ModelOwner>,
+    dataset: &purrdf_rdf::RdfDataset, owner: &Arc<ModelOwner>,
 ) -> bool {
     if !owner.functions.is_empty() {
         return false;
@@ -81,8 +80,7 @@ impl<'model> ModelWalk<'model> for ExpressionPresence {
         Ok(false)
     }
     fn first_declaration(
-        &mut self,
-        _: &'model Arc<CustomFunction>,
+        &mut self, _: &'model Arc<CustomFunction>,
     ) -> Result<bool, ShapesProductError> {
         self.found = true;
         Ok(false)
@@ -100,8 +98,7 @@ impl<'model> ModelWalk<'model> for ExpressionPresence {
 impl Parser<'_> {
     /// Admit a signed original catalog without unfolding any simple path.
     pub(crate) fn check_shape_recursion(
-        &self,
-        owner: &Arc<ModelOwner>,
+        &self, owner: &Arc<ModelOwner>,
     ) -> Result<Option<purrdf_lex::allocation::Shared<crate::recursion::graph::Source>>, ShapesError>
     {
         // Refers is defined over every shape, not only shapes an explicit data

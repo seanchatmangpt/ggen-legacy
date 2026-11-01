@@ -1,6 +1,10 @@
 // SPDX-FileCopyrightText: 2026 Blackcat Informatics® Inc. <paudley@blackcatinformatics.ca>
 // SPDX-License-Identifier: MIT OR Apache-2.0 OR MulanPSL-2.0
 
+// LINT-GATE (G03 offline ladder, 2026-10-31, D17): example crate sits outside
+// the stardf-gts lib gate; witnessed-lint gate only, body verbatim.
+#![allow(clippy::single_match_else)]
+
 //! End-to-end example: an agent-memory log persisted as a GTS container
 //! (append, fold, and read back RDF 1.2 quads plus binary blobs).
 

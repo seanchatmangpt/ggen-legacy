@@ -177,11 +177,8 @@ fn request(text: &str) -> SparqlRequest<'_> {
 }
 
 fn execute(
-    engine: &NativeSparqlEngine,
-    dataset: &mut Arc<RdfDataset>,
-    text: &str,
-    options: QueryOptions<'_, '_>,
-    governed: bool,
+    engine: &NativeSparqlEngine, dataset: &mut Arc<RdfDataset>, text: &str,
+    options: QueryOptions<'_, '_>, governed: bool,
 ) -> Result<(), RdfDiagnostic> {
     if governed {
         let outcome =
@@ -240,10 +237,7 @@ fn assert_queries(engine: &NativeSparqlEngine, dataset: &Arc<RdfDataset>, expect
 /// Compare a whole-state independent expectation at both public doors, then use
 /// a fresh copy to observe the same slots at a WHERE snapshot inside the request.
 fn check(
-    before: &Image,
-    expected: &Image,
-    operation: &str,
-    options: QueryOptions<'_, '_>,
+    before: &Image, expected: &Image, operation: &str, options: QueryOptions<'_, '_>,
     failure: Option<&str>,
 ) {
     let engine = NativeSparqlEngine::new();
@@ -318,10 +312,7 @@ fn silent_word(silent: bool) -> &'static str {
 }
 
 fn transfer(
-    operation: &str,
-    source: State,
-    destination: Option<State>,
-    mode: GraphExistenceMode,
+    operation: &str, source: State, destination: Option<State>, mode: GraphExistenceMode,
     silent: bool,
 ) {
     let before = fixture(source, destination);
@@ -408,11 +399,7 @@ fn clear_one(operation: &str, state: State, mode: GraphExistenceMode, silent: bo
 }
 
 fn clear_bulk(
-    operation: &str,
-    population: &str,
-    all: bool,
-    mode: GraphExistenceMode,
-    silent: bool,
+    operation: &str, population: &str, all: bool, mode: GraphExistenceMode, silent: bool,
 ) {
     let mut before = Image::default();
     before.insert(None, "default-row", "p", "value");

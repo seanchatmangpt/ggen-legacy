@@ -469,9 +469,7 @@ fn signatures_verify_ok<K: SignatureKeyring + ?Sized>(post: &Graph, keyring: &K)
 /// content frame. The shared file verifier additionally rejects invalid,
 /// unresolved or structurally damaged observations anywhere in the pack.
 fn packaging_signature_ok<K: SignatureKeyring + ?Sized>(
-    bytes: &[u8],
-    post: &Graph,
-    keyring: &K,
+    bytes: &[u8], post: &Graph, keyring: &K,
 ) -> bool {
     let inventory = purrdf_gts::replication::inventory(bytes);
     let [segment] = inventory.segments.as_slice() else {
@@ -638,9 +636,7 @@ fn suppressions_ok(pre: &Graph, post: &Graph) -> Result<bool, CertifyError> {
 /// trips, or the RDFC-1.0 call budget is exhausted on a symmetric-poison
 /// graph.
 pub fn verify_compaction<K: SignatureKeyring + ?Sized>(
-    pre_bytes: &[u8],
-    post_bytes: &[u8],
-    keyring: &K,
+    pre_bytes: &[u8], post_bytes: &[u8], keyring: &K,
 ) -> Result<CompactionReport, CertifyError> {
     let pre = read(pre_bytes, true, None);
     let post = read(post_bytes, true, None);
@@ -787,8 +783,7 @@ impl CompactionCertificate {
 /// (deduplicated, first-seen order).
 #[must_use]
 pub fn compose(
-    a: &CompactionCertificate,
-    b: &CompactionCertificate,
+    a: &CompactionCertificate, b: &CompactionCertificate,
 ) -> Option<CompactionCertificate> {
     if a.post_refold_digest != b.pre_refold_digest {
         return None;
@@ -855,11 +850,7 @@ pub fn compose(
 /// }
 /// ```
 pub fn compact_and_certify<S: PackagingSigner>(
-    pre_bytes: &[u8],
-    plan: DictPlan,
-    timestamp: &str,
-    seal_original: bool,
-    packaging_signer: S,
+    pre_bytes: &[u8], plan: DictPlan, timestamp: &str, seal_original: bool, packaging_signer: S,
 ) -> Result<(Vec<u8>, CompactionCertificate), CertifyError> {
     let pre_fold = read(pre_bytes, true, None);
     if !pre_fold.diagnostics.is_empty() {

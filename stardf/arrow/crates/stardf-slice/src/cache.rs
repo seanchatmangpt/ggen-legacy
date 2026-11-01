@@ -259,8 +259,7 @@ fn is_build_edge(edge: &DependencyEdge) -> bool {
 /// their own link unit / product seed). Returns the sorted node list and an
 /// index-based adjacency list over it.
 fn build_unit_graph(
-    catalog: &SliceCatalog,
-    edges: &[DependencyEdge],
+    catalog: &SliceCatalog, edges: &[DependencyEdge],
 ) -> (Vec<SliceIri>, Vec<Vec<usize>>) {
     // Sort slice IRIs for deterministic node numbering.
     let mut nodes: Vec<SliceIri> = catalog
@@ -330,9 +329,7 @@ pub fn link_units(catalog: &SliceCatalog, edges: &[DependencyEdge]) -> Vec<LinkU
 /// empty or partial closure is never returned for an unknown seed (the same
 /// refusal `merkle_root` raises for an unknown member).
 pub fn dependency_closure(
-    catalog: &SliceCatalog,
-    edges: &[DependencyEdge],
-    seeds: &[SliceIri],
+    catalog: &SliceCatalog, edges: &[DependencyEdge], seeds: &[SliceIri],
 ) -> Result<Vec<SliceIri>, SliceError> {
     // Adjacency: from → {to} over build edges.
     let valid: BTreeSet<&SliceIri> = catalog
@@ -383,9 +380,7 @@ pub fn dependency_closure(
 ///
 /// The typed cache-slice refusal for a seed naming no discovered slice.
 pub fn product_unit(
-    catalog: &SliceCatalog,
-    edges: &[DependencyEdge],
-    seeds: &[SliceIri],
+    catalog: &SliceCatalog, edges: &[DependencyEdge], seeds: &[SliceIri],
 ) -> Result<ProductUnit, SliceError> {
     let mut seed_vec: Vec<SliceIri> = seeds.to_vec();
     seed_vec.sort();
@@ -427,9 +422,7 @@ fn phase_artifact_digest(phase: Phase, artifact: &ArtifactRecord) -> Result<Stri
 /// path. Path-independent: only the slice IRI and *logical* (intra-slice) paths
 /// enter — never the group directory.
 fn slice_phase_leaf(
-    phase: Phase,
-    record: &SliceRecord,
-    toolchain: &ToolchainContext,
+    phase: Phase, record: &SliceRecord, toolchain: &ToolchainContext,
 ) -> Result<String, SliceError> {
     let mut hasher = Sha256::new();
     hasher.update(phase.tag().as_bytes());
@@ -494,10 +487,7 @@ pub struct CacheKey {
 /// phase leaf digests of every transitive dependency (the upstream
 /// "dependency-output digests" of RFC §12). Path-independent throughout.
 fn merkle_root(
-    phase: Phase,
-    catalog: &SliceCatalog,
-    edges: &[DependencyEdge],
-    members: &[SliceIri],
+    phase: Phase, catalog: &SliceCatalog, edges: &[DependencyEdge], members: &[SliceIri],
     toolchain: &ToolchainContext,
 ) -> Result<String, SliceError> {
     // The set of slices whose leaves enter the key: the members, plus their
@@ -546,10 +536,7 @@ fn merkle_root(
 /// so a change to a dependency invalidates the dependent's key (Merkle
 /// composition). Path-independent: moving the slice's directory changes nothing.
 pub fn source_unit_key(
-    phase: Phase,
-    catalog: &SliceCatalog,
-    edges: &[DependencyEdge],
-    slice: &str,
+    phase: Phase, catalog: &SliceCatalog, edges: &[DependencyEdge], slice: &str,
     toolchain: &ToolchainContext,
 ) -> Result<CacheKey, SliceError> {
     let members = vec![slice.to_string()];
@@ -565,10 +552,7 @@ pub fn source_unit_key(
 /// are folded together (they reason as one union), and — for dependency-folding
 /// phases — the union's dependency closure as well.
 pub fn link_unit_key(
-    phase: Phase,
-    catalog: &SliceCatalog,
-    edges: &[DependencyEdge],
-    unit: &LinkUnit,
+    phase: Phase, catalog: &SliceCatalog, edges: &[DependencyEdge], unit: &LinkUnit,
     toolchain: &ToolchainContext,
 ) -> Result<CacheKey, SliceError> {
     let mut members = unit.members.clone();
@@ -584,10 +568,7 @@ pub fn link_unit_key(
 /// Compute the cache key for a **product unit** (dependency-closed profile) at
 /// `phase`. The whole closure's leaves are folded (validate full composition).
 pub fn product_unit_key(
-    phase: Phase,
-    catalog: &SliceCatalog,
-    edges: &[DependencyEdge],
-    unit: &ProductUnit,
+    phase: Phase, catalog: &SliceCatalog, edges: &[DependencyEdge], unit: &ProductUnit,
     toolchain: &ToolchainContext,
 ) -> Result<CacheKey, SliceError> {
     // The product key covers the full closure regardless of phase folding (the

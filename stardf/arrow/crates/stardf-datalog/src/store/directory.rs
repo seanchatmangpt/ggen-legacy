@@ -188,9 +188,7 @@ impl<I: TermIdentity, K: Copy> Directory<I, K> {
     }
 
     pub(super) fn after(
-        &self,
-        predicate: Option<I>,
-        previous: Option<PartitionId>,
+        &self, predicate: Option<I>, previous: Option<PartitionId>,
     ) -> Option<usize> {
         let Self::Sparse {
             order,
@@ -227,8 +225,7 @@ impl<I: TermIdentity, K: Copy> Directory<I, K> {
     }
 
     pub(super) fn admit(
-        &mut self,
-        predicate: Option<I>,
+        &mut self, predicate: Option<I>,
     ) -> Result<Option<Vec<usize>>, StorageError> {
         assert!(
             !self.is_supplemental(),
@@ -282,8 +279,7 @@ impl<I: TermIdentity, K: Copy> Directory<I, K> {
     }
 
     pub(super) fn flush_retired_in<A: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, A>,
+        &mut self, memory: &mut Memory<'_, A>,
     ) -> Result<(), StorageError> {
         if let Self::Sparse {
             admitted: Some(admitted),
@@ -296,9 +292,7 @@ impl<I: TermIdentity, K: Copy> Directory<I, K> {
     }
 
     pub(super) fn admit_in<A: Admission + ?Sized>(
-        &mut self,
-        predicate: Option<I>,
-        memory: &mut Memory<'_, A>,
+        &mut self, predicate: Option<I>, memory: &mut Memory<'_, A>,
     ) -> Result<Option<Vec<usize>>, StorageError> {
         let Self::Sparse {
             order,
@@ -335,13 +329,8 @@ impl<I: TermIdentity, K: Copy> Directory<I, K> {
     }
 
     pub(super) fn publish(
-        &mut self,
-        slot: usize,
-        id: PartitionId,
-        predicate: I,
-        position: Position,
-        bucket: Option<Vec<usize>>,
-        predicate_at: impl Fn(usize) -> I,
+        &mut self, slot: usize, id: PartitionId, predicate: I, position: Position,
+        bucket: Option<Vec<usize>>, predicate_at: impl Fn(usize) -> I,
     ) {
         match (self, position) {
             (Self::Dense { order, predicates }, Position::Dense(position)) => {
@@ -479,8 +468,7 @@ impl<I: TermIdentity, K: Copy> Directory<I, K> {
     /// Resident test stores exercise the public insertion boundary after setup.
     #[cfg(test)]
     pub(super) fn resident_from_live<D: TermDictionary<Id = I>, const N: usize>(
-        dictionary: &D,
-        entries: impl IntoIterator<Item = (usize, PartitionId, StoreKey<I, N>)>,
+        dictionary: &D, entries: impl IntoIterator<Item = (usize, PartitionId, StoreKey<I, N>)>,
     ) -> Result<Self, DictionaryError<D::Error>>
     where
         Arity<N>: StoreShape<N, Key<I> = K>,
@@ -496,9 +484,7 @@ impl<I: TermIdentity, K: Copy> Directory<I, K> {
     }
 
     pub(super) fn insert_live_in<D: TermDictionary<Id = I>, const N: usize, A: Admission + ?Sized>(
-        &mut self,
-        dictionary: &D,
-        entry: (usize, PartitionId, StoreKey<I, N>),
+        &mut self, dictionary: &D, entry: (usize, PartitionId, StoreKey<I, N>),
         memory: &mut Memory<'_, A>,
     ) -> Result<(), DictionaryError<D::Error>>
     where
@@ -516,9 +502,7 @@ impl<I: TermIdentity, K: Copy> Directory<I, K> {
     }
 
     pub(super) fn prepare_sparse<D: TermDictionary<Id = I>, const N: usize>(
-        &mut self,
-        dictionary: &D,
-        key: K,
+        &mut self, dictionary: &D, key: K,
     ) -> Result<Prepared<'_, K>, DictionaryError<D::Error>>
     where
         Arity<N>: StoreShape<N, Key<I> = K>,
@@ -543,10 +527,7 @@ impl<I: TermIdentity, K: Copy> Directory<I, K> {
         const N: usize,
         A: Admission + ?Sized,
     >(
-        &mut self,
-        dictionary: &D,
-        key: K,
-        memory: &mut Memory<'_, A>,
+        &mut self, dictionary: &D, key: K, memory: &mut Memory<'_, A>,
     ) -> Result<Prepared<'_, K>, DictionaryError<D::Error>>
     where
         Arity<N>: StoreShape<N, Key<I> = K>,
@@ -559,10 +540,7 @@ impl<I: TermIdentity, K: Copy> Directory<I, K> {
     }
 
     fn prepare_sparse_with<D: TermDictionary<Id = I>, const N: usize, A: Admission + ?Sized>(
-        &mut self,
-        dictionary: &D,
-        key: K,
-        memory: &mut Memory<'_, A>,
+        &mut self, dictionary: &D, key: K, memory: &mut Memory<'_, A>,
     ) -> Result<Prepared<'_, K>, DictionaryError<D::Error>>
     where
         Arity<N>: StoreShape<N, Key<I> = K>,

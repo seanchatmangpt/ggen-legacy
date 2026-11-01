@@ -63,8 +63,7 @@ pub fn bits(batch: &[Vec<Ranked>]) -> Vec<Vec<(usize, u64)>> {
 /// Every row of one kNN invocation seeded at `seed`: the ranked read of depth 3 when
 /// `neighbour` is free, the membership lookup of `neighbour` when it is bound.
 pub fn knn_invoke<A: Arithmetic>(
-    relation: &EmbeddingKnnRelation<A>,
-    seed: &purrdf_core::TermValue,
+    relation: &EmbeddingKnnRelation<A>, seed: &purrdf_core::TermValue,
     neighbour: Option<&purrdf_core::TermValue>,
 ) -> Result<Vec<PfRow>, EvalError> {
     let count =
@@ -83,10 +82,7 @@ pub fn knn_invoke<A: Arithmetic>(
 /// Every row of `matrix` scored against row `query` under `kernel`, in the exact path's
 /// order. `norms` are the rows' exact norms.
 pub fn exact_scored(
-    kernel: Kernel,
-    matrix: &VectorMatrix,
-    norms: &[f64],
-    query: usize,
+    kernel: Kernel, matrix: &VectorMatrix, norms: &[f64], query: usize,
 ) -> Vec<Ranked> {
     let exact = Exact::resolve().expect("the default float environment is the IEEE one");
     let vector = matrix.row(query);

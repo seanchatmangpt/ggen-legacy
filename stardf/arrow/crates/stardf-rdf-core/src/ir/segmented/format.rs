@@ -36,8 +36,7 @@ pub(super) const fn statistics_kind(section: super::super::statistics::Statistic
 
 /// Binary search over a certified logical directory without materializing it.
 pub(super) fn partition_point<E>(
-    count: u64,
-    mut before: impl FnMut(u64) -> Result<bool, E>,
+    count: u64, mut before: impl FnMut(u64) -> Result<bool, E>,
 ) -> Result<u64, E> {
     let (mut low, mut high) = (0, count);
     while low < high {
@@ -351,8 +350,7 @@ pub(super) fn push_id(out: &mut Vec<u8>, id: GlobalTermId) {
 }
 
 pub(super) fn encode_term(
-    term: TermRef<'_, GlobalTermId>,
-    out: &mut Vec<u8>,
+    term: TermRef<'_, GlobalTermId>, out: &mut Vec<u8>,
 ) -> Result<(), SegmentedError> {
     match term {
         TermRef::Iri(iri) => {
@@ -436,8 +434,7 @@ pub(super) fn decode_term(bytes: &[u8]) -> Result<TermRef<'_, GlobalTermId>, Seg
 }
 
 pub(super) fn record_block(
-    records: &[(GlobalTermId, Vec<u8>)],
-    block_bytes: usize,
+    records: &[(GlobalTermId, Vec<u8>)], block_bytes: usize,
 ) -> Result<(Vec<u8>, usize), SegmentedError> {
     let raw = raw_record_block(records, block_bytes)?;
     let decoded_limit = block_bytes
@@ -508,8 +505,7 @@ pub(super) fn record_block(
 }
 
 fn raw_record_block(
-    records: &[(GlobalTermId, Vec<u8>)],
-    block_bytes: usize,
+    records: &[(GlobalTermId, Vec<u8>)], block_bytes: usize,
 ) -> Result<(Vec<u8>, usize), SegmentedError> {
     let first = records
         .first()
@@ -603,10 +599,7 @@ impl OverflowSpan {
 }
 
 pub(super) fn spanned_record(
-    id: GlobalTermId,
-    key: &[u8],
-    overflow: &mut Vec<Vec<u8>>,
-    block_bytes: usize,
+    id: GlobalTermId, key: &[u8], overflow: &mut Vec<Vec<u8>>, block_bytes: usize,
 ) -> Result<Vec<u8>, SegmentedError> {
     let span = OverflowSpan {
         first: overflow.len() as u64,
@@ -632,8 +625,7 @@ pub(super) fn spanned_record(
 }
 
 pub(super) fn overflow_descriptor(
-    bytes: &[u8],
-    stream: Stream,
+    bytes: &[u8], stream: Stream,
 ) -> Result<(GlobalTermId, OverflowSpan), SegmentedError> {
     let (count, decoded, payload) = record_header(bytes, 1, u64::from(u32::MAX))?;
     if bytes[0] != SPANNED_DICTIONARY
@@ -661,9 +653,7 @@ pub(super) fn overflow_descriptor(
 /// Visit authenticated page payloads. A stopped visit is a selective read, never
 /// a certification of unvisited bytes; certification always visits the full span.
 pub(super) fn visit_overflow(
-    span: OverflowSpan,
-    stream: Stream,
-    block_bytes: usize,
+    span: OverflowSpan, stream: Stream, block_bytes: usize,
     mut read: impl FnMut(u64, &mut [u8]) -> Result<(), SegmentedError>,
     mut visit: impl FnMut(&[u8]) -> core::ops::ControlFlow<()>,
 ) -> Result<core::ops::ControlFlow<()>, SegmentedError> {
@@ -699,9 +689,7 @@ pub(super) fn visit_overflow(
 }
 
 fn record_header(
-    bytes: &[u8],
-    max_records: u32,
-    max_decoded: u64,
+    bytes: &[u8], max_records: u32, max_decoded: u64,
 ) -> Result<(u32, u32, u32), SegmentedError> {
     let mut input = Reader::at(bytes, 0);
     if !matches!(input.byte()?, DICTIONARY | SPANNED_DICTIONARY) {
@@ -717,9 +705,7 @@ fn record_header(
 }
 
 pub(super) fn decode_memory_bytes(
-    bytes: &[u8],
-    max_records: u32,
-    max_decoded: u64,
+    bytes: &[u8], max_records: u32, max_decoded: u64,
 ) -> Result<u64, SegmentedError> {
     let (count, decoded, _) = record_header(bytes, max_records, max_decoded)?;
     let entry_bytes = u64::try_from(size_of::<(GlobalTermId, core::ops::Range<usize>)>())
@@ -731,9 +717,7 @@ pub(super) fn decode_memory_bytes(
 }
 
 pub(super) fn decode_scratch_bytes(
-    bytes: &[u8],
-    max_records: u32,
-    max_decoded: u64,
+    bytes: &[u8], max_records: u32, max_decoded: u64,
 ) -> Result<u64, SegmentedError> {
     let (count, decoded, payload) = record_header(bytes, max_records, max_decoded)?;
     if payload & COMPRESSED_RECORDS == 0 {
@@ -760,10 +744,7 @@ impl DecodedRecords {
     /// Capacities are bounded by the authenticated header and reserved by the
     /// session before this function allocates either collection.
     pub(super) fn decode(
-        bytes: &[u8],
-        max_records: u32,
-        max_decoded: u64,
-        overflow: Stream,
+        bytes: &[u8], max_records: u32, max_decoded: u64, overflow: Stream,
         mut read: impl FnMut(u64, &mut [u8]) -> Result<(), SegmentedError>,
     ) -> Result<Self, SegmentedError> {
         let (count, decoded, payload) = record_header(bytes, max_records, max_decoded)?;

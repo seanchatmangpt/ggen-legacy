@@ -149,8 +149,7 @@ impl LimbScratch {
     /// # Errors
     /// Refuses overflowing arrays and live-byte sums before allocation.
     pub fn required_bytes_with_storage<S>(
-        buffers: usize,
-        limbs: usize,
+        buffers: usize, limbs: usize,
     ) -> Result<usize, StorageError> {
         SharedBuffer::<u64>::required_bytes(buffers, limbs)?
             .checked_add(SharedOwned::<Mutex<FreeBuffers>>::allocation_layout::<S>().size())
@@ -178,9 +177,7 @@ impl LimbScratch {
     /// Every partially built payload dies before its grant is refunded or moved
     /// into this error; no ordinary heap fallback is attempted.
     pub fn new_with_storage<S: Admission + Send + Sync + 'static>(
-        buffers: usize,
-        limbs: usize,
-        mut storage: S,
+        buffers: usize, limbs: usize, mut storage: S,
     ) -> Result<Self, (StorageError, S)> {
         let required = match Self::required_bytes_with_storage::<S>(buffers, limbs) {
             Ok(bytes) => bytes,
@@ -306,9 +303,7 @@ impl LimbScratch {
     }
 
     pub(super) fn destination(
-        &self,
-        capacity: usize,
-        length: usize,
+        &self, capacity: usize, length: usize,
     ) -> Result<Mag, LimbScratchError> {
         if length > capacity {
             return Err(LimbScratchError::SizeOverflow);

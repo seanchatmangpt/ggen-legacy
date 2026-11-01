@@ -277,7 +277,11 @@ mod tests {
         // the ceiling when the ceiling itself is below 1 (empty-pattern case).
         fn ref_impl(value: f64, ceiling: f64) -> f64 {
             let capped = if value < ceiling { value } else { ceiling };
-            if capped < 1.0 { 1.0 } else { capped }
+            if capped < 1.0 {
+                1.0
+            } else {
+                capped
+            }
         }
         for value in [0.0f64, 1.0, 2.5, 100.0, 1e300] {
             for ceiling in [0.0f64, 1.0, 2.5, 42.0, f64::INFINITY] {

@@ -90,9 +90,7 @@ pub struct ContentChainVerification {
 ///   included in the verified chain (the detail names each missing term + digest,
 ///   in sorted `TermId` order).
 pub fn verify_content_chain(
-    dataset: &RdfDataset,
-    gts_bytes: &[u8],
-    expected_head: &[u8],
+    dataset: &RdfDataset, gts_bytes: &[u8], expected_head: &[u8],
 ) -> Result<ContentChainVerification, RdfDiagnostic> {
     // 1. COSE signatures: resolve the embedded transport key and verify every
     //    signed frame. `ok` is false whenever any error was recorded.

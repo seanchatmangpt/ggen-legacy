@@ -71,18 +71,14 @@ struct Projector<'a> {
 /// when caller roles are ambiguous, required data is absent, the input view is
 /// invalid, or a mandatory bound is exceeded.
 pub fn project_research_object<D: DatasetView>(
-    view: &D,
-    target_profile: &str,
-    config: &ResearchObjectConfig,
+    view: &D, target_profile: &str, config: &ResearchObjectConfig,
 ) -> Result<ResearchObjectProjection, ProjectionError> {
     Projector::load(view, target_profile, config)?.project()
 }
 
 impl<'a> Projector<'a> {
     fn load<D: DatasetView>(
-        view: &D,
-        target_profile: &str,
-        config: &'a ResearchObjectConfig,
+        view: &D, target_profile: &str, config: &'a ResearchObjectConfig,
     ) -> Result<Self, ProjectionError> {
         let mut cache = BTreeMap::new();
         let mut quads = Vec::new();
@@ -263,9 +259,7 @@ impl<'a> Projector<'a> {
     }
 
     fn extract_resource(
-        &mut self,
-        node: &ProjectionTerm,
-        id: String,
+        &mut self, node: &ProjectionTerm, id: String,
     ) -> Result<ResearchResource, ProjectionError> {
         self.require_type(node, ResearchRole::ResourceClass, "resource")?;
         let byte_sizes = self.take_texts(node, ResearchRole::ByteSize)?;
@@ -319,9 +313,7 @@ impl<'a> Projector<'a> {
     }
 
     fn extract_activity(
-        &mut self,
-        node: &ProjectionTerm,
-        id: &str,
+        &mut self, node: &ProjectionTerm, id: &str,
     ) -> Result<(ResearchActivity, BTreeMap<ProjectionTerm, String>), ProjectionError> {
         self.require_type(node, ResearchRole::ActivityClass, "activity")?;
         let actors = self.take_entity_nodes(node, ResearchRole::Actor)?;
@@ -350,9 +342,7 @@ impl<'a> Projector<'a> {
     }
 
     fn extract_record_set(
-        &mut self,
-        node: &ProjectionTerm,
-        id: String,
+        &mut self, node: &ProjectionTerm, id: String,
     ) -> Result<ResearchRecordSet, ProjectionError> {
         self.require_type(node, ResearchRole::RecordSetClass, "record set")?;
         let field_nodes = self.take_entity_nodes(node, ResearchRole::HasField)?;
@@ -399,10 +389,7 @@ impl<'a> Projector<'a> {
     }
 
     fn require_type(
-        &mut self,
-        subject: &ProjectionTerm,
-        class_role: ResearchRole,
-        description: &str,
+        &mut self, subject: &ProjectionTerm, class_role: ResearchRole, description: &str,
     ) -> Result<(), ProjectionError> {
         let predicate = self.config.roles().iri(ResearchRole::RdfType);
         let class = self.config.roles().iri(class_role);
@@ -442,9 +429,7 @@ impl<'a> Projector<'a> {
     }
 
     fn take_texts(
-        &mut self,
-        subject: &ProjectionTerm,
-        role: ResearchRole,
+        &mut self, subject: &ProjectionTerm, role: ResearchRole,
     ) -> Result<Vec<ResearchText>, ProjectionError> {
         self.take_terms(subject, role)
             .into_iter()
@@ -479,9 +464,7 @@ impl<'a> Projector<'a> {
     }
 
     fn take_values(
-        &mut self,
-        subject: &ProjectionTerm,
-        role: ResearchRole,
+        &mut self, subject: &ProjectionTerm, role: ResearchRole,
     ) -> Result<Vec<ResearchValue>, ProjectionError> {
         let mut values = Vec::new();
         for term in self.take_terms(subject, role) {
@@ -495,9 +478,7 @@ impl<'a> Projector<'a> {
     }
 
     fn take_entity_nodes(
-        &mut self,
-        subject: &ProjectionTerm,
-        role: ResearchRole,
+        &mut self, subject: &ProjectionTerm, role: ResearchRole,
     ) -> Result<Vec<(ProjectionTerm, String)>, ProjectionError> {
         let mut values = Vec::new();
         for term in self.take_terms(subject, role) {
@@ -511,16 +492,13 @@ impl<'a> Projector<'a> {
     }
 
     fn take_entity_ids(
-        &mut self,
-        subject: &ProjectionTerm,
-        role: ResearchRole,
+        &mut self, subject: &ProjectionTerm, role: ResearchRole,
     ) -> Result<Vec<(ProjectionTerm, String)>, ProjectionError> {
         self.take_entity_nodes(subject, role)
     }
 
     fn value_from_term(
-        &mut self,
-        term: &ProjectionTerm,
+        &mut self, term: &ProjectionTerm,
     ) -> Result<Option<ResearchValue>, ProjectionError> {
         Ok(match term {
             ProjectionTerm::Iri { value } => Some(ResearchValue::iri(value.clone())?),
@@ -704,8 +682,7 @@ impl<'a> Projector<'a> {
 ///
 /// Returns a typed model, term, or dataset-integrity failure.
 pub fn lift_research_object(
-    model: ResearchObjectModel,
-    config: &ResearchObjectConfig,
+    model: ResearchObjectModel, config: &ResearchObjectConfig,
 ) -> Result<Arc<RdfDataset>, ProjectionError> {
     let model = model.normalize(config.policy())?;
     let roles = config.roles();
@@ -1019,10 +996,7 @@ pub fn lift_research_object(
 }
 
 fn push_type(
-    builder: &mut RdfDatasetBuilder,
-    subject: &str,
-    predicate: &str,
-    class: &str,
+    builder: &mut RdfDatasetBuilder, subject: &str, predicate: &str, class: &str,
 ) -> Result<(), ProjectionError> {
     push_iri_triple(builder, subject, predicate, class)?;
 
@@ -1030,10 +1004,7 @@ fn push_type(
 }
 
 fn push_relations(
-    builder: &mut RdfDatasetBuilder,
-    subject: &str,
-    predicate: &str,
-    values: &[String],
+    builder: &mut RdfDatasetBuilder, subject: &str, predicate: &str, values: &[String],
 ) -> Result<(), ProjectionError> {
     for value in values {
         push_iri_triple(builder, subject, predicate, value)?;
@@ -1043,10 +1014,7 @@ fn push_relations(
 }
 
 fn push_values(
-    builder: &mut RdfDatasetBuilder,
-    subject: &str,
-    predicate: &str,
-    values: &[ResearchValue],
+    builder: &mut RdfDatasetBuilder, subject: &str, predicate: &str, values: &[ResearchValue],
 ) -> Result<(), ProjectionError> {
     for value in values {
         match value {
@@ -1060,10 +1028,7 @@ fn push_values(
 }
 
 fn push_texts(
-    builder: &mut RdfDatasetBuilder,
-    subject: &str,
-    predicate: &str,
-    values: &[ResearchText],
+    builder: &mut RdfDatasetBuilder, subject: &str, predicate: &str, values: &[ResearchText],
 ) -> Result<(), ProjectionError> {
     for value in values {
         let subject = builder.intern_iri(subject)?;
@@ -1135,10 +1100,7 @@ mod tests {
     }
 
     fn push_text(
-        builder: &mut RdfDatasetBuilder,
-        subject: &str,
-        predicate: &str,
-        value: &str,
+        builder: &mut RdfDatasetBuilder, subject: &str, predicate: &str, value: &str,
         datatype: &str,
     ) {
         let subject = builder.intern_iri(subject).unwrap();

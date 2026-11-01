@@ -21,9 +21,7 @@ fn next<'a>(cursor: &mut Cursor<'a>, budget: &mut Budget<'_>) -> Result<Option<P
 }
 
 fn append(
-    out: &mut String,
-    text: &str,
-    budget: &mut Budget<'_>,
+    out: &mut String, text: &str, budget: &mut Budget<'_>,
     output: &mut Option<&mut Memory<'_, dyn Admission + '_>>,
 ) -> Result<(), Error> {
     budget.charge_wide(Resource::OutputBytes, text.len() as u128)?;
@@ -70,12 +68,7 @@ impl CompiledPattern {
     /// Returns the original accounts on grammar, work, allocation or capacity
     /// refusal; no partial replacement text is published.
     pub fn replace_all_with_storage<'h, M: Admission, O: Admission>(
-        &self,
-        input: &'h str,
-        replacement: &str,
-        limits: Limits,
-        mut matcher: M,
-        mut output: O,
+        &self, input: &'h str, replacement: &str, limits: Limits, mut matcher: M, mut output: O,
     ) -> Result<OwnedReplacement<'h, M, O>, super::OwnedPatternError<(M, O)>> {
         let verdict = {
             let budget = Budget::with_storage(limits, &mut matcher);
@@ -113,19 +106,13 @@ impl CompiledPattern {
     // absorb the matcher's frames into its own, which every nesting level pays.
     #[inline(never)]
     pub fn replace_all<'h>(
-        &self,
-        input: &'h str,
-        replacement: &str,
-        limits: Limits,
+        &self, input: &'h str, replacement: &str, limits: Limits,
     ) -> Result<Cow<'h, str>, Error> {
         self.replace_budget(input, replacement, Budget::new(limits), None)
     }
 
     fn replace_budget<'h, 'storage>(
-        &'storage self,
-        input: &'h str,
-        replacement: &str,
-        mut budget: Budget<'storage>,
+        &'storage self, input: &'h str, replacement: &str, mut budget: Budget<'storage>,
         mut output: Option<&mut Memory<'_, dyn Admission + '_>>,
     ) -> Result<Cow<'h, str>, Error>
     where

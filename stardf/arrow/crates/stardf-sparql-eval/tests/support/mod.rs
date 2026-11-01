@@ -20,8 +20,7 @@ pub mod statement_claims;
 /// Physical-access descriptors and metadata provenance identify the actual
 /// provider; neither difference may hide a changed count or execution receipt.
 pub fn assert_scan_explanation_matches_resident(
-    actual: &purrdf_sparql_eval::QueryExplanation,
-    resident: &str,
+    actual: &purrdf_sparql_eval::QueryExplanation, resident: &str,
 ) {
     use purrdf_core::StatementIndexSupport;
     let scanning = StatementIndexSupport::default();
@@ -150,9 +149,7 @@ where
 /// `subject(i) predicate object(i)` for `i` in `0..count`: one edge per index on a single
 /// predicate.
 pub fn fan_out(
-    count: usize,
-    predicate: &str,
-    subject: impl Fn(usize) -> String,
+    count: usize, predicate: &str, subject: impl Fn(usize) -> String,
     object: impl Fn(usize) -> String,
 ) -> Arc<RdfDataset> {
     let mut builder = RdfDatasetBuilder::new();

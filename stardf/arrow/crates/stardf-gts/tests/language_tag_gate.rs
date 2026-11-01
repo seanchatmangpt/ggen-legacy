@@ -297,9 +297,7 @@ struct LiteralCapture {
 
 impl RdfEventSink for LiteralCapture {
     fn term(
-        &mut self,
-        _id: EventTermId,
-        term: EventTerm<'_>,
+        &mut self, _id: EventTermId, term: EventTerm<'_>,
     ) -> Result<ControlFlow<()>, EventError> {
         if let EventTerm::Literal {
             lexical,
@@ -322,18 +320,13 @@ impl RdfEventSink for LiteralCapture {
     }
 
     fn reifier(
-        &mut self,
-        _reifier: EventTermId,
-        _triple: purrdf_events::EventTriple,
+        &mut self, _reifier: EventTermId, _triple: purrdf_events::EventTriple,
     ) -> Result<ControlFlow<()>, EventError> {
         Ok(ControlFlow::Continue(()))
     }
 
     fn annotation(
-        &mut self,
-        _reifier: EventTermId,
-        _p: EventTermId,
-        _o: EventTermId,
+        &mut self, _reifier: EventTermId, _p: EventTermId, _o: EventTermId,
     ) -> Result<ControlFlow<()>, EventError> {
         Ok(ControlFlow::Continue(()))
     }

@@ -553,11 +553,7 @@ fn may_compose_second(c: char, class: u8) -> bool {
 /// The one composition/blocking decision for either metadata representation.
 #[inline]
 fn unblocked_composite(
-    first: char,
-    second: char,
-    class: u8,
-    last_class: u8,
-    pending: bool,
+    first: char, second: char, class: u8, last_class: u8, pending: bool,
 ) -> Option<char> {
     if (pending && last_class >= class) || !may_compose_second(second, class) {
         None
@@ -713,9 +709,7 @@ pub fn drive<P: Stage>(input: &str, pipeline: &mut P) {
 /// Run `input` through the pipeline `build` makes around a [`Collect`], and
 /// return what `take` hands back of it.
 pub fn collect<P: Stage>(
-    input: &str,
-    build: impl FnOnce(Collect) -> P,
-    take: impl FnOnce(P) -> Collect,
+    input: &str, build: impl FnOnce(Collect) -> P, take: impl FnOnce(P) -> Collect,
 ) -> String {
     let mut pipeline = build(Collect(String::with_capacity(input.len())));
     drive(input, &mut pipeline);

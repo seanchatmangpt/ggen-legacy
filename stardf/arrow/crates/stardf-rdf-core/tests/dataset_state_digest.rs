@@ -97,9 +97,7 @@ impl Node {
     }
 
     fn intern(
-        &self,
-        builder: &mut RdfDatasetBuilder,
-        labels: &impl Fn(u8) -> (String, BlankScope),
+        &self, builder: &mut RdfDatasetBuilder, labels: &impl Fn(u8) -> (String, BlankScope),
     ) -> TermId {
         match self {
             Self::Iri(iri) => builder.intern_iri(iri).unwrap(),
@@ -616,8 +614,7 @@ impl DatasetView for Probe {
     }
 
     fn reserve_workspace(
-        &self,
-        _: u64,
+        &self, _: u64,
     ) -> Result<impl WorkspaceReservation<Error = SourceFault> + '_, SourceFault> {
         assert!(!self.reservation_live.replace(true), "one owned admission");
         Ok(Admission(self))
@@ -644,12 +641,7 @@ impl DatasetView for Probe {
     }
     fn probe_plan(&self, _: bool, _: bool, _: bool, _: GraphMatch) {}
     fn quads_for_pattern_with_plan(
-        &self,
-        (): &(),
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, (): &(), s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         self.quads_for_pattern(s, p, o, g)
     }

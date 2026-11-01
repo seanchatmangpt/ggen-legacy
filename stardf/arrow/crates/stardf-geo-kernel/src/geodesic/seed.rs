@@ -272,12 +272,7 @@ fn sample(sphere: &Sphere, series: &Series, alpha: f64, ops: Binary64<'_>) -> Op
 
 /// Longitude and Jacobi integrals of the certified sine-power recurrence.
 fn integrals(
-    series: &Series,
-    sigma1: f64,
-    sigma2: f64,
-    delta: f64,
-    q: f64,
-    ops: Binary64<'_>,
+    series: &Series, sigma1: f64, sigma2: f64, delta: f64, q: f64, ops: Binary64<'_>,
 ) -> Option<(f64, f64)> {
     let trig = &series.tables;
     if q == 0.0 {
@@ -339,12 +334,7 @@ pub(super) struct Proposal {
 /// bracket `(lower, upper)`, on which the certified solver's longitude law is
 /// increasing. Bisection replaces any step leaving the current bracket.
 pub(super) fn newton(
-    sphere: &Sphere,
-    series: &Series,
-    target: f64,
-    lower: f64,
-    upper: f64,
-    start: f64,
+    sphere: &Sphere, series: &Series, target: f64, lower: f64, upper: f64, start: f64,
     ops: Binary64<'_>,
 ) -> Option<Proposal> {
     let (mut low, mut high) = (lower, upper);

@@ -327,9 +327,7 @@ impl RegimeClosure {
 /// assert!(closed.report().ends_with("inconsistency none\n"));
 /// ```
 pub fn materialize_to_nquads_string(
-    regime: &str,
-    document: &str,
-    program: &str,
+    regime: &str, document: &str, program: &str,
 ) -> Result<RegimeClosure, String> {
     materialize_to_nquads_string_with(
         regime,
@@ -395,8 +393,7 @@ impl RegimeHost {
     /// that order: the argument, keyword or flag of the entry point the caller called.
     #[must_use]
     pub const fn service_knobs(
-        self,
-        service: RegimeService,
+        self, service: RegimeService,
     ) -> (&'static str, &'static str, &'static str) {
         match (self, service) {
             (Self::Rust, _) => (
@@ -571,11 +568,7 @@ impl MaterializeLimits {
 /// [`MaterializeLimits::host`] spells. The configuration — the regime spelling, then the
 /// import table — is reported before the caller's document, as on every other service.
 pub fn materialize_to_nquads_string_with(
-    regime: &str,
-    document: &str,
-    program: &str,
-    imports: &ImportList<'_>,
-    premise_iris: &[&str],
+    regime: &str, document: &str, program: &str, imports: &ImportList<'_>, premise_iris: &[&str],
     limits: &MaterializeLimits,
 ) -> Result<RegimeClosure, String> {
     let (parsed, map) = configuration(regime, imports, premise_iris)?;
@@ -929,9 +922,7 @@ pub fn render_entail_error<E: std::fmt::Display>(regime: &str, error: &EntailErr
 /// with <knob>`.
 #[must_use]
 pub fn render_entail_error_for<E: std::fmt::Display>(
-    regime: &str,
-    error: &EntailError<E>,
-    host: RegimeHost,
+    regime: &str, error: &EntailError<E>, host: RegimeHost,
 ) -> String {
     render_entail_error_in(regime, error, host, RegimeService::Materialize)
 }
@@ -940,10 +931,7 @@ pub fn render_entail_error_for<E: std::fmt::Display>(
 /// knob of the entry point the caller called ([`RegimeHost::service_knobs`]).
 #[must_use]
 pub fn render_entail_error_in<E: std::fmt::Display>(
-    regime: &str,
-    error: &EntailError<E>,
-    host: RegimeHost,
-    service: RegimeService,
+    regime: &str, error: &EntailError<E>, host: RegimeHost, service: RegimeService,
 ) -> String {
     let capacity = match error {
         EntailError::Evaluate(EvalError::BudgetExhausted { resource, report })
@@ -2352,12 +2340,8 @@ impl ReasonerSession {
     /// document, as on every service — then a malformed document, then an unresolved or
     /// unreached import.
     pub fn open_premise(
-        document: &str,
-        imports: &ImportList<'_>,
-        premise_iris: &[&str],
-        step_cap: u32,
-        work_cap: u32,
-        proofs: bool,
+        document: &str, imports: &ImportList<'_>, premise_iris: &[&str], step_cap: u32,
+        work_cap: u32, proofs: bool,
     ) -> Result<Self, String> {
         let map = premise_import_map(imports, premise_iris)?;
         let premise = parse_premise(document)?;
@@ -2399,12 +2383,7 @@ impl ReasonerSession {
     /// # Errors
     /// The refusals of [`check_dl_proof`], over this session's source snapshot.
     pub fn check_proof(
-        &self,
-        service: &str,
-        argument: &str,
-        answer: &str,
-        certificate: &str,
-        proof: &str,
+        &self, service: &str, argument: &str, answer: &str, certificate: &str, proof: &str,
     ) -> Result<String, String> {
         check_dl_proof_from_source(
             || Ok(std::sync::Arc::clone(&self.dataset)),
@@ -2681,9 +2660,7 @@ impl ReasonerSession {
     /// An unknown `regime`, a `conclusion` that is not one statement, or a conclusion the
     /// regime does not derive.
     pub fn explain_conclusion(
-        &self,
-        regime: &str,
-        conclusion: &str,
+        &self, regime: &str, conclusion: &str,
     ) -> Result<ReasoningAnswer, String> {
         let parsed = parse_regime(regime)?;
         let (graph, subject, predicate, object) = parse_one_statement(conclusion)?;
@@ -2749,11 +2726,7 @@ impl ReasonerSession {
 /// assert!(consistency_to_string(importing, &[], &[], 0, 0).is_err());
 /// ```
 pub fn consistency_to_string(
-    document: &str,
-    imports: &ImportList<'_>,
-    premise_iris: &[&str],
-    step_cap: u32,
-    work_cap: u32,
+    document: &str, imports: &ImportList<'_>, premise_iris: &[&str], step_cap: u32, work_cap: u32,
 ) -> Result<ReasoningAnswer, String> {
     ReasonerSession::open_premise(document, imports, premise_iris, step_cap, work_cap, false)?
         .consistency()
@@ -2783,9 +2756,7 @@ pub fn consistency_to_string(
 /// certificate refuses exact directness with `owl-directness-unavailable` and
 /// the complete original certificate block.
 pub fn classify_to_string(
-    document: &str,
-    step_cap: u32,
-    work_cap: u32,
+    document: &str, step_cap: u32, work_cap: u32,
 ) -> Result<ReasoningAnswer, String> {
     ReasonerSession::open(document, step_cap, work_cap)?.classify()
 }
@@ -2810,9 +2781,7 @@ pub fn classify_to_string(
 /// The latter carries `owl-directness-unavailable` and the complete original
 /// certificate block.
 pub fn realize_to_string(
-    document: &str,
-    step_cap: u32,
-    work_cap: u32,
+    document: &str, step_cap: u32, work_cap: u32,
 ) -> Result<ReasoningAnswer, String> {
     ReasonerSession::open(document, step_cap, work_cap)?.realize()
 }
@@ -2830,10 +2799,7 @@ pub fn realize_to_string(
 /// A malformed document, a `class` that is not one N-Triples term, or an ontology
 /// with no model — every individual would then be an instance of every class.
 pub fn instances_to_string(
-    document: &str,
-    class: &str,
-    step_cap: u32,
-    work_cap: u32,
+    document: &str, class: &str, step_cap: u32, work_cap: u32,
 ) -> Result<ReasoningAnswer, String> {
     ReasonerSession::open(document, step_cap, work_cap)?.instances(class)
 }
@@ -2876,10 +2842,7 @@ pub fn instances_to_string(
 /// assert!(decided.answer().contains("\naxiom ClassAssertion\n"));
 /// ```
 pub fn entails_to_string(
-    document: &str,
-    axiom: &str,
-    step_cap: u32,
-    work_cap: u32,
+    document: &str, axiom: &str, step_cap: u32, work_cap: u32,
 ) -> Result<ReasoningAnswer, String> {
     ReasonerSession::open(document, step_cap, work_cap)?.entails(axiom)
 }
@@ -3011,9 +2974,7 @@ fn render_profile_certificate(certificate: &ProfileCertificate) -> String {
 /// unknown `method` spelling (the message names the accepted set), or a module that
 /// cannot be frozen into a dataset.
 pub fn extract_module_to_string(
-    document: &str,
-    signature: &str,
-    method: &str,
+    document: &str, signature: &str, method: &str,
 ) -> Result<ReasoningAnswer, String> {
     ReasonerSession::open(document, 0, 0)?.extract_module(signature, method)
 }
@@ -3218,9 +3179,7 @@ fn render_justification(justification: &Justification) -> Result<String, String>
 /// term; a conclusion that is neither asserted nor derived; or a proof that does
 /// not re-derive, which is an engine defect made visible rather than shipped.
 pub fn explain_conclusion_to_string(
-    document: &str,
-    regime: &str,
-    conclusion: &str,
+    document: &str, regime: &str, conclusion: &str,
 ) -> Result<ReasoningAnswer, String> {
     ReasonerSession::open(document, 0, 0)?.explain_conclusion(regime, conclusion)
 }
@@ -3565,9 +3524,7 @@ fn parse_bgp(text: &str) -> Result<Vec<purrdf_entail::QTriple>, String> {
 /// alternatives are a refusal or a term of this boundary's own invented namespace reaching
 /// the matcher as if the caller had written it.
 fn restore_query_vars(
-    term: TermValue,
-    slot: &impl Fn(&str) -> Option<usize>,
-    names: &[String],
+    term: TermValue, slot: &impl Fn(&str) -> Option<usize>, names: &[String],
 ) -> Result<purrdf_entail::QNode, String> {
     term.try_fold_owned(
         |term| match term {
@@ -3689,9 +3646,7 @@ fn build_import_map(imports: &ImportList<'_>) -> Result<ImportMap, String> {
 /// not yet a meaningful thing to report. `the_three_services_agree_on_error_precedence`
 /// drives all three with the same doubly-bad input and holds them to it.
 fn configuration(
-    regime: &str,
-    imports: &ImportList<'_>,
-    premise_iris: &[&str],
+    regime: &str, imports: &ImportList<'_>, premise_iris: &[&str],
 ) -> Result<(Regime, ImportMap), String> {
     let parsed = parse_regime(regime)?;
     Ok((parsed, premise_import_map(imports, premise_iris)?))
@@ -3826,8 +3781,7 @@ pub fn check_premise_iris(premise_iris: &[&str]) -> Result<(), PremiseIriError> 
 /// ontology IRI, or one ontology IRI declared twice. The premise IRIs are checked before the
 /// import table, so every host reports the same one of two bad arguments first.
 pub fn premise_import_map(
-    imports: &ImportList<'_>,
-    premise_iris: &[&str],
+    imports: &ImportList<'_>, premise_iris: &[&str],
 ) -> Result<ImportMap, String> {
     check_premise_iris(premise_iris).map_err(|error| error.to_string())?;
     let mut map = build_import_map(imports)?;
@@ -3976,11 +3930,7 @@ fn parse_premise(document: &str) -> Result<std::sync::Arc<purrdf_core::RdfDatase
 /// assert!(closed.answer().contains("\nrow <http://example.org/Animal>\n"));
 /// ```
 pub fn certain_answers_to_string(
-    regime: &str,
-    document: &str,
-    pattern: &str,
-    imports: &ImportList<'_>,
-    premise_iris: &[&str],
+    regime: &str, document: &str, pattern: &str, imports: &ImportList<'_>, premise_iris: &[&str],
     limits: &MaterializeLimits,
 ) -> Result<ReasoningAnswer, String> {
     let (parsed, map) = configuration(regime, imports, premise_iris)?;
@@ -4078,11 +4028,7 @@ pub fn certain_answers_to_string(
 /// assert!(decided.certificate().contains("\nfired prp-trp "));
 /// ```
 pub fn graph_entails_to_string(
-    regime: &str,
-    premise: &str,
-    conclusion: &str,
-    imports: &ImportList<'_>,
-    premise_iris: &[&str],
+    regime: &str, premise: &str, conclusion: &str, imports: &ImportList<'_>, premise_iris: &[&str],
     limits: &MaterializeLimits,
 ) -> Result<ReasoningAnswer, String> {
     let (parsed, map) = configuration(regime, imports, premise_iris)?;
@@ -4193,11 +4139,7 @@ fn render_entailment_answer(entailment: &EntailmentCertificate) -> String {
 /// assert!(missing.answer().ends_with("verified not-applicable\n"));
 /// ```
 pub fn verify_entailment_to_string(
-    regime: &str,
-    premise: &str,
-    conclusion: &str,
-    imports: &ImportList<'_>,
-    premise_iris: &[&str],
+    regime: &str, premise: &str, conclusion: &str, imports: &ImportList<'_>, premise_iris: &[&str],
     limits: &MaterializeLimits,
 ) -> Result<ReasoningAnswer, String> {
     let (parsed, map) = configuration(regime, imports, premise_iris)?;
@@ -4411,11 +4353,7 @@ impl ReasonerSession {
 /// assert!(checked.starts_with("purrdf-dl-proof-check 1\n"));
 /// ```
 pub fn prove_to_string(
-    document: &str,
-    service: &str,
-    argument: &str,
-    step_cap: u32,
-    work_cap: u32,
+    document: &str, service: &str, argument: &str, step_cap: u32, work_cap: u32,
 ) -> Result<ReasoningAnswer, String> {
     ReasonerSession::open_with_proofs(document, step_cap, work_cap)?.prove(service, argument)
 }
@@ -4626,9 +4564,7 @@ fn answer_verdict(answer: &str, keyword: &str) -> Result<Verdict, String> {
 /// A three-valued `false` or `unknown` reports no POSITIVE claim. The separate signed
 /// judgement check binds those answers to refutation or undecided evidence respectively.
 fn answer_claims(
-    service: Service,
-    argument: &str,
-    answer: &str,
+    service: Service, argument: &str, answer: &str,
 ) -> Result<Vec<ClaimSubject>, String> {
     Ok(match service {
         Service::Consistency => {
@@ -4719,9 +4655,7 @@ fn answer_claims(
 /// argument, and those are re-derived from the consumer's `reasoner` — their own reverse
 /// mapping of their own document — which is exactly the re-derivation the check needs.
 fn proof_question(
-    reasoner: &Reasoner,
-    service: Service,
-    argument: &str,
+    reasoner: &Reasoner, service: Service, argument: &str,
 ) -> Result<Question, String> {
     Ok(match service {
         Service::Consistency => Question::Consistency,
@@ -4810,12 +4744,7 @@ fn proof_question(
 /// certificate that is not a `purrdf-dl-certificate 1` block; or a run whose recorded trace
 /// does not replay.
 pub fn check_dl_proof(
-    document: &str,
-    service: &str,
-    argument: &str,
-    answer: &str,
-    certificate: &str,
-    proof: &str,
+    document: &str, service: &str, argument: &str, answer: &str, certificate: &str, proof: &str,
 ) -> Result<String, String> {
     check_dl_proof_from_source(
         || {
@@ -4833,11 +4762,7 @@ pub fn check_dl_proof(
 
 fn check_dl_proof_from_source(
     source: impl FnOnce() -> Result<std::sync::Arc<purrdf_rdf::RdfDataset>, String>,
-    resolved_imports: bool,
-    service: &str,
-    argument: &str,
-    answer: &str,
-    certificate: &str,
+    resolved_imports: bool, service: &str, argument: &str, answer: &str, certificate: &str,
     proof: &str,
 ) -> Result<String, String> {
     let asked = parse_proof_service(service)?;
@@ -5193,8 +5118,7 @@ pub fn check_dl_proof_golden_vectors() -> Result<(), String> {
 /// Exercise causal capture through the existing packaged-WASM golden entry.
 /// The consumer prepares the original source but never repeats the producer search.
 fn check_recursive_causal_vector(
-    case: &DlProofVector,
-    produced: &ReasoningAnswer,
+    case: &DlProofVector, produced: &ReasoningAnswer,
 ) -> Result<(), String> {
     use purrdf_entail::proof_source::{
         ResolvedNode,
@@ -9196,8 +9120,7 @@ mod term_walk_tests {
     }
 
     fn reference_restore(
-        term: TermValue,
-        names: &[String],
+        term: TermValue, names: &[String],
     ) -> Result<purrdf_entail::QNode, String> {
         match term {
             TermValue::Iri(ref iri) => Ok(match slot(iri) {

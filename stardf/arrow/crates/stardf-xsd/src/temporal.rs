@@ -325,8 +325,7 @@ fn copy_exact_seconds_admitted(
 /// # Errors
 /// Preserves value-space refusal and physical storage refusal separately.
 pub fn cast_calendar_admitted(
-    source: &XsdValue,
-    target: XsdDatatype,
+    source: &XsdValue, target: XsdDatatype,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -439,8 +438,7 @@ pub fn cast_calendar_admitted(
 /// # Errors
 /// Returns value-shape refusal or physical storage refusal separately.
 pub fn cast_duration_admitted(
-    source: &Duration,
-    target: XsdDatatype,
+    source: &Duration, target: XsdDatatype,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -462,9 +460,7 @@ pub fn cast_duration_admitted(
 /// # Errors
 /// Returns the original value-space or physical storage error.
 pub fn duration_from_seconds_admitted(
-    months: i64,
-    seconds: &Decimal,
-    datatype: XsdDatatype,
+    months: i64, seconds: &Decimal, datatype: XsdDatatype,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -694,8 +690,7 @@ impl TemporalReadError {
 /// # Errors
 /// The inner result retains lexical versus native range refusal classification.
 pub fn read_temporal(
-    lexical: &str,
-    datatype: XsdDatatype,
+    lexical: &str, datatype: XsdDatatype,
 ) -> Option<Result<XsdValue, TemporalReadError>> {
     read_temporal_mode(lexical, datatype, true)
 }
@@ -704,8 +699,7 @@ pub fn read_temporal(
 /// unbounded seconds. A governed caller can refuse the numeric layout before
 /// invoking the value-producing reader.
 pub(crate) fn preflight_temporal(
-    lexical: &str,
-    datatype: XsdDatatype,
+    lexical: &str, datatype: XsdDatatype,
 ) -> Option<Result<(), TemporalReadError>> {
     read_temporal_mode(lexical, datatype, false).map(|result| result.map(|_| ()))
 }
@@ -716,8 +710,7 @@ pub(crate) fn preflight_temporal(
 /// normalization, and the resulting coefficient. Summing phase peaks is
 /// deliberately conservative: it admits all allocations before any are made.
 pub(crate) fn temporal_parse_bytes(
-    lexical: &str,
-    datatype: XsdDatatype,
+    lexical: &str, datatype: XsdDatatype,
 ) -> Result<usize, crate::bigint::LimbScratchError> {
     use crate::bigint::LimbScratchError::SizeOverflow;
     use crate::exact::cost::{self, IntegerOperation};
@@ -851,9 +844,7 @@ pub(crate) fn temporal_parse_bytes(
 }
 
 fn read_temporal_mode(
-    lexical: &str,
-    datatype: XsdDatatype,
-    read_exact: bool,
+    lexical: &str, datatype: XsdDatatype, read_exact: bool,
 ) -> Option<Result<XsdValue, TemporalReadError>> {
     use XsdDatatype as D;
     Some(match datatype {
@@ -917,9 +908,7 @@ pub fn parse_gregorian(datatype: XsdDatatype, lexical: &str) -> Result<Gregorian
 /// Split a trailing timezone (`Z`, `+hh:mm`, `-hh:mm`) off the time portion. Returns
 /// `(body_without_tz, tz_minutes_option)`.
 fn split_tz<'a>(
-    dt: XsdDatatype,
-    lexical: &str,
-    s: &'a str,
+    dt: XsdDatatype, lexical: &str, s: &'a str,
 ) -> Result<(&'a str, Option<i32>), TemporalReadError> {
     if let Some(body) = s.strip_suffix('Z') {
         return Ok((body, Some(0)));
@@ -980,10 +969,7 @@ fn all_ascii_digits(text: &str) -> bool {
 /// XSD's years and duration fields are unbounded — so that failure is
 /// [`TemporalReadError::OutOfRange`], never [`TemporalReadError::Invalid`].
 fn parse_numeral<T: std::str::FromStr>(
-    dt: XsdDatatype,
-    _lexical: &str,
-    digits: &str,
-    reason: &'static str,
+    dt: XsdDatatype, _lexical: &str, digits: &str, reason: &'static str,
 ) -> Result<T, TemporalReadError> {
     debug_assert!(all_ascii_digits(digits), "{digits:?} is a numeral");
     digits.parse().map_err(|_| TemporalReadError::OutOfRange {
@@ -1002,10 +988,7 @@ type Deferred<T> = Result<T, TemporalReadError>;
 /// [`TemporalReadError::Invalid`]; an exact decimal preserves every fractional
 /// digit, while a physical parsing refusal remains a deferred typed error.
 fn parse_seconds(
-    dt: XsdDatatype,
-    lexical: &str,
-    text: &str,
-    read_exact: bool,
+    dt: XsdDatatype, lexical: &str, text: &str, read_exact: bool,
 ) -> Result<Deferred<Decimal>, TemporalReadError> {
     if !crate::numeric::is_decimal_lexical(text) {
         return Err(TemporalReadError::invalid(dt, lexical, "bad seconds"));
@@ -1078,9 +1061,7 @@ pub const fn days_in_month(year: i64, month: u8) -> u8 {
 
 /// Parse `[-]YYYY[Y...]-MM-DD` into `(year, month, day)`, the year deferred.
 fn parse_ymd(
-    dt: XsdDatatype,
-    lexical: &str,
-    s: &str,
+    dt: XsdDatatype, lexical: &str, s: &str,
 ) -> Result<(Deferred<i64>, u8, u8), TemporalReadError> {
     let neg = s.starts_with('-');
     let body = if neg { &s[1..] } else { s };
@@ -1156,10 +1137,7 @@ fn parse_ymd(
 
 /// Parse `hh:mm:ss(.fff)?` into `(hour, minute, second)`, the second deferred.
 fn parse_hms(
-    dt: XsdDatatype,
-    lexical: &str,
-    s: &str,
-    read_exact: bool,
+    dt: XsdDatatype, lexical: &str, s: &str, read_exact: bool,
 ) -> Result<(u8, u8, Deferred<Decimal>), TemporalReadError> {
     let Some((hour_text, minute_second)) = s.split_once(':') else {
         return Err(TemporalReadError::invalid(dt, lexical, "expected hh:mm:ss"));
@@ -1252,9 +1230,7 @@ fn parse_hms(
 
 /// `xsd:dateTime` = `date 'T' time tz?`.
 fn read_datetime_as(
-    dt: XsdDatatype,
-    s: &str,
-    read_exact: bool,
+    dt: XsdDatatype, s: &str, read_exact: bool,
 ) -> Result<DateTime, TemporalReadError> {
     let (date_part, time_part) = s
         .split_once('T')
@@ -1318,10 +1294,7 @@ fn read_time(s: &str, read_exact: bool) -> Result<Time, TemporalReadError> {
 /// as `duSecondFrag` allows), which [`parse_seconds`] then validates. Anything else
 /// is refused.
 fn duration_fields<'a>(
-    dt: XsdDatatype,
-    lexical: &str,
-    part: &'a str,
-    designators: [u8; 3],
+    dt: XsdDatatype, lexical: &str, part: &'a str, designators: [u8; 3],
 ) -> Result<[Option<&'a str>; 3], TemporalReadError> {
     let mut fields = [None; 3];
     let mut next = 0;
@@ -1370,9 +1343,7 @@ fn duration_fields<'a>(
 /// `xsd:duration` and subtypes: `[-]PnYnMnDTnHnMnS` (any component group optional,
 /// at least one present; the `T` separates date from time components).
 fn read_duration(
-    dt: XsdDatatype,
-    s: &str,
-    read_exact: bool,
+    dt: XsdDatatype, s: &str, read_exact: bool,
 ) -> Result<Duration, TemporalReadError> {
     let neg = s.starts_with('-');
     let body = s.strip_prefix('-').unwrap_or(s);
@@ -1508,9 +1479,7 @@ fn read_duration(
 /// Returns `(signed_year, remaining_str_after_year_digits)`, the year deferred.
 /// The year must be ≥4 digits; >4 digits must not have a leading zero.
 fn parse_year_str<'a>(
-    dt: XsdDatatype,
-    lexical: &str,
-    s: &'a str,
+    dt: XsdDatatype, lexical: &str, s: &'a str,
 ) -> Result<(Deferred<i64>, &'a str), TemporalReadError> {
     let neg = s.starts_with('-');
     let digits_start = usize::from(neg);
@@ -1570,10 +1539,7 @@ const DAY_FIELD: TwoDigitField = TwoDigitField {
 /// one reading of `MM` and `DD`. Exactly two ASCII digits, so the value is read
 /// off the two bytes and no signed or wider spelling can slip through.
 fn parse_two_digit_field(
-    dt: XsdDatatype,
-    lexical: &str,
-    s: &str,
-    field: &TwoDigitField,
+    dt: XsdDatatype, lexical: &str, s: &str, field: &TwoDigitField,
 ) -> Result<u8, TemporalReadError> {
     let &[tens, units] = s.as_bytes() else {
         return Err(TemporalReadError::invalid(dt, lexical, field.width));
@@ -1735,10 +1701,7 @@ fn naive_secs(days: i128, hour: u8, minute: u8, sec_whole: i128) -> i128 {
 /// differ, their difference is at least a minute and cannot be reversed by
 /// either seconds field; only equal bases need native decimal comparison.
 fn cmp_point_admitted(
-    a_base: i128,
-    a_second: &Decimal,
-    b_base: i128,
-    b_second: &Decimal,
+    a_base: i128, a_second: &Decimal, b_base: i128, b_second: &Decimal,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1758,11 +1721,7 @@ fn cmp_point_admitted(
 /// The XSD partial-order comparison for a timezoned point: naive whole seconds +
 /// fractional seconds + optional timezone (minutes). `None` = indeterminate.
 fn cmp_timeline_admitted(
-    a_naive: i128,
-    a_second: &Decimal,
-    a_tz: Option<i32>,
-    b_naive: i128,
-    b_second: &Decimal,
+    a_naive: i128, a_second: &Decimal, a_tz: Option<i32>, b_naive: i128, b_second: &Decimal,
     b_tz: Option<i32>,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
@@ -1810,8 +1769,7 @@ pub fn cmp_datetime(a: &DateTime, b: &DateTime) -> Option<Ordering> {
 /// # Errors
 /// Returns physical refusal before scale-alignment scratch is allocated.
 pub fn cmp_datetime_admitted(
-    a: &DateTime,
-    b: &DateTime,
+    a: &DateTime, b: &DateTime,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1831,8 +1789,7 @@ pub fn cmp_date(a: &Date, b: &Date) -> Option<Ordering> {
 /// # Errors
 /// Returns physical refusal if native seconds comparison needs storage.
 pub fn cmp_date_admitted(
-    a: &Date,
-    b: &Date,
+    a: &Date, b: &Date,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1853,8 +1810,7 @@ pub fn cmp_time(a: &Time, b: &Time) -> Option<Ordering> {
 /// # Errors
 /// Returns physical refusal before scale-alignment scratch is allocated.
 pub fn cmp_time_admitted(
-    a: &Time,
-    b: &Time,
+    a: &Time, b: &Time,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1911,8 +1867,7 @@ pub fn cmp_duration(a: &Duration, b: &Duration) -> Option<Ordering> {
 /// # Errors
 /// Returns physical refusal before seconds alignment allocates.
 pub fn cmp_duration_admitted(
-    a: &Duration,
-    b: &Duration,
+    a: &Duration, b: &Duration,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1970,8 +1925,7 @@ pub fn duration_equal(a: &Duration, b: &Duration) -> bool {
 /// # Errors
 /// Returns physical refusal before native scale-alignment scratch is allocated.
 pub fn duration_equal_admitted(
-    a: &Duration,
-    b: &Duration,
+    a: &Duration, b: &Duration,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -2057,10 +2011,7 @@ fn divide_decimal_exact(dividend: &Decimal, divisor: &Decimal) -> Result<Decimal
 /// arithmetic (no day component — the caller clamps the day separately, XML Schema
 /// Appendix E). Exact; errors only on genuine `i64` year overflow.
 fn shift_year_month(
-    datatype: XsdDatatype,
-    year: i64,
-    month: u8,
-    months_delta: i64,
+    datatype: XsdDatatype, year: i64, month: u8, months_delta: i64,
 ) -> Result<(i64, u8), XsdError> {
     let total = i128::from(year)
         .checked_mul(12)
@@ -2202,9 +2153,7 @@ fn split_seconds_day_admitted(
 /// day/month/year all roll over correctly. Exact — no float rounding, and no panics:
 /// exact intermediate arithmetic preserves every fractional digit.
 fn add_seconds_decimal_admitted(
-    datatype: XsdDatatype,
-    point: &CalendarPoint,
-    delta: &Decimal,
+    datatype: XsdDatatype, point: &CalendarPoint, delta: &Decimal,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -2307,9 +2256,7 @@ struct Instant<'a> {
 /// supply — that case is a hard `Indeterminate`, not a best-effort answer.
 /// Both-timezoned and both-untimezoned pairs are always determinate.
 fn instant_diff_admitted(
-    _datatype: XsdDatatype,
-    a: &Instant<'_>,
-    b: &Instant<'_>,
+    _datatype: XsdDatatype, a: &Instant<'_>, b: &Instant<'_>,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -2386,8 +2333,7 @@ fn require_day_time_duration(dur: &Duration) -> Result<(), XsdError> {
 /// whole number of minutes with magnitude `<= 14:00`, matching the lexical timezone
 /// grammar this crate already enforces in `split_tz`.
 fn validate_timezone_seconds(
-    datatype: XsdDatatype,
-    secs: Option<i64>,
+    datatype: XsdDatatype, secs: Option<i64>,
 ) -> Result<Option<i32>, XsdError> {
     let Some(secs) = secs else {
         return Ok(None);
@@ -2418,8 +2364,7 @@ fn validate_timezone_seconds(
 /// (day/month/year may roll over). If `dt` has no timezone, `timezone` is attached
 /// with no shift — the local fields are left as-is.
 pub fn adjust_datetime_to_timezone(
-    dt: &DateTime,
-    timezone: Option<i64>,
+    dt: &DateTime, timezone: Option<i64>,
 ) -> Result<DateTime, XsdError> {
     adjust_datetime_to_timezone_admitted(dt, timezone, &mut |_| Ok(()))
 }
@@ -2428,8 +2373,7 @@ pub fn adjust_datetime_to_timezone(
 /// # Errors
 /// Preserves invalid timezone and calendar errors separately from storage refusal.
 pub fn adjust_datetime_to_timezone_admitted(
-    dt: &DateTime,
-    timezone: Option<i64>,
+    dt: &DateTime, timezone: Option<i64>,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -2493,8 +2437,7 @@ pub fn adjust_date_to_timezone(d: &Date, timezone: Option<i64>) -> Result<Date, 
 /// # Errors
 /// Preserves invalid timezone and calendar errors separately from storage refusal.
 pub fn adjust_date_to_timezone_admitted(
-    d: &Date,
-    timezone: Option<i64>,
+    d: &Date, timezone: Option<i64>,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -2538,8 +2481,7 @@ pub fn adjust_time_to_timezone(t: &Time, timezone: Option<i64>) -> Result<Time, 
 /// # Errors
 /// Preserves invalid timezone and calendar errors separately from storage refusal.
 pub fn adjust_time_to_timezone_admitted(
-    t: &Time,
-    timezone: Option<i64>,
+    t: &Time, timezone: Option<i64>,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -2758,11 +2700,8 @@ const fn actions(datatype: XsdDatatype) -> (MonthAction, SecondAction) {
 /// function structurally never receives it in practice, and the match arm
 /// below exists only to keep the match total.
 fn drive(
-    datatype: XsdDatatype,
-    month_action: MonthAction,
-    second_action: SecondAction,
-    point: CalendarPoint,
-    dur: &Duration,
+    datatype: XsdDatatype, month_action: MonthAction, second_action: SecondAction,
+    point: CalendarPoint, dur: &Duration,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -2833,8 +2772,7 @@ fn drive(
 /// unlike the reference implementation, which silently drops such precision —
 /// this crate refuses to fabricate a day count that ignores it.
 fn gregorian_whole_days_admitted(
-    datatype: XsdDatatype,
-    seconds: &Decimal,
+    datatype: XsdDatatype, seconds: &Decimal,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -2988,11 +2926,7 @@ type GregorianFields = (Option<i64>, Option<u8>, Option<u8>);
 /// bisected wrap point) answers instead of refusing, and
 /// `--01-15 + P400000000000000000M` answers `--05-15` again.
 fn gmonthday_shift(
-    datatype: XsdDatatype,
-    month: u8,
-    day: u8,
-    dur_months: i64,
-    whole_days: i64,
+    datatype: XsdDatatype, month: u8, day: u8, dur_months: i64, whole_days: i64,
 ) -> Result<(u8, u8), XsdError> {
     // `div_euclid`/`rem_euclid` never panic for these operands (only division by
     // zero or by -1 at `i64::MIN` can, and the divisors here are the constants 12,
@@ -3077,10 +3011,7 @@ fn gmonthday_shift(
 /// correctness it buys, and independent of `dur_months`/`whole_days`'s
 /// magnitude for the same reduce-first reason.
 fn gday_shift(
-    datatype: XsdDatatype,
-    day: u8,
-    dur_months: i64,
-    whole_days: i64,
+    datatype: XsdDatatype, day: u8, dur_months: i64, whole_days: i64,
 ) -> Result<u8, XsdError> {
     let carry_years = dur_months.div_euclid(12);
     let month_offset = dur_months.rem_euclid(12); // 0..=11
@@ -3141,11 +3072,8 @@ fn gday_shift(
 /// [`MonthAction`]'s doc — and a zero component is skipped entirely, which is
 /// what makes "zero duration → identity" uniform here too.
 fn drive_gregorian(
-    datatype: XsdDatatype,
-    month_action: MonthAction,
-    second_action: SecondAction,
-    fields: GregorianFields,
-    dur: &Duration,
+    datatype: XsdDatatype, month_action: MonthAction, second_action: SecondAction,
+    fields: GregorianFields, dur: &Duration,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -3411,8 +3339,7 @@ pub fn add_duration_to_datetime(dt: &DateTime, dur: &Duration) -> Result<DateTim
 /// # Errors
 /// Preserves calendar domain errors and native storage refusals.
 pub fn add_duration_to_datetime_admitted(
-    dt: &DateTime,
-    dur: &Duration,
+    dt: &DateTime, dur: &Duration,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -3461,8 +3388,7 @@ pub fn add_duration_to_datetime_admitted(
 /// assert_eq!(result.canonical_lexical(), "2023-02-28T00:00:00");
 /// ```
 pub fn subtract_duration_from_datetime(
-    dt: &DateTime,
-    dur: &Duration,
+    dt: &DateTime, dur: &Duration,
 ) -> Result<DateTime, XsdError> {
     subtract_duration_from_datetime_admitted(dt, dur, &mut |_| Ok(()))
 }
@@ -3471,8 +3397,7 @@ pub fn subtract_duration_from_datetime(
 /// # Errors
 /// Preserves value-space and storage refusals.
 pub fn subtract_duration_from_datetime_admitted(
-    dt: &DateTime,
-    dur: &Duration,
+    dt: &DateTime, dur: &Duration,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -3512,8 +3437,7 @@ pub fn add_duration_to_date(d: &Date, dur: &Duration) -> Result<Date, XsdError> 
 /// # Errors
 /// Preserves calendar domain errors and native storage refusals.
 pub fn add_duration_to_date_admitted(
-    d: &Date,
-    dur: &Duration,
+    d: &Date, dur: &Duration,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -3559,8 +3483,7 @@ pub fn subtract_duration_from_date(d: &Date, dur: &Duration) -> Result<Date, Xsd
 /// # Errors
 /// Preserves calendar domain errors and native storage refusals.
 pub fn subtract_duration_from_date_admitted(
-    d: &Date,
-    dur: &Duration,
+    d: &Date, dur: &Duration,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -3601,8 +3524,7 @@ pub fn add_duration_to_time(t: &Time, dur: &Duration) -> Result<Time, XsdError> 
 /// # Errors
 /// Preserves calendar domain errors and native storage refusals.
 pub fn add_duration_to_time_admitted(
-    t: &Time,
-    dur: &Duration,
+    t: &Time, dur: &Duration,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -3652,8 +3574,7 @@ pub fn subtract_duration_from_time(t: &Time, dur: &Duration) -> Result<Time, Xsd
 /// # Errors
 /// Preserves calendar domain errors and native storage refusals.
 pub fn subtract_duration_from_time_admitted(
-    t: &Time,
-    dur: &Duration,
+    t: &Time, dur: &Duration,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -3705,8 +3626,7 @@ pub fn add_duration_to_gregorian(g: &Gregorian, dur: &Duration) -> Result<Gregor
 /// # Errors
 /// Preserves calendar domain errors and native storage refusal.
 pub fn add_duration_to_gregorian_admitted(
-    g: &Gregorian,
-    dur: &Duration,
+    g: &Gregorian, dur: &Duration,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -3747,8 +3667,7 @@ pub fn add_duration_to_gregorian_admitted(
 /// assert_eq!(result.canonical_lexical(), "2024");
 /// ```
 pub fn subtract_duration_from_gregorian(
-    g: &Gregorian,
-    dur: &Duration,
+    g: &Gregorian, dur: &Duration,
 ) -> Result<Gregorian, XsdError> {
     subtract_duration_from_gregorian_admitted(g, dur, &mut |_| Ok(()))
 }
@@ -3757,8 +3676,7 @@ pub fn subtract_duration_from_gregorian(
 /// # Errors
 /// Preserves calendar domain errors and native storage refusal.
 pub fn subtract_duration_from_gregorian_admitted(
-    g: &Gregorian,
-    dur: &Duration,
+    g: &Gregorian, dur: &Duration,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -3784,8 +3702,7 @@ pub fn subtract_duration_from_gregorian_admitted(
 /// month's last day when the original day does not exist there (XML Schema Appendix
 /// E, e.g. 2024-01-31 + P1M = 2024-02-29).
 pub fn add_year_month_duration_to_datetime(
-    dt: &DateTime,
-    dur: &Duration,
+    dt: &DateTime, dur: &Duration,
 ) -> Result<DateTime, XsdError> {
     require_year_month_duration(dur)?;
     add_duration_to_datetime(dt, dur)
@@ -3793,8 +3710,7 @@ pub fn add_year_month_duration_to_datetime(
 
 /// `op:subtract-yearMonthDuration-from-dateTime`.
 pub fn subtract_year_month_duration_from_datetime(
-    dt: &DateTime,
-    dur: &Duration,
+    dt: &DateTime, dur: &Duration,
 ) -> Result<DateTime, XsdError> {
     require_year_month_duration(dur)?;
     subtract_duration_from_datetime(dt, dur)
@@ -3802,8 +3718,7 @@ pub fn subtract_year_month_duration_from_datetime(
 
 /// `op:add-dayTimeDuration-to-dateTime`.
 pub fn add_day_time_duration_to_datetime(
-    dt: &DateTime,
-    dur: &Duration,
+    dt: &DateTime, dur: &Duration,
 ) -> Result<DateTime, XsdError> {
     require_day_time_duration(dur)?;
     add_duration_to_datetime(dt, dur)
@@ -3811,8 +3726,7 @@ pub fn add_day_time_duration_to_datetime(
 
 /// `op:subtract-dayTimeDuration-from-dateTime`.
 pub fn subtract_day_time_duration_from_datetime(
-    dt: &DateTime,
-    dur: &Duration,
+    dt: &DateTime, dur: &Duration,
 ) -> Result<DateTime, XsdError> {
     require_day_time_duration(dur)?;
     subtract_duration_from_datetime(dt, dur)
@@ -3871,8 +3785,7 @@ pub fn subtract_datetimes(a: &DateTime, b: &DateTime) -> Result<Duration, XsdErr
 /// # Errors
 /// Returns indeterminate timezone mix before allocation and typed storage refusal.
 pub fn subtract_datetimes_admitted(
-    a: &DateTime,
-    b: &DateTime,
+    a: &DateTime, b: &DateTime,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -3904,8 +3817,7 @@ pub fn subtract_dates(a: &Date, b: &Date) -> Result<Duration, XsdError> {
 /// # Errors
 /// Returns indeterminate timezone mix before allocation and typed storage refusal.
 pub fn subtract_dates_admitted(
-    a: &Date,
-    b: &Date,
+    a: &Date, b: &Date,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -3938,8 +3850,7 @@ pub fn subtract_times(a: &Time, b: &Time) -> Result<Duration, XsdError> {
 /// # Errors
 /// Returns indeterminate timezone mix before allocation and typed storage refusal.
 pub fn subtract_times_admitted(
-    a: &Time,
-    b: &Time,
+    a: &Time, b: &Time,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -4016,8 +3927,7 @@ pub fn add_durations(a: &Duration, b: &Duration) -> Result<Duration, XsdError> {
 /// # Errors
 /// Returns the original value error or a typed storage refusal.
 pub fn add_durations_admitted(
-    a: &Duration,
-    b: &Duration,
+    a: &Duration, b: &Duration,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -4060,8 +3970,7 @@ pub fn subtract_durations(a: &Duration, b: &Duration) -> Result<Duration, XsdErr
 /// # Errors
 /// Returns the original value error or a typed storage refusal.
 pub fn subtract_durations_admitted(
-    a: &Duration,
-    b: &Duration,
+    a: &Duration, b: &Duration,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -4095,8 +4004,7 @@ pub fn multiply_duration(dur: &Duration, factor: &Decimal) -> Result<Duration, X
 }
 
 fn round_month_product_admitted(
-    datatype: XsdDatatype,
-    product: &Decimal,
+    datatype: XsdDatatype, product: &Decimal,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -4116,9 +4024,7 @@ fn round_month_product_admitted(
 }
 
 fn multiply_months_admitted(
-    dur: &Duration,
-    coefficient: &Integer,
-    scale: u32,
+    dur: &Duration, coefficient: &Integer, scale: u32,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -4143,9 +4049,7 @@ fn multiply_months_admitted(
 /// # Errors
 /// Distinguishes value-space overflow from physical storage refusal.
 pub fn multiply_duration_parts_admitted(
-    dur: &Duration,
-    coefficient: &Integer,
-    scale: u32,
+    dur: &Duration, coefficient: &Integer, scale: u32,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -4205,10 +4109,7 @@ pub fn divide_duration(dur: &Duration, divisor: &Decimal) -> Result<Duration, Xs
 }
 
 fn divide_parts_admitted(
-    left: &Integer,
-    left_scale: u32,
-    right: &Integer,
-    right_scale: u32,
+    left: &Integer, left_scale: u32, right: &Integer, right_scale: u32,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -4237,9 +4138,7 @@ fn divide_parts_admitted(
 /// # Errors
 /// Keeps division-by-zero, precision, and storage causes distinct.
 pub fn divide_duration_parts_admitted(
-    dur: &Duration,
-    divisor: &Integer,
-    divisor_scale: u32,
+    dur: &Duration, divisor: &Integer, divisor_scale: u32,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -4337,8 +4236,7 @@ pub fn divide_durations(a: &Duration, b: &Duration) -> Result<Decimal, XsdError>
 /// # Errors
 /// Retains the established value-shape and default precision refusals.
 pub fn divide_durations_admitted(
-    a: &Duration,
-    b: &Duration,
+    a: &Duration, b: &Duration,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -4799,8 +4697,7 @@ impl DateTime {
     /// # Errors
     /// Preserves native admission, layout and allocator refusal.
     pub fn detached_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         Ok(Self {
             year: self.year,
@@ -4819,8 +4716,7 @@ impl DateTime {
     /// # Errors
     /// Returns native shared-control refusal before exposing an unowned value.
     pub fn publish_detached(
-        &mut self,
-        original: &purrdf_lex::allocation::SharedOwned<()>,
+        &mut self, original: &purrdf_lex::allocation::SharedOwned<()>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         self.second.publish_detached(original)
     }

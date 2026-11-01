@@ -140,10 +140,7 @@ pub fn compute_fix_deps(catalog: &SliceCatalog) -> Result<Vec<ManifestPatch>, Sl
 /// pre-edit parse and the post-edit re-parse use it, so a manifest that spells a
 /// dependency relatively is compared against a resolved set on both sides.
 fn apply_proposal(
-    original: &str,
-    proposal: &DepProposal,
-    vocab: &SliceVocab,
-    base: Option<&str>,
+    original: &str, proposal: &DepProposal, vocab: &SliceVocab, base: Option<&str>,
 ) -> Result<String, SliceError> {
     // ── RDF-aware confirmation: parse the manifest, confirm the slice subject,
     // and read its existing sliceDependsOn object set. ──────────────────────────
@@ -273,10 +270,7 @@ fn render_object(iri: &str, _vocab_ns: &str) -> String {
 /// `desired` is the authoritative target set (existing − removed + added),
 /// already computed from the parsed graph by [`apply_proposal`].
 fn surgical_edit(
-    original: &str,
-    vocab_ns: &str,
-    vocab: &SliceVocab,
-    desired: &BTreeSet<String>,
+    original: &str, vocab_ns: &str, vocab: &SliceVocab, desired: &BTreeSet<String>,
     had_existing_block: bool,
 ) -> Result<String, SliceError> {
     match find_depends_on_block(original, vocab) {
@@ -431,10 +425,7 @@ fn is_token_boundary_before(b: u8) -> bool {
 /// becomes empty the whole block is removed and its terminator is preserved by
 /// promoting the block's `.`/`;` onto the surrounding statement.
 fn rewrite_block(
-    original: &str,
-    vocab_ns: &str,
-    vocab: &SliceVocab,
-    desired: &BTreeSet<String>,
+    original: &str, vocab_ns: &str, vocab: &SliceVocab, desired: &BTreeSet<String>,
     block: &DependsBlock,
 ) -> Result<String, SliceError> {
     let mut out = String::with_capacity(original.len());
@@ -511,10 +502,7 @@ fn rewrite_block(
 /// Insert a brand-new `<prefix>:sliceDependsOn` predicate block after the
 /// `a <prefix>:Slice` declaration when the manifest declared no dependencies yet.
 fn insert_new_block(
-    original: &str,
-    vocab_ns: &str,
-    vocab: &SliceVocab,
-    desired: &BTreeSet<String>,
+    original: &str, vocab_ns: &str, vocab: &SliceVocab, desired: &BTreeSet<String>,
 ) -> Result<String, SliceError> {
     let prefix = vocab.prefix_name();
     // Find the `a <prefix>:Slice` line to anchor after, and its indentation.

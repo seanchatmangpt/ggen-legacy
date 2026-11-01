@@ -515,9 +515,7 @@ impl CsvwTableGroup {
 }
 
 fn validate_key_columns(
-    names: &[String],
-    columns: &BTreeMap<&str, usize>,
-    role: &str,
+    names: &[String], columns: &BTreeMap<&str, usize>, role: &str,
 ) -> Result<(), ProjectionError> {
     let mut seen = std::collections::BTreeSet::new();
     for name in names {

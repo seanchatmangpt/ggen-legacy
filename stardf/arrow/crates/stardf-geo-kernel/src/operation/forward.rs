@@ -86,9 +86,7 @@ impl OperationModel {
         }
     }
     pub(super) fn validate_with(
-        &self,
-        values: &crate::numerical::ExactValues<'_>,
-        progress: &mut WorkProgress<'_>,
+        &self, values: &crate::numerical::ExactValues<'_>, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         match self {
             Self::GcjRationalHarmonicV1(domain) | Self::GcjRationalHarmonicInverseV1(domain) => {
@@ -194,9 +192,7 @@ impl OperationModel {
         }
     }
     pub(super) fn validate_metadata(
-        &self,
-        point: &OperationPoint,
-        progress: &mut WorkProgress<'_>,
+        &self, point: &OperationPoint, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         match self {
             Self::GeographicToGeocentric { .. } | Self::GeocentricToGeographic { .. }
@@ -209,10 +205,7 @@ impl OperationModel {
         }
     }
     pub(crate) fn validate_presence(
-        &self,
-        height: Option<&Rat>,
-        epoch: Option<&Rat>,
-        progress: &mut WorkProgress<'_>,
+        &self, height: Option<&Rat>, epoch: Option<&Rat>, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         if matches!(
             self,
@@ -242,11 +235,7 @@ impl OperationModel {
     /// Complete exact validation bound, derived from the original source/model
     /// operands before their first clone, comparison or normalization.
     pub(super) fn validation_cost(
-        &self,
-        source: [&Rat; 2],
-        height: Option<&Rat>,
-        epoch: Option<&Rat>,
-        full: bool,
+        &self, source: [&Rat; 2], height: Option<&Rat>, epoch: Option<&Rat>, full: bool,
     ) -> Option<ExactArithmeticCost> {
         let mut bits = 20; // Includes range constants and the Helmert ppm bound.
         let mut include = |value: &Rat| {
@@ -373,9 +362,7 @@ impl OperationModel {
         Some(cost)
     }
     pub(super) fn validate_point(
-        &self,
-        point: &OperationPoint,
-        progress: &mut WorkProgress<'_>,
+        &self, point: &OperationPoint, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         match self {
             Self::GcjRationalHarmonicV1(domain) => {
@@ -438,8 +425,7 @@ impl OperationModel {
         Ok(())
     }
     pub(super) fn parameters(
-        &self,
-        fields: &mut (impl ParameterSink + ?Sized),
+        &self, fields: &mut (impl ParameterSink + ?Sized),
     ) -> Result<(), GeoError> {
         match self {
             Self::GcjRationalHarmonicV1(domain) | Self::GcjRationalHarmonicInverseV1(domain) => {
@@ -611,10 +597,7 @@ impl OperationModel {
         }
     }
     pub(super) fn certify_quantized_fixed(
-        &self,
-        input: &[FixedInterval],
-        output: &[Rat],
-        math: &mut CoordinateMath,
+        &self, input: &[FixedInterval], output: &[Rat], math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<(), MathError> {
         match self {
@@ -656,12 +639,8 @@ impl OperationModel {
     /// A missing derivative denotes an actual singularity or a model whose
     /// derivative is supplied by its dedicated original implementation.
     pub(super) fn differential(
-        &self,
-        point: &OperationPoint,
-        coordinates: &[FixedInterval],
-        limits: OperationSolverLimits,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, point: &OperationPoint, coordinates: &[FixedInterval],
+        limits: OperationSolverLimits, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<(OperationCoordinates, Option<RootJacobian2>), MathError> {
         let image = self.evaluate_fixed(point, coordinates, false, limits, math, progress)?;
         let jacobian = match self {
@@ -700,10 +679,7 @@ impl OperationModel {
     }
 
     pub(super) fn evaluate(
-        &self,
-        point: &OperationPoint,
-        limits: OperationSolverLimits,
-        math: &mut CoordinateMath,
+        &self, point: &OperationPoint, limits: OperationSolverLimits, math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<super::TransformEnclosure, MathError> {
         let mut coordinates: OperationCoordinates = purrdf_core::smallvec![
@@ -720,13 +696,8 @@ impl OperationModel {
         })
     }
     pub(super) fn evaluate_fixed(
-        &self,
-        point: &OperationPoint,
-        coordinates: &[FixedInterval],
-        source_is_exact: bool,
-        limits: OperationSolverLimits,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, point: &OperationPoint, coordinates: &[FixedInterval], source_is_exact: bool,
+        limits: OperationSolverLimits, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<OperationCoordinates, MathError> {
         if matches!(
             self,
@@ -854,10 +825,7 @@ impl OperationModel {
 }
 
 fn harmonic(
-    value: &FixedInterval,
-    frequency: &str,
-    amplitude: i64,
-    math: &mut CoordinateMath,
+    value: &FixedInterval, frequency: &str, amplitude: i64, math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     let angle = value
         .mul(&FixedInterval::pi(math)?, math)?
@@ -869,8 +837,7 @@ fn harmonic(
 }
 
 pub(super) fn gcj(
-    coordinates: &[FixedInterval],
-    math: &mut CoordinateMath,
+    coordinates: &[FixedInterval], math: &mut CoordinateMath,
 ) -> Result<OperationCoordinates, MathError> {
     let x = coordinates[0].sub(&FixedInterval::from_i64(105, math)?, math)?;
     let root = x.abs(math)?.sqrt(math)?;
@@ -880,9 +847,7 @@ pub(super) fn gcj(
 // Cusp charts supply the exact identity sqrt(|longitude-105|)=u. The
 // polynomial, harmonic and metric-factor bodies remain shared with forward GCJ.
 pub(super) fn gcj_with_root(
-    coordinates: &[FixedInterval],
-    x: &FixedInterval,
-    root: &FixedInterval,
+    coordinates: &[FixedInterval], x: &FixedInterval, root: &FixedInterval,
     math: &mut CoordinateMath,
 ) -> Result<OperationCoordinates, MathError> {
     let [longitude, latitude] = gcj_corrections(x, &coordinates[1], root, math)?;
@@ -898,9 +863,7 @@ pub(super) fn gcj_with_root(
 }
 
 pub(super) fn gcj_corrections(
-    x: &FixedInterval,
-    latitude_degrees: &FixedInterval,
-    root: &FixedInterval,
+    x: &FixedInterval, latitude_degrees: &FixedInterval, root: &FixedInterval,
     math: &mut CoordinateMath,
 ) -> Result<[FixedInterval; 2], MathError> {
     let y = latitude_degrees.sub(&FixedInterval::from_i64(35, math)?, math)?;
@@ -959,8 +922,7 @@ pub(super) fn gcj_corrections(
 }
 
 pub(super) fn gcj_scales(
-    latitude_degrees: &FixedInterval,
-    math: &mut CoordinateMath,
+    latitude_degrees: &FixedInterval, math: &mut CoordinateMath,
 ) -> Result<[FixedInterval; 2], MathError> {
     let phi = radians(latitude_degrees, math)?;
     let (sine, cosine) = phi.sin_cos_range(math)?;
@@ -981,17 +943,14 @@ pub(super) fn gcj_scales(
 }
 
 pub(super) fn bd09(
-    coordinates: &[FixedInterval],
-    math: &mut CoordinateMath,
+    coordinates: &[FixedInterval], math: &mut CoordinateMath,
 ) -> Result<OperationCoordinates, MathError> {
     let offset = bd09_offset(coordinates, math)?;
     bd09_image(coordinates, &offset, math)
 }
 
 fn bd09_image(
-    coordinates: &[FixedInterval],
-    offset: &[FixedInterval; 2],
-    math: &mut CoordinateMath,
+    coordinates: &[FixedInterval], offset: &[FixedInterval; 2], math: &mut CoordinateMath,
 ) -> Result<OperationCoordinates, MathError> {
     let mut output: OperationCoordinates = purrdf_core::smallvec![
         coordinates[0]
@@ -1010,8 +969,7 @@ fn bd09_image(
 // F(p)-p without subtracting dependent interval copies of p. The original
 // Cartesian rotation and radial displacement are evaluated in one home.
 pub(super) fn bd09_offset(
-    coordinates: &[FixedInterval],
-    math: &mut CoordinateMath,
+    coordinates: &[FixedInterval], math: &mut CoordinateMath,
 ) -> Result<[FixedInterval; 2], MathError> {
     Ok(bd09_parts(coordinates, false, math)?.0)
 }
@@ -1020,9 +978,7 @@ pub(super) fn bd09_offset(
 // analytic derivative. Derivative callers share the same constants and trig
 // reductions; the origin enclosure has no invented differentiability claim.
 fn bd09_parts(
-    coordinates: &[FixedInterval],
-    derivative: bool,
-    math: &mut CoordinateMath,
+    coordinates: &[FixedInterval], derivative: bool, math: &mut CoordinateMath,
 ) -> Result<([FixedInterval; 2], Option<RootJacobian2>), MathError> {
     let x = &coordinates[0];
     let y = &coordinates[1];
@@ -1108,11 +1064,7 @@ fn bd09_parts(
 }
 
 pub(super) fn mercator(
-    coordinates: &[FixedInterval],
-    a: &Rat,
-    e2: &Rat,
-    square: bool,
-    math: &mut CoordinateMath,
+    coordinates: &[FixedInterval], a: &Rat, e2: &Rat, square: bool, math: &mut CoordinateMath,
 ) -> Result<OperationCoordinates, MathError> {
     let lambda = radians(&coordinates[0], math)?;
     let phi = radians(&coordinates[1], math)?;
@@ -1152,9 +1104,7 @@ pub(super) fn mercator(
 }
 
 pub(super) fn geocentric(
-    coordinates: &[FixedInterval],
-    ellipsoid: &PreparedEllipsoid,
-    math: &mut CoordinateMath,
+    coordinates: &[FixedInterval], ellipsoid: &PreparedEllipsoid, math: &mut CoordinateMath,
 ) -> Result<OperationCoordinates, MathError> {
     let (sin_lon, cos_lon, sine, cosine) = geocentric_angles(coordinates, math)?;
     let one = FixedInterval::from_i64(1, math)?;
@@ -1180,8 +1130,7 @@ pub(super) fn geocentric(
 /// Whole angular image shared by Cartesian positions and their differentials.
 /// Exact pole decisions precede trigonometry and retain the written frame.
 pub(super) fn geocentric_angles(
-    coordinates: &[FixedInterval],
-    math: &mut CoordinateMath,
+    coordinates: &[FixedInterval], math: &mut CoordinateMath,
 ) -> Result<(FixedInterval, FixedInterval, FixedInterval, FixedInterval), MathError> {
     let lambda = radians(&coordinates[0], math)?;
     let phi = radians(&coordinates[1], math)?;

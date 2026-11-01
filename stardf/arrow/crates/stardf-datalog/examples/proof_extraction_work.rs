@@ -55,8 +55,7 @@ mod native {
     }
 
     fn measured<T>(
-        counter: &mut CounterControl,
-        run: impl FnOnce() -> Result<T>,
+        counter: &mut CounterControl, run: impl FnOnce() -> Result<T>,
     ) -> Result<(T, Measurement)> {
         counter.command(CounterCommand::Enable)?;
         let window = CurrentThreadWindow::open();
@@ -91,10 +90,7 @@ mod native {
     }
 
     fn verify(
-        outputs: &[Proof],
-        goals: &[Fact],
-        eager: &EvaluationProofs,
-        context: &ProofContext<'_>,
+        outputs: &[Proof], goals: &[Fact], eager: &EvaluationProofs, context: &ProofContext<'_>,
     ) -> Result<()> {
         for ((arena, root), goal) in outputs.iter().zip(goals) {
             if arena.check(*root, context)? != *goal {

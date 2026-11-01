@@ -420,8 +420,7 @@ impl<'storage> Budget<'storage> {
 
     /// The same instruction/slot law with actual physical storage admission.
     pub(super) fn with_storage(
-        limits: Limits,
-        storage: &'storage mut dyn purrdf_lex::allocation::Admission,
+        limits: Limits, storage: &'storage mut dyn purrdf_lex::allocation::Admission,
     ) -> Self {
         Self {
             memory: Some(purrdf_lex::allocation::Memory::new(storage)),
@@ -434,20 +433,13 @@ impl<'storage> Budget<'storage> {
     }
 
     pub(super) fn reserve_match<T>(
-        &mut self,
-        values: &mut Vec<T>,
-        required: usize,
-        units: u64,
+        &mut self, values: &mut Vec<T>, required: usize, units: u64,
     ) -> Result<(), Error> {
         self.reserve_resource(values, required, Resource::MatchSlots, units)
     }
 
     fn reserve_resource<T>(
-        &mut self,
-        values: &mut Vec<T>,
-        required: usize,
-        resource: Resource,
-        units: u64,
+        &mut self, values: &mut Vec<T>, required: usize, resource: Resource, units: u64,
     ) -> Result<(), Error> {
         if let Some(memory) = &mut self.memory {
             return memory.reserve(values, required).map_err(Error::Storage);
@@ -461,10 +453,7 @@ impl<'storage> Budget<'storage> {
     }
 
     pub(super) fn push_work<T, const N: usize>(
-        &mut self,
-        work: &mut purrdf_lex::walk::WorkList<T, N>,
-        value: T,
-        resource: Resource,
+        &mut self, work: &mut purrdf_lex::walk::WorkList<T, N>, value: T, resource: Resource,
         units: u64,
     ) -> Result<(), Error> {
         if let Some(memory) = &mut self.memory {
@@ -477,8 +466,7 @@ impl<'storage> Budget<'storage> {
     }
 
     pub(super) fn release_work<T, const N: usize>(
-        &mut self,
-        work: purrdf_lex::walk::WorkList<T, N>,
+        &mut self, work: purrdf_lex::walk::WorkList<T, N>,
     ) -> Result<(), Error> {
         if let Some(memory) = &mut self.memory {
             return work.release_admitted(memory).map_err(Error::Storage);
@@ -513,9 +501,7 @@ impl<'storage> Budget<'storage> {
     }
 
     pub(super) fn reserve_string(
-        &mut self,
-        value: &mut String,
-        required: usize,
+        &mut self, value: &mut String, required: usize,
     ) -> Result<(), Error> {
         if let Some(memory) = &mut self.memory {
             return memory
@@ -934,9 +920,7 @@ mod publication_fixtures {
         type Output = ();
         type Error = &'static str;
         fn publish(
-            self,
-            _: &mut Option<Value<'a>>,
-            _: &mut Option<Grant<'a>>,
+            self, _: &mut Option<Value<'a>>, _: &mut Option<Grant<'a>>,
         ) -> Result<(), &'static str> {
             Err("original admission refusal")
         }
@@ -951,9 +935,7 @@ mod publication_fixtures {
         type Output = Published<'a>;
         type Error = &'static str;
         fn publish(
-            self,
-            value: &mut Option<Value<'a>>,
-            storage: &mut Option<Grant<'a>>,
+            self, value: &mut Option<Value<'a>>, storage: &mut Option<Grant<'a>>,
         ) -> Result<Self::Output, Self::Error> {
             // All fallible work is complete; only the final owner is constructed.
             Ok(Published {

@@ -26,7 +26,7 @@ use purrdf_shapes::spec::declared_terms;
 /// vocabulary (`crates/iri/src/vocab.rs`), as `(name, value)`, excluding the
 /// namespace constant `NS` itself.
 fn model_constants(module: &str) -> BTreeMap<String, String> {
-    let source = include_str!("../../iri/src/vocab.rs");
+    let source = include_str!("../../stardf-iri/src/vocab.rs");
     let file = syn::parse_file(source).expect("vocab.rs parses as Rust");
     let mut out = BTreeMap::new();
     for item in &file.items {

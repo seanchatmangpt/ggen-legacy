@@ -30,8 +30,7 @@ impl SegmentedLayerMetadata {
     /// # Errors
     /// A declaration carrier must contain graph slots only, never statements.
     pub fn new(
-        removals: Option<Arc<RdfDataset>>,
-        declarations: Option<Arc<RdfDataset>>,
+        removals: Option<Arc<RdfDataset>>, declarations: Option<Arc<RdfDataset>>,
     ) -> Result<Self, SegmentedError> {
         if declarations.as_ref().is_some_and(|dataset| {
             dataset.quad_count() != 0
@@ -98,8 +97,7 @@ impl SegmentedLayer {
     /// # Errors
     /// Refuses a provider already reporting another generation or encoded length.
     pub fn new(
-        provider: Arc<dyn SegmentedProvider>,
-        receipt: SegmentedReceipt,
+        provider: Arc<dyn SegmentedProvider>, receipt: SegmentedReceipt,
         metadata: SegmentedLayerMetadata,
     ) -> Result<Self, SegmentedError> {
         let layer = Self {
@@ -151,8 +149,7 @@ impl SegmentedResidentHead {
     /// Refuses allocation or arithmetic failure while certifying the original
     /// expanded-term footprint. The certificate is retained across snapshots.
     pub fn new(
-        dataset: Arc<RdfDataset>,
-        metadata: SegmentedLayerMetadata,
+        dataset: Arc<RdfDataset>, metadata: SegmentedLayerMetadata,
     ) -> Result<Self, SegmentedError> {
         let max_owned_term_bytes =
             super::build::resident_owned_term_bound(&dataset)?.max(metadata.max_owned_term_bytes());
@@ -211,9 +208,7 @@ impl SegmentedStack {
     /// Every successor header is authenticated under one cumulative operation.
     /// Refusal or descriptor drift leaves the current publication unchanged.
     pub fn publish(
-        &mut self,
-        layers: Vec<Arc<SegmentedLayer>>,
-        limits: SegmentedReadLimits,
+        &mut self, layers: Vec<Arc<SegmentedLayer>>, limits: SegmentedReadLimits,
     ) -> Result<(), SegmentedError> {
         validate_layers(&layers, limits)?;
         self.layers = layers;
@@ -332,8 +327,7 @@ fn check_layers(layers: &[Arc<SegmentedLayer>]) -> Result<(), SegmentedError> {
 }
 
 fn validate_layers(
-    layers: &[Arc<SegmentedLayer>],
-    limits: SegmentedReadLimits,
+    layers: &[Arc<SegmentedLayer>], limits: SegmentedReadLimits,
 ) -> Result<(), SegmentedError> {
     if layers.is_empty() {
         return Ok(());

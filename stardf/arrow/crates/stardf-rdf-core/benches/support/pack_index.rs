@@ -488,10 +488,7 @@ impl WaveletIndexes {
     }
 
     pub(crate) fn predicate_object_count(
-        &self,
-        adjacency: &Adjacency,
-        predicate: u64,
-        object: u64,
+        &self, adjacency: &Adjacency, predicate: u64, object: u64,
     ) -> usize {
         let predicate_positions = self.predicates.positions(predicate);
         let object_positions: Vec<_> = self

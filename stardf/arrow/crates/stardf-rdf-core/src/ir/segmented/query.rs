@@ -98,16 +98,14 @@ impl SegmentedStackSnapshot {
     /// # Errors
     /// Preserves the first provider, identity, admission or allocation failure.
     pub fn query(
-        &self,
-        limits: SegmentedReadLimits,
+        &self, limits: SegmentedReadLimits,
     ) -> Result<SegmentedStackQuery<'_>, SegmentedError> {
         let operation = SegmentedOperation::new(limits)?;
         self.query_with_operation(operation)
     }
 
     fn query_with_operation(
-        &self,
-        operation: SegmentedOperation,
+        &self, operation: SegmentedOperation,
     ) -> Result<SegmentedStackQuery<'_>, SegmentedError> {
         let mut storage = QueryStorage::new(&operation)?;
         let mut sessions = Vec::new();
@@ -183,9 +181,7 @@ impl SegmentedStackQuery<'_> {
     /// Refuses a foreign source/index or actual read/storage failure. Hash bucket
     /// collisions compare exact values while their original scratch remains owned.
     pub fn intern_source_term(
-        &self,
-        source: SegmentedStackSource,
-        index: u64,
+        &self, source: SegmentedStackSource, index: u64,
     ) -> Result<GlobalTermId, SegmentedError> {
         self.operation.ready()?;
         self.intern(SourceTerm { source, index })
@@ -382,8 +378,7 @@ impl QueryStorage {
     }
 
     pub(super) fn run<T, E: Into<SegmentedError>>(
-        &mut self,
-        body: impl FnOnce(&mut Memory<'_, Self>) -> Result<T, E>,
+        &mut self, body: impl FnOnce(&mut Memory<'_, Self>) -> Result<T, E>,
     ) -> Result<T, SegmentedError> {
         let live = usize::try_from(self.reservation.bytes())
             .map_err(|_| SegmentedError::AddressExhausted)?;

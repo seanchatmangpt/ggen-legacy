@@ -70,8 +70,7 @@ impl<'a> Invocation<'a> {
     }
 
     pub(crate) const fn with_bindings(
-        purpose: QueryPurpose,
-        parameters: &'a [(String, crate::term::Term)],
+        purpose: QueryPurpose, parameters: &'a [(String, crate::term::Term)],
     ) -> Self {
         Self {
             purpose,
@@ -97,9 +96,7 @@ impl Runtime {
     }
 
     pub(crate) fn admit(
-        &self,
-        invocation: Invocation<'_>,
-        query: &Query,
+        &self, invocation: Invocation<'_>, query: &Query,
     ) -> Result<(), crate::error::ShapesError> {
         crate::prebinding::admit(
             self.profile,
@@ -137,10 +134,7 @@ impl Runtime {
     }
 
     fn refuse_source(
-        &self,
-        purpose: Option<QueryPurpose>,
-        source: &crate::term::Term,
-        index: Option<usize>,
+        &self, purpose: Option<QueryPurpose>, source: &crate::term::Term, index: Option<usize>,
     ) -> String {
         let refusal =
             crate::report::QuerySourceRefusal::new(self.profile, purpose, source.clone(), index);
@@ -152,10 +146,7 @@ impl Runtime {
     /// Look up one actual target ordinal, then validate its complete public
     /// model against that occurrence. Equal query text is never a lookup key.
     pub(crate) fn target_invocation(
-        &self,
-        shape: &crate::term::Term,
-        index: usize,
-        target: &crate::shapes::Target,
+        &self, shape: &crate::term::Term, index: usize, target: &crate::shapes::Target,
     ) -> Result<Invocation<'_>, String> {
         let occurrence = self
             .sources
@@ -182,10 +173,8 @@ impl Runtime {
     }
 
     pub(crate) fn component_invocation(
-        &self,
-        site: crate::report::ConstraintSite<'_>,
-        constraint: &crate::plan::PlannedConstraint<'_>,
-        purpose: QueryPurpose,
+        &self, site: crate::report::ConstraintSite<'_>,
+        constraint: &crate::plan::PlannedConstraint<'_>, purpose: QueryPurpose,
     ) -> Result<Invocation<'_>, String> {
         let occurrence =
             crate::report::admit_component_occurrence(self.sources.as_deref(), site, constraint)
@@ -199,9 +188,7 @@ impl Runtime {
     /// A linked shape occurrence and a global occurrence of the same rule node
     /// have distinct source keys and potentially distinct initial bindings.
     pub(crate) fn rule_invocation(
-        &self,
-        rule: &crate::rules::Rule,
-        shape: Option<&crate::term::Term>,
+        &self, rule: &crate::rules::Rule, shape: Option<&crate::term::Term>,
     ) -> Result<Invocation<'_>, String> {
         let purpose = if shape.is_some() {
             QueryPurpose::ConstructRule
@@ -282,8 +269,7 @@ pub(crate) struct Scope {
 }
 
 pub(crate) fn enter(
-    profile: ShaclProfile,
-    sources: Option<&Arc<crate::shapes::ConstraintSources>>,
+    profile: ShaclProfile, sources: Option<&Arc<crate::shapes::ConstraintSources>>,
 ) -> Scope {
     let runtime = (profile != ShaclProfile::LEGACY).then(|| {
         Arc::new(Runtime {

@@ -47,10 +47,7 @@ use crate::error::EvalError;
 /// [`EvalError::FunctionOperational`] on a caught panic; otherwise `Ok` of `read`'s result.
 #[cfg(test)]
 pub(crate) fn declaration_contained<T>(
-    kind: &str,
-    iri: &str,
-    what: &str,
-    read: impl FnOnce() -> T,
+    kind: &str, iri: &str, what: &str, read: impl FnOnce() -> T,
 ) -> Result<T, EvalError> {
     declaration_contained_admitted(
         kind,
@@ -63,10 +60,7 @@ pub(crate) fn declaration_contained<T>(
 
 /// The same declaration/panic law with originally admitted immutable diagnostics.
 pub(crate) fn declaration_contained_admitted<T>(
-    kind: &str,
-    iri: &str,
-    what: &str,
-    read: impl FnOnce() -> T,
+    kind: &str, iri: &str, what: &str, read: impl FnOnce() -> T,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<T, EvalError> {
     match read_declaration(read) {
@@ -100,10 +94,7 @@ pub(crate) fn declaration_best_effort<T>(read: impl FnOnce() -> T) -> Option<T> 
 /// [`EvalError::FunctionOperational`] on a caught panic or an opaque caller-returned
 /// [`EvalError::Function`]; every more specific typed cause propagates unchanged.
 pub(crate) fn call_contained<T>(
-    kind: &str,
-    iri: &str,
-    what: &str,
-    call: impl FnOnce() -> Result<T, EvalError>,
+    kind: &str, iri: &str, what: &str, call: impl FnOnce() -> Result<T, EvalError>,
 ) -> Result<T, EvalError> {
     call_contained_admitted(
         kind,
@@ -116,10 +107,7 @@ pub(crate) fn call_contained<T>(
 
 /// The original host-call and typed-failure law with before-render admission.
 pub(crate) fn call_contained_admitted<T>(
-    kind: &str,
-    iri: &str,
-    what: &str,
-    call: impl FnOnce() -> Result<T, EvalError>,
+    kind: &str, iri: &str, what: &str, call: impl FnOnce() -> Result<T, EvalError>,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<T, EvalError> {
     match catch_unwind(AssertUnwindSafe(call)) {

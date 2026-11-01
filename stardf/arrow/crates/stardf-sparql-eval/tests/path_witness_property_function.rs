@@ -124,8 +124,7 @@ fn walk_registry(graph: Arc<PathGraph>, limits: PathLimits) -> PropertyFunctionR
 
 /// A registry holding one [`ShortestPathWitnessRelation`] under [`SHORTEST`].
 fn shortest_registry(
-    graph: Arc<PathGraph>,
-    limits: PathLimits,
+    graph: Arc<PathGraph>, limits: PathLimits,
 ) -> PropertyFunctionRegistry<'static> {
     let mut registry = PropertyFunctionRegistry::new();
     registry.register(
@@ -179,9 +178,7 @@ impl Answers {
 
 /// Evaluate `query` over `data` with `registry` in scope, through the public engine.
 fn run(
-    data: &RdfDataset,
-    query: &str,
-    registry: &ExtensionEnv<'_>,
+    data: &RdfDataset, query: &str, registry: &ExtensionEnv<'_>,
 ) -> Result<Answers, purrdf_core::RdfDiagnostic> {
     let result = NativeSparqlEngine::new().query_with_options_view(
         data,

@@ -29,8 +29,7 @@ pub(crate) struct MetadataOutcome {
 }
 
 pub(crate) fn load_metadata(
-    input: &CsvwInput,
-    config: &CsvwConfig,
+    input: &CsvwInput, config: &CsvwConfig,
 ) -> Result<MetadataOutcome, ProjectionError> {
     let mut loader = MetadataLoader {
         input,
@@ -84,9 +83,7 @@ struct MetadataLoader<'a> {
 
 impl MetadataLoader<'_> {
     fn parse_root_context(
-        &mut self,
-        object: &Object,
-        resource: &str,
+        &mut self, object: &Object, resource: &str,
     ) -> Result<DocumentContext, ProjectionError> {
         let context_value = object.get("@context").ok_or_else(|| {
             ProjectionError::integrity("CSVW metadata requires an @context").at_path(resource)
@@ -162,12 +159,8 @@ impl MetadataLoader<'_> {
     }
 
     fn parse_inherited(
-        &mut self,
-        object: &Object,
-        resource: &str,
-        location: &str,
-        parent: &CsvwInheritedProperties,
-        context: &DocumentContext,
+        &mut self, object: &Object, resource: &str, location: &str,
+        parent: &CsvwInheritedProperties, context: &DocumentContext,
     ) -> Result<CsvwInheritedProperties, ProjectionError> {
         let mut inherited = parent.clone();
         inherited.about_url = template_property(
@@ -253,10 +246,7 @@ impl MetadataLoader<'_> {
     }
 
     fn parse_schema_property(
-        &mut self,
-        value: Option<&Value>,
-        resource: &str,
-        context: &DocumentContext,
+        &mut self, value: Option<&Value>, resource: &str, context: &DocumentContext,
         inherited: &CsvwInheritedProperties,
     ) -> Result<CsvwSchema, ProjectionError> {
         let Some(value) = value else {
@@ -306,12 +296,8 @@ impl MetadataLoader<'_> {
     }
 
     fn parse_schema(
-        &mut self,
-        object: &Object,
-        resource: &str,
-        context: &DocumentContext,
-        inherited: &CsvwInheritedProperties,
-        location: &str,
+        &mut self, object: &Object, resource: &str, context: &DocumentContext,
+        inherited: &CsvwInheritedProperties, location: &str,
     ) -> Result<CsvwSchema, ProjectionError> {
         check_type(object, "Schema", resource)?;
         let id = parse_optional_id(
@@ -410,13 +396,8 @@ impl MetadataLoader<'_> {
     }
 
     fn parse_column(
-        &mut self,
-        object: &Object,
-        resource: &str,
-        context: &DocumentContext,
-        inherited: &CsvwInheritedProperties,
-        number: usize,
-        location: &str,
+        &mut self, object: &Object, resource: &str, context: &DocumentContext,
+        inherited: &CsvwInheritedProperties, number: usize, location: &str,
     ) -> Result<CsvwColumn, ProjectionError> {
         check_type(object, "Column", resource)?;
         let id = parse_optional_id(
@@ -494,11 +475,7 @@ impl MetadataLoader<'_> {
     }
 
     fn parse_datatype(
-        &mut self,
-        value: &Value,
-        resource: &str,
-        location: &str,
-        context: &DocumentContext,
+        &mut self, value: &Value, resource: &str, location: &str, context: &DocumentContext,
         fallback: &CsvwDatatype,
     ) -> Result<CsvwDatatype, ProjectionError> {
         match value {
@@ -647,10 +624,7 @@ impl MetadataLoader<'_> {
     }
 
     fn parse_dialect_property(
-        &mut self,
-        value: Option<&Value>,
-        resource: &str,
-        context: &DocumentContext,
+        &mut self, value: Option<&Value>, resource: &str, context: &DocumentContext,
     ) -> Result<CsvwDialect, ProjectionError> {
         let Some(value) = value else {
             return Ok(CsvwDialect::default());
@@ -685,10 +659,7 @@ impl MetadataLoader<'_> {
     }
 
     fn parse_dialect(
-        &mut self,
-        object: &Object,
-        resource: &str,
-        location: &str,
+        &mut self, object: &Object, resource: &str, location: &str,
     ) -> Result<CsvwDialect, ProjectionError> {
         check_type(object, "Dialect", resource)?;
         if let Some(value) = object.get("@id") {
@@ -818,11 +789,7 @@ impl MetadataLoader<'_> {
     }
 
     fn parse_foreign_keys(
-        &mut self,
-        value: Option<&Value>,
-        resource: &str,
-        context: &DocumentContext,
-        location: &str,
+        &mut self, value: Option<&Value>, resource: &str, context: &DocumentContext, location: &str,
     ) -> Result<Vec<CsvwForeignKey>, ProjectionError> {
         let Some(value) = value else {
             return Ok(Vec::new());
@@ -917,10 +884,7 @@ impl MetadataLoader<'_> {
     }
 
     fn parse_transformations(
-        &mut self,
-        value: Option<&Value>,
-        resource: &str,
-        context: &DocumentContext,
+        &mut self, value: Option<&Value>, resource: &str, context: &DocumentContext,
     ) -> Result<Vec<CsvwTransformation>, ProjectionError> {
         let Some(value) = value else {
             return Ok(Vec::new());
@@ -1009,11 +973,7 @@ impl MetadataLoader<'_> {
     }
 
     fn parse_annotations(
-        &self,
-        object: &Object,
-        known: &[&str],
-        resource: &str,
-        location: &str,
+        &self, object: &Object, known: &[&str], resource: &str, location: &str,
         context: &DocumentContext,
     ) -> Result<CsvwAnnotations, ProjectionError> {
         let mut annotations = CsvwAnnotations::new();
@@ -1035,11 +995,7 @@ impl MetadataLoader<'_> {
     }
 
     fn warn_unknown(
-        &mut self,
-        object: &Object,
-        known: &[&str],
-        resource: &str,
-        location: &str,
+        &mut self, object: &Object, known: &[&str], resource: &str, location: &str,
         context: &DocumentContext,
     ) {
         for key in object.keys() {
@@ -1121,10 +1077,7 @@ impl MetadataLoader<'_> {
     }
 
     fn parse_group(
-        &mut self,
-        object: &Object,
-        resource: &str,
-        context: &DocumentContext,
+        &mut self, object: &Object, resource: &str, context: &DocumentContext,
         inherited: &CsvwInheritedProperties,
     ) -> Result<CsvwTableGroup, ProjectionError> {
         check_type(object, "TableGroup", resource)?;
@@ -1186,10 +1139,7 @@ impl MetadataLoader<'_> {
     }
 
     fn parse_table(
-        &mut self,
-        object: &Object,
-        resource: &str,
-        context: &DocumentContext,
+        &mut self, object: &Object, resource: &str, context: &DocumentContext,
         inherited: &CsvwInheritedProperties,
     ) -> Result<CsvwTable, ProjectionError> {
         check_type(object, "Table", resource)?;
@@ -1427,10 +1377,7 @@ fn check_type(object: &Object, expected: &str, resource: &str) -> Result<(), Pro
 }
 
 fn ensure_only_properties(
-    object: &Object,
-    allowed: &[&str],
-    resource: &str,
-    role: &str,
+    object: &Object, allowed: &[&str], resource: &str, role: &str,
 ) -> Result<(), ProjectionError> {
     if let Some(key) = object.keys().find(|key| !allowed.contains(&key.as_str())) {
         return Err(ProjectionError::integrity(format!(
@@ -1442,13 +1389,8 @@ fn ensure_only_properties(
 }
 
 fn parse_context_object(
-    map: &Object,
-    resource: &str,
-    base_iri: &mut BaseIri,
-    language: &mut Option<String>,
-    prefixes: &mut BTreeMap<String, String>,
-    config: &CsvwConfig,
-    warnings: &mut Vec<CsvwWarning>,
+    map: &Object, resource: &str, base_iri: &mut BaseIri, language: &mut Option<String>,
+    prefixes: &mut BTreeMap<String, String>, config: &CsvwConfig, warnings: &mut Vec<CsvwWarning>,
 ) -> Result<(), ProjectionError> {
     for (key, value) in map {
         match key.as_str() {
@@ -1567,10 +1509,7 @@ fn document_base(resource: &str) -> Result<BaseIri, ProjectionError> {
 }
 
 fn parse_optional_id(
-    object: &Object,
-    resource: &str,
-    context: &DocumentContext,
-    location: &str,
+    object: &Object, resource: &str, context: &DocumentContext, location: &str,
     warnings: &mut Vec<CsvwWarning>,
 ) -> Result<Option<String>, ProjectionError> {
     match object.get("@id") {
@@ -1587,9 +1526,7 @@ fn parse_optional_id(
 }
 
 fn parse_id_value(
-    value: &Value,
-    resource: &str,
-    base: &BaseIri,
+    value: &Value, resource: &str, base: &BaseIri,
 ) -> Result<String, ProjectionError> {
     let value = value
         .as_str()
@@ -1603,11 +1540,7 @@ fn parse_id_value(
 }
 
 fn array_property<'a>(
-    object: &'a Object,
-    key: &str,
-    resource: &str,
-    location: &str,
-    warnings: &mut Vec<CsvwWarning>,
+    object: &'a Object, key: &str, resource: &str, location: &str, warnings: &mut Vec<CsvwWarning>,
 ) -> Result<&'a [Value], ProjectionError> {
     let Some(value) = object.get(key) else {
         return Err(
@@ -1628,11 +1561,7 @@ fn array_property<'a>(
 }
 
 fn optional_array_property<'a>(
-    object: &'a Object,
-    key: &str,
-    resource: &str,
-    location: &str,
-    warnings: &mut Vec<CsvwWarning>,
+    object: &'a Object, key: &str, resource: &str, location: &str, warnings: &mut Vec<CsvwWarning>,
 ) -> &'a [Value] {
     let Some(value) = object.get(key) else {
         return &[];
@@ -1664,10 +1593,7 @@ fn empty_schema(inherited: CsvwInheritedProperties, metadata_explicit: bool) -> 
 }
 
 fn atomic_bool(
-    value: Option<&Value>,
-    fallback: bool,
-    resource: &str,
-    location: &str,
+    value: Option<&Value>, fallback: bool, resource: &str, location: &str,
     warnings: &mut Vec<CsvwWarning>,
 ) -> bool {
     match value {
@@ -1681,10 +1607,7 @@ fn atomic_bool(
 }
 
 fn atomic_string(
-    value: Option<&Value>,
-    fallback: &str,
-    resource: &str,
-    location: &str,
+    value: Option<&Value>, fallback: &str, resource: &str, location: &str,
     warnings: &mut Vec<CsvwWarning>,
 ) -> String {
     match value {
@@ -1698,10 +1621,7 @@ fn atomic_string(
 }
 
 fn optional_string(
-    value: Option<&Value>,
-    fallback: Option<String>,
-    resource: &str,
-    location: &str,
+    value: Option<&Value>, fallback: Option<String>, resource: &str, location: &str,
     warnings: &mut Vec<CsvwWarning>,
 ) -> Option<String> {
     match value {
@@ -1716,10 +1636,7 @@ fn optional_string(
 }
 
 fn template_property(
-    value: Option<&Value>,
-    fallback: Option<String>,
-    resource: &str,
-    location: &str,
+    value: Option<&Value>, fallback: Option<String>, resource: &str, location: &str,
     warnings: &mut Vec<CsvwWarning>,
 ) -> Option<String> {
     match value {
@@ -1734,10 +1651,7 @@ fn template_property(
 }
 
 fn language_property(
-    value: Option<&Value>,
-    fallback: Option<String>,
-    resource: &str,
-    location: &str,
+    value: Option<&Value>, fallback: Option<String>, resource: &str, location: &str,
     warnings: &mut Vec<CsvwWarning>,
 ) -> Option<String> {
     match value {
@@ -1764,10 +1678,7 @@ fn language_property(
 }
 
 fn string_or_array(
-    value: Option<&Value>,
-    fallback: &[String],
-    resource: &str,
-    location: &str,
+    value: Option<&Value>, fallback: &[String], resource: &str, location: &str,
     warnings: &mut Vec<CsvwWarning>,
 ) -> Vec<String> {
     match value {
@@ -1790,10 +1701,7 @@ fn string_or_array(
 }
 
 fn nonnegative_integer(
-    value: Option<&Value>,
-    resource: &str,
-    location: &str,
-    warnings: &mut Vec<CsvwWarning>,
+    value: Option<&Value>, resource: &str, location: &str, warnings: &mut Vec<CsvwWarning>,
 ) -> Option<usize> {
     let value = value?;
     if let Some(value) = value.as_u64().and_then(|value| usize::try_from(value).ok()) {
@@ -1805,10 +1713,7 @@ fn nonnegative_integer(
 }
 
 fn single_character(
-    value: Option<&Value>,
-    fallback: char,
-    resource: &str,
-    location: &str,
+    value: Option<&Value>, fallback: char, resource: &str, location: &str,
     warnings: &mut Vec<CsvwWarning>,
 ) -> char {
     let Some(value) = value else {
@@ -1824,10 +1729,7 @@ fn single_character(
 }
 
 fn optional_character(
-    value: Option<&Value>,
-    fallback: Option<char>,
-    resource: &str,
-    location: &str,
+    value: Option<&Value>, fallback: Option<char>, resource: &str, location: &str,
     warnings: &mut Vec<CsvwWarning>,
 ) -> Option<char> {
     match value {
@@ -1851,10 +1753,7 @@ fn exactly_one_character(value: &str) -> Option<char> {
 }
 
 fn parse_trim(
-    value: Option<&Value>,
-    fallback: CsvwTrim,
-    resource: &str,
-    location: &str,
+    value: Option<&Value>, fallback: CsvwTrim, resource: &str, location: &str,
     warnings: &mut Vec<CsvwWarning>,
 ) -> CsvwTrim {
     match value {
@@ -1871,10 +1770,7 @@ fn parse_trim(
 }
 
 fn parse_text_direction(
-    value: Option<&Value>,
-    fallback: Option<CsvwTextDirection>,
-    resource: &str,
-    location: &str,
+    value: Option<&Value>, fallback: Option<CsvwTextDirection>, resource: &str, location: &str,
     warnings: &mut Vec<CsvwWarning>,
 ) -> Option<CsvwTextDirection> {
     match value {
@@ -1900,10 +1796,7 @@ fn parse_text_direction(
 }
 
 fn parse_table_direction(
-    value: Option<&Value>,
-    fallback: CsvwTableDirection,
-    resource: &str,
-    location: &str,
+    value: Option<&Value>, fallback: CsvwTableDirection, resource: &str, location: &str,
     warnings: &mut Vec<CsvwWarning>,
 ) -> CsvwTableDirection {
     match value {
@@ -1925,10 +1818,7 @@ fn parse_table_direction(
 }
 
 fn invalid_warning(
-    resource: &str,
-    location: &str,
-    expected: &str,
-    warnings: &mut Vec<CsvwWarning>,
+    resource: &str, location: &str, expected: &str, warnings: &mut Vec<CsvwWarning>,
 ) {
     warnings.push(CsvwWarning::new(
         CsvwWarningKind::InvalidValue,
@@ -1939,10 +1829,7 @@ fn invalid_warning(
 }
 
 fn natural_language_property(
-    value: Option<&Value>,
-    default_language: Option<&str>,
-    resource: &str,
-    location: &str,
+    value: Option<&Value>, default_language: Option<&str>, resource: &str, location: &str,
     warnings: &mut Vec<CsvwWarning>,
 ) -> CsvwNaturalLanguage {
     let mut result = CsvwNaturalLanguage::new();
@@ -2019,9 +1906,7 @@ fn natural_language_property(
 }
 
 fn name_from_titles(
-    titles: &CsvwNaturalLanguage,
-    default_language: Option<&str>,
-    number: usize,
+    titles: &CsvwNaturalLanguage, default_language: Option<&str>, number: usize,
 ) -> String {
     let title = default_language
         .and_then(|language| titles.get(&identity_fold(language)))
@@ -2088,10 +1973,7 @@ fn valid_uri_template(value: &str) -> bool {
 }
 
 fn column_reference_property(
-    value: Option<&Value>,
-    resource: &str,
-    location: &str,
-    warnings: &mut Vec<CsvwWarning>,
+    value: Option<&Value>, resource: &str, location: &str, warnings: &mut Vec<CsvwWarning>,
 ) -> Vec<String> {
     match value {
         None => Vec::new(),
@@ -2120,10 +2002,7 @@ fn column_reference_property(
 }
 
 fn link_property(
-    value: Option<&Value>,
-    base: &BaseIri,
-    resource: &str,
-    location: &str,
+    value: Option<&Value>, base: &BaseIri, resource: &str, location: &str,
     warnings: &mut Vec<CsvwWarning>,
 ) -> Result<Option<String>, ProjectionError> {
     match value {
@@ -2165,10 +2044,7 @@ fn canonical_language_tag(value: &str) -> Result<String, purrdf_iri::langtag::La
 /// names the production that refused, and this module is not its owner, so it
 /// quotes it rather than paraphrasing.
 fn invalid_language_tag_warning(
-    resource: &str,
-    location: &str,
-    expected: &str,
-    error: purrdf_iri::langtag::LanguageTagError,
+    resource: &str, location: &str, expected: &str, error: purrdf_iri::langtag::LanguageTagError,
     warnings: &mut Vec<CsvwWarning>,
 ) {
     invalid_warning(
@@ -2180,10 +2056,7 @@ fn invalid_language_tag_warning(
 }
 
 fn expand_datatype(
-    name: &str,
-    context: &DocumentContext,
-    config: &CsvwConfig,
-    allow_absolute: bool,
+    name: &str, context: &DocumentContext, config: &CsvwConfig, allow_absolute: bool,
 ) -> Option<String> {
     match name {
         "html" => return Some(config.vocabulary().rdf("HTML")),
@@ -2300,10 +2173,7 @@ fn builtin_datatype_iri(iri: &str, config: &CsvwConfig) -> bool {
 }
 
 fn parse_datatype_format(
-    value: Option<&Value>,
-    resource: &str,
-    location: &str,
-    warnings: &mut Vec<CsvwWarning>,
+    value: Option<&Value>, resource: &str, location: &str, warnings: &mut Vec<CsvwWarning>,
 ) -> Option<CsvwDatatypeFormat> {
     match value {
         None => None,
@@ -2359,12 +2229,8 @@ fn parse_datatype_format(
 }
 
 fn validate_datatype_format(
-    base: &str,
-    format: Option<CsvwDatatypeFormat>,
-    config: &CsvwConfig,
-    resource: &str,
-    location: &str,
-    warnings: &mut Vec<CsvwWarning>,
+    base: &str, format: Option<CsvwDatatypeFormat>, config: &CsvwConfig, resource: &str,
+    location: &str, warnings: &mut Vec<CsvwWarning>,
 ) -> Option<CsvwDatatypeFormat> {
     let local = base.strip_prefix(config.vocabulary().xsd_namespace());
     match (local, format) {
@@ -2447,9 +2313,7 @@ fn length_datatype(base: &str, config: &CsvwConfig) -> bool {
 }
 
 fn validate_facet_combinations(
-    datatype: &CsvwDatatype,
-    resource: &str,
-    config: &CsvwConfig,
+    datatype: &CsvwDatatype, resource: &str, config: &CsvwConfig,
 ) -> Result<(), ProjectionError> {
     if datatype.minimum.is_some()
         && (datatype.min_inclusive.is_some() || datatype.min_exclusive.is_some())
@@ -2555,9 +2419,7 @@ fn facet_datatype(base: &str, config: &CsvwConfig) -> Option<XsdDatatype> {
 }
 
 fn parse_facet_value(
-    value: &Value,
-    datatype: XsdDatatype,
-    resource: &str,
+    value: &Value, datatype: XsdDatatype, resource: &str,
 ) -> Result<purrdf_xsd::XsdValue, ProjectionError> {
     let lexical = match value {
         Value::String(value) => value.clone(),
@@ -2581,10 +2443,7 @@ fn expand_annotation_key(key: &str, context: &CsvwContext) -> Result<String, ()>
 }
 
 fn validate_annotation_value(
-    value: &Value,
-    resource: &str,
-    location: &str,
-    context: &DocumentContext,
+    value: &Value, resource: &str, location: &str, context: &DocumentContext,
 ) -> Result<(), ProjectionError> {
     match value {
         Value::Array(values) => {
@@ -2699,10 +2558,7 @@ fn validate_annotation_value(
 }
 
 fn validate_jsonld_iri(
-    value: &Value,
-    resource: &str,
-    context: &DocumentContext,
-    role: &str,
+    value: &Value, resource: &str, context: &DocumentContext, role: &str,
 ) -> Result<(), ProjectionError> {
     let value = value.as_str().ok_or_else(|| {
         ProjectionError::integrity(format!("CSVW {role} must be a string")).at_path(resource)
@@ -2764,10 +2620,7 @@ fn normalize_annotation_value(value: &Value, context: &DocumentContext) -> Value
 /// Refuse two items of one table group whose `key`s are equal: CSVW requires
 /// table URLs, and column names within a schema, to be unique.
 fn reject_repeated<T>(
-    items: &[T],
-    key: impl Fn(&T) -> &String,
-    what: &str,
-    resource: &str,
+    items: &[T], key: impl Fn(&T) -> &String, what: &str, resource: &str,
 ) -> Result<(), ProjectionError> {
     let mut seen = BTreeSet::new();
     for item in items {
@@ -2977,11 +2830,8 @@ mod percent_frozen_vectors {
     /// `encode` says whether answers are encoded text rather than `=`-prefixed
     /// decodings, and `skipped` names inputs this copy is known to answer differently.
     fn replay(
-        vectors: &str,
-        encode: bool,
-        run: impl Fn(&str) -> Option<String>,
-        skipped: impl Fn(&str) -> bool,
-        plane_skipped: impl Fn(u32) -> bool,
+        vectors: &str, encode: bool, run: impl Fn(&str) -> Option<String>,
+        skipped: impl Fn(&str) -> bool, plane_skipped: impl Fn(u32) -> bool,
     ) {
         let answer = |input: &str| match run(input) {
             Some(value) if encode => encode_str(&value),
@@ -3016,7 +2866,7 @@ mod percent_frozen_vectors {
     #[test]
     fn csvw_name_replays_the_frozen_vectors() {
         replay(
-            include_str!("../../../../lex/tests/vectors/percent_csvw_name_vectors.txt"),
+            include_str!("../../../../stardf-lex/tests/vectors/percent_csvw_name_vectors.txt"),
             true,
             |input| Some(super::column_name_from_title(input)),
             |input| {

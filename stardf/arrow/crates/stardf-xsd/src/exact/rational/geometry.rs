@@ -73,9 +73,7 @@ impl Rat {
     /// # Errors
     /// Refuses destination exhaustion or capacity without allocating a fallback.
     pub fn from_dyadic_integer_in(
-        numerator: &Int,
-        fractional_bits: u32,
-        scratch: &LimbScratch,
+        numerator: &Int, fractional_bits: u32, scratch: &LimbScratch,
     ) -> Result<Self, LimbScratchError> {
         Rational::from_dyadic_integer_in(numerator, fractional_bits, scratch).map(Self::wrap)
     }
@@ -134,8 +132,7 @@ impl Rat {
     /// # Errors
     /// Preserves the first native admission or allocation failure.
     pub fn detached_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         self.value.detached_with_memory(memory).map(Self::wrap)
     }
@@ -145,8 +142,7 @@ impl Rat {
     /// # Errors
     /// Preserves a refused native shared-control allocation.
     pub fn publish_detached(
-        &mut self,
-        original: &purrdf_lex::allocation::SharedOwned<()>,
+        &mut self, original: &purrdf_lex::allocation::SharedOwned<()>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         self.value.publish_detached(original)
     }
@@ -253,9 +249,7 @@ impl Rat {
     /// # Errors
     /// Refuses physical capacity separately from the zero-divisor decision.
     pub fn div_in(
-        &self,
-        other: &Self,
-        scratch: &LimbScratch,
+        &self, other: &Self, scratch: &LimbScratch,
     ) -> Result<Option<Self>, LimbScratchError> {
         self.value
             .div_in(&other.value, scratch)
@@ -310,9 +304,7 @@ impl Rat {
     /// # Errors
     /// Refuses destination exhaustion without an allocating fallback.
     pub fn from_decimal_in(
-        mantissa: &Int,
-        scale: u32,
-        scratch: &LimbScratch,
+        mantissa: &Int, scale: u32, scratch: &LimbScratch,
     ) -> Result<Self, LimbScratchError> {
         Rational::from_decimal_in(mantissa, scale, scratch).map(Self::wrap)
     }
@@ -331,8 +323,7 @@ impl Rat {
     /// # Errors
     /// Refuses physical destination exhaustion without an allocating fallback.
     pub fn from_binary64_in(
-        value: f64,
-        scratch: &LimbScratch,
+        value: f64, scratch: &LimbScratch,
     ) -> Result<Option<Self>, LimbScratchError> {
         Rational::from_binary64_in(value, scratch).map(|value| value.map(Self::wrap))
     }
@@ -371,8 +362,7 @@ impl Rat {
     /// # Errors
     /// Returns the callback's refusal without constructing the value.
     pub fn parse_decimal_admitted<E>(
-        text: &str,
-        admit: &mut impl FnMut(usize, u64) -> Result<(), E>,
+        text: &str, admit: &mut impl FnMut(usize, u64) -> Result<(), E>,
     ) -> Result<Option<Self>, E> {
         Rational::parse_decimal_admitted(text, admit).map(|value| value.map(Self::wrap))
     }
@@ -383,9 +373,7 @@ impl Rat {
     /// Preserves the exact admission or native destination refusal independently
     /// of a malformed spelling, which remains `Ok(None)`.
     pub fn parse_decimal_in<E>(
-        text: &str,
-        admit: &mut impl FnMut(usize, u64) -> Result<(), E>,
-        scratch: &LimbScratch,
+        text: &str, admit: &mut impl FnMut(usize, u64) -> Result<(), E>, scratch: &LimbScratch,
     ) -> Result<Option<Self>, DecimalConstructionError<E>> {
         Rational::parse_decimal_in(text, admit, scratch).map(|value| value.map(Self::wrap))
     }
@@ -403,8 +391,7 @@ impl Rat {
     /// # Errors
     /// Refuses checked destination layout overflow before construction.
     pub fn decimal_scratch_layout(
-        digits: usize,
-        power: u64,
+        digits: usize, power: u64,
     ) -> Result<(usize, usize), LimbScratchError> {
         Rational::decimal_scratch_layout(digits, power)
     }
@@ -475,8 +462,7 @@ impl Rat {
     /// # Errors
     /// Refuses destination exhaustion or capacity without an allocating fallback.
     pub fn finite_decimal_scale_in(
-        &self,
-        scratch: &LimbScratch,
+        &self, scratch: &LimbScratch,
     ) -> Result<Option<u64>, LimbScratchError> {
         self.value.finite_decimal_scale_in(scratch)
     }
@@ -500,9 +486,7 @@ impl Rat {
     /// original rounding and formatting bodies before any output allocation.
     #[must_use]
     pub fn to_decimal_string_with(
-        &self,
-        max_scale: u32,
-        rounding: crate::ieee::ratio::Rounding,
+        &self, max_scale: u32, rounding: crate::ieee::ratio::Rounding,
     ) -> String {
         self.value.to_decimal_string_with(max_scale, rounding)
     }
@@ -520,9 +504,7 @@ impl Rat {
     /// # Errors
     /// Refuses destination exhaustion without an allocating fallback.
     pub fn round_to_scale_in(
-        &self,
-        scale: u32,
-        scratch: &LimbScratch,
+        &self, scale: u32, scratch: &LimbScratch,
     ) -> Result<Int, LimbScratchError> {
         self.value.round_to_scale_in(scale, scratch)
     }
@@ -541,10 +523,7 @@ impl Rat {
     /// # Errors
     /// Refuses destination exhaustion without an allocation fallback.
     pub fn round_to_scale_with_in(
-        &self,
-        scale: u32,
-        rounding: crate::ieee::ratio::Rounding,
-        scratch: &LimbScratch,
+        &self, scale: u32, rounding: crate::ieee::ratio::Rounding, scratch: &LimbScratch,
     ) -> Result<Int, LimbScratchError> {
         self.value.round_to_scale_with_in(scale, rounding, scratch)
     }
@@ -553,9 +532,7 @@ impl Rat {
     /// # Errors
     /// Refuses destination exhaustion without an allocating product fallback.
     pub fn compare_in(
-        &self,
-        other: &Self,
-        scratch: &LimbScratch,
+        &self, other: &Self, scratch: &LimbScratch,
     ) -> Result<Ordering, LimbScratchError> {
         self.value.compare_in(&other.value, scratch)
     }
@@ -572,8 +549,7 @@ impl Rat {
     /// # Errors
     /// Returns checked-bound overflow or the callback's first refusal.
     pub fn compare_admitted<E>(
-        &self,
-        other: &Self,
+        &self, other: &Self,
         run: impl FnMut(ExactArithmeticCost, &mut RationalComparisonBody<'_>) -> Result<Ordering, E>,
     ) -> Result<Ordering, RationalComparisonError<E>> {
         self.value.compare_admitted(&other.value, run)
@@ -584,9 +560,7 @@ impl Rat {
     /// Returns checked-bound overflow or the callback's admission/body refusal;
     /// the supplied body has no heap fallback on arena exhaustion.
     pub fn compare_admitted_in<E>(
-        &self,
-        other: &Self,
-        scratch: &LimbScratch,
+        &self, other: &Self, scratch: &LimbScratch,
         run: impl FnMut(ExactArithmeticCost, &mut RationalComparisonBody<'_>) -> Result<Ordering, E>,
     ) -> Result<Ordering, RationalComparisonError<E>> {
         self.value.compare_admitted_in(&other.value, scratch, run)
@@ -597,8 +571,7 @@ impl Rat {
     /// # Errors
     /// Preserves checked-bound overflow and the original caller/native failure.
     pub fn compare_admitted_by<E>(
-        &self,
-        other: &Self,
+        &self, other: &Self,
         run: impl FnMut(
             ExactArithmeticCost,
             &mut RationalNativeComparisonBody<'_>,
@@ -628,11 +601,7 @@ impl Rat {
     /// # Errors
     /// Refuses destination exhaustion or capacity without an allocating fallback.
     pub fn difference_in_integer_interval_in(
-        &self,
-        other: &Self,
-        lower: i64,
-        upper: i64,
-        scratch: &LimbScratch,
+        &self, other: &Self, lower: i64, upper: i64, scratch: &LimbScratch,
     ) -> Result<bool, LimbScratchError> {
         self.value
             .difference_in_integer_interval_in(&other.value, lower, upper, scratch)
@@ -649,10 +618,7 @@ impl Rat {
     /// # Errors
     /// Refuses destination exhaustion; a zero period returns `Ok(None)`.
     pub fn modulo_integer_in(
-        &self,
-        origin: i64,
-        period: u64,
-        scratch: &LimbScratch,
+        &self, origin: i64, period: u64, scratch: &LimbScratch,
     ) -> Result<Option<Self>, LimbScratchError> {
         self.value
             .modulo_integer_in(origin, period, scratch)

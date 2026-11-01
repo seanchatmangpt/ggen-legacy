@@ -18,8 +18,7 @@ pub(super) trait IntegerAdmission {
     fn diagnostic_number(&mut self, value: &Rat)
     -> Result<crate::context::Retained<Rat>, GeoError>;
     fn exact<T>(
-        &mut self,
-        cost: ExactArithmeticCost,
+        &mut self, cost: ExactArithmeticCost,
         evaluate: impl FnOnce(&crate::numerical::ExactValues<'_>) -> Result<T, GeoError>,
     ) -> Result<T, GeoError>;
 }
@@ -30,25 +29,19 @@ impl IntegerAdmission for PureAssignment {
         Ok(())
     }
     fn diagnostic_number(
-        &mut self,
-        value: &Rat,
+        &mut self, value: &Rat,
     ) -> Result<crate::context::Retained<Rat>, GeoError> {
         crate::numerical::ExactValues::resident().diagnostic_number(value)
     }
     fn exact<T>(
-        &mut self,
-        _: ExactArithmeticCost,
+        &mut self, _: ExactArithmeticCost,
         evaluate: impl FnOnce(&crate::numerical::ExactValues<'_>) -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         evaluate(&crate::numerical::ExactValues::resident())
     }
 }
 pub(super) fn integer<T, A: IntegerAdmission>(
-    admission: &mut A,
-    operation: ExactOperation,
-    operands: &[&Int],
-    count: u64,
-    extra_bits: u64,
+    admission: &mut A, operation: ExactOperation, operands: &[&Int], count: u64, extra_bits: u64,
     evaluate: impl FnOnce(&crate::numerical::ExactValues<'_>) -> Result<T, GeoError>,
 ) -> Result<T, GeoError> {
     if !A::METERED {
@@ -68,10 +61,7 @@ pub(super) fn integer<T, A: IntegerAdmission>(
     admission.exact(cost, evaluate)
 }
 pub(super) fn rational<T, A: IntegerAdmission>(
-    admission: &mut A,
-    operation: ExactOperation,
-    operands: &[&Rat],
-    count: u64,
+    admission: &mut A, operation: ExactOperation, operands: &[&Rat], count: u64,
     evaluate: impl FnOnce(&crate::numerical::ExactValues<'_>) -> Result<T, GeoError>,
 ) -> Result<T, GeoError> {
     if !A::METERED {
@@ -83,10 +73,7 @@ pub(super) fn rational<T, A: IntegerAdmission>(
     admission.exact(cost, evaluate)
 }
 fn round_ratio(
-    numerator: &Int,
-    denominator: &Int,
-    fractional_bits: u32,
-    admission: &mut impl IntegerAdmission,
+    numerator: &Int, denominator: &Int, fractional_bits: u32, admission: &mut impl IntegerAdmission,
 ) -> Result<i128, GeoError> {
     let scaled = integer(
         admission,
@@ -220,8 +207,7 @@ pub(super) fn normal(point: &LonLat) -> Result<[i128; 3], GeoError> {
     normal_admitted(point, &mut PureAssignment)
 }
 pub(super) fn normal_admitted(
-    point: &LonLat,
-    admission: &mut impl IntegerAdmission,
+    point: &LonLat, admission: &mut impl IntegerAdmission,
 ) -> Result<[i128; 3], GeoError> {
     let pole = integer(
         admission,

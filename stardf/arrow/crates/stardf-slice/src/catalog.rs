@@ -384,9 +384,7 @@ fn discover_artifacts(dir: &Path) -> Result<Vec<ArtifactRecord>, SliceError> {
 }
 
 fn collect_artifacts(
-    root: &Path,
-    current: &Path,
-    out: &mut Vec<ArtifactRecord>,
+    root: &Path, current: &Path, out: &mut Vec<ArtifactRecord>,
 ) -> Result<(), SliceError> {
     for entry in std::fs::read_dir(current).map_err(SliceError::from)? {
         let entry = entry.map_err(SliceError::from)?;

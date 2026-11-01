@@ -91,9 +91,7 @@ use purrdf_core::datatype::XSD_STRING;
 /// carries a non-IRI predicate (e.g. a blank node or literal). RDF predicates
 /// must be IRIs; emitting such input would produce structurally invalid SRJ.
 pub fn to_json(
-    result: &SparqlResult,
-    provenance: &ResultProvenance,
-    namespace: Option<&ProvenanceNamespace>,
+    result: &SparqlResult, provenance: &ResultProvenance, namespace: Option<&ProvenanceNamespace>,
 ) -> Result<SerializeOutcome, Error> {
     // Cheap lower-bound pre-size (capacity is unobservable in the output):
     // the fixed skeleton plus a modest per-cell estimate saves the early
@@ -123,9 +121,7 @@ pub fn to_json(
 /// called had ended with `}`; that is now a property of the split rather than a
 /// runtime assertion, so the arm is gone.
 pub(crate) fn write_srj<W: TextOut + ?Sized>(
-    result: &SparqlResult,
-    provenance: &ResultProvenance,
-    namespace: Option<&ProvenanceNamespace>,
+    result: &SparqlResult, provenance: &ResultProvenance, namespace: Option<&ProvenanceNamespace>,
     out: &mut W,
 ) -> Result<(), Error> {
     write_base_body(result, out)?;
@@ -241,9 +237,7 @@ fn write_base_body<W: TextOut + ?Sized>(result: &SparqlResult, out: &mut W) -> R
 /// top-level key it happens to be spelled under (`namespace.prefix()`, a bare
 /// string with no uniqueness guarantee) was never reused by an unrelated caller.
 fn write_provenance_body<W: TextOut + ?Sized>(
-    result: &SparqlResult,
-    provenance: &ResultProvenance,
-    namespace: &ProvenanceNamespace,
+    result: &SparqlResult, provenance: &ResultProvenance, namespace: &ProvenanceNamespace,
     out: &mut W,
 ) {
     out.push_str("{\"namespace\":");
@@ -541,9 +535,7 @@ mod tests {
     }
 
     fn json_text_ns(
-        result: &SparqlResult,
-        prov: &ResultProvenance,
-        namespace: &ProvenanceNamespace,
+        result: &SparqlResult, prov: &ResultProvenance, namespace: &ProvenanceNamespace,
     ) -> String {
         let outcome = to_json(result, prov, Some(namespace)).expect("serialization succeeds");
         String::from_utf8(outcome.bytes).expect("UTF-8 output")

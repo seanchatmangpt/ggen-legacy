@@ -17,8 +17,7 @@ use purrdf_xsd::integer::ExactArithmeticCost;
 /// # Errors
 /// Preserves checked layout, physical allocator, and original admission refusal.
 pub fn literal_from_display_metered(
-    lexical: impl core::fmt::Display,
-    datatype: impl core::fmt::Display,
+    lexical: impl core::fmt::Display, datatype: impl core::fmt::Display,
     observer: Option<&mut dyn MetricWorkObserver>,
 ) -> Result<TermValue, GeoError> {
     let mut progress = crate::context::WorkProgress::integer(observer);
@@ -41,8 +40,7 @@ pub fn literal_from_display_metered(
 /// storage cause instead of constructing an unpriced lexical fallback.
 #[must_use]
 pub fn error_from_display_metered(
-    construct: fn(String) -> GeoError,
-    message: impl core::fmt::Display,
+    construct: fn(String) -> GeoError, message: impl core::fmt::Display,
     observer: Option<&mut dyn MetricWorkObserver>,
 ) -> GeoError {
     let mut progress = crate::context::WorkProgress::integer(observer);
@@ -61,8 +59,7 @@ pub fn error_from_display_metered(
 /// # Errors
 /// Refuses source work/storage exhaustion before a walk frontier can spill.
 pub fn term_source_in_policy(
-    value: &TermValue,
-    policy: crate::ExecutionPolicy,
+    value: &TermValue, policy: crate::ExecutionPolicy,
 ) -> Result<super::ParseReceipt, GeoError> {
     term_source_observed(value, policy, None, None)
 }
@@ -72,9 +69,7 @@ pub fn term_source_in_policy(
 /// # Errors
 /// Preserves the original source, policy and observer refusals.
 pub fn term_source_metered(
-    value: &TermValue,
-    policy: crate::ExecutionPolicy,
-    observer: &mut dyn MetricWorkObserver,
+    value: &TermValue, policy: crate::ExecutionPolicy, observer: &mut dyn MetricWorkObserver,
 ) -> Result<super::ParseReceipt, GeoError> {
     term_source_observed(value, policy, Some(observer), None)
 }
@@ -85,19 +80,15 @@ pub fn term_source_metered(
 /// # Errors
 /// Preserves original source, policy, observer and physical refusals.
 pub fn term_source_with_storage(
-    value: &TermValue,
-    policy: crate::ExecutionPolicy,
-    observer: &mut dyn MetricWorkObserver,
+    value: &TermValue, policy: crate::ExecutionPolicy, observer: &mut dyn MetricWorkObserver,
     storage: &super::CarrierStorage<'_>,
 ) -> Result<super::ParseReceipt, GeoError> {
     term_source_observed(value, policy, Some(observer), Some(storage))
 }
 
 fn term_source_observed(
-    value: &TermValue,
-    policy: crate::ExecutionPolicy,
-    observer: Option<&mut dyn MetricWorkObserver>,
-    storage: Option<&super::CarrierStorage<'_>>,
+    value: &TermValue, policy: crate::ExecutionPolicy,
+    observer: Option<&mut dyn MetricWorkObserver>, storage: Option<&super::CarrierStorage<'_>>,
 ) -> Result<super::ParseReceipt, GeoError> {
     let mut admission = super::ParseAdmission::new(0, policy, observer)?;
     if let Some(storage) = storage {
@@ -108,8 +99,7 @@ fn term_source_observed(
 }
 
 pub(super) fn admit_term_source(
-    value: &TermValue,
-    already_admitted_bytes: u64,
+    value: &TermValue, already_admitted_bytes: u64,
     admission: &mut super::ParseAdmission<'_, '_, '_>,
 ) -> Result<(), GeoError> {
     let mut admitted_heap = already_admitted_bytes;
@@ -199,9 +189,7 @@ impl CarrierFormat {
 /// # Errors
 /// Preserves typed work, memory, cancellation and environment refusals.
 pub fn term_in_context(
-    lexical: String,
-    format: CarrierFormat,
-    context: &mut MetricContext,
+    lexical: String, format: CarrierFormat, context: &mut MetricContext,
 ) -> Result<TermValue, GeoError> {
     term_observed(lexical, format, context, None)
 }
@@ -212,18 +200,14 @@ pub fn term_in_context(
 /// # Errors
 /// Adds observer refusal before allocation and after the pure output body.
 pub fn term_in_context_metered(
-    lexical: String,
-    format: CarrierFormat,
-    context: &mut MetricContext,
+    lexical: String, format: CarrierFormat, context: &mut MetricContext,
     observer: &mut dyn MetricWorkObserver,
 ) -> Result<TermValue, GeoError> {
     term_observed(lexical, format, context, Some(observer))
 }
 
 fn term_observed(
-    lexical: String,
-    format: CarrierFormat,
-    context: &mut MetricContext,
+    lexical: String, format: CarrierFormat, context: &mut MetricContext,
     observer: Option<&mut dyn MetricWorkObserver>,
 ) -> Result<TermValue, GeoError> {
     let datatype = format.datatype();

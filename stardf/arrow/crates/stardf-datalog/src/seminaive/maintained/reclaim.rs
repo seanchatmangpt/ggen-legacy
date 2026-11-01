@@ -43,11 +43,8 @@ impl<I> Default for Frame<I> {
 
 impl<I: TermIdentity> Frame<I> {
     pub(super) fn resume<D: TermDictionary<Id = I>, const N: usize, A: Admission + ?Sized>(
-        &mut self,
-        state: &mut FixpointState<D, N>,
-        delta: &[([I; N], i64)],
-        memory: &mut Memory<'_, A>,
-        mut allow: impl FnMut(usize) -> bool,
+        &mut self, state: &mut FixpointState<D, N>, delta: &[([I; N], i64)],
+        memory: &mut Memory<'_, A>, mut allow: impl FnMut(usize) -> bool,
     ) -> Result<bool, EvalError<D::Error>>
     where
         Arity<N>: StoreShape<N>,

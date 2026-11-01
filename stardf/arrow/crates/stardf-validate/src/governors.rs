@@ -144,8 +144,7 @@ impl std::error::Error for GovernorPartsError {}
 /// [`GovernorPartsError::CeilingWithNoCeiling`] when `parts` asks for no ceiling
 /// and names one.
 pub fn from_parts(
-    parts: &GovernorParts,
-    stop: Option<Arc<dyn StopSignal>>,
+    parts: &GovernorParts, stop: Option<Arc<dyn StopSignal>>,
 ) -> Result<QueryGovernors, GovernorPartsError> {
     let mut governors = if parts.no_ceiling {
         if let Some(&(dimension, _)) = parts.named().first() {
@@ -183,8 +182,7 @@ pub fn from_parts(
 /// [`GovernorPartsError::AnswerCapOnUpdate`] when `parts` names an answer cap,
 /// and otherwise whatever [`from_parts`] refuses.
 pub fn from_update_parts(
-    parts: &GovernorParts,
-    stop: Option<Arc<dyn StopSignal>>,
+    parts: &GovernorParts, stop: Option<Arc<dyn StopSignal>>,
 ) -> Result<QueryGovernors, GovernorPartsError> {
     if parts.max_answers.is_some() {
         return Err(GovernorPartsError::AnswerCapOnUpdate);

@@ -40,10 +40,7 @@ fn parse_cost(query: &str) -> Measurement {
 }
 
 fn nested_stars_with_leaf(
-    depth: usize,
-    leaf: &str,
-    trailing_values: bool,
-    minus: MinusShape,
+    depth: usize, leaf: &str, trailing_values: bool, minus: MinusShape,
 ) -> String {
     let contextual_minus = !matches!(minus, MinusShape::None);
     let shared_minus_name = matches!(

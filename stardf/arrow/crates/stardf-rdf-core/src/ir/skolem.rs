@@ -342,11 +342,7 @@ pub(crate) trait TermMapper {
     /// Map one blank node (identified by its source-dataset id and resolved
     /// `(label, scope)`) to a term interned in `builder`.
     fn map_blank(
-        &mut self,
-        builder: &mut RdfDatasetBuilder,
-        id: TermId,
-        label: &str,
-        scope: BlankScope,
+        &mut self, builder: &mut RdfDatasetBuilder, id: TermId, label: &str, scope: BlankScope,
     ) -> Result<TermId, Self::Error>;
 
     /// Map one IRI to a term interned in `builder`. `iri_only` is `true` when
@@ -354,10 +350,7 @@ pub(crate) trait TermMapper {
     /// slot or a literal's datatype), so a mapper that mints blanks from IRIs
     /// must refuse rather than produce an invalid dataset.
     fn map_iri(
-        &mut self,
-        builder: &mut RdfDatasetBuilder,
-        iri: &str,
-        iri_only: bool,
+        &mut self, builder: &mut RdfDatasetBuilder, iri: &str, iri_only: bool,
     ) -> Result<TermId, Self::Error>;
 
     /// Observe a completed term rewrite without bypassing any positional check.
@@ -381,11 +374,7 @@ pub(crate) trait TermMapper {
 /// triple itself. Every term is reported to [`TermMapper::record_term`] as soon as its
 /// own id exists, and the first refusal ends the walk.
 fn reintern<M: TermMapper>(
-    ds: &RdfDataset,
-    builder: &mut RdfDatasetBuilder,
-    id: TermId,
-    mapper: &mut M,
-    iri_only: bool,
+    ds: &RdfDataset, builder: &mut RdfDatasetBuilder, id: TermId, mapper: &mut M, iri_only: bool,
 ) -> Result<TermId, M::Error> {
     try_fold_nested(
         (id, iri_only),
@@ -447,11 +436,7 @@ fn reintern<M: TermMapper>(
 ///
 /// Any other datatype returns its lexical form unchanged and untouched.
 fn remap_composite_lexical<M: TermMapper>(
-    ds: &RdfDataset,
-    builder: &mut RdfDatasetBuilder,
-    lexical: &str,
-    datatype: &str,
-    mapper: &mut M,
+    ds: &RdfDataset, builder: &mut RdfDatasetBuilder, lexical: &str, datatype: &str, mapper: &mut M,
 ) -> Result<String, M::Error> {
     use std::collections::BTreeMap;
 
@@ -572,8 +557,7 @@ fn element_text(builder: &RdfDatasetBuilder, id: TermId) -> String {
 /// `iri_only` contract): a positionally valid rewrite of a valid dataset
 /// re-freezes without a diagnostic.
 pub(crate) fn rebuild_dataset<M: TermMapper>(
-    ds: &RdfDataset,
-    mapper: &mut M,
+    ds: &RdfDataset, mapper: &mut M,
 ) -> Result<RdfDataset, M::Error> {
     let mut builder = match ds.content_id_scheme() {
         Some(scheme) => {
@@ -641,21 +625,14 @@ impl TermMapper for Skolemizer {
     type Error = SkolemError;
 
     fn map_blank(
-        &mut self,
-        builder: &mut RdfDatasetBuilder,
-        _id: TermId,
-        label: &str,
-        scope: BlankScope,
+        &mut self, builder: &mut RdfDatasetBuilder, _id: TermId, label: &str, scope: BlankScope,
     ) -> Result<TermId, SkolemError> {
         let iri = format!("{}{}", self.prefix, encode_blank(label, scope));
         Ok(builder.intern_iri(&iri)?)
     }
 
     fn map_iri(
-        &mut self,
-        builder: &mut RdfDatasetBuilder,
-        iri: &str,
-        _iri_only: bool,
+        &mut self, builder: &mut RdfDatasetBuilder, iri: &str, _iri_only: bool,
     ) -> Result<TermId, SkolemError> {
         if iri.starts_with(&self.prefix) {
             return Err(SkolemError::ReservedGenid { iri: iri.into() });
@@ -678,20 +655,13 @@ impl TermMapper for Deskolemizer {
     type Error = SkolemError;
 
     fn map_blank(
-        &mut self,
-        builder: &mut RdfDatasetBuilder,
-        _id: TermId,
-        label: &str,
-        scope: BlankScope,
+        &mut self, builder: &mut RdfDatasetBuilder, _id: TermId, label: &str, scope: BlankScope,
     ) -> Result<TermId, SkolemError> {
         Ok(builder.intern_blank(label, scope)?)
     }
 
     fn map_iri(
-        &mut self,
-        builder: &mut RdfDatasetBuilder,
-        iri: &str,
-        iri_only: bool,
+        &mut self, builder: &mut RdfDatasetBuilder, iri: &str, iri_only: bool,
     ) -> Result<TermId, SkolemError> {
         let Some(segment) = iri.strip_prefix(&self.prefix) else {
             // Not under OUR authority's genid space: untouched — including any
@@ -1157,20 +1127,14 @@ mod tests {
             type Error = SkolemError;
 
             fn map_blank(
-                &mut self,
-                builder: &mut RdfDatasetBuilder,
-                _id: TermId,
-                label: &str,
+                &mut self, builder: &mut RdfDatasetBuilder, _id: TermId, label: &str,
                 scope: BlankScope,
             ) -> Result<TermId, Self::Error> {
                 Ok(builder.intern_blank(label, scope).unwrap())
             }
 
             fn map_iri(
-                &mut self,
-                builder: &mut RdfDatasetBuilder,
-                iri: &str,
-                _iri_only: bool,
+                &mut self, builder: &mut RdfDatasetBuilder, iri: &str, _iri_only: bool,
             ) -> Result<TermId, Self::Error> {
                 let mapped = if iri == "http://example.org/second" {
                     "http://example.org/first"
@@ -1377,21 +1341,14 @@ mod term_walk_tests {
         type Error = SkolemError;
 
         fn map_blank(
-            &mut self,
-            builder: &mut RdfDatasetBuilder,
-            id: TermId,
-            label: &str,
-            scope: BlankScope,
+            &mut self, builder: &mut RdfDatasetBuilder, id: TermId, label: &str, scope: BlankScope,
         ) -> Result<TermId, Self::Error> {
             self.0.push(format!("blank {id:?} {label} {scope:?}"));
             Ok(builder.intern_blank(label, scope).unwrap())
         }
 
         fn map_iri(
-            &mut self,
-            builder: &mut RdfDatasetBuilder,
-            iri: &str,
-            iri_only: bool,
+            &mut self, builder: &mut RdfDatasetBuilder, iri: &str, iri_only: bool,
         ) -> Result<TermId, Self::Error> {
             self.0.push(format!("iri {iri} {iri_only}"));
             Ok(builder.intern_iri(iri).unwrap())
@@ -1403,10 +1360,7 @@ mod term_walk_tests {
     }
 
     fn reference_reintern(
-        ds: &RdfDataset,
-        builder: &mut RdfDatasetBuilder,
-        id: TermId,
-        mapper: &mut Logging,
+        ds: &RdfDataset, builder: &mut RdfDatasetBuilder, id: TermId, mapper: &mut Logging,
         iri_only: bool,
     ) -> Result<TermId, SkolemError> {
         let mapped = match ds.resolve(id) {

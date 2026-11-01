@@ -29,8 +29,7 @@ pub(super) fn array(count: usize, element: OutputLayout) -> Result<OutputLayout>
 }
 
 pub(super) fn batch<T>(
-    answers: &[Option<T>],
-    element: impl Fn(&T) -> Result<OutputLayout>,
+    answers: &[Option<T>], element: impl Fn(&T) -> Result<OutputLayout>,
 ) -> Result<OutputLayout> {
     let mut layout = array(answers.len(), OutputLayout::scalar())?;
     for answer in answers {
@@ -187,11 +186,7 @@ impl Fields {
         )
     }
     fn decimal_shape(
-        &mut self,
-        numerator: u64,
-        denominator: u64,
-        places: u32,
-        copies: u64,
+        &mut self, numerator: u64, denominator: u64, places: u32, copies: u64,
     ) -> Result<()> {
         let cost = checked(ExactArithmeticCost::rational_decimal(
             numerator,

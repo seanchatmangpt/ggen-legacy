@@ -177,8 +177,7 @@ impl ServedIndex {
     }
 
     fn with_len_admitted(
-        len: usize,
-        workspace: &crate::WorkspaceCapability,
+        len: usize, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let mut served = AdmittedVec::with_capacity(len, workspace)?;
         let mut exists_uses = AdmittedVec::with_capacity(len, workspace)?;
@@ -280,9 +279,7 @@ impl<I> std::ops::Deref for EndpointFrames<I> {
 
 impl<I: purrdf_core::ViewTermId> EndpointFrames<I> {
     fn push(
-        &mut self,
-        frame: EndpointFrame<I>,
-        workspace: &crate::WorkspaceCapability,
+        &mut self, frame: EndpointFrame<I>, workspace: &crate::WorkspaceCapability,
     ) -> Result<(), EvalError> {
         let required = self
             .frames
@@ -299,8 +296,7 @@ impl<I: purrdf_core::ViewTermId> EndpointFrames<I> {
     }
 
     pub(crate) fn clone_admitted(
-        &self,
-        workspace: &crate::WorkspaceCapability,
+        &self, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let mut copy = Self::default();
         workspace.reserve_vec(&mut copy.frames, &mut copy.allocation, self.len())?;
@@ -339,8 +335,7 @@ enum Scope<'a> {
 /// left operand: those of a `SERVICE ?v` reached only in direct positions (see the module
 /// doc for why only those).
 fn served_endpoint_variables_admitted(
-    right: &GraphPattern,
-    placeholders: Option<&crate::deferred_exists::DeferredMap>,
+    right: &GraphPattern, placeholders: Option<&crate::deferred_exists::DeferredMap>,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<AdmittedVec<Variable>, EvalError> {
     let mut uses = AdmittedVec::new(workspace);
@@ -356,8 +351,7 @@ fn served_endpoint_variables_admitted(
 
 #[cfg(test)]
 fn served_endpoint_variables(
-    right: &GraphPattern,
-    placeholders: Option<&crate::deferred_exists::DeferredMap>,
+    right: &GraphPattern, placeholders: Option<&crate::deferred_exists::DeferredMap>,
 ) -> Vec<Variable> {
     served_endpoint_variables_admitted(right, placeholders, &crate::WorkspaceCapability::default())
         .expect("resident endpoint classification")
@@ -367,10 +361,7 @@ fn served_endpoint_variables(
 
 /// Record one reached `SERVICE ?variable`.
 fn record_admitted(
-    variable: &Variable,
-    direct: bool,
-    scopes: &[Scope<'_>],
-    uses: &mut AdmittedVec<EndpointUse>,
+    variable: &Variable, direct: bool, scopes: &[Scope<'_>], uses: &mut AdmittedVec<EndpointUse>,
 ) -> Result<(), EvalError> {
     let mut direct = direct;
     for scope in scopes {
@@ -433,9 +424,7 @@ enum ClassifyStep<'a> {
 /// The match is wildcard-free so a new algebra variant is a compile error here rather
 /// than a position silently classified.
 fn classify_admitted(
-    pattern: &GraphPattern,
-    direct: bool,
-    uses: &mut AdmittedVec<EndpointUse>,
+    pattern: &GraphPattern, direct: bool, uses: &mut AdmittedVec<EndpointUse>,
     placeholders: Option<&crate::deferred_exists::DeferredMap>,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<(), EvalError> {
@@ -603,9 +592,7 @@ fn classify_admitted(
 
 #[cfg(test)]
 fn classify(
-    pattern: &GraphPattern,
-    direct: bool,
-    uses: &mut Vec<EndpointUse>,
+    pattern: &GraphPattern, direct: bool, uses: &mut Vec<EndpointUse>,
     placeholders: Option<&crate::deferred_exists::DeferredMap>,
 ) {
     let mut owned = AdmittedVec::from_resident(std::mem::take(uses));
@@ -644,8 +631,7 @@ pub(crate) fn mentions_variable_endpoint(pattern: &GraphPattern) -> bool {
 }
 
 pub(crate) fn mentions_variable_endpoint_admitted(
-    pattern: &GraphPattern,
-    workspace: &crate::WorkspaceCapability,
+    pattern: &GraphPattern, workspace: &crate::WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     let mut storage = crate::workspace::LexicalFrame::new(workspace);
     let mut pending = purrdf_lex::walk::WorkList::<ScanNode<'_>, 16>::new();
@@ -721,9 +707,7 @@ pub(crate) fn mentions_variable_endpoint_admitted(
 /// The scan of the tree rooted at `pattern`, of `len` nodes, whose node addresses `ids`
 /// maps to their ids — built with the tree by [`crate::plan::Tree::build`].
 pub(crate) fn scan_admitted(
-    pattern: &GraphPattern,
-    ids: &crate::plan::AddressIndex<'_>,
-    len: usize,
+    pattern: &GraphPattern, ids: &crate::plan::AddressIndex<'_>, len: usize,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<EndpointScan, EvalError> {
     if !mentions_variable_endpoint_admitted(pattern, workspace)? {
@@ -775,8 +759,7 @@ fn indirect(mut summary: Vec<Occurrence>) -> Vec<Occurrence> {
 }
 
 fn merge_admitted(
-    into: &mut AdmittedVec<Occurrence>,
-    from: AdmittedVec<Occurrence>,
+    into: &mut AdmittedVec<Occurrence>, from: AdmittedVec<Occurrence>,
 ) -> Result<(), EvalError> {
     for occurrence in from {
         if let Some(existing) = into
@@ -802,8 +785,7 @@ fn indirect_admitted(mut summary: AdmittedVec<Occurrence>) -> AdmittedVec<Occurr
 }
 
 fn one_occurrence(
-    occurrence: Occurrence,
-    workspace: &crate::WorkspaceCapability,
+    occurrence: Occurrence, workspace: &crate::WorkspaceCapability,
 ) -> Result<AdmittedVec<Occurrence>, EvalError> {
     let mut summary = AdmittedVec::with_capacity(1, workspace)?;
     summary.push_reserved(occurrence);
@@ -812,9 +794,7 @@ fn one_occurrence(
 
 impl ServedIndex {
     fn variables(
-        &self,
-        summary: &[Occurrence],
-        served: bool,
+        &self, summary: &[Occurrence], served: bool,
     ) -> Result<EndpointVariables, EvalError> {
         let count = summary
             .iter()
@@ -838,9 +818,7 @@ impl ServedIndex {
     /// Record `operand`'s served variables.
     #[cfg(test)]
     fn note(
-        &mut self,
-        operand: &GraphPattern,
-        summary: &[Occurrence],
+        &mut self, operand: &GraphPattern, summary: &[Occurrence],
         ids: &crate::plan::AddressIndex<'_>,
     ) {
         self.note_admitted(operand, summary, ids)
@@ -848,9 +826,7 @@ impl ServedIndex {
     }
 
     fn note_admitted(
-        &mut self,
-        operand: &GraphPattern,
-        summary: &[Occurrence],
+        &mut self, operand: &GraphPattern, summary: &[Occurrence],
         ids: &crate::plan::AddressIndex<'_>,
     ) -> Result<(), EvalError> {
         let served = self.variables(summary, true)?;
@@ -869,9 +845,7 @@ impl ServedIndex {
     /// served lists and `EXISTS` uses come out in that order.
     #[cfg(test)]
     fn summarize(
-        &mut self,
-        pattern: &GraphPattern,
-        ids: &crate::plan::AddressIndex<'_>,
+        &mut self, pattern: &GraphPattern, ids: &crate::plan::AddressIndex<'_>,
     ) -> Vec<Occurrence> {
         self.summarize_admitted(pattern, ids)
             .expect("resident endpoint summary")
@@ -880,9 +854,7 @@ impl ServedIndex {
     }
 
     fn summarize_admitted(
-        &mut self,
-        pattern: &GraphPattern,
-        ids: &crate::plan::AddressIndex<'_>,
+        &mut self, pattern: &GraphPattern, ids: &crate::plan::AddressIndex<'_>,
     ) -> Result<AdmittedVec<Occurrence>, EvalError> {
         let mut storage = crate::workspace::LexicalFrame::new(&self.workspace);
         let mut frames = purrdf_lex::walk::WorkList::<SummaryFrame<'_>, 16>::new();
@@ -954,9 +926,7 @@ impl ServedIndex {
     /// The summary of `node` from its parts' summaries, `kids`, in the order
     /// [`summary_parts`] pushed the parts.
     fn combine_admitted(
-        &mut self,
-        node: SummaryNode<'_>,
-        kids: &mut impl Iterator<Item = AdmittedVec<Occurrence>>,
+        &mut self, node: SummaryNode<'_>, kids: &mut impl Iterator<Item = AdmittedVec<Occurrence>>,
         ids: &crate::plan::AddressIndex<'_>,
     ) -> Result<AdmittedVec<Occurrence>, EvalError> {
         let workspace = self.workspace.clone();
@@ -1221,9 +1191,7 @@ fn summary_parts<'a>(node: SummaryNode<'a>, push: &mut impl FnMut(SummaryNode<'a
 /// from the query's index when `operand` is one of its nodes and no deferred `EXISTS`
 /// placeholder is in scope, and analysed here otherwise.
 fn served_in<D: DatasetView + Sync>(
-    operand: &GraphPattern,
-    index: &ServedIndex,
-    ctx: &EvalCtx<'_, D>,
+    operand: &GraphPattern, index: &ServedIndex, ctx: &EvalCtx<'_, D>,
 ) -> Result<EndpointVariables, EvalError> {
     if ctx.deferred_exists.is_none()
         && let Some(served) = ctx
@@ -1242,8 +1210,7 @@ fn served_in<D: DatasetView + Sync>(
 
 /// The innermost frame for `variable`, if any frame names it.
 fn frame_for<'c, I>(
-    frames: &'c [EndpointFrame<I>],
-    variable: &Variable,
+    frames: &'c [EndpointFrame<I>], variable: &Variable,
 ) -> Option<&'c EndpointFrame<I>> {
     frames
         .iter()
@@ -1253,8 +1220,7 @@ fn frame_for<'c, I>(
 
 /// The innermost frame's binding for `variable`, if any frame names it.
 fn binding_for<'c, I>(
-    frames: &'c [EndpointFrame<I>],
-    variable: &Variable,
+    frames: &'c [EndpointFrame<I>], variable: &Variable,
 ) -> Option<&'c EndpointBinding<I>> {
     frame_for(frames, variable).map(|frame| &frame.binding)
 }
@@ -1268,10 +1234,7 @@ fn binding_for<'c, I>(
 ///
 /// Whatever evaluating `right` raises.
 pub(crate) fn eval_right_operand<D: DatasetView + Sync>(
-    left: &SolutionSeq<D::Id>,
-    right: &GraphPattern,
-    role: FrameRole,
-    ctx: &mut EvalCtx<'_, D>,
+    left: &SolutionSeq<D::Id>, right: &GraphPattern, role: FrameRole, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let EndpointScan::Present(index) = ctx.endpoint_scan() else {
         return eval_evaluated(right, ctx);
@@ -1345,9 +1308,7 @@ pub(crate) struct MinusPartition<I> {
 /// enclosing operator already lists endpoints for keeps that list, as in
 /// [`eval_right_operand`].
 pub(crate) fn minus_partitions<D: DatasetView + Sync>(
-    left: &SolutionSeq<D::Id>,
-    right: &GraphPattern,
-    ctx: &EvalCtx<'_, D>,
+    left: &SolutionSeq<D::Id>, right: &GraphPattern, ctx: &EvalCtx<'_, D>,
 ) -> Result<Option<AdmittedVec<MinusPartition<D::Id>>>, EvalError> {
     use std::hash::{Hash, Hasher};
     let EndpointScan::Present(index) = ctx.endpoint_scan() else {
@@ -1431,9 +1392,7 @@ pub(crate) fn minus_partitions<D: DatasetView + Sync>(
 ///
 /// Whatever evaluating `right` raises.
 pub(crate) fn eval_minus_partition<D: DatasetView + Sync>(
-    partition: &MinusPartition<D::Id>,
-    right: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    partition: &MinusPartition<D::Id>, right: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let depth = ctx.endpoint_frames.len();
     let evaluated = (|| {
@@ -1471,9 +1430,7 @@ pub(crate) fn eval_minus_partition<D: DatasetView + Sync>(
 /// clause is refused where it is evaluated, as before — the order changes nothing then —
 /// so this is decided on the patterns alone.
 pub(crate) fn binds_left_endpoints<D: DatasetView + Sync>(
-    left: &GraphPattern,
-    right: &GraphPattern,
-    ctx: &EvalCtx<'_, D>,
+    left: &GraphPattern, right: &GraphPattern, ctx: &EvalCtx<'_, D>,
 ) -> Result<bool, EvalError> {
     let EndpointScan::Present(index) = ctx.endpoint_scan() else {
         return Ok(false);
@@ -1523,9 +1480,7 @@ pub(crate) fn binds_left_endpoints<D: DatasetView + Sync>(
 /// one leaves it unbound and no enclosing operator lists its endpoints
 /// ([`unbound_endpoint`]), `SILENT` or not.
 pub(crate) fn admit_lateral_endpoints<D: DatasetView + Sync>(
-    left: &SolutionSeq<D::Id>,
-    right: &GraphPattern,
-    ctx: &EvalCtx<'_, D>,
+    left: &SolutionSeq<D::Id>, right: &GraphPattern, ctx: &EvalCtx<'_, D>,
 ) -> Result<(), EvalError> {
     if ctx.endpoint_scan().is_absent() || left.rows.is_empty() {
         return Ok(());
@@ -1593,8 +1548,7 @@ pub(crate) fn admit_lateral_endpoints<D: DatasetView + Sync>(
 /// `uses` fills in the order the clauses are written and a right operand of any depth
 /// costs heap and never stack.
 fn lateral_endpoint_uses_admitted(
-    pattern: &GraphPattern,
-    uses: &mut AdmittedVec<(Variable, bool)>,
+    pattern: &GraphPattern, uses: &mut AdmittedVec<(Variable, bool)>,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<(), EvalError> {
     enum Step<'a> {
@@ -1678,8 +1632,7 @@ fn lateral_endpoint_uses(pattern: &GraphPattern, uses: &mut Vec<(Variable, bool)
 ///
 /// Whatever evaluating `inner` raises.
 pub(crate) fn eval_projected<D: DatasetView + Sync>(
-    inner: &GraphPattern,
-    variables: purrdf_sparql_algebra::ProjectionNames<'_>,
+    inner: &GraphPattern, variables: purrdf_sparql_algebra::ProjectionNames<'_>,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     if ctx.endpoint_frames.is_empty() {
@@ -1718,10 +1671,7 @@ pub(crate) fn eval_projected<D: DatasetView + Sync>(
 /// not) and, without `SILENT`, when the clause's variable is bound to a term that is not
 /// an IRI; and whatever each endpoint's invocation raises.
 pub(crate) fn eval_variable_endpoint<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    variable: &Variable,
-    silent: bool,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, variable: &Variable, silent: bool, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     match frame_for(&ctx.endpoint_frames, variable) {
         Some(EndpointFrame {
@@ -1756,8 +1706,7 @@ pub(crate) fn eval_variable_endpoint<D: DatasetView + Sync>(
 /// Preserve the resident refusal variant and the exact original diagnostic law;
 /// bounded execution retains the native text grant through terminal publication.
 fn unsupported_endpoint(
-    message: impl std::fmt::Display,
-    workspace: &crate::WorkspaceCapability,
+    message: impl std::fmt::Display, workspace: &crate::WorkspaceCapability,
 ) -> EvalError {
     if workspace.is_bounded() {
         crate::NativeDiagnostic::error(
@@ -1772,9 +1721,7 @@ fn unsupported_endpoint(
 
 /// The refusal for a `SERVICE ?variable` no solution names an endpoint for.
 pub(crate) fn unbound_endpoint(
-    variable: &Variable,
-    cause: &str,
-    workspace: &crate::WorkspaceCapability,
+    variable: &Variable, cause: &str, workspace: &crate::WorkspaceCapability,
 ) -> EvalError {
     let v = variable.as_str();
     unsupported_endpoint(
@@ -1800,9 +1747,7 @@ pub(crate) fn unbound_endpoint(
 /// IRI: it names no endpoint, so there is nothing to send the request to. Under `SILENT`
 /// the invocation is silenced with this message instead.
 pub(crate) fn non_iri_endpoint(
-    variable: &Variable,
-    value: &TermValue,
-    workspace: &crate::WorkspaceCapability,
+    variable: &Variable, value: &TermValue, workspace: &crate::WorkspaceCapability,
 ) -> EvalError {
     // The canonical spelling uses the sole term-writer body and retains its
     // original grant while the final diagnostic is counted and rendered.
@@ -1875,9 +1820,7 @@ impl purrdf_lex::text_out::TextOut for EndpointText<'_, '_> {
 }
 
 fn term_text_admitted(
-    value: &TermValue,
-    raw_iri: bool,
-    workspace: &crate::WorkspaceCapability,
+    value: &TermValue, raw_iri: bool, workspace: &crate::WorkspaceCapability,
 ) -> Result<purrdf_lex::allocation::SharedText, EvalError> {
     use crate::workspace::LexicalFrame;
     use purrdf_lex::allocation::Memory;
@@ -1923,8 +1866,7 @@ fn term_text_admitted(
 }
 
 fn endpoint_text_admitted(
-    value: &TermValue,
-    workspace: &crate::WorkspaceCapability,
+    value: &TermValue, workspace: &crate::WorkspaceCapability,
 ) -> Result<purrdf_lex::allocation::SharedText, EvalError> {
     term_text_admitted(value, true, workspace)
 }
@@ -1951,12 +1893,8 @@ type EndpointBlocks<I> = AdmittedVec<(SolutionTerm<I>, Block<I>)>;
 /// `⋃ { ?variable ↦ e } ⋈ Invocation(e, node's body)` over `endpoints`, in their order —
 /// with a silenced invocation under a `MINUS` frame contributing Ω0 itself, untagged.
 fn eval_over_endpoints<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    variable: &Variable,
-    endpoints: &[SolutionTerm<D::Id>],
-    silent: bool,
-    role: FrameRole,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, variable: &Variable, endpoints: &[SolutionTerm<D::Id>], silent: bool,
+    role: FrameRole, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let key = VarSchema::from_vars_admitted([variable.clone()], &ctx.growth)?;
     let mut blocks: EndpointBlocks<D::Id> =
@@ -2989,9 +2927,7 @@ pub(crate) mod walk_tests {
 
     /// [`super::classify`], as a recursion over the pattern.
     fn classify_reference<'a>(
-        pattern: &'a GraphPattern,
-        direct: bool,
-        scopes: &mut Vec<Scope<'a>>,
+        pattern: &'a GraphPattern, direct: bool, scopes: &mut Vec<Scope<'a>>,
         uses: &mut Vec<EndpointUse>,
     ) {
         match pattern {
@@ -3096,9 +3032,7 @@ pub(crate) mod walk_tests {
 
     /// The expression half of [`classify_reference`], with no deferred placeholders.
     fn classify_expression_reference<'a>(
-        expr: &'a Expression,
-        scopes: &mut Vec<Scope<'a>>,
-        uses: &mut Vec<EndpointUse>,
+        expr: &'a Expression, scopes: &mut Vec<Scope<'a>>, uses: &mut Vec<EndpointUse>,
     ) {
         crate::governor::soundness::visit_expression_parts(expr, &mut |part| {
             match part {
@@ -3134,9 +3068,7 @@ pub(crate) mod walk_tests {
     impl ServedIndex {
         /// [`Self::summarize`], as a recursion over the pattern.
         fn summarize_reference(
-            &mut self,
-            pattern: &GraphPattern,
-            ids: &crate::plan::AddressIndex<'_>,
+            &mut self, pattern: &GraphPattern, ids: &crate::plan::AddressIndex<'_>,
         ) -> Vec<Occurrence> {
             match pattern {
                 GraphPattern::Bgp { .. }
@@ -3289,9 +3221,7 @@ pub(crate) mod walk_tests {
 
         /// The expression half of [`Self::summarize_reference`].
         fn summarize_expression_reference(
-            &mut self,
-            expr: &Expression,
-            ids: &crate::plan::AddressIndex<'_>,
+            &mut self, expr: &Expression, ids: &crate::plan::AddressIndex<'_>,
         ) -> Vec<Occurrence> {
             let mut summary = Vec::new();
             crate::governor::soundness::visit_expression_parts(expr, &mut |part| {

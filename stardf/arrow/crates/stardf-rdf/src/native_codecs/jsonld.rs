@@ -224,8 +224,7 @@ fn triple_components(g: &SerGraph, term: &SerTerm) -> Option<(usize, usize, usiz
 /// quoted-triple term of a star-heavy graph is linear in the statement layer rather
 /// than quadratic. Same first-row-wins answer as the scan.
 fn triple_components_in(
-    bindings: &ReifierBindings,
-    term: &SerTerm,
+    bindings: &ReifierBindings, term: &SerTerm,
 ) -> Option<(usize, usize, usize)> {
     term.reifier.and_then(|rid| bindings.get(rid))
 }
@@ -250,18 +249,13 @@ pub(super) struct JsonLdCodec;
 
 impl RdfCodec for JsonLdCodec {
     fn parse(
-        &self,
-        text: &str,
-        base: &mut purrdf_iri::BaseScope,
-        _mode: LineParseMode,
+        &self, text: &str, base: &mut purrdf_iri::BaseScope, _mode: LineParseMode,
     ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
         parse_jsonld_into_scope(text.as_bytes(), base)
     }
 
     fn serialize_into(
-        &self,
-        graph: &SerGraph,
-        out: &mut TextSink<'_>,
+        &self, graph: &SerGraph, out: &mut TextSink<'_>,
     ) -> Result<(), RdfDiagnostic> {
         // Emitted through the sink. The carrier writes each node into an `io::Write`,
         // so the only thing that ever made this document whole was the buffer the
@@ -285,19 +279,14 @@ pub(super) struct YamlLdCodec;
 
 impl RdfCodec for YamlLdCodec {
     fn parse(
-        &self,
-        text: &str,
-        base: &mut purrdf_iri::BaseScope,
-        _mode: LineParseMode,
+        &self, text: &str, base: &mut purrdf_iri::BaseScope, _mode: LineParseMode,
     ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
         let json = yamlld_to_jsonld(text.as_bytes())?;
         parse_jsonld_into_scope(json.as_bytes(), base)
     }
 
     fn serialize_into(
-        &self,
-        graph: &SerGraph,
-        out: &mut TextSink<'_>,
+        &self, graph: &SerGraph, out: &mut TextSink<'_>,
     ) -> Result<(), RdfDiagnostic> {
         // Emitted through the sink. The header and body are pushed separately, so
         // the third whole-document copy the concatenation used to make is gone. The
@@ -330,8 +319,7 @@ pub fn serialize_dataset_to_jsonld<D: DatasetView>(dataset: &D) -> Result<String
 /// caller context is applied through the typed RDF 1.2 carrier; derived mode is
 /// implemented by the deterministic dataset analysis layer.
 pub fn serialize_dataset_to_jsonld_with_options<D: DatasetView>(
-    dataset: &D,
-    options: &JsonLdSerializeOptions,
+    dataset: &D, options: &JsonLdSerializeOptions,
 ) -> Result<String, RdfDiagnostic> {
     let graph = build_ser_graph(
         dataset,
@@ -351,8 +339,7 @@ pub fn serialize_dataset_to_jsonld_with_options<D: DatasetView>(
 /// many datasets. It is equivalent to context-mode [`JsonLdSerializeOptions`] without
 /// cloning the compiled context.
 pub fn serialize_dataset_to_jsonld_with_context<D: DatasetView>(
-    dataset: &D,
-    context: &CompiledJsonLdContext,
+    dataset: &D, context: &CompiledJsonLdContext,
 ) -> Result<String, RdfDiagnostic> {
     let graph = build_ser_graph(
         dataset,
@@ -411,9 +398,7 @@ fn serialize_ser_graph(graph: &SerGraph) -> Result<String, RdfDiagnostic> {
 }
 
 pub(crate) fn write_ser_graph_with_options(
-    graph: &SerGraph,
-    options: &JsonLdSerializeOptions,
-    out: &mut TextSink<'_>,
+    graph: &SerGraph, options: &JsonLdSerializeOptions, out: &mut TextSink<'_>,
 ) -> Result<(), RdfDiagnostic> {
     let fold_lists = !matches!(options.mode(), JsonLdSerializeMode::Expanded);
     let carrier = build_carrier(graph, fold_lists)?;
@@ -436,8 +421,7 @@ pub(crate) fn write_ser_graph_with_options(
 
 /// The whole-`String` spelling of [`write_ser_graph_with_options`].
 pub(crate) fn serialize_ser_graph_with_options(
-    graph: &SerGraph,
-    options: &JsonLdSerializeOptions,
+    graph: &SerGraph, options: &JsonLdSerializeOptions,
 ) -> Result<String, RdfDiagnostic> {
     let mut out = TextSink::in_memory();
     write_ser_graph_with_options(graph, options, &mut out)?;
@@ -465,8 +449,7 @@ fn base_only_context(graph: &SerGraph) -> Result<Option<CompiledJsonLdContext>, 
 /// `@base` is the one in force — the composition JSON-LD 1.1 already defines, rather than
 /// a merge invented here.
 fn context_with_base(
-    context: &CompiledJsonLdContext,
-    graph: &SerGraph,
+    context: &CompiledJsonLdContext, graph: &SerGraph,
 ) -> Result<Option<CompiledJsonLdContext>, RdfDiagnostic> {
     let Some(base) = graph.base().filter(|_| context.base_iri().is_none()) else {
         return Ok(None);
@@ -487,17 +470,14 @@ fn base_context_value(iri: &str) -> Value {
 }
 
 fn write_carrier_expanded(
-    carrier: &CarrierDocument,
-    out: &mut TextSink<'_>,
+    carrier: &CarrierDocument, out: &mut TextSink<'_>,
 ) -> Result<(), RdfDiagnostic> {
     let mut bounded = BoundedJsonOutput::new(out, MAX_JSON_LD_DOCUMENT_BYTES);
     carrier.write_expanded_json(&mut bounded, &build_context())
 }
 
 fn write_carrier_compacted(
-    carrier: CarrierDocument,
-    context: &CompiledJsonLdContext,
-    out: &mut TextSink<'_>,
+    carrier: CarrierDocument, context: &CompiledJsonLdContext, out: &mut TextSink<'_>,
 ) -> Result<(), RdfDiagnostic> {
     let mut bounded = BoundedJsonOutput::new(out, MAX_JSON_LD_DOCUMENT_BYTES);
     carrier.write_compacted_json(&mut bounded, context)
@@ -505,8 +485,7 @@ fn write_carrier_compacted(
 
 /// The whole-`String` spelling of [`write_carrier_compacted`].
 fn serialize_carrier_compacted(
-    carrier: CarrierDocument,
-    context: &CompiledJsonLdContext,
+    carrier: CarrierDocument, context: &CompiledJsonLdContext,
 ) -> Result<String, RdfDiagnostic> {
     let mut out = TextSink::in_memory();
     write_carrier_compacted(carrier, context, &mut out)?;
@@ -576,8 +555,7 @@ impl IoWrite for BoundedJsonOutput<'_, '_> {
 /// anchors/aliases, and an explicit `@context`. The header carries a YAML
 /// language-server schema reference.
 pub fn serialize_dataset_to_yamlld<D: DatasetView>(
-    dataset: &D,
-    schema_url: Option<&str>,
+    dataset: &D, schema_url: Option<&str>,
 ) -> Result<String, RdfDiagnostic> {
     let graph = build_ser_graph(
         dataset,
@@ -598,8 +576,7 @@ pub fn serialize_dataset_to_yamlld<D: DatasetView>(
 /// The optional schema reference is carried by [`JsonLdSerializeOptions`] so direct,
 /// generic, CLI, and foreign-language routes all produce the same header bytes.
 pub fn serialize_dataset_to_yamlld_with_options<D: DatasetView>(
-    dataset: &D,
-    options: &JsonLdSerializeOptions,
+    dataset: &D, options: &JsonLdSerializeOptions,
 ) -> Result<String, RdfDiagnostic> {
     let graph = build_ser_graph(
         dataset,
@@ -616,9 +593,7 @@ pub fn serialize_dataset_to_yamlld_with_options<D: DatasetView>(
 /// Serialize a dataset to deterministic YAML-LD through an already compiled,
 /// reusable caller context.
 pub fn serialize_dataset_to_yamlld_with_context<D: DatasetView>(
-    dataset: &D,
-    context: &CompiledJsonLdContext,
-    schema_url: Option<&str>,
+    dataset: &D, context: &CompiledJsonLdContext, schema_url: Option<&str>,
 ) -> Result<String, RdfDiagnostic> {
     let graph = build_ser_graph(
         dataset,
@@ -644,9 +619,7 @@ pub fn serialize_dataset_to_yamlld_with_context<D: DatasetView>(
 /// Serialize an already-materialized [`SerGraph`] to deterministic YAML-LD-star bytes —
 /// the graph-level core shared by [`serialize_dataset_to_yamlld`] and [`YamlLdCodec`].
 fn write_ser_graph_to_yamlld(
-    graph: &SerGraph,
-    schema_url: Option<&str>,
-    out: &mut TextSink<'_>,
+    graph: &SerGraph, schema_url: Option<&str>, out: &mut TextSink<'_>,
 ) -> Result<(), RdfDiagnostic> {
     let carrier = build_carrier(graph, false)?;
     let mut bounded = BoundedJsonOutput::new(out, MAX_JSON_LD_DOCUMENT_BYTES);
@@ -658,9 +631,7 @@ fn write_ser_graph_to_yamlld(
 }
 
 pub(crate) fn write_ser_graph_to_yamlld_with_options(
-    graph: &SerGraph,
-    options: &JsonLdSerializeOptions,
-    out: &mut TextSink<'_>,
+    graph: &SerGraph, options: &JsonLdSerializeOptions, out: &mut TextSink<'_>,
 ) -> Result<(), RdfDiagnostic> {
     let fold_lists = !matches!(options.mode(), JsonLdSerializeMode::Expanded);
     let carrier = build_carrier(graph, fold_lists)?;
@@ -695,8 +666,7 @@ pub(crate) fn write_ser_graph_to_yamlld_with_options(
 /// produce output over `MAX_JSON_LD_DOCUMENT_BYTES` while every individual check
 /// passed.
 fn write_yaml_header<W: IoWrite>(
-    schema_url: Option<&str>,
-    out: &mut W,
+    schema_url: Option<&str>, out: &mut W,
 ) -> Result<(), RdfDiagnostic> {
     let url = schema_url.unwrap_or(BUNDLED_SCHEMA_REF);
     out.write_all(b"# yaml-language-server: $schema=")
@@ -712,8 +682,7 @@ fn write_yaml_header<W: IoWrite>(
 
 /// The whole-`String` spelling of [`write_ser_graph_to_yamlld_with_options`].
 pub(crate) fn serialize_ser_graph_to_yamlld_with_options(
-    graph: &SerGraph,
-    options: &JsonLdSerializeOptions,
+    graph: &SerGraph, options: &JsonLdSerializeOptions,
 ) -> Result<String, RdfDiagnostic> {
     let mut out = TextSink::in_memory();
     write_ser_graph_to_yamlld_with_options(graph, options, &mut out)?;
@@ -988,10 +957,7 @@ impl CarrierFootprint {
     }
 
     fn add_term(
-        &mut self,
-        graph: &SerGraph,
-        term: usize,
-        memo: &mut BTreeMap<usize, Self>,
+        &mut self, graph: &SerGraph, term: usize, memo: &mut BTreeMap<usize, Self>,
         visiting: &mut BTreeSet<usize>,
     ) -> Result<(), RdfDiagnostic> {
         self.add(carrier_term_footprint(graph, term, memo, visiting)?)
@@ -1007,8 +973,7 @@ impl CarrierFootprint {
 /// estimate also reserves space for B-tree/vector/string bookkeeping, the prepared
 /// compaction copy, and the largest transient compacted subtree.
 fn validate_materialized_carrier_budget(
-    graph: &SerGraph,
-    annotations_of: &AnnotationIndex,
+    graph: &SerGraph, annotations_of: &AnnotationIndex,
 ) -> Result<(), RdfDiagnostic> {
     validate_materialized_carrier_budget_with_limits(
         graph,
@@ -1019,10 +984,7 @@ fn validate_materialized_carrier_budget(
 }
 
 fn validate_materialized_carrier_budget_with_limits(
-    graph: &SerGraph,
-    annotations_of: &AnnotationIndex,
-    max_rows: u64,
-    max_working_bytes: ByteLimit,
+    graph: &SerGraph, annotations_of: &AnnotationIndex, max_rows: u64, max_working_bytes: ByteLimit,
 ) -> Result<(), RdfDiagnostic> {
     let mut footprint = CarrierFootprint::default();
     let mut memo = BTreeMap::new();
@@ -1126,11 +1088,8 @@ fn estimated_carrier_working_bytes(footprint: CarrierFootprint) -> Option<u64> {
 }
 
 fn add_annotation_footprint(
-    graph: &SerGraph,
-    annotations: Option<&Vec<(usize, usize)>>,
-    footprint: &mut CarrierFootprint,
-    memo: &mut BTreeMap<usize, CarrierFootprint>,
-    visiting: &mut BTreeSet<usize>,
+    graph: &SerGraph, annotations: Option<&Vec<(usize, usize)>>, footprint: &mut CarrierFootprint,
+    memo: &mut BTreeMap<usize, CarrierFootprint>, visiting: &mut BTreeSet<usize>,
 ) -> Result<(), RdfDiagnostic> {
     let Some(annotations) = annotations else {
         return Ok(());
@@ -1147,9 +1106,7 @@ fn add_annotation_footprint(
 }
 
 fn carrier_term_footprint(
-    graph: &SerGraph,
-    term_id: usize,
-    memo: &mut BTreeMap<usize, CarrierFootprint>,
+    graph: &SerGraph, term_id: usize, memo: &mut BTreeMap<usize, CarrierFootprint>,
     visiting: &mut BTreeSet<usize>,
 ) -> Result<CarrierFootprint, RdfDiagnostic> {
     if let Some(footprint) = memo.get(&term_id) {
@@ -1240,9 +1197,7 @@ fn fold_document_rdf_lists(document: &mut CarrierDocument) {
 }
 
 fn used_in_another_graph(
-    id: &str,
-    current_usage: &FixedHashSet<String>,
-    usage_counts: &FixedHashMap<String, u8>,
+    id: &str, current_usage: &FixedHashSet<String>, usage_counts: &FixedHashMap<String, u8>,
 ) -> bool {
     usage_counts.get(id).copied().unwrap_or_default() > u8::from(current_usage.contains(id))
 }
@@ -1406,10 +1361,8 @@ fn collect_annotation_subjects(node: &CarrierNode, output: &mut BTreeSet<String>
 /// the `rdf:rest` of `rest_of`, when that is where it stands), and every term
 /// inside its triple terms, lists and annotations.
 fn note_list_references<'a>(
-    value: &'a CarrierValue,
-    candidates: &BTreeSet<&'a str>,
-    usages: &mut BTreeMap<&'a str, CellUsage<'a>>,
-    rest_of: Option<&'a str>,
+    value: &'a CarrierValue, candidates: &BTreeSet<&'a str>,
+    usages: &mut BTreeMap<&'a str, CellUsage<'a>>, rest_of: Option<&'a str>,
 ) {
     // The walk yields the value's own term first; every other reference stands
     // somewhere other than an `rdf:rest`.
@@ -1489,10 +1442,7 @@ fn replace_folded_head(term: &mut CarrierTerm, lists: &BTreeMap<String, Vec<Carr
 
 /// Build one node object for a subject from its predicate/object rows.
 fn build_node(
-    graph: &SerGraph,
-    subject: usize,
-    pos: Vec<(usize, usize)>,
-    g: Option<usize>,
+    graph: &SerGraph, subject: usize, pos: Vec<(usize, usize)>, g: Option<usize>,
     indexes: &Indexes<'_>,
 ) -> Result<CarrierNode, RdfDiagnostic> {
     let subject_term = &graph.terms[subject];
@@ -1522,13 +1472,8 @@ fn build_node(
 /// Build a value object for a quad object, attaching `@annotation` when the
 /// base triple is reified.
 fn build_value_object(
-    graph: &SerGraph,
-    subject: usize,
-    predicate: usize,
-    object: usize,
-    g: Option<usize>,
-    object_term: &SerTerm,
-    indexes: &Indexes<'_>,
+    graph: &SerGraph, subject: usize, predicate: usize, object: usize, g: Option<usize>,
+    object_term: &SerTerm, indexes: &Indexes<'_>,
 ) -> Result<CarrierValue, RdfDiagnostic> {
     let term = if object_term.kind == SerTermKind::Triple {
         build_triple_term_value(graph, indexes.bindings, object_term)?
@@ -1550,9 +1495,7 @@ fn build_value_object(
 /// Render a triple term as its distinguishable JSON-LD-star `@triple` object, resolving
 /// its `(s,p,o)` components through the term's own self-reifier binding.
 fn build_triple_term_value(
-    graph: &SerGraph,
-    bindings: &ReifierBindings,
-    term: &SerTerm,
+    graph: &SerGraph, bindings: &ReifierBindings, term: &SerTerm,
 ) -> Result<CarrierTerm, RdfDiagnostic> {
     let (s, p, o) = triple_components_in(bindings, term)
         .ok_or_else(|| parse("triple term with no components".to_string()))?;
@@ -1567,11 +1510,7 @@ fn build_triple_term_value(
 /// through the same encoding (nested triple terms work), and `@predicate` is the full
 /// source IRI. Keys are `BTreeMap`-ordered, so the output is byte-deterministic.
 fn build_nested_triple_node(
-    graph: &SerGraph,
-    bindings: &ReifierBindings,
-    s: usize,
-    p: usize,
-    o: usize,
+    graph: &SerGraph, bindings: &ReifierBindings, s: usize, p: usize, o: usize,
 ) -> Result<CarrierTerm, RdfDiagnostic> {
     let subject = encode_triple_component(graph, bindings, s)?;
     let object = encode_triple_component(graph, bindings, o)?;
@@ -1599,9 +1538,7 @@ fn build_nested_triple_node(
 /// that takes a caller-supplied graph (`crate::gts::gts_to_ser`) proves it, refusing a
 /// self-reaching table with `gts-self-reaching-term`. See `ser_model::write_term`.
 fn encode_triple_component(
-    graph: &SerGraph,
-    bindings: &ReifierBindings,
-    idx: usize,
+    graph: &SerGraph, bindings: &ReifierBindings, idx: usize,
 ) -> Result<CarrierTerm, RdfDiagnostic> {
     let term = &graph.terms[idx];
     if term.kind == SerTermKind::Triple {
@@ -1649,10 +1586,7 @@ fn term_to_value(graph: &SerGraph, term: &SerTerm) -> Result<CarrierTerm, RdfDia
 
 /// Build the annotation node object for a single reifier.
 fn build_annotation_node(
-    graph: &SerGraph,
-    reifier_id: usize,
-    g: Option<usize>,
-    indexes: &Indexes<'_>,
+    graph: &SerGraph, reifier_id: usize, g: Option<usize>, indexes: &Indexes<'_>,
 ) -> Result<CarrierNode, RdfDiagnostic> {
     let reifier_term = &graph.terms[reifier_id];
     let mut node = CarrierNode::new(term_id(reifier_term)?);
@@ -1681,12 +1615,7 @@ fn build_annotation_node(
 /// `rdf:reifies` row folds back into the RDF-1.2 statement layer with its annotations, so
 /// the reifier round-trips instead of being dropped for want of a base value object.
 fn build_orphan_reifier_node(
-    graph: &SerGraph,
-    reifier_id: usize,
-    s: usize,
-    p: usize,
-    o: usize,
-    g: Option<usize>,
+    graph: &SerGraph, reifier_id: usize, s: usize, p: usize, o: usize, g: Option<usize>,
     indexes: &Indexes<'_>,
 ) -> Result<CarrierNode, RdfDiagnostic> {
     let mut node = build_annotation_node(graph, reifier_id, g, indexes)?;
@@ -1706,9 +1635,7 @@ fn build_orphan_reifier_node(
 
 /// Convert a term to a value object without recursive triple-term handling.
 fn simple_term_value(
-    graph: &SerGraph,
-    bindings: &ReifierBindings,
-    term: &SerTerm,
+    graph: &SerGraph, bindings: &ReifierBindings, term: &SerTerm,
 ) -> Result<CarrierTerm, RdfDiagnostic> {
     if term.kind == SerTermKind::Triple {
         build_triple_term_value(graph, bindings, term)
@@ -1804,8 +1731,7 @@ fn scope_base(scope: &purrdf_iri::BaseScope) -> Option<&str> {
 /// cannot apply and §5.1.4 does. Deriving a retrieval IRI is the CLI's job, and the CLI
 /// hands the result in through this very parameter.
 pub fn parse_jsonld(
-    json_bytes: &[u8],
-    base: Option<&str>,
+    json_bytes: &[u8], base: Option<&str>,
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
     let mut scope = super::parse::base_scope_for(base)?;
     parse_jsonld_into_scope(json_bytes, &mut scope)
@@ -1820,8 +1746,7 @@ pub fn parse_jsonld(
 /// replace the caller's, or (`null`) clear it, and all three now reach the caller instead
 /// of dying inside the expander.
 pub(super) fn parse_jsonld_into_scope(
-    json_bytes: &[u8],
-    base: &mut purrdf_iri::BaseScope,
+    json_bytes: &[u8], base: &mut purrdf_iri::BaseScope,
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
     let context = CompiledJsonLdContext::compile(&Value::Object(Object::new()), scope_base(base))?;
     let value = context::parse_document(json_bytes)?;
@@ -1857,8 +1782,7 @@ pub(super) fn parse_jsonld_into_scope(
 /// the inverse surface for registry-backed configured serialization; no network lookup
 /// is attempted.
 pub fn parse_jsonld_with_context(
-    json_bytes: &[u8],
-    context: &CompiledJsonLdContext,
+    json_bytes: &[u8], context: &CompiledJsonLdContext,
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
     let value = context::parse_document(json_bytes)?;
     expand_to_dataset(value, context)
@@ -1869,8 +1793,7 @@ pub fn parse_jsonld_with_context(
 /// The single expansion body both public parse entry points and the codec seam share, so
 /// the base-reporting path cannot expand a document differently from the base-less one.
 fn expand_to_dataset(
-    value: Value,
-    context: &CompiledJsonLdContext,
+    value: Value, context: &CompiledJsonLdContext,
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
     let carrier = expand::expand_document(value, context)?;
     expand::carrier_to_dataset(carrier)
@@ -1913,9 +1836,7 @@ fn validated_iri_term(iri: &str) -> Result<RdfTerm, RdfDiagnostic> {
 /// is a downcast of CALLER JSON-LD, so it resolves relative references exactly as the
 /// same bytes would through any other JSON-LD ingress.
 pub fn jsonld_to_statement_metadata_nquads(
-    json_bytes: &[u8],
-    base: Option<&str>,
-    vocab: Option<&StatementMetadataVocab<'_>>,
+    json_bytes: &[u8], base: Option<&str>, vocab: Option<&StatementMetadataVocab<'_>>,
 ) -> Result<String, RdfDiagnostic> {
     let dataset = parse_jsonld(json_bytes, base)?;
 
@@ -2040,9 +1961,7 @@ pub fn yamlld_to_jsonld(yaml_bytes: &[u8]) -> Result<String, RdfDiagnostic> {
 /// up-projection lane. As with the JSON-LD-star downcast there is NO default
 /// vocabulary: star input hard-fails when `vocab` is `None`.
 pub fn yamlld_to_statement_metadata_nquads(
-    yaml_bytes: &[u8],
-    base: Option<&str>,
-    vocab: Option<&StatementMetadataVocab<'_>>,
+    yaml_bytes: &[u8], base: Option<&str>, vocab: Option<&StatementMetadataVocab<'_>>,
 ) -> Result<String, RdfDiagnostic> {
     jsonld_to_statement_metadata_nquads(yamlld_to_jsonld(yaml_bytes)?.as_bytes(), base, vocab)
 }

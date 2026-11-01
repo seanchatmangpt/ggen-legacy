@@ -213,10 +213,7 @@ fn reg_name(s: &str, base_off: usize, mode: Mode) -> Result<()> {
 /// Validate an authority's `host` (`s`, found at byte `base_off` of the whole
 /// reference).
 pub(crate) fn validate_host_with(
-    s: &str,
-    base_off: usize,
-    mode: Mode,
-    diagnostics: Diagnostics<'_>,
+    s: &str, base_off: usize, mode: Mode, diagnostics: Diagnostics<'_>,
 ) -> core::result::Result<(), IriReadError> {
     if let Some(inner) = s.strip_prefix('[').and_then(|r| r.strip_suffix(']')) {
         // IP-literal = "[" ( IPv6address / IPvFuture ) "]". Character
@@ -231,9 +228,7 @@ pub(crate) fn validate_host_with(
 /// Validate an IP-literal's contents (`inner`, found at byte `base_off`)
 /// without normalizing its spelling.
 fn validate_ip_literal_with(
-    inner: &str,
-    base_off: usize,
-    diagnostics: Diagnostics<'_>,
+    inner: &str, base_off: usize, diagnostics: Diagnostics<'_>,
 ) -> core::result::Result<(), IriReadError> {
     if matches!(inner.as_bytes().first(), Some(b'v' | b'V')) {
         // IPvFuture = "v" 1*HEXDIG "." 1*( unreserved / sub-delims / ":" ).

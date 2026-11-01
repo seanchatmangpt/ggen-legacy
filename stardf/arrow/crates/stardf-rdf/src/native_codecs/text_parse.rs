@@ -212,12 +212,8 @@ pub(super) enum LineParseMode {
 /// and left in force at its END (see [`document_statements`]); N-Triples / N-Quads have
 /// no prefix directive and leave it untouched.
 pub(super) fn parse_to_gts_graph_mode<S: SpanCollector>(
-    format: NativeRdfFormat,
-    text: &str,
-    base: &mut BaseScope,
-    mode: LineParseMode,
-    collector: &mut S,
-    prefixes: &mut Vec<(String, String)>,
+    format: NativeRdfFormat, text: &str, base: &mut BaseScope, mode: LineParseMode,
+    collector: &mut S, prefixes: &mut Vec<(String, String)>,
 ) -> Result<SerGraph, RdfDiagnostic> {
     if text.len() >= u32::MAX as usize {
         for (line, raw) in physical_lines(text).enumerate() {
@@ -276,12 +272,8 @@ pub(super) fn parse_to_gts_graph_mode<S: SpanCollector>(
 /// ([`ParseFailure`](super::parse::ParseFailure)); a caller that only wants the
 /// dataset discards them with the error.
 fn document_statements<S: SpanCollector>(
-    text: &str,
-    base: &mut BaseScope,
-    allow_named_graphs: bool,
-    collector: &mut S,
-    prefixes: &mut Vec<(String, String)>,
-    named_graphs: &mut Vec<Node>,
+    text: &str, base: &mut BaseScope, allow_named_graphs: bool, collector: &mut S,
+    prefixes: &mut Vec<(String, String)>, named_graphs: &mut Vec<Node>,
 ) -> Result<Vec<Statement>, RdfDiagnostic> {
     let mut parser = DocParser::new(text, base.clone(), allow_named_graphs, collector);
     let statements = parser.parse();
@@ -342,11 +334,7 @@ const PARALLEL_MAX_CHUNK_BYTES: usize = 4 << 20;
 /// order and assigns the same term ids (interning stays the sequential serialization
 /// point). The determinism-proof tests below assert this end to end.
 fn parse_lines<S: SpanCollector>(
-    text: &str,
-    allow_graph: bool,
-    mode: LineParseMode,
-    base: &BaseScope,
-    collector: &mut S,
+    text: &str, allow_graph: bool, mode: LineParseMode, base: &BaseScope, collector: &mut S,
 ) -> Result<Vec<Statement>, RdfDiagnostic> {
     if mode == LineParseMode::Auto && text.len() >= PARALLEL_MIN_BYTES {
         // The parallel path is `NoSpans`-only (each chunk gets its own ZST collector);
@@ -529,9 +517,7 @@ fn split_line_chunks(text: &str, target_bytes: usize) -> Vec<&str> {
 /// so the message is byte-identical to the sequential path's. Successful chunks
 /// concatenate in order into the exact statement list the sequential pass yields.
 fn parse_lines_parallel(
-    text: &str,
-    allow_graph: bool,
-    base: &BaseScope,
+    text: &str, allow_graph: bool, base: &BaseScope,
 ) -> Result<Vec<Statement>, RdfDiagnostic> {
     let threads = rayon::current_num_threads().max(1);
     let target = (text.len() / (threads * 4).max(1))
@@ -542,10 +528,7 @@ fn parse_lines_parallel(
 /// [`parse_lines_parallel`] with an explicit chunk size (tests use a tiny size to
 /// force many chunks over small fixtures; chunk geometry never changes the output).
 fn parse_lines_parallel_with_chunk_size(
-    text: &str,
-    allow_graph: bool,
-    target_bytes: usize,
-    base: &BaseScope,
+    text: &str, allow_graph: bool, target_bytes: usize, base: &BaseScope,
 ) -> Result<Vec<Statement>, RdfDiagnostic> {
     let chunks = split_line_chunks(text, target_bytes);
     // Each chunk is a contiguous line-aligned slice; chunk 0 begins at document
@@ -592,11 +575,7 @@ fn parse_lines_parallel_with_chunk_size(
 /// `<<( s p o )>>` quoted-triple TERM is admitted in subject (NQ only) and object
 /// position; IRIREFs are UCHAR-decoded (the test060 fix).
 fn parse_lines_sequential<S: SpanCollector>(
-    text: &str,
-    allow_graph: bool,
-    base_line: u64,
-    base: &BaseScope,
-    collector: &mut S,
+    text: &str, allow_graph: bool, base_line: u64, base: &BaseScope, collector: &mut S,
 ) -> Result<Vec<Statement>, RdfDiagnostic> {
     let mut statements = Vec::new();
     let mut lineno = base_line;
@@ -786,10 +765,7 @@ fn check_line_columns(raw: &str, line: u64) -> Result<(), RdfDiagnostic> {
 }
 
 fn parse_one_line(
-    raw: &str,
-    allow_graph: bool,
-    lineno: u64,
-    base: &BaseScope,
+    raw: &str, allow_graph: bool, lineno: u64, base: &BaseScope,
 ) -> Result<Option<Statement>, RdfDiagnostic> {
     check_line_columns(raw, lineno)?;
     let line = terminals::trim_ws(raw);
@@ -1121,9 +1097,7 @@ impl<'a> TokenCursor<'a> {
 /// the RDF 1.2 base-direction marker; any other `--`-suffix is rejected, mirroring
 /// purrdf-gts.
 fn split_lang_direction(
-    raw: &str,
-    line_no: u64,
-    column: u32,
+    raw: &str, line_no: u64, column: u32,
 ) -> Result<(String, Option<String>), RdfDiagnostic> {
     if let Some((base, dir)) = raw.rsplit_once("--") {
         if crate::RdfTextDirection::from_str_token(dir).is_some() && !base.is_empty() {
@@ -1183,10 +1157,7 @@ fn split_lang_direction(
 /// threaded all the way down to this frame. The message now names the base and says it
 /// is deliberately not applied here, which is the fact the user needs.
 fn absolute_iri_by_grammar(
-    value: &str,
-    base: &BaseScope,
-    line_no: u64,
-    column: u32,
+    value: &str, base: &BaseScope, line_no: u64, column: u32,
 ) -> Result<Iri, RdfDiagnostic> {
     base.resolve_absolute_only(value)
         .map_err(|e| iri_err_at(&e, line_no, column))
@@ -1299,11 +1270,7 @@ fn validate_object(node: &Node, line_no: u64, column: u32) -> Result<(), RdfDiag
 }
 
 fn validate_triple(
-    s: &Node,
-    p: &Node,
-    o: &Node,
-    line_no: u64,
-    column: u32,
+    s: &Node, p: &Node, o: &Node, line_no: u64, column: u32,
 ) -> Result<(), RdfDiagnostic> {
     validate_subject(s, line_no, column)?;
     validate_predicate(p, line_no, column)?;
@@ -1760,9 +1727,7 @@ impl<'a, 'c, S: SpanCollector> DocParser<'a, 'c, S> {
     /// extra triples that cannot live inside a triple term, so they are rejected
     /// (W3C-conformant); an empty `[]` / `()` is a plain term and is allowed.
     fn quoted_component(
-        &mut self,
-        graph: Option<&Node>,
-        depth: usize,
+        &mut self, graph: Option<&Node>, depth: usize,
     ) -> Result<Node, RdfDiagnostic> {
         match self.peek() {
             Some(Token::LBracket) => {
@@ -1798,9 +1763,7 @@ impl<'a, 'c, S: SpanCollector> DocParser<'a, 'c, S> {
     }
 
     fn parenthesized_quoted_triple(
-        &mut self,
-        graph: Option<&Node>,
-        depth: usize,
+        &mut self, graph: Option<&Node>, depth: usize,
     ) -> Result<Node, RdfDiagnostic> {
         self.expect(&Token::TripleOpen)?;
         self.expect(&Token::LParen)?;
@@ -1817,9 +1780,7 @@ impl<'a, 'c, S: SpanCollector> DocParser<'a, 'c, S> {
     /// serialization). Always a [`Node::Triple`] — never a minted reifier — because the
     /// object of `rdf:reifies` denotes the reified triple itself.
     fn reifies_object_triple_term(
-        &mut self,
-        graph: Option<&Node>,
-        depth: usize,
+        &mut self, graph: Option<&Node>, depth: usize,
     ) -> Result<Node, RdfDiagnostic> {
         self.expect(&Token::TripleOpen)?;
         let parenthesized = self.eat(&Token::LParen);
@@ -1839,9 +1800,7 @@ impl<'a, 'c, S: SpanCollector> DocParser<'a, 'c, S> {
     /// blank node is minted. The inner triple is NOT independently asserted here — the
     /// reifiedTriple denotes its reifier, so only the `rdf:reifies` statement is emitted.
     fn reifying_triple(
-        &mut self,
-        graph: Option<&Node>,
-        depth: usize,
+        &mut self, graph: Option<&Node>, depth: usize,
     ) -> Result<Node, RdfDiagnostic> {
         self.expect(&Token::TripleOpen)?;
         let s = self.quoted_component(graph, depth)?;
@@ -1876,9 +1835,7 @@ impl<'a, 'c, S: SpanCollector> DocParser<'a, 'c, S> {
     /// two cases — so the refusal belongs here, where the following tokens are
     /// known.
     fn blank_node_property_list(
-        &mut self,
-        graph: Option<&Node>,
-        depth: usize,
+        &mut self, graph: Option<&Node>, depth: usize,
     ) -> Result<Node, RdfDiagnostic> {
         // `[]` lexes as a single `Anon`; `[ … ]` opens with `LBracket`.
         if self.eat(&Token::Anon) {
@@ -2037,9 +1994,7 @@ impl<'a, 'c, S: SpanCollector> DocParser<'a, 'c, S> {
     }
 
     fn statement_after_subject(
-        &mut self,
-        subject: &Node,
-        graph: Option<&Node>,
+        &mut self, subject: &Node, graph: Option<&Node>,
     ) -> Result<(), RdfDiagnostic> {
         // A self-asserting subject (reifying triple or blank-node property list) may
         // end immediately at `.`; a plain subject still needs a predicate-object list.
@@ -2050,9 +2005,7 @@ impl<'a, 'c, S: SpanCollector> DocParser<'a, 'c, S> {
     }
 
     fn statement_after_subject_in_graph(
-        &mut self,
-        subject: &Node,
-        graph: Option<&Node>,
+        &mut self, subject: &Node, graph: Option<&Node>,
     ) -> Result<(), RdfDiagnostic> {
         if !(self.at(&Token::Dot) || self.at(&Token::RBrace)) {
             self.predicate_object_list(subject, graph, 0)?;
@@ -2077,10 +2030,7 @@ impl<'a, 'c, S: SpanCollector> DocParser<'a, 'c, S> {
     /// through a nested [`term`](Self::term), so counting only terms would leave it
     /// unbounded.
     fn predicate_object_list(
-        &mut self,
-        subject: &Node,
-        graph: Option<&Node>,
-        depth: usize,
+        &mut self, subject: &Node, graph: Option<&Node>, depth: usize,
     ) -> Result<(), RdfDiagnostic> {
         let depth = self.descend(depth)?;
         loop {
@@ -2138,12 +2088,7 @@ impl<'a, 'c, S: SpanCollector> DocParser<'a, 'c, S> {
     /// consumes at most the one pending reifier, so a second block mints fresh.
     /// `~` is `Token::Tilde`; `{|`/`|}` are the `LBrace Pipe` / `Pipe RBrace` pairs.
     fn maybe_reify_and_annotate(
-        &mut self,
-        s: &Node,
-        p: &Node,
-        o: &Node,
-        graph: Option<&Node>,
-        depth: usize,
+        &mut self, s: &Node, p: &Node, o: &Node, graph: Option<&Node>, depth: usize,
     ) -> Result<(), RdfDiagnostic> {
         let mut pending: Option<Node> = None;
         loop {
@@ -2249,11 +2194,7 @@ impl<'a, 'c, S: SpanCollector> DocParser<'a, 'c, S> {
     /// BEFORE it consumed the token (the token cursor has already advanced by the
     /// time we get here, so `self.loc()` would report the following token).
     fn resolve_prefixed(
-        &self,
-        prefix: &str,
-        local: &str,
-        line: u64,
-        col: u32,
+        &self, prefix: &str, local: &str, line: u64, col: u32,
     ) -> Result<Node, RdfDiagnostic> {
         match self.prefixes.get(prefix) {
             Some(namespace) => {
@@ -2370,10 +2311,7 @@ fn deterministic_label(id: usize) -> String {
 /// hash-iteration order — so the fixed-key `FixedHasher` just keeps SipHash off the hot
 /// interning path (same pattern as `purrdf-core`'s `ir::builder::hash_of`).
 fn hash_atom(
-    kind: SerTermKind,
-    value: &str,
-    lang: Option<&str>,
-    direction: Option<&str>,
+    kind: SerTermKind, value: &str, lang: Option<&str>, direction: Option<&str>,
     datatype: Option<usize>,
 ) -> u64 {
     use std::hash::{BuildHasher, Hash, Hasher};
@@ -2411,11 +2349,7 @@ fn hash_stored_atom(term: &SerTerm) -> u64 {
 /// datatype's interned ID rather than its string: equal datatype strings always
 /// intern to the same id (and vice versa), so equality is unchanged.
 fn atom_matches(
-    term: &SerTerm,
-    kind: SerTermKind,
-    value: &str,
-    lang: Option<&str>,
-    direction: Option<&str>,
+    term: &SerTerm, kind: SerTermKind, value: &str, lang: Option<&str>, direction: Option<&str>,
     datatype: Option<usize>,
 ) -> bool {
     term.kind == kind
@@ -2452,11 +2386,7 @@ impl Interner {
     /// Insert-or-find an atom row by its borrowed components, storing the strings
     /// exactly once (on first sight) in `terms`.
     fn intern_atom(
-        &mut self,
-        kind: SerTermKind,
-        value: &str,
-        lang: Option<&str>,
-        direction: Option<&str>,
+        &mut self, kind: SerTermKind, value: &str, lang: Option<&str>, direction: Option<&str>,
         datatype: Option<usize>,
     ) -> usize {
         let Self { atoms, terms, .. } = self;
@@ -2626,8 +2556,7 @@ impl GraphAccumulator {
 /// `from_nquads`'s `build_gts` (the `rdf:reifies` statement-layer shorthand,
 /// first-seen interning, statement-order quads, encounter-order reifiers).
 fn build_gts_graph(
-    statements: &[Statement],
-    named_graphs: &[Node],
+    statements: &[Statement], named_graphs: &[Node],
 ) -> Result<SerGraph, RdfDiagnostic> {
     let mut accumulator = GraphAccumulator::new();
     for nodes in statements {

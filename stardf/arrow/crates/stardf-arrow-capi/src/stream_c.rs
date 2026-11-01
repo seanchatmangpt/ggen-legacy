@@ -22,21 +22,23 @@
 #![allow(dead_code)]
 
 use crate::StardfBatch;
-use avec_arrow::c_abi::{ArrowArray, ArrowSchema};
 use core::ffi::{c_char, c_void};
 use std::alloc::Layout; // LANE 10: ownership-tag layout
 use std::boxed::Box;
 
+// LANE 09 decouple (2026-10-31): was `use cgap_arrow::c_abi::{ArrowArray,
+// ArrowSchema}` — the callbacks now speak stardf-arrow-core's spec-fixed
+// stream struct shapes directly (crate root re-exports the same types), so
+// the cgap git crate left this file entirely.
 use stardf_arrow_core::stream as core_stream;
+use stardf_arrow_core::stream::{ArrowArray, ArrowSchema};
 
-// The capi callbacks speak the avec-arrow struct shapes; the core stream
-// speaks its own identical-layout mirror. Layout equality is a build-time
-// fact here, so the pointer casts below are ABI-safe, not a hope.
-const _: () =
-    assert!(core::mem::size_of::<ArrowArray>() == core::mem::size_of::<core_stream::ArrowArray>());
-const _: () = assert!(
-    core::mem::size_of::<ArrowSchema>() == core::mem::size_of::<core_stream::ArrowSchema>()
-);
+// The capi callbacks and the core stream now share ONE struct definition
+// (spec-fixed); these asserts pin the C Data Interface ABI shape on the
+// LP64 targets this membrane ships for, plus the fn-pointer/pointer-slot
+// pun the release path relies on.
+const _: () = assert!(core::mem::size_of::<ArrowArray>() == 80);
+const _: () = assert!(core::mem::size_of::<ArrowSchema>() == 72);
 const _: () = assert!(
     core::mem::size_of::<Option<unsafe extern "C" fn()>>() == core::mem::size_of::<*mut c_void>()
 );
@@ -105,7 +107,7 @@ unsafe extern "C" fn stream_get_schema(
         let get_schema = core.core.get_schema;
         // SAFETY: layout equality is const-asserted; `stream`/`out` are the
         // caller's live structs and the core vtable owns the same contract.
-        unsafe { get_schema(&mut core.core, out as *mut core_stream::ArrowSchema) }
+        unsafe { get_schema(&mut core.core, out) }
     })
 }
 
@@ -123,7 +125,7 @@ unsafe extern "C" fn stream_get_next(stream: *mut ArrowArrayStream, out: *mut Ar
         };
         let get_next = core.core.get_next;
         // SAFETY: layout equality is const-asserted; spec contract as above.
-        match unsafe { get_next(&mut core.core, out as *mut core_stream::ArrowArray) } {
+        match unsafe { get_next(&mut core.core, out) } {
             core_stream::STREAM_OK => {
                 if unsafe { (*out).release.is_none() } || unsafe { (*out).length == 0 } {
                     // Either the core yielded an unreleased (EOS) array, or
@@ -173,7 +175,7 @@ unsafe extern "C" fn stream_get_last_error(stream: *mut ArrowArrayStream) -> *co
 
 /// SAFETY: single release. CAS-swaps the release slot to NULL BEFORE any
 /// drop, so a double release is a typed no-op, never a double free (house
-/// discipline: avec-arrow c_abi.rs:70-77).
+/// discipline: cgap-arrow c_abi.rs:70-77).
 unsafe extern "C" fn stream_release(stream: *mut ArrowArrayStream) {
     if stream.is_null() {
         return;
@@ -201,7 +203,7 @@ unsafe extern "C" fn stream_release(stream: *mut ArrowArrayStream) {
         }
         drop(priv_box);
     }
-    // Ownership law (model: avec-arrow c_abi.rs release_array): release
+    // Ownership law (model: cgap-arrow c_abi.rs release_array): release
     // consumes ONLY private_data. The stream shell stays allocated — its
     // disposal belongs solely to stream_free / stardf_stream_free, whose
     // internal release re-fires as the typed no-op above before the shell

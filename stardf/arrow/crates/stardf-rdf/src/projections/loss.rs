@@ -26,10 +26,7 @@ use super::source_rows::source_identifier;
 /// its projection's closed contract declares, so an undeclared one is a
 /// programming error, not a data condition.
 pub(crate) fn record_contract_loss(
-    ledger: &mut LossLedger,
-    contract: &LossLedger,
-    code: &'static str,
-    location: RdfLocation,
+    ledger: &mut LossLedger, contract: &LossLedger, code: &'static str, location: RdfLocation,
 ) {
     let template = contract
         .entries()
@@ -48,10 +45,7 @@ pub(crate) fn record_contract_loss(
 /// Record the contract entry `code` at the logical location `logical`, on
 /// `subject`.
 pub(crate) fn record_logical_loss(
-    ledger: &mut LossLedger,
-    contract: &LossLedger,
-    code: &'static str,
-    logical: &str,
+    ledger: &mut LossLedger, contract: &LossLedger, code: &'static str, logical: &str,
     subject: impl Into<String>,
 ) {
     record_contract_loss(
@@ -69,12 +63,8 @@ pub(crate) fn record_logical_loss(
 ///
 /// Returns [`source_identifier`]'s refusal.
 pub(crate) fn record_row_loss(
-    ledger: &mut LossLedger,
-    contract: &LossLedger,
-    code: &'static str,
-    logical: &str,
-    prefix: &str,
-    row: &impl ToJson,
+    ledger: &mut LossLedger, contract: &LossLedger, code: &'static str, logical: &str,
+    prefix: &str, row: &impl ToJson,
 ) -> Result<(), ProjectionError> {
     let subject = source_identifier(prefix, row)?;
     record_logical_loss(ledger, contract, code, logical, subject);
@@ -88,9 +78,7 @@ pub(crate) fn record_row_loss(
 ///
 /// Returns an integrity error naming the undeclared loss.
 pub(crate) fn ensure_sound(
-    ledger: &LossLedger,
-    from: &str,
-    to: &str,
+    ledger: &LossLedger, from: &str, to: &str,
 ) -> Result<(), ProjectionError> {
     check_ledger_sound(ledger, from, to).map_err(ProjectionError::integrity)
 }

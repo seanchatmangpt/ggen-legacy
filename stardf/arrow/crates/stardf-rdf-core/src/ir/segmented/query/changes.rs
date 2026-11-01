@@ -129,9 +129,7 @@ struct Baseline {
 
 impl<'snapshot> SegmentedStackQuery<'snapshot> {
     fn owned_directory_row(
-        &self,
-        origin: SegmentedStackSource,
-        record: SourceRecord,
+        &self, origin: SegmentedStackSource, record: SourceRecord,
     ) -> Result<OwnedRow, SegmentedError> {
         let row = if let SegmentedStackSource::Layer(index) = origin {
             self.sessions[index]
@@ -147,10 +145,7 @@ impl<'snapshot> SegmentedStackQuery<'snapshot> {
     }
 
     fn initial_additions<D: DirectoryRead<Record = SourceRecord>>(
-        &self,
-        source: &D,
-        origin: SegmentedStackSource,
-        previous: &EffectiveDirectory,
+        &self, source: &D, origin: SegmentedStackSource, previous: &EffectiveDirectory,
         candidates: &mut Candidates,
     ) -> Result<(), SegmentedError>
     where
@@ -196,13 +191,8 @@ impl<'snapshot> SegmentedStackQuery<'snapshot> {
     }
 
     fn compare_effective_directory<D: DirectoryRead<Record = SourceRecord>>(
-        &self,
-        before: &Self,
-        previous: &EffectiveDirectory,
-        source: &D,
-        origin: SegmentedStackSource,
-        candidates: &mut Candidates,
-        work: &mut SourceChangeWork,
+        &self, before: &Self, previous: &EffectiveDirectory, source: &D,
+        origin: SegmentedStackSource, candidates: &mut Candidates, work: &mut SourceChangeWork,
     ) -> Result<EffectiveDirectory, SegmentedError>
     where
         SegmentedError: From<D::Error>,
@@ -237,10 +227,7 @@ impl<'snapshot> SegmentedStackQuery<'snapshot> {
     }
 
     fn compacted_candidates(
-        &self,
-        before: &Self,
-        previous: &EffectiveDirectory,
-        candidates: &mut Candidates,
+        &self, before: &Self, previous: &EffectiveDirectory, candidates: &mut Candidates,
         work: &mut SourceChangeWork,
     ) -> Result<EffectiveDirectory, SegmentedError> {
         let next = self.compare_effective_directory(
@@ -261,11 +248,7 @@ impl<'snapshot> SegmentedStackQuery<'snapshot> {
     }
 
     fn diff_compacted_head(
-        &self,
-        before: &Self,
-        full: bool,
-        candidates: &mut Candidates,
-        work: &mut SourceChangeWork,
+        &self, before: &Self, full: bool, candidates: &mut Candidates, work: &mut SourceChangeWork,
     ) -> Result<(), SegmentedError> {
         // The old effective directory already includes its head. A missing new
         // head needs no second removal pass. An unchanged head is idempotent;
@@ -303,9 +286,7 @@ impl<'snapshot> SegmentedStackQuery<'snapshot> {
     }
 
     fn source_directories<'a>(
-        &'a self,
-        count: usize,
-        storage: &mut QueryStorage,
+        &'a self, count: usize, storage: &mut QueryStorage,
     ) -> Result<
         (
             Vec<usize>,
@@ -343,13 +324,10 @@ impl<'snapshot> SegmentedStackQuery<'snapshot> {
     }
 
     fn compare_groups<A: DirectoryRead, B: DirectoryRead<Record = SourceRecord>>(
-        &self,
-        (previous, next, next_indices): (&[A], &[B], &[usize]),
+        &self, (previous, next, next_indices): (&[A], &[B], &[usize]),
         mut old_row: impl FnMut(usize, A::Record) -> Result<OwnedRow, SegmentedError>,
-        mut raw: Option<EffectiveDirectory>,
-        candidates: &mut Candidates,
-        work: &mut SourceChangeWork,
-        storage: &mut QueryStorage,
+        mut raw: Option<EffectiveDirectory>, candidates: &mut Candidates,
+        work: &mut SourceChangeWork, storage: &mut QueryStorage,
     ) -> Result<Option<EffectiveDirectory>, SegmentedError>
     where
         SegmentedError: From<A::Error> + From<B::Error>,
@@ -390,10 +368,7 @@ impl<'snapshot> SegmentedStackQuery<'snapshot> {
     }
 
     fn regrouped_candidates(
-        &self,
-        before: &Self,
-        previous: &SegmentedSourceVersion,
-        candidates: &mut Candidates,
+        &self, before: &Self, previous: &SegmentedSourceVersion, candidates: &mut Candidates,
         work: &mut SourceChangeWork,
     ) -> Result<Option<EffectiveDirectory>, SegmentedError> {
         let mut storage = QueryStorage::new(&self.operation)?;
@@ -487,10 +462,7 @@ impl<'snapshot> SegmentedStackQuery<'snapshot> {
     }
 
     fn lazy_compacted_candidates(
-        &self,
-        before: &Self,
-        folded: usize,
-        candidates: &mut Candidates,
+        &self, before: &Self, folded: usize, candidates: &mut Candidates,
         work: &mut SourceChangeWork,
     ) -> Result<(), SegmentedError> {
         let mut storage = QueryStorage::new(&self.operation)?;
@@ -517,9 +489,7 @@ impl<'snapshot> SegmentedStackQuery<'snapshot> {
     /// suffix descriptors survive. Compare canonical prefix keys, never the
     /// removed physical layers. A one-image publication uses the old full union.
     fn compacted_prefix(
-        &self,
-        previous: &SegmentedSourceVersion,
-        work: &mut SourceChangeWork,
+        &self, previous: &SegmentedSourceVersion, work: &mut SourceChangeWork,
     ) -> Option<usize> {
         if self.sessions.is_empty() {
             return None;
@@ -553,9 +523,7 @@ impl<'snapshot> SegmentedStackQuery<'snapshot> {
     }
 
     fn owned_source_row(
-        &self,
-        origin: SegmentedStackSource,
-        row: QuadIds<u64>,
+        &self, origin: SegmentedStackSource, row: QuadIds<u64>,
     ) -> Result<OwnedRow, SegmentedError> {
         let value = |index| {
             self.source_value(SourceTerm {
@@ -572,9 +540,7 @@ impl<'snapshot> SegmentedStackQuery<'snapshot> {
     }
 
     fn add_source_candidates(
-        &self,
-        origin: SegmentedStackSource,
-        candidates: &mut Candidates,
+        &self, origin: SegmentedStackSource, candidates: &mut Candidates,
     ) -> Result<u64, SegmentedError> {
         let mut count = 0;
         for row in self.physical_source_rows(origin) {
@@ -586,9 +552,7 @@ impl<'snapshot> SegmentedStackQuery<'snapshot> {
     }
 
     fn add_layer_candidates(
-        &self,
-        index: usize,
-        candidates: &mut Candidates,
+        &self, index: usize, candidates: &mut Candidates,
     ) -> Result<u64, SegmentedError> {
         let count = self.add_source_candidates(self.source_at(index), candidates)?;
         let removals = if index == self.sessions.len() {
@@ -600,12 +564,8 @@ impl<'snapshot> SegmentedStackQuery<'snapshot> {
     }
 
     fn diff_resident(
-        &self,
-        before: &Self,
-        carriers: (Option<&Arc<RdfDataset>>, Option<&Arc<RdfDataset>>),
-        origin: SegmentedStackSource,
-        candidates: &mut Candidates,
-        work: &mut SourceChangeWork,
+        &self, before: &Self, carriers: (Option<&Arc<RdfDataset>>, Option<&Arc<RdfDataset>>),
+        origin: SegmentedStackSource, candidates: &mut Candidates, work: &mut SourceChangeWork,
     ) -> Result<(), SegmentedError> {
         match carriers {
             (Some(old), Some(new)) if Arc::ptr_eq(old, new) => {}
@@ -636,10 +596,7 @@ impl<'snapshot> SegmentedStackQuery<'snapshot> {
     }
 
     fn diff_heads(
-        &self,
-        before: &Self,
-        candidates: &mut Candidates,
-        work: &mut SourceChangeWork,
+        &self, before: &Self, candidates: &mut Candidates, work: &mut SourceChangeWork,
     ) -> Result<(), SegmentedError> {
         let a = before.snapshot.head.as_ref();
         let b = self.snapshot.head.as_ref();
@@ -672,9 +629,7 @@ impl<'snapshot> SegmentedStackQuery<'snapshot> {
     }
 
     fn source_baseline(
-        &self,
-        previous: &SegmentedSourceVersion,
-        work: &mut SourceChangeWork,
+        &self, previous: &SegmentedSourceVersion, work: &mut SourceChangeWork,
     ) -> Result<Baseline, SegmentedError> {
         let old = &previous.snapshot;
         let new = self.snapshot;
@@ -754,8 +709,7 @@ impl<'snapshot> SegmentedStackQuery<'snapshot> {
     }
 
     pub(super) fn observed_source_changes<B>(
-        &self,
-        previous: &SourceVersion,
+        &self, previous: &SourceVersion,
         mut visit: impl FnMut(SourceSide, SourceFamily, SourceRowRef<'_>) -> ControlFlow<B>,
     ) -> Result<SourceVisit<B>, SegmentedError> {
         self.check_ready()?;
@@ -928,10 +882,7 @@ impl<'snapshot> SegmentedStackQuery<'snapshot> {
     }
 
     fn has_source_row(
-        &self,
-        row: SourceRowRef<'_>,
-        family: SourceFamily,
-        sources: usize,
+        &self, row: SourceRowRef<'_>, family: SourceFamily, sources: usize,
     ) -> Result<bool, SegmentedError> {
         if sources == 0 {
             return Ok(false);
@@ -972,11 +923,8 @@ impl<'snapshot> SegmentedStackQuery<'snapshot> {
     }
 
     fn advance_records<B>(
-        &self,
-        before: &Self,
-        limits: (usize, usize),
-        (records, directory): (&mut Multiset256, &mut EffectiveDirectory),
-        candidates: &Candidates,
+        &self, before: &Self, limits: (usize, usize),
+        (records, directory): (&mut Multiset256, &mut EffectiveDirectory), candidates: &Candidates,
         work: &mut SourceChangeWork,
         visit: &mut impl FnMut(SourceSide, SourceFamily, SourceRowRef<'_>) -> ControlFlow<B>,
     ) -> Result<ControlFlow<B>, SegmentedError> {
@@ -1017,11 +965,8 @@ impl<'snapshot> SegmentedStackQuery<'snapshot> {
     }
 
     fn seal_version(
-        &self,
-        prefixes: Vec<Option<EffectiveDirectory>>,
-        records: Multiset256,
-        directory: EffectiveDirectory,
-        mut storage: QueryStorage,
+        &self, prefixes: Vec<Option<EffectiveDirectory>>, records: Multiset256,
+        directory: EffectiveDirectory, mut storage: QueryStorage,
     ) -> Result<SourceVersion, SegmentedError> {
         if directory.summary() != records {
             return Err(SegmentedError::Corrupt(

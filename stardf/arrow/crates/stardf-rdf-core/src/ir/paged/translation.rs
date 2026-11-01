@@ -103,8 +103,7 @@ impl PageTranslation {
     ///
     /// [`SummaryDefect`] if the page cannot be summarized honestly.
     pub(crate) fn try_build(
-        page: &RdfDataset,
-        dict: &mut GlobalDictionary,
+        page: &RdfDataset, dict: &mut GlobalDictionary,
     ) -> Result<Self, TranslationError> {
         let term_count = page.term_count();
         let mut local_to_global: Vec<GlobalTermId> = Vec::with_capacity(term_count);

@@ -26,14 +26,10 @@ pub(super) struct LineState {
 impl LineState {
     #[allow(clippy::too_many_arguments)] // Original line source, immutable equivalent tables and checked scratch.
     pub(super) fn new_with_coefficients(
-        start: &LonLat,
-        azimuth: &FixedInterval,
-        exact_azimuth: Option<&Rat>,
+        start: &LonLat, azimuth: &FixedInterval, exact_azimuth: Option<&Rat>,
         prepared: &PreparedGeodesic,
-        coefficients: Option<&crate::context::Retained<IntegralCoefficients>>,
-        order: usize,
-        chunks: &mut ChunkObserver<'_, '_>,
-        math: &mut CoordinateMath,
+        coefficients: Option<&crate::context::Retained<IntegralCoefficients>>, order: usize,
+        chunks: &mut ChunkObserver<'_, '_>, math: &mut CoordinateMath,
     ) -> Result<Self, SolveError> {
         // Inverse proof angles may use the equivalent signed representative
         // (for example -90 for a westward equator). Preserve exact quarter-turn
@@ -133,9 +129,7 @@ impl LineState {
     }
 
     pub(super) fn initial_sigma(
-        &self,
-        distance: &FixedInterval,
-        math: &mut CoordinateMath,
+        &self, distance: &FixedInterval, math: &mut CoordinateMath,
     ) -> Result<(FixedInterval, FixedInterval), MathError> {
         // For q=0, ds/dsigma=b identically. Otherwise ds/dsigma lies in
         // [b,a] on the complete oblate line; the hull admits both forward
@@ -154,12 +148,8 @@ impl LineState {
     }
 
     pub(super) fn contract_sigma(
-        &self,
-        distance: &FixedInterval,
-        lower: &mut FixedInterval,
-        upper: &mut FixedInterval,
-        chunks: &mut ChunkObserver<'_, '_>,
-        math: &mut CoordinateMath,
+        &self, distance: &FixedInterval, lower: &mut FixedInterval, upper: &mut FixedInterval,
+        chunks: &mut ChunkObserver<'_, '_>, math: &mut CoordinateMath,
     ) -> Result<bool, SolveError> {
         let previous_lower = lower.lower().clone();
         let previous_upper = upper.upper().clone();
@@ -193,10 +183,7 @@ impl LineState {
     }
 
     pub(super) fn sigma_enclosure(
-        &self,
-        distance: &FixedInterval,
-        iterations: u32,
-        chunks: &mut ChunkObserver<'_, '_>,
+        &self, distance: &FixedInterval, iterations: u32, chunks: &mut ChunkObserver<'_, '_>,
         math: &mut CoordinateMath,
     ) -> Result<FixedInterval, SolveError> {
         let (mut lower, mut upper) = self.initial_sigma(distance, math)?;

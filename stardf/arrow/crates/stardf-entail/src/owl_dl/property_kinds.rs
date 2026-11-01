@@ -34,8 +34,7 @@ impl PropertyKinds {
 
     /// Resolve only this service's inventory; legacy reasoning is unaffected.
     pub(crate) fn objects(
-        &self,
-        interner: &crate::interner::Interner,
+        &self, interner: &crate::interner::Interner,
         mut poll: impl FnMut() -> Result<(), EntailError>,
     ) -> Result<Vec<u32>, EntailError> {
         let mut permitted = BTreeMap::new();

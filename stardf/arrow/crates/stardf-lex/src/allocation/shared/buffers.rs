@@ -71,10 +71,7 @@ impl<T: Copy> SharedBuffer<T> {
     /// Preserves original admission, layout or allocation refusal. Partial
     /// arrays are destroyed before the scope refunds their admitted capacity.
     pub fn new_array_with_memory<S: Admission + ?Sized>(
-        buffers: usize,
-        capacity: usize,
-        zero: T,
-        memory: &mut Memory<'_, S>,
+        buffers: usize, capacity: usize, zero: T, memory: &mut Memory<'_, S>,
     ) -> Result<Vec<Self>, StorageError> {
         Self::required_bytes(buffers, capacity)?;
         if buffers == 0 {

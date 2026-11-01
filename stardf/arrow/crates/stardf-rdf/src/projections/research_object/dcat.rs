@@ -274,8 +274,7 @@ purrdf_lex::json_record!(impl ToJson for DcatConfig {
 /// Returns typed mapping, configuration, JSON-LD semantic-validation, or
 /// configured resource-limit failures with every RDF-side loss ledgered.
 pub fn project_dcat<D: DatasetView>(
-    view: &D,
-    config: &DcatConfig,
+    view: &D, config: &DcatConfig,
 ) -> Result<ResearchObjectPackageProjection, ProjectionError> {
     let projection = project_research_object(view, DCAT_PROFILE, config.common())?;
     let document = encode_document(&projection.model, config)?;
@@ -299,8 +298,7 @@ pub fn project_dcat<D: DatasetView>(
 /// invalid JSON-LD semantics, duplicate/dangling graph identities, unsupported
 /// entity shapes, or configured resource-limit excesses.
 pub fn read_dcat(
-    package: &ProjectionPackage,
-    config: &DcatConfig,
+    package: &ProjectionPackage, config: &DcatConfig,
 ) -> Result<ResearchObjectReadOutcome, ProjectionError> {
     let bytes = require_artifact(package, DCAT_ARTIFACT, config.common())?;
     let value = parse_strict_json(bytes, config.common(), "DCAT 3 JSON-LD", DCAT_ARTIFACT)?;
@@ -319,8 +317,7 @@ pub fn read_dcat(
 }
 
 fn encode_document(
-    model: &ResearchObjectModel,
-    config: &DcatConfig,
+    model: &ResearchObjectModel, config: &DcatConfig,
 ) -> Result<Value, ProjectionError> {
     let mut graph = vec![encode_dataset(model, config)];
     graph.extend(model.agents.iter().map(|agent| encode_agent(agent, config)));
@@ -433,8 +430,7 @@ fn encode_agent(agent: &ResearchAgent, config: &DcatConfig) -> Value {
 }
 
 fn encode_distribution(
-    resource: &ResearchResource,
-    config: &DcatConfig,
+    resource: &ResearchResource, config: &DcatConfig,
 ) -> Result<(Value, Vec<Value>), ProjectionError> {
     let terms = config.vocabulary();
     let mut object = typed_object(&resource.id, terms.term(DcatRole::DistributionClass));
@@ -560,8 +556,7 @@ fn encode_activity(activity: &ResearchActivity, config: &DcatConfig) -> Value {
 }
 
 fn encode_record_set(
-    record_set: &ResearchRecordSet,
-    config: &DcatConfig,
+    record_set: &ResearchRecordSet, config: &DcatConfig,
 ) -> Result<Value, ProjectionError> {
     let terms = config.vocabulary();
     let mut object = typed_object(&record_set.id, terms.term(DcatRole::RecordSetClass));
@@ -674,10 +669,7 @@ struct DcatDecoder<'a> {
 }
 
 fn decode_document(
-    value: Value,
-    config: &DcatConfig,
-    contract: &LossLedger,
-    ledger: &mut LossLedger,
+    value: Value, config: &DcatConfig, contract: &LossLedger, ledger: &mut LossLedger,
 ) -> Result<ResearchObjectModel, ProjectionError> {
     DcatDecoder {
         config,
@@ -708,9 +700,7 @@ impl ProfileReader for DcatDecoder<'_> {
     }
 
     fn parse_reference_value(
-        &mut self,
-        value: &Value,
-        pointer: &str,
+        &mut self, value: &Value, pointer: &str,
     ) -> Result<Option<ResearchValue>, ProjectionError> {
         let id = self.parse_ref(value, pointer)?;
         if id.starts_with("_:") {
@@ -957,9 +947,7 @@ impl DcatDecoder<'_> {
     }
 
     fn decode_resource(
-        &mut self,
-        mut node: RawNode,
-        checksum_nodes: &mut BTreeMap<String, RawNode>,
+        &mut self, mut node: RawNode, checksum_nodes: &mut BTreeMap<String, RawNode>,
     ) -> Result<ResearchResource, ProjectionError> {
         let names = self.take_texts(&mut node.object, DcatRole::Title, &node.pointer)?;
         let descriptions =
@@ -1065,9 +1053,7 @@ impl DcatDecoder<'_> {
     }
 
     fn decode_record_set(
-        &mut self,
-        mut node: RawNode,
-        fields: &mut BTreeMap<String, ResearchField>,
+        &mut self, mut node: RawNode, fields: &mut BTreeMap<String, ResearchField>,
     ) -> Result<ResearchRecordSet, ProjectionError> {
         let names = self.take_texts(&mut node.object, DcatRole::Title, &node.pointer)?;
         let descriptions =
@@ -1096,11 +1082,7 @@ impl DcatDecoder<'_> {
     }
 
     fn take_refs(
-        &mut self,
-        object: &mut Object,
-        role: DcatRole,
-        parent: &str,
-        require_known: bool,
+        &mut self, object: &mut Object, role: DcatRole, parent: &str, require_known: bool,
         require_absolute: bool,
     ) -> Result<Vec<String>, ProjectionError> {
         let term = self.config.vocabulary().term(role).to_owned();
@@ -1154,9 +1136,7 @@ impl DcatDecoder<'_> {
     }
 
     fn take_paths(
-        &mut self,
-        object: &mut Object,
-        parent: &str,
+        &mut self, object: &mut Object, parent: &str,
     ) -> Result<Vec<String>, ProjectionError> {
         let values = self.take_texts(object, DcatRole::Path, parent)?;
         let xsd_string = self
@@ -1181,9 +1161,7 @@ impl DcatDecoder<'_> {
     }
 
     fn take_byte_size(
-        &mut self,
-        object: &mut Object,
-        parent: &str,
+        &mut self, object: &mut Object, parent: &str,
     ) -> Result<Option<u64>, ProjectionError> {
         let values = self.take_texts(object, DcatRole::ByteSize, parent)?;
         if values.len() > 1 {
@@ -1216,9 +1194,7 @@ impl DcatDecoder<'_> {
     }
 
     fn take_rows(
-        &mut self,
-        object: &mut Object,
-        parent: &str,
+        &mut self, object: &mut Object, parent: &str,
     ) -> Result<Vec<Value>, ProjectionError> {
         let values = self.take_texts(object, DcatRole::Records, parent)?;
         let datatype = self
@@ -1276,10 +1252,7 @@ impl DcatDecoder<'_> {
     }
 
     fn require_type(
-        &mut self,
-        object: &mut Object,
-        parent: &str,
-        expected: &str,
+        &mut self, object: &mut Object, parent: &str, expected: &str,
     ) -> Result<(), ProjectionError> {
         let actual = self.take_type(object, parent)?;
         if actual != expected {

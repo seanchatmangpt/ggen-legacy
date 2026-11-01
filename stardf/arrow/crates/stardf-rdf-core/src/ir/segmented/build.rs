@@ -36,11 +36,7 @@ impl SegmentedBuildLimits {
     /// # Errors
     /// Refuses invalid block sizes or zero/oversized dictionary block counts.
     pub fn new(
-        terms: u32,
-        term_bytes: u32,
-        rows: u32,
-        block_bytes: u32,
-        records_per_block: u32,
+        terms: u32, term_bytes: u32, rows: u32, block_bytes: u32, records_per_block: u32,
     ) -> Result<Self, SegmentedError> {
         if terms == u32::MAX
             || !(512..=1_048_576).contains(&block_bytes)
@@ -136,9 +132,7 @@ impl SegmentedBuilder {
     /// Refuses before interning when conservative referenced-term/string bounds
     /// would exceed the declared resident construction limits.
     pub fn intern_batch(
-        &mut self,
-        values: &[TermValue],
-        mut visit: impl FnMut(&TermValue, GlobalTermId),
+        &mut self, values: &[TermValue], mut visit: impl FnMut(&TermValue, GlobalTermId),
     ) -> Result<(), SegmentedError> {
         for value in values {
             let (terms, bytes) = value_bound(value)?;
@@ -196,10 +190,7 @@ impl SegmentedBuilder {
     /// # Errors
     /// Refuses foreign IDs or the resident row ceiling. Seal checks RDF roles.
     pub fn push_reifier(
-        &mut self,
-        reifier: GlobalTermId,
-        triple: GlobalTermId,
-        graph: Option<GlobalTermId>,
+        &mut self, reifier: GlobalTermId, triple: GlobalTermId, graph: Option<GlobalTermId>,
     ) -> Result<(), SegmentedError> {
         let (r, t) = (self.local(reifier)?, self.local(triple)?);
         let g = graph.map(|id| self.local(id)).transpose()?;
@@ -332,8 +323,7 @@ pub struct SegmentedImage {
 impl SegmentedImage {
     #[cfg(test)]
     pub(in crate::ir) fn from_native_fixture(
-        dataset: &RdfDataset,
-        limits: SegmentedBuildLimits,
+        dataset: &RdfDataset, limits: SegmentedBuildLimits,
     ) -> Result<Self, SegmentedError> {
         encode_dataset(dataset, limits)
     }
@@ -359,8 +349,7 @@ impl SegmentedImage {
     /// # Errors
     /// Propagates the original session's authentication, capacity and request refusal.
     pub fn open_session(
-        &self,
-        limits: SegmentedReadLimits,
+        &self, limits: SegmentedReadLimits,
     ) -> Result<SegmentedSession, SegmentedError> {
         SegmentedSession::open(Arc::new(self.provider()), self.receipt(), limits)
     }
@@ -459,8 +448,7 @@ impl SegmentedImage {
     /// # Errors
     /// Returns old-reader validation failures, source read failures or capacity refusal.
     pub fn from_pack_v1(
-        bytes: &[u8],
-        limits: SegmentedBuildLimits,
+        bytes: &[u8], limits: SegmentedBuildLimits,
     ) -> Result<Self, SegmentedError> {
         let source = super::super::pack::restore_pack(bytes)
             .map_err(|_| SegmentedError::Corrupt("invalid eager v1 pack"))?;
@@ -483,9 +471,7 @@ impl SegmentedImage {
     /// Refuses invalid v1 RDF, non-graph values, or construction capacities before
     /// admitting sidecar terms/declarations. The new identity binds the sidecar too.
     pub fn from_pack_v1_with_graphs(
-        bytes: &[u8],
-        graphs: &[TermValue],
-        limits: SegmentedBuildLimits,
+        bytes: &[u8], graphs: &[TermValue], limits: SegmentedBuildLimits,
     ) -> Result<Self, SegmentedError> {
         let source = super::super::pack::restore_pack(bytes)
             .map_err(|_| SegmentedError::Corrupt("invalid eager v1 pack"))?;
@@ -541,8 +527,7 @@ fn map_quad(q: QuadIds, first: u64) -> QuadIds<GlobalTermId> {
 }
 
 fn encode_dataset(
-    dataset: &RdfDataset,
-    limits: SegmentedBuildLimits,
+    dataset: &RdfDataset, limits: SegmentedBuildLimits,
 ) -> Result<SegmentedImage, SegmentedError> {
     let block_bytes =
         usize::try_from(limits.block_bytes).map_err(|_| SegmentedError::AddressExhausted)?;
@@ -752,10 +737,8 @@ fn encode_dataset(
 }
 
 fn append_source_directory(
-    directory: &super::super::source_directory::SourceDirectory,
-    kind: u8,
-    blocks: &mut Vec<Vec<u8>>,
-    block_bytes: usize,
+    directory: &super::super::source_directory::SourceDirectory, kind: u8,
+    blocks: &mut Vec<Vec<u8>>, block_bytes: usize,
 ) -> Result<Stream, SegmentedError> {
     let width = super::super::source_directory::RECORD_BYTES;
     let per_block = (block_bytes - 9) / width;
@@ -785,9 +768,7 @@ fn append_source_directory(
 }
 
 fn translated_statistics(
-    dataset: &RdfDataset,
-    first: u64,
-    memory: &mut Memory<'_, Resident>,
+    dataset: &RdfDataset, first: u64, memory: &mut Memory<'_, Resident>,
 ) -> Result<LocalStatistics<GlobalTermId>, SegmentedError> {
     LocalStatistics::merge_translated(
         [dataset.predicate_statistics()],
@@ -802,10 +783,7 @@ fn translated_statistics(
 }
 
 fn append_statistics(
-    dataset: &RdfDataset,
-    first: u64,
-    blocks: &mut Vec<Vec<u8>>,
-    block_bytes: usize,
+    dataset: &RdfDataset, first: u64, blocks: &mut Vec<Vec<u8>>, block_bytes: usize,
 ) -> Result<[Stream; 4], SegmentedError> {
     let mut resident = Resident;
     let mut memory = Memory::new(&mut resident);
@@ -841,11 +819,8 @@ fn append_statistics(
 }
 
 fn append_dictionary(
-    blocks: &mut Vec<Vec<u8>>,
-    records: &[(GlobalTermId, Vec<u8>)],
-    chunk: usize,
-    block_bytes: usize,
-    overflow: &mut Vec<Vec<u8>>,
+    blocks: &mut Vec<Vec<u8>>, records: &[(GlobalTermId, Vec<u8>)], chunk: usize,
+    block_bytes: usize, overflow: &mut Vec<Vec<u8>>,
 ) -> Result<(Stream, u64), SegmentedError> {
     let first = u64::try_from(blocks.len()).map_err(|_| SegmentedError::AddressExhausted)?;
     let mut remaining = records;
@@ -879,11 +854,7 @@ fn append_dictionary(
     ))
 }
 fn append_fixed<C: AsRef<[u8]>>(
-    blocks: &mut Vec<Vec<u8>>,
-    chunks: impl Iterator<Item = C>,
-    rows: u64,
-    kind: u8,
-    width: usize,
+    blocks: &mut Vec<Vec<u8>>, chunks: impl Iterator<Item = C>, rows: u64, kind: u8, width: usize,
     block_bytes: usize,
 ) -> Result<Stream, SegmentedError> {
     let first = u64::try_from(blocks.len()).map_err(|_| SegmentedError::AddressExhausted)?;
@@ -912,12 +883,8 @@ fn append_fixed<C: AsRef<[u8]>>(
     })
 }
 fn append_quads<'a>(
-    blocks: &mut Vec<Vec<u8>>,
-    rows: &[QuadIds<GlobalTermId>],
-    table: u8,
-    block_bytes: usize,
-    summaries: &mut Vec<Vec<u8>>,
-    value_ranges: &mut Vec<Vec<u8>>,
+    blocks: &mut Vec<Vec<u8>>, rows: &[QuadIds<GlobalTermId>], table: u8, block_bytes: usize,
+    summaries: &mut Vec<Vec<u8>>, value_ranges: &mut Vec<Vec<u8>>,
     resolve: impl Fn(GlobalTermId) -> Result<TermRef<'a, GlobalTermId>, SegmentedError>,
 ) -> Result<Stream, SegmentedError> {
     let first = u64::try_from(blocks.len()).map_err(|_| SegmentedError::AddressExhausted)?;
@@ -945,11 +912,7 @@ fn append_quads<'a>(
     })
 }
 pub(super) fn summary(
-    rows: &[QuadIds<GlobalTermId>],
-    slot: u64,
-    table: u8,
-    first_range: u64,
-    range_count: u64,
+    rows: &[QuadIds<GlobalTermId>], slot: u64, table: u8, first_range: u64, range_count: u64,
 ) -> Result<Vec<u8>, SegmentedError> {
     let mut bytes = Vec::with_capacity(format::SUMMARY_BYTES);
     bytes.extend_from_slice(&slot.to_le_bytes());
@@ -976,8 +939,7 @@ pub(super) fn summary(
 }
 
 fn append_value_ranges<'a>(
-    output: &mut Vec<Vec<u8>>,
-    rows: &[QuadIds<GlobalTermId>],
+    output: &mut Vec<Vec<u8>>, rows: &[QuadIds<GlobalTermId>],
     resolve: impl Fn(GlobalTermId) -> Result<TermRef<'a, GlobalTermId>, SegmentedError>,
 ) -> Result<(u64, u64), SegmentedError> {
     let start = u64::try_from(output.len()).map_err(|_| SegmentedError::AddressExhausted)?;
@@ -996,10 +958,7 @@ fn append_value_ranges<'a>(
     Ok((start, end - start))
 }
 fn make_tree(
-    bytes: &[u8],
-    block_bytes: usize,
-    count: u64,
-    leaves: u64,
+    bytes: &[u8], block_bytes: usize, count: u64, leaves: u64,
 ) -> Result<Vec<u8>, SegmentedError> {
     let nodes = usize::try_from(
         leaves
@@ -1416,9 +1375,7 @@ fn validate_content(bytes: &[u8], header: &Header) -> Result<(), SegmentedError>
 }
 
 fn validate_statistics(
-    bytes: &[u8],
-    header: &Header,
-    dataset: &RdfDataset,
+    bytes: &[u8], header: &Header, dataset: &RdfDataset,
 ) -> Result<(), SegmentedError> {
     if header.source_union != dataset.predicate_statistics().source_union() {
         return Err(SegmentedError::Corrupt(
@@ -1475,11 +1432,8 @@ fn validate_statistics(
 }
 
 fn validate_source_directory(
-    bytes: &[u8],
-    header: &Header,
-    directory: &super::super::source_directory::SourceDirectory,
-    stream: Stream,
-    kind: u8,
+    bytes: &[u8], header: &Header, directory: &super::super::source_directory::SourceDirectory,
+    stream: Stream, kind: u8,
 ) -> Result<(), SegmentedError> {
     let mut resident = Resident;
     let mut memory = Memory::new(&mut resident);
@@ -1549,9 +1503,7 @@ pub(super) fn fixed_records(bytes: &[u8], kind: u8, width: usize) -> Result<&[u8
 }
 
 fn expanded_footprint(
-    term: TermRef<'_, u64>,
-    first: u64,
-    previous: &[(u64, u32)],
+    term: TermRef<'_, u64>, first: u64, previous: &[(u64, u32)],
 ) -> Result<(u64, u32), SegmentedError> {
     let base = OWNED_TERM_NODE_BYTES;
     let reference = |id: u64| -> Result<(u64, u32), SegmentedError> {

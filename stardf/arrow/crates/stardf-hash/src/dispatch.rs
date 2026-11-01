@@ -216,9 +216,7 @@ pub fn host_advertises(flags: &[&str]) -> bool {
 /// unknown family, or a path `family` does not have.
 #[must_use]
 pub fn required_names(
-    family: &str,
-    known: &[&'static str],
-    expected_here: impl Fn(&'static str) -> bool,
+    family: &str, known: &[&'static str], expected_here: impl Fn(&'static str) -> bool,
 ) -> Vec<&'static str> {
     let Some(value) = std::env::var_os(REQUIRE_SIMD_PATHS) else {
         return Vec::new();
@@ -257,8 +255,7 @@ pub fn required<B: Backend>(family: &str, expected_here: impl Fn(B) -> bool) -> 
 ///
 /// As [`required`], and when a required path is unavailable.
 pub fn assert_required_available<B: Backend>(
-    family: &str,
-    expected_here: impl Fn(B) -> bool,
+    family: &str, expected_here: impl Fn(B) -> bool,
 ) -> Vec<B> {
     let required = required::<B>(family, expected_here);
     for backend in &required {
@@ -278,10 +275,7 @@ pub fn assert_required_available<B: Backend>(
 
 /// The requirement `value` makes of `family`, or why `value` is refused.
 fn parse(
-    value: &str,
-    family: &str,
-    known: &[&'static str],
-    expected_here: impl Fn(&'static str) -> bool,
+    value: &str, family: &str, known: &[&'static str], expected_here: impl Fn(&'static str) -> bool,
 ) -> Result<Vec<&'static str>, String> {
     assert!(
         FAMILIES.contains(&family),

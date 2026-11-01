@@ -33,8 +33,7 @@ impl PointInput {
     }
 
     pub(super) fn from_value_native(
-        value: &Value,
-        decode: &Decode<'_, '_, '_, '_>,
+        value: &Value, decode: &Decode<'_, '_, '_, '_>,
     ) -> Result<Self, GeoCallError> {
         let mut fields = decode.record(value, "exact geographic point")?;
         let encoding: Option<String> = fields.optional_native("encoding")?;
@@ -360,8 +359,7 @@ impl GeoRequest {
     }
 
     pub(super) fn from_value_native(
-        value: &Value,
-        decode: &Decode<'_, '_, '_, '_>,
+        value: &Value, decode: &Decode<'_, '_, '_, '_>,
     ) -> Result<Self, GeoCallError> {
         let mut fields = decode.record(value, "geographic request version one")?;
         let version: u32 = fields.required_native("version")?;
@@ -638,8 +636,7 @@ fn name(fields: &mut Record<'_>, decode: &Decode<'_, '_, '_, '_>) -> Result<Crs,
 }
 
 pub(super) fn crs(
-    fields: &mut Record<'_>,
-    decode: &Decode<'_, '_, '_, '_>,
+    fields: &mut Record<'_>, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Crs, GeoCallError> {
     let crs = fields.optional_with("crs", |value| decode.crs(value))?;
     crs.map_or_else(|| decode.crs_text(ogc::CRS84), Ok)
@@ -653,8 +650,7 @@ pub(super) fn grid(fields: &mut Record<'_>) -> Result<NativeGridProfile, DecodeE
 }
 
 fn pair(
-    value: &Value,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Value, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<(PointInput, PointInput), GeoCallError> {
     let mut fields = decode.record(value, "point-distance pair")?;
     let pair = (
@@ -666,8 +662,7 @@ fn pair(
 }
 
 fn direct_input(
-    value: &Value,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Value, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<(PointInput, purrdf_geo_kernel::Rat, Metres), GeoCallError> {
     let mut fields = decode.record(value, "direct geodesic input")?;
     let input = (
@@ -682,8 +677,7 @@ fn direct_input(
 }
 
 pub(super) fn threshold(
-    value: &Value,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Value, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<XsdDoubleMetres, GeoCallError> {
     let mut fields = decode.record(value, "promoted distance threshold")?;
     let kind = fields.tag("kind", &["double-bits", "decimal", "integer"])?;
@@ -738,8 +732,7 @@ fn cell(value: &Value, decode: &Decode<'_, '_, '_, '_>) -> Result<CellId, GeoCal
 }
 
 pub(super) fn term(
-    value: &Value,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Value, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<TermValue, GeoCallError> {
     let mut fields = decode.record(value, "geometry function argument term")?;
     let kind = fields.tag("kind", &["iri", "literal"])?;
@@ -788,8 +781,7 @@ impl std::str::FromStr for GeoRequest {
 }
 
 fn transform_grid(
-    fields: &mut Record<'_>,
-    _decode: &Decode<'_, '_, '_, '_>,
+    fields: &mut Record<'_>, _decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<purrdf_geo_kernel::TransformOutputGrid, GeoCallError> {
     Ok(purrdf_geo_kernel::TransformOutputGrid::new(
         fields

@@ -91,13 +91,13 @@ CONSTRUCT {
           rust:simdProfile "Arrow-64B" ;
           rust:byteAlignment 64 .
   <urn:stardf-arrow:crate:stardf-arrow> a rust:Workspace ;
-          rust:workspaceDependency <urn:stardf-arrow:dep:avec-arrow> ;
+          rust:workspaceDependency <urn:stardf-arrow:dep:cgap-arrow> ;
           rust:itemName "stardf-arrow" .
-  <urn:stardf-arrow:dep:avec-arrow> a rust:Dependency ;
-          rust:itemName "avec-arrow" .
+  <urn:stardf-arrow:dep:cgap-arrow> a rust:Dependency ;
+          rust:itemName "cgap-arrow" .
   <urn:stardf-arrow:crate:capi> a rust:Module ;
           rust:itemName "stardf_arrow_capi" ;
-          rust:dependsOn <urn:stardf-arrow:dep:avec-arrow> .
+          rust:dependsOn <urn:stardf-arrow:dep:cgap-arrow> .
 }
 WHERE {
   ?export a sa:CabiExport ;

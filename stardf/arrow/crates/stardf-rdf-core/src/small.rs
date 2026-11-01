@@ -524,8 +524,7 @@ impl<A: Array> SmallVec<A> {
     /// # Errors
     /// Returns capacity overflow or the allocator's refusal.
     pub fn try_reserve_exact(
-        &mut self,
-        additional: usize,
+        &mut self, additional: usize,
     ) -> Result<(), std::collections::TryReserveError> {
         if self.capacity() - self.len() >= additional {
             return Ok(());
@@ -545,9 +544,7 @@ impl<A: Array> SmallVec<A> {
     /// # Errors
     /// Returns layout overflow, admission refusal or allocation failure.
     pub fn push_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &mut self,
-        value: A::Item,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &mut self, value: A::Item, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         use purrdf_lex::allocation::StorageError;
         if self.len() == self.capacity() {
@@ -568,9 +565,7 @@ impl<A: Array> SmallVec<A> {
     /// # Errors
     /// Returns checked layout overflow, admission refusal or allocator refusal.
     pub fn reserve_exact_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &mut self,
-        additional: usize,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &mut self, additional: usize, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         use purrdf_lex::allocation::StorageError;
         let required = self
@@ -603,8 +598,7 @@ impl<A: Array> SmallVec<A> {
     /// # Errors
     /// Returns a refused admission shrink or layout overflow.
     pub fn release_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         let bytes = if self.spilled() {
             self.capacity()

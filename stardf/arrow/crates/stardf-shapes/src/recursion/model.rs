@@ -62,8 +62,7 @@ pub(crate) fn canonical_handle(shape: &Shape) -> bool {
 }
 
 pub(crate) fn admit_shape(
-    shape: &Shape,
-    semantics: Option<RecursionSemantics>,
+    shape: &Shape, semantics: Option<RecursionSemantics>,
 ) -> Result<(), ShapesError> {
     if let Some(owner) = &shape.owner {
         owner.admit_recursion(semantics)?;
@@ -333,9 +332,7 @@ struct Builder<'a> {
 
 impl<'a> Builder<'a> {
     fn unqualified(
-        &self,
-        parameter: &'static str,
-        index: Option<&ShapeIndexRef>,
+        &self, parameter: &'static str, index: Option<&ShapeIndexRef>,
     ) -> Result<(), WalkError> {
         if let Some(index) = index {
             let owner = self.owner.ok_or(PreparationRefusal::UnboundModel)?;
@@ -386,10 +383,7 @@ impl<'a> Builder<'a> {
         Ok(index)
     }
     fn edge(
-        &mut self,
-        node: Node<'a>,
-        parameter: &'static str,
-        polarity: RecursionPolarity,
+        &mut self, node: Node<'a>, parameter: &'static str, polarity: RecursionPolarity,
     ) -> Result<(), WalkError> {
         let target = self.intern(node)?;
         if let Some(source) = self.current {
@@ -402,9 +396,7 @@ impl<'a> Builder<'a> {
         Ok(())
     }
     fn reference(
-        &mut self,
-        target: &crate::term::Term,
-        parameter: &'static str,
+        &mut self, target: &crate::term::Term, parameter: &'static str,
     ) -> Result<(), WalkError> {
         let owner = self.owner.ok_or(PreparationRefusal::UnboundReference)?;
         let definition = owner.definition_required(target)?;
@@ -443,10 +435,7 @@ impl<'a> Builder<'a> {
         Ok(())
     }
     fn indexed_targets(
-        &mut self,
-        expression: &'a NodeExpr,
-        index: &ShapeIndexRef,
-        parameter: &'static str,
+        &mut self, expression: &'a NodeExpr, index: &ShapeIndexRef, parameter: &'static str,
         polarity: RecursionPolarity,
     ) -> Result<bool, WalkError> {
         let owner = self.owner.ok_or(PreparationRefusal::UnboundModel)?;
@@ -665,8 +654,7 @@ impl<'a> ModelWalk<'a, WalkError> for Builder<'a> {
         result
     }
     fn deactivations(
-        &mut self,
-        expressions: &'a [NodeExpr],
+        &mut self, expressions: &'a [NodeExpr],
         annotations: &'a [crate::shapes::ConstraintAnnotation],
     ) -> Result<(), WalkError> {
         let previous = self.context;

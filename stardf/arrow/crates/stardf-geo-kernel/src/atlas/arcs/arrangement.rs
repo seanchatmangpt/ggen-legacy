@@ -124,18 +124,13 @@ impl SourceParameter {
     /// # Errors
     /// Adds observer refusal to [`Self::refined`].
     pub fn refined_metered(
-        &self,
-        bits: u32,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, bits: u32, context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         self.refine(context, bits, Some(observer))
     }
 
     fn refine(
-        &self,
-        context: &mut MetricContext,
-        bits: u32,
+        &self, context: &mut MetricContext, bits: u32,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         context.begin(1)?;
@@ -146,10 +141,7 @@ impl SourceParameter {
 
     /// Refine the same implicit contact under the active cumulative invocation.
     pub(crate) fn refined_in(
-        &self,
-        bits: u32,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &self, bits: u32, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<Self, GeoError> {
         if bits == 0 || bits > context.policy().limits().max_precision_bits {
             return Err(GeoError::PrecisionExhausted {
@@ -393,9 +385,7 @@ impl NativeBoundaryArrangement {
 /// parameters, including every repeated phase visit, are compared with the
 /// source-defined cuts; numerical cut tails are never discarded.
 pub(crate) fn selected_boundary_contact(
-    point: &crate::LonLat,
-    boundary: &NativeBoundaryArrangement,
-    context: &mut MetricContext,
+    point: &crate::LonLat, boundary: &NativeBoundaryArrangement, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     selected_contact_stratum(point, boundary, context, progress).map(|value| value.is_some())
@@ -405,9 +395,7 @@ pub(crate) fn selected_boundary_contact(
 /// Area consumers can discard lower-dimensional contacts without copying the
 /// original point/parameter proof or changing complete-set membership.
 pub(crate) fn selected_contact_stratum(
-    point: &crate::LonLat,
-    boundary: &NativeBoundaryArrangement,
-    context: &mut MetricContext,
+    point: &crate::LonLat, boundary: &NativeBoundaryArrangement, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<SelectedContactStratum>, GeoError> {
     for stratum in [
@@ -450,11 +438,8 @@ pub(crate) fn selected_contact_stratum(
 }
 
 fn source_contact(
-    point: &crate::LonLat,
-    edge: &PreparedEdge,
-    original_parameters: [&SourceParameter; 2],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    point: &crate::LonLat, edge: &PreparedEdge, original_parameters: [&SourceParameter; 2],
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     if let Some(constant) = super::constant::constant_point(edge, context, progress)? {
         return ExactAdmission::new(context, progress).rational(
@@ -527,8 +512,7 @@ fn source_contact(
 /// reference mismatch, and incomplete work/memory/output/precision admission.
 /// Both written chart rings and explicitly oriented native rings are admitted.
 pub fn native_boundary(
-    region: &PreparedRegion,
-    context: &mut MetricContext,
+    region: &PreparedRegion, context: &mut MetricContext,
 ) -> Result<NativeBoundaryArrangement, GeoError> {
     arrange(region, context, None)
 }
@@ -538,9 +522,7 @@ pub fn native_boundary(
 /// # Errors
 /// Adds observer refusal to [`native_boundary`].
 pub fn native_boundary_metered(
-    region: &PreparedRegion,
-    context: &mut MetricContext,
-    observer: &mut dyn MetricWorkObserver,
+    region: &PreparedRegion, context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
 ) -> Result<NativeBoundaryArrangement, GeoError> {
     arrange(region, context, Some(observer))
 }
@@ -581,8 +563,7 @@ struct Inventory {
 }
 
 fn arrange(
-    region: &PreparedRegion,
-    context: &mut MetricContext,
+    region: &PreparedRegion, context: &mut MetricContext,
     observer: Option<&mut dyn MetricWorkObserver>,
 ) -> Result<NativeBoundaryArrangement, GeoError> {
     context.begin(1)?;
@@ -630,9 +611,7 @@ fn arrange(
 
 /// Borrow the active invocation without resetting its cumulative admission.
 pub(crate) fn native_boundary_in(
-    region: &PreparedRegion,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    region: &PreparedRegion, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<NativeBoundaryArrangement, GeoError> {
     let binding = crate::numerical::reference_identity(context, progress, None)?;
     region.check_binding_admitted(binding, context, progress)?;
@@ -660,9 +639,7 @@ pub(crate) fn native_boundary_in(
 }
 
 fn arrange_admitted(
-    region: &PreparedRegion,
-    reference: crate::GeographicReference,
-    context: &mut MetricContext,
+    region: &PreparedRegion, reference: crate::GeographicReference, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<NativeBoundaryArrangement, GeoError> {
     let mut temporary = 0;
@@ -761,9 +738,7 @@ fn arrange_admitted(
 }
 
 fn reset_inventory(
-    inventory: &mut Inventory,
-    base: u64,
-    context: &mut MetricContext,
+    inventory: &mut Inventory, base: u64, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     // Drop every old contact, limb and grown container before its allowance is
@@ -831,9 +806,7 @@ fn node_id(source: Digest32, fields: &[u64]) -> Digest32 {
 }
 
 fn initialize(
-    inventory: &mut Inventory,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    inventory: &mut Inventory, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     let mut count = 0usize;
     for curve in inventory
@@ -971,10 +944,7 @@ fn initialize(
 }
 
 fn with_pair_contacts<T>(
-    source: &PreparedGeometry,
-    pair: [Address; 2],
-    goal: u32,
-    context: &mut MetricContext,
+    source: &PreparedGeometry, pair: [Address; 2], goal: u32, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
     evaluate: impl FnOnce(
         &[CurveIntersection],
@@ -1041,8 +1011,7 @@ fn with_pair_contacts<T>(
 }
 
 fn contact_bounds<'a>(
-    contact: &'a CurveIntersection,
-    constants: &'a [Rat; 2],
+    contact: &'a CurveIntersection, constants: &'a [Rat; 2],
 ) -> SmallVec<[ContactPoint<'a>; 2]> {
     let mut points = SmallVec::new();
     match contact {
@@ -1083,9 +1052,7 @@ fn contact_bounds<'a>(
 }
 
 fn bounds_order(
-    a: BoundRefs<'_>,
-    b: BoundRefs<'_>,
-    context: &mut MetricContext,
+    a: BoundRefs<'_>, b: BoundRefs<'_>, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<core::cmp::Ordering, GeoError> {
     ExactAdmission::new(context, progress).rational(
@@ -1107,9 +1074,7 @@ fn bounds_order(
 }
 
 fn copy_bounds(
-    bounds: BoundRefs<'_>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    bounds: BoundRefs<'_>, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Bounds, GeoError> {
     ExactAdmission::new(context, progress).expression_result(Linear, &bounds, 2, |values| {
         Ok((values.original(bounds[0])?, values.original(bounds[1])?))
@@ -1117,9 +1082,7 @@ fn copy_bounds(
 }
 
 fn copy_definition(
-    definition: &Definition,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    definition: &Definition, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Definition, GeoError> {
     match definition {
         Definition::Exact(value) => ExactAdmission::new(context, progress).expression_result(
@@ -1147,9 +1110,7 @@ fn copy_definition(
 }
 
 fn node_pairs(
-    inventory: &mut Inventory,
-    goal: u32,
-    context: &mut MetricContext,
+    inventory: &mut Inventory, goal: u32, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     let count = inventory.addresses.len();
@@ -1189,9 +1150,7 @@ fn node_pairs(
 }
 
 fn reverse_bounds(
-    bounds: &Bounds,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    bounds: &Bounds, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Bounds, GeoError> {
     let one = Rat::one();
     let mut admission = ExactAdmission::new(context, progress);
@@ -1212,9 +1171,7 @@ fn reverse_bounds(
 }
 
 fn copy_alias_cuts(
-    inventory: &mut Inventory,
-    aliases: &[(usize, bool)],
-    context: &mut MetricContext,
+    inventory: &mut Inventory, aliases: &[(usize, bool)], context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     for (index, &(original, reversed)) in aliases.iter().enumerate() {
@@ -1272,9 +1229,7 @@ fn copy_alias_cuts(
 /// isolated contact's complete parameter box. That contact's uniqueness proof
 /// then identifies the two nodes. Bounds overlap alone is never equality.
 fn complete_exact_contacts(
-    inventory: &mut Inventory,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    inventory: &mut Inventory, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     for cuts in &inventory.cuts {
         for first in 0..cuts.len() {
@@ -1397,10 +1352,7 @@ struct ExactContactWitness {
 }
 
 fn bounds_contain_exact(
-    value: &Rat,
-    bounds: &Bounds,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    value: &Rat, bounds: &Bounds, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let mut admission = ExactAdmission::new(context, progress);
     Ok(!admission.compare(value, &bounds.0)?.is_lt()
@@ -1408,10 +1360,7 @@ fn bounds_contain_exact(
 }
 
 fn exact_contact_witness(
-    inventory: &Inventory,
-    pair: [Address; 2],
-    node: usize,
-    context: &mut MetricContext,
+    inventory: &Inventory, pair: [Address; 2], node: usize, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<ExactContactWitness>, GeoError> {
     let scan = (inventory.addresses.len() as u64)
@@ -1476,10 +1425,7 @@ fn exact_contact_witness(
 }
 
 fn node_pairs_inner(
-    inventory: &mut Inventory,
-    goal: u32,
-    aliases: &[(usize, bool)],
-    context: &mut MetricContext,
+    inventory: &mut Inventory, goal: u32, aliases: &[(usize, bool)], context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     for first in 0..inventory.addresses.len() {
@@ -1774,18 +1720,13 @@ fn physical_node(inventory: &Inventory, node: usize) -> Digest32 {
 }
 
 fn midpoint(
-    first: &Cut,
-    second: &Cut,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    first: &Cut, second: &Cut, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Rat, GeoError> {
     crate::topology::mean_admitted(&first.bounds.1, &second.bounds.0, context, progress)
 }
 
 fn exact_fragment_point(
-    edge: &PreparedEdge,
-    parameter: &Rat,
-    context: &mut MetricContext,
+    edge: &PreparedEdge, parameter: &Rat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<crate::LonLat>, GeoError> {
     let endpoint =
@@ -1844,20 +1785,14 @@ fn exact_fragment_point(
 }
 
 fn fragment_point(
-    edge: &PreparedEdge,
-    parameter: &Rat,
-    bits: u32,
-    context: &mut MetricContext,
+    edge: &PreparedEdge, parameter: &Rat, bits: u32, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<[FixedInterval; 2], GeoError> {
     fragment_enclosure(edge, [parameter, parameter], bits, context, progress)
 }
 
 fn fragment_enclosure(
-    edge: &PreparedEdge,
-    bounds: [&Rat; 2],
-    bits: u32,
-    context: &mut MetricContext,
+    edge: &PreparedEdge, bounds: [&Rat; 2], bits: u32, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<[FixedInterval; 2], GeoError> {
     let policy = context.policy();

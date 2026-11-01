@@ -183,22 +183,15 @@ where
     /// # Errors
     /// Preserves invalid-source and unsupported immutable-base scheduling failures.
     pub fn new(
-        exe: &'r Executable<N>,
-        edb: RelationStore<D, N>,
-        guards: &'r dyn GuardEvaluator<D, N>,
-        context: SessionContext,
-        options: EvalOptions,
+        exe: &'r Executable<N>, edb: RelationStore<D, N>, guards: &'r dyn GuardEvaluator<D, N>,
+        context: SessionContext, options: EvalOptions,
     ) -> Result<Self, EvalError<D::Error>> {
         Self::new_with_native(exe, edb, guards, context, options, false)
     }
 
     pub(super) fn new_with_native(
-        exe: &'r Executable<N>,
-        edb: RelationStore<D, N>,
-        guards: &'r dyn GuardEvaluator<D, N>,
-        context: SessionContext,
-        options: EvalOptions,
-        native: bool,
+        exe: &'r Executable<N>, edb: RelationStore<D, N>, guards: &'r dyn GuardEvaluator<D, N>,
+        context: SessionContext, options: EvalOptions, native: bool,
     ) -> Result<Self, EvalError<D::Error>> {
         if let Some(rule) = exe.base_read_rule {
             return Err(EvalError::BaseReadRequiresSchedule { rule });
@@ -242,9 +235,7 @@ where
     /// failures are preserved and poison further execution. Resource and stop
     /// refusals return [`ResumeProgress::Paused`] with the continuation intact.
     pub fn resume(
-        &mut self,
-        binding: ContinuationBinding,
-        options: EvalOptions,
+        &mut self, binding: ContinuationBinding, options: EvalOptions,
         stop: Option<&dyn StopSignal>,
     ) -> Result<ResumeProgress<D::Error>, SessionError<D::Error>> {
         let before = self.state.as_ref().map_or(0, |state| state.native_bytes);
@@ -257,11 +248,8 @@ where
     }
 
     pub(super) fn resume_in_memory<A: Admission + ?Sized>(
-        &mut self,
-        binding: ContinuationBinding,
-        options: EvalOptions,
-        stop: Option<&dyn StopSignal>,
-        memory: &mut Memory<'_, A>,
+        &mut self, binding: ContinuationBinding, options: EvalOptions,
+        stop: Option<&dyn StopSignal>, memory: &mut Memory<'_, A>,
     ) -> Result<ResumeProgress<D::Error>, SessionError<D::Error>> {
         let before = memory.admitted_bytes();
         let result = self.resume_native(binding, options, stop, memory);
@@ -272,11 +260,8 @@ where
     }
 
     fn resume_native<A: Admission + ?Sized>(
-        &mut self,
-        binding: ContinuationBinding,
-        options: EvalOptions,
-        stop: Option<&dyn StopSignal>,
-        memory: &mut Memory<'_, A>,
+        &mut self, binding: ContinuationBinding, options: EvalOptions,
+        stop: Option<&dyn StopSignal>, memory: &mut Memory<'_, A>,
     ) -> Result<ResumeProgress<D::Error>, SessionError<D::Error>> {
         for (component, expected, actual) in [
             ("program", self.binding.program, binding.program),
@@ -416,10 +401,7 @@ where
     /// # Errors
     /// Refuses an incomplete/taken model, invalid coordinates or original failures.
     pub fn probe_head(
-        &self,
-        rule: usize,
-        head: usize,
-        terms: [D::Id; N],
+        &self, rule: usize, head: usize, terms: [D::Id; N],
     ) -> Result<super::HeadProbe<'_, D, N>, super::ProbeError<D::Error>> {
         if let Some(error) = &self.failure {
             return Err(super::ProbeError::Failed(error.clone()));

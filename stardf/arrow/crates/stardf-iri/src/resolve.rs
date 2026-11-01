@@ -48,8 +48,7 @@ impl<'a> Parts<'a> {
 
     /// §5.3 component recomposition.
     fn recompose<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> core::result::Result<String, StorageError> {
         // Exact-fit buffer from the known part lengths: one allocation per
         // recompose instead of the amortized-doubling reallocs of `String::new()`.
@@ -128,9 +127,7 @@ impl Iri {
     /// # Errors
     /// Returns the original IRI error or typed physical storage refusal.
     pub fn resolve_with_memory<S: Admission + ?Sized>(
-        &self,
-        reference: &str,
-        memory: &mut Memory<'_, S>,
+        &self, reference: &str, memory: &mut Memory<'_, S>,
     ) -> core::result::Result<Self, IriReadError> {
         if !self.has_scheme() {
             return Err(IriError::NonAbsoluteBase(memory.string(self.as_str())?).into());
@@ -161,9 +158,7 @@ impl Iri {
     }
 
     pub(crate) fn resolve_iri_with_memory<S: Admission + ?Sized>(
-        &self,
-        r: &Self,
-        memory: &mut Memory<'_, S>,
+        &self, r: &Self, memory: &mut Memory<'_, S>,
     ) -> core::result::Result<Self, IriReadError> {
         if !self.has_scheme() {
             return Err(IriError::NonAbsoluteBase(memory.string(self.as_str())?).into());
@@ -177,9 +172,7 @@ impl Iri {
     /// spans and be itself validated: a resolution that produced something malformed
     /// is a hard error, never a silently-returned bad IRI.
     fn transform_and_reparse<S: Admission + ?Sized>(
-        &self,
-        r: &Parts<'_>,
-        memory: &mut Memory<'_, S>,
+        &self, r: &Parts<'_>, memory: &mut Memory<'_, S>,
     ) -> core::result::Result<Self, IriReadError> {
         let transformed = transform(&Parts::of(self), r, memory)?;
         let text = transformed.recompose(memory);
@@ -201,9 +194,7 @@ pub(crate) fn resident_result<T>(result: core::result::Result<T, IriReadError>) 
 /// RFC-3986 §5.2.2 transform-references (strict mode: a reference scheme is never
 /// ignored, even when equal to the base scheme).
 fn transform<'a, S: Admission + ?Sized>(
-    base: &Parts<'a>,
-    r: &Parts<'a>,
-    memory: &mut Memory<'_, S>,
+    base: &Parts<'a>, r: &Parts<'a>, memory: &mut Memory<'_, S>,
 ) -> core::result::Result<Parts<'a>, StorageError> {
     if r.scheme.is_some() {
         return Ok(Parts {
@@ -262,9 +253,7 @@ fn transform<'a, S: Admission + ?Sized>(
 
 /// RFC-3986 §5.2.3 merge: combine a relative-reference path with the base path.
 fn merge<S: Admission + ?Sized>(
-    base: &Parts<'_>,
-    ref_path: &str,
-    memory: &mut Memory<'_, S>,
+    base: &Parts<'_>, ref_path: &str, memory: &mut Memory<'_, S>,
 ) -> core::result::Result<String, StorageError> {
     if base.authority.is_some() && base.path.is_empty() {
         let mut s = String::new();
@@ -311,8 +300,7 @@ pub(crate) fn remove_dot_segments(path: &str) -> String {
 }
 
 fn remove_dot_segments_with_memory<S: Admission + ?Sized>(
-    path: &str,
-    memory: &mut Memory<'_, S>,
+    path: &str, memory: &mut Memory<'_, S>,
 ) -> core::result::Result<String, StorageError> {
     let mut input: &str = path;
     let mut out = String::new();

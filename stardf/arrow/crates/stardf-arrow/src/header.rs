@@ -1,14 +1,14 @@
 // SPDX-FileCopyrightText: 2026 Blackcat Informatics® Inc. <paudley@blackcatinformatics.ca>
 // SPDX-License-Identifier: MIT OR Apache-2.0 OR MulanPSL-2.0
 
-//! CanonArrow egress wire protocol — 128-byte framed CanonArrow columnar-egress header (not Arrow IPC; designed for downstream Arrow IPC encapsulation).
+//! `CanonArrow` egress wire protocol — 128-byte framed `CanonArrow` columnar-egress header (not Arrow IPC; designed for downstream Arrow IPC encapsulation).
 //!
 //! Layout is fixed: the struct is `#[repr(C, align(64))]` and the field
 //! order is the wire order. `total_byte_len` covers payload + 128 header + 64-byte trailing padding.
 
 use purrdf_hash::blake3;
 
-/// Wire header for the CanonArrow columnar egress payload. 128 bytes total, 64-byte aligned.
+/// Wire header for the `CanonArrow` columnar egress payload. 128 bytes total, 64-byte aligned.
 #[repr(C, align(64))]
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub struct ArrowEgressHeader {
@@ -38,11 +38,11 @@ pub struct ArrowEgressHeader {
 // 128-byte wire image `to_bytes`/`from_bytes` slice by explicit offsets.
 // A field add/remove/reorder that desynchronizes the two fails here.
 const _: () = assert!(
-    core::mem::size_of::<ArrowEgressHeader>() == ArrowEgressHeader::SIZE,
+    size_of::<ArrowEgressHeader>() == ArrowEgressHeader::SIZE,
     "struct layout must equal the 128-byte wire image"
 );
 const _: () = assert!(
-    core::mem::align_of::<ArrowEgressHeader>() == 64,
+    align_of::<ArrowEgressHeader>() == 64,
     "struct alignment must equal the 64-byte wire alignment"
 );
 
@@ -70,11 +70,11 @@ impl ArrowEgressHeader {
     pub const SCHEMA_VERSION: u16 = 0x0002;
     /// Byte offset of the payload region.
     pub const PAYLOAD_OFFSET: u32 = 128;
-    ///
-    /// A `SCHEMA_VERSION` bump is a BREAKING change — historical streams fail
-    /// closed on the new reader and new streams fail on old readers — so it
-    /// must ship in a semver major release of this crate (and therefore the
-    /// workspace); minor and patch releases keep `SCHEMA_VERSION` unchanged.
+    //
+    // A `SCHEMA_VERSION` bump is a BREAKING change — historical streams fail
+    // closed on the new reader and new streams fail on old readers — so it
+    // must ship in a semver major release of this crate (and therefore the
+    // workspace); minor and patch releases keep `SCHEMA_VERSION` unchanged.
 
     /// Flags bit0: payload contains null values.
     /// Advisory only: `from_bytes` mask-checks flags but never cross-checks
@@ -98,6 +98,7 @@ impl ArrowEgressHeader {
         Self::FLAG_HAS_NULLS | Self::FLAG_BIG_ENDIAN | Self::FLAG_STRICT_PROJECTION_ORDER;
 
     /// Serialize to the 128-byte little-endian wire form.
+    #[must_use]
     pub fn to_bytes(&self) -> [u8; Self::SIZE] {
         let mut out = [0u8; Self::SIZE];
         out[0..8].copy_from_slice(&self.magic);
@@ -120,6 +121,17 @@ impl ArrowEgressHeader {
     /// [`ArrowEgressHeaderError::BadSchemaVersion`], which carries the
     /// observed value so migration tooling can identify the stream
     /// without decoding it. See that constant for the upgrade path.
+    ///
+    /// # Errors
+    /// Returns [`ArrowEgressHeaderError`] for a mismatched magic, an unknown
+    /// schema version, undefined flag bits, a wrong payload offset, a
+    /// batch-count/payload-length inconsistency, a `total_byte_len` that
+    /// underflows, a payload-length mismatch, or nonzero reserved bytes.
+    ///
+    /// # Panics
+    /// Never: every `try_into` here re-slices fixed-size ranges of the
+    /// caller's `&[u8; Self::SIZE]`, so each conversion is infallible by
+    /// construction.
     pub fn from_bytes(bytes: &[u8; Self::SIZE]) -> Result<Self, ArrowEgressHeaderError> {
         if bytes[0..8] != Self::MAGIC {
             return Err(ArrowEgressHeaderError::BadMagic);
@@ -150,17 +162,14 @@ impl ArrowEgressHeader {
         // Subtraction order, not addition: a hostile wire header with
         // payload_byte_len near u64::MAX must overflow-refuse here, not
         // wrap total_byte_len + SIZE + 64 to a small passing value.
-        let expected = match total_byte_len
+        let Some(expected) = total_byte_len
             .checked_sub(Self::SIZE as u64)
             .and_then(|rest| rest.checked_sub(64))
-        {
-            Some(rest) => rest,
-            None => {
-                return Err(ArrowEgressHeaderError::BadTotalLen {
-                    payload_byte_len,
-                    total_byte_len,
-                });
-            }
+        else {
+            return Err(ArrowEgressHeaderError::BadTotalLen {
+                payload_byte_len,
+                total_byte_len,
+            });
         };
         if payload_byte_len != expected {
             return Err(ArrowEgressHeaderError::BadTotalLen {
@@ -196,7 +205,7 @@ impl ArrowEgressHeader {
     /// `&frame[Self::SIZE..][..self.payload_byte_len]` without this check is
     /// the caller-side panic surface. Gate the slice on this.
     #[must_use]
-    pub fn fits_in(&self, available: u64) -> bool {
+    pub const fn fits_in(&self, available: u64) -> bool {
         available >= self.total_byte_len
     }
 }
@@ -260,13 +269,13 @@ impl std::error::Error for ArrowEgressHeaderError {}
 impl purrdf_hash::error::StructuredError for ArrowEgressHeaderError {
     purrdf_hash::error_visit! {
         BadMagic => "canonarrow-bad-magic" {},
-        BadSchemaVersion(v) => "canonarrow-bad-schema-version" { "version" => Unsigned(*v as u128) },
-        BadFlags(f) => "canonarrow-bad-flags" { "flags" => Unsigned(*f as u128) },
-        BadPayloadOffset(o) => "canonarrow-bad-payload-offset" { "offset" => Unsigned(*o as u128) },
-        BadBatchCount(n) => "canonarrow-bad-batch-count" { "batch_count" => Unsigned(*n as u128) },
+        BadSchemaVersion(v) => "canonarrow-bad-schema-version" { "version" => Unsigned(u128::from(*v)) },
+        BadFlags(f) => "canonarrow-bad-flags" { "flags" => Unsigned(u128::from(*f)) },
+        BadPayloadOffset(o) => "canonarrow-bad-payload-offset" { "offset" => Unsigned(u128::from(*o)) },
+        BadBatchCount(n) => "canonarrow-bad-batch-count" { "batch_count" => Unsigned(u128::from(*n)) },
         BadTotalLen { payload_byte_len, total_byte_len } => "canonarrow-bad-total-len" {
-            "payload_len" => Unsigned(*payload_byte_len as u128),
-            "total_len" => Unsigned(*total_byte_len as u128),
+            "payload_len" => Unsigned(u128::from(*payload_byte_len)),
+            "total_len" => Unsigned(u128::from(*total_byte_len)),
         },
         ReservedNotZero => "canonarrow-reserved-not-zero" {},
     }

@@ -159,8 +159,7 @@ fn binding_contract() -> ExternalBindingContract {
 }
 
 fn guard(
-    role: IndexUseRole,
-    certified_metadata_binding: Option<purrdf_core::ExternalBindingId>,
+    role: IndexUseRole, certified_metadata_binding: Option<purrdf_core::ExternalBindingId>,
 ) -> IndexGuardContract {
     IndexGuardContract {
         implementation: FX.artifact("hnsw-fixture"),
@@ -195,9 +194,7 @@ fn coordinates(context: &Context, projection: usize) -> IndexCoordinates {
 }
 
 fn build(
-    context: &Context,
-    external_bindings: Vec<ExternalBinding>,
-    indexes: Vec<DerivedIndex>,
+    context: &Context, external_bindings: Vec<ExternalBinding>, indexes: Vec<DerivedIndex>,
 ) -> Vec<u8> {
     let metadata = CanonicalMetadataInput {
         source: context.source,

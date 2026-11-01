@@ -1743,10 +1743,7 @@ impl ChangePath {
 /// Both argument slices are prepared by [`build_case`], so the only thing inside
 /// a window built around this call is the validation itself.
 fn validate_conforming(
-    fixture: &CaseFixture,
-    path: ChangePath,
-    focus_nodes: usize,
-    case: &str,
+    fixture: &CaseFixture, path: ChangePath, focus_nodes: usize, case: &str,
 ) -> ValidationReport {
     let report = match path {
         ChangePath::Ids => fixture
@@ -2156,8 +2153,7 @@ fn expansion_growth_alloc_model(changes: usize) -> u64 {
 /// A delta-bound validator over [`EXPANSION_FOCUS_NODES`] focus nodes whose mutation
 /// inserts `changes` rows, each of which reaches one focus node.
 fn expansion_fixture(
-    shapes: &str,
-    changes: usize,
+    shapes: &str, changes: usize,
 ) -> (
     Arc<purrdf_rdf::ir::DeltaDatasetView>,
     PreparedValidator,

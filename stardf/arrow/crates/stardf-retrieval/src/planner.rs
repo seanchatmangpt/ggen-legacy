@@ -430,8 +430,7 @@ const PPM_UNIT: u64 = 1_000_000;
 ///   the ceiling, and the ending says the planned depth stopped the read — see this
 ///   module's header.
 pub fn plan(
-    request: &RetrievalRequest,
-    registry: &PropertyFunctionRegistry<'_>,
+    request: &RetrievalRequest, registry: &PropertyFunctionRegistry<'_>,
     statistics: &impl Statistics,
 ) -> Result<Plan, PlanError> {
     for constraint in &request.constraints {
@@ -469,9 +468,7 @@ pub(crate) enum DepthPolicy<'a> {
 
 /// Match and place once; only the depth/evidence policy differs.
 pub(crate) fn plan_read(
-    terms: &[RequestTerm],
-    policy: DepthPolicy<'_>,
-    registry: &PropertyFunctionRegistry<'_>,
+    terms: &[RequestTerm], policy: DepthPolicy<'_>, registry: &PropertyFunctionRegistry<'_>,
     statistics: &impl Statistics,
 ) -> Result<crate::plan::PlanParts, PlanError> {
     // 1. A malformed term cannot be planned, and no later stage could repair
@@ -870,8 +867,7 @@ enum Outcome<'a> {
 /// and at the admission waist for the ones a binding and the per-term unserved
 /// evidence record.
 fn terms_at<'a>(
-    terms: &'a [RequestTerm],
-    indices: Option<&BTreeSet<u32>>,
+    terms: &'a [RequestTerm], indices: Option<&BTreeSet<u32>>,
 ) -> Vec<(u32, &'a RequestTerm)> {
     indices.map_or_else(Vec::new, |indices| {
         indices
@@ -918,9 +914,7 @@ fn all_indexed_terms(terms: &[RequestTerm]) -> Vec<(u32, &RequestTerm)> {
 /// it" names a registry with no such producer at all. A term that is both gets
 /// the first, because the first is the narrower fact.
 fn unserved_terms(
-    terms: &[RequestTerm],
-    candidates: &[Candidate<'_>],
-    bindings: &[ProducerBinding],
+    terms: &[RequestTerm], candidates: &[Candidate<'_>], bindings: &[ProducerBinding],
 ) -> Vec<UnservedTerm> {
     let mut accepted = vec![false; terms.len()];
     let mut carried = vec![false; terms.len()];
@@ -1035,9 +1029,7 @@ fn unserved_terms(
 /// handful fixed by the registry rather than by the corpus. Nothing here touches a
 /// row.
 fn licensed_prefix(
-    bound: ReadBound,
-    stratum: &Iri,
-    declaration: &SurvivingStratum<'_>,
+    bound: ReadBound, stratum: &Iri, declaration: &SurvivingStratum<'_>,
     surviving: &BTreeMap<Iri, SurvivingStratum<'_>>,
 ) -> Option<u64> {
     let ReadBound::Bounded(top_k) = bound else {
@@ -1080,10 +1072,7 @@ fn licensed_prefix(
 /// selectivity the derivation never applied would describe a derivation that did
 /// not happen.
 fn consult(
-    declared: u64,
-    stratum: &Iri,
-    terms: &[(u32, &RequestTerm)],
-    statistics: &impl Statistics,
+    declared: u64, stratum: &Iri, terms: &[(u32, &RequestTerm)], statistics: &impl Statistics,
     prefix: Option<u64>,
 ) -> DepthInputs {
     let cardinality = statistics.cardinality(stratum);
@@ -1374,9 +1363,7 @@ fn clamp_depth(bound: u64) -> u32 {
 /// one a stratum's depth is derived from. Asking about every term keeps the
 /// lookup a lookup.
 fn combined_selectivity_ppm(
-    subject: &Iri,
-    terms: &[(u32, &RequestTerm)],
-    statistics: &impl Statistics,
+    subject: &Iri, terms: &[(u32, &RequestTerm)], statistics: &impl Statistics,
 ) -> (Option<u64>, Vec<u32>) {
     let mut total: Option<u64> = None;
     let mut contributing = Vec::new();
@@ -1560,9 +1547,7 @@ pub(crate) fn term_predicate(term: &RequestTerm) -> Option<&Iri> {
 /// because a constructor the planner is exempt from is a law the planner's own
 /// output is not held to.
 fn capture_statistics(
-    terms: &[RequestTerm],
-    statistics: &impl Statistics,
-    derivations: &BTreeMap<Iri, DepthInputs>,
+    terms: &[RequestTerm], statistics: &impl Statistics, derivations: &BTreeMap<Iri, DepthInputs>,
 ) -> Result<StatisticsSnapshot, PlanError> {
     // Keyed rather than pushed, so "one row per subject" is the container's law
     // instead of a rule this function has to remember, and the ascending order

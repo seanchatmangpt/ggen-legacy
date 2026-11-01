@@ -234,11 +234,8 @@ fn vector_space_of(terms: &[String]) -> Arc<HnswSpace> {
 
 /// The read `search` takes: every stratum on demand.
 fn on_demand(
-    registry: &PropertyFunctionRegistry<'static>,
-    statistics: &Cardinalities,
-    dataset: &RdfDataset,
-    request: &RetrievalRequest,
-    profile: &FusionProfile,
+    registry: &PropertyFunctionRegistry<'static>, statistics: &Cardinalities, dataset: &RdfDataset,
+    request: &RetrievalRequest, profile: &FusionProfile,
 ) -> usize {
     let env = AdmissionEnvironment {
         registry,
@@ -255,11 +252,8 @@ fn on_demand(
 
 /// The same answer, read materialised: `execute` at the planned depths, then `fuse`.
 fn materialised(
-    registry: &PropertyFunctionRegistry<'static>,
-    statistics: &Cardinalities,
-    dataset: &RdfDataset,
-    request: &RetrievalRequest,
-    profile: &FusionProfile,
+    registry: &PropertyFunctionRegistry<'static>, statistics: &Cardinalities, dataset: &RdfDataset,
+    request: &RetrievalRequest, profile: &FusionProfile,
 ) -> usize {
     let env = AdmissionEnvironment {
         registry,
@@ -398,9 +392,7 @@ fn text_pair_dataset(pair: &TextPair) -> Arc<RdfDataset> {
 /// exclusion basis replaced by `basis` — so a with-lookups and a without-lookups
 /// registration of one pair differ in that field and nothing else.
 fn text_pair_registry(
-    dataset: &RdfDataset,
-    pair: &TextPair,
-    basis: ExclusionBasis,
+    dataset: &RdfDataset, pair: &TextPair, basis: ExclusionBasis,
 ) -> PropertyFunctionRegistry<'static> {
     let mut registry = PropertyFunctionRegistry::new();
     let sides = [
@@ -603,9 +595,7 @@ fn hnsw_pair(shape: Shape, rows: usize) -> HnswPair {
 /// The text and vector producers registered under their own declarations, with only
 /// the exclusion basis replaced by `basis`, as [`text_pair_registry`] does.
 fn hnsw_pair_registry(
-    dataset: &RdfDataset,
-    pair: &HnswPair,
-    basis: ExclusionBasis,
+    dataset: &RdfDataset, pair: &HnswPair, basis: ExclusionBasis,
 ) -> PropertyFunctionRegistry<'static> {
     let mut registry = PropertyFunctionRegistry::new();
 
@@ -731,10 +721,8 @@ fn text_hnsw_reads(c: &mut Bench) {
 /// given `id`. The stratum is prepared once, before this is called; every harness
 /// iteration re-times the same lookup.
 fn bench_single_lookup(
-    group: &mut purrdf_testkit::bench::BenchmarkGroup<'_>,
-    id: &str,
-    stream: &mut purrdf::retrieval::StratumStream<'_>,
-    candidate: &Term,
+    group: &mut purrdf_testkit::bench::BenchmarkGroup<'_>, id: &str,
+    stream: &mut purrdf::retrieval::StratumStream<'_>, candidate: &Term,
 ) {
     group.bench_function(id, |b| {
         b.iter(|| {

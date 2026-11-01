@@ -383,8 +383,7 @@ fn count_shape(n: usize) -> Shape {
     .expect("an integer has a shape")
 }
 fn operand_shapes(
-    survivors: &[Vec<TermValue>],
-    workspace: &crate::WorkspaceCapability,
+    survivors: &[Vec<TermValue>], workspace: &crate::WorkspaceCapability,
 ) -> Result<crate::AdmittedVec<Shape>, EvalError> {
     let mut shapes = crate::AdmittedVec::new(workspace);
     for tuple in survivors {
@@ -396,9 +395,7 @@ fn operand_shapes(
 }
 
 fn percentile_cost(
-    survivors: &[Vec<TermValue>],
-    p: Option<&XsdValue>,
-    workspace: &crate::WorkspaceCapability,
+    survivors: &[Vec<TermValue>], p: Option<&XsdValue>, workspace: &crate::WorkspaceCapability,
 ) -> Result<Cost, EvalError> {
     if machine_word_operands(survivors) {
         return Ok(Cost::ZERO);
@@ -426,9 +423,7 @@ fn percentile_cost(
     Ok(sort.then(tower_step(finish, &[m, p, rank, diff, scaled, result])))
 }
 fn moments_cost(
-    survivors: &[Vec<TermValue>],
-    deviation: bool,
-    policy: purrdf_xsd::exact::DivisionPolicy,
+    survivors: &[Vec<TermValue>], deviation: bool, policy: purrdf_xsd::exact::DivisionPolicy,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<Cost, EvalError> {
     if machine_word_operands(survivors) {
@@ -476,8 +471,7 @@ fn moments_cost(
 }
 
 fn parse_stat_value(
-    value: &TermValue,
-    workspace: &crate::WorkspaceCapability,
+    value: &TermValue, workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<crate::parsed_value::ParsedValue>, EvalError> {
     let TermValue::Literal {
         lexical_form,
@@ -494,9 +488,7 @@ fn parse_stat_value(
 }
 
 fn scalarval_native(
-    scalarvals: &[(String, TermValue)],
-    name: &str,
-    workspace: &crate::WorkspaceCapability,
+    scalarvals: &[(String, TermValue)], name: &str, workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<crate::parsed_value::ParsedValue>, EvalError> {
     let Some((_, term)) = scalarvals.iter().find(|(key, _)| key == name) else {
         return Ok(None);
@@ -509,10 +501,7 @@ fn inline_stat_value(value: XsdValue) -> Result<crate::parsed_value::ParsedValue
 }
 
 fn stat_compare(
-    a: &XsdValue,
-    b: &XsdValue,
-    total: bool,
-    workspace: &crate::WorkspaceCapability,
+    a: &XsdValue, b: &XsdValue, total: bool, workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<Ordering>, EvalError> {
     let mut frame = crate::native_numeric::NumericFrame::new(workspace);
     let answer = if total && a.is_numeric() && b.is_numeric() {
@@ -524,8 +513,7 @@ fn stat_compare(
 }
 
 fn floor_stat_value(
-    value: &XsdValue,
-    workspace: &crate::WorkspaceCapability,
+    value: &XsdValue, workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<crate::parsed_value::ParsedValue>, EvalError> {
     let mut frame = crate::native_numeric::NumericFrame::new(workspace);
     let answer = purrdf_xsd::numeric::numeric_unary_admitted(
@@ -537,8 +525,7 @@ fn floor_stat_value(
 }
 
 fn native_floor_index(
-    value: &XsdValue,
-    workspace: &crate::WorkspaceCapability,
+    value: &XsdValue, workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<i128>, EvalError> {
     Ok(match value {
         XsdValue::Integer { value, .. } => Some(value.as_i128().unwrap_or_else(|| {
@@ -576,8 +563,7 @@ fn native_floor_index(
 }
 
 fn series_order<V: std::borrow::Borrow<XsdValue>>(
-    values: &[V],
-    workspace: &crate::WorkspaceCapability,
+    values: &[V], workspace: &crate::WorkspaceCapability,
 ) -> Result<crate::AdmittedVec<usize>, EvalError> {
     let mut classes = crate::AdmittedVec::with_capacity(values.len(), workspace)?;
     for value in values {
@@ -610,9 +596,7 @@ fn sort_series(values: Vec<XsdValue>) -> Vec<XsdValue> {
 }
 
 fn percentile_native(
-    values: &[crate::parsed_value::ParsedValue],
-    order: &[usize],
-    p: &XsdValue,
+    values: &[crate::parsed_value::ParsedValue], order: &[usize], p: &XsdValue,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<crate::parsed_value::ParsedValue>, EvalError> {
     use purrdf_xsd::numeric::NumericBinaryOperator::{Add, Multiply, Subtract};
@@ -690,9 +674,7 @@ fn percentile_native(
 }
 
 fn native_term_order(
-    left: &TermValue,
-    right: &TermValue,
-    workspace: &crate::WorkspaceCapability,
+    left: &TermValue, right: &TermValue, workspace: &crate::WorkspaceCapability,
 ) -> Result<Ordering, EvalError> {
     let left_key = project_admitted(Some(left), workspace)?;
     let right_key = project_admitted(Some(right), workspace)?;
@@ -705,9 +687,7 @@ fn native_term_order(
 }
 
 fn insert_bounded(
-    values: &mut crate::AdmittedVec<crate::WorkspaceTerm>,
-    k: usize,
-    value: crate::WorkspaceTerm,
+    values: &mut crate::AdmittedVec<crate::WorkspaceTerm>, k: usize, value: crate::WorkspaceTerm,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<(), EvalError> {
     if k == 0 {
@@ -771,9 +751,7 @@ enum ValueSeries {
 }
 impl ValueSeries {
     fn step(
-        &mut self,
-        args: &[TermValue],
-        workspace: &crate::WorkspaceCapability,
+        &mut self, args: &[TermValue], workspace: &crate::WorkspaceCapability,
     ) -> Result<(), EvalError> {
         if matches!(self, Self::Poisoned) {
             return Ok(());
@@ -847,8 +825,7 @@ impl AggregateAccumulator for PercentileAccumulator {
         native_resident_answer(self.finish_admitted(&workspace))
     }
     fn finish_admitted(
-        self: Box<Self>,
-        workspace: &crate::WorkspaceCapability,
+        self: Box<Self>, workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
         let Self {
             p,
@@ -891,11 +868,7 @@ enum MomentsState {
 }
 
 fn moments_step(
-    n: u64,
-    sum: &XsdValue,
-    sumsq: &XsdValue,
-    x: &XsdValue,
-    workspace: &crate::WorkspaceCapability,
+    n: u64, sum: &XsdValue, sumsq: &XsdValue, x: &XsdValue, workspace: &crate::WorkspaceCapability,
 ) -> Result<
     Option<(
         u64,
@@ -1022,21 +995,18 @@ impl AggregateAccumulator for MomentsAccumulator {
         self.finish_absorbing(&mut |_| {})
     }
     fn finish_absorbing(
-        self: Box<Self>,
-        absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
+        self: Box<Self>, absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
     ) -> Result<Option<TermValue>, EvalError> {
         let workspace = self.workspace.clone();
         native_resident_answer(self.finish_absorbing_admitted(absorb, &workspace))
     }
     fn finish_admitted(
-        self: Box<Self>,
-        workspace: &crate::WorkspaceCapability,
+        self: Box<Self>, workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
         self.finish_absorbing_admitted(&mut |_| {}, workspace)
     }
     fn finish_absorbing_admitted(
-        self: Box<Self>,
-        absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
+        self: Box<Self>, absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
         use purrdf_xsd::numeric::NumericBinaryOperator::{Divide, Multiply, Subtract};
@@ -1192,8 +1162,7 @@ impl AggregateAccumulator for ModeAccumulator {
         native_resident_answer(self.finish_admitted(&workspace))
     }
     fn finish_admitted(
-        self: Box<Self>,
-        _workspace: &crate::WorkspaceCapability,
+        self: Box<Self>, _workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
         let Self {
             mut values,
@@ -1268,8 +1237,7 @@ impl AggregateAccumulator for EdgeAccumulator {
         native_resident_answer(self.finish_admitted(&workspace))
     }
     fn finish_admitted(
-        self: Box<Self>,
-        _workspace: &crate::WorkspaceCapability,
+        self: Box<Self>, _workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
         Ok(self.value)
     }
@@ -1329,8 +1297,7 @@ impl AggregateAccumulator for TopKAccumulator {
         native_resident_answer(self.finish_admitted(&workspace))
     }
     fn finish_admitted(
-        self: Box<Self>,
-        workspace: &crate::WorkspaceCapability,
+        self: Box<Self>, workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
         let Self {
             state,
@@ -1362,9 +1329,7 @@ impl AggregateAccumulator for TopKAccumulator {
 macro_rules! resident_statistic_doors {
     () => {
         fn exact_numeric_cost(
-            &self,
-            survivors: &[Vec<TermValue>],
-            scalarvals: &[(String, TermValue)],
+            &self, survivors: &[Vec<TermValue>], scalarvals: &[(String, TermValue)],
         ) -> Cost {
             self.exact_numeric_cost_under(
                 survivors,
@@ -1373,9 +1338,7 @@ macro_rules! resident_statistic_doors {
             )
         }
         fn exact_numeric_cost_under(
-            &self,
-            survivors: &[Vec<TermValue>],
-            scalarvals: &[(String, TermValue)],
+            &self, survivors: &[Vec<TermValue>], scalarvals: &[(String, TermValue)],
             division: purrdf_xsd::exact::DivisionPolicy,
         ) -> Cost {
             self.exact_numeric_cost_admitted(
@@ -1387,9 +1350,7 @@ macro_rules! resident_statistic_doors {
             .expect("resident statistical cost")
         }
         fn init_under(
-            &self,
-            scalarvals: &[(String, TermValue)],
-            division: purrdf_xsd::exact::DivisionPolicy,
+            &self, scalarvals: &[(String, TermValue)], division: purrdf_xsd::exact::DivisionPolicy,
         ) -> Box<dyn AggregateAccumulator> {
             self.init_admitted(
                 scalarvals,
@@ -1421,11 +1382,8 @@ impl CustomAggregate for MedianAggregate {
     resident_statistic_doors!();
 
     fn exact_numeric_cost_admitted(
-        &self,
-        survivors: &[Vec<TermValue>],
-        _scalarvals: &[(String, TermValue)],
-        _division: purrdf_xsd::exact::DivisionPolicy,
-        workspace: &crate::WorkspaceCapability,
+        &self, survivors: &[Vec<TermValue>], _scalarvals: &[(String, TermValue)],
+        _division: purrdf_xsd::exact::DivisionPolicy, workspace: &crate::WorkspaceCapability,
     ) -> Result<Cost, EvalError> {
         percentile_cost(survivors, Some(&half()), workspace)
     }
@@ -1434,9 +1392,7 @@ impl CustomAggregate for MedianAggregate {
     }
 
     fn init_admitted(
-        &self,
-        _scalarvals: &[(String, TermValue)],
-        _division: purrdf_xsd::exact::DivisionPolicy,
+        &self, _scalarvals: &[(String, TermValue)], _division: purrdf_xsd::exact::DivisionPolicy,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<WorkspaceAccumulator, EvalError> {
         WorkspaceAccumulator::new(
@@ -1472,11 +1428,8 @@ impl CustomAggregate for PercentileAggregate {
     resident_statistic_doors!();
 
     fn exact_numeric_cost_admitted(
-        &self,
-        survivors: &[Vec<TermValue>],
-        scalarvals: &[(String, TermValue)],
-        _division: purrdf_xsd::exact::DivisionPolicy,
-        workspace: &crate::WorkspaceCapability,
+        &self, survivors: &[Vec<TermValue>], scalarvals: &[(String, TermValue)],
+        _division: purrdf_xsd::exact::DivisionPolicy, workspace: &crate::WorkspaceCapability,
     ) -> Result<Cost, EvalError> {
         {
             let p = scalarval_native(scalarvals, PERCENTILE_P, workspace)?;
@@ -1488,9 +1441,7 @@ impl CustomAggregate for PercentileAggregate {
     }
 
     fn init_admitted(
-        &self,
-        scalarvals: &[(String, TermValue)],
-        _division: purrdf_xsd::exact::DivisionPolicy,
+        &self, scalarvals: &[(String, TermValue)], _division: purrdf_xsd::exact::DivisionPolicy,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<WorkspaceAccumulator, EvalError> {
         WorkspaceAccumulator::new(
@@ -1524,11 +1475,8 @@ impl CustomAggregate for MomentsAggregate {
     resident_statistic_doors!();
 
     fn exact_numeric_cost_admitted(
-        &self,
-        survivors: &[Vec<TermValue>],
-        _scalarvals: &[(String, TermValue)],
-        division: purrdf_xsd::exact::DivisionPolicy,
-        workspace: &crate::WorkspaceCapability,
+        &self, survivors: &[Vec<TermValue>], _scalarvals: &[(String, TermValue)],
+        division: purrdf_xsd::exact::DivisionPolicy, workspace: &crate::WorkspaceCapability,
     ) -> Result<Cost, EvalError> {
         moments_cost(
             survivors,
@@ -1542,9 +1490,7 @@ impl CustomAggregate for MomentsAggregate {
     }
 
     fn init_admitted(
-        &self,
-        _scalarvals: &[(String, TermValue)],
-        division: purrdf_xsd::exact::DivisionPolicy,
+        &self, _scalarvals: &[(String, TermValue)], division: purrdf_xsd::exact::DivisionPolicy,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<WorkspaceAccumulator, EvalError> {
         WorkspaceAccumulator::new(
@@ -1577,11 +1523,8 @@ impl CustomAggregate for ModeAggregate {
     resident_statistic_doors!();
 
     fn exact_numeric_cost_admitted(
-        &self,
-        survivors: &[Vec<TermValue>],
-        _scalarvals: &[(String, TermValue)],
-        _division: purrdf_xsd::exact::DivisionPolicy,
-        workspace: &crate::WorkspaceCapability,
+        &self, survivors: &[Vec<TermValue>], _scalarvals: &[(String, TermValue)],
+        _division: purrdf_xsd::exact::DivisionPolicy, workspace: &crate::WorkspaceCapability,
     ) -> Result<Cost, EvalError> {
         {
             if machine_word_operands(survivors) {
@@ -1596,9 +1539,7 @@ impl CustomAggregate for ModeAggregate {
     }
 
     fn init_admitted(
-        &self,
-        _scalarvals: &[(String, TermValue)],
-        _division: purrdf_xsd::exact::DivisionPolicy,
+        &self, _scalarvals: &[(String, TermValue)], _division: purrdf_xsd::exact::DivisionPolicy,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<WorkspaceAccumulator, EvalError> {
         WorkspaceAccumulator::new(
@@ -1629,11 +1570,8 @@ impl CustomAggregate for FirstAggregate {
     resident_statistic_doors!();
 
     fn exact_numeric_cost_admitted(
-        &self,
-        _survivors: &[Vec<TermValue>],
-        _scalarvals: &[(String, TermValue)],
-        _division: purrdf_xsd::exact::DivisionPolicy,
-        _workspace: &crate::WorkspaceCapability,
+        &self, _survivors: &[Vec<TermValue>], _scalarvals: &[(String, TermValue)],
+        _division: purrdf_xsd::exact::DivisionPolicy, _workspace: &crate::WorkspaceCapability,
     ) -> Result<Cost, EvalError> {
         Ok(Cost::ZERO)
     }
@@ -1642,9 +1580,7 @@ impl CustomAggregate for FirstAggregate {
     }
 
     fn init_admitted(
-        &self,
-        _scalarvals: &[(String, TermValue)],
-        _division: purrdf_xsd::exact::DivisionPolicy,
+        &self, _scalarvals: &[(String, TermValue)], _division: purrdf_xsd::exact::DivisionPolicy,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<WorkspaceAccumulator, EvalError> {
         WorkspaceAccumulator::new(
@@ -1676,11 +1612,8 @@ impl CustomAggregate for LastAggregate {
     resident_statistic_doors!();
 
     fn exact_numeric_cost_admitted(
-        &self,
-        _survivors: &[Vec<TermValue>],
-        _scalarvals: &[(String, TermValue)],
-        _division: purrdf_xsd::exact::DivisionPolicy,
-        _workspace: &crate::WorkspaceCapability,
+        &self, _survivors: &[Vec<TermValue>], _scalarvals: &[(String, TermValue)],
+        _division: purrdf_xsd::exact::DivisionPolicy, _workspace: &crate::WorkspaceCapability,
     ) -> Result<Cost, EvalError> {
         Ok(Cost::ZERO)
     }
@@ -1689,9 +1622,7 @@ impl CustomAggregate for LastAggregate {
     }
 
     fn init_admitted(
-        &self,
-        _scalarvals: &[(String, TermValue)],
-        _division: purrdf_xsd::exact::DivisionPolicy,
+        &self, _scalarvals: &[(String, TermValue)], _division: purrdf_xsd::exact::DivisionPolicy,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<WorkspaceAccumulator, EvalError> {
         WorkspaceAccumulator::new(
@@ -1727,11 +1658,8 @@ impl CustomAggregate for TopKAggregate {
     resident_statistic_doors!();
 
     fn exact_numeric_cost_admitted(
-        &self,
-        survivors: &[Vec<TermValue>],
-        scalarvals: &[(String, TermValue)],
-        _division: purrdf_xsd::exact::DivisionPolicy,
-        workspace: &crate::WorkspaceCapability,
+        &self, survivors: &[Vec<TermValue>], scalarvals: &[(String, TermValue)],
+        _division: purrdf_xsd::exact::DivisionPolicy, workspace: &crate::WorkspaceCapability,
     ) -> Result<Cost, EvalError> {
         {
             let k = scalarval_native(scalarvals, TOPK_K, workspace)?
@@ -1760,9 +1688,7 @@ impl CustomAggregate for TopKAggregate {
     }
 
     fn init_admitted(
-        &self,
-        scalarvals: &[(String, TermValue)],
-        _division: purrdf_xsd::exact::DivisionPolicy,
+        &self, scalarvals: &[(String, TermValue)], _division: purrdf_xsd::exact::DivisionPolicy,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<WorkspaceAccumulator, EvalError> {
         WorkspaceAccumulator::new(
@@ -1892,9 +1818,7 @@ mod tests {
     /// time (`PERCENTILE`'s `P`, `TOPK`'s `K`) rather than a positional
     /// argument.
     fn fold_with(
-        local: &str,
-        scalarvals: &[(String, TermValue)],
-        rows: &[Vec<TermValue>],
+        local: &str, scalarvals: &[(String, TermValue)], rows: &[Vec<TermValue>],
     ) -> Option<TermValue> {
         let registry = registry();
         let agg = registry.resolve(&iri(local)).expect("registered");

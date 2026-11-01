@@ -73,8 +73,7 @@ pub(crate) fn build_dataset(rows: usize) -> Arc<RdfDataset> {
     reason = "native_codecs uses this shared fixture; jsonld_alloc does not"
 )]
 pub(crate) fn build_many_namespace_dataset(
-    namespace_count: usize,
-    iris_per_namespace: usize,
+    namespace_count: usize, iris_per_namespace: usize,
 ) -> Arc<RdfDataset> {
     let mut builder = RdfDatasetBuilder::new();
     let subject = builder.intern_iri("urn:subject").unwrap();

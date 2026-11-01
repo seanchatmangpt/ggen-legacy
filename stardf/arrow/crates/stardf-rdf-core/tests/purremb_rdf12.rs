@@ -432,8 +432,7 @@ fn multi_binding_fixture(include_unbound_annotation: bool) -> RdfFixture {
 }
 
 fn multi_binding_fixture_with_annotation(
-    include_unbound_annotation: bool,
-    [annotation_predicate, annotation_object]: [usize; 2],
+    include_unbound_annotation: bool, [annotation_predicate, annotation_object]: [usize; 2],
 ) -> RdfFixture {
     let iris = [
         "subject",

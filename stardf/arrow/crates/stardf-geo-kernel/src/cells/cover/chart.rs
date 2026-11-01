@@ -78,9 +78,7 @@ pub(in crate::cells) trait Arithmetic {
 }
 
 fn equations<A: Arithmetic>(
-    radius: &Rat,
-    axis: &LonLat,
-    arithmetic: &mut A,
+    radius: &Rat, axis: &LonLat, arithmetic: &mut A,
 ) -> Result<Bounds<A::Number>, A::Error> {
     let guard = arithmetic.original(&axis_guard())?;
     let radius = arithmetic.original(radius)?;
@@ -130,9 +128,7 @@ fn equations<A: Arithmetic>(
 }
 
 fn longitude_band<A: Arithmetic>(
-    center: &Rat,
-    half: &A::Number,
-    arithmetic: &mut A,
+    center: &Rat, half: &A::Number, arithmetic: &mut A,
 ) -> Result<Bands<A::Number>, A::Error> {
     let center = arithmetic.original(center)?;
     let low = arithmetic.subtract(&center, half)?;
@@ -223,16 +219,12 @@ impl Arithmetic for Interval<'_> {
         a.add(b, self.0)
     }
     fn subtract(
-        &mut self,
-        a: &FixedInterval,
-        b: &FixedInterval,
+        &mut self, a: &FixedInterval, b: &FixedInterval,
     ) -> Result<FixedInterval, MathError> {
         a.sub(b, self.0)
     }
     fn multiply(
-        &mut self,
-        a: &FixedInterval,
-        b: &FixedInterval,
+        &mut self, a: &FixedInterval, b: &FixedInterval,
     ) -> Result<FixedInterval, MathError> {
         a.mul(b, self.0)
     }
@@ -270,10 +262,7 @@ impl Arithmetic for Interval<'_> {
 }
 impl Interval<'_> {
     fn extreme(
-        &mut self,
-        a: &FixedInterval,
-        b: &FixedInterval,
-        maximum: bool,
+        &mut self, a: &FixedInterval, b: &FixedInterval, maximum: bool,
     ) -> Result<FixedInterval, MathError> {
         self.0.admit_exact(
             4,
@@ -299,10 +288,7 @@ impl Interval<'_> {
 
 impl Footprint {
     pub(in crate::cells) fn chart_enclosure(
-        &self,
-        axis: &LonLat,
-        precision: u32,
-        budget: &mut CoverBudget<'_>,
+        &self, axis: &LonLat, precision: u32, budget: &mut CoverBudget<'_>,
     ) -> Result<ChartEnclosure, GeoError> {
         let sources = [&self.radius, axis.longitude(), axis.latitude()];
         let bounds =
@@ -359,8 +345,7 @@ impl Footprint {
     }
     #[cfg(test)]
     pub(in crate::cells) fn chart_bounds(
-        &self,
-        budget: &mut CoverBudget<'_>,
+        &self, budget: &mut CoverBudget<'_>,
     ) -> Result<ChartBounds, GeoError> {
         let axis = self.point(budget)?;
         let bounds = equations(&self.radius, &axis, &mut Exact(budget))?;
@@ -376,8 +361,7 @@ impl Footprint {
     /// Prove the identical exact chart walls' directed grid values through
     /// shrinking integer intervals, avoiding intermediate compound fractions.
     pub(in crate::cells) fn chart_bounds_outward(
-        &self,
-        budget: &mut CoverBudget<'_>,
+        &self, budget: &mut CoverBudget<'_>,
     ) -> Result<ChartBounds, GeoError> {
         let axis = self.point(budget)?;
         let sources = [&self.radius, axis.longitude(), axis.latitude()];
@@ -418,8 +402,7 @@ impl Footprint {
 }
 
 fn directed_band(
-    (west, east): (FixedInterval, FixedInterval),
-    math: &mut CoordinateMath,
+    (west, east): (FixedInterval, FixedInterval), math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<(Rat, Rat), MathError> {
     Ok((
@@ -429,12 +412,8 @@ fn directed_band(
 }
 
 pub(super) fn classify_box(
-    area: &ClosedBox,
-    target: &[(&Rat, &Rat)],
-    full_longitude: bool,
-    seam: bool,
-    footprint: &Footprint,
-    budget: &mut CoverBudget<'_>,
+    area: &ClosedBox, target: &[(&Rat, &Rat)], full_longitude: bool, seam: bool,
+    footprint: &Footprint, budget: &mut CoverBudget<'_>,
 ) -> Result<Classification, GeoError> {
     let axis = footprint.point(budget)?;
     let mut sources = purrdf_core::SmallVec::<[&Rat; 11]>::new();
@@ -456,12 +435,8 @@ pub(super) fn classify_box(
 }
 
 fn box_equations<A: Arithmetic>(
-    area: &ClosedBox,
-    target: &[(&Rat, &Rat)],
-    full_longitude: bool,
-    seam: bool,
-    bounds: &Bounds<A::Number>,
-    arithmetic: &mut A,
+    area: &ClosedBox, target: &[(&Rat, &Rat)], full_longitude: bool, seam: bool,
+    bounds: &Bounds<A::Number>, arithmetic: &mut A,
 ) -> Result<Classification, A::Error> {
     let south = arithmetic.original(&area.south)?;
     let north = arithmetic.original(&area.north)?;
@@ -511,10 +486,7 @@ fn box_equations<A: Arithmetic>(
 }
 
 pub(in crate::cells) fn directed(
-    value: &FixedInterval,
-    places: u32,
-    rounding: Rounding,
-    math: &mut CoordinateMath,
+    value: &FixedInterval, places: u32, rounding: Rounding, math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Rat, MathError> {
     let (lower, upper) = value.round_decimal_with(places, rounding, math)?;

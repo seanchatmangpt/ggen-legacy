@@ -142,8 +142,7 @@ impl<'error> Capture<'error> {
     /// # Panics
     /// Fails a producer that omits or repeats its variant identity.
     pub fn read_with_buffer(
-        error: &'error dyn StructuredError,
-        mut events: Vec<Event<'error>>,
+        error: &'error dyn StructuredError, mut events: Vec<Event<'error>>,
     ) -> Self {
         events.clear();
         let mut sink = Sink { code: None, events };

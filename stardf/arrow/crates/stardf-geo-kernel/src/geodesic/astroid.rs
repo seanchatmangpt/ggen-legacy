@@ -14,13 +14,8 @@ use purrdf_xsd::math::{CertifiedInterval, IntervalContext, MathError};
 
 #[allow(clippy::too_many_arguments)] // The original ellipsoid integral supplies the conjugate astroid scale.
 pub(super) fn seed<I: CertifiedInterval>(
-    sphere: &SpherePair<I>,
-    longitude: &I,
-    c: &I,
-    e2: &I,
-    ep2: &I,
-    coefficients: &IntegralCoefficients<I>,
-    chunks: &mut ChunkObserver<'_, '_>,
+    sphere: &SpherePair<I>, longitude: &I, c: &I, e2: &I, ep2: &I,
+    coefficients: &IntegralCoefficients<I>, chunks: &mut ChunkObserver<'_, '_>,
     math: &mut IntervalContext<'_>,
 ) -> Result<Option<I>, SolveError> {
     let one = I::from_i64(1, math)?;

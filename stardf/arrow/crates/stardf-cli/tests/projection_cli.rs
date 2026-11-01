@@ -45,36 +45,36 @@ fn lpg_config() -> &'static [u8] {
 
 const TURTLE: &[u8] = b"@prefix ex: <https://example.org/> .\nex:s ex:p ex:o .\n";
 const RESEARCH_SOURCE: &[u8] =
-    include_bytes!("../../rdf/tests/fixtures/research-objects/carrier/shared.ttl");
-const CSVW_TERMS_CONFIG: &[u8] = include_bytes!("../../rdf/tests/fixtures/csvw-terms.json");
-const OKF_TERMS_CONFIG: &[u8] = include_bytes!("../../rdf/tests/fixtures/okf-terms.json");
-const OKF_TERMS_SOURCE: &[u8] = include_bytes!("../../rdf/tests/fixtures/okf-terms.trig");
+    include_bytes!("../../stardf-rdf/tests/fixtures/research-objects/carrier/shared.ttl");
+const CSVW_TERMS_CONFIG: &[u8] = include_bytes!("../../stardf-rdf/tests/fixtures/csvw-terms.json");
+const OKF_TERMS_CONFIG: &[u8] = include_bytes!("../../stardf-rdf/tests/fixtures/okf-terms.json");
+const OKF_TERMS_SOURCE: &[u8] = include_bytes!("../../stardf-rdf/tests/fixtures/okf-terms.trig");
 const DCAT_RDF_CONFIG: &[u8] =
-    include_bytes!("../../rdf/tests/fixtures/dataset-description/dcat-rdf.json");
-const VOID_CONFIG: &[u8] = include_bytes!("../../rdf/tests/fixtures/dataset-description/void.json");
+    include_bytes!("../../stardf-rdf/tests/fixtures/dataset-description/dcat-rdf.json");
+const VOID_CONFIG: &[u8] = include_bytes!("../../stardf-rdf/tests/fixtures/dataset-description/void.json");
 const VOID_SOURCE: &[u8] =
-    include_bytes!("../../rdf/tests/fixtures/dataset-description/void-source.trig");
+    include_bytes!("../../stardf-rdf/tests/fixtures/dataset-description/void-source.trig");
 const RESEARCH_CONFIGS: &[(&str, &[u8])] = &[
     (
         "croissant-1.1",
-        include_bytes!("../../rdf/tests/fixtures/research-objects/carrier/croissant-1.1.json"),
+        include_bytes!("../../stardf-rdf/tests/fixtures/research-objects/carrier/croissant-1.1.json"),
     ),
     (
         "ro-crate-1.3",
-        include_bytes!("../../rdf/tests/fixtures/research-objects/carrier/ro-crate-1.3.json"),
+        include_bytes!("../../stardf-rdf/tests/fixtures/research-objects/carrier/ro-crate-1.3.json"),
     ),
     (
         "datacite-4.6",
-        include_bytes!("../../rdf/tests/fixtures/research-objects/carrier/datacite-4.6.json"),
+        include_bytes!("../../stardf-rdf/tests/fixtures/research-objects/carrier/datacite-4.6.json"),
     ),
     (
         "dcat-3",
-        include_bytes!("../../rdf/tests/fixtures/research-objects/carrier/dcat-3.json"),
+        include_bytes!("../../stardf-rdf/tests/fixtures/research-objects/carrier/dcat-3.json"),
     ),
     (
         "frictionless-data-package-1",
         include_bytes!(
-            "../../rdf/tests/fixtures/research-objects/carrier/frictionless-data-package-1.json"
+            "../../stardf-rdf/tests/fixtures/research-objects/carrier/frictionless-data-package-1.json"
         ),
     ),
 ];

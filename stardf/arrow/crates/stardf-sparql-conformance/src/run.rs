@@ -156,10 +156,7 @@ fn relation_tables() -> Arc<RdfDataset> {
 
 /// Read one table out of the fixture graph as a [`MemoryRelation`].
 fn memory_table(
-    tables: &RdfDataset,
-    head: &str,
-    subject_arity: usize,
-    object_arity: usize,
+    tables: &RdfDataset, head: &str, subject_arity: usize, object_arity: usize,
 ) -> MemoryRelation {
     MemoryRelation::from_graph(
         tables,
@@ -311,9 +308,7 @@ fn file_base_iri(base: &str, path: &std::path::Path) -> String {
 ///
 /// Returns a message on any read, parse, or freeze failure (never silent).
 pub fn build_dataset(
-    base: &str,
-    data: &[std::path::PathBuf],
-    graph_data: &[(String, std::path::PathBuf)],
+    base: &str, data: &[std::path::PathBuf], graph_data: &[(String, std::path::PathBuf)],
 ) -> Result<Arc<RdfDataset>, String> {
     let sources = parse_sources(base, data, graph_data)?;
     freeze_sources(&sources, graph_data)
@@ -328,9 +323,7 @@ type Source = (Arc<RdfDataset>, Option<purrdf_core::RdfTerm>);
 /// source of its own — the `qt:constructDataFile` document in [`load_dataset`] —
 /// can add it before the merge and have it scoped like any other document.
 fn parse_sources(
-    base: &str,
-    data: &[std::path::PathBuf],
-    graph_data: &[(String, std::path::PathBuf)],
+    base: &str, data: &[std::path::PathBuf], graph_data: &[(String, std::path::PathBuf)],
 ) -> Result<Vec<Source>, String> {
     let mut sources: Vec<Source> = Vec::with_capacity(data.len() + graph_data.len());
 
@@ -362,8 +355,7 @@ fn parse_sources(
 /// and freeze — the standardize-apart half of the merge documented on
 /// [`build_dataset`].
 fn freeze_sources(
-    sources: &[Source],
-    graph_data: &[(String, std::path::PathBuf)],
+    sources: &[Source], graph_data: &[(String, std::path::PathBuf)],
 ) -> Result<Arc<RdfDataset>, String> {
     let mut builder = purrdf_core::RdfDatasetBuilder::new();
     for (index, (source, graph)) in sources.iter().enumerate() {
@@ -420,8 +412,7 @@ fn freeze_sources(
 /// not a graph-producing form, or if the graph cannot be written to / read back
 /// from the declared media type.
 fn construct_data_document(
-    case: &SparqlTestCase,
-    construct: &crate::manifest::ConstructDataFile,
+    case: &SparqlTestCase, construct: &crate::manifest::ConstructDataFile,
 ) -> Result<Arc<RdfDataset>, String> {
     let query_text = std::fs::read_to_string(&construct.query).map_err(|e| {
         format!(
@@ -484,10 +475,8 @@ fn construct_data_document(
 /// The whole RDF 1.2 statement layer travels: base quads, reifier bindings and
 /// annotations alike, each with its own graph slot retagged.
 fn merge_source(
-    builder: &mut purrdf_core::RdfDatasetBuilder,
-    source: &RdfDataset,
-    scope: purrdf_core::BlankScope,
-    graph: Option<&purrdf_core::RdfTerm>,
+    builder: &mut purrdf_core::RdfDatasetBuilder, source: &RdfDataset,
+    scope: purrdf_core::BlankScope, graph: Option<&purrdf_core::RdfTerm>,
 ) -> Result<(), purrdf_core::RdfDiagnostic> {
     for mut quad in source.owned_quads() {
         if let Some(g) = graph {
@@ -526,8 +515,7 @@ fn merge_source(
 /// Returns a message on a read/parse/evaluation failure (the harness decides
 /// whether that is an expected failure).
 pub fn run(
-    case: &SparqlTestCase,
-    remote: Option<&(dyn ServiceResolver + Sync)>,
+    case: &SparqlTestCase, remote: Option<&(dyn ServiceResolver + Sync)>,
 ) -> Result<RunOutcome, String> {
     let query_text = std::fs::read_to_string(&case.query)
         .map_err(|e| format!("read query {}: {e}", case.query.display()))?;
@@ -610,8 +598,7 @@ pub fn run(
 ///
 /// Returns a message on any load, parse, or entailment failure.
 pub fn query_eval_dataset(
-    case: &SparqlTestCase,
-    query_text: &str,
+    case: &SparqlTestCase, query_text: &str,
 ) -> Result<Arc<RdfDataset>, String> {
     // The older W3C dataset cases declare their source files in FROM clauses,
     // without qt:data/qt:graphData. Supply those documents under the parsed IRIs;
@@ -655,8 +642,7 @@ pub fn query_eval_dataset(
 /// Returns a message when the query does not parse or names a document outside
 /// the workspace.
 pub fn query_dataset_sources(
-    case: &SparqlTestCase,
-    query_text: &str,
+    case: &SparqlTestCase, query_text: &str,
 ) -> Result<Vec<(String, std::path::PathBuf)>, String> {
     let query = SparqlParser::new()
         .with_base_iri(&case.base)
@@ -701,8 +687,7 @@ pub fn query_eval_parser_options() -> ParserOptions {
 /// feature a case can require is the evaluator's ordinary behavior.
 #[must_use]
 pub fn query_eval_options<'a>(
-    case: &SparqlTestCase,
-    env: &'a purrdf_sparql_eval::ExtensionEnv<'a>,
+    case: &SparqlTestCase, env: &'a purrdf_sparql_eval::ExtensionEnv<'a>,
 ) -> QueryOptions<'a, 'a> {
     QueryOptions::new()
         .with_env(env)
@@ -820,8 +805,7 @@ struct OfflineLoadResolver;
 
 impl purrdf_sparql_eval::GraphResolver for OfflineLoadResolver {
     fn resolve(
-        &self,
-        request: purrdf_sparql_eval::GraphResolveRequest<'_>,
+        &self, request: purrdf_sparql_eval::GraphResolveRequest<'_>,
     ) -> Result<Arc<RdfDataset>, purrdf_sparql_eval::LoadError> {
         Err(purrdf_sparql_eval::LoadError::Transport(format!(
             "<{}> cannot be fetched: the conformance harness has no network",
@@ -846,9 +830,7 @@ impl purrdf_sparql_eval::GraphResolver for OfflineLoadResolver {
 /// comparison is the conservative default, and a query the harness could not
 /// parse would already have failed evaluation before reaching the comparer.
 fn query_is_top_level_ordered(
-    query_text: &str,
-    options: &ParserOptions,
-    base: Option<&str>,
+    query_text: &str, options: &ParserOptions, base: Option<&str>,
 ) -> bool {
     let mut parser = SparqlParser::new();
     if let Some(base) = base {
@@ -885,8 +867,7 @@ use purrdf_iri::vocab::rif::USED_WITH_PROFILE as RIF_USED_WITH_PROFILE;
 /// Returns a message if the case has no `qt:data` file (so no fixture directory),
 /// if no `.rif` reference is found, or if any referenced `.rif` fails to parse.
 fn build_rif_ruleset(
-    case: &SparqlTestCase,
-    dataset: &RdfDataset,
+    case: &SparqlTestCase, dataset: &RdfDataset,
 ) -> Result<purrdf_entail::RuleSet, String> {
     let dir = case
         .data
@@ -951,8 +932,7 @@ fn load_rif_ruleset(rif_path: &std::path::Path) -> Result<purrdf_entail::RuleSet
 /// last path segment. A `.rdf` fixture is RDF/XML; anything else is N-Triples. A missing
 /// fixture is a hard error.
 fn load_rif_import(
-    dir: &std::path::Path,
-    import: &purrdf_entail::RifImport,
+    dir: &std::path::Path, import: &purrdf_entail::RifImport,
 ) -> Result<Arc<RdfDataset>, purrdf_entail::EntailError> {
     let location = &import.location;
     let fail = |why: String| purrdf_entail::EntailError::Parse(format!("import {location}: {why}"));

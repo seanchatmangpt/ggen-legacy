@@ -141,8 +141,7 @@ impl Interner {
 /// The builder's own value interning ([`TermFactory::intern_value`]), which takes a
 /// triple term apart over a work list rather than the machine stack.
 pub(crate) fn intern_into(
-    b: &mut RdfDatasetBuilder,
-    v: &TermValue,
+    b: &mut RdfDatasetBuilder, v: &TermValue,
 ) -> Result<TermId, purrdf_lex::allocation::StorageError> {
     b.intern_value(v)
 }
@@ -414,8 +413,7 @@ mod term_walk_tests {
 /// The index every blank-node closure walk over an interned triple list reads; see
 /// [`blank_closure`].
 pub(crate) fn blank_subjects(
-    interner: &Interner,
-    triples: &[(u32, u32, u32)],
+    interner: &Interner, triples: &[(u32, u32, u32)],
 ) -> BTreeMap<u32, Vec<usize>> {
     let mut blanks: BTreeMap<u32, Vec<usize>> = BTreeMap::new();
     for (index, &(s, _, _)) in triples.iter().enumerate() {
@@ -433,11 +431,8 @@ pub(crate) fn blank_subjects(
 /// blank structure terminates. The one walk behind axiom explanation and module extraction,
 /// which both carry an axiom's anonymous scaffolding along with it.
 pub(crate) fn blank_closure(
-    interner: &Interner,
-    triples: &[(u32, u32, u32)],
-    blanks: &BTreeMap<u32, Vec<usize>>,
-    term: u32,
-    out: &mut BTreeSet<usize>,
+    interner: &Interner, triples: &[(u32, u32, u32)], blanks: &BTreeMap<u32, Vec<usize>>,
+    term: u32, out: &mut BTreeSet<usize>,
 ) {
     let mut stack = vec![term];
     let mut seen: BTreeSet<u32> = BTreeSet::new();

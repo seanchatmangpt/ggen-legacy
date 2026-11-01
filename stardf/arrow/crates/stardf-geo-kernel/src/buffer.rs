@@ -36,9 +36,7 @@ impl OffsetRegion {
     /// # Errors
     /// Refuses incomplete work/workspace admission before parameter rendering.
     pub fn new(
-        source: Arc<PreparedGeometry>,
-        radius: Metres,
-        policy: crate::ExecutionPolicy,
+        source: Arc<PreparedGeometry>, radius: Metres, policy: crate::ExecutionPolicy,
     ) -> Result<Self, GeoError> {
         Self::prepare(source, Cow::Owned(radius), policy, None)
     }
@@ -48,18 +46,14 @@ impl OffsetRegion {
     /// # Errors
     /// Preserves all constructor refusals and the observer's original failure.
     pub fn new_metered(
-        source: Arc<PreparedGeometry>,
-        radius: &Metres,
-        policy: crate::ExecutionPolicy,
+        source: Arc<PreparedGeometry>, radius: &Metres, policy: crate::ExecutionPolicy,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::prepare(source, Cow::Borrowed(radius), policy, Some(observer))
     }
 
     fn prepare(
-        source: Arc<PreparedGeometry>,
-        radius: Cow<'_, Metres>,
-        policy: crate::ExecutionPolicy,
+        source: Arc<PreparedGeometry>, radius: Cow<'_, Metres>, policy: crate::ExecutionPolicy,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         let bytes = source
@@ -161,10 +155,7 @@ impl OffsetRegion {
     /// # Errors
     /// Also propagates the observer's original refusal without publishing a result.
     pub fn contains_metered(
-        &self,
-        point: &LonLat,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, point: &LonLat, context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<bool, GeoError> {
         self.contains_inner(point, None, context, Some(observer))
     }
@@ -174,9 +165,7 @@ impl OffsetRegion {
     /// # Errors
     /// Refuses a different or missing retained source and every membership error.
     pub fn contains_prepared(
-        &self,
-        point: &LonLat,
-        receipt: &crate::context::PreparedSourceReceipt,
+        &self, point: &LonLat, receipt: &crate::context::PreparedSourceReceipt,
         context: &mut MetricContext,
     ) -> Result<bool, GeoError> {
         self.contains_inner(point, Some(receipt), context, None)
@@ -187,21 +176,15 @@ impl OffsetRegion {
     /// # Errors
     /// Also preserves the observer's original operational refusal.
     pub fn contains_prepared_metered(
-        &self,
-        point: &LonLat,
-        receipt: &crate::context::PreparedSourceReceipt,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, point: &LonLat, receipt: &crate::context::PreparedSourceReceipt,
+        context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<bool, GeoError> {
         self.contains_inner(point, Some(receipt), context, Some(observer))
     }
 
     fn contains_inner(
-        &self,
-        point: &LonLat,
-        receipt: Option<&crate::context::PreparedSourceReceipt>,
-        context: &mut MetricContext,
-        observer: Option<&mut dyn MetricWorkObserver>,
+        &self, point: &LonLat, receipt: Option<&crate::context::PreparedSourceReceipt>,
+        context: &mut MetricContext, observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<bool, GeoError> {
         if self.source.reference() != context.reference() {
             context.begin(0)?;
@@ -268,10 +251,7 @@ impl OffsetRegion {
     }
 
     fn contains_with_progress(
-        &self,
-        point: &LonLat,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &self, point: &LonLat, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<bool, GeoError> {
         self.contains_at_radius_with_progress(point, &self.radius, context, progress)
     }
@@ -280,10 +260,7 @@ impl OffsetRegion {
     // This is a borrowed numerical phase: the caller already validates the source
     // reference and admits its storage, and cumulative work is never reset.
     pub(crate) fn contains_at_radius_with_progress(
-        &self,
-        point: &LonLat,
-        radius: &Metres,
-        context: &mut MetricContext,
+        &self, point: &LonLat, radius: &Metres, context: &mut MetricContext,
         progress: &mut WorkProgress<'_>,
     ) -> Result<bool, GeoError> {
         if radius.exact() < &Rat::zero() {

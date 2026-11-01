@@ -706,8 +706,7 @@ impl std::error::Error for StackError {
 /// [`StackError::ExceedsFloor`] on `wasm32` when `bytes` exceeds what is left above the
 /// floor; [`StackError::Spawn`] natively when the thread cannot be started.
 pub fn on_stack<R: Send + 'static>(
-    bytes: usize,
-    f: impl FnOnce() -> R + Send + 'static,
+    bytes: usize, f: impl FnOnce() -> R + Send + 'static,
 ) -> Result<R, StackError> {
     on_stack_scoped(bytes, f)
 }
@@ -727,8 +726,7 @@ pub fn on_stack<R: Send + 'static>(
 /// [`StackError::ExceedsFloor`] on `wasm32` when `bytes` exceeds what is left above the
 /// floor; [`StackError::Spawn`] natively when the thread cannot be started.
 pub fn on_stack_scoped<'env, R: Send + 'env>(
-    bytes: usize,
-    f: impl FnOnce() -> R + Send + 'env,
+    bytes: usize, f: impl FnOnce() -> R + Send + 'env,
 ) -> Result<R, StackError> {
     #[cfg(not(target_arch = "wasm32"))]
     {
@@ -744,8 +742,7 @@ pub fn on_stack_scoped<'env, R: Send + 'env>(
 /// the scope closes.
 #[cfg(not(target_arch = "wasm32"))]
 fn on_thread<'env, R: Send + 'env>(
-    bytes: usize,
-    f: impl FnOnce() -> R + Send + 'env,
+    bytes: usize, f: impl FnOnce() -> R + Send + 'env,
 ) -> Result<R, StackError> {
     std::thread::scope(|scope| {
         let handle = std::thread::Builder::new()

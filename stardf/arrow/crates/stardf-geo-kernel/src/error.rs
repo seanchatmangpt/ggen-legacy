@@ -440,8 +440,7 @@ impl GeoError {
     /// Publish an already caller-owned resident diagnostic without copying it.
     /// Bounded producers use their original retained-allocation factory.
     pub(crate) fn resident_failure<T: purrdf_hash::error::NativeError + 'static>(
-        cause: T,
-        make: fn(crate::context::Retained<T>) -> Self,
+        cause: T, make: fn(crate::context::Retained<T>) -> Self,
     ) -> Self {
         match crate::context::Retained::try_new(cause) {
             Ok(cause) => make(cause),
@@ -453,8 +452,7 @@ impl GeoError {
     /// physical account. Any owned heap fields must already have their owner;
     /// this factory does not admit prior resident copies for a bounded caller.
     pub(crate) fn retained_failure<T: purrdf_hash::error::NativeError + 'static>(
-        cause: T,
-        make: fn(crate::context::Retained<T>) -> Self,
+        cause: T, make: fn(crate::context::Retained<T>) -> Self,
         observer: Option<&mut dyn crate::MetricWorkObserver>,
     ) -> Self {
         let mut progress = crate::context::WorkProgress::new(observer);
@@ -463,8 +461,7 @@ impl GeoError {
 
     /// The same native publication within an already active progress owner.
     pub(crate) fn retained_failure_with_progress<T: purrdf_hash::error::NativeError + 'static>(
-        cause: T,
-        make: fn(crate::context::Retained<T>) -> Self,
+        cause: T, make: fn(crate::context::Retained<T>) -> Self,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> Self {
         match crate::context::Retained::produce(progress, |_| Ok(cause), |_, _| Ok(())) {
@@ -476,8 +473,7 @@ impl GeoError {
     /// Retain original member/extent operands without rendering a message.
     #[must_use]
     pub fn geometry_domain_metered(
-        cause: GeometryDomainError,
-        observer: Option<&mut dyn crate::MetricWorkObserver>,
+        cause: GeometryDomainError, observer: Option<&mut dyn crate::MetricWorkObserver>,
     ) -> Self {
         Self::retained_failure(cause, Self::GeometryDomain, observer)
     }
@@ -486,8 +482,7 @@ impl GeoError {
     /// The immutable control and detached coefficient buffers are admitted
     /// before birth; clones retain that same original error payload owner.
     pub(crate) fn diagnostic_number(
-        value: &crate::Rat,
-        progress: &mut crate::context::WorkProgress<'_>,
+        value: &crate::Rat, progress: &mut crate::context::WorkProgress<'_>,
     ) -> Result<crate::context::Retained<crate::Rat>, Self> {
         crate::context::Retained::produce(
             progress,
@@ -499,10 +494,8 @@ impl GeoError {
     /// Capture scalar declarations, optional source data and an exact computed
     /// operand through their original detached numerical publication home.
     pub(crate) fn diagnostic_inputs<T: crate::context::retained::NativeDetached>(
-        declaration: &T,
-        point: Option<&crate::operation::OperationPoint>,
-        comparison: Option<&crate::Rat>,
-        progress: &mut crate::context::WorkProgress<'_>,
+        declaration: &T, point: Option<&crate::operation::OperationPoint>,
+        comparison: Option<&crate::Rat>, progress: &mut crate::context::WorkProgress<'_>,
         make: impl FnOnce(
             T,
             Option<crate::operation::OperationPoint>,
@@ -534,8 +527,7 @@ impl GeoError {
     /// Carry a native domain refusal through an existing numerical boundary;
     /// resource failures keep their original operational category and owner.
     pub(crate) fn math_validation_failure(
-        error: Self,
-        context: OperationValidationContext,
+        error: Self, context: OperationValidationContext,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> purrdf_xsd::math::MathError {
         let error = if error.is_expression_error() {
@@ -601,8 +593,7 @@ impl GeoError {
     /// No cause is rendered during capture or inspection.
     #[must_use]
     pub fn from_native_cause_metered(
-        make: fn(GeoFailureCause) -> Self,
-        cause: impl purrdf_hash::error::NativeError + 'static,
+        make: fn(GeoFailureCause) -> Self, cause: impl purrdf_hash::error::NativeError + 'static,
         observer: Option<&mut dyn crate::MetricWorkObserver>,
     ) -> Self {
         Self::from_native_cause_with_progress(
@@ -613,8 +604,7 @@ impl GeoError {
     }
 
     fn from_native_cause_with_progress(
-        make: fn(GeoFailureCause) -> Self,
-        cause: impl purrdf_hash::error::NativeError + 'static,
+        make: fn(GeoFailureCause) -> Self, cause: impl purrdf_hash::error::NativeError + 'static,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> Self {
         match RetainedGeoCause::capture(cause, progress) {
@@ -907,8 +897,7 @@ impl GeoError {
 
 impl GeoError {
     fn fmt_with<'a, D: core::fmt::Display>(
-        &'a self,
-        f: &mut core::fmt::Formatter<'_>,
+        &'a self, f: &mut core::fmt::Formatter<'_>,
         mut number: impl FnMut(std::borrow::Cow<'a, crate::Int>) -> D,
     ) -> core::fmt::Result {
         match self {
@@ -1138,8 +1127,7 @@ impl GeoError {
     /// # Errors
     /// Preserves native integer, checked layout, allocator and account refusal.
     pub fn message_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<String, Self> {
         if let Self::Retained(original) = self {
             return original.original().message_with_memory(memory);

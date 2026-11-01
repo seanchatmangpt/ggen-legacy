@@ -79,8 +79,7 @@ pub(crate) struct FoldRow {
 /// With a single-graph document the graph half is constant and the key degenerates to
 /// the subject, which is exactly the pre-per-graph behaviour.
 pub(crate) fn fold_statement_layer<I>(
-    builder: &mut RdfDatasetBuilder,
-    rows: I,
+    builder: &mut RdfDatasetBuilder, rows: I,
 ) -> Result<(), RdfDiagnostic>
 where
     I: IntoIterator<Item = FoldRow>,
@@ -132,9 +131,7 @@ where
 /// `rdfxml` codec (no external purrdf-gts text / RDF-XML codec); then
 /// walk that graph through `fold_statement_layer` and freeze.
 pub fn parse_dataset(
-    bytes: &[u8],
-    media_type: &str,
-    base_iri: Option<&str>,
+    bytes: &[u8], media_type: &str, base_iri: Option<&str>,
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
     parse_dataset_mode(bytes, media_type, base_iri, LineParseMode::Auto)
         .map(|(dataset, _base)| dataset)
@@ -261,10 +258,7 @@ impl ParseFailure {
 /// base is reported unconditionally: every codec already tracks its own base scope, so
 /// reading it back costs nothing.
 pub fn parse_dataset_with(
-    bytes: &[u8],
-    media_type: &str,
-    base_iri: Option<&str>,
-    options: &ParseOptions,
+    bytes: &[u8], media_type: &str, base_iri: Option<&str>, options: &ParseOptions,
 ) -> Result<ParseOutcome, RdfDiagnostic> {
     parse_dataset_reporting_failure(bytes, media_type, base_iri, options)
         .map_err(|failure| failure.diagnostic)
@@ -278,10 +272,7 @@ pub fn parse_dataset_with(
 ///
 /// Exactly [`parse_dataset_with`]'s diagnostic, as [`ParseFailure::diagnostic`].
 pub fn parse_dataset_reporting_failure(
-    bytes: &[u8],
-    media_type: &str,
-    base_iri: Option<&str>,
-    options: &ParseOptions,
+    bytes: &[u8], media_type: &str, base_iri: Option<&str>, options: &ParseOptions,
 ) -> Result<ParseOutcome, Box<ParseFailure>> {
     let format = classify(media_type).map_err(|e| ParseFailure::before_parsing(e, base_iri))?;
 
@@ -381,9 +372,7 @@ pub fn parse_dataset_reporting_failure(
 /// API — hidden, unstable, and free to disappear.
 #[doc(hidden)]
 pub fn parse_dataset_forced_sequential(
-    bytes: &[u8],
-    media_type: &str,
-    base_iri: Option<&str>,
+    bytes: &[u8], media_type: &str, base_iri: Option<&str>,
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
     parse_dataset_mode(bytes, media_type, base_iri, LineParseMode::ForceSequential)
         .map(|(dataset, _base)| dataset)
@@ -412,10 +401,7 @@ pub(super) fn base_scope_for(base_iri: Option<&str>) -> Result<BaseScope, RdfDia
 /// force — the two halves every caller of this function needs between them, so neither is
 /// recomputed and neither can be reported from a different parse than the other.
 fn parse_dataset_mode(
-    bytes: &[u8],
-    media_type: &str,
-    base_iri: Option<&str>,
-    mode: LineParseMode,
+    bytes: &[u8], media_type: &str, base_iri: Option<&str>, mode: LineParseMode,
 ) -> Result<(Arc<RdfDataset>, BaseScope), RdfDiagnostic> {
     let format = classify(media_type)?;
     let mut base = base_scope_for(base_iri)?;
@@ -441,8 +427,7 @@ fn parse_dataset_mode(
 /// Run a first-party codec parse under a panic guard, converting any unwind into a
 /// structured `native-codec-panic` diagnostic (mirrors the RDF/XML guard).
 pub(super) fn catch_codec_panic<F>(
-    format: NativeRdfFormat,
-    parse: F,
+    format: NativeRdfFormat, parse: F,
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic>
 where
     F: FnOnce() -> Result<Arc<RdfDataset>, RdfDiagnostic>,
@@ -461,12 +446,8 @@ where
 }
 
 pub(super) fn text_parse_without_panicking<S: SpanCollector>(
-    format: NativeRdfFormat,
-    text: &str,
-    base: &mut BaseScope,
-    mode: LineParseMode,
-    collector: &mut S,
-    prefixes: &mut Vec<(String, String)>,
+    format: NativeRdfFormat, text: &str, base: &mut BaseScope, mode: LineParseMode,
+    collector: &mut S, prefixes: &mut Vec<(String, String)>,
 ) -> Result<SerGraph, RdfDiagnostic> {
     let outcome = catch_unwind(AssertUnwindSafe(|| {
         super::text_parse::parse_to_gts_graph_mode(format, text, base, mode, collector, prefixes)
@@ -485,9 +466,7 @@ pub(super) fn text_parse_without_panicking<S: SpanCollector>(
 }
 
 pub(super) fn parse_rdfxml_without_panicking(
-    text: &str,
-    base: &mut BaseScope,
-    namespaces: Option<&mut Vec<(String, String)>>,
+    text: &str, base: &mut BaseScope, namespaces: Option<&mut Vec<(String, String)>>,
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
     let outcome = catch_unwind(AssertUnwindSafe(|| {
         super::rdfxml::parse_rdfxml_document(text, base, namespaces)
@@ -599,9 +578,7 @@ impl BlankIngress {
 }
 
 fn dataset_from_ser_graph_impl(
-    graph: &SerGraph,
-    flatten_to_default_graph: bool,
-    blanks: BlankIngress,
+    graph: &SerGraph, flatten_to_default_graph: bool, blanks: BlankIngress,
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
     let mut builder = RdfDatasetBuilder::new();
     let interner = SerInterner { graph, blanks };
@@ -733,9 +710,7 @@ impl SerInterner<'_> {
     /// self-reaching table with `gts-self-reaching-term`. The IR's own acyclicity
     /// check runs at `freeze()`, which is far too late to stop a walk around a cycle.
     fn intern(
-        &self,
-        builder: &mut RdfDatasetBuilder,
-        gts_id: usize,
+        &self, builder: &mut RdfDatasetBuilder, gts_id: usize,
     ) -> Result<TermId, RdfDiagnostic> {
         try_fold_nested(
             gts_id,
@@ -749,9 +724,7 @@ impl SerInterner<'_> {
     /// quoted-triple term becomes `Triple` (its components already interned) so a
     /// caller can fold it as a reifier binding rather than re-interning it.
     fn intern_node(
-        &self,
-        builder: &mut RdfDatasetBuilder,
-        gts_id: usize,
+        &self, builder: &mut RdfDatasetBuilder, gts_id: usize,
     ) -> Result<FoldNode, RdfDiagnostic> {
         match self.resolve_node(builder, gts_id)? {
             Nested::Leaf(id) => Ok(FoldNode::Term(id)),
@@ -767,9 +740,7 @@ impl SerInterner<'_> {
     /// Intern a GTS term id that is not a quoted triple, or find a quoted triple's
     /// three component GTS ids through the reifier table, interning none of them.
     fn resolve_node(
-        &self,
-        builder: &mut RdfDatasetBuilder,
-        gts_id: usize,
+        &self, builder: &mut RdfDatasetBuilder, gts_id: usize,
     ) -> Result<Nested<usize, TermId>, RdfDiagnostic> {
         let term = self.graph.terms.get(gts_id).ok_or_else(|| {
             RdfDiagnostic::error(
@@ -1394,9 +1365,7 @@ mod term_walk_tests {
 
     /// The recursive reference of [`SerInterner::intern`].
     fn reference_intern(
-        interner: &SerInterner<'_>,
-        builder: &mut RdfDatasetBuilder,
-        id: usize,
+        interner: &SerInterner<'_>, builder: &mut RdfDatasetBuilder, id: usize,
     ) -> Result<TermId, RdfDiagnostic> {
         match interner.resolve_node(builder, id)? {
             Nested::Leaf(id) => Ok(id),

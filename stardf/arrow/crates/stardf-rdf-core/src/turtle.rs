@@ -138,9 +138,7 @@ pub fn write_dataset_term<W: TextOut + ?Sized>(dataset: &RdfDataset, id: TermId,
 /// Returns a typed source failure or invalid datatype reference. The caller must
 /// discard or abort partial output when this function fails.
 pub fn try_write_view_term<D: crate::DatasetView, W: TextOut + ?Sized>(
-    dataset: &D,
-    id: D::Id,
-    out: &mut W,
+    dataset: &D, id: D::Id, out: &mut W,
 ) -> Result<(), crate::TermLookupError<D::ReadError>> {
     use crate::TermGuard as _;
     enum Step<Id> {
@@ -215,12 +213,8 @@ use purrdf_iri::vocab::rdf::REIFIES as RDF_REIFIES;
 /// [`write_dataset_term`] as every other position rather than a partial match, for
 /// the same reason that function is total.
 fn write_dataset_statement<W: TextOut + ?Sized>(
-    dataset: &RdfDataset,
-    subject: TermId,
-    predicate: TermId,
-    object: TermId,
-    graph: Option<TermId>,
-    out: &mut W,
+    dataset: &RdfDataset, subject: TermId, predicate: TermId, object: TermId,
+    graph: Option<TermId>, out: &mut W,
 ) {
     write_dataset_term(dataset, subject, out);
     out.push(' ');
@@ -236,11 +230,7 @@ fn write_dataset_statement<W: TextOut + ?Sized>(
 
 /// Append `<reifier> rdf:reifies <statement> [g] .\n`.
 fn write_dataset_reifier_statement<W: TextOut + ?Sized>(
-    dataset: &RdfDataset,
-    reifier: TermId,
-    statement: TermId,
-    graph: Option<TermId>,
-    out: &mut W,
+    dataset: &RdfDataset, reifier: TermId, statement: TermId, graph: Option<TermId>, out: &mut W,
 ) {
     write_dataset_term(dataset, reifier, out);
     out.push(' ');
@@ -282,11 +272,7 @@ pub fn write_dataset_nquad<W: TextOut + ?Sized>(dataset: &RdfDataset, quad: Quad
 /// The annotation's own graph slot is dropped, exactly as [`write_dataset_quad`]
 /// drops a base quad's; [`write_dataset_annotation_nquad`] keeps it.
 pub fn write_dataset_annotation<W: TextOut + ?Sized>(
-    dataset: &RdfDataset,
-    reifier: TermId,
-    predicate: TermId,
-    object: TermId,
-    out: &mut W,
+    dataset: &RdfDataset, reifier: TermId, predicate: TermId, object: TermId, out: &mut W,
 ) {
     write_dataset_statement(dataset, reifier, predicate, object, None, out);
 }
@@ -299,12 +285,8 @@ pub fn write_dataset_annotation<W: TextOut + ?Sized>(
 /// not decoration, and a graph-carrying egress that dropped it would silently
 /// merge two graphs' annotations of the same reifier.
 pub fn write_dataset_annotation_nquad<W: TextOut + ?Sized>(
-    dataset: &RdfDataset,
-    reifier: TermId,
-    predicate: TermId,
-    object: TermId,
-    graph: Option<TermId>,
-    out: &mut W,
+    dataset: &RdfDataset, reifier: TermId, predicate: TermId, object: TermId,
+    graph: Option<TermId>, out: &mut W,
 ) {
     write_dataset_statement(dataset, reifier, predicate, object, graph, out);
 }
@@ -314,10 +296,7 @@ pub fn write_dataset_annotation_nquad<W: TextOut + ?Sized>(
 /// The declaration's own graph slot is dropped;
 /// [`write_dataset_reifier_nquad`] keeps it.
 pub fn write_dataset_reifier<W: TextOut + ?Sized>(
-    dataset: &RdfDataset,
-    reifier: TermId,
-    statement: TermId,
-    out: &mut W,
+    dataset: &RdfDataset, reifier: TermId, statement: TermId, out: &mut W,
 ) {
     write_dataset_reifier_statement(dataset, reifier, statement, None, out);
 }
@@ -326,11 +305,7 @@ pub fn write_dataset_reifier<W: TextOut + ?Sized>(
 /// slot the declaration was made in (see [`write_dataset_annotation_nquad`] for why
 /// that slot is content).
 pub fn write_dataset_reifier_nquad<W: TextOut + ?Sized>(
-    dataset: &RdfDataset,
-    reifier: TermId,
-    statement: TermId,
-    graph: Option<TermId>,
-    out: &mut W,
+    dataset: &RdfDataset, reifier: TermId, statement: TermId, graph: Option<TermId>, out: &mut W,
 ) {
     write_dataset_reifier_statement(dataset, reifier, statement, graph, out);
 }

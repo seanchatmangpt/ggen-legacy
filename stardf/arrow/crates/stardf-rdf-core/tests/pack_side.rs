@@ -108,8 +108,7 @@ fn build_fixture() -> Fixture {
 /// Resolve `RdfDataset::reifier_quads`/`annotation_quads`'s `QuadIds` stream to
 /// dataset-independent `TermValue` tuples.
 fn source_value_quads(
-    dataset: &RdfDataset,
-    rows: impl Iterator<Item = purrdf_core::QuadIds>,
+    dataset: &RdfDataset, rows: impl Iterator<Item = purrdf_core::QuadIds>,
 ) -> FastSet<ValueQuad> {
     rows.map(|q| {
         (
@@ -124,8 +123,7 @@ fn source_value_quads(
 
 /// Resolve `SideTablesRef`'s unified-id row stream to `TermValue` tuples.
 fn pack_value_quads(
-    dict: &PackDict,
-    rows: impl Iterator<Item = (u64, u64, u64, Option<u64>)>,
+    dict: &PackDict, rows: impl Iterator<Item = (u64, u64, u64, Option<u64>)>,
 ) -> FastSet<ValueQuad> {
     rows.map(|(s, p, o, g)| {
         (

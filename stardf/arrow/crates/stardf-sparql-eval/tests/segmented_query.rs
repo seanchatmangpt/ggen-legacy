@@ -343,13 +343,9 @@ impl GovernedEntry<'_> {
         reason = "the fixture preserves the paired receipts returned by each public entry"
     )]
     fn run<'d>(
-        self,
-        engine: &'d NativeSparqlEngine,
-        source: &'d SegmentedSession,
-        prepared: &PreparedQuery,
-        substitutions: &[(String, TermValue)],
-        options: QueryOptions<'d, 'd>,
-        governors: &QueryGovernors,
+        self, engine: &'d NativeSparqlEngine, source: &'d SegmentedSession,
+        prepared: &PreparedQuery, substitutions: &[(String, TermValue)],
+        options: QueryOptions<'d, 'd>, governors: &QueryGovernors,
     ) -> FallibleSparqlResult<SegmentedError, GovernedEvidence<SegmentedEvidence>> {
         match self {
             Self::Text(query) => engine.query_governed_fallible_view(

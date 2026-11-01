@@ -17,7 +17,7 @@
 //! at const seeds — no RNG dependency, no clock.
 
 use purrdf_mime::{Document, Limits, Profile, SourceDocument, Vocabulary, analyze};
-use purrdf_testkit::bench::{Bench, BenchmarkId, Throughput, bench_group, bench_main, black_box};
+use purrdf_testkit::bench::{Bench, Throughput, bench_group, bench_main, black_box};
 use purrdf_testkit::rng::xorshift64_next;
 use purrdf_xsd::{canonical_base64, canonical_hex};
 

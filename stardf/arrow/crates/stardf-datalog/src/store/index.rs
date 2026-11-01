@@ -80,18 +80,13 @@ impl std::error::Error for RowIndexError {
 /// Sort original row positions by the requested integer columns. Equal keys keep
 /// insertion order through an explicit position tie-break, even for an empty key.
 pub(super) fn sort_row_positions<I: TermIdentity>(
-    positions: &mut [usize],
-    columns: &[&[I]],
-    order: &[usize],
+    positions: &mut [usize], columns: &[&[I]], order: &[usize],
 ) {
     positions.sort_unstable_by(|&left, &right| compare_row_positions(left, right, columns, order));
 }
 
 pub(super) fn compare_row_positions<I: TermIdentity>(
-    left: usize,
-    right: usize,
-    columns: &[&[I]],
-    order: &[usize],
+    left: usize, right: usize, columns: &[&[I]], order: &[usize],
 ) -> Ordering {
     order
         .iter()
@@ -180,8 +175,7 @@ impl<'a, I: TermIdentity, const N: usize, R: Copy> RowIndex<'a, I, N, R> {
     ///
     /// Returns the original oversized-prefix refusal.
     pub fn select<'s>(
-        &'s self,
-        prefix: &[I],
+        &'s self, prefix: &[I],
     ) -> Result<
         impl ExactSizeIterator<Item = ([I; N], R)> + DoubleEndedIterator + use<'s, 'a, I, N, R>,
         RowIndexError,

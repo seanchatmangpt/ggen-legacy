@@ -111,10 +111,7 @@ struct Round<'a> {
 /// the finite range; [`HnswError::FloatEnvironment`] if the calling thread, or a worker
 /// thread the build runs on, is not in the IEEE environment the arithmetic defines.
 pub(crate) fn build_with_batch<A: IndexArithmetic>(
-    matrix: VectorMatrix,
-    kernel: Kernel,
-    params: Params,
-    batch: Option<usize>,
+    matrix: VectorMatrix, kernel: Kernel, params: Params, batch: Option<usize>,
 ) -> Result<HnswIndex<A>> {
     let arithmetic = A::resolve()?;
     let (graph, norms) = (A::compiled().build_graph)(&matrix, arithmetic, kernel, params, batch)?;
@@ -143,10 +140,7 @@ pub(crate) fn build_with_batch<A: IndexArithmetic>(
 /// environment is a per-thread property, and must resolve the same dispatch path, because
 /// the image records one.
 pub(crate) fn build_graph<A: Arithmetic>(
-    matrix: &VectorMatrix,
-    arithmetic: Resolved<A>,
-    kernel: Kernel,
-    params: Params,
+    matrix: &VectorMatrix, arithmetic: Resolved<A>, kernel: Kernel, params: Params,
     batch: Option<usize>,
 ) -> Result<(Graph, Vec<f64>)> {
     params.validate_against(matrix.rows(), matrix.dims())?;
@@ -234,13 +228,8 @@ pub(crate) fn build_graph<A: Arithmetic>(
 /// Determinism: the orphan order, the host preference, and the eviction choice are all
 /// total functions of the graph, so the repaired graph is a pure function of the build.
 fn repair_connectivity<A: Arithmetic>(
-    graph: &mut Graph,
-    matrix: &VectorMatrix,
-    arithmetic: Resolved<A>,
-    kernel: Kernel,
-    norms: &[f64],
-    params: &Params,
-    entry: usize,
+    graph: &mut Graph, matrix: &VectorMatrix, arithmetic: Resolved<A>, kernel: Kernel,
+    norms: &[f64], params: &Params, entry: usize,
 ) -> Result<()> {
     let n = graph.node_count();
     let bound = params.degree_bound(0);
@@ -316,11 +305,7 @@ fn mark_reachable(graph: &Graph, reachable: &mut [bool], from: usize) {
 
 /// The reachable node that will adopt `orphan`, preferring the nearest one it points at.
 fn choose_host(
-    graph: &Graph,
-    reachable: &[bool],
-    protected: &[BTreeSet<usize>],
-    bound: usize,
-    entry: usize,
+    graph: &Graph, reachable: &[bool], protected: &[BTreeSet<usize>], bound: usize, entry: usize,
     orphan: usize,
 ) -> Result<usize> {
     let has_room = |row: usize| protected[row].len() < bound;
@@ -353,9 +338,7 @@ fn choose_host(
 /// index ranks by; a caller holding another arithmetic's handle passes its
 /// [`Resolved::exact`].
 pub(crate) fn compute_norms(
-    matrix: &VectorMatrix,
-    arithmetic: Resolved<Exact>,
-    kernel: Kernel,
+    matrix: &VectorMatrix, arithmetic: Resolved<Exact>, kernel: Kernel,
 ) -> Result<Vec<f64>> {
     if !kernel.needs_norms() {
         return Ok(Vec::new());
@@ -378,10 +361,7 @@ pub(crate) fn compute_norms(
 /// row. The shared [`DistanceCache`] is the only cross-worker state and affects nothing
 /// but how often a distance is recomputed.
 fn propose_round<A: Arithmetic>(
-    round: &Round<'_>,
-    arithmetic: Resolved<A>,
-    batch: &[usize],
-    levels: &[u32],
+    round: &Round<'_>, arithmetic: Resolved<A>, batch: &[usize], levels: &[u32],
 ) -> Result<Vec<Edge>> {
     let node_count = round.frozen.node_count();
     let recorded = arithmetic.image_code();
@@ -428,11 +408,7 @@ fn propose_round<A: Arithmetic>(
 
 /// The proposed links for one node: per layer, the selected neighbours in rank order.
 fn propose_node<A: Arithmetic>(
-    round: &Round<'_>,
-    arithmetic: Resolved<A>,
-    visited: &mut Visited,
-    node: usize,
-    node_level: u32,
+    round: &Round<'_>, arithmetic: Resolved<A>, visited: &mut Visited, node: usize, node_level: u32,
 ) -> Result<NodeProposal> {
     let frozen = round.frozen;
     let Some(entry) = frozen.entry() else {

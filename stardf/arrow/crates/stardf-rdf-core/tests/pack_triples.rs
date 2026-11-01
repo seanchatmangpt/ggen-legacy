@@ -206,10 +206,7 @@ fn build_fixture() -> Fixture {
 /// resolved to dataset-independent `TermValue`s — an explicit linear scan and
 /// filter, independent of any indexed/succinct machinery under test.
 fn brute_force(
-    dataset: &RdfDataset,
-    s: Option<TermId>,
-    p: Option<TermId>,
-    o: Option<TermId>,
+    dataset: &RdfDataset, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
     g: GraphMatch<TermId>,
 ) -> FastSet<ValueQuad> {
     dataset
@@ -234,12 +231,8 @@ fn brute_force(
 /// The triples codec's answer for the same pattern, resolved to
 /// dataset-independent `TermValue`s via the dictionary.
 fn codec_pattern(
-    dict: &PackDict,
-    triples: &TriplesRef<'_>,
-    s: Option<PackTermId>,
-    p: Option<PackTermId>,
-    o: Option<PackTermId>,
-    g: GraphMatch<PackTermId>,
+    dict: &PackDict, triples: &TriplesRef<'_>, s: Option<PackTermId>, p: Option<PackTermId>,
+    o: Option<PackTermId>, g: GraphMatch<PackTermId>,
 ) -> FastSet<ValueQuad> {
     triples
         .pattern(s, p, o, g)
@@ -270,11 +263,7 @@ fn graph_selections(fx: &Fixture) -> Vec<(GraphMatch<TermId>, GraphMatch<PackTer
 /// `(bound_s, bound_p, bound_o)`, against `triples` (either the freshly-encoded
 /// reader or a round-tripped one — the caller supplies which).
 fn assert_shape_parity(
-    fx: &Fixture,
-    triples: &TriplesRef<'_>,
-    bound_s: bool,
-    bound_p: bool,
-    bound_o: bool,
+    fx: &Fixture, triples: &TriplesRef<'_>, bound_s: bool, bound_p: bool, bound_o: bool,
 ) {
     let s_choices: Vec<Option<&Probe>> = if bound_s {
         fx.subject_probes.iter().map(Some).collect()

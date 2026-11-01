@@ -15,7 +15,10 @@ version = "26.9.29"
 edition = "2021"
 publish = false
 license = "MIT OR Apache-2.0 OR MulanPSL-2.0"
-rust-version = "1.88"
+# Lane 06-msrv (2026-10-31): 1.88 -> 1.98 literal (excluded non-member, so
+# `rust-version.workspace` cannot resolve); matches the five sibling seams
+# and the vendored upstream testkit's own MSRV.
+rust-version = "1.98"
 
 [lib]
 name = "purrdf_testkit"

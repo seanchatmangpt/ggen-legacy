@@ -37,9 +37,7 @@ where
 
     /// The one built-in/caller dispatch, with the original input borrows.
     pub(super) fn invoke(
-        &self,
-        guards: &dyn GuardEvaluator<D, N>,
-        inputs: &[DictionaryTerm<'_, D::Id>],
+        &self, guards: &dyn GuardEvaluator<D, N>, inputs: &[DictionaryTerm<'_, D::Id>],
     ) -> Result<GuardRows<D::Id>, EvalError<D::Error>> {
         self.model
             .interner()
@@ -86,9 +84,7 @@ impl<I: TermIdentity> Invocation<I> {
     /// A fresh callback's width error precedes its final source-health check, as in
     /// the original kernel. Resumption validates source authority before more work.
     pub(super) fn advance<D: TermDictionary<Id = I>, const N: usize>(
-        &mut self,
-        guards: &dyn GuardEvaluator<D, N>,
-        call: &GuardCall<'_, D, N>,
+        &mut self, guards: &dyn GuardEvaluator<D, N>, call: &GuardCall<'_, D, N>,
         governor: &mut StepGovernor<'_>,
     ) -> Result<(), EvalError<D::Error>>
     where
@@ -105,9 +101,7 @@ impl<I: TermIdentity> Invocation<I> {
 
     /// Prepare inputs only when invoking; a resumed admission reuses the batch.
     pub(super) fn advance_with<D: TermDictionary<Id = I>, const N: usize>(
-        &mut self,
-        context: &Context<'_, D, N>,
-        governor: &mut StepGovernor<'_>,
+        &mut self, context: &Context<'_, D, N>, governor: &mut StepGovernor<'_>,
         invoke: impl FnOnce() -> Result<GuardRows<I>, EvalError<D::Error>>,
     ) -> Result<(), EvalError<D::Error>>
     where
@@ -201,11 +195,8 @@ where
 
     /// Continue the original callback/filter path without repeating an invocation.
     pub(super) fn advance<D: TermDictionary<Id = I>>(
-        &mut self,
-        entry: RuleEntry<'_, N>,
-        rel: &RelationStore<D, N>,
-        guards: &dyn GuardEvaluator<D, N>,
-        governor: &mut StepGovernor<'_>,
+        &mut self, entry: RuleEntry<'_, N>, rel: &RelationStore<D, N>,
+        guards: &dyn GuardEvaluator<D, N>, governor: &mut StepGovernor<'_>,
     ) -> Result<(), EvalError<D::Error>> {
         rel.interner().check_read().map_err(EvalError::Source)?;
         while self.position < self.end {
@@ -293,8 +284,7 @@ mod tests {
 
     impl GuardEvaluator<HostDictionary, 3> for Producer {
         fn evaluate(
-            &self,
-            call: &GuardCall<'_, HostDictionary, 3>,
+            &self, call: &GuardCall<'_, HostDictionary, 3>,
         ) -> Result<GuardRows<u64>, CallbackError<SourceLost>> {
             self.calls.fetch_add(1, Ordering::Relaxed);
             self.order
@@ -322,10 +312,8 @@ mod tests {
     }
 
     fn check_cuts(
-        entry: RuleEntry<'_, 3>,
-        store: &RelationStore<HostDictionary, 3>,
-        positions: std::ops::Range<usize>,
-        inputs: &[SlotSolution<u64, 3>],
+        entry: RuleEntry<'_, 3>, store: &RelationStore<HostDictionary, 3>,
+        positions: std::ops::Range<usize>, inputs: &[SlotSolution<u64, 3>],
     ) -> Vec<SlotSolution<u64, 3>> {
         let probes = || store.interner().lookups.load(Ordering::Relaxed);
         let before = probes();
@@ -486,8 +474,7 @@ mod tests {
 
     impl GuardEvaluator<HostDictionary, 3> for Returned {
         fn evaluate(
-            &self,
-            call: &GuardCall<'_, HostDictionary, 3>,
+            &self, call: &GuardCall<'_, HostDictionary, 3>,
         ) -> Result<GuardRows<u64>, CallbackError<SourceLost>> {
             self.calls.fetch_add(1, Ordering::Relaxed);
             if self.lose {

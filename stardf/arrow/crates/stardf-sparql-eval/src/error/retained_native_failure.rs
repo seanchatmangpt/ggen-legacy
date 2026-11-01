@@ -14,8 +14,7 @@ pub struct RetainedNativeFailure {
 
 impl RetainedNativeFailure {
     pub(crate) fn new(
-        kind: super::NativeDiagnosticKind,
-        cause: impl purrdf_hash::error::NativeError + 'static,
+        kind: super::NativeDiagnosticKind, cause: impl purrdf_hash::error::NativeError + 'static,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, crate::EvalError> {
         crate::retained::PreparedDiagnosticCause::new(
@@ -30,8 +29,7 @@ impl RetainedNativeFailure {
     /// Admission refusal returns the original workspace error before allocating;
     /// successful construction and structural inspection never format the cause.
     pub fn error(
-        kind: super::NativeDiagnosticKind,
-        cause: impl purrdf_hash::error::NativeError + 'static,
+        kind: super::NativeDiagnosticKind, cause: impl purrdf_hash::error::NativeError + 'static,
         workspace: &crate::WorkspaceCapability,
     ) -> crate::EvalError {
         match Self::new(kind, cause, workspace) {

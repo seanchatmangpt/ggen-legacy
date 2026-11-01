@@ -200,12 +200,8 @@ pub(super) fn kind_key(kind: RdfTermKind) -> u8 {
 impl StatisticsBuilder {
     /// Aggregate one immutable physical relation without cloning its rows.
     fn add<S: Admission + ?Sized>(
-        &mut self,
-        relation: Relation,
-        count: usize,
-        row: impl Fn(usize) -> QuadIds,
-        dictionary: &FrozenTerms,
-        memory: &mut Memory<'_, S>,
+        &mut self, relation: Relation, count: usize, row: impl Fn(usize) -> QuadIds,
+        dictionary: &FrozenTerms, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         if count == 0 {
             return Ok(());
@@ -399,9 +395,7 @@ impl StatisticsBuilder {
 
 impl<I: StatisticsId> StatisticsBuilder<I> {
     fn encode_domain<S: Admission + ?Sized>(
-        &mut self,
-        ids: impl IntoIterator<Item = I>,
-        memory: &mut Memory<'_, S>,
+        &mut self, ids: impl IntoIterator<Item = I>, memory: &mut Memory<'_, S>,
     ) -> Result<Domain, StorageError> {
         let offset = self.domains.len();
         let mut previous = None;
@@ -430,8 +424,7 @@ impl<I: StatisticsId> StatisticsBuilder<I> {
     }
 
     pub(super) fn freeze<S: Admission + ?Sized>(
-        mut self,
-        memory: &mut Memory<'_, S>,
+        mut self, memory: &mut Memory<'_, S>,
     ) -> Result<LocalStatistics<I>, StorageError> {
         self.predicates.sort_unstable_by_key(|entry| entry.key);
         let statement_count = self
@@ -489,11 +482,9 @@ impl LocalStatistics {
         self.effective_directory.as_ref().unwrap_or(&self.directory)
     }
     pub(super) fn build<S: Admission + ?Sized>(
-        dictionary: &FrozenTerms,
-        asserted: (usize, impl Fn(usize) -> QuadIds),
+        dictionary: &FrozenTerms, asserted: (usize, impl Fn(usize) -> QuadIds),
         reifiers: &(usize, impl Fn(usize) -> ReifierRow),
-        annotations: (usize, impl Fn(usize) -> QuadIds),
-        memory: &mut Memory<'_, S>,
+        annotations: (usize, impl Fn(usize) -> QuadIds), memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         memory.try_scope(|memory| {
             let count = asserted
@@ -563,10 +554,8 @@ impl<I: StatisticsId> LocalStatistics<I> {
     /// substitutes for destination identity. A missing selected frequency stays
     /// unknown, while domains and category counts remain complete and exact.
     pub(super) fn merge_translated<'a, J: StatisticsId, T: Copy, S: Admission + ?Sized>(
-        sources: impl IntoIterator<Item = T>,
-        summary: impl Fn(T) -> &'a LocalStatistics<J>,
-        translate: impl Fn(T, J) -> I,
-        memory: &mut Memory<'_, S>,
+        sources: impl IntoIterator<Item = T>, summary: impl Fn(T) -> &'a LocalStatistics<J>,
+        translate: impl Fn(T, J) -> I, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StatisticsMergeError> {
         memory.try_scope(|memory| {
             let mut keys = Vec::new();
@@ -735,8 +724,7 @@ impl<I: StatisticsId> LocalStatistics<I> {
     }
 
     pub(super) fn clone_admitted<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         memory.try_scope(|memory| {
             let predicates = memory.collect(self.predicates.iter().copied())?;
@@ -789,10 +777,7 @@ impl<I: StatisticsId> LocalStatistics<I> {
     }
 
     fn entry(
-        &self,
-        relation: Relation,
-        predicate: I,
-        graph: GraphMatch<I>,
+        &self, relation: Relation, predicate: I, graph: GraphMatch<I>,
     ) -> Option<&Predicate<I>> {
         let scope = codec::scope_of(graph);
         self.predicates
@@ -802,20 +787,14 @@ impl<I: StatisticsId> LocalStatistics<I> {
     }
 
     pub(crate) fn source_summary(
-        &self,
-        predicate: I,
-        graph: GraphMatch<I>,
-        stream: crate::StatisticsStream,
+        &self, predicate: I, graph: GraphMatch<I>, stream: crate::StatisticsStream,
     ) -> SourceSummary {
         self.entry(relation(stream), predicate, graph)
             .map_or_else(SourceSummary::default, |entry| entry.source)
     }
 
     pub(super) fn predicate(
-        &self,
-        relation: Relation,
-        predicate: I,
-        graph: GraphMatch<I>,
+        &self, relation: Relation, predicate: I, graph: GraphMatch<I>,
     ) -> PredicateStatistics {
         let entry = self.entry(relation, predicate, graph);
         PredicateStatistics {
@@ -826,11 +805,7 @@ impl<I: StatisticsId> LocalStatistics<I> {
     }
 
     pub(super) fn frequency(
-        &self,
-        relation: Relation,
-        predicate: I,
-        object: I,
-        graph: GraphMatch<I>,
+        &self, relation: Relation, predicate: I, object: I, graph: GraphMatch<I>,
     ) -> Option<StatisticCount> {
         let Some(entry) = self.entry(relation, predicate, graph) else {
             return Some(exact(0));
@@ -846,11 +821,7 @@ impl<I: StatisticsId> LocalStatistics<I> {
     }
 
     pub(super) fn kind(
-        &self,
-        relation: Relation,
-        predicate: I,
-        kind: RdfTermKind,
-        datatype: Option<I>,
+        &self, relation: Relation, predicate: I, kind: RdfTermKind, datatype: Option<I>,
         graph: GraphMatch<I>,
     ) -> StatisticCount {
         let Some(entry) = self.entry(relation, predicate, graph) else {
@@ -866,11 +837,7 @@ impl<I: StatisticsId> LocalStatistics<I> {
     }
 
     pub(super) fn domain(
-        &self,
-        relation: Relation,
-        predicate: I,
-        graph: GraphMatch<I>,
-        subject: bool,
+        &self, relation: Relation, predicate: I, graph: GraphMatch<I>, subject: bool,
     ) -> DeltaListRef<'_> {
         let domain = self.entry(relation, predicate, graph).map(|entry| {
             if subject {
@@ -924,9 +891,7 @@ impl<I: StatisticsId> crate::SnapshotStatistics<I> for LocalStatistics<I> {
     }
 
     fn stream_rows(
-        &self,
-        graph: GraphMatch<I>,
-        stream: crate::StatisticsStream,
+        &self, graph: GraphMatch<I>, stream: crate::StatisticsStream,
     ) -> Option<StatisticCount> {
         let scope = codec::scope_of(graph);
         self.predicates
@@ -937,50 +902,33 @@ impl<I: StatisticsId> crate::SnapshotStatistics<I> for LocalStatistics<I> {
     }
 
     fn predicate(
-        &self,
-        predicate: I,
-        graph: GraphMatch<I>,
-        stream: crate::StatisticsStream,
+        &self, predicate: I, graph: GraphMatch<I>, stream: crate::StatisticsStream,
     ) -> Option<PredicateStatistics> {
         Some(Self::predicate(self, relation(stream), predicate, graph))
     }
 
     fn predicate_object(
-        &self,
-        predicate: I,
-        object: I,
-        graph: GraphMatch<I>,
-        stream: crate::StatisticsStream,
+        &self, predicate: I, object: I, graph: GraphMatch<I>, stream: crate::StatisticsStream,
     ) -> Option<StatisticCount> {
         self.frequency(relation(stream), predicate, object, graph)
     }
 
     fn predicate_object_kind(
-        &self,
-        predicate: I,
-        kind: RdfTermKind,
-        datatype: Option<I>,
-        graph: GraphMatch<I>,
+        &self, predicate: I, kind: RdfTermKind, datatype: Option<I>, graph: GraphMatch<I>,
         stream: crate::StatisticsStream,
     ) -> Option<StatisticCount> {
         Some(self.kind(relation(stream), predicate, kind, datatype, graph))
     }
 
     fn reifier_target_predicate(
-        &self,
-        predicate: I,
-        graph: GraphMatch<I>,
+        &self, predicate: I, graph: GraphMatch<I>,
     ) -> Option<PredicateStatistics> {
         Some(Self::predicate(self, Relation::Targets, predicate, graph))
     }
 
     fn visit_distinct(
-        &self,
-        predicate: I,
-        graph: GraphMatch<I>,
-        stream: crate::StatisticsStream,
-        position: crate::StatisticsPosition,
-        visit: &mut dyn FnMut(I) -> std::ops::ControlFlow<()>,
+        &self, predicate: I, graph: GraphMatch<I>, stream: crate::StatisticsStream,
+        position: crate::StatisticsPosition, visit: &mut dyn FnMut(I) -> std::ops::ControlFlow<()>,
     ) -> Result<bool, super::pack::bits::PackBitsError> {
         for value in self.domain(
             relation(stream),
@@ -1043,9 +991,7 @@ mod tests {
     }
 
     fn fixture_partition(
-        named: bool,
-        partition: u8,
-        extra_objects: u8,
+        named: bool, partition: u8, extra_objects: u8,
     ) -> (Arc<RdfDataset>, Vec<TermId>, Vec<GraphMatch>) {
         let mut builder = RdfDatasetBuilder::new();
         let names = [
@@ -1222,8 +1168,7 @@ mod tests {
     }
 
     fn owned_literal_rows<D: DatasetView>(
-        view: &D,
-        rows: impl IntoIterator<Item = QuadIds<D::Id>>,
+        view: &D, rows: impl IntoIterator<Item = QuadIds<D::Id>>,
     ) -> [purrdf_hash::multiset::Multiset256; 2] {
         let mut literals = [purrdf_hash::multiset::Multiset256::default(); 2];
         for row in rows {
@@ -1477,10 +1422,7 @@ mod tests {
     use purrdf_testkit::prop::prelude::*;
 
     fn assert_persisted_partition_merge(
-        left: &RdfDataset,
-        right: &RdfDataset,
-        combined: &RdfDataset,
-        predicates: &[TermId],
+        left: &RdfDataset, right: &RdfDataset, combined: &RdfDataset, predicates: &[TermId],
         scopes: &[GraphMatch],
     ) {
         use crate::{SegmentedBuildLimits, SegmentedImage, SegmentedReadLimits};

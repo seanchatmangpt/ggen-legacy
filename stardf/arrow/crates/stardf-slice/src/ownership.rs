@@ -631,9 +631,7 @@ impl<'a> OwnershipAnalyzer<'a> {
 
 fn collect_reference_evidence<'a>(
     referenced: impl Iterator<Item = &'a NamedNode>,
-    validated_owner: &FastMap<NamedNode, SliceIri>,
-    from: &SliceIri,
-    kind: EdgeKind,
+    validated_owner: &FastMap<NamedNode, SliceIri>, from: &SliceIri, kind: EdgeKind,
     from_evidence: &ArtifactEvidence,
     edge_evidence: &mut BTreeMap<(SliceIri, SliceIri, EdgeKind), Vec<EdgeEvidence>>,
 ) {
@@ -826,8 +824,7 @@ fn collect_term_iri_refs<'a>(store: &'a RdfDataset, term: TermId, out: &mut BTre
 /// recognizes parses as a property-function call, whose relation IRI is then
 /// excluded from the walk rather than collected as an ordinary term reference.
 fn extract_query_iris(
-    artifact: &ArtifactRecord,
-    options: &ParserOptions,
+    artifact: &ArtifactRecord, options: &ParserOptions,
 ) -> Result<BTreeSet<NamedNode>, String> {
     let text = std::str::from_utf8(&artifact.content)
         .map_err(|e| format!("query is not valid UTF-8: {e}"))?;
@@ -879,8 +876,7 @@ fn insert_iri(node: &purrdf_sparql_algebra::NamedNode, out: &mut BTreeSet<NamedN
 }
 
 fn walk_named_node_pattern(
-    p: &purrdf_sparql_algebra::NamedNodePattern,
-    out: &mut BTreeSet<NamedNode>,
+    p: &purrdf_sparql_algebra::NamedNodePattern, out: &mut BTreeSet<NamedNode>,
 ) {
     if let purrdf_sparql_algebra::NamedNodePattern::NamedNode(n) = p {
         insert_iri(n, out);
@@ -956,8 +952,7 @@ fn collect_iris(root: Reach<'_>, out: &mut BTreeSet<NamedNode>) {
 }
 
 fn path_iris<'a>(
-    p: &'a purrdf_sparql_algebra::PropertyPathExpression,
-    pending: &mut Vec<Reach<'a>>,
+    p: &'a purrdf_sparql_algebra::PropertyPathExpression, pending: &mut Vec<Reach<'a>>,
     out: &mut BTreeSet<NamedNode>,
 ) {
     use purrdf_sparql_algebra::PropertyPathExpression as P;
@@ -981,8 +976,7 @@ fn path_iris<'a>(
 }
 
 fn expression_iris<'a>(
-    e: &'a purrdf_sparql_algebra::Expression,
-    pending: &mut Vec<Reach<'a>>,
+    e: &'a purrdf_sparql_algebra::Expression, pending: &mut Vec<Reach<'a>>,
     out: &mut BTreeSet<NamedNode>,
 ) {
     use purrdf_sparql_algebra::Expression as E;
@@ -1033,8 +1027,7 @@ fn expression_iris<'a>(
 }
 
 fn pattern_iris<'a>(
-    g: &'a purrdf_sparql_algebra::GraphPattern,
-    pending: &mut Vec<Reach<'a>>,
+    g: &'a purrdf_sparql_algebra::GraphPattern, pending: &mut Vec<Reach<'a>>,
     out: &mut BTreeSet<NamedNode>,
 ) {
     use purrdf_sparql_algebra::GraphPattern as G;

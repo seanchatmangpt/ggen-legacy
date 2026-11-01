@@ -93,37 +93,28 @@ pub trait GtsEventSink: RdfEventSink {
 
     /// An inline blob's content digest and declared public metadata.
     fn blob(
-        &mut self,
-        _ctx: Option<FrameContext<'_>>,
-        _digest: &str,
-        _meta: Option<&Value>,
+        &mut self, _ctx: Option<FrameContext<'_>>, _digest: &str, _meta: Option<&Value>,
     ) -> Result<ControlFlow<()>, EventError> {
         purrdf_events::CONTINUE
     }
 
     /// An opaque frame (unknown codec, missing key, or damaged payload).
     fn opaque(
-        &mut self,
-        _ctx: Option<FrameContext<'_>>,
-        _node: &OpaqueNode,
+        &mut self, _ctx: Option<FrameContext<'_>>, _node: &OpaqueNode,
     ) -> Result<ControlFlow<()>, EventError> {
         purrdf_events::CONTINUE
     }
 
     /// A signature observation on a frame.
     fn signature(
-        &mut self,
-        _ctx: Option<FrameContext<'_>>,
-        _sig: &Signature,
+        &mut self, _ctx: Option<FrameContext<'_>>, _sig: &Signature,
     ) -> Result<ControlFlow<()>, EventError> {
         purrdf_events::CONTINUE
     }
 
     /// A suppression directive.
     fn suppression(
-        &mut self,
-        _ctx: Option<FrameContext<'_>>,
-        _suppression: &Suppression,
+        &mut self, _ctx: Option<FrameContext<'_>>, _suppression: &Suppression,
     ) -> Result<ControlFlow<()>, EventError> {
         purrdf_events::CONTINUE
     }
@@ -131,9 +122,7 @@ pub trait GtsEventSink: RdfEventSink {
     /// A reader diagnostic. Frame-scoped diagnostics carry the cached
     /// [`FrameContext`]; file-level diagnostics carry `None`.
     fn gts_diagnostic(
-        &mut self,
-        _ctx: Option<FrameContext<'_>>,
-        _diagnostic: &Diagnostic,
+        &mut self, _ctx: Option<FrameContext<'_>>, _diagnostic: &Diagnostic,
     ) -> Result<ControlFlow<()>, EventError> {
         purrdf_events::CONTINUE
     }
@@ -299,10 +288,7 @@ impl<'s> EventEmitter<'s> {
     /// `rdf:dirLangString` with a directional language tag, `rdf:langString`
     /// with a language tag alone, else `xsd:string`.
     fn datatype_iri(
-        &self,
-        datatype: Option<EventTermId>,
-        lang: Option<&str>,
-        direction: Option<&str>,
+        &self, datatype: Option<EventTermId>, lang: Option<&str>, direction: Option<&str>,
     ) -> Result<String, EventError> {
         match datatype {
             Some(dt) => self
@@ -324,8 +310,7 @@ impl<'s> EventEmitter<'s> {
 /// legitimate absence, an unrecognized token is a hard error, and RDF 1.2 admits
 /// a base direction only on a non-empty language-tagged string.
 fn parse_direction(
-    direction: Option<&str>,
-    lang: Option<&str>,
+    direction: Option<&str>, lang: Option<&str>,
 ) -> Result<Option<TextDirection>, EventError> {
     let parsed = match direction {
         None => return Ok(None),
@@ -351,10 +336,7 @@ impl ResolvedSink for EventEmitter<'_> {
     type Error = EventError;
 
     fn intern_iri(
-        &mut self,
-        segment_index: u64,
-        _gts_id: usize,
-        iri: &str,
+        &mut self, segment_index: u64, _gts_id: usize, iri: &str,
     ) -> Result<Self::Id, Self::Error> {
         self.ensure_scope(segment_index)?;
         let id = mint_event_id(&mut self.next_id)?;
@@ -364,10 +346,7 @@ impl ResolvedSink for EventEmitter<'_> {
     }
 
     fn intern_blank(
-        &mut self,
-        segment_index: u64,
-        _gts_id: usize,
-        label: &str,
+        &mut self, segment_index: u64, _gts_id: usize, label: &str,
     ) -> Result<Self::Id, Self::Error> {
         self.ensure_scope(segment_index)?;
         let id = mint_event_id(&mut self.next_id)?;
@@ -377,13 +356,8 @@ impl ResolvedSink for EventEmitter<'_> {
     }
 
     fn intern_literal(
-        &mut self,
-        segment_index: u64,
-        _gts_id: usize,
-        lexical: String,
-        datatype: Option<Self::Id>,
-        lang: Option<String>,
-        direction: Option<String>,
+        &mut self, segment_index: u64, _gts_id: usize, lexical: String, datatype: Option<Self::Id>,
+        lang: Option<String>, direction: Option<String>,
     ) -> Result<Self::Id, Self::Error> {
         self.ensure_scope(segment_index)?;
         // Clone the datatype IRI into a local so the `sink.term` call below does
@@ -404,12 +378,7 @@ impl ResolvedSink for EventEmitter<'_> {
     }
 
     fn intern_triple(
-        &mut self,
-        segment_index: u64,
-        _gts_id: usize,
-        s: Self::Id,
-        p: Self::Id,
-        o: Self::Id,
+        &mut self, segment_index: u64, _gts_id: usize, s: Self::Id, p: Self::Id, o: Self::Id,
     ) -> Result<Self::Id, Self::Error> {
         self.ensure_scope(segment_index)?;
         let id = mint_event_id(&mut self.next_id)?;
@@ -418,12 +387,7 @@ impl ResolvedSink for EventEmitter<'_> {
     }
 
     fn push_quad(
-        &mut self,
-        segment_index: u64,
-        s: Self::Id,
-        p: Self::Id,
-        o: Self::Id,
-        g: Option<Self::Id>,
+        &mut self, segment_index: u64, s: Self::Id, p: Self::Id, o: Self::Id, g: Option<Self::Id>,
     ) -> Result<(), Self::Error> {
         self.ensure_scope(segment_index)?;
         if self.cancelled {
@@ -436,12 +400,7 @@ impl ResolvedSink for EventEmitter<'_> {
     }
 
     fn push_reifier(
-        &mut self,
-        segment_index: u64,
-        reifier: Self::Id,
-        s: Self::Id,
-        p: Self::Id,
-        o: Self::Id,
+        &mut self, segment_index: u64, reifier: Self::Id, s: Self::Id, p: Self::Id, o: Self::Id,
         g: Option<Self::Id>,
     ) -> Result<(), Self::Error> {
         self.ensure_scope(segment_index)?;
@@ -466,11 +425,7 @@ impl ResolvedSink for EventEmitter<'_> {
     }
 
     fn push_annotation(
-        &mut self,
-        segment_index: u64,
-        reifier: Self::Id,
-        p: Self::Id,
-        o: Self::Id,
+        &mut self, segment_index: u64, reifier: Self::Id, p: Self::Id, o: Self::Id,
         g: Option<Self::Id>,
     ) -> Result<(), Self::Error> {
         self.ensure_scope(segment_index)?;
@@ -542,10 +497,7 @@ impl ResolvedSink for EventEmitter<'_> {
     }
 
     fn blob(
-        &mut self,
-        _segment_index: u64,
-        digest: &str,
-        meta: Option<&Value>,
+        &mut self, _segment_index: u64, digest: &str, meta: Option<&Value>,
     ) -> Result<(), Self::Error> {
         if self.cancelled {
             return Ok(());
@@ -580,9 +532,7 @@ impl ResolvedSink for EventEmitter<'_> {
     }
 
     fn suppression(
-        &mut self,
-        _segment_index: u64,
-        suppression: &Suppression,
+        &mut self, _segment_index: u64, suppression: &Suppression,
     ) -> Result<(), Self::Error> {
         if self.cancelled {
             return Ok(());
@@ -630,9 +580,7 @@ impl ResolvedSink for EventEmitter<'_> {
     }
 
     fn streamable_layout(
-        &mut self,
-        _segment_index: u64,
-        _info: &StreamableInfo,
+        &mut self, _segment_index: u64, _info: &StreamableInfo,
     ) -> Result<(), Self::Error> {
         Ok(())
     }
@@ -658,9 +606,7 @@ impl ResolvedSink for EventEmitter<'_> {
 /// Returns the first [`EventError`] raised while resolving or emitting the
 /// stream, or by finalizing the sink.
 pub fn stream_events(
-    data: &[u8],
-    options: ReadOptions<'_>,
-    sink: &mut dyn GtsEventSink,
+    data: &[u8], options: ReadOptions<'_>, sink: &mut dyn GtsEventSink,
 ) -> Result<StreamingReadResult, EventError> {
     let mut resolver = SegmentResolver::new(EventEmitter::new(sink));
     let read_result = read_to_sink_with_options(data, options, &mut resolver);

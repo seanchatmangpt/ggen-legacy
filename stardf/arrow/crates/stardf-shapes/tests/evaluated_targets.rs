@@ -554,9 +554,7 @@ fn candidates<const N: usize>(locals: [&str; N]) -> [purrdf_shapes::term::Term; 
 
 /// The focus set a bounded validation over `candidates` produces.
 fn bounded(
-    shapes_ttl: &str,
-    data_ttl: &str,
-    candidates: &[purrdf_shapes::term::Term],
+    shapes_ttl: &str, data_ttl: &str, candidates: &[purrdf_shapes::term::Term],
 ) -> Vec<String> {
     let prepared = purrdf_shapes::engine::PreparedShapes::new(Arc::new(shapes(shapes_ttl)));
     let validator = prepared

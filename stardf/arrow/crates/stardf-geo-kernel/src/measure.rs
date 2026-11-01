@@ -131,8 +131,7 @@ pub(crate) struct BorrowedParts<'a> {
 
 impl<'a> BorrowedParts<'a> {
     pub(crate) fn with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        geometry: &'a Geometry,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        geometry: &'a Geometry, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         use core::ops::ControlFlow;
         memory.try_scope(|memory| {
@@ -225,8 +224,7 @@ impl<'a> BorrowedParts<'a> {
     }
 
     pub(crate) fn release<S: purrdf_lex::allocation::Admission + ?Sized>(
-        self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         memory.release_vec(self.points)?;
         memory.release_vec(self.lines)?;
@@ -386,9 +384,7 @@ pub(crate) struct OrderedBounds<'a> {
 }
 impl<'a> BorrowedBounds<'a> {
     fn include(
-        &mut self,
-        x: &'a Rat,
-        y: &'a Rat,
+        &mut self, x: &'a Rat, y: &'a Rat,
         mut admission: Option<&mut crate::numerical::ExactAdmission<'_, '_>>,
     ) -> Result<(), GeoError> {
         let mut compare = |a: &Rat, b: &Rat| {
@@ -402,9 +398,7 @@ impl<'a> BorrowedBounds<'a> {
     }
 
     pub(crate) fn include_using(
-        &mut self,
-        x: &'a Rat,
-        y: &'a Rat,
+        &mut self, x: &'a Rat, y: &'a Rat,
         compare: &mut impl FnMut(&Rat, &Rat) -> Result<core::cmp::Ordering, GeoError>,
     ) -> Result<(), GeoError> {
         // An ordinate below the minimum cannot also exceed the maximum.
@@ -422,8 +416,7 @@ impl<'a> BorrowedBounds<'a> {
     }
 
     pub(crate) fn include_bounds(
-        &mut self,
-        other: Self,
+        &mut self, other: Self,
         mut admission: Option<&mut crate::numerical::ExactAdmission<'_, '_>>,
     ) -> Result<(), GeoError> {
         self.include(other.west, other.south, admission.as_deref_mut())?;
@@ -431,8 +424,7 @@ impl<'a> BorrowedBounds<'a> {
     }
 
     pub(crate) fn ordered(
-        self,
-        admission: &mut crate::numerical::ExactAdmission<'_, '_>,
+        self, admission: &mut crate::numerical::ExactAdmission<'_, '_>,
     ) -> Result<OrderedBounds<'a>, GeoError> {
         let keys = [
             admission.order_key(self.west)?,
@@ -452,19 +444,14 @@ impl<'a> OrderedBounds<'a> {
     /// their complete base equals this box before reusing its interior label.
     /// Equality remains a candidate; only strict outside proves disjointness.
     pub(crate) fn locate_admitted(
-        self,
-        point: &Coord,
-        point_keys: [u64; 2],
+        self, point: &Coord, point_keys: [u64; 2],
         admission: &mut crate::numerical::ExactAdmission<'_, '_>,
     ) -> Result<Set, GeoError> {
         self.locate_ordinates_admitted(point.x(), point.y(), point_keys, admission)
     }
 
     pub(crate) fn locate_ordinates_admitted(
-        self,
-        x: &Rat,
-        y: &Rat,
-        point_keys: [u64; 2],
+        self, x: &Rat, y: &Rat, point_keys: [u64; 2],
         admission: &mut crate::numerical::ExactAdmission<'_, '_>,
     ) -> Result<Set, GeoError> {
         let mut boundary = false;
@@ -626,10 +613,7 @@ fn extent_resident(geometry: &Geometry, ordinate: Ordinate, maximum: bool) -> Op
 /// # Errors
 /// Preserves selected work/storage, numerical and cancellation refusals.
 pub fn extent_metered(
-    geometry: &Geometry,
-    ordinate: Ordinate,
-    maximum: bool,
-    context: &mut crate::MetricContext,
+    geometry: &Geometry, ordinate: Ordinate, maximum: bool, context: &mut crate::MetricContext,
     observer: &mut dyn crate::MetricWorkObserver,
 ) -> Result<OrdinateExtent, GeoError> {
     context.begin(1)?;
@@ -645,9 +629,7 @@ pub fn extent_metered(
 }
 
 fn extent_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-    geometry: &Geometry,
-    ordinate: Ordinate,
-    maximum: bool,
+    geometry: &Geometry, ordinate: Ordinate, maximum: bool,
     memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     arithmetic: &crate::construct::arithmetic::Arithmetic<'_, '_, '_>,
 ) -> Result<OrdinateExtent, GeoError> {
@@ -745,9 +727,7 @@ pub(crate) fn signed_ring_area(ring: &[Coord]) -> Rat {
 
 /// Transfer the original exact result's live storage to its caller's owner.
 pub(crate) fn signed_ring_area_retained(
-    ring: &[Coord],
-    admission: &mut crate::numerical::ExactAdmission<'_, '_>,
-    retained: &mut u64,
+    ring: &[Coord], admission: &mut crate::numerical::ExactAdmission<'_, '_>, retained: &mut u64,
 ) -> Result<Rat, GeoError> {
     let (area, bytes) = signed_ring_area_inner(ring, Some(admission))?;
     let Some(total) = retained.checked_add(bytes) else {
@@ -762,8 +742,7 @@ pub(crate) fn signed_ring_area_retained(
 
 /// Inspect the original exact orientation while its result remains charged.
 pub(crate) fn signed_ring_orientation_admitted(
-    ring: &[Coord],
-    admission: &mut crate::numerical::ExactAdmission<'_, '_>,
+    ring: &[Coord], admission: &mut crate::numerical::ExactAdmission<'_, '_>,
 ) -> Result<i32, GeoError> {
     let (area, mut bytes) = signed_ring_area_inner(ring, Some(admission))?;
     let sign = area.signum();
@@ -773,8 +752,7 @@ pub(crate) fn signed_ring_orientation_admitted(
 }
 
 fn signed_ring_area_inner(
-    ring: &[Coord],
-    mut admission: Option<&mut crate::numerical::ExactAdmission<'_, '_>>,
+    ring: &[Coord], mut admission: Option<&mut crate::numerical::ExactAdmission<'_, '_>>,
 ) -> Result<(Rat, u64), GeoError> {
     use crate::numerical::exact_retained_rational;
     use purrdf_xsd::integer::ExactOperation::{RationalAdd, RationalDivide, RationalMultiply};
@@ -861,9 +839,7 @@ pub(crate) fn scaled_segment_length(p: &Coord, q: &Coord) -> Int {
 
 /// The original integer square-root equation using actual native destinations.
 pub(crate) fn scaled_segment_length_using(
-    p: &Coord,
-    q: &Coord,
-    arithmetic: &crate::construct::arithmetic::Arithmetic<'_, '_, '_>,
+    p: &Coord, q: &Coord, arithmetic: &crate::construct::arithmetic::Arithmetic<'_, '_, '_>,
 ) -> Result<Int, GeoError> {
     use purrdf_xsd::integer::{ExactArithmeticCost, ExactOperation};
     let dx = arithmetic.subtract(q.x(), p.x())?;
@@ -935,8 +911,7 @@ pub(crate) fn from_scaled(scaled: &Int) -> Rat {
 }
 
 pub(crate) fn from_scaled_using(
-    scaled: &Int,
-    arithmetic: &crate::construct::arithmetic::Arithmetic<'_, '_, '_>,
+    scaled: &Int, arithmetic: &crate::construct::arithmetic::Arithmetic<'_, '_, '_>,
 ) -> Result<Rat, GeoError> {
     use purrdf_xsd::integer::{ExactArithmeticCost, ExactOperation};
     let denominator_bits = Int::pow10(LENGTH_SCALE_DIGITS).bit_len();
@@ -1207,9 +1182,7 @@ pub fn geometry_n(geometry: &Geometry, n: usize) -> Option<Geometry> {
 }
 
 pub(crate) fn geometry_n_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-    geometry: &Geometry,
-    n: usize,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    geometry: &Geometry, n: usize, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     arithmetic: &crate::construct::arithmetic::Arithmetic<'_, '_, '_>,
 ) -> Result<Option<Geometry>, GeoError> {
     let Some(index) = n.checked_sub(1) else {
@@ -1322,8 +1295,7 @@ pub fn is_simple(geometry: &Geometry) -> bool {
 /// Preserves work, physical allocation, exact arithmetic and cancellation
 /// refusals before a partial simplicity answer can be returned.
 pub fn is_simple_metered(
-    geometry: &Geometry,
-    context: &mut crate::MetricContext,
+    geometry: &Geometry, context: &mut crate::MetricContext,
     observer: &mut dyn crate::MetricWorkObserver,
 ) -> Result<bool, GeoError> {
     context.begin(1)?;
@@ -1341,8 +1313,7 @@ pub fn is_simple_metered(
 }
 
 fn is_simple_inner<W: crate::topology::noding::NodingWork>(
-    geometry: &Geometry,
-    work: &mut W,
+    geometry: &Geometry, work: &mut W,
 ) -> Result<bool, W::Error> {
     if matches!(
         geometry.body(),
@@ -1381,8 +1352,7 @@ type SimplicityParts<'a, W> = (
 );
 
 fn collect_simplicity_parts_inner<'a, W: crate::topology::noding::NodingWork>(
-    geometry: &'a Geometry,
-    work: &mut W,
+    geometry: &'a Geometry, work: &mut W,
 ) -> Result<SimplicityParts<'a, W>, W::Error> {
     let mut points = W::Array::default();
     let mut curves = W::Array::default();
@@ -1430,9 +1400,7 @@ fn collect_simplicity_parts_inner<'a, W: crate::topology::noding::NodingWork>(
 
 #[cfg(test)]
 fn collect_simplicity_parts(
-    geometry: &Geometry,
-    points: &mut Vec<Coord>,
-    curves: &mut Vec<Vec<Coord>>,
+    geometry: &Geometry, points: &mut Vec<Coord>, curves: &mut Vec<Vec<Coord>>,
 ) {
     let mut visit = |_: u64, _: Option<&Coord>| Ok::<(), core::convert::Infallible>(());
     let (borrowed_points, borrowed_curves) = collect_simplicity_parts_inner(
@@ -1449,9 +1417,7 @@ fn collect_simplicity_parts(
 }
 
 fn simplicity_same<W: crate::topology::noding::NodingWork>(
-    left: &Coord,
-    right: &Coord,
-    work: &mut W,
+    left: &Coord, right: &Coord, work: &mut W,
 ) -> Result<bool, W::Error> {
     work.visit(1, None)?;
     work.exact(
@@ -1464,8 +1430,7 @@ fn simplicity_same<W: crate::topology::noding::NodingWork>(
 
 /// Test the original consecutive segments without materializing endpoint copies.
 fn curve_is_simple<W: crate::topology::noding::NodingWork>(
-    path: &[Coord],
-    work: &mut W,
+    path: &[Coord], work: &mut W,
 ) -> Result<bool, W::Error> {
     if path.len() < 2 {
         return Ok(true);
@@ -1499,9 +1464,7 @@ fn curve_is_simple<W: crate::topology::noding::NodingWork>(
 
 /// A closed curve has no mod-2 endpoint; an open one has exactly its two ends.
 fn chain_bounds<W: crate::topology::noding::NodingWork>(
-    path: &[Coord],
-    point: &Coord,
-    work: &mut W,
+    path: &[Coord], point: &Coord, work: &mut W,
 ) -> Result<bool, W::Error> {
     if path.len() < 2 || simplicity_same(&path[0], &path[path.len() - 1], work)? {
         return Ok(false);
@@ -1512,9 +1475,7 @@ fn chain_bounds<W: crate::topology::noding::NodingWork>(
 
 /// A point's boundary is empty, so no meeting with any curve is permitted.
 fn no_point_lies_on_a_curve<W: crate::topology::noding::NodingWork>(
-    points: &[&Coord],
-    curves: &[&CoordSeq],
-    work: &mut W,
+    points: &[&Coord], curves: &[&CoordSeq], work: &mut W,
 ) -> Result<bool, W::Error> {
     for &point in points {
         for &curve in curves {
@@ -1531,8 +1492,7 @@ fn no_point_lies_on_a_curve<W: crate::topology::noding::NodingWork>(
 
 /// Every inter-curve meeting must bound both original curves.
 fn curves_meet_only_at_ends<W: crate::topology::noding::NodingWork>(
-    curves: &[&CoordSeq],
-    work: &mut W,
+    curves: &[&CoordSeq], work: &mut W,
 ) -> Result<bool, W::Error> {
     for (i, &first) in curves.iter().enumerate() {
         for &second in &curves[i + 1..] {
@@ -2627,9 +2587,7 @@ mod nesting_tests {
 
     /// The recursive gathering of simplicity parts.
     fn reference_simplicity_parts(
-        geometry: &Geometry,
-        points: &mut Vec<Coord>,
-        curves: &mut Vec<Vec<Coord>>,
+        geometry: &Geometry, points: &mut Vec<Coord>, curves: &mut Vec<Vec<Coord>>,
     ) {
         match geometry.body() {
             GeometryBody::GeometryCollection(members) => {

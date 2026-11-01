@@ -265,9 +265,7 @@ impl<T> fmt::Debug for FusionResult<T> {
 /// contributed to more times than there are strata, which this entry point's
 /// own duplicate-stratum refusal makes unreachable from a conforming stream.
 pub async fn fuse<S, T>(
-    streams: Vec<(Iri, S)>,
-    profile: &FusionProfile,
-    top_k: TopK,
+    streams: Vec<(Iri, S)>, profile: &FusionProfile, top_k: TopK,
 ) -> Result<FusionResult<T>, FusionError>
 where
     S: RankedStream<Item = T>,
@@ -294,9 +292,7 @@ pub(crate) fn admit_streams<S: RankedStream>(
 }
 
 pub(crate) async fn fuse_admitted<S, T>(
-    streams: purrdf_sparql_eval::AdmittedVec<(Iri, S)>,
-    profile: &FusionProfile,
-    top_k: TopK,
+    streams: purrdf_sparql_eval::AdmittedVec<(Iri, S)>, profile: &FusionProfile, top_k: TopK,
 ) -> Result<FusionResult<T>, FusionError>
 where
     S: RankedStream<Item = T>,
@@ -306,9 +302,7 @@ where
 }
 
 pub(crate) async fn fuse_admitted_scoped<S, T>(
-    streams: purrdf_sparql_eval::AdmittedVec<(Iri, S)>,
-    profile: &FusionProfile,
-    top_k: TopK,
+    streams: purrdf_sparql_eval::AdmittedVec<(Iri, S)>, profile: &FusionProfile, top_k: TopK,
     scopes: Option<&[crate::ScopedStratum]>,
 ) -> Result<FusionResult<T>, FusionError>
 where

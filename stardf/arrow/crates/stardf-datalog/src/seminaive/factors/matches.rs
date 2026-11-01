@@ -50,10 +50,7 @@ where
 {
     /// Freeze this factor's existing scan law and certified native groups once.
     pub(super) fn new<D: TermDictionary<Id = I>>(
-        factor: &Factor,
-        entry: RuleEntry<'_, N>,
-        snapshot: JoinSnapshot<'_, D, N>,
-        scan: JoinScan,
+        factor: &Factor, entry: RuleEntry<'_, N>, snapshot: JoinSnapshot<'_, D, N>, scan: JoinScan,
     ) -> Result<Self, D::Error> {
         snapshot.rel.interner().check_read()?;
         let seed = match scan {
@@ -98,12 +95,8 @@ where
 
     /// Continue native joining and each original negative witness without replay.
     pub(super) fn advance<D: TermDictionary<Id = I>>(
-        &mut self,
-        factor: &Factor,
-        entry: RuleEntry<'_, N>,
-        snapshot: JoinSnapshot<'_, D, N>,
-        governor: &mut StepGovernor<'_>,
-        evidence: &mut Option<&mut dyn RuleEvidence<D, N>>,
+        &mut self, factor: &Factor, entry: RuleEntry<'_, N>, snapshot: JoinSnapshot<'_, D, N>,
+        governor: &mut StepGovernor<'_>, evidence: &mut Option<&mut dyn RuleEvidence<D, N>>,
     ) -> Result<(), EvalError<D::Error>> {
         snapshot
             .rel
@@ -331,11 +324,8 @@ mod tests {
     }
 
     fn compare<const N: usize>(
-        factor: &Factor,
-        entry: RuleEntry<'_, N>,
-        snapshot: JoinSnapshot<'_, HostDictionary, N>,
-        scan: JoinScan,
-        evidenced: bool,
+        factor: &Factor, entry: RuleEntry<'_, N>, snapshot: JoinSnapshot<'_, HostDictionary, N>,
+        scan: JoinScan, evidenced: bool,
     ) where
         Arity<N>: StoreShape<N>,
     {
@@ -519,9 +509,7 @@ mod tests {
     }
 
     fn compare_relations<const N: usize>(
-        entry: RuleEntry<'_, N>,
-        snapshot: JoinSnapshot<'_, HostDictionary, N>,
-        evidenced: bool,
+        entry: RuleEntry<'_, N>, snapshot: JoinSnapshot<'_, HostDictionary, N>, evidenced: bool,
     ) where
         Arity<N>: StoreShape<N>,
     {
@@ -720,9 +708,7 @@ mod tests {
     }
 
     fn compare_whole_factor<const N: usize>(
-        entry: RuleEntry<'_, N>,
-        snapshot: RoundSnapshot<'_, HostDictionary, N>,
-        evidenced: bool,
+        entry: RuleEntry<'_, N>, snapshot: RoundSnapshot<'_, HostDictionary, N>, evidenced: bool,
     ) where
         Arity<N>: StoreShape<N>,
     {
@@ -973,13 +959,9 @@ mod tests {
     }
 
     fn compare_product<const N: usize>(
-        entry: RuleEntry<'_, N>,
-        snapshot: RoundSnapshot<'_, HostDictionary, N>,
-        relations: &mut Vec<Vec<SlotSolution<u64, N>>>,
-        projections: &mut Vec<Projection>,
-        head: usize,
-        anchor: usize,
-        evidenced: bool,
+        entry: RuleEntry<'_, N>, snapshot: RoundSnapshot<'_, HostDictionary, N>,
+        relations: &mut Vec<Vec<SlotSolution<u64, N>>>, projections: &mut Vec<Projection>,
+        head: usize, anchor: usize, evidenced: bool,
     ) where
         Arity<N>: StoreShape<N>,
     {

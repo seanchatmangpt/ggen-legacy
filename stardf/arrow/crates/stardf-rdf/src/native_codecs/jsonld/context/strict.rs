@@ -16,9 +16,7 @@ pub(super) struct StrictJsonLimits {
 }
 
 pub(super) fn parse_strict_json(
-    bytes: &[u8],
-    limits: StrictJsonLimits,
-    description: &str,
+    bytes: &[u8], limits: StrictJsonLimits, description: &str,
 ) -> Result<Value, RdfDiagnostic> {
     if !limits.bytes.admits_usize(bytes.len()) {
         return Err(error(format!(

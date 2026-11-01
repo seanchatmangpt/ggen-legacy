@@ -519,11 +519,7 @@ fn entry_types(g: &RdfDataset, entry: &Term) -> Vec<String> {
 
 /// Parse one entry; an entry of any type this module does not know PANICS.
 fn parse_case(
-    g: &Arc<RdfDataset>,
-    entry: &Term,
-    manifest_path: &Path,
-    root: &Path,
-    discovered_by: Root12,
+    g: &Arc<RdfDataset>, entry: &Term, manifest_path: &Path, root: &Path, discovered_by: Root12,
 ) -> Case12 {
     let Term::NamedNode(entry_iri) = entry else {
         panic!(
@@ -624,10 +620,7 @@ fn existing_file(term: &Term, id: &str, role: &str) -> PathBuf {
 }
 
 fn parse_node_expr_case(
-    g: &Arc<RdfDataset>,
-    entry: &Term,
-    manifest_path: &Path,
-    id: &str,
+    g: &Arc<RdfDataset>, entry: &Term, manifest_path: &Path, id: &str,
 ) -> NodeExprCase {
     let action = exactly_one(g, entry, mf::ACTION, id);
     let mut focus: Option<Term> = None;

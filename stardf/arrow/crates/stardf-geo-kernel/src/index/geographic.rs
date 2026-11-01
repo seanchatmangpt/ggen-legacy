@@ -57,10 +57,7 @@ impl GeographicGeoIndex {
     /// Refuses incompatible references, missing operations, uncertified source
     /// topology and incomplete work or storage admission, without a partial index.
     pub fn prepare(
-        source: Arc<GeoIndex>,
-        profile: &GeoProfile,
-        target: Crs,
-        context: &mut MetricContext,
+        source: Arc<GeoIndex>, profile: &GeoProfile, target: Crs, context: &mut MetricContext,
     ) -> Result<Self, GeoError> {
         Self::prepare_inner(source, profile, target, None, context, None)
     }
@@ -69,10 +66,7 @@ impl GeographicGeoIndex {
     /// # Errors
     /// Adds the observer's original refusal to [`Self::prepare`].
     pub fn prepare_metered(
-        source: Arc<GeoIndex>,
-        profile: &GeoProfile,
-        target: Crs,
-        context: &mut MetricContext,
+        source: Arc<GeoIndex>, profile: &GeoProfile, target: Crs, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::prepare_inner(source, profile, target, None, context, Some(observer))
@@ -82,10 +76,7 @@ impl GeographicGeoIndex {
     /// # Errors
     /// Uses the complete reference, operation and admission contract of [`Self::prepare`].
     pub fn prepare_with_epoch(
-        source: Arc<GeoIndex>,
-        profile: &GeoProfile,
-        target: Crs,
-        epoch: &crate::Rat,
+        source: Arc<GeoIndex>, profile: &GeoProfile, target: Crs, epoch: &crate::Rat,
         context: &mut MetricContext,
     ) -> Result<Self, GeoError> {
         Self::prepare_inner(source, profile, target, Some(epoch), context, None)
@@ -95,12 +86,8 @@ impl GeographicGeoIndex {
     /// # Errors
     /// Adds observer refusal to [`Self::prepare_with_epoch`].
     pub fn prepare_with_epoch_metered(
-        source: Arc<GeoIndex>,
-        profile: &GeoProfile,
-        target: Crs,
-        epoch: &crate::Rat,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        source: Arc<GeoIndex>, profile: &GeoProfile, target: Crs, epoch: &crate::Rat,
+        context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::prepare_inner(
             source,
@@ -113,12 +100,8 @@ impl GeographicGeoIndex {
     }
 
     fn prepare_inner(
-        source: Arc<GeoIndex>,
-        profile: &GeoProfile,
-        target: Crs,
-        epoch: Option<&crate::Rat>,
-        context: &mut MetricContext,
-        observer: Option<&mut dyn MetricWorkObserver>,
+        source: Arc<GeoIndex>, profile: &GeoProfile, target: Crs, epoch: Option<&crate::Rat>,
+        context: &mut MetricContext, observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         context.begin(source.len())?;
         let work_base = context.work_items();
@@ -318,10 +301,7 @@ impl GeographicGeoIndex {
     /// # Errors
     /// Refuses any incomplete narrow phase or resource admission; no partial bag.
     pub fn relation_pairs(
-        &self,
-        relation: SpatialRelation,
-        subject: Option<&TermValue>,
-        object: Option<&TermValue>,
+        &self, relation: SpatialRelation, subject: Option<&TermValue>, object: Option<&TermValue>,
         context: &mut MetricContext,
     ) -> Result<Vec<(TermValue, TermValue)>, GeoError> {
         self.relation_pairs_inner(relation, subject, object, None, context, None)
@@ -331,12 +311,8 @@ impl GeographicGeoIndex {
     /// # Errors
     /// Adds observer refusal to [`Self::relation_pairs`].
     pub fn relation_pairs_metered(
-        &self,
-        relation: SpatialRelation,
-        subject: Option<&TermValue>,
-        object: Option<&TermValue>,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, relation: SpatialRelation, subject: Option<&TermValue>, object: Option<&TermValue>,
+        context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<Vec<(TermValue, TermValue)>, GeoError> {
         self.relation_pairs_inner(relation, subject, object, None, context, Some(observer))
             .map(|(rows, _)| rows)
@@ -346,10 +322,7 @@ impl GeographicGeoIndex {
     /// # Errors
     /// Returns precisely the failures of [`Self::relation_pairs`].
     pub fn relation_pairs_with_receipt(
-        &self,
-        relation: SpatialRelation,
-        subject: Option<&TermValue>,
-        object: Option<&TermValue>,
+        &self, relation: SpatialRelation, subject: Option<&TermValue>, object: Option<&TermValue>,
         context: &mut MetricContext,
     ) -> Result<(Vec<(TermValue, TermValue)>, GeographicRelationReceipt), GeoError> {
         self.relation_pairs_inner(relation, subject, object, None, context, None)
@@ -359,12 +332,8 @@ impl GeographicGeoIndex {
     /// # Errors
     /// Adds observer refusal to [`Self::relation_pairs_with_receipt`].
     pub fn relation_pairs_with_receipt_metered(
-        &self,
-        relation: SpatialRelation,
-        subject: Option<&TermValue>,
-        object: Option<&TermValue>,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, relation: SpatialRelation, subject: Option<&TermValue>, object: Option<&TermValue>,
+        context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<(Vec<(TermValue, TermValue)>, GeographicRelationReceipt), GeoError> {
         self.relation_pairs_inner(relation, subject, object, None, context, Some(observer))
     }
@@ -374,12 +343,8 @@ impl GeographicGeoIndex {
     /// # Errors
     /// Refuses an unrelated or missing source receipt and every traversal error.
     pub fn relation_pairs_prepared_with_receipt(
-        &self,
-        relation: SpatialRelation,
-        subject: Option<&TermValue>,
-        object: Option<&TermValue>,
-        receipt: &PreparedSourceReceipt,
-        context: &mut MetricContext,
+        &self, relation: SpatialRelation, subject: Option<&TermValue>, object: Option<&TermValue>,
+        receipt: &PreparedSourceReceipt, context: &mut MetricContext,
     ) -> Result<(Vec<(TermValue, TermValue)>, GeographicRelationReceipt), GeoError> {
         self.relation_pairs_inner(relation, subject, object, Some(receipt), context, None)
     }
@@ -388,12 +353,8 @@ impl GeographicGeoIndex {
     /// # Errors
     /// Adds observer refusal to [`Self::relation_pairs_prepared_with_receipt`].
     pub fn relation_pairs_prepared_with_receipt_metered(
-        &self,
-        relation: SpatialRelation,
-        subject: Option<&TermValue>,
-        object: Option<&TermValue>,
-        receipt: &PreparedSourceReceipt,
-        context: &mut MetricContext,
+        &self, relation: SpatialRelation, subject: Option<&TermValue>, object: Option<&TermValue>,
+        receipt: &PreparedSourceReceipt, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<(Vec<(TermValue, TermValue)>, GeographicRelationReceipt), GeoError> {
         self.relation_pairs_inner(
@@ -413,12 +374,8 @@ impl GeographicGeoIndex {
     /// # Errors
     /// Preserves reference, relation, physical and observer refusal.
     pub fn relation_pair_references_with_receipt_metered(
-        &self,
-        relation: SpatialRelation,
-        subject: Option<&TermValue>,
-        object: Option<&TermValue>,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, relation: SpatialRelation, subject: Option<&TermValue>, object: Option<&TermValue>,
+        context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<
         (
             crate::PreparedValues<RelationPair>,
@@ -437,12 +394,8 @@ impl GeographicGeoIndex {
     }
 
     fn relation_pairs_inner(
-        &self,
-        relation: SpatialRelation,
-        subject: Option<&TermValue>,
-        object: Option<&TermValue>,
-        receipt: Option<&PreparedSourceReceipt>,
-        context: &mut MetricContext,
+        &self, relation: SpatialRelation, subject: Option<&TermValue>, object: Option<&TermValue>,
+        receipt: Option<&PreparedSourceReceipt>, context: &mut MetricContext,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<(Vec<(TermValue, TermValue)>, GeographicRelationReceipt), GeoError> {
         self.relation_pair_references_inner(relation, subject, object, receipt, context, observer)
@@ -454,12 +407,8 @@ impl GeographicGeoIndex {
     }
 
     fn relation_pair_references_inner(
-        &self,
-        relation: SpatialRelation,
-        subject: Option<&TermValue>,
-        object: Option<&TermValue>,
-        receipt: Option<&PreparedSourceReceipt>,
-        context: &mut MetricContext,
+        &self, relation: SpatialRelation, subject: Option<&TermValue>, object: Option<&TermValue>,
+        receipt: Option<&PreparedSourceReceipt>, context: &mut MetricContext,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<
         (
@@ -543,9 +492,7 @@ struct GeographicPairs<'index, 'context, 'observer> {
 }
 impl PairWorker for GeographicPairs<'_, '_, '_> {
     fn bindings(
-        &mut self,
-        subject: Option<&TermValue>,
-        object: Option<&TermValue>,
+        &mut self, subject: Option<&TermValue>, object: Option<&TermValue>,
     ) -> Result<(), GeoError> {
         for bound in [subject, object].into_iter().flatten() {
             self.maximum_term_bytes = self.maximum_term_bytes.max(term_inventory(
@@ -560,9 +507,7 @@ impl PairWorker for GeographicPairs<'_, '_, '_> {
         self.charge_comparisons(comparisons)
     }
     fn reserve(
-        &mut self,
-        pairs: &mut crate::context::RetainedBuilder<RelationPair>,
-        required: usize,
+        &mut self, pairs: &mut crate::context::RetainedBuilder<RelationPair>, required: usize,
     ) -> Result<(), GeoError> {
         let Some(bytes) = pairs.replacement_bytes(required, &self.progress)? else {
             return Ok(());
@@ -660,9 +605,7 @@ impl PairWorker for GeographicPairs<'_, '_, '_> {
         self.progress.context_poll(self.context)
     }
     fn compare_terms(
-        &mut self,
-        left: &TermValue,
-        right: &TermValue,
+        &mut self, left: &TermValue, right: &TermValue,
     ) -> Result<core::cmp::Ordering, GeoError> {
         self.charge_comparisons(1)?;
         self.progress.with_storage(0, |memory| {
@@ -688,9 +631,7 @@ impl GeographicPairs<'_, '_, '_> {
 }
 
 pub(super) fn term_inventory(
-    term: &TermValue,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    term: &TermValue, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<u64, GeoError> {
     let mut encoded = 0_u64;
     let result =
@@ -757,9 +698,7 @@ pub(super) fn term_inventory(
 }
 
 fn frame_term(
-    hash: &mut Hasher,
-    term: &TermValue,
-    context: &mut MetricContext,
+    hash: &mut Hasher, term: &TermValue, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<u64, GeoError> {
     let maximum = term_inventory(term, context, progress)?;

@@ -63,9 +63,7 @@ impl Parser<'_> {
 
     /// Parse a single `sh:SPARQLTargetType` declaration node.
     fn parse_one_sparql_target_type(
-        &self,
-        id: &Term,
-        iri: &str,
+        &self, id: &Term, iri: &str,
     ) -> Result<ParsedTargetType, String> {
         // Parameters, ordered by (sh:order, predicate IRI).
         let mut raw: Vec<(f64, TargetTypeParam)> = Vec::new();

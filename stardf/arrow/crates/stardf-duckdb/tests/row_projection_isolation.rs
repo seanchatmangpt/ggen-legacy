@@ -1,6 +1,8 @@
 // SPDX-FileCopyrightText: 2026 Blackcat Informatics® Inc. <paudley@blackcatinformatics.ca>
 // SPDX-License-Identifier: MIT OR Apache-2.0 OR MulanPSL-2.0
 
+//! Row-projection isolation: DuckDB-backed SQL evaluation over projected rows.
+
 use purrdf_core::TermValue;
 use purrdf_duckdb::{EvaluatorError, PurRdfDuckDB};
 use purrdf_sql::{CompiledQuery, SqlLiteral};

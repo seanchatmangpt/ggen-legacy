@@ -384,8 +384,7 @@ impl purrdf_hash::error::StructuredError for ProducerStatus {
 
 impl ProducerStatus {
     fn clone_admitted(
-        &self,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<Self, purrdf_sparql_eval::EvalError> {
         match self {
             Self::ExecutionFailed { reason } => Ok(Self::ExecutionFailed {
@@ -396,8 +395,7 @@ impl ProducerStatus {
     }
     /// Preserve a native-authored failure spelling with its original grant.
     pub(crate) fn failed_admitted(
-        reason: &(impl fmt::Display + ?Sized),
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        reason: &(impl fmt::Display + ?Sized), workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<Self, purrdf_sparql_eval::EvalError> {
         Ok(Self::ExecutionFailed {
             reason: workspace.authored_text(reason)?.into(),
@@ -1343,9 +1341,7 @@ pub(crate) fn evidence_canonical_bytes(
 }
 
 pub(crate) fn write_evidence<'a, B: crate::canonical::CanonicalSink, A, R>(
-    writer: &mut Writer<B>,
-    attestations: impl Fn() -> A,
-    resolution: impl Fn() -> R,
+    writer: &mut Writer<B>, attestations: impl Fn() -> A, resolution: impl Fn() -> R,
 ) where
     A: ExactSizeIterator<Item = (&'a Iri, &'a PfAttestation)>,
     R: Iterator<Item = (&'a Iri, &'a StratumResolution)>,
@@ -1842,8 +1838,7 @@ enum StreamSet {
 impl StreamSet {
     /// The empty set over `width` streams.
     fn empty(
-        width: usize,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        width: usize, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<Self, FusionError> {
         if width <= 64 {
             Ok(Self::Narrow(0))
@@ -2183,9 +2178,7 @@ impl EmittedTable {
     /// cannot happen, and returning a value no caller may read would only
     /// invite one to start reading it.
     fn record(
-        &mut self,
-        item: Term,
-        record: EmittedRecord,
+        &mut self, item: Term, record: EmittedRecord,
         workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<(), FusionError> {
         self.entries.insert_admitted(item, record, workspace)?;
@@ -2506,8 +2499,7 @@ impl<S: RankedStream> FusionStream<'static, S> {
 impl<'p, S: RankedStream> FusionStream<'p, S> {
     /// Use the caller's exact immutable profile for the engine's admitted lifetime.
     pub(crate) fn borrowed(
-        streams: purrdf_sparql_eval::AdmittedVec<(Iri, S)>,
-        profile: &'p FusionProfile,
+        streams: purrdf_sparql_eval::AdmittedVec<(Iri, S)>, profile: &'p FusionProfile,
     ) -> Result<Self, FusionError> {
         Self::with_profile(
             streams,
@@ -2712,8 +2704,7 @@ impl<'p, S: RankedStream> FusionStream<'p, S> {
     /// They share the original frontier/aggregation law, but never masquerade
     /// as established stream ranks or threshold heads.
     pub(crate) fn retain_scoped(
-        &mut self,
-        scopes: &[crate::ScopedStratum],
+        &mut self, scopes: &[crate::ScopedStratum],
     ) -> Result<purrdf_sparql_eval::QueryEvidence, FusionError> {
         let owner = purrdf_sparql_eval::QueryEvidence::new(&self.workspace)?;
         let mut records: purrdf_sparql_eval::AdmittedOrderedMap<
@@ -2811,8 +2802,7 @@ impl<'p, S: RankedStream> FusionStream<'p, S> {
     }
 
     pub(crate) fn row_evidence(
-        &self,
-        row: &FusedRow,
+        &self, row: &FusedRow,
     ) -> Result<purrdf_sparql_eval::RowEvidence, FusionError> {
         let Some(scoped) = &self.scoped else {
             return Ok(purrdf_sparql_eval::RowEvidence::default());
@@ -3968,8 +3958,7 @@ impl<'p, S: RankedStream> FusionStream<'p, S> {
     /// and since every contribution is non-negative, some member of a group
     /// overflows precisely when its best-scoring member does.
     fn wanted_exclusions(
-        &self,
-        visits: &mut u64,
+        &self, visits: &mut u64,
     ) -> Result<purrdf_sparql_eval::AdmittedVec<(CandidateId, usize)>, FusionError> {
         let open = self.open_streams()?;
         let mut wanted = purrdf_sparql_eval::AdmittedVec::new(&self.workspace);
@@ -4037,10 +4026,7 @@ impl<'p, S: RankedStream> FusionStream<'p, S> {
     /// Either way the producer has said it might name a candidate it promised
     /// never to name, so it is the domain family that refuses it.
     fn check_verdict_against_declaration(
-        &self,
-        index: usize,
-        id: &CandidateId,
-        verdict: ExclusionVerdict,
+        &self, index: usize, id: &CandidateId, verdict: ExclusionVerdict,
     ) -> Result<(), FusionError> {
         if verdict != ExclusionVerdict::Possible {
             return Ok(());
@@ -4299,9 +4285,7 @@ impl<'p, S: RankedStream> FusionStream<'p, S> {
     /// The declared total tie-break: score descending, then best rank ascending,
     /// then canonical term byte order ascending.
     fn is_better(
-        left_id: &CandidateId,
-        left: &CandidateState,
-        right_id: &CandidateId,
+        left_id: &CandidateId, left: &CandidateState, right_id: &CandidateId,
         right: &CandidateState,
     ) -> bool {
         match left.lower_bound.cmp(&right.lower_bound) {
@@ -4338,10 +4322,7 @@ impl<'p, S: RankedStream> FusionStream<'p, S> {
     /// The third case is what keeps the frontier bounded: without it a pair of
     /// finalized, exactly-tied candidates blocks on itself forever.
     fn outranks(
-        &self,
-        other_id: &CandidateId,
-        other: &CandidateState,
-        id: &CandidateId,
+        &self, other_id: &CandidateId, other: &CandidateState, id: &CandidateId,
         state: &CandidateState,
     ) -> Result<bool, FusionError> {
         let other_upper = self.upper_bound(other)?;
@@ -4473,8 +4454,7 @@ impl<'p, S: RankedStream> FusionStream<'p, S> {
     /// meets that rival before a dominating one. See
     /// [`Self::select_emittable`].
     fn select_emittable_by_scan(
-        &self,
-        visits: &mut u64,
+        &self, visits: &mut u64,
     ) -> Result<Option<CandidateId>, FusionError> {
         if self.frontier.is_empty() {
             return Ok(None);
@@ -4672,11 +4652,7 @@ impl<'p, S: RankedStream> FusionStream<'p, S> {
     /// The item is cloned only to render a refusal. On the conforming path this
     /// function allocates nothing and touches no state.
     fn check_declared_block<I: Clone + Into<Term>>(
-        &self,
-        index: usize,
-        block: &RowBlock,
-        rank: u64,
-        item: &I,
+        &self, index: usize, block: &RowBlock, rank: u64, item: &I,
     ) -> Result<(), FusionError> {
         crate::ranked_stream::validate_declared_block(
             &self.streams[index].0,
@@ -4704,11 +4680,7 @@ impl<'p, S: RankedStream> FusionStream<'p, S> {
     /// placed yet has nothing to contradict; both are `Ok` here, and neither is
     /// upgraded into a claim.
     fn check_candidate_block(
-        &self,
-        item: &Term,
-        index: usize,
-        block: &RowBlock,
-        placed: Option<&BlockWitness>,
+        &self, item: &Term, index: usize, block: &RowBlock, placed: Option<&BlockWitness>,
     ) -> Result<(), FusionError> {
         crate::ranked_stream::validate_candidate_block(
             item,
@@ -4747,9 +4719,7 @@ impl<'p, S: RankedStream> FusionStream<'p, S> {
     /// block records nothing, and never erases a placement another row made —
     /// silence cannot overwrite evidence.
     fn placement_for(
-        index: usize,
-        block: &RowBlock,
-        placed: Option<&BlockWitness>,
+        index: usize, block: &RowBlock, placed: Option<&BlockWitness>,
     ) -> Option<Box<BlockWitness>> {
         match (block.tag(), placed) {
             (Some(tag), None) => Some(Box::new(BlockWitness {

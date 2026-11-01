@@ -379,8 +379,7 @@ fn depth_limit() -> ShapesProductError {
 /// `refusal` past [`MAX_DEPTH`]: the one bound the encoder, the decoder and the
 /// model walks share.
 pub(crate) fn open_level(
-    depth: &mut u32,
-    refusal: fn() -> ShapesProductError,
+    depth: &mut u32, refusal: fn() -> ShapesProductError,
 ) -> Result<(), ShapesProductError> {
     if purrdf_stack::is_low() {
         return Err(crate::error::PreparationRefusal::StackMargin.into());
@@ -658,8 +657,7 @@ impl AstWriter {
     /// Write a SPARQL executable's result annotations, in the canonical order the
     /// parser keeps them: each one's property, variable and default values.
     fn result_annotations(
-        &mut self,
-        annotations: &[crate::shapes::ResultAnnotation],
+        &mut self, annotations: &[crate::shapes::ResultAnnotation],
     ) -> Result<(), ShapesProductError> {
         self.count(annotations.len());
         for annotation in annotations {
@@ -676,8 +674,7 @@ impl AstWriter {
     /// Write a shape's per-constraint reifier annotations, in the canonical order
     /// the parser keeps them (by constraint).
     fn constraint_annotations(
-        &mut self,
-        annotations: &[ConstraintAnnotation],
+        &mut self, annotations: &[ConstraintAnnotation],
     ) -> Result<(), ShapesProductError> {
         self.count(annotations.len());
         for annotation in annotations {
@@ -833,8 +830,7 @@ impl AstWriter {
 
     /// Write a `sh:SPARQLTargetType` declaration.
     fn sparql_target_type(
-        &mut self,
-        target_type: &SparqlTargetType,
+        &mut self, target_type: &SparqlTargetType,
     ) -> Result<(), ShapesProductError> {
         self.term(&target_type.id)?;
         self.count(target_type.params.len());
@@ -1997,9 +1993,7 @@ impl<'a> AstReader<'a> {
     /// constraint past the `constraints` the shape holds, naming the reifier
     /// constraint on a node shape, or overriding nothing.
     fn constraint_annotations(
-        &mut self,
-        constraints: usize,
-        property_shape: bool,
+        &mut self, constraints: usize, property_shape: bool,
     ) -> Result<Vec<ConstraintAnnotation>, ShapesProductError> {
         let annotations = self.seq(|reader| {
             let constraint = match reader.tag("AnnotatedConstraint", TAGS_ANNOTATED_CONSTRAINT)? {
@@ -2713,8 +2707,7 @@ impl ModelWalk<'_> for FnTable {
     }
 
     fn first_declaration(
-        &mut self,
-        func: &Arc<CustomFunction>,
+        &mut self, func: &Arc<CustomFunction>,
     ) -> Result<bool, ShapesProductError> {
         match self.function_ids.entry(Arc::as_ptr(func).addr()) {
             std::collections::btree_map::Entry::Occupied(_) => return Ok(false),
@@ -2749,8 +2742,7 @@ impl ModelWalk<'_> for FnTable {
 /// `sh:order`); [`ProductDimension::UnsupportedCapability`] for a
 /// SPARQL-based node expression spelled under a key this build does not know.
 pub(crate) fn encode_ast(
-    shapes: &Shapes,
-    classes: &ClassCatalog,
+    shapes: &Shapes, classes: &ClassCatalog,
 ) -> Result<Vec<u8>, ShapesProductError> {
     encode_model(shapes, Some(classes), &[])
 }
@@ -2758,15 +2750,13 @@ pub(crate) fn encode_ast(
 /// Encode the semantic model before any prepared class catalog is attached.
 /// Rule execution computes its classes from this model and retained source.
 pub(crate) fn encode_rule_model(
-    shapes: &Shapes,
-    producers: &[&crate::srl::ir::ShaclProducer<'_>],
+    shapes: &Shapes, producers: &[&crate::srl::ir::ShaclProducer<'_>],
 ) -> Result<Vec<u8>, ShapesProductError> {
     encode_model(shapes, None, producers)
 }
 
 fn encode_model(
-    shapes: &Shapes,
-    classes: Option<&ClassCatalog>,
+    shapes: &Shapes, classes: Option<&ClassCatalog>,
     producers: &[&crate::srl::ir::ShaclProducer<'_>],
 ) -> Result<Vec<u8>, ShapesProductError> {
     let tables = FnTable::collect_model(shapes)?;

@@ -138,8 +138,7 @@ fn paged(pages: &[Fixture]) -> PagedDataset {
 /// the one whose named-graph set comes straight from the builder, and a skip that lost a
 /// solution would have to lose it identically on both to escape.
 fn rows_agreeing_across_backends(
-    pages: &[Fixture],
-    query: &str,
+    pages: &[Fixture], query: &str,
 ) -> (Vec<String>, Vec<Vec<Option<TermValue>>>) {
     let single = build(&Fixture::merged(pages));
     let view = paged(pages);
@@ -426,11 +425,7 @@ impl DatasetView for ProbeCountingView {
     /// `planned_probes` must answer "how many graphs were evaluated", not "how many
     /// iterators were made".
     fn quads_for_pattern(
-        &self,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         DatasetView::quads_for_pattern(&*self.inner, s, p, o, g)
     }
@@ -452,11 +447,7 @@ impl DatasetView for ProbeCountingView {
 
     /// Forwards to the inner view unchanged; not part of what this type measures.
     fn probe_plan(
-        &self,
-        s_bound: bool,
-        p_bound: bool,
-        o_bound: bool,
-        g: GraphMatch,
+        &self, s_bound: bool, p_bound: bool, o_bound: bool, g: GraphMatch,
     ) -> QuadProbePlan {
         DatasetView::probe_plan(&*self.inner, s_bound, p_bound, o_bound, g)
     }
@@ -466,11 +457,7 @@ impl DatasetView for ProbeCountingView {
     /// reading data for the current graph — see the type doc for why this, and not
     /// `quads_for_pattern`, is the right method to count.
     fn quads_for_pattern_with_plan(
-        &self,
-        plan: &QuadProbePlan,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
+        &self, plan: &QuadProbePlan, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
         g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         self.planned_probes.fetch_add(1, Ordering::Relaxed);
@@ -479,11 +466,7 @@ impl DatasetView for ProbeCountingView {
 
     /// Forwards to the inner view unchanged; not part of what this type measures.
     fn cardinality_estimate(
-        &self,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> u64 {
         DatasetView::cardinality_estimate(&*self.inner, s, p, o, g)
     }
@@ -515,8 +498,7 @@ impl DatasetView for ProbeCountingView {
 
     /// Forwards to the inner view unchanged; not part of what this type measures.
     fn annotations_of_with_graph(
-        &self,
-        reifier: TermId,
+        &self, reifier: TermId,
     ) -> impl Iterator<Item = (TermId, TermId, Option<TermId>)> + '_ {
         DatasetView::annotations_of_with_graph(&*self.inner, reifier)
     }

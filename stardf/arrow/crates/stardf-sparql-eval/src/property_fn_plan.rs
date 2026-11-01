@@ -219,8 +219,7 @@ pub(crate) type PrepResult<T> = Result<T, PreparationError>;
 
 impl PreparationError {
     fn into_failure(
-        self,
-        memory: &mut Memory<'_, LexicalFrame>,
+        self, memory: &mut Memory<'_, LexicalFrame>,
     ) -> crate::engine::EvaluationFailure {
         match self {
             Self::Storage(error) => crate::engine::EvaluationFailure::Evaluation(
@@ -257,9 +256,7 @@ impl PreparationError {
 }
 
 fn plan_message(
-    seam: PlanSeam,
-    message: impl core::fmt::Display,
-    workspace: &WorkspaceCapability,
+    seam: PlanSeam, message: impl core::fmt::Display, workspace: &WorkspaceCapability,
 ) -> PlanError {
     let error = crate::error::NativeDiagnostic::error(
         crate::error::NativeDiagnosticKind::Function,
@@ -306,9 +303,7 @@ pub(crate) fn parameter_set(names: &[&str]) -> DetHashSet<Variable> {
 /// registered entry does not declare — refused HERE, at prepare time, before any governor
 /// charge (see [`Planner::enter_aggregate`]).
 pub(crate) fn plan_query(
-    query: &Query,
-    relations: &PropertyFunctionRegistry<'_>,
-    agg_registry: &AggregateRegistry,
+    query: &Query, relations: &PropertyFunctionRegistry<'_>, agg_registry: &AggregateRegistry,
     parameters: &DetHashSet<Variable>,
 ) -> Result<Option<Query>, PlanError> {
     legacy_query_plan(query, relations, agg_registry, parameters, true)
@@ -317,11 +312,8 @@ pub(crate) fn plan_query(
 /// Immutable prepared plans retain their positive topology. Registry and promised
 /// parameter feasibility still run, without normalizing an already admitted tree.
 fn legacy_query_plan(
-    query: &Query,
-    relations: &PropertyFunctionRegistry<'_>,
-    aggregates: &AggregateRegistry,
-    parameters: &DetHashSet<Variable>,
-    normalize: bool,
+    query: &Query, relations: &PropertyFunctionRegistry<'_>, aggregates: &AggregateRegistry,
+    parameters: &DetHashSet<Variable>, normalize: bool,
 ) -> Result<Option<Query>, PlanError> {
     let workspace = WorkspaceCapability::resident();
     let mut frame = LexicalFrame::new(&workspace);
@@ -335,11 +327,8 @@ fn legacy_query_plan(
 
 /// Prepare through the original allocation admission, retaining only new AST buffers.
 pub(crate) fn plan_query_with_memory(
-    query: &Query,
-    relations: &PropertyFunctionRegistry<'_>,
-    aggregates: &AggregateRegistry,
-    parameters: &[&str],
-    memory: &mut Memory<'_, LexicalFrame>,
+    query: &Query, relations: &PropertyFunctionRegistry<'_>, aggregates: &AggregateRegistry,
+    parameters: &[&str], memory: &mut Memory<'_, LexicalFrame>,
 ) -> Result<Option<Query>, crate::engine::EvaluationFailure> {
     plan_query_native(query, relations, aggregates, parameters, true, memory)
         .map_err(|error| error.into_failure(memory))
@@ -347,19 +336,15 @@ pub(crate) fn plan_query_with_memory(
 
 /// Recheck feasibility without renormalizing an immutable prepared topology.
 pub(crate) fn recheck_query_with_memory(
-    query: &Query,
-    relations: &PropertyFunctionRegistry<'_>,
-    aggregates: &AggregateRegistry,
-    parameters: &[&str],
-    memory: &mut Memory<'_, LexicalFrame>,
+    query: &Query, relations: &PropertyFunctionRegistry<'_>, aggregates: &AggregateRegistry,
+    parameters: &[&str], memory: &mut Memory<'_, LexicalFrame>,
 ) -> Result<Option<Query>, crate::engine::EvaluationFailure> {
     plan_query_native(query, relations, aggregates, parameters, false, memory)
         .map_err(|error| error.into_failure(memory))
 }
 
 fn promised_parameters(
-    parameters: &[&str],
-    workspace: &WorkspaceCapability,
+    parameters: &[&str], workspace: &WorkspaceCapability,
 ) -> Result<VarSchema, EvalError> {
     let mut builder = SchemaBuilder::new(workspace);
     for name in parameters {
@@ -369,12 +354,8 @@ fn promised_parameters(
 }
 
 fn plan_query_native(
-    query: &Query,
-    relations: &PropertyFunctionRegistry<'_>,
-    aggregates: &AggregateRegistry,
-    parameters: &[&str],
-    normalize: bool,
-    memory: &mut Memory<'_, LexicalFrame>,
+    query: &Query, relations: &PropertyFunctionRegistry<'_>, aggregates: &AggregateRegistry,
+    parameters: &[&str], normalize: bool, memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<Option<Query>> {
     let workspace = memory.admission_mut().workspace().clone();
     let promised = promised_parameters(parameters, &workspace)?;
@@ -418,10 +399,8 @@ fn plan_query_native(
 /// [`PlanSeam::Aggregate`], for a reachable `AggregateFunction::Custom` — see
 /// [`plan_query`]'s doc.
 pub(crate) fn plan_where_pattern(
-    pattern: &GraphPattern,
-    relations: &PropertyFunctionRegistry<'_>,
-    agg_registry: &AggregateRegistry,
-    parameters: &DetHashSet<Variable>,
+    pattern: &GraphPattern, relations: &PropertyFunctionRegistry<'_>,
+    agg_registry: &AggregateRegistry, parameters: &DetHashSet<Variable>,
 ) -> Result<Option<GraphPattern>, PlanError> {
     let workspace = WorkspaceCapability::resident();
     let mut frame = LexicalFrame::new(&workspace);
@@ -440,11 +419,8 @@ pub(crate) fn plan_where_pattern(
 }
 
 fn plan_where_pattern_native(
-    pattern: &GraphPattern,
-    relations: &PropertyFunctionRegistry<'_>,
-    aggregates: &AggregateRegistry,
-    parameters: &VarSchema,
-    normalize_positive: bool,
+    pattern: &GraphPattern, relations: &PropertyFunctionRegistry<'_>,
+    aggregates: &AggregateRegistry, parameters: &VarSchema, normalize_positive: bool,
     memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<Option<GraphPattern>> {
     let start = memory.admitted_bytes();
@@ -564,8 +540,7 @@ impl<'a> Promise<'a> {
 /// nothing — builds no set.
 #[cfg(test)]
 fn call_scope<'s>(
-    bound: &'s DetHashSet<Variable>,
-    promise: Promise<'_>,
+    bound: &'s DetHashSet<Variable>, promise: Promise<'_>,
 ) -> std::borrow::Cow<'s, DetHashSet<Variable>> {
     match promise.for_calls() {
         Some(parameters) if !parameters.iter().all(|variable| bound.contains(variable)) => {
@@ -609,11 +584,8 @@ struct Atom<'a> {
 /// first admission failure met in that order is the one returned.
 #[cfg(test)]
 fn plan_pattern(
-    pattern: &GraphPattern,
-    relations: &PropertyFunctionRegistry<'_>,
-    aggregates: &AggregateRegistry,
-    outer: &DetHashSet<Variable>,
-    promise: Promise<'_>,
+    pattern: &GraphPattern, relations: &PropertyFunctionRegistry<'_>,
+    aggregates: &AggregateRegistry, outer: &DetHashSet<Variable>, promise: Promise<'_>,
 ) -> Result<GraphPattern, PlanError> {
     let workspace = WorkspaceCapability::resident();
     let mut frame = LexicalFrame::new(&workspace);
@@ -637,11 +609,8 @@ fn plan_pattern(
 }
 
 fn plan_pattern_native<'a>(
-    pattern: &'a GraphPattern,
-    relations: &PropertyFunctionRegistry<'_>,
-    aggregates: &AggregateRegistry,
-    outer: &'a VarSchema,
-    promise: NativePromise<'a>,
+    pattern: &'a GraphPattern, relations: &PropertyFunctionRegistry<'_>,
+    aggregates: &AggregateRegistry, outer: &'a VarSchema, promise: NativePromise<'a>,
     memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<GraphPattern> {
     let workspace = memory.admission_mut().workspace().clone();
@@ -751,8 +720,7 @@ fn collect_chain<'a>(pattern: &'a GraphPattern, atoms: &mut Vec<Atom<'a>>) -> bo
 }
 
 fn collect_chain_native<'a>(
-    pattern: &'a GraphPattern,
-    atoms: &mut AdmittedVec<Atom<'a>>,
+    pattern: &'a GraphPattern, atoms: &mut AdmittedVec<Atom<'a>>,
     memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<bool> {
     /// One pending step of the peel.
@@ -827,9 +795,7 @@ fn planned_lateral_call(right: &GraphPattern) -> Option<(&GraphPattern, &Propert
 /// rebuilt tree with a node that binds nothing and matches everything.
 #[cfg(test)]
 fn push_atom<'a>(
-    pattern: &'a GraphPattern,
-    call: Option<&'a PropertyFunctionCall>,
-    atoms: &mut Vec<Atom<'a>>,
+    pattern: &'a GraphPattern, call: Option<&'a PropertyFunctionCall>, atoms: &mut Vec<Atom<'a>>,
 ) {
     let mut owner = AdmittedVec::from_resident(core::mem::take(atoms));
     push_atom_native(pattern, call, &mut owner).expect("resident atom storage failed");
@@ -839,8 +805,7 @@ fn push_atom<'a>(
 }
 
 fn push_atom_native<'a>(
-    pattern: &'a GraphPattern,
-    call: Option<&'a PropertyFunctionCall>,
+    pattern: &'a GraphPattern, call: Option<&'a PropertyFunctionCall>,
     atoms: &mut AdmittedVec<Atom<'a>>,
 ) -> Result<(), EvalError> {
     if !pattern.is_empty_bgp() {
@@ -888,11 +853,8 @@ struct NativeChainOrder<'a> {
 }
 
 fn order_chain_native<'a>(
-    mut remaining: AdmittedVec<Atom<'a>>,
-    relations: &PropertyFunctionRegistry<'_>,
-    outer: &VarSchema,
-    promise: NativePromise<'_>,
-    memory: &mut Memory<'_, LexicalFrame>,
+    mut remaining: AdmittedVec<Atom<'a>>, relations: &PropertyFunctionRegistry<'_>,
+    outer: &VarSchema, promise: NativePromise<'_>, memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<NativeChainOrder<'a>> {
     let workspace = memory.admission_mut().workspace().clone();
     let mut bound = outer.clone();
@@ -954,9 +916,7 @@ fn order_chain_native<'a>(
 /// The same invocation law under the original physical walk admission.
 /// Membership borrows the caller's certainty owner rather than copying its set.
 pub(crate) fn invocation_mode_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-    call: &PropertyFunctionCall,
-    bound: &dyn Fn(&Variable) -> bool,
-    memory: &mut Memory<'_, S>,
+    call: &PropertyFunctionCall, bound: &dyn Fn(&Variable) -> bool, memory: &mut Memory<'_, S>,
 ) -> Result<BindingPattern, StorageError> {
     // The existing BindingPattern contract is a 64-bit pure value. Its positions
     // need no heap storage while each argument's traversal admits actual spill.
@@ -994,9 +954,7 @@ fn term_is_bound(term: &TermPattern, bound: &DetHashSet<Variable>) -> bool {
 /// Blank nodes remain non-distinguished variables. Every quoted-triple component
 /// must be bound; the original walk order uses the shared inline/spill work list.
 fn term_is_bound_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-    term: &TermPattern,
-    bound: &dyn Fn(&Variable) -> bool,
-    memory: &mut Memory<'_, S>,
+    term: &TermPattern, bound: &dyn Fn(&Variable) -> bool, memory: &mut Memory<'_, S>,
 ) -> Result<bool, StorageError> {
     let mut pending: purrdf_lex::walk::WorkList<_, 8> = purrdf_lex::walk::WorkList::with(term);
     let mut answer = true;
@@ -1033,9 +991,7 @@ fn term_is_bound_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
 /// atoms, the positions they cannot fill, and the modes they declare.
 #[cfg(test)]
 fn stuck(
-    remaining: &[Atom<'_>],
-    relations: &PropertyFunctionRegistry<'_>,
-    bound: &DetHashSet<Variable>,
+    remaining: &[Atom<'_>], relations: &PropertyFunctionRegistry<'_>, bound: &DetHashSet<Variable>,
 ) -> PlanError {
     let workspace = WorkspaceCapability::resident();
     let mut frame = LexicalFrame::new(&workspace);
@@ -1050,10 +1006,8 @@ fn stuck(
 }
 
 fn stuck_native(
-    remaining: &[Atom<'_>],
-    relations: &PropertyFunctionRegistry<'_>,
-    bound: &dyn Fn(&Variable) -> bool,
-    memory: &mut Memory<'_, LexicalFrame>,
+    remaining: &[Atom<'_>], relations: &PropertyFunctionRegistry<'_>,
+    bound: &dyn Fn(&Variable) -> bool, memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<PlanError> {
     struct Description<'a> {
         call: &'a PropertyFunctionCall,
@@ -1132,8 +1086,7 @@ fn stuck_native(
 /// caller-configured namespace, so a call with nothing to resolve against is a host
 /// configuration that names a relation it never supplied — never a silently empty one.
 fn resolve_native<'r>(
-    call: &PropertyFunctionCall,
-    relations: &'r PropertyFunctionRegistry<'r>,
+    call: &PropertyFunctionCall, relations: &'r PropertyFunctionRegistry<'r>,
     workspace: &WorkspaceCapability,
 ) -> Result<&'r std::sync::Arc<dyn crate::property_fn::PropertyFunction + 'r>, PlanError> {
     relations.resolve(&call.iri).ok_or_else(|| {
@@ -1149,8 +1102,7 @@ fn resolve_native<'r>(
 /// its access mode is infeasible; a chain may first bind more variables.
 #[cfg(test)]
 fn admitted_row_bound(
-    call: &PropertyFunctionCall,
-    relations: &PropertyFunctionRegistry<'_>,
+    call: &PropertyFunctionCall, relations: &PropertyFunctionRegistry<'_>,
     bound: &DetHashSet<Variable>,
 ) -> Result<Option<u64>, PlanError> {
     let workspace = WorkspaceCapability::resident();
@@ -1166,10 +1118,8 @@ fn admitted_row_bound(
 }
 
 fn admitted_row_bound_native(
-    call: &PropertyFunctionCall,
-    relations: &PropertyFunctionRegistry<'_>,
-    bound: &dyn Fn(&Variable) -> bool,
-    memory: &mut Memory<'_, LexicalFrame>,
+    call: &PropertyFunctionCall, relations: &PropertyFunctionRegistry<'_>,
+    bound: &dyn Fn(&Variable) -> bool, memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<Option<u64>> {
     let workspace = memory.admission_mut().workspace().clone();
     let relation = resolve_native(call, relations, &workspace)?;
@@ -1212,9 +1162,7 @@ fn admitted_row_bound_native(
 
 /// Check a call site's argument counts against the relation's declaration.
 fn check_arity_native(
-    call: &PropertyFunctionCall,
-    declared: PfArity,
-    workspace: &WorkspaceCapability,
+    call: &PropertyFunctionCall, declared: PfArity, workspace: &WorkspaceCapability,
 ) -> Result<(), PlanError> {
     let supplied = PfArity::new(call.subject_args.len(), call.object_args.len());
     if declared == supplied {
@@ -1417,11 +1365,7 @@ impl<'a> Planner<'a, '_, '_, '_> {
     /// Widen `scope` by what `pattern` certainly binds under `promise`: the scope an
     /// expression evaluated over `pattern`'s rows sees.
     fn widen(
-        &self,
-        scope: &mut VarSchema,
-        outer: SetRef<'a>,
-        pattern: &GraphPattern,
-        promise: Prom<'a>,
+        &self, scope: &mut VarSchema, outer: SetRef<'a>, pattern: &GraphPattern, promise: Prom<'a>,
     ) -> PrepResult<()> {
         let added = collect_bound_admitted(
             pattern,
@@ -1460,10 +1404,7 @@ impl<'a> Planner<'a, '_, '_, '_> {
     /// Enter `node`: admit a bare call and plan it as written; order a chain and push its
     /// atoms; or push a structural node's parts.
     fn enter_pattern(
-        &mut self,
-        node: &'a GraphPattern,
-        scope: SetRef<'a>,
-        promise: Prom<'a>,
+        &mut self, node: &'a GraphPattern, scope: SetRef<'a>, promise: Prom<'a>,
     ) -> PrepResult<()> {
         if let GraphPattern::PropertyFunction(call) = node {
             let bound = scope.get(&self.scopes);
@@ -1500,10 +1441,7 @@ impl<'a> Planner<'a, '_, '_, '_> {
     /// Order a chain's atoms and push each to be planned: a call against the variables
     /// bound when it was chosen, anything else against the chain's enclosing context.
     fn enter_chain(
-        &mut self,
-        atoms: AdmittedVec<Atom<'a>>,
-        scope: SetRef<'a>,
-        promise: Prom<'a>,
+        &mut self, atoms: AdmittedVec<Atom<'a>>, scope: SetRef<'a>, promise: Prom<'a>,
     ) -> PrepResult<()> {
         let NativeChainOrder {
             ordered,
@@ -1546,10 +1484,7 @@ impl<'a> Planner<'a, '_, '_, '_> {
     /// Push the parts of a non-chain node, threading to each the variables its left
     /// siblings certainly bind and the promise that reaches it.
     fn enter_parts(
-        &mut self,
-        node: &'a GraphPattern,
-        scope: SetRef<'a>,
-        promise: Prom<'a>,
+        &mut self, node: &'a GraphPattern, scope: SetRef<'a>, promise: Prom<'a>,
     ) -> PrepResult<()> {
         // The one rewrite writes the parameters everywhere, so every part of the node
         // inherits the same promise. See [`Promise`].
@@ -1779,10 +1714,7 @@ impl<'a> Planner<'a, '_, '_, '_> {
     /// custom aggregate is planned as written; any other has its operands pushed, and an
     /// `EXISTS` its pattern.
     fn enter_expression(
-        &mut self,
-        expr: &'a Expression,
-        scope: SetRef<'a>,
-        promise: Prom<'a>,
+        &mut self, expr: &'a Expression, scope: SetRef<'a>, promise: Prom<'a>,
     ) -> PrepResult<()> {
         // Either hazard alone must still walk `expr` — see `plan_where_pattern`'s
         // identical widening for the same reason: an `EXISTS` whose inner `GROUP BY`
@@ -1885,10 +1817,7 @@ impl<'a> Planner<'a, '_, '_, '_> {
     /// invalid scalarval (see [`validate_scalarvals`]'s docs for the four ways one is
     /// refused).
     fn enter_aggregate(
-        &mut self,
-        aggregate: &'a AggregateExpression,
-        scope: SetRef<'a>,
-        promise: Prom<'a>,
+        &mut self, aggregate: &'a AggregateExpression, scope: SetRef<'a>, promise: Prom<'a>,
     ) -> PrepResult<()> {
         if let AggregateFunction::Custom(iri) = aggregate.function() {
             let iri_str = iri.as_str();
@@ -1949,10 +1878,7 @@ impl<'a> Planner<'a, '_, '_, '_> {
     /// Enter a sort key: its expression is planned, and the key rebuilt with its
     /// `ASC`/`DESC` direction.
     fn enter_order(
-        &mut self,
-        order: &'a OrderExpression,
-        scope: SetRef<'a>,
-        promise: Prom<'a>,
+        &mut self, order: &'a OrderExpression, scope: SetRef<'a>, promise: Prom<'a>,
     ) -> PrepResult<()> {
         self.steps.push(Step::Assemble(Assemble::Order(order)))?;
         let (OrderExpression::Asc(expr) | OrderExpression::Desc(expr)) = order;
@@ -2363,17 +2289,13 @@ impl<'a> Planner<'a, '_, '_, '_> {
 /// the four cases above.
 #[cfg(test)]
 fn validate_scalarvals(
-    iri: &str,
-    supplied: &[(String, Literal)],
-    declared: &[ScalarvalSpec],
+    iri: &str, supplied: &[(String, Literal)], declared: &[ScalarvalSpec],
 ) -> Result<(), EvalError> {
     validate_scalarvals_native(iri, supplied, declared, &WorkspaceCapability::resident())
 }
 
 fn validate_scalarvals_native(
-    iri: &str,
-    supplied: &[(String, Literal)],
-    declared: &[ScalarvalSpec],
+    iri: &str, supplied: &[(String, Literal)], declared: &[ScalarvalSpec],
     workspace: &WorkspaceCapability,
 ) -> Result<(), EvalError> {
     let mut seen = AdmittedMap::default();
@@ -2430,9 +2352,7 @@ fn validate_scalarvals_native(
 /// admission rule can never drift from what the numeric tower actually accepts
 /// elsewhere in this crate.
 fn scalarval_value_matches_kind_native(
-    value: &Literal,
-    kind: ScalarvalKind,
-    workspace: &WorkspaceCapability,
+    value: &Literal, kind: ScalarvalKind, workspace: &WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     Ok(match kind {
         ScalarvalKind::Numeric => {
@@ -2541,17 +2461,14 @@ pub(crate) fn collect_certainly_bound(pattern: &GraphPattern, out: &mut DetHashS
 /// The same certainty law with every engine-created owner admitted before growth.
 /// The returned immutable schema keeps its original payload admission alive.
 pub(crate) fn collect_certainly_bound_admitted(
-    pattern: &GraphPattern,
-    workspace: &WorkspaceCapability,
+    pattern: &GraphPattern, workspace: &WorkspaceCapability,
 ) -> Result<VarSchema, EvalError> {
     collect_certainly_bound_in_admitted(pattern, &VarSchema::default(), workspace)
 }
 
 /// Contextual certainty, without adding the caller's context to the result.
 pub(crate) fn collect_certainly_bound_in_admitted(
-    pattern: &GraphPattern,
-    context: &VarSchema,
-    workspace: &WorkspaceCapability,
+    pattern: &GraphPattern, context: &VarSchema, workspace: &WorkspaceCapability,
 ) -> Result<VarSchema, EvalError> {
     collect_bound_admitted(pattern, context, None, workspace)
 }
@@ -2574,9 +2491,7 @@ pub(crate) fn collect_certainly_bound_in_admitted(
 /// `context` and its own left operand's certain bindings.
 #[cfg(test)]
 pub(crate) fn collect_certainly_bound_in(
-    pattern: &GraphPattern,
-    context: &DetHashSet<Variable>,
-    out: &mut DetHashSet<Variable>,
+    pattern: &GraphPattern, context: &DetHashSet<Variable>, out: &mut DetHashSet<Variable>,
 ) {
     collect_bound(pattern, context, Written::NOTHING, out);
 }
@@ -2615,9 +2530,7 @@ impl Written<'_> {
 /// widens.
 #[cfg(test)]
 fn collect_bound(
-    pattern: &GraphPattern,
-    context: &DetHashSet<Variable>,
-    given_written: Written<'_>,
+    pattern: &GraphPattern, context: &DetHashSet<Variable>, given_written: Written<'_>,
     out: &mut DetHashSet<Variable>,
 ) {
     // These sets are caller-owned resident planner inputs and output. Bounded
@@ -2636,9 +2549,7 @@ fn collect_bound(
 
 /// Contextual certainty with optional promised bindings and retained schema owners.
 pub(crate) fn collect_bound_admitted(
-    pattern: &GraphPattern,
-    context: &VarSchema,
-    given_written: Option<&VarSchema>,
+    pattern: &GraphPattern, context: &VarSchema, given_written: Option<&VarSchema>,
     workspace: &WorkspaceCapability,
 ) -> Result<VarSchema, EvalError> {
     /// The context a node is evaluated under: the caller's, or one a `LATERAL` or a
@@ -2658,9 +2569,7 @@ pub(crate) fn collect_bound_admitted(
     const _: () = assert!(size_of::<Writes>() == size_of::<Option<&VarSchema>>());
     impl Writes {
         fn set<'s>(
-            self,
-            given: Option<&'s VarSchema>,
-            arena: &'s [VarSchema],
+            self, given: Option<&'s VarSchema>, arena: &'s [VarSchema],
         ) -> Option<&'s VarSchema> {
             match self {
                 Self::Given => given,
@@ -2668,10 +2577,7 @@ pub(crate) fn collect_bound_admitted(
             }
         }
         fn writes(
-            self,
-            variable: &Variable,
-            given: Option<&VarSchema>,
-            arena: &[VarSchema],
+            self, variable: &Variable, given: Option<&VarSchema>, arena: &[VarSchema],
         ) -> bool {
             self.set(given, arena)
                 .is_some_and(|set| set.contains(variable))
@@ -2699,9 +2605,7 @@ pub(crate) fn collect_bound_admitted(
     }
     /// The set `context` names, read from `arena` when a node built it.
     fn resolve<'c>(
-        context: Context,
-        given: &'c VarSchema,
-        arena: &'c [VarSchema],
+        context: Context, given: &'c VarSchema, arena: &'c [VarSchema],
     ) -> &'c VarSchema {
         match context {
             Context::Given => given,
@@ -3116,9 +3020,7 @@ pub(crate) fn collect_bound_admitted(
 ///   `GROUP BY` the implicit group may hold no row, where these answer unbound for
 ///   want of any input: the same structural absence, so none of them counts there.
 fn aggregate_certainly_binds_admitted(
-    aggregate: &AggregateExpression,
-    grouped: bool,
-    row_binds: &dyn Fn(&Variable) -> bool,
+    aggregate: &AggregateExpression, grouped: bool, row_binds: &dyn Fn(&Variable) -> bool,
     workspace: &WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     match aggregate.function() {
@@ -3149,8 +3051,7 @@ fn aggregate_certainly_binds_admitted(
 /// projects.
 #[cfg(test)]
 fn narrowed_to(
-    context: &DetHashSet<Variable>,
-    variables: purrdf_sparql_algebra::ProjectionNames<'_>,
+    context: &DetHashSet<Variable>, variables: purrdf_sparql_algebra::ProjectionNames<'_>,
 ) -> DetHashSet<Variable> {
     let workspace = WorkspaceCapability::default();
     let context = VarSchema::from_vars_admitted(context.iter().cloned(), &workspace)
@@ -3164,8 +3065,7 @@ fn narrowed_to(
 }
 
 fn narrowed_to_admitted(
-    context: &VarSchema,
-    variables: purrdf_sparql_algebra::ProjectionNames<'_>,
+    context: &VarSchema, variables: purrdf_sparql_algebra::ProjectionNames<'_>,
     workspace: &WorkspaceCapability,
 ) -> Result<VarSchema, EvalError> {
     VarSchema::from_vars_admitted(
@@ -3179,9 +3079,7 @@ fn narrowed_to_admitted(
 }
 
 fn intersection_admitted(
-    left: &VarSchema,
-    right: &VarSchema,
-    workspace: &WorkspaceCapability,
+    left: &VarSchema, right: &VarSchema, workspace: &WorkspaceCapability,
 ) -> Result<VarSchema, EvalError> {
     narrowed_to_admitted(
         left,
@@ -3216,9 +3114,7 @@ fn expression_reads_only_bound(expr: &Expression, is_bound: &dyn Fn(&Variable) -
 }
 
 fn expression_reads_only_bound_admitted(
-    expr: &Expression,
-    is_bound: &dyn Fn(&Variable) -> bool,
-    workspace: &WorkspaceCapability,
+    expr: &Expression, is_bound: &dyn Fn(&Variable) -> bool, workspace: &WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     /// One step of the walk.
     enum Step<'e> {
@@ -3500,8 +3396,7 @@ fn one_of(left: Requires, right: Requires) -> Requires {
 type AdmittedRequires = Option<VarSchema>;
 
 fn needs_admitted(
-    variable: &Variable,
-    workspace: &WorkspaceCapability,
+    variable: &Variable, workspace: &WorkspaceCapability,
 ) -> Result<AdmittedRequires, EvalError> {
     Ok(Some(VarSchema::from_vars_admitted(
         std::iter::once(variable.clone()),
@@ -3510,9 +3405,7 @@ fn needs_admitted(
 }
 
 fn all_of_admitted(
-    left: AdmittedRequires,
-    right: AdmittedRequires,
-    workspace: &WorkspaceCapability,
+    left: AdmittedRequires, right: AdmittedRequires, workspace: &WorkspaceCapability,
 ) -> Result<AdmittedRequires, EvalError> {
     let (Some(left), Some(right)) = (left, right) else {
         return Ok(None);
@@ -3521,9 +3414,7 @@ fn all_of_admitted(
 }
 
 fn one_of_admitted(
-    left: AdmittedRequires,
-    right: AdmittedRequires,
-    workspace: &WorkspaceCapability,
+    left: AdmittedRequires, right: AdmittedRequires, workspace: &WorkspaceCapability,
 ) -> Result<AdmittedRequires, EvalError> {
     match (left, right) {
         (None, other) | (other, None) => Ok(other),
@@ -3629,9 +3520,7 @@ fn requires(expr: &Expression, outcome: Outcome) -> Requires {
 }
 
 fn requires_admitted(
-    expr: &Expression,
-    outcome: Outcome,
-    workspace: &WorkspaceCapability,
+    expr: &Expression, outcome: Outcome, workspace: &WorkspaceCapability,
 ) -> Result<AdmittedRequires, EvalError> {
     let mut steps = AdmittedVec::new(workspace);
     steps.push(RequirementStep::Enter(expr, outcome))?;
@@ -3716,11 +3605,8 @@ fn requires_admitted(
 /// `values` at once; an operator's operands are pushed onto `steps`, each in the mode it
 /// is read in, behind the step that combines their requirements.
 fn enter_requirement<'e>(
-    expr: &'e Expression,
-    outcome: Outcome,
-    steps: &mut AdmittedVec<RequirementStep<'e>>,
-    values: &mut AdmittedVec<AdmittedRequires>,
-    workspace: &WorkspaceCapability,
+    expr: &'e Expression, outcome: Outcome, steps: &mut AdmittedVec<RequirementStep<'e>>,
+    values: &mut AdmittedVec<AdmittedRequires>, workspace: &WorkspaceCapability,
 ) -> Result<(), EvalError> {
     let mut outcome = outcome;
     loop {
@@ -3892,8 +3778,7 @@ fn enter_requirement<'e>(
 /// Push `operands` to be asked, in reading order, behind the step combining their
 /// requirements as `combine` says.
 fn push_operands<'e>(
-    steps: &mut AdmittedVec<RequirementStep<'e>>,
-    combine: Combine,
+    steps: &mut AdmittedVec<RequirementStep<'e>>, combine: Combine,
     operands: impl Iterator<Item = (&'e Expression, Outcome)>,
 ) -> Result<(), EvalError> {
     let exit = steps.len();
@@ -3912,11 +3797,8 @@ fn push_operands<'e>(
 /// value, its truth, the first branch's `outcome`, the condition's falsity, and the
 /// second branch's `outcome`.
 fn push_conditional<'e>(
-    steps: &mut AdmittedVec<RequirementStep<'e>>,
-    condition: &'e Expression,
-    then: &'e Expression,
-    otherwise: &'e Expression,
-    outcome: Outcome,
+    steps: &mut AdmittedVec<RequirementStep<'e>>, condition: &'e Expression, then: &'e Expression,
+    otherwise: &'e Expression, outcome: Outcome,
 ) -> Result<(), EvalError> {
     push_operands(
         steps,
@@ -3934,9 +3816,7 @@ fn push_conditional<'e>(
 
 /// Add a triple pattern's variables, its nested quoted triples walked over a work list.
 fn collect_triple_vars_admitted(
-    triple: &TriplePattern,
-    out: &mut SchemaBuilder,
-    workspace: &WorkspaceCapability,
+    triple: &TriplePattern, out: &mut SchemaBuilder, workspace: &WorkspaceCapability,
 ) -> Result<(), EvalError> {
     let mut pending = AdmittedVec::new(workspace);
     pending.push(triple)?;
@@ -3960,9 +3840,7 @@ fn collect_triple_vars_admitted(
 
 /// Add a term position's variables through the same admitted nested-triple walk.
 fn collect_term_vars_admitted(
-    term: &TermPattern,
-    out: &mut SchemaBuilder,
-    workspace: &WorkspaceCapability,
+    term: &TermPattern, out: &mut SchemaBuilder, workspace: &WorkspaceCapability,
 ) -> Result<(), EvalError> {
     match term {
         TermPattern::Variable(variable) => {
@@ -4059,8 +3937,7 @@ pub(crate) fn registry_fingerprint(
 
 /// Recompute the live declaration identity through its original physical account.
 pub(crate) fn registry_fingerprint_with_memory(
-    relations: &PropertyFunctionRegistry<'_>,
-    memory: &mut Memory<'_, LexicalFrame>,
+    relations: &PropertyFunctionRegistry<'_>, memory: &mut Memory<'_, LexicalFrame>,
 ) -> Result<String, EvalError> {
     if relations.is_empty() {
         return Ok(String::new());
@@ -4179,8 +4056,7 @@ pub fn content_fingerprint(
 }
 
 pub(crate) fn content_fingerprint_with_memory(
-    relations: &PropertyFunctionRegistry<'_>,
-    memory: &mut Memory<'_, LexicalFrame>,
+    relations: &PropertyFunctionRegistry<'_>, memory: &mut Memory<'_, LexicalFrame>,
 ) -> Result<ContentDigest, EvalError> {
     let capability = memory.admission_mut().workspace().clone();
     let descriptors = relations.describe_admitted(&capability)?;
@@ -4442,9 +4318,7 @@ mod content_fingerprint_tests {
         }
 
         fn open<'cursor>(
-            &self,
-            _args: &PfArgs<'_>,
-            _ceiling: Option<u64>,
+            &self, _args: &PfArgs<'_>, _ceiling: Option<u64>,
         ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
         where
             Self: 'cursor,
@@ -4455,10 +4329,7 @@ mod content_fingerprint_tests {
 
     /// A registry holding one [`DeclaredRelation`] under `iri`.
     fn one(
-        iri: &str,
-        subject: usize,
-        object: usize,
-        volatility: Volatility,
+        iri: &str, subject: usize, object: usize, volatility: Volatility,
     ) -> PropertyFunctionRegistry<'static> {
         let mut registry = PropertyFunctionRegistry::new();
         registry.register(
@@ -4495,11 +4366,7 @@ mod content_fingerprint_tests {
     /// ranked producer under `stratum` — the ranked counterpart to [`one`], built
     /// from the SAME relation constructor so only the ranked declaration differs.
     fn one_ranked(
-        iri: &str,
-        subject: usize,
-        object: usize,
-        volatility: Volatility,
-        stratum: &str,
+        iri: &str, subject: usize, object: usize, volatility: Volatility, stratum: &str,
     ) -> PropertyFunctionRegistry<'static> {
         let mut registry = PropertyFunctionRegistry::new();
         registry.register_ranked(
@@ -4549,9 +4416,7 @@ mod content_fingerprint_tests {
         }
 
         fn open<'cursor>(
-            &self,
-            _args: &PfArgs<'_>,
-            _ceiling: Option<u64>,
+            &self, _args: &PfArgs<'_>, _ceiling: Option<u64>,
         ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
         where
             Self: 'cursor,
@@ -4562,10 +4427,7 @@ mod content_fingerprint_tests {
 
     /// A registry holding one [`ModedRelation`] under `iri`.
     fn one_moded(
-        iri: &str,
-        arity: PfArity,
-        modes: Vec<BindingPattern>,
-        rows_per_invocation: u64,
+        iri: &str, arity: PfArity, modes: Vec<BindingPattern>, rows_per_invocation: u64,
     ) -> PropertyFunctionRegistry<'_> {
         let mut registry = PropertyFunctionRegistry::new();
         registry.register(
@@ -4823,9 +4685,7 @@ mod pushdown_reach_tests {
         }
 
         fn open<'cursor>(
-            &self,
-            _args: &PfArgs<'_>,
-            _ceiling: Option<u64>,
+            &self, _args: &PfArgs<'_>, _ceiling: Option<u64>,
         ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
         where
             Self: 'cursor,
@@ -5269,11 +5129,8 @@ mod iterative_walk_tests {
 
     /// Test-only recursive reference for `super::plan_pattern`.
     fn reference_plan_pattern(
-        pattern: &GraphPattern,
-        relations: &PropertyFunctionRegistry<'_>,
-        agg_registry: &AggregateRegistry,
-        outer: &DetHashSet<Variable>,
-        promise: Promise<'_>,
+        pattern: &GraphPattern, relations: &PropertyFunctionRegistry<'_>,
+        agg_registry: &AggregateRegistry, outer: &DetHashSet<Variable>, promise: Promise<'_>,
     ) -> Result<GraphPattern, PlanError> {
         // Compiler-produced algebra may be a bare call, without the parser's Lateral
         // wrapper. Apply the same admission as a chain member before cloning it.
@@ -5352,11 +5209,8 @@ mod iterative_walk_tests {
 
     /// Test-only recursive reference for `super::order_chain_native`.
     fn reference_order_chain(
-        atoms: Vec<Atom<'_>>,
-        relations: &PropertyFunctionRegistry<'_>,
-        agg_registry: &AggregateRegistry,
-        outer: &DetHashSet<Variable>,
-        promise: Promise<'_>,
+        atoms: Vec<Atom<'_>>, relations: &PropertyFunctionRegistry<'_>,
+        agg_registry: &AggregateRegistry, outer: &DetHashSet<Variable>, promise: Promise<'_>,
     ) -> Result<GraphPattern, PlanError> {
         let mut bound = outer.clone();
         let mut remaining: Vec<Atom<'_>> = atoms;
@@ -5457,11 +5311,8 @@ mod iterative_walk_tests {
 
     /// Test-only recursive reference for `super::map_children`.
     fn reference_map_children(
-        pattern: &GraphPattern,
-        relations: &PropertyFunctionRegistry<'_>,
-        agg_registry: &AggregateRegistry,
-        outer: &DetHashSet<Variable>,
-        promise: Promise<'_>,
+        pattern: &GraphPattern, relations: &PropertyFunctionRegistry<'_>,
+        agg_registry: &AggregateRegistry, outer: &DetHashSet<Variable>, promise: Promise<'_>,
     ) -> Result<GraphPattern, PlanError> {
         let recurse = |child: &GraphPattern, outer: &DetHashSet<Variable>, promise: Promise<'_>| {
             reference_plan_pattern(child, relations, agg_registry, outer, promise).map(Child::new)
@@ -5776,11 +5627,8 @@ mod iterative_walk_tests {
 
     /// Test-only recursive reference for `super::plan_expression`.
     fn reference_plan_expression(
-        expr: &Expression,
-        relations: &PropertyFunctionRegistry<'_>,
-        agg_registry: &AggregateRegistry,
-        outer: &DetHashSet<Variable>,
-        promise: Promise<'_>,
+        expr: &Expression, relations: &PropertyFunctionRegistry<'_>,
+        agg_registry: &AggregateRegistry, outer: &DetHashSet<Variable>, promise: Promise<'_>,
     ) -> Result<Expression, PlanError> {
         // Either hazard alone must still walk `expr` — see `plan_where_pattern`'s
         // identical widening for the same reason: an `EXISTS` whose inner `GROUP BY`
@@ -5872,11 +5720,8 @@ mod iterative_walk_tests {
 
     /// Test-only recursive reference for `super::plan_aggregate`.
     fn reference_plan_aggregate(
-        aggregate: &AggregateExpression,
-        relations: &PropertyFunctionRegistry<'_>,
-        agg_registry: &AggregateRegistry,
-        outer: &DetHashSet<Variable>,
-        promise: Promise<'_>,
+        aggregate: &AggregateExpression, relations: &PropertyFunctionRegistry<'_>,
+        agg_registry: &AggregateRegistry, outer: &DetHashSet<Variable>, promise: Promise<'_>,
     ) -> Result<AggregateExpression, PlanError> {
         if let AggregateFunction::Custom(iri) = aggregate.function() {
             let iri_str = iri.as_str();
@@ -5931,11 +5776,8 @@ mod iterative_walk_tests {
 
     /// Test-only recursive reference for `super::plan_order_expression`.
     fn reference_plan_order_expression(
-        order: &OrderExpression,
-        relations: &PropertyFunctionRegistry<'_>,
-        agg_registry: &AggregateRegistry,
-        outer: &DetHashSet<Variable>,
-        promise: Promise<'_>,
+        order: &OrderExpression, relations: &PropertyFunctionRegistry<'_>,
+        agg_registry: &AggregateRegistry, outer: &DetHashSet<Variable>, promise: Promise<'_>,
     ) -> Result<OrderExpression, PlanError> {
         Ok(match order {
             OrderExpression::Asc(expr) => OrderExpression::Asc(reference_plan_expression(
@@ -5957,9 +5799,7 @@ mod iterative_walk_tests {
 
     /// Test-only recursive reference for `super::collect_bound`.
     fn reference_collect_bound(
-        pattern: &GraphPattern,
-        context: &DetHashSet<Variable>,
-        written: Written<'_>,
+        pattern: &GraphPattern, context: &DetHashSet<Variable>, written: Written<'_>,
         out: &mut DetHashSet<Variable>,
     ) {
         let beneath = written;
@@ -6149,9 +5989,7 @@ mod iterative_walk_tests {
 
     /// Test-only recursive reference for `super::aggregate_certainly_binds`.
     fn reference_aggregate_certainly_binds(
-        aggregate: &AggregateExpression,
-        grouped: bool,
-        row_binds: &dyn Fn(&Variable) -> bool,
+        aggregate: &AggregateExpression, grouped: bool, row_binds: &dyn Fn(&Variable) -> bool,
     ) -> bool {
         match aggregate.function() {
             AggregateFunction::Count
@@ -6174,8 +6012,7 @@ mod iterative_walk_tests {
 
     /// Test-only recursive reference for `super::expression_reads_only_bound`.
     fn reference_expression_reads_only_bound(
-        expr: &Expression,
-        is_bound: &dyn Fn(&Variable) -> bool,
+        expr: &Expression, is_bound: &dyn Fn(&Variable) -> bool,
     ) -> bool {
         let reads = |expr: &Expression| reference_expression_reads_only_bound(expr, is_bound);
         match expr {
@@ -6424,9 +6261,7 @@ mod iterative_walk_tests {
         }
 
         fn open<'cursor>(
-            &self,
-            _args: &PfArgs<'_>,
-            _ceiling: Option<u64>,
+            &self, _args: &PfArgs<'_>, _ceiling: Option<u64>,
         ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
         where
             Self: 'cursor,
@@ -6977,10 +6812,7 @@ mod iterative_walk_tests {
 
     /// The planner and its reference rebuild the same plan, or refuse the same way.
     fn assert_plans_agree(
-        pattern: &GraphPattern,
-        outer: &DetHashSet<Variable>,
-        promise: Promise<'_>,
-        seed: u64,
+        pattern: &GraphPattern, outer: &DetHashSet<Variable>, promise: Promise<'_>, seed: u64,
     ) {
         let relations = relations();
         let aggregates = aggregates();

@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT OR Apache-2.0 OR MulanPSL-2.0
 
 use std::collections::BTreeSet;
-use std::sync::{Arc, OnceLock};
+use std::sync::Arc;
 
 use purrdf_lex::json::{self as lex_json, Object, Value};
 
@@ -648,6 +648,11 @@ fn options_decoder_is_versioned_closed_and_mode_explicit() {
 
 /// The draft 2020-12 meta-schemas the published options schema declares,
 /// from the workspace's test data (`purrdf-jsonschema` carries none).
+// LANED-EXCLUSION (lane 13, 2026-10-31, D17): `purrdf_jsonschema` is loudly
+// absent from this tree (crates/jsonschema/DISPOSITION.md; the dev-dep was
+// landed-removed from this crate's manifest), so the two schema-validation
+// tests and their helpers below are cfg(any())-parked, not deleted.
+#[cfg(any())]
 fn metaschemas() -> &'static purrdf_jsonschema::Metaschemas {
     static SET: OnceLock<purrdf_jsonschema::Metaschemas> = OnceLock::new();
     SET.get_or_init(|| {
@@ -664,6 +669,7 @@ fn metaschemas() -> &'static purrdf_jsonschema::Metaschemas {
 }
 
 /// Compile the published options schema against `metaschemas`.
+#[cfg(any())]
 fn options_schema(
     metaschemas: &purrdf_jsonschema::Metaschemas,
 ) -> Result<purrdf_jsonschema::Schema, purrdf_jsonschema::SchemaError> {
@@ -674,6 +680,7 @@ fn options_schema(
     )
 }
 
+#[cfg(any())]
 #[test]
 fn options_schema_compiles_with_its_metaschema_and_names_it_when_absent() {
     let schema = options_schema(metaschemas()).expect("compiles with the 2020-12 meta-schemas");
@@ -692,6 +699,7 @@ fn options_schema_compiles_with_its_metaschema_and_names_it_when_absent() {
     }
 }
 
+#[cfg(any())]
 #[test]
 fn options_schema_and_decoder_have_identical_mode_field_constraints() {
     fn schema_accepts(instance: &Value) -> bool {

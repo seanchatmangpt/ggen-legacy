@@ -296,10 +296,7 @@ impl WitnessQuestion {
     /// by the execution caller and must never be supplied as search incompleteness.
     #[must_use]
     pub const fn settle(
-        self,
-        information: Information,
-        completeness: SearchCompleteness,
-        exhausted: bool,
+        self, information: Information, completeness: SearchCompleteness, exhausted: bool,
         closure_declared: bool,
     ) -> Option<WitnessVerdict> {
         if matches!(self, Self::ClosedAbsence) && information.supports() {

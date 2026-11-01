@@ -212,9 +212,7 @@ impl CellCover {
     /// # Errors
     /// Preserves stored-level, checked layout, allocator and account refusal.
     pub fn ranges_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        stored_level: u8,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, stored_level: u8, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Vec<CellRange>, GeoError> {
         validate_level(stored_level)?;
         memory.try_scope(|memory| {
@@ -282,11 +280,7 @@ impl ClosedBox {
     /// # Errors
     /// Preserves the original axis/inversion failure and native capacity refusal.
     pub fn new_in(
-        west: Rat,
-        south: Rat,
-        east: Rat,
-        north: Rat,
-        scratch: &purrdf_xsd::integer::LimbScratch,
+        west: Rat, south: Rat, east: Rat, north: Rat, scratch: &purrdf_xsd::integer::LimbScratch,
     ) -> Result<Self, GeoError> {
         Self::new_using(
             west,
@@ -297,11 +291,7 @@ impl ClosedBox {
         )
     }
     pub(crate) fn new_using(
-        west: Rat,
-        south: Rat,
-        east: Rat,
-        north: Rat,
-        values: crate::numerical::ExactValues<'_>,
+        west: Rat, south: Rat, east: Rat, north: Rat, values: crate::numerical::ExactValues<'_>,
     ) -> Result<Self, GeoError> {
         LonLat::validate_with(&west, &south, &values).map_err(GeoError::NumericalScratch)??;
         LonLat::validate_with(&east, &north, &values).map_err(GeoError::NumericalScratch)??;
@@ -352,10 +342,7 @@ impl ClosedBox {
         contains(longitude) || (longitude.abs() == Rat::from_i64(180) && contains(&longitude.neg()))
     }
     fn intervals<'a>(
-        &'a self,
-        cut_west: &'a Rat,
-        cut_east: &'a Rat,
-        wraps: bool,
+        &'a self, cut_west: &'a Rat, cut_east: &'a Rat, wraps: bool,
     ) -> chart::Bands<&'a Rat> {
         if wraps {
             chart::Bands::Two([(cut_west, &self.east), (&self.west, cut_east)])
@@ -371,11 +358,7 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Refuses negative radius and precision/work/memory/logical-cell exhaustion.
     pub fn cover_disk_fixed(
-        self,
-        center: &LonLat,
-        radius: &Metres,
-        level: u8,
-        limits: FixedCoverLimits,
+        self, center: &LonLat, radius: &Metres, level: u8, limits: FixedCoverLimits,
     ) -> Result<CellCover, GeoError> {
         self.cover_disk_mixed(
             center,
@@ -389,31 +372,19 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Refuses negative radius and incomplete numerical/resource admission.
     pub fn cover_disk_mixed(
-        self,
-        center: &LonLat,
-        radius: &Metres,
-        levels: CoverLevels,
-        limits: MixedCoverLimits,
+        self, center: &LonLat, radius: &Metres, levels: CoverLevels, limits: MixedCoverLimits,
     ) -> Result<CellCover, GeoError> {
         self.cover_disk(center, radius, levels, limits, None)
     }
     fn cover_disk(
-        self,
-        center: &LonLat,
-        radius: &Metres,
-        levels: CoverLevels,
-        limits: MixedCoverLimits,
+        self, center: &LonLat, radius: &Metres, levels: CoverLevels, limits: MixedCoverLimits,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<CellCover, GeoError> {
         let mut budget = CoverBudget::new_metered(limits, observer)?;
         self.cover_disk_in(center, radius, levels, limits, &mut budget)
     }
     fn cover_disk_in(
-        self,
-        center: &LonLat,
-        radius: &Metres,
-        levels: CoverLevels,
-        limits: MixedCoverLimits,
+        self, center: &LonLat, radius: &Metres, levels: CoverLevels, limits: MixedCoverLimits,
         budget: &mut CoverBudget<'_>,
     ) -> Result<CellCover, GeoError> {
         if radius.exact().signum() < 0 {
@@ -438,21 +409,14 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Refuses incomplete numerical/resource admission.
     pub fn cover_reported_disk_mixed(
-        self,
-        center: &LonLat,
-        threshold: XsdDoubleMetres,
-        levels: CoverLevels,
+        self, center: &LonLat, threshold: XsdDoubleMetres, levels: CoverLevels,
         limits: MixedCoverLimits,
     ) -> Result<CellCover, GeoError> {
         self.cover_reported_disk(center, threshold, levels, limits, None)
     }
     fn cover_reported_disk(
-        self,
-        center: &LonLat,
-        threshold: XsdDoubleMetres,
-        levels: CoverLevels,
-        limits: MixedCoverLimits,
-        observer: Option<&mut dyn MetricWorkObserver>,
+        self, center: &LonLat, threshold: XsdDoubleMetres, levels: CoverLevels,
+        limits: MixedCoverLimits, observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<CellCover, GeoError> {
         if threshold.is_negative() {
             return empty(self, levels, limits, observer);
@@ -508,11 +472,7 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Refuses invalid level and incomplete admission.
     pub fn cover_reported_disk_fixed(
-        self,
-        center: &LonLat,
-        threshold: XsdDoubleMetres,
-        level: u8,
-        limits: FixedCoverLimits,
+        self, center: &LonLat, threshold: XsdDoubleMetres, level: u8, limits: FixedCoverLimits,
     ) -> Result<CellCover, GeoError> {
         self.cover_reported_disk_mixed(
             center,
@@ -526,10 +486,7 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Refuses invalid level and incomplete admission.
     pub fn cover_box_fixed(
-        self,
-        area: &ClosedBox,
-        level: u8,
-        limits: FixedCoverLimits,
+        self, area: &ClosedBox, level: u8, limits: FixedCoverLimits,
     ) -> Result<CellCover, GeoError> {
         self.cover_box_mixed(area, CoverLevels::new(level, level)?, fixed_limits(limits))
     }
@@ -538,18 +495,12 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Refuses incomplete numerical/resource admission.
     pub fn cover_box_mixed(
-        self,
-        area: &ClosedBox,
-        levels: CoverLevels,
-        limits: MixedCoverLimits,
+        self, area: &ClosedBox, levels: CoverLevels, limits: MixedCoverLimits,
     ) -> Result<CellCover, GeoError> {
         self.cover_box(area, levels, limits, None)
     }
     fn cover_box(
-        self,
-        area: &ClosedBox,
-        levels: CoverLevels,
-        limits: MixedCoverLimits,
+        self, area: &ClosedBox, levels: CoverLevels, limits: MixedCoverLimits,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<CellCover, GeoError> {
         let mut budget = CoverBudget::new_metered(limits, observer)?;
@@ -601,11 +552,7 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Adds observer refusal to the ordinary complete cover contract.
     pub fn cover_disk_mixed_metered(
-        self,
-        center: &LonLat,
-        radius: &Metres,
-        levels: CoverLevels,
-        limits: MixedCoverLimits,
+        self, center: &LonLat, radius: &Metres, levels: CoverLevels, limits: MixedCoverLimits,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<CellCover, GeoError> {
         self.cover_disk(center, radius, levels, limits, Some(observer))
@@ -614,11 +561,7 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Refuses invalid level or incomplete observer/resource admission.
     pub fn cover_disk_fixed_metered(
-        self,
-        center: &LonLat,
-        radius: &Metres,
-        level: u8,
-        limits: FixedCoverLimits,
+        self, center: &LonLat, radius: &Metres, level: u8, limits: FixedCoverLimits,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<CellCover, GeoError> {
         self.cover_disk(
@@ -633,12 +576,8 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Adds observer refusal to the reported cover contract.
     pub fn cover_reported_disk_mixed_metered(
-        self,
-        center: &LonLat,
-        threshold: XsdDoubleMetres,
-        levels: CoverLevels,
-        limits: MixedCoverLimits,
-        observer: &mut dyn MetricWorkObserver,
+        self, center: &LonLat, threshold: XsdDoubleMetres, levels: CoverLevels,
+        limits: MixedCoverLimits, observer: &mut dyn MetricWorkObserver,
     ) -> Result<CellCover, GeoError> {
         self.cover_reported_disk(center, threshold, levels, limits, Some(observer))
     }
@@ -646,11 +585,7 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Refuses invalid level or incomplete observer/resource admission.
     pub fn cover_reported_disk_fixed_metered(
-        self,
-        center: &LonLat,
-        threshold: XsdDoubleMetres,
-        level: u8,
-        limits: FixedCoverLimits,
+        self, center: &LonLat, threshold: XsdDoubleMetres, level: u8, limits: FixedCoverLimits,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<CellCover, GeoError> {
         self.cover_reported_disk(
@@ -665,10 +600,7 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Adds observer refusal to the ordinary box cover contract.
     pub fn cover_box_mixed_metered(
-        self,
-        area: &ClosedBox,
-        levels: CoverLevels,
-        limits: MixedCoverLimits,
+        self, area: &ClosedBox, levels: CoverLevels, limits: MixedCoverLimits,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<CellCover, GeoError> {
         self.cover_box(area, levels, limits, Some(observer))
@@ -677,10 +609,7 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Refuses invalid level or incomplete observer/resource admission.
     pub fn cover_box_fixed_metered(
-        self,
-        area: &ClosedBox,
-        level: u8,
-        limits: FixedCoverLimits,
+        self, area: &ClosedBox, level: u8, limits: FixedCoverLimits,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<CellCover, GeoError> {
         self.cover_box(
@@ -700,9 +629,7 @@ pub(super) fn fixed_limits(limits: FixedCoverLimits) -> MixedCoverLimits {
     }
 }
 fn empty(
-    grid: CubeHilbertQ62V1,
-    levels: CoverLevels,
-    limits: MixedCoverLimits,
+    grid: CubeHilbertQ62V1, levels: CoverLevels, limits: MixedCoverLimits,
     observer: Option<&mut dyn MetricWorkObserver>,
 ) -> Result<CellCover, GeoError> {
     let budget = CoverBudget::new_metered(limits, observer)?;
@@ -744,8 +671,7 @@ impl super::fixed::IntegerAdmission for CoverBudget<'_> {
         self.retain_diagnostic_number(value)
     }
     fn exact<T>(
-        &mut self,
-        cost: ExactArithmeticCost,
+        &mut self, cost: ExactArithmeticCost,
         evaluate: impl FnOnce(&crate::numerical::ExactValues<'_>) -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         self.with_exact_values(cost, evaluate)
@@ -757,8 +683,7 @@ impl<'a> CoverBudget<'a> {
         Self::new_metered(limits, None)
     }
     pub(super) fn new_metered(
-        limits: MixedCoverLimits,
-        observer: Option<&'a mut dyn MetricWorkObserver>,
+        limits: MixedCoverLimits, observer: Option<&'a mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         let metered = observer.is_some();
         let mut progress = WorkProgress::new(observer);
@@ -766,9 +691,7 @@ impl<'a> CoverBudget<'a> {
         Self::from_progress(limits, progress, metered)
     }
     pub(super) fn from_progress(
-        limits: MixedCoverLimits,
-        progress: WorkProgress<'a>,
-        metered: bool,
+        limits: MixedCoverLimits, progress: WorkProgress<'a>, metered: bool,
     ) -> Result<Self, GeoError> {
         if limits.max_emitted_cells == 0
             || limits.max_work_items == 0
@@ -825,15 +748,12 @@ impl<'a> CoverBudget<'a> {
         self.peak
     }
     pub(super) fn context(
-        &mut self,
-        reference: GeographicReference,
+        &mut self, reference: GeographicReference,
     ) -> Result<MetricContext, GeoError> {
         self.context_for_sources(reference, &[])
     }
     pub(super) fn context_for_sources(
-        &mut self,
-        reference: GeographicReference,
-        sources: &[&Rat],
+        &mut self, reference: GeographicReference, sources: &[&Rat],
     ) -> Result<MetricContext, GeoError> {
         let source_bits = crate::numerical::scratch_source_bits(sources, reference.ellipsoid());
         let mut preparation = MetricContext::new(reference.clone(), self.policy()?)?;
@@ -904,9 +824,7 @@ impl<'a> CoverBudget<'a> {
     /// The old buffer and its lease survive every refused replacement and stay
     /// live through successful movement; its allowance is freed only afterward.
     pub(super) fn reserve_array<T>(
-        &mut self,
-        values: &mut RetainedBuilder<T>,
-        required: usize,
+        &mut self, values: &mut RetainedBuilder<T>, required: usize,
     ) -> Result<(), GeoError> {
         let Some(bytes) = values.replacement_bytes(required, &self.progress)? else {
             return Ok(());
@@ -924,9 +842,7 @@ impl<'a> CoverBudget<'a> {
     }
 
     pub(super) fn push_array<T>(
-        &mut self,
-        values: &mut RetainedBuilder<T>,
-        value: T,
+        &mut self, values: &mut RetainedBuilder<T>, value: T,
     ) -> Result<(), GeoError> {
         let required = values.len().checked_add(1).ok_or(GeoError::Storage(
             purrdf_lex::allocation::StorageError::SizeOverflow,
@@ -936,8 +852,7 @@ impl<'a> CoverBudget<'a> {
     }
 
     pub(super) fn persistent<T: crate::context::NativeDetached>(
-        &mut self,
-        value: T,
+        &mut self, value: T,
     ) -> Result<crate::context::PersistentNumeric<T>, GeoError> {
         let bytes = crate::context::persistent_numeric_bytes(&value, &self.progress)?;
         self.reserve(bytes)?;
@@ -953,9 +868,7 @@ impl<'a> CoverBudget<'a> {
     /// Move an intrinsically owned native result into an enclosing typed value.
     /// Failed counter growth destroys the payload before refunding its allowance.
     pub(super) fn persist<T: crate::context::NativeDetached>(
-        &mut self,
-        value: T,
-        retained: &mut u64,
+        &mut self, value: T, retained: &mut u64,
     ) -> Result<T, GeoError> {
         let value = self.persistent(value)?;
         let bytes = value.workspace_bytes();
@@ -972,16 +885,13 @@ impl<'a> CoverBudget<'a> {
         self.release(bytes)
     }
     pub(super) fn exact<T>(
-        &mut self,
-        cost: ExactArithmeticCost,
-        evaluate: impl FnOnce() -> Result<T, GeoError>,
+        &mut self, cost: ExactArithmeticCost, evaluate: impl FnOnce() -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         self.exact_native(cost, |_| evaluate())
     }
 
     fn exact_native<T>(
-        &mut self,
-        cost: ExactArithmeticCost,
+        &mut self, cost: ExactArithmeticCost,
         evaluate: impl FnOnce(&mut Self) -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         self.reserve(cost.workspace_bytes)?;
@@ -996,8 +906,7 @@ impl<'a> CoverBudget<'a> {
         self.progress.settle_result(result, accounting)
     }
     fn with_exact_values<T>(
-        &mut self,
-        cost: ExactArithmeticCost,
+        &mut self, cost: ExactArithmeticCost,
         evaluate: impl FnOnce(&crate::numerical::ExactValues<'_>) -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         self.with_exact_scratch(cost, |scratch, budget| {
@@ -1011,8 +920,7 @@ impl<'a> CoverBudget<'a> {
     }
 
     fn with_exact_scratch<T>(
-        &mut self,
-        cost: ExactArithmeticCost,
+        &mut self, cost: ExactArithmeticCost,
         evaluate: impl FnOnce(&purrdf_xsd::integer::LimbScratch, &mut Self) -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         self.exact_native(cost, |budget| {
@@ -1108,10 +1016,7 @@ impl<'a> CoverBudget<'a> {
     }
 
     pub(super) fn expression_result<T>(
-        &mut self,
-        operation: ExactOperation,
-        operands: &[&Rat],
-        count: u64,
+        &mut self, operation: ExactOperation, operands: &[&Rat], count: u64,
         evaluate: impl FnOnce(&crate::numerical::ExactValues<'_>) -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         let cost = crate::numerical::rational_cost(operation, operands, count).ok_or(
@@ -1121,9 +1026,7 @@ impl<'a> CoverBudget<'a> {
     }
 
     pub(super) fn compare(
-        &mut self,
-        left: &Rat,
-        right: &Rat,
+        &mut self, left: &Rat, right: &Rat,
     ) -> Result<core::cmp::Ordering, GeoError> {
         left.compare_admitted_by(right, |cost, evaluate| {
             if cost.workspace_bytes == 0 {
@@ -1165,8 +1068,7 @@ impl<'a> CoverBudget<'a> {
         self.math_for_sources(&[], action)
     }
     pub(super) fn math_for_sources<T>(
-        &mut self,
-        sources: &[&Rat],
+        &mut self, sources: &[&Rat],
         mut action: impl FnMut(&mut CoordinateMath, &mut WorkProgress<'_>) -> Result<T, MathError>,
     ) -> Result<T, GeoError> {
         let limit = self.execution.max_precision_bits;
@@ -1190,9 +1092,7 @@ impl<'a> CoverBudget<'a> {
         }
     }
     pub(super) fn math_for_sources_at_precision<T>(
-        &mut self,
-        precision: u32,
-        sources: &[&Rat],
+        &mut self, precision: u32, sources: &[&Rat],
         mut action: impl FnMut(&mut CoordinateMath, &mut WorkProgress<'_>) -> Result<T, MathError>,
     ) -> Result<T, GeoError> {
         let mut context = self.context_for_sources(GeographicReference::wgs84(), sources)?;
@@ -1247,9 +1147,7 @@ impl<'a> CoverBudget<'a> {
 }
 
 pub(super) fn build(
-    grid: CubeHilbertQ62V1,
-    levels: CoverLevels,
-    limits: MixedCoverLimits,
+    grid: CubeHilbertQ62V1, levels: CoverLevels, limits: MixedCoverLimits,
     budget: &mut CoverBudget<'_>,
     mut classify: impl FnMut(CellId, &mut CoverBudget<'_>) -> Result<Classification, GeoError>,
 ) -> Result<CellCover, GeoError> {
@@ -1306,9 +1204,7 @@ pub(super) fn build(
     })
 }
 fn coalesce(
-    output: &mut RetainedBuilder<CellId>,
-    minimum: u8,
-    progress: &mut WorkProgress<'_>,
+    output: &mut RetainedBuilder<CellId>, minimum: u8, progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     while output.len() >= 4 {
         let start = output.len() - 4;
@@ -1326,9 +1222,7 @@ fn coalesce(
     Ok(())
 }
 fn emit(
-    cell: CellId,
-    budget: &mut CoverBudget<'_>,
-    output: &mut RetainedBuilder<CellId>,
+    cell: CellId, budget: &mut CoverBudget<'_>, output: &mut RetainedBuilder<CellId>,
 ) -> Result<(), GeoError> {
     let required = output
         .len()
@@ -1351,8 +1245,7 @@ impl Footprint {
         Self::new_with(cell, None)
     }
     pub(super) fn new_admitted(
-        cell: CellId,
-        budget: &mut CoverBudget<'_>,
+        cell: CellId, budget: &mut CoverBudget<'_>,
     ) -> Result<Self, GeoError> {
         Self::new_with(cell, Some(budget))
     }
@@ -1433,9 +1326,7 @@ impl Footprint {
     }
 }
 fn footprint_ratio(
-    numerator: i128,
-    denominator: u128,
-    budget: &mut Option<&mut CoverBudget<'_>>,
+    numerator: i128, denominator: u128, budget: &mut Option<&mut CoverBudget<'_>>,
 ) -> Result<Rat, GeoError> {
     let evaluate = || {
         Ok(
@@ -1501,10 +1392,7 @@ fn axis_guard() -> Rat {
         .expect("positive")
 }
 fn rounded(
-    value: &FixedInterval,
-    places: u32,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    value: &FixedInterval, places: u32, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<Rat, MathError> {
     let (low, high) = value.round_decimal(places, math)?;
     if low != high {

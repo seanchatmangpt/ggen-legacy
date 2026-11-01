@@ -233,8 +233,7 @@ pub fn validate_pattern(pattern: &GraphPattern) -> Result<(), ScopeError> {
 /// # Errors
 /// Returns original observer violations or native storage refusal.
 pub fn validate_pattern_with_memory<S: Admission + ?Sized>(
-    pattern: &GraphPattern,
-    memory: &mut Memory<'_, S>,
+    pattern: &GraphPattern, memory: &mut Memory<'_, S>,
 ) -> Result<(), ScopeValidationError> {
     walk_nodes_with_memory(
         NodeRef::Pattern(pattern),
@@ -279,16 +278,14 @@ pub fn validate_quad(quad: &QuadPattern) -> Result<(), ScopeError> {
 /// # Errors
 /// Returns the original observer violation or physical refusal.
 pub fn validate_query_with_memory<S: Admission + ?Sized>(
-    query: &Query,
-    memory: &mut Memory<'_, S>,
+    query: &Query, memory: &mut Memory<'_, S>,
 ) -> Result<(), ScopeValidationError> {
     validate_query_head_with_memory(query, memory)?;
     validate_pattern_with_memory(query.pattern(), memory)
 }
 
 pub(crate) fn validate_query_head_with_memory<S: Admission + ?Sized>(
-    query: &Query,
-    memory: &mut Memory<'_, S>,
+    query: &Query, memory: &mut Memory<'_, S>,
 ) -> Result<(), ScopeValidationError> {
     match query {
         Query::Construct { template, .. } => {
@@ -318,9 +315,7 @@ pub(crate) fn validate_query_head_with_memory<S: Admission + ?Sized>(
 }
 
 fn validate_quad_at_with_memory<S: Admission + ?Sized>(
-    quad: &QuadPattern,
-    item: usize,
-    memory: &mut Memory<'_, S>,
+    quad: &QuadPattern, item: usize, memory: &mut Memory<'_, S>,
 ) -> Result<(), ScopeValidationError> {
     let mut next_node = 0;
     walk_nodes_with_memory(
@@ -415,9 +410,7 @@ pub(crate) fn check_node(node: NodeRef<'_>, site: ScopeSite) -> Result<(), Scope
 }
 
 fn check_variables(
-    variables: &[Variable],
-    role: ObserverRole,
-    site: ScopeSite,
+    variables: &[Variable], role: ObserverRole, site: ScopeSite,
 ) -> Result<(), ScopeError> {
     for (index, variable) in variables.iter().enumerate() {
         check_identity(variable, role, site.at_slot(index))?;
@@ -426,9 +419,7 @@ fn check_variables(
 }
 
 fn check_identity(
-    variable: &Variable,
-    role: ObserverRole,
-    site: ScopeSite,
+    variable: &Variable, role: ObserverRole, site: ScopeSite,
 ) -> Result<(), ScopeError> {
     if variable.is_hidden() {
         return Err(ScopeError {
@@ -502,9 +493,7 @@ pub fn spine_leaves<'a>(pattern: &'a GraphPattern, out: &mut Vec<&'a GraphPatter
 /// # Errors
 /// Returns checked native working/output buffer refusal.
 pub fn spine_leaves_with_memory<'a, S: Admission + ?Sized>(
-    pattern: &'a GraphPattern,
-    out: &mut Vec<&'a GraphPattern>,
-    memory: &mut Memory<'_, S>,
+    pattern: &'a GraphPattern, out: &mut Vec<&'a GraphPattern>, memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     visit_spine_leaves_with_memory(
         pattern,
@@ -519,8 +508,7 @@ pub fn spine_leaves_with_memory<'a, S: Admission + ?Sized>(
 
 /// Visit leaves in their original written order.
 pub fn visit_spine_leaves<'a>(
-    pattern: &'a GraphPattern,
-    test: &mut impl FnMut(&'a GraphPattern) -> bool,
+    pattern: &'a GraphPattern, test: &mut impl FnMut(&'a GraphPattern) -> bool,
 ) -> bool {
     visit_spine_leaves_with_memory(
         pattern,
@@ -577,9 +565,7 @@ pub enum LabelSource {
 
 /// Visit exposed leaf labels under the original identity rule.
 pub fn visit_leaf_labels<'a>(
-    leaf: &'a GraphPattern,
-    source: LabelSource,
-    visit: &mut impl FnMut(&'a str) -> bool,
+    leaf: &'a GraphPattern, source: LabelSource, visit: &mut impl FnMut(&'a str) -> bool,
 ) -> bool {
     visit_leaf_labels_with_memory(
         leaf,
@@ -594,8 +580,7 @@ pub fn visit_leaf_labels<'a>(
 /// # Errors
 /// Returns original visitor or physical storage refusal.
 pub fn visit_leaf_labels_with_memory<'a, S, E>(
-    leaf: &'a GraphPattern,
-    source: LabelSource,
+    leaf: &'a GraphPattern, source: LabelSource,
     visit: &mut impl FnMut(&'a str, &mut Memory<'_, S>) -> Result<bool, E>,
     memory: &mut Memory<'_, S>,
 ) -> Result<bool, E>
@@ -653,9 +638,7 @@ where
 
 /// Visit term labels, subject before object at each quoted level.
 pub fn visit_term_labels<'a>(
-    term: &'a TermPattern,
-    source: LabelSource,
-    visit: &mut impl FnMut(&'a str) -> bool,
+    term: &'a TermPattern, source: LabelSource, visit: &mut impl FnMut(&'a str) -> bool,
 ) -> bool {
     visit_term_labels_with_memory(
         term,
@@ -670,8 +653,7 @@ pub fn visit_term_labels<'a>(
 /// # Errors
 /// Returns original visitor or physical storage refusal.
 pub fn visit_term_labels_with_memory<'a, S, E>(
-    term: &'a TermPattern,
-    source: LabelSource,
+    term: &'a TermPattern, source: LabelSource,
     visit: &mut impl FnMut(&'a str, &mut Memory<'_, S>) -> Result<bool, E>,
     memory: &mut Memory<'_, S>,
 ) -> Result<bool, E>

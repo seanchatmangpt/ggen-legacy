@@ -63,11 +63,7 @@ use crate::search::norm_of;
 /// [`crate::error::HnswError::NonFiniteDistance`] if a candidate-to-candidate distance left
 /// the finite range.
 pub(crate) fn select_neighbors<A: Arithmetic>(
-    beam: &[Ranked],
-    cap: usize,
-    matrix: &VectorMatrix,
-    arithmetic: Resolved<A>,
-    kernel: Kernel,
+    beam: &[Ranked], cap: usize, matrix: &VectorMatrix, arithmetic: Resolved<A>, kernel: Kernel,
     norms: &[f64],
 ) -> Result<Vec<Ranked>> {
     if cap == 0 || beam.is_empty() {

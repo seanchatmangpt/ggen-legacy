@@ -178,8 +178,7 @@ impl CandidateMembership {
     /// # Errors
     /// Refuses contradictory caller declarations through the native diagnostic.
     pub fn into_evidence(
-        self,
-        workspace: &crate::WorkspaceCapability,
+        self, workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<crate::RowEvidence>, EvalError> {
         match self {
             Self::Rejected => Ok(None),
@@ -214,9 +213,7 @@ pub trait CandidateScope: core::fmt::Debug + Sync {
     /// # Errors
     /// Returns the original read, declaration, cancellation or admission failure.
     fn decide(
-        &self,
-        candidate: &TermValue,
-        workspace: &crate::WorkspaceCapability,
+        &self, candidate: &TermValue, workspace: &crate::WorkspaceCapability,
     ) -> Result<CandidateMembership, EvalError>;
 }
 
@@ -224,8 +221,7 @@ impl<'a> PfArgs<'a> {
     /// Build the argument view of one invocation from its two sides.
     #[must_use]
     pub const fn new(
-        subject: &'a [Option<&'a TermValue>],
-        object: &'a [Option<&'a TermValue>],
+        subject: &'a [Option<&'a TermValue>], object: &'a [Option<&'a TermValue>],
     ) -> Self {
         Self {
             subject,
@@ -467,8 +463,7 @@ impl ServiceLevel {
     /// # Errors
     /// Returns original admission, layout or allocator refusal before publication.
     pub fn incomplete_admitted(
-        reason: &str,
-        workspace: &crate::WorkspaceCapability,
+        reason: &str, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         Ok(Self::Incomplete {
             reason: workspace.authored_text(reason)?,
@@ -641,8 +636,7 @@ pub trait PfCursor {
     /// # Errors
     /// Preserve original producer failures; a context stop remains a governor.
     fn next_metered(
-        &mut self,
-        _context: &crate::NativeFnContext<'_>,
+        &mut self, _context: &crate::NativeFnContext<'_>,
     ) -> Result<Option<PfRow>, EvalError> {
         self.next()
     }
@@ -661,8 +655,7 @@ pub trait PfCursor {
     /// # Errors
     /// Preserve physical, source and producer failures without publishing rows.
     fn next_admitted_metered(
-        &mut self,
-        _context: &crate::NativeFnContext<'_>,
+        &mut self, _context: &crate::NativeFnContext<'_>,
     ) -> Result<Option<AdmittedPfRow>, EvalError> {
         self.next_admitted()
     }
@@ -773,8 +766,7 @@ pub trait PfCursor {
     /// # Errors
     /// Returns the provider's original typed failure or native storage refusal.
     fn service_level_with_workspace(
-        &self,
-        _workspace: &crate::WorkspaceCapability,
+        &self, _workspace: &crate::WorkspaceCapability,
     ) -> Result<ServiceLevel, EvalError> {
         Ok(self.service_level())
     }
@@ -1462,8 +1454,7 @@ impl DomainTag {
     /// # Errors
     /// Returns original layout, admission or allocator refusal.
     pub fn clone_admitted(
-        &self,
-        workspace: &crate::WorkspaceCapability,
+        &self, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         self.0.clone_admitted(workspace).map(Self)
     }
@@ -1472,8 +1463,7 @@ impl DomainTag {
     /// # Errors
     /// Returns the original physical refusal or admitted grammar diagnostic.
     pub fn parse_admitted(
-        text: &str,
-        workspace: &crate::WorkspaceCapability,
+        text: &str, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         workspace.parse_iri(text).map(Self)
     }
@@ -1594,8 +1584,7 @@ impl CandidateDomains {
     /// # Errors
     /// Returns original layout, admission or allocator refusal before publication.
     pub fn within_admitted(
-        tags: impl IntoIterator<Item = DomainTag>,
-        workspace: &crate::WorkspaceCapability,
+        tags: impl IntoIterator<Item = DomainTag>, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let mut members = crate::AdmittedOrderedSet::new(workspace);
         for tag in tags {
@@ -1610,8 +1599,7 @@ impl CandidateDomains {
     /// # Errors
     /// Returns original layout, admission or allocator refusal.
     pub fn clone_admitted(
-        &self,
-        workspace: &crate::WorkspaceCapability,
+        &self, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         match self {
             Self::Unrestricted => Ok(Self::Unrestricted),
@@ -2056,9 +2044,7 @@ impl RankedDeclaration {
     /// pattern over a relation's positions is held to.
     #[must_use]
     pub fn exclusion_lookup_mode(
-        &self,
-        total: usize,
-        supplies: impl Fn(usize) -> bool,
+        &self, total: usize, supplies: impl Fn(usize) -> bool,
     ) -> BindingPattern {
         let depth = self
             .depth_placement
@@ -2090,8 +2076,7 @@ fn write_canonical_number(out: &mut impl core::fmt::Write, value: usize) -> core
 
 /// Append a present/absent discriminant and, when present, a framed value.
 fn write_canonical_option(
-    out: &mut impl core::fmt::Write,
-    value: Option<&str>,
+    out: &mut impl core::fmt::Write, value: Option<&str>,
 ) -> core::fmt::Result {
     match value {
         None => out.write_char('0')?,
@@ -2125,9 +2110,7 @@ impl<'query> WorkspaceCursor<'query> {
     /// Returns checked physical overflow, admission or allocator refusal before
     /// the cursor Box is born. Pending fields die before their original owners.
     pub fn new<C: PfCursor + 'query>(
-        cursor: C,
-        workspace: &crate::WorkspaceCapability,
-        construct: &'static str,
+        cursor: C, workspace: &crate::WorkspaceCapability, construct: &'static str,
     ) -> Result<Self, EvalError> {
         let (cursor, allocation) = crate::workspace::box_native(cursor, workspace, construct)?;
         Ok(Self { cursor, allocation })
@@ -2196,8 +2179,7 @@ pub trait OccurrenceDictionary: Send + Sync {
     /// # Errors
     /// Native allocation and source failures remain hard failures.
     fn scan(
-        &self,
-        workspace: &crate::WorkspaceCapability,
+        &self, workspace: &crate::WorkspaceCapability,
     ) -> Result<Box<dyn OccurrenceMatches>, EvalError>;
 }
 
@@ -2212,8 +2194,7 @@ pub trait OccurrenceMatches {
     /// # Errors
     /// Preserves native row production and physical refusal.
     fn next(
-        &mut self,
-        workspace: &crate::WorkspaceCapability,
+        &mut self, workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<(usize, crate::AdmittedVec<AdmittedPfRow>)>, EvalError>;
 }
 
@@ -2252,10 +2233,7 @@ pub trait DictionaryBatch: Send + Sync {
     /// # Errors
     /// Preserve native construction and operational failures.
     fn open<'cursor>(
-        &self,
-        ordinal: usize,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
+        &self, ordinal: usize, args: &PfArgs<'_>, ceiling: Option<u64>,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<WorkspaceCursor<'cursor>, EvalError>
     where
@@ -2343,10 +2321,7 @@ pub trait PropertyFunction: Send + Sync {
     /// # Errors
     /// Preserves the producer's original operational or physical refusal.
     fn open_metered<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
-        context: &crate::NativeFnContext<'_>,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>, context: &crate::NativeFnContext<'_>,
         _geo: &purrdf_geo_kernel::GeoProfile,
     ) -> Result<WorkspaceCursor<'cursor>, EvalError>
     where
@@ -2375,9 +2350,7 @@ pub trait PropertyFunction: Send + Sync {
     /// # Errors
     /// Preserves analyzer and original native preparation failures.
     fn prepare_occurrence_dictionary(
-        &self,
-        _inputs: &[OccurrenceDictionaryInput],
-        _workspace: &crate::WorkspaceCapability,
+        &self, _inputs: &[OccurrenceDictionaryInput], _workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<Box<dyn OccurrenceDictionary>>, EvalError> {
         Ok(None)
     }
@@ -2390,9 +2363,7 @@ pub trait PropertyFunction: Send + Sync {
     /// # Errors
     /// Preserves native analyzer, storage, and producer failures.
     fn prepare_dictionary(
-        &self,
-        _inputs: &[BatchInvocation],
-        _workspace: &crate::WorkspaceCapability,
+        &self, _inputs: &[BatchInvocation], _workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<Box<dyn DictionaryBatch>>, EvalError> {
         Ok(None)
     }
@@ -2400,9 +2371,7 @@ pub trait PropertyFunction: Send + Sync {
     /// working set and each returned row. The producer must respect both bounds.
     /// Native producers can instead implement `open_admitted` with local owners.
     fn workspace_certificate(
-        &self,
-        _args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, _args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Option<ProducerWorkspaceCertificate> {
         None
     }
@@ -2413,10 +2382,7 @@ pub trait PropertyFunction: Send + Sync {
     /// Refuses a missing certificate before entering opaque producer code, or
     /// propagates allocation, admission and producer failures unchanged.
     fn open_admitted<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
-        workspace: crate::WorkspaceCapability,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>, workspace: crate::WorkspaceCapability,
     ) -> Result<WorkspaceCursor<'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -2498,9 +2464,7 @@ pub trait PropertyFunction: Send + Sync {
     /// query rather than contributing zero rows, which would be indistinguishable from
     /// an honest empty answer.
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor;
@@ -2639,8 +2603,7 @@ impl PfCursor for CertifiedCursor<'_> {
         self.cursor.next()
     }
     fn next_metered(
-        &mut self,
-        context: &crate::NativeFnContext<'_>,
+        &mut self, context: &crate::NativeFnContext<'_>,
     ) -> Result<Option<PfRow>, EvalError> {
         self.cursor.next_metered(context)
     }
@@ -2654,8 +2617,7 @@ impl PfCursor for CertifiedCursor<'_> {
             .map(|row| row.map(|row| AdmittedPfRow::new(row, admission)))
     }
     fn next_admitted_metered(
-        &mut self,
-        context: &crate::NativeFnContext<'_>,
+        &mut self, context: &crate::NativeFnContext<'_>,
     ) -> Result<Option<AdmittedPfRow>, EvalError> {
         if self.cursor.carries_row_evidence() {
             return self.cursor.next_admitted_metered(context);
@@ -2675,8 +2637,7 @@ impl PfCursor for CertifiedCursor<'_> {
         self.cursor.service_level()
     }
     fn service_level_with_workspace(
-        &self,
-        workspace: &crate::WorkspaceCapability,
+        &self, workspace: &crate::WorkspaceCapability,
     ) -> Result<ServiceLevel, EvalError> {
         self.cursor.service_level_with_workspace(workspace)
     }
@@ -2731,10 +2692,7 @@ impl PfRowOwner {
 /// on a caught panic or opaque caller-returned failure. More specific typed causes
 /// propagate unchanged.
 pub fn open_contained<'query>(
-    relation: &(dyn PropertyFunction + 'query),
-    iri: &str,
-    args: &PfArgs<'_>,
-    ceiling: Option<u64>,
+    relation: &(dyn PropertyFunction + 'query), iri: &str, args: &PfArgs<'_>, ceiling: Option<u64>,
 ) -> Result<Box<dyn PfCursor + 'query>, EvalError> {
     open_with_workspace_contained(
         relation,
@@ -2764,12 +2722,8 @@ pub fn open_contained<'query>(
 }
 
 pub(crate) fn open_with_workspace_contained<'query>(
-    relation: &(dyn PropertyFunction + 'query),
-    iri: &str,
-    args: &PfArgs<'_>,
-    ceiling: Option<u64>,
-    workspace: &crate::WorkspaceCapability,
-    context: Option<&crate::NativeFnContext<'_>>,
+    relation: &(dyn PropertyFunction + 'query), iri: &str, args: &PfArgs<'_>, ceiling: Option<u64>,
+    workspace: &crate::WorkspaceCapability, context: Option<&crate::NativeFnContext<'_>>,
     geo: &purrdf_geo_kernel::GeoProfile,
 ) -> Result<WorkspaceCursor<'query>, EvalError> {
     let declared = declaration_contained_admitted(iri, "arity", || relation.arity(), workspace)?;
@@ -2817,9 +2771,7 @@ pub(crate) fn open_with_workspace_contained<'query>(
 }
 
 pub(crate) fn next_with_workspace_contained(
-    cursor: &mut dyn PfCursor,
-    iri: &str,
-    context: &crate::NativeFnContext<'_>,
+    cursor: &mut dyn PfCursor, iri: &str, context: &crate::NativeFnContext<'_>,
 ) -> Result<Option<PfRowOwner>, EvalError> {
     let workspace = context.workspace();
     crate::contain::call_contained_admitted(
@@ -2876,9 +2828,7 @@ pub fn take_work_contained(cursor: &mut dyn PfCursor, iri: &str) -> Result<u64, 
     take_work_contained_admitted(cursor, iri, &crate::WorkspaceCapability::resident())
 }
 pub(crate) fn take_work_contained_admitted(
-    cursor: &mut dyn PfCursor,
-    iri: &str,
-    workspace: &crate::WorkspaceCapability,
+    cursor: &mut dyn PfCursor, iri: &str, workspace: &crate::WorkspaceCapability,
 ) -> Result<u64, EvalError> {
     declaration_contained_admitted(iri, "work", || cursor.take_work(), workspace)
 }
@@ -2897,16 +2847,13 @@ pub(crate) fn take_work_contained_admitted(
 ///
 /// [`EvalError::FunctionOperational`] on a caught panic; otherwise `Ok` of the declared generation.
 pub fn generation_contained(
-    cursor: &dyn PfCursor,
-    iri: &str,
+    cursor: &dyn PfCursor, iri: &str,
 ) -> Result<IndexGeneration, EvalError> {
     declaration_contained(iri, "index generation", || cursor.generation())
 }
 
 pub(crate) fn generation_contained_admitted(
-    cursor: &dyn PfCursor,
-    iri: &str,
-    workspace: &crate::WorkspaceCapability,
+    cursor: &dyn PfCursor, iri: &str, workspace: &crate::WorkspaceCapability,
 ) -> Result<IndexGeneration, EvalError> {
     declaration_contained_admitted(iri, "index generation", || cursor.generation(), workspace)
 }
@@ -2923,16 +2870,13 @@ pub(crate) fn generation_contained_admitted(
 /// [`EvalError::FunctionOperational`] on a caught panic; otherwise `Ok` of the declared service
 /// level.
 pub fn service_level_contained(
-    cursor: &dyn PfCursor,
-    iri: &str,
+    cursor: &dyn PfCursor, iri: &str,
 ) -> Result<ServiceLevel, EvalError> {
     declaration_contained(iri, "service level", || cursor.service_level())
 }
 
 pub(crate) fn service_level_contained_admitted(
-    cursor: &dyn PfCursor,
-    iri: &str,
-    workspace: &crate::WorkspaceCapability,
+    cursor: &dyn PfCursor, iri: &str, workspace: &crate::WorkspaceCapability,
 ) -> Result<ServiceLevel, EvalError> {
     declaration_contained_admitted(
         iri,
@@ -2943,9 +2887,7 @@ pub(crate) fn service_level_contained_admitted(
 }
 
 pub(crate) fn search_evidence_contained_admitted(
-    cursor: &dyn PfCursor,
-    iri: &str,
-    workspace: &crate::WorkspaceCapability,
+    cursor: &dyn PfCursor, iri: &str, workspace: &crate::WorkspaceCapability,
 ) -> Result<(bool, Option<crate::RowEvidence>), EvalError> {
     declaration_contained_admitted(
         iri,
@@ -2966,9 +2908,7 @@ pub(crate) fn search_evidence_contained_admitted(
 }
 
 pub(crate) fn retain_search_evidence_contained_admitted(
-    cursor: &dyn PfCursor,
-    iri: &str,
-    workspace: &crate::WorkspaceCapability,
+    cursor: &dyn PfCursor, iri: &str, workspace: &crate::WorkspaceCapability,
     previous: &mut Option<crate::RowEvidence>,
 ) -> Result<bool, EvalError> {
     let (carries, current) = search_evidence_contained_admitted(cursor, iri, workspace)?;
@@ -3001,17 +2941,12 @@ pub(crate) fn retain_search_evidence_contained_admitted(
 ///
 /// [`EvalError::FunctionOperational`] on a caught panic; otherwise `Ok` of `read`'s result.
 pub fn declaration_contained<T>(
-    iri: &str,
-    what: &str,
-    read: impl FnOnce() -> T,
+    iri: &str, what: &str, read: impl FnOnce() -> T,
 ) -> Result<T, EvalError> {
     declaration_contained_admitted(iri, what, read, &crate::WorkspaceCapability::resident())
 }
 pub(crate) fn declaration_contained_admitted<T>(
-    iri: &str,
-    what: &str,
-    read: impl FnOnce() -> T,
-    workspace: &crate::WorkspaceCapability,
+    iri: &str, what: &str, read: impl FnOnce() -> T, workspace: &crate::WorkspaceCapability,
 ) -> Result<T, EvalError> {
     crate::contain::declaration_contained_admitted("property function", iri, what, read, workspace)
 }
@@ -3171,9 +3106,7 @@ impl<'query> PropertyFunctionRegistry<'query> {
     /// Panics if `iri` is already registered — see the type's docs for why a relation
     /// may not be silently shadowed.
     pub fn register(
-        &mut self,
-        iri: impl Into<String>,
-        relation: Arc<dyn PropertyFunction + 'query>,
+        &mut self, iri: impl Into<String>, relation: Arc<dyn PropertyFunction + 'query>,
     ) {
         self.insert(iri.into(), relation, None);
     }
@@ -3232,9 +3165,7 @@ impl<'query> PropertyFunctionRegistry<'query> {
     /// duplicate registration it is caught where it is committed rather than at
     /// the first query that reaches it.
     pub fn register_ranked(
-        &mut self,
-        iri: impl Into<String>,
-        relation: Arc<dyn PropertyFunction + 'query>,
+        &mut self, iri: impl Into<String>, relation: Arc<dyn PropertyFunction + 'query>,
         decl: RankedDeclaration,
     ) {
         self.insert(iri.into(), relation, Some(decl));
@@ -3246,9 +3177,7 @@ impl<'query> PropertyFunctionRegistry<'query> {
     /// `relations` is written LAST: a declaration that fails validation panics
     /// before anything is inserted, leaving the registry exactly as it was.
     fn insert(
-        &mut self,
-        iri: String,
-        relation: Arc<dyn PropertyFunction + 'query>,
+        &mut self, iri: String, relation: Arc<dyn PropertyFunction + 'query>,
         decl: Option<RankedDeclaration>,
     ) {
         assert!(
@@ -3395,8 +3324,7 @@ impl<'query> PropertyFunctionRegistry<'query> {
     /// The bounded description path shares the registered immutable ranked
     /// declaration. Only concrete descriptor arrays and mode/IRI text allocate.
     pub(crate) fn describe_admitted(
-        &self,
-        workspace: &crate::WorkspaceCapability,
+        &self, workspace: &crate::WorkspaceCapability,
     ) -> Result<crate::workspace::AdmittedRecords<PfDescriptor>, EvalError> {
         let mut out =
             crate::workspace::AdmittedRecords::with_capacity(self.relations.len(), workspace)?;
@@ -3558,9 +3486,7 @@ impl<'query> PropertyFunctionRegistry<'query> {
 ///
 /// Panics if another registered producer already declares `decl.stratum`.
 fn assert_stratum_unclaimed(
-    iri: &str,
-    decl: &RankedDeclaration,
-    ranked: &DetHashMap<String, Arc<RankedDeclaration>>,
+    iri: &str, decl: &RankedDeclaration, ranked: &DetHashMap<String, Arc<RankedDeclaration>>,
 ) {
     let claimed = ranked
         .iter()
@@ -3798,10 +3724,7 @@ fn validate_declaration(iri: &str, decl: &RankedDeclaration, relation: &dyn Prop
 ///
 /// See [`PropertyFunctionRegistry::register_ranked`].
 fn validate_exclusion(
-    iri: &str,
-    decl: &RankedDeclaration,
-    relation: &dyn PropertyFunction,
-    total: usize,
+    iri: &str, decl: &RankedDeclaration, relation: &dyn PropertyFunction, total: usize,
 ) {
     if !decl.exclusion.is_declared() {
         return;
@@ -3949,9 +3872,7 @@ impl MemoryRelation {
     /// caught where it is supplied rather than surfacing later as a row the engine
     /// cannot bind.
     pub fn new(
-        subject_arity: usize,
-        object_arity: usize,
-        rows: Vec<PfRow>,
+        subject_arity: usize, object_arity: usize, rows: Vec<PfRow>,
     ) -> Result<Self, EvalError> {
         let arity = PfArity::new(subject_arity, object_arity);
         let width = arity.total();
@@ -4002,10 +3923,7 @@ impl MemoryRelation {
     ///   naming a list that does not exist is a configuration pointing at nothing, not
     ///   an empty relation.
     pub fn from_graph<D: DatasetView>(
-        dataset: &D,
-        head: &TermValue,
-        graph: GraphMatch<D::Id>,
-        subject_arity: usize,
+        dataset: &D, head: &TermValue, graph: GraphMatch<D::Id>, subject_arity: usize,
         object_arity: usize,
     ) -> Result<Self, EvalError> {
         let arity = PfArity::new(subject_arity, object_arity);
@@ -4078,9 +3996,7 @@ impl PropertyFunction for MemoryRelation {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -4586,9 +4502,7 @@ mod tests {
         }
 
         fn open<'cursor>(
-            &self,
-            _args: &PfArgs<'_>,
-            _ceiling: Option<u64>,
+            &self, _args: &PfArgs<'_>, _ceiling: Option<u64>,
         ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
         where
             Self: 'cursor,
@@ -4756,9 +4670,7 @@ mod tests {
             }
 
             fn open<'cursor>(
-                &self,
-                _args: &PfArgs<'_>,
-                _ceiling: Option<u64>,
+                &self, _args: &PfArgs<'_>, _ceiling: Option<u64>,
             ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
             where
                 Self: 'cursor,
@@ -4837,9 +4749,7 @@ mod tests {
         }
 
         fn open<'cursor>(
-            &self,
-            _args: &PfArgs<'_>,
-            _ceiling: Option<u64>,
+            &self, _args: &PfArgs<'_>, _ceiling: Option<u64>,
         ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
         where
             Self: 'cursor,

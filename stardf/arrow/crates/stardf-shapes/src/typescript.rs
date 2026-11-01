@@ -103,8 +103,7 @@ impl TypeScriptConfig {
     /// Returns [`TypeScriptError`] for an invalid package name, blank prose, or
     /// unsupported control characters.
     pub fn new(
-        package_name: impl Into<String>,
-        package_docstring: impl Into<String>,
+        package_name: impl Into<String>, package_docstring: impl Into<String>,
         module_docstring: impl Into<String>,
     ) -> Result<Self, TypeScriptError> {
         let package_name = package_name.into();
@@ -230,8 +229,7 @@ purrdf_lex::message_error! {
 /// keyword values, or has source keys that collide on a reserved/exported
 /// TypeScript name.
 pub fn emit_typescript(
-    compiled: &CompiledSchema,
-    config: &TypeScriptConfig,
+    compiled: &CompiledSchema, config: &TypeScriptConfig,
 ) -> Result<TypeScriptPackage, TypeScriptError> {
     let catalog = CompiledSchemaCatalog::parse(compiled)
         .map_err(|error| TypeScriptError::new(error.to_string()))?;
@@ -283,8 +281,7 @@ pub fn emit_typescript(
 /// schema, declaration artifact, type-name map, or forward loss ledger differs
 /// from deterministic re-emission, or when shared schema import fails.
 pub fn import_typescript_package(
-    package: &TypeScriptPackage,
-    config: &SchemaImportConfig,
+    package: &TypeScriptPackage, config: &SchemaImportConfig,
 ) -> Result<ImportedShapes, TypeScriptError> {
     if package.dialect != TYPESCRIPT_DIALECT {
         return Err(TypeScriptError::new(format!(
@@ -503,9 +500,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn render_document(
-        &mut self,
-        config: &TypeScriptConfig,
-        definitions: &Object,
+        &mut self, config: &TypeScriptConfig, definitions: &Object,
     ) -> Result<String, TypeScriptError> {
         let mut output = String::new();
         let header = format!(
@@ -540,10 +535,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn render_schema(
-        &mut self,
-        schema: &Value,
-        path: &str,
-        depth: usize,
+        &mut self, schema: &Value, path: &str, depth: usize,
     ) -> Result<String, TypeScriptError> {
         limits::ensure_depth(depth, path, "TypeScript").map_err(TypeScriptError::new)?;
         match schema {
@@ -630,10 +622,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn render_carrier_relation(
-        &mut self,
-        object: &Object,
-        path: &str,
-        depth: usize,
+        &mut self, object: &Object, path: &str, depth: usize,
     ) -> Result<Option<String>, TypeScriptError> {
         let explicit_type = object.contains_key("type");
         let object_shape = has_object_shape(object);
@@ -665,10 +654,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn render_object(
-        &mut self,
-        object: &Object,
-        path: &str,
-        depth: usize,
+        &mut self, object: &Object, path: &str, depth: usize,
     ) -> Result<String, TypeScriptError> {
         limits::ensure_depth(depth, path, "TypeScript").map_err(TypeScriptError::new)?;
         let empty = Object::new();
@@ -751,11 +737,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn render_required_only_property(
-        &mut self,
-        object: &Object,
-        patterns: &Object,
-        path: &str,
-        depth: usize,
+        &mut self, object: &Object, patterns: &Object, path: &str, depth: usize,
     ) -> Result<String, TypeScriptError> {
         let mut variants = Vec::new();
         for (pattern, schema) in patterns {
@@ -783,10 +765,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn render_array(
-        &mut self,
-        object: &Object,
-        path: &str,
-        depth: usize,
+        &mut self, object: &Object, path: &str, depth: usize,
     ) -> Result<String, TypeScriptError> {
         limits::ensure_depth(depth, path, "TypeScript").map_err(TypeScriptError::new)?;
         let mut prefix = Vec::new();
@@ -844,9 +823,7 @@ impl<'a> Renderer<'a> {
     /// written (see [`distinct_shape`]). Every item schema must admit finitely
     /// many JSON scalars.
     fn distinct_bounds(
-        &self,
-        object: &Object,
-        path: &str,
+        &self, object: &Object, path: &str,
     ) -> Result<Option<DistinctBounds>, TypeScriptError> {
         if object.get("uniqueItems") != Some(&Value::Bool(true)) {
             return Ok(None);
@@ -926,10 +903,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn audit_schema(
-        &mut self,
-        schema: &Value,
-        path: &str,
-        depth: usize,
+        &mut self, schema: &Value, path: &str, depth: usize,
     ) -> Result<(), TypeScriptError> {
         limits::ensure_depth(depth, path, "TypeScript").map_err(TypeScriptError::new)?;
         let Value::Object(object) = schema else {
@@ -1162,10 +1136,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn audit_literal(
-        &mut self,
-        value: &Value,
-        path: &str,
-        depth: usize,
+        &mut self, value: &Value, path: &str, depth: usize,
     ) -> Result<(), TypeScriptError> {
         limits::ensure_depth(depth, path, "TypeScript").map_err(TypeScriptError::new)?;
         match value {
@@ -1366,8 +1337,7 @@ fn validate_keyword_values(object: &Object, path: &str) -> Result<(), TypeScript
 }
 
 fn declared_kinds(
-    object: &Object,
-    path: &str,
+    object: &Object, path: &str,
 ) -> Result<(BTreeSet<JsonKind>, bool, bool), TypeScriptError> {
     let mut kinds = BTreeSet::new();
     let mut has_integer = false;
@@ -1618,10 +1588,7 @@ fn integer_exceeds_typescript_exact_range(number: &Number) -> bool {
 /// when the length is at least `m`, and an optional `never`-typed property
 /// `"n"` exactly when it is at most `n`, for every bound.
 fn render_array_relation(
-    prefix: &[String],
-    rest: &str,
-    min_items: u64,
-    max_items: Option<u64>,
+    prefix: &[String], rest: &str, min_items: u64, max_items: Option<u64>,
 ) -> String {
     let has_rest = rest != "never";
     let prefix_length = u64::try_from(prefix.len()).unwrap_or(u64::MAX);
@@ -1740,9 +1707,7 @@ const fn distinct_level_depth(candidates: usize) -> u32 {
 /// at [`DISTINCT_SPREAD_LIMIT`], deepest instantiation depth, longest further
 /// length); `None` when a path reaches [`INSTANTIATION_DEPTH_LIMIT`].
 fn distinct_subtree<'d>(
-    domain: &dyn Fn(usize) -> &'d BTreeSet<String>,
-    position: usize,
-    used: Vec<&'d String>,
+    domain: &dyn Fn(usize) -> &'d BTreeSet<String>, position: usize, used: Vec<&'d String>,
     depth: u32,
 ) -> Option<(u64, u32, usize)> {
     let mut count = 0_u64;

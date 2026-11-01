@@ -316,11 +316,7 @@ impl Emitter<'_> {
     }
 
     fn write_indicator(
-        &mut self,
-        indicator: &str,
-        need_whitespace: bool,
-        is_whitespace: bool,
-        is_indention: bool,
+        &mut self, indicator: &str, need_whitespace: bool, is_whitespace: bool, is_indention: bool,
     ) {
         if need_whitespace && !self.whitespace {
             self.put(' ');

@@ -57,9 +57,7 @@ impl CompositeValue {
     /// Malformed lexical forms alone keep ORDER's original opaque-literal rule.
     /// Every admission, capacity and allocator failure remains operational.
     pub(crate) fn parse(
-        lexical: &str,
-        datatype: &str,
-        workspace: &WorkspaceCapability,
+        lexical: &str, datatype: &str, workspace: &WorkspaceCapability,
     ) -> Result<Option<Self>, EvalError> {
         let Some(datatype) = CdtDatatype::from_iri(datatype) else {
             return Ok(None);
@@ -103,9 +101,7 @@ impl CompositeValue {
     }
 
     pub(crate) fn total_cmp(
-        &self,
-        other: &Self,
-        workspace: &WorkspaceCapability,
+        &self, other: &Self, workspace: &WorkspaceCapability,
     ) -> Result<Ordering, EvalError> {
         let mut frame = crate::workspace::LexicalFrame::new(workspace);
         let result = purrdf_cdt::ops::try_total_value_cmp(

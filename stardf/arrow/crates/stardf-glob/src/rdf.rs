@@ -273,9 +273,7 @@ impl StructuredError for Error {
 // Only subject/predicate SPOG probes, with graph filtering after the probe.
 // No lazy permutation index is initialized by a schema read.
 fn objects(
-    data: &RdfDataset,
-    subject: TermId,
-    predicate: TermId,
+    data: &RdfDataset, subject: TermId, predicate: TermId,
 ) -> impl Iterator<Item = TermId> + '_ {
     DatasetView::quads_for_pattern(
         data,
@@ -293,10 +291,7 @@ fn sole(data: &RdfDataset, subject: TermId, predicate: Option<TermId>) -> SoleOb
     })
 }
 fn required(
-    data: &RdfDataset,
-    node: TermId,
-    predicate: Option<TermId>,
-    role: usize,
+    data: &RdfDataset, node: TermId, predicate: Option<TermId>, role: usize,
 ) -> Result<TermId, Reason> {
     match sole(data, node, predicate) {
         SoleObject::One(value) => Ok(value),
@@ -335,8 +330,7 @@ struct Schema {
     count: usize,
 }
 fn walk(
-    data: &RdfDataset,
-    schema: Schema,
+    data: &RdfDataset, schema: Schema,
 ) -> impl Iterator<Item = Result<TermId, ListFault<TermId>>> + Clone + '_ {
     RdfListWalk::new(
         schema.head,
@@ -346,10 +340,7 @@ fn walk(
     )
 }
 fn check_fields(
-    data: &RdfDataset,
-    node: TermId,
-    role: usize,
-    allowed: &[Option<TermId>],
+    data: &RdfDataset, node: TermId, role: usize, allowed: &[Option<TermId>],
 ) -> Result<(), Reason> {
     for quad in
         DatasetView::quads_for_pattern(data, Some(node), None, None, purrdf_core::GraphMatch::Any)
@@ -365,9 +356,7 @@ fn check_fields(
     Ok(())
 }
 fn schema(
-    data: &RdfDataset,
-    root: TermId,
-    vocab: Vocabulary<'_>,
+    data: &RdfDataset, root: TermId, vocab: Vocabulary<'_>,
 ) -> Result<(Schema, Mode, usize), Reason> {
     let ids = vocab.terms.map(|iri| data.term_id_by_iri(iri));
     let ty = data.term_id_by_iri(TYPE);
@@ -477,10 +466,7 @@ impl<'v, S: Admission> PreparedPlan<'v, S> {
         reason = "Refusal retains original RDF snapshots inline without allocating on the failure path"
     )]
     pub fn compile(
-        source: DatasetHandle,
-        plan: TermId,
-        vocab: &Vocabulary<'v>,
-        storage: S,
+        source: DatasetHandle, plan: TermId, vocab: &Vocabulary<'v>, storage: S,
     ) -> Result<Self, Error> {
         let result = (|| {
             if plan.index() >= source.term_count() {
@@ -547,11 +533,7 @@ impl<'v, S: Admission> PreparedPlan<'v, S> {
         reason = "Refusal retains original RDF snapshots inline without allocating on the failure path"
     )]
     pub fn execute<W: Admission>(
-        self,
-        input: DatasetHandle,
-        input_term: TermId,
-        max_work: u64,
-        storage: W,
+        self, input: DatasetHandle, input_term: TermId, max_work: u64, storage: W,
     ) -> Result<Execution<'v, S, W>, Error> {
         let mut account = Account(storage);
         let mut indices = Vec::new();
@@ -677,9 +659,7 @@ impl<'v, S: Admission, W: Admission> Execution<'v, S, W> {
         reason = "Refusal retains original RDF snapshots inline without allocating on the failure path"
     )]
     pub fn export<O: Admission + Send + Sync + 'static>(
-        self,
-        evaluation_iri: &str,
-        storage: O,
+        self, evaluation_iri: &str, storage: O,
     ) -> Result<DatasetHandle, ExportError<O>> {
         let collision = self
             .plan
@@ -716,9 +696,7 @@ impl<'v, S: Admission, W: Admission> Execution<'v, S, W> {
         })
     }
     fn export_native<O: Admission + Send + Sync + 'static>(
-        &self,
-        evaluation: &str,
-        storage: O,
+        &self, evaluation: &str, storage: O,
     ) -> Result<DatasetHandle, (Reason, Option<Account<O>>)> {
         let mut account = Account(storage);
         let result: Result<RdfDataset, Reason> = (|| {

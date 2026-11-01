@@ -437,9 +437,7 @@ fn read(conclusion: &RdfDataset) -> Read {
 
 /// Recognize the anonymous class expression `node`, or refuse the whole conclusion.
 fn recognize(
-    indexed: &Indexed,
-    node: &TermValue,
-    consumed: &mut BTreeSet<usize>,
+    indexed: &Indexed, node: &TermValue, consumed: &mut BTreeSet<usize>,
     consumed_nodes: &mut Vec<TermValue>,
 ) -> Result<Scaffold, String> {
     let refuse = |why: &str| Err(format!("the class expression at {}: {why}", show(node)));
@@ -620,9 +618,7 @@ fn witness(term: &TermValue, witnesses: &BTreeMap<String, TermValue>) -> TermVal
 /// A pure function of the reading, the witness map and the closure — which is what lets
 /// [`verify`](super::verify) recompute it and compare rather than trust the warrant's list.
 fn license(
-    reading: &Reading,
-    witnesses: &BTreeMap<String, TermValue>,
-    closure: &Closure,
+    reading: &Reading, witnesses: &BTreeMap<String, TermValue>, closure: &Closure,
 ) -> Option<Licensed> {
     let mut minted = Vec::new();
     let mut licences = Vec::new();
@@ -701,10 +697,7 @@ fn license(
 
 /// The closure triples that license `individual`'s membership in `constructor`, if any do.
 fn membership_licences(
-    constructor: &Constructor,
-    members: &[TermValue],
-    individual: &TermValue,
-    closure: &Closure,
+    constructor: &Constructor, members: &[TermValue], individual: &TermValue, closure: &Closure,
 ) -> Option<Vec<Triple>> {
     let typed = |class: &TermValue| {
         let triple = [individual.clone(), TermValue::iri(RDF_TYPE), class.clone()];
@@ -730,10 +723,7 @@ fn membership_licences(
 /// also typed `rdf:List`, which the list comprehension condition licenses whether or not the
 /// conclusion happened to state it.
 fn list_triples(
-    node: &TermValue,
-    predicate: &'static str,
-    members: &[TermValue],
-    cells: &[TermValue],
+    node: &TermValue, predicate: &'static str, members: &[TermValue], cells: &[TermValue],
     witnesses: &BTreeMap<String, TermValue>,
 ) -> Vec<Triple> {
     let vocab = ListVocab::term_values();
@@ -846,9 +836,7 @@ pub(crate) fn attempt(q: &Question<'_>) -> Result<Attempt, EntailError> {
 /// One witness per scaffold-internal blank node, none of them naming anything either document
 /// names.
 fn mint_witnesses(
-    reading: &Reading,
-    premise: &RdfDataset,
-    conclusion: &RdfDataset,
+    reading: &Reading, premise: &RdfDataset, conclusion: &RdfDataset,
 ) -> BTreeMap<String, TermValue> {
     let mut fresh = FreshBlanks::avoiding(&[premise, conclusion]);
     let mut witnesses = BTreeMap::new();
@@ -867,10 +855,7 @@ fn mint_witnesses(
 /// warrant's witness map and compared, every witness is re-checked absent from both
 /// documents, every licence is re-looked-up in the closure, and the binding is replayed.
 pub(crate) fn verify_comprehension(
-    w: &ComprehensionWarrant,
-    premise: &RdfDataset,
-    conclusion: &RdfDataset,
-    _triples: &[Triple],
+    w: &ComprehensionWarrant, premise: &RdfDataset, conclusion: &RdfDataset, _triples: &[Triple],
     _pending: &BTreeSet<usize>,
 ) -> Option<Replay> {
     let Read::Scaffolds(reading) = read(conclusion) else {

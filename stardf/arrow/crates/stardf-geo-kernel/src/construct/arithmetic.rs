@@ -63,10 +63,7 @@ impl<'a, 'context, 'observer> Arithmetic<'a, 'context, 'observer> {
     }
 
     pub(crate) fn exact<T>(
-        &self,
-        operation: ExactOperation,
-        operands: &[&Rat],
-        count: u64,
+        &self, operation: ExactOperation, operands: &[&Rat], count: u64,
         evaluate: impl FnOnce(&ExactValues<'_>) -> Result<T, LimbScratchError>,
     ) -> Result<T, GeoError> {
         match (self.context, self.progress) {
@@ -81,8 +78,7 @@ impl<'a, 'context, 'observer> Arithmetic<'a, 'context, 'observer> {
     }
 
     pub(crate) fn cost<T>(
-        &self,
-        cost: ExactArithmeticCost,
+        &self, cost: ExactArithmeticCost,
         evaluate: impl FnOnce(&ExactValues<'_>) -> Result<T, LimbScratchError>,
     ) -> Result<T, GeoError> {
         match (self.context, self.progress) {
@@ -201,9 +197,7 @@ impl<'a, 'context, 'observer> Arithmetic<'a, 'context, 'observer> {
     }
 
     pub(crate) fn geometry(
-        &self,
-        dim: crate::CoordDim,
-        body: crate::GeometryBody,
+        &self, dim: crate::CoordDim, body: crate::GeometryBody,
     ) -> Result<crate::Geometry, GeoError> {
         match self.progress {
             Some(progress) => {

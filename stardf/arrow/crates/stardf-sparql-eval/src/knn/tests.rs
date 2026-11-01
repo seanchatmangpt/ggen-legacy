@@ -59,9 +59,7 @@ fn fixture(metric: &DistanceMetric, rows: &[(&str, Vec<f64>)]) -> Fixture {
 
 /// [`fixture`], with `indexes` declared as derived-index guards over the artifact.
 fn fixture_with_indexes(
-    metric: &DistanceMetric,
-    rows: &[(&str, Vec<f64>)],
-    indexes: Vec<DerivedIndex>,
+    metric: &DistanceMetric, rows: &[(&str, Vec<f64>)], indexes: Vec<DerivedIndex>,
 ) -> Fixture {
     let dimension = u32::try_from(rows.first().map_or(0, |(_, v)| v.len())).expect("small");
     let dataset = RdfDatasetBuilder::new().freeze().expect("empty dataset");
@@ -183,9 +181,7 @@ fn space(metric: &DistanceMetric, rows: &[(&str, Vec<f64>)]) -> EmbeddingSpace {
 
 /// Invoke `relation` with the given per-position bindings and drain the cursor.
 fn invoke<A: Arithmetic>(
-    relation: &EmbeddingKnnRelation<A>,
-    bound: &[Option<TermValue>],
-    ceiling: Option<u64>,
+    relation: &EmbeddingKnnRelation<A>, bound: &[Option<TermValue>], ceiling: Option<u64>,
 ) -> Result<Vec<PfRow>, EvalError> {
     let refs: Vec<Option<&TermValue>> = bound.iter().map(Option::as_ref).collect();
     let (subject, object) = refs.split_at(relation.arity().subject);
@@ -1179,9 +1175,7 @@ fn rows_per_invocation_is_an_upper_bound_that_is_respected_and_attained() {
 
 /// Open `relation` for the roomy fixture and hand back its cursor.
 fn cursor_for(
-    relation: &EmbeddingKnnRelation,
-    bound: &[Option<TermValue>],
-    ceiling: Option<u64>,
+    relation: &EmbeddingKnnRelation, bound: &[Option<TermValue>], ceiling: Option<u64>,
 ) -> Box<dyn PfCursor> {
     let refs: Vec<Option<&TermValue>> = bound.iter().map(Option::as_ref).collect();
     let (subject, object) = refs.split_at(relation.arity().subject);
@@ -1511,11 +1505,8 @@ fn a_derived_index_guard_naming_this_space_is_checked_and_a_matching_one_is_admi
 /// path; each is a different branch, and an untested branch in a reader is a wrong answer
 /// waiting for the first artifact that takes it.
 fn prefixed_fixture(
-    metric: &DistanceMetric,
-    rows: &[(&str, Vec<f64>)],
-    dtype: VectorDtype,
-    prefixes: &[(u32, PrefixPostprocessing)],
-    queried: usize,
+    metric: &DistanceMetric, rows: &[(&str, Vec<f64>)], dtype: VectorDtype,
+    prefixes: &[(u32, PrefixPostprocessing)], queried: usize,
 ) -> Fixture {
     let stored = u32::try_from(rows.first().map_or(0, |(_, v)| v.len())).expect("small");
     let dataset = RdfDatasetBuilder::new().freeze().expect("empty dataset");
@@ -1991,8 +1982,7 @@ fn arithmetic_rows() -> Vec<(&'static str, Vec<f64>)> {
 /// Every `(query, neighbour, emitted distance)` a relation over `rows` emits, over
 /// every row as the seed and every row as a neighbour.
 fn every_distance<A: Arithmetic>(
-    relation: &EmbeddingKnnRelation<A>,
-    rows: &[(&str, Vec<f64>)],
+    relation: &EmbeddingKnnRelation<A>, rows: &[(&str, Vec<f64>)],
 ) -> Vec<(String, String, f64)> {
     let mut out = Vec::new();
     for (query, _) in rows {
@@ -2563,8 +2553,7 @@ fn every_term_of_the_universe_agrees_with_its_row_under_the_reassociated_arithme
 /// Every term of the universe, asked as a membership lookup seeded at `a`, is answered by
 /// exactly its own row when `space` holds one and by nothing when it does not.
 fn every_term_agrees_with_its_row<A: Arithmetic>(
-    relation: &EmbeddingKnnRelation<A>,
-    space: &EmbeddingSpace,
+    relation: &EmbeddingKnnRelation<A>, space: &EmbeddingSpace,
 ) {
     let seed = iri("a");
 

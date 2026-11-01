@@ -322,8 +322,7 @@ impl<'a> Reader<'a> {
 
     /// Read a present/absent discriminant and, when present, a framed string.
     pub(crate) fn option_string(
-        &mut self,
-        what: &'static str,
+        &mut self, what: &'static str,
     ) -> Result<Option<String>, PlanError> {
         match self.u8()? {
             0 => Ok(None),

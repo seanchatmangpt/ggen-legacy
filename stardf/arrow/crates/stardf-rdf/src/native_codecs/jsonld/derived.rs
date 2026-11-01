@@ -312,8 +312,7 @@ mod tests {
     use super::*;
 
     fn derive_from<'a>(
-        iris: impl IntoIterator<Item = &'a str>,
-        limits: DerivationLimits,
+        iris: impl IntoIterator<Item = &'a str>, limits: DerivationLimits,
     ) -> Result<CompiledJsonLdContext, RdfDiagnostic> {
         let mut collector = Collector::new(limits);
         for iri in iris {

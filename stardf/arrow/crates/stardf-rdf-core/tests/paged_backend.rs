@@ -66,10 +66,7 @@ fn split_pages_refuses_zero_destinations_only_for_nonempty_input() {
 /// pattern into the second — the id-space unification a `PagedDataset` must provide
 /// across a page boundary.
 fn join_rows<V: DatasetView>(
-    v: &V,
-    a_s: &TermValue,
-    a_p: &TermValue,
-    b_p: &TermValue,
+    v: &V, a_s: &TermValue, a_p: &TermValue, b_p: &TermValue,
 ) -> Vec<(TermValue, TermValue)> {
     let a_s_id = v
         .term_id_by_value(a_s)

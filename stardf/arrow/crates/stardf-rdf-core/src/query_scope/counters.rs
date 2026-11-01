@@ -82,8 +82,7 @@ impl<S: Admission> ScopeCounters<S> {
     /// # Errors
     /// Refuses noncanonical constraint identities or native storage failure.
     pub fn with_admission(
-        constraints: &[Digest32],
-        mut admission: S,
+        constraints: &[Digest32], mut admission: S,
     ) -> Result<Self, ScopeError<core::convert::Infallible>> {
         if constraints.windows(2).any(|pair| pair[0] >= pair[1]) {
             return Err(ScopeError::NonCanonicalConstraints);
@@ -134,8 +133,7 @@ impl<S: Admission> ScopeCounters<S> {
     /// # Errors
     /// Returns the original callback failure, physical refusal or aborted owner.
     pub fn evaluate<E, R>(
-        &mut self,
-        mut decide: impl FnMut(Digest32) -> Result<ConstraintDecision, E>,
+        &mut self, mut decide: impl FnMut(Digest32) -> Result<ConstraintDecision, E>,
         emit: impl FnOnce(&[(usize, ConstraintDecision)]) -> Result<R, E>,
     ) -> Result<R, ScopeError<E>> {
         if self.aborted {

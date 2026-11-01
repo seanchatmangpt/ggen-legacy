@@ -151,10 +151,7 @@ fn atom(subject: ClauseTerm, predicate: &str, object: ClauseTerm) -> ClauseAtom 
 /// three-arguments-in-four-positions convention and for how such an id is kept out of the
 /// materialized answer.
 fn internal(
-    relation: &'static str,
-    first: ClauseTerm,
-    second: ClauseTerm,
-    third: ClauseTerm,
+    relation: &'static str, first: ClauseTerm, second: ClauseTerm, third: ClauseTerm,
 ) -> ClauseAtom {
     ClauseAtom::quad(first, ClauseTerm::literal(relation), second, third)
 }

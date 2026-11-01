@@ -338,11 +338,7 @@ impl<'a> Renderer<'a> {
 
     /// Leave a subject's property lines on `pending`, the first on top.
     fn expand_props(
-        &self,
-        subj: TermId,
-        depth: usize,
-        top: bool,
-        pending: &mut WorkList<Emit, 16>,
+        &self, subj: TermId, depth: usize, top: bool, pending: &mut WorkList<Emit, 16>,
     ) {
         let Some(props) = self.by_subject.get(&subj) else {
             return;
@@ -403,11 +399,7 @@ impl<'a> Renderer<'a> {
     /// Write an object term, or what opens it, onto `out`, and leave its parts and
     /// what closes it on `pending`.
     fn expand_object(
-        &self,
-        id: TermId,
-        depth: usize,
-        out: &mut String,
-        pending: &mut WorkList<Emit, 16>,
+        &self, id: TermId, depth: usize, out: &mut String, pending: &mut WorkList<Emit, 16>,
     ) {
         match self.dataset.resolve(id) {
             TermRef::Iri(iri) => out.push_str(&self.iri(iri)),
@@ -556,10 +548,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn literal(
-        &self,
-        lexical: &str,
-        datatype: TermId,
-        language: Option<&str>,
+        &self, lexical: &str, datatype: TermId, language: Option<&str>,
         direction: Option<RdfTextDirection>,
     ) -> String {
         if let Some(lang) = language {
@@ -660,11 +649,7 @@ impl ContentKeys {
 /// resolved acyclic subtrees are written to `cache`; cyclic / over-budget blank graphs
 /// fall through to the value-based identity tiebreak in [`ObjKey`].
 fn compute_content_key(
-    dataset: &RdfDataset,
-    raw: &RawProps,
-    id: TermId,
-    seen: &mut BTreeSet<TermId>,
-    depth: usize,
+    dataset: &RdfDataset, raw: &RawProps, id: TermId, seen: &mut BTreeSet<TermId>, depth: usize,
     cache: &mut FastMap<TermId, String>,
 ) -> (String, bool) {
     match dataset.resolve(id) {
@@ -772,9 +757,7 @@ fn quoted_blanks(dataset: &RdfDataset, positions: impl Iterator<Item = TermId>) 
 /// instead, which makes it a top-level subject; whatever hangs off the cycle still
 /// inlines beneath it. Every walk here runs over a work list.
 fn inline_blanks(
-    raw: &RawProps,
-    object_refs: &FastMap<TermId, usize>,
-    quoted: &FastSet<TermId>,
+    raw: &RawProps, object_refs: &FastMap<TermId, usize>, quoted: &FastSet<TermId>,
 ) -> FastSet<TermId> {
     let mut inline: FastSet<TermId> = object_refs
         .iter()
@@ -912,9 +895,7 @@ impl Ord for ObjKey {
 /// blank's grounded neighbourhood; round 1 folds neighbour signatures. Sufficient
 /// for the non-symmetric blank graphs the authored ontology sources contain.
 fn blank_signatures(
-    dataset: &RdfDataset,
-    by_subject: &FastMap<TermId, Props>,
-    shared: &[TermId],
+    dataset: &RdfDataset, by_subject: &FastMap<TermId, Props>, shared: &[TermId],
 ) -> FastMap<TermId, u64> {
     let ground = |id: TermId| -> u64 { ground_sig(dataset, id, 0) };
     let shared_set: BTreeSet<TermId> = shared.iter().copied().collect();

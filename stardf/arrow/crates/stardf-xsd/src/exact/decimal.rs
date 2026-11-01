@@ -58,15 +58,13 @@ impl<W: fmt::Write + ?Sized> fmt::Write for DecimalPointWriter<'_, W> {
 
 impl PreparedDecimalText {
     fn from_coefficient(
-        coefficient: &BigInt,
-        scale: u32,
+        coefficient: &BigInt, scale: u32,
     ) -> Result<Self, crate::bigint::LimbScratchError> {
         Self::from_digits(coefficient.prepare_decimal_digits()?, scale)
     }
 
     fn from_digits(
-        digits: crate::bigint::PreparedDecimalDigits,
-        scale: u32,
+        digits: crate::bigint::PreparedDecimalDigits, scale: u32,
     ) -> Result<Self, crate::bigint::LimbScratchError> {
         use crate::bigint::LimbScratchError::SizeOverflow;
         let scale = usize::try_from(scale).map_err(|_| SizeOverflow)?;
@@ -221,9 +219,7 @@ purrdf_lex::variant_from!(DecimalTextError {
 /// Distinguishes native numerical storage from lexical layout, admission, and
 /// allocator refusal. No source magnitude copy or intermediate String is made.
 pub fn append_scaled_integer_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-    coefficient: &BigInt,
-    scale: u32,
-    output: &mut String,
+    coefficient: &BigInt, scale: u32, output: &mut String,
     memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<(), DecimalTextError> {
     use purrdf_lex::allocation::StorageError;
@@ -303,9 +299,7 @@ impl Decimal {
     }
 
     pub(crate) fn new_using(
-        unscaled: Integer,
-        scale: u32,
-        storage: &impl crate::bigint::scratch::Allocate,
+        unscaled: Integer, scale: u32, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<Self, crate::bigint::LimbScratchError> {
         if unscaled.is_zero() {
             return Ok(Self::ZERO);
@@ -370,8 +364,7 @@ impl Decimal {
     /// # Errors
     /// Returns admission or physical storage refusal before allocation.
     pub fn try_add_admitted(
-        &self,
-        rhs: &Self,
+        &self, rhs: &Self,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
         ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -383,8 +376,7 @@ impl Decimal {
     /// # Errors
     /// Returns admission or physical storage refusal before allocation.
     pub fn try_sub_admitted(
-        &self,
-        rhs: &Self,
+        &self, rhs: &Self,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
         ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -393,25 +385,19 @@ impl Decimal {
     }
 
     fn add_using(
-        &self,
-        rhs: &Self,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, rhs: &Self, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<Self, crate::bigint::LimbScratchError> {
         self.add_admitted_using(rhs, storage, &mut |_| Ok(()))
     }
 
     fn sub_using(
-        &self,
-        rhs: &Self,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, rhs: &Self, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<Self, crate::bigint::LimbScratchError> {
         self.sub_admitted_using(rhs, storage, &mut |_| Ok(()))
     }
 
     fn add_admitted_using(
-        &self,
-        rhs: &Self,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, rhs: &Self, storage: &impl crate::bigint::scratch::Allocate,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
         ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -427,9 +413,7 @@ impl Decimal {
     }
 
     fn sub_admitted_using(
-        &self,
-        rhs: &Self,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, rhs: &Self, storage: &impl crate::bigint::scratch::Allocate,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
         ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -445,8 +429,7 @@ impl Decimal {
     }
 
     pub(crate) fn copy_using(
-        &self,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<Self, crate::bigint::LimbScratchError> {
         Ok(Self {
             unscaled: self.unscaled.copy_using(storage)?,
@@ -455,8 +438,7 @@ impl Decimal {
     }
 
     pub(crate) fn neg_using(
-        &self,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<Self, crate::bigint::LimbScratchError> {
         Ok(Self {
             unscaled: self.unscaled.neg_using(storage)?,
@@ -477,8 +459,7 @@ impl Decimal {
     /// # Errors
     /// Preserves native admission, layout and allocator refusal.
     pub fn detached_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         Ok(Self {
             unscaled: self.unscaled.detached_with_memory(memory)?,
@@ -491,8 +472,7 @@ impl Decimal {
     /// # Errors
     /// Returns native shared-control refusal without changing the decimal law.
     pub fn publish_detached(
-        &mut self,
-        original: &purrdf_lex::allocation::SharedOwned<()>,
+        &mut self, original: &purrdf_lex::allocation::SharedOwned<()>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         self.unscaled.publish_detached(original)
     }
@@ -802,9 +782,7 @@ impl Decimal {
     }
 
     fn ratio_bits_admitted_using(
-        &self,
-        format: &super::binary::Format,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, format: &super::binary::Format, storage: &impl crate::bigint::scratch::Allocate,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
         ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -880,9 +858,7 @@ impl Decimal {
     /// # Errors
     /// Returns admission/allocation refusal before conversion, power or output.
     pub fn try_round_admitted(
-        &self,
-        precision: i32,
-        rounding: Rounding,
+        &self, precision: i32, rounding: Rounding,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
         ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -909,10 +885,7 @@ impl Decimal {
     }
 
     fn round_admitted_using(
-        &self,
-        precision: i32,
-        rounding: Rounding,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, precision: i32, rounding: Rounding, storage: &impl crate::bigint::scratch::Allocate,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
         ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -982,9 +955,7 @@ impl Decimal {
     }
 
     pub(crate) fn mul_using(
-        &self,
-        rhs: &Self,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, rhs: &Self, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<Self, super::ExactOperationError> {
         self.mul_admitted_using(rhs, storage, &mut |_| Ok(()))
     }
@@ -993,8 +964,7 @@ impl Decimal {
     /// # Errors
     /// Distinguishes scale overflow from admission or physical storage refusal.
     pub fn try_mul_admitted(
-        &self,
-        rhs: &Self,
+        &self, rhs: &Self,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
         ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1003,9 +973,7 @@ impl Decimal {
     }
 
     fn mul_admitted_using(
-        &self,
-        rhs: &Self,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, rhs: &Self, storage: &impl crate::bigint::scratch::Allocate,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
         ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1082,8 +1050,7 @@ impl Decimal {
     /// # Errors
     /// Preserves value-space errors and physical admission/storage refusal.
     pub fn try_div_exact_admitted(
-        &self,
-        rhs: &Self,
+        &self, rhs: &Self,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
         ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1114,9 +1081,7 @@ impl Decimal {
     /// # Errors
     /// Keeps domain/scale errors separate from actual allocation refusal.
     pub fn try_div_fallible(
-        &self,
-        rhs: &Self,
-        policy: DivisionPolicy,
+        &self, rhs: &Self, policy: DivisionPolicy,
     ) -> Result<Self, super::ExactOperationError> {
         self.div_using(rhs, policy, &crate::bigint::scratch::Fallible)
     }
@@ -1125,9 +1090,7 @@ impl Decimal {
     /// # Errors
     /// Preserves all value-space refusals; admission and allocation stay operational.
     pub fn try_div_admitted(
-        &self,
-        rhs: &Self,
-        policy: DivisionPolicy,
+        &self, rhs: &Self, policy: DivisionPolicy,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
         ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1169,10 +1132,7 @@ impl Decimal {
     )]
     #[inline(always)]
     fn div_using(
-        &self,
-        rhs: &Self,
-        policy: DivisionPolicy,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, rhs: &Self, policy: DivisionPolicy, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<Self, super::ExactOperationError> {
         if rhs.is_zero() {
             return Err(ExactError::DivisionByZero.into());
@@ -1252,10 +1212,7 @@ impl Decimal {
     )]
     #[inline(always)]
     fn div_rounded_using(
-        &self,
-        rhs: &Self,
-        scale: u32,
-        rounding: Rounding,
+        &self, rhs: &Self, scale: u32, rounding: Rounding,
         storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<Self, super::ExactOperationError> {
         self.div_rounded_admitted_using(rhs, scale, rounding, storage, &mut |_| Ok(()))
@@ -1267,10 +1224,7 @@ impl Decimal {
     )]
     #[inline(always)]
     fn div_rounded_admitted_using(
-        &self,
-        rhs: &Self,
-        scale: u32,
-        rounding: Rounding,
+        &self, rhs: &Self, scale: u32, rounding: Rounding,
         storage: &impl crate::bigint::scratch::Allocate,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
@@ -1291,17 +1245,13 @@ impl Decimal {
     /// when `r = 1`, and then `a/b = (a/g) · 2^(k−x) · 5^(k−y) / 10^k` with
     /// `k = max(x, y)`.
     fn div_exact_using(
-        &self,
-        rhs: &Self,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, rhs: &Self, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<Self, super::ExactOperationError> {
         self.div_exact_admitted_using(rhs, storage, &mut |_| Ok(()))
     }
 
     fn div_exact_admitted_using(
-        &self,
-        rhs: &Self,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, rhs: &Self, storage: &impl crate::bigint::scratch::Allocate,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
         ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1318,9 +1268,7 @@ impl Decimal {
 
     /// The shared total order with every new magnitude in caller-owned storage.
     pub(crate) fn cmp_using(
-        &self,
-        other: &Self,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, other: &Self, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<Ordering, crate::bigint::LimbScratchError> {
         cmp_parts_admitted_using(
             &self.unscaled,
@@ -1333,9 +1281,7 @@ impl Decimal {
     }
 
     pub(crate) fn round_to_integer_using(
-        &self,
-        rounding: Rounding,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, rounding: Rounding, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<Integer, crate::bigint::LimbScratchError> {
         self.round_admitted_using(0, rounding, storage, &mut |_| Ok(()))
             .map(|value| value.unscaled)
@@ -1469,10 +1415,7 @@ impl Decimal {
     /// # Errors
     /// Returns physical admission/allocation refusal before conversion or alignment.
     pub fn try_cmp_parts_admitted(
-        left: &Integer,
-        left_scale: u32,
-        right: &Integer,
-        right_scale: u32,
+        left: &Integer, left_scale: u32, right: &Integer, right_scale: u32,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
         ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1491,8 +1434,7 @@ impl Decimal {
     /// # Errors
     /// Returns physical admission/allocation refusal, distinct from NaN incomparability.
     pub fn try_cmp_f64_admitted(
-        &self,
-        value: f64,
+        &self, value: f64,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
         ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1510,10 +1452,7 @@ impl Decimal {
     /// # Errors
     /// Returns checked admission or native destination refusal.
     pub fn try_add_parts_admitted(
-        left: &Integer,
-        ls: u32,
-        right: &Integer,
-        rs: u32,
+        left: &Integer, ls: u32, right: &Integer, rs: u32,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
         ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1532,10 +1471,7 @@ impl Decimal {
     /// # Errors
     /// Returns checked admission or native destination refusal.
     pub fn try_sub_parts_admitted(
-        left: &Integer,
-        ls: u32,
-        right: &Integer,
-        rs: u32,
+        left: &Integer, ls: u32, right: &Integer, rs: u32,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
         ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1554,10 +1490,7 @@ impl Decimal {
     /// # Errors
     /// Preserves scale overflow separately from admission/storage refusal.
     pub fn try_mul_parts_admitted(
-        left: &Integer,
-        ls: u32,
-        right: &Integer,
-        rs: u32,
+        left: &Integer, ls: u32, right: &Integer, rs: u32,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
         ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1576,11 +1509,7 @@ impl Decimal {
     /// # Errors
     /// Preserves zero/nonterminating/scale errors separately from physical refusal.
     pub fn try_div_parts_admitted(
-        left: &Integer,
-        ls: u32,
-        right: &Integer,
-        rs: u32,
-        policy: DivisionPolicy,
+        left: &Integer, ls: u32, right: &Integer, rs: u32, policy: DivisionPolicy,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
         ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -1656,10 +1585,7 @@ impl Decimal {
 }
 
 fn add_parts_admitted_using(
-    left: &Integer,
-    ls: u32,
-    right: &Integer,
-    rs: u32,
+    left: &Integer, ls: u32, right: &Integer, rs: u32,
     storage: &impl crate::bigint::scratch::Allocate,
     admit: &mut impl FnMut(cost::NumericOperationLayout) -> Result<(), crate::bigint::LimbScratchError>,
 ) -> Result<Decimal, crate::bigint::LimbScratchError> {
@@ -1683,10 +1609,7 @@ fn add_parts_admitted_using(
 }
 
 fn sub_parts_admitted_using(
-    left: &Integer,
-    ls: u32,
-    right: &Integer,
-    rs: u32,
+    left: &Integer, ls: u32, right: &Integer, rs: u32,
     storage: &impl crate::bigint::scratch::Allocate,
     admit: &mut impl FnMut(cost::NumericOperationLayout) -> Result<(), crate::bigint::LimbScratchError>,
 ) -> Result<Decimal, crate::bigint::LimbScratchError> {
@@ -1710,10 +1633,7 @@ fn sub_parts_admitted_using(
 }
 
 fn mul_parts_admitted_using(
-    left: &Integer,
-    ls: u32,
-    right: &Integer,
-    rs: u32,
+    left: &Integer, ls: u32, right: &Integer, rs: u32,
     storage: &impl crate::bigint::scratch::Allocate,
     admit: &mut impl FnMut(cost::NumericOperationLayout) -> Result<(), crate::bigint::LimbScratchError>,
 ) -> Result<Decimal, super::ExactOperationError> {
@@ -1741,10 +1661,7 @@ fn mul_parts_admitted_using(
 )]
 #[inline(always)]
 fn div_rounded_parts_admitted_using(
-    left_parts: (&Integer, u32),
-    right_parts: (&Integer, u32),
-    scale: u32,
-    rounding: Rounding,
+    left_parts: (&Integer, u32), right_parts: (&Integer, u32), scale: u32, rounding: Rounding,
     storage: &impl crate::bigint::scratch::Allocate,
     admit: &mut impl FnMut(cost::NumericOperationLayout) -> Result<(), crate::bigint::LimbScratchError>,
 ) -> Result<Decimal, super::ExactOperationError> {
@@ -1768,10 +1685,7 @@ fn div_rounded_parts_admitted_using(
 // Keep general integer storage and admission state out of the machine-word frame.
 #[cold]
 fn div_rounded_wide_parts_admitted_using(
-    operands: (&Integer, &Integer),
-    alignment: (i64, u32, bool),
-    scale: u32,
-    rounding: Rounding,
+    operands: (&Integer, &Integer), alignment: (i64, u32, bool), scale: u32, rounding: Rounding,
     storage: &impl crate::bigint::scratch::Allocate,
     admit: &mut impl FnMut(cost::NumericOperationLayout) -> Result<(), crate::bigint::LimbScratchError>,
 ) -> Result<Decimal, super::ExactOperationError> {
@@ -1813,10 +1727,7 @@ fn div_rounded_wide_parts_admitted_using(
 }
 
 fn div_exact_parts_admitted_using(
-    left: &Integer,
-    ls: u32,
-    right: &Integer,
-    rs: u32,
+    left: &Integer, ls: u32, right: &Integer, rs: u32,
     storage: &impl crate::bigint::scratch::Allocate,
     admit: &mut impl FnMut(cost::NumericOperationLayout) -> Result<(), crate::bigint::LimbScratchError>,
 ) -> Result<Decimal, super::ExactOperationError> {
@@ -1879,10 +1790,7 @@ fn div_exact_parts_admitted_using(
 }
 
 fn aligned_small_parts(
-    left: &Integer,
-    ls: u32,
-    right: &Integer,
-    rs: u32,
+    left: &Integer, ls: u32, right: &Integer, rs: u32,
 ) -> Option<(i128, i128, u32)> {
     let (a, b) = (left.as_i128()?, right.as_i128()?);
     let shift = |value: i128, digits: u32| {
@@ -1898,10 +1806,7 @@ fn aligned_small_parts(
 
 #[inline]
 fn div_rounded_small_parts(
-    left: &Integer,
-    right: &Integer,
-    shift: i64,
-    rounding: Rounding,
+    left: &Integer, right: &Integer, shift: i64, rounding: Rounding,
 ) -> Option<i128> {
     let (a, b) = (left.as_i128()?, right.as_i128()?);
     let negative = (a < 0) != (b < 0);
@@ -1939,10 +1844,7 @@ pub(crate) fn cmp_scaled_f64(unscaled: &Integer, scale: u32, value: f64) -> Opti
 }
 
 pub(crate) fn cmp_scaled_f64_admitted_using(
-    unscaled: &Integer,
-    scale: u32,
-    value: f64,
-    storage: &impl crate::bigint::scratch::Allocate,
+    unscaled: &Integer, scale: u32, value: f64, storage: &impl crate::bigint::scratch::Allocate,
     admit: &mut impl FnMut(cost::NumericOperationLayout) -> Result<(), crate::bigint::LimbScratchError>,
 ) -> Result<Option<Ordering>, crate::bigint::LimbScratchError> {
     if value.is_nan() {
@@ -1992,9 +1894,7 @@ fn shape_parts(coefficient: &Integer, scale: u32) -> cost::Shape {
 }
 
 fn exact_exponent_admitted(
-    coefficient: &Integer,
-    scale: u32,
-    storage: &impl crate::bigint::scratch::Allocate,
+    coefficient: &Integer, scale: u32, storage: &impl crate::bigint::scratch::Allocate,
     admit: &mut impl FnMut(cost::NumericOperationLayout) -> Result<(), crate::bigint::LimbScratchError>,
 ) -> Result<i64, crate::bigint::LimbScratchError> {
     use crate::bigint::LimbScratchError::SizeOverflow;
@@ -2013,10 +1913,7 @@ fn exact_exponent_admitted(
 }
 
 fn aligned_parts_layout(
-    left: &Integer,
-    ls: u32,
-    right: &Integer,
-    rs: u32,
+    left: &Integer, ls: u32, right: &Integer, rs: u32,
 ) -> Result<cost::NumericOperationLayout, crate::bigint::LimbScratchError> {
     use crate::bigint::LimbScratchError::SizeOverflow;
     let scale = ls.max(rs);
@@ -2035,10 +1932,7 @@ fn aligned_parts_layout(
 }
 
 fn aligned_parts_using(
-    left: &Integer,
-    ls: u32,
-    right: &Integer,
-    rs: u32,
+    left: &Integer, ls: u32, right: &Integer, rs: u32,
     storage: &impl crate::bigint::scratch::Allocate,
 ) -> Result<(Integer, Integer, u32), crate::bigint::LimbScratchError> {
     let scale = ls.max(rs);
@@ -2050,10 +1944,7 @@ fn aligned_parts_using(
 }
 
 fn cmp_parts_admitted_using(
-    left: &Integer,
-    ls: u32,
-    right: &Integer,
-    rs: u32,
+    left: &Integer, ls: u32, right: &Integer, rs: u32,
     storage: &impl crate::bigint::scratch::Allocate,
     admit: &mut impl FnMut(cost::NumericOperationLayout) -> Result<(), crate::bigint::LimbScratchError>,
 ) -> Result<Ordering, crate::bigint::LimbScratchError> {
@@ -2096,10 +1987,7 @@ fn cmp_parts_admitted_using(
 
 /// `|unscaled| × 10^-scale` against `significand × 2^exponent` (both nonzero).
 fn cmp_magnitude_binary_admitted_using(
-    unscaled: &Integer,
-    scale: u32,
-    significand: u64,
-    exponent: i32,
+    unscaled: &Integer, scale: u32, significand: u64, exponent: i32,
     storage: &impl crate::bigint::scratch::Allocate,
     admit: &mut impl FnMut(cost::NumericOperationLayout) -> Result<(), crate::bigint::LimbScratchError>,
 ) -> Result<Ordering, crate::bigint::LimbScratchError> {
@@ -2151,10 +2039,7 @@ fn cmp_magnitude_binary_admitted_using(
 /// Compare a decimal coefficient and binary significand in machine words when
 /// their aligned products fit; wider products use the admitted integer path.
 fn small_magnitude_cmp(
-    magnitude: u128,
-    scale: u32,
-    significand: u64,
-    exponent: i32,
+    magnitude: u128, scale: u32, significand: u64, exponent: i32,
 ) -> Option<Ordering> {
     let trailing = significand.trailing_zeros();
     let (significand, exponent) = (
@@ -2240,9 +2125,7 @@ fn strip_zeros(magnitude: u128, limit: u32) -> (u128, u32) {
 }
 
 pub(crate) fn scale_up_using(
-    value: &Integer,
-    digits: u32,
-    storage: &impl crate::bigint::scratch::Allocate,
+    value: &Integer, digits: u32, storage: &impl crate::bigint::scratch::Allocate,
 ) -> Result<Integer, crate::bigint::LimbScratchError> {
     if digits == 0 || value.is_zero() {
         return value.copy_using(storage);
@@ -2262,10 +2145,7 @@ pub(crate) fn scale_up_using(
 /// `⌊n / d⌋` rounded in direction `rounding` for the exact sign `negative`
 /// (`n`, `d` non-negative magnitudes, `d` nonzero); the magnitude of the result.
 pub(crate) fn round_quotient(
-    numerator: &Integer,
-    denominator: &Integer,
-    rounding: Rounding,
-    negative: bool,
+    numerator: &Integer, denominator: &Integer, rounding: Rounding, negative: bool,
 ) -> Integer {
     round_quotient_using(
         numerator,
@@ -2278,10 +2158,7 @@ pub(crate) fn round_quotient(
 }
 
 fn round_quotient_using(
-    numerator: &Integer,
-    denominator: &Integer,
-    rounding: Rounding,
-    negative: bool,
+    numerator: &Integer, denominator: &Integer, rounding: Rounding, negative: bool,
     storage: &impl crate::bigint::scratch::Allocate,
 ) -> Result<Integer, super::ExactOperationError> {
     round_quotient_admitted_using(
@@ -2295,10 +2172,7 @@ fn round_quotient_using(
 }
 
 fn round_quotient_admitted_using(
-    numerator: &Integer,
-    denominator: &Integer,
-    rounding: Rounding,
-    negative: bool,
+    numerator: &Integer, denominator: &Integer, rounding: Rounding, negative: bool,
     storage: &impl crate::bigint::scratch::Allocate,
     admit: &mut impl FnMut(cost::NumericOperationLayout) -> Result<(), crate::bigint::LimbScratchError>,
 ) -> Result<Integer, super::ExactOperationError> {
@@ -2336,10 +2210,7 @@ fn round_quotient_admitted_using(
 /// Split `coefficient`'s magnitude at `drop` digits: the kept (truncated) signed
 /// coefficient, and whether `rounding` increments its magnitude.
 fn discard_digits_admitted_using(
-    coefficient: &Integer,
-    drop: u64,
-    rounding: Rounding,
-    negative: bool,
+    coefficient: &Integer, drop: u64, rounding: Rounding, negative: bool,
     storage: &impl crate::bigint::scratch::Allocate,
     admit: &mut impl FnMut(cost::NumericOperationLayout) -> Result<(), crate::bigint::LimbScratchError>,
 ) -> Result<(Integer, bool), crate::bigint::LimbScratchError> {
@@ -2405,9 +2276,7 @@ pub(crate) fn strip_factor(value: BigInt, prime: u64) -> (BigInt, u32) {
 }
 
 fn strip_factor_using(
-    mut value: BigInt,
-    prime: u64,
-    storage: &impl crate::bigint::scratch::Allocate,
+    mut value: BigInt, prime: u64, storage: &impl crate::bigint::scratch::Allocate,
 ) -> Result<(BigInt, u32), super::ExactOperationError> {
     let (chunk, chunk_power) = if prime == 2 {
         (1_u64 << 32, 32)
@@ -2452,8 +2321,7 @@ impl From<i128> for Decimal {
 
 impl Decimal {
     fn parse_with_storage(
-        lexical: &str,
-        storage: &impl crate::bigint::scratch::Allocate,
+        lexical: &str, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<Self, super::ExactParseError> {
         let Some((negative, whole, fraction)) = crate::numeric::decimal_lexical_parts(lexical)
         else {
@@ -2515,10 +2383,7 @@ impl Decimal {
 // Keep the existing wide conversion tree and its storage frame off short inputs.
 #[cold]
 fn parse_wide_coefficient(
-    whole: &str,
-    fraction: &str,
-    negative: bool,
-    storage: &impl crate::bigint::scratch::Allocate,
+    whole: &str, fraction: &str, negative: bool, storage: &impl crate::bigint::scratch::Allocate,
 ) -> Result<Integer, super::ExactParseError> {
     let magnitude =
         BigInt::from_decimal_bytes_using(whole.bytes().chain(fraction.bytes()), negative, storage)

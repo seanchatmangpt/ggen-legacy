@@ -43,11 +43,7 @@ impl PatternCache {
     /// # Errors
     /// Returns the native compiler's distinct language or operational cause.
     pub fn compiled(
-        &mut self,
-        profile: Profile,
-        pattern: &str,
-        flags: &str,
-        limits: Limits,
+        &mut self, profile: Profile, pattern: &str, flags: &str, limits: Limits,
     ) -> Result<&CompiledPattern, Error> {
         self.admit(profile, pattern, flags, limits)?;
         Ok(self
@@ -66,11 +62,7 @@ impl PatternCache {
     /// # Errors
     /// Returns the same current language or operational cause as [`Self::compiled`].
     pub fn compiled_shared(
-        &mut self,
-        profile: Profile,
-        pattern: &str,
-        flags: &str,
-        limits: Limits,
+        &mut self, profile: Profile, pattern: &str, flags: &str, limits: Limits,
     ) -> Result<Arc<CompiledPattern>, Error> {
         self.admit(profile, pattern, flags, limits)?;
         if matches!(self.program, Some(Retained::Owned(_))) {
@@ -86,11 +78,7 @@ impl PatternCache {
     }
 
     fn admit(
-        &mut self,
-        profile: Profile,
-        pattern: &str,
-        flags: &str,
-        limits: Limits,
+        &mut self, profile: Profile, pattern: &str, flags: &str, limits: Limits,
     ) -> Result<(), Error> {
         limits.admit_pattern(pattern)?;
         if let Some(program) = &self.program

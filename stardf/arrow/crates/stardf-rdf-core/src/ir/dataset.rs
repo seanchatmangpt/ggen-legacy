@@ -260,9 +260,7 @@ impl<'a, Id> TermRef<'a, Id> {
     /// it merges several, keeps their blank-node scopes apart) here.
     #[inline]
     pub fn map_ids_scoped<B>(
-        self,
-        mut map: impl FnMut(Id) -> B,
-        scope: impl FnOnce(BlankScope) -> BlankScope,
+        self, mut map: impl FnMut(Id) -> B, scope: impl FnOnce(BlankScope) -> BlankScope,
     ) -> TermRef<'a, B> {
         match self {
             TermRef::Iri(iri) => TermRef::Iri(iri),
@@ -466,9 +464,7 @@ impl TryFrom<RdfDataset> for super::triple::TripleDataset {
 
 /// The one fallible dense-ordinal sort used by resident carrier permutations.
 pub(super) fn build_ordinal_permutation<T, S, E: From<purrdf_lex::allocation::StorageError>>(
-    rows: &[T],
-    capacity: super::builder::LocalCapacity,
-    storage: &mut S,
+    rows: &[T], capacity: super::builder::LocalCapacity, storage: &mut S,
     reserve: impl FnOnce(&mut S, &mut Vec<u32>, usize) -> Result<(), E>,
     freeze: impl FnOnce(&mut S, Vec<u32>) -> Result<Box<[u32]>, E>,
     mut compare: impl FnMut(&T, &T) -> Ordering,
@@ -485,9 +481,7 @@ pub(super) fn build_ordinal_permutation<T, S, E: From<purrdf_lex::allocation::St
 
 /// Publish a resident carrier's deterministic ordinal order on first access.
 pub(super) fn cached_permutation<'a, T>(
-    cell: &'a OnceLock<Box<[u32]>>,
-    rows: &[T],
-    capacity: super::builder::LocalCapacity,
+    cell: &'a OnceLock<Box<[u32]>>, rows: &[T], capacity: super::builder::LocalCapacity,
     compare: impl FnMut(&T, &T) -> Ordering,
 ) -> Result<&'a [u32], purrdf_lex::allocation::StorageError> {
     use purrdf_lex::allocation::{Memory, Resident};
@@ -502,11 +496,8 @@ pub(super) fn cached_permutation<'a, T>(
 /// The same cache publication under the original owner's admission. Bounded
 /// callers hold exclusive payload access until all indexes are published.
 fn cache_permutation_with_memory<'a, T, S: purrdf_lex::allocation::Admission + ?Sized>(
-    cell: &'a OnceLock<Box<[u32]>>,
-    rows: &[T],
-    capacity: super::builder::LocalCapacity,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
-    compare: impl FnMut(&T, &T) -> Ordering,
+    cell: &'a OnceLock<Box<[u32]>>, rows: &[T], capacity: super::builder::LocalCapacity,
+    memory: &mut purrdf_lex::allocation::Memory<'_, S>, compare: impl FnMut(&T, &T) -> Ordering,
 ) -> Result<&'a [u32], purrdf_lex::allocation::StorageError> {
     use purrdf_lex::allocation::Memory;
     if let Some(ordinals) = cell.get() {
@@ -631,10 +622,7 @@ fn compare_quads(axes: QuadAxisOrder, a: &QuadRow, b: &QuadRow) -> Ordering {
 /// bisection without materializing a key array.
 #[inline]
 fn compare_prefix(
-    axes: QuadAxisOrder,
-    q: &QuadRow,
-    target: &QuadAxisKeys,
-    prefix: usize,
+    axes: QuadAxisOrder, q: &QuadRow, target: &QuadAxisKeys, prefix: usize,
 ) -> Ordering {
     for (&axis, &target_key) in axes.axes.iter().zip(target.iter()).take(prefix) {
         match axis_key(axis, q).cmp(&target_key) {
@@ -940,10 +928,7 @@ impl QuadPatternCursor {
     /// Open the original indexed cursor while retaining the frozen storage owner.
     #[must_use]
     pub fn new(
-        dataset: DatasetHandle,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
+        dataset: DatasetHandle, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
         g: GraphMatch,
     ) -> Self {
         let plan = RdfDataset::probe_plan(s.is_some(), p.is_some(), o.is_some(), g);
@@ -1019,9 +1004,7 @@ impl RdfDataset {
         S: purrdf_lex::allocation::Admission + ?Sized,
         E: From<purrdf_lex::allocation::StorageError>,
     >(
-        &self,
-        next: &Self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, next: &Self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
         mut visit: impl FnMut(
             crate::source::SourceSide,
             crate::StatisticsStream,
@@ -1046,8 +1029,7 @@ impl RdfDataset {
     }
 
     pub(crate) fn source_record_row(
-        &self,
-        record: super::source_directory::SourceRecord,
+        &self, record: super::source_directory::SourceRecord,
     ) -> QuadIds {
         let index = record.ordinal as usize;
         match record.stream {
@@ -1077,14 +1059,10 @@ impl RdfDataset {
     /// [`RdfDatasetBuilder::freeze`]: super::builder::RdfDatasetBuilder::freeze
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn from_parts<S: purrdf_lex::allocation::Admission + ?Sized>(
-        dictionary: super::frozen_terms::FrozenTerms,
-        quads: Box<[QuadRow]>,
-        reifiers: Box<[ReifierRow]>,
-        annotations: Box<[AnnotationRow]>,
-        locations: Box<[(QuadHandle, RdfLocation)]>,
-        caps: RdfStoreCapabilities,
-        named_graphs: Box<[TermId]>,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        dictionary: super::frozen_terms::FrozenTerms, quads: Box<[QuadRow]>,
+        reifiers: Box<[ReifierRow]>, annotations: Box<[AnnotationRow]>,
+        locations: Box<[(QuadHandle, RdfLocation)]>, caps: RdfStoreCapabilities,
+        named_graphs: Box<[TermId]>, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         let statistics = super::statistics::LocalStatistics::build(
             &dictionary,
@@ -1137,9 +1115,7 @@ impl RdfDataset {
     }
 
     pub(crate) fn term_fingerprint<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        id: TermId,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, id: TermId, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<[u8; 32], purrdf_lex::allocation::StorageError> {
         memory.try_scope(|memory| {
             let mut hash = purrdf_hash::blake3::Hasher::new();
@@ -1283,10 +1259,7 @@ impl RdfDataset {
 
     /// Resolve a `(reifier, triple-term, graph)` binding to an owned [`RdfReifier`].
     pub fn to_owned_reifier(
-        &self,
-        reifier: TermId,
-        triple: TermId,
-        graph: Option<TermId>,
+        &self, reifier: TermId, triple: TermId, graph: Option<TermId>,
     ) -> RdfReifier {
         let statement = match self.resolve(triple) {
             TermRef::Triple { s, p, o } => RdfTriple::new(
@@ -1303,11 +1276,7 @@ impl RdfDataset {
     /// Resolve a `(reifier, predicate, object, graph)` annotation to an owned
     /// [`RdfAnnotation`].
     pub fn to_owned_annotation(
-        &self,
-        reifier: TermId,
-        p: TermId,
-        o: TermId,
-        graph: Option<TermId>,
+        &self, reifier: TermId, p: TermId, o: TermId, graph: Option<TermId>,
     ) -> RdfAnnotation {
         RdfAnnotation::new(
             self.to_owned_term(reifier),
@@ -1436,8 +1405,7 @@ impl RdfDataset {
     }
 
     fn try_permutation(
-        &self,
-        perm: QuadPermutation,
+        &self, perm: QuadPermutation,
     ) -> Result<&[u32], purrdf_lex::allocation::StorageError> {
         let axes = perm.axes();
         cached_permutation(
@@ -1470,11 +1438,7 @@ impl RdfDataset {
     /// [`Self::quads_for_pattern_indexed`] (iteration) and
     /// [`Self::cardinality_estimate`] (counting).
     fn pattern_candidate_run(
-        &self,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> (QuadPermutation, usize, usize) {
         let plan = Self::probe_plan(s.is_some(), p.is_some(), o.is_some(), g);
         self.candidate_run(&plan, s, p, o, g)
@@ -1525,10 +1489,7 @@ impl RdfDataset {
     /// by the index prefix, keeping the comparison transitive across buckets.
     #[must_use]
     pub fn compare_pattern_probe_rows(
-        &self,
-        plan: &QuadProbePlan,
-        left: QuadIds,
-        right: QuadIds,
+        &self, plan: &QuadProbePlan, left: QuadIds, right: QuadIds,
     ) -> Ordering {
         let left_row = QuadRow::from(left);
         let right_row = QuadRow::from(right);
@@ -1566,11 +1527,7 @@ impl RdfDataset {
     /// run. For SPOG the bounds index the freeze-sorted `quads` table directly;
     /// otherwise the permutation's ordinal array.
     fn candidate_run(
-        &self,
-        plan: &QuadProbePlan,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
+        &self, plan: &QuadProbePlan, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
         g: GraphMatch,
     ) -> (QuadPermutation, usize, usize) {
         let axes = plan.perm.axes();
@@ -1619,11 +1576,7 @@ impl RdfDataset {
     }
 
     fn candidate_access(
-        &self,
-        plan: &QuadProbePlan,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
+        &self, plan: &QuadProbePlan, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
         g: GraphMatch,
     ) -> (QuadCandidateAccess, usize, usize) {
         let (best, lo, hi) = self.candidate_run(plan, s, p, o, g);
@@ -1652,11 +1605,7 @@ impl RdfDataset {
     /// materialised as triples.
     #[must_use]
     pub fn cardinality_estimate(
-        &self,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> usize {
         let (_perm, lo, hi) = self.pattern_candidate_run(s, p, o, g);
         hi - lo
@@ -1669,11 +1618,7 @@ impl RdfDataset {
     /// index only narrows the candidate set; the residual filter is the same
     /// id-equality + [`GraphMatch`] predicate the default scan uses.
     pub(crate) fn quads_for_pattern_indexed(
-        &self,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         let plan = Self::probe_plan(s.is_some(), p.is_some(), o.is_some(), g);
         self.quads_for_pattern_with_plan(&plan, s, p, o, g)
@@ -1689,11 +1634,7 @@ impl RdfDataset {
     /// dataset's shared lazy index, exactly as the borrowed query path does.
     #[must_use]
     pub fn quads_for_pattern_cursor(
-        self: &Arc<Self>,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        self: &Arc<Self>, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> QuadPatternCursor {
         QuadPatternCursor::new(Arc::clone(self).into(), s, p, o, g)
     }
@@ -1705,11 +1646,7 @@ impl RdfDataset {
     /// residual `(s, p, o, g)` id-equality + [`GraphMatch`] filter, so the yielded
     /// quads and their order are unchanged.
     pub fn quads_for_pattern_with_plan(
-        &self,
-        plan: &QuadProbePlan,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
+        &self, plan: &QuadProbePlan, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
         g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ + use<'_> {
         let (access, lo, hi) = self.candidate_access(plan, s, p, o, g);
@@ -1753,10 +1690,7 @@ impl RdfDataset {
     /// one — is byte-identical to a verbatim probe and allocates nothing.
     #[must_use]
     pub fn term_id_by_literal(
-        &self,
-        lexical_form: &str,
-        datatype: &str,
-        language: Option<&str>,
+        &self, lexical_form: &str, datatype: &str, language: Option<&str>,
         direction: Option<RdfTextDirection>,
     ) -> Option<TermId> {
         self.dictionary
@@ -1836,9 +1770,7 @@ impl RdfDataset {
     /// Literal datatypes and triple children are original local IDs; callers
     /// retain this dataset to inspect them explicitly without recursive expansion.
     pub fn inspect_term<'a>(
-        &'a self,
-        id: TermId,
-        name: Option<&'static str>,
+        &'a self, id: TermId, name: Option<&'static str>,
         visitor: &mut dyn purrdf_hash::error::ErrorVisitor<'a>,
     ) {
         self.resolve(id).visit_error_record(name, visitor);
@@ -1914,8 +1846,7 @@ impl RdfDataset {
     }
 
     fn reifier_rows_for_target(
-        &self,
-        triple: TermId,
+        &self, triple: TermId,
     ) -> impl ExactSizeIterator<Item = ReifierRow> + '_ {
         let order = self
             .try_reifier_targets()
@@ -1937,8 +1868,7 @@ impl RdfDataset {
     }
 
     fn try_reifier_components(
-        &self,
-        pattern: [Option<TermId>; 3],
+        &self, pattern: [Option<TermId>; 3],
     ) -> Result<OrdinalRows<'_, ReifierRow>, purrdf_lex::allocation::StorageError> {
         let mask = component_mask(pattern);
         masked_rows(
@@ -1952,9 +1882,7 @@ impl RdfDataset {
     }
 
     fn try_annotation_rows(
-        &self,
-        predicate: Option<TermId>,
-        object: Option<TermId>,
+        &self, predicate: Option<TermId>, object: Option<TermId>,
     ) -> Result<OrdinalRows<'_, AnnotationRow>, purrdf_lex::allocation::StorageError> {
         let pattern = [None, predicate, object];
         let mask = component_mask(pattern) >> 1;
@@ -1984,8 +1912,7 @@ impl RdfDataset {
     /// Like [`annotations_of`](Self::annotations_of) but yields each annotation's graph
     /// slot too (`None` ⇒ default graph), for a graph-aware pattern match.
     pub fn annotations_of_with_graph(
-        &self,
-        reifier: TermId,
+        &self, reifier: TermId,
     ) -> impl Iterator<Item = (TermId, TermId, Option<TermId>)> + '_ {
         let start = self
             .annotations
@@ -2099,9 +2026,7 @@ impl RdfDataset {
     /// Reifier declarations for an exact triple term and graph scope, using the
     /// target ordinal range. Graph-distinct rows retain their declaration order.
     pub fn reifier_quads_for_target(
-        &self,
-        target: TermId,
-        graph: GraphMatch,
+        &self, target: TermId, graph: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         self.assert_reifier_table_invariant();
         self.rdf_reifies_id()
@@ -2121,9 +2046,7 @@ impl RdfDataset {
     /// Reifier declarations whose triple components match the supplied local IDs.
     /// Every bound mask addresses its own range and preserves frozen row order.
     pub fn reifier_quads_for_components(
-        &self,
-        components: [Option<TermId>; 3],
-        graph: GraphMatch,
+        &self, components: [Option<TermId>; 3], graph: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         self.assert_reifier_table_invariant();
         self.rdf_reifies_id()
@@ -2144,10 +2067,7 @@ impl RdfDataset {
     /// Annotation rows in the matching predicate/object run and graph scope.
     /// The range retains the frozen order of matching declarations.
     pub fn annotation_quads_for_pattern(
-        &self,
-        predicate: Option<TermId>,
-        object: Option<TermId>,
-        graph: GraphMatch,
+        &self, predicate: Option<TermId>, object: Option<TermId>, graph: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         self.try_annotation_rows(predicate, object)
             .expect("host cannot allocate a resident annotation index")
@@ -2160,9 +2080,7 @@ impl RdfDataset {
     /// this is a planner estimate, never an allocation or output certificate.
     #[must_use]
     pub fn statement_cardinality_estimate(
-        &self,
-        pattern: ProbePattern,
-        components: [Option<TermId>; 3],
+        &self, pattern: ProbePattern, components: [Option<TermId>; 3],
     ) -> Option<u64> {
         if self.reifiers.is_empty() && self.annotations.is_empty() {
             return Some(0);
@@ -2539,8 +2457,7 @@ impl RdfDataset {
     /// # Errors
     /// Returns physical layout, original admission or allocator refusal.
     pub fn warm_query_indexes_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &mut self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &mut self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         for permutation in [
             QuadPermutation::Pos,
@@ -4919,11 +4836,7 @@ mod tests {
         /// over the same candidate access: the oracle of
         /// [`Self::quads_for_pattern_with_plan`], order included.
         fn quads_for_pattern_with_plan_per_row(
-            &self,
-            plan: &QuadProbePlan,
-            s: Option<TermId>,
-            p: Option<TermId>,
-            o: Option<TermId>,
+            &self, plan: &QuadProbePlan, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
             g: GraphMatch,
         ) -> Vec<QuadIds> {
             let (access, lo, hi) = self.candidate_access(plan, s, p, o, g);
@@ -4950,11 +4863,7 @@ mod tests {
     /// The per-row cursor loop [`QuadPatternCursor::next`] replaced, over the
     /// same candidate access: the oracle of the cursor, order included.
     fn quads_for_pattern_cursor_per_row(
-        ds: &RdfDataset,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        ds: &RdfDataset, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> Vec<QuadIds> {
         let plan = RdfDataset::probe_plan(s.is_some(), p.is_some(), o.is_some(), g);
         let (access, mut next, end) = ds.candidate_access(&plan, s, p, o, g);

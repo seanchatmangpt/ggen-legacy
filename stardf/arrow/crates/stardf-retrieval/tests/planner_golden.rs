@@ -314,9 +314,7 @@ impl PropertyFunction for MockProducer {
     }
 
     fn open<'cursor>(
-        &self,
-        _args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, _args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -2599,8 +2597,7 @@ const PREFIX_STRATUM: &str = "stratum/prefix";
 /// placement and so is handed nothing, which would leave the selectivity leg of
 /// the derivation out of the fixture entirely.
 fn prefix_registry(
-    declared: u64,
-    duplicates: DuplicatePolicy,
+    declared: u64, duplicates: DuplicatePolicy,
 ) -> PropertyFunctionRegistry<'static> {
     let mut registry = PropertyFunctionRegistry::new();
     registry.register_ranked(

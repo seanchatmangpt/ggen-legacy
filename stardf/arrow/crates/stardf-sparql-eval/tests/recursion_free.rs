@@ -423,9 +423,7 @@ fn nested_service_expected(n: usize) -> Answer {
 }
 
 const fn vector(
-    name: &'static str,
-    text: fn(usize) -> String,
-    expected: fn(usize) -> Answer,
+    name: &'static str, text: fn(usize) -> String, expected: fn(usize) -> Answer,
 ) -> Vector {
     Vector {
         name,

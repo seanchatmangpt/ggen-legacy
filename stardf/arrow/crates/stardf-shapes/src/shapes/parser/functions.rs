@@ -74,11 +74,8 @@ use crate::shapes::Parser;
 /// that reaches here has already parsed once, so a failure means the dataset is not
 /// the shapes graph it claims to be; refusing is the fail-closed answer.
 pub(crate) fn register_declared_sparql_functions(
-    dataset: &Arc<RdfDataset>,
-    provenance: &ParseProvenance,
-    reached: &[Arc<CustomFunction>],
-    registry: &mut UserFunctionRegistry,
-    profile: crate::profile::ShaclProfile,
+    dataset: &Arc<RdfDataset>, provenance: &ParseProvenance, reached: &[Arc<CustomFunction>],
+    registry: &mut UserFunctionRegistry, profile: crate::profile::ShaclProfile,
 ) -> Result<BTreeSet<String>, crate::report::CompleteValidationError> {
     // No declaration can name a class absent from the term table. Avoid
     // constructing a prefix resolver when there is no function syntax to read.
@@ -125,9 +122,7 @@ impl Parser<'_> {
     /// parsed into this parser's own handles, because an unreached body may call a
     /// reached function and must find it filled.
     fn register_unreached_list_functions(
-        &mut self,
-        reached: &[Arc<CustomFunction>],
-        registry: &mut UserFunctionRegistry,
+        &mut self, reached: &[Arc<CustomFunction>], registry: &mut UserFunctionRegistry,
     ) -> Result<(), String> {
         let reached: BTreeSet<&str> = reached.iter().map(|f| f.iri.as_str()).collect();
         let unreached: Vec<Arc<CustomFunction>> = self
@@ -204,8 +199,7 @@ impl Parser<'_> {
     /// second caller to merge two of them, and a merge is a second place for the
     /// precedence between the kinds to be decided differently.
     pub(crate) fn parse_sparql_functions(
-        &self,
-        registry: &mut UserFunctionRegistry,
+        &self, registry: &mut UserFunctionRegistry,
     ) -> Result<(), String> {
         for id in self.sparql_function_ids() {
             // Only IRI-named functions are callable (the call site is an IRI), so a
@@ -326,8 +320,7 @@ impl Parser<'_> {
     /// apply") — with the reserved names of the SHACL version it links, which adds
     /// `shapesGraph` and `currentShape`; the body rule is `SPARQLFunction-query`.
     fn parse_one_sparql_function(
-        &self,
-        id: &Term,
+        &self, id: &Term,
     ) -> Result<(UserFunction, Option<crate::shapes::QueryRefusal>), crate::error::RuleViolation>
     {
         // ── Parameters, ordered by (sh:order, predicate IRI) ──────────────────
@@ -702,9 +695,7 @@ fn blank_node_argument_is_error(call: &ExprFnCall<'_>) -> bool {
 /// The recursion guard is SEEDED from `call.depth`, so a cycle that passed through
 /// SPARQL to get here keeps counting rather than restarting.
 pub(crate) fn invoke_expression_function(
-    owner: &Arc<crate::shapes::ModelOwner>,
-    func: &Arc<CustomFunction>,
-    call: &ExprFnCall<'_>,
+    owner: &Arc<crate::shapes::ModelOwner>, func: &Arc<CustomFunction>, call: &ExprFnCall<'_>,
 ) -> Result<Option<TermValue>, EvalError> {
     let _functions = crate::sparql::FunctionRequest::enter(call);
     let mut args: Vec<Option<Term>> = Vec::with_capacity(call.args.len());
@@ -755,8 +746,7 @@ pub(crate) fn invoke_expression_function(
 /// classification is [`ShapesError::failure_class`], an exhaustive match on the typed
 /// error, never on its message.
 fn sparql_call_result<T>(
-    outcome: Result<Option<T>, ShapesError>,
-    what: &str,
+    outcome: Result<Option<T>, ShapesError>, what: &str,
 ) -> Result<Option<T>, EvalError> {
     match outcome {
         Ok(value) => Ok(value),
@@ -826,9 +816,7 @@ impl NativeListCallee {
 /// count fails identically for every value. It is a defect of the query as written, as
 /// it is for a custom function, whose registry arity is checked the same way.
 pub(crate) fn invoke_native_list_function(
-    iri: &str,
-    callee: &NativeListCallee,
-    owner: &Arc<crate::shapes::ModelOwner>,
+    iri: &str, callee: &NativeListCallee, owner: &Arc<crate::shapes::ModelOwner>,
     call: &ExprFnCall<'_>,
 ) -> Result<Option<TermValue>, EvalError> {
     let _functions = crate::sparql::FunctionRequest::enter(call);

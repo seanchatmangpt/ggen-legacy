@@ -138,9 +138,7 @@ impl Powl {
     /// [`ProcessError::OrderNotIrreflexive`], [`ProcessError::OrderIndexOutOfRange`],
     /// or [`ProcessError::OrderNotAntisymmetric`].
     pub fn partial_order(
-        id: impl Into<String>,
-        children: Vec<Powl>,
-        order: Vec<(usize, usize)>,
+        id: impl Into<String>, children: Vec<Powl>, order: Vec<(usize, usize)>,
     ) -> Result<Self, ProcessError> {
         validate_order(children.len(), &order)?;
         Ok(Self::PartialOrder {
@@ -159,9 +157,7 @@ impl Powl {
     /// # Errors
     /// [`ProcessError::InvalidChoiceGraph`].
     pub fn choice_graph(
-        id: impl Into<String>,
-        children: Vec<Powl>,
-        edges: Vec<(Endpoint, Endpoint)>,
+        id: impl Into<String>, children: Vec<Powl>, edges: Vec<(Endpoint, Endpoint)>,
     ) -> Result<Self, ProcessError> {
         validate_choice_graph(children.len(), &edges)?;
         Ok(Self::ChoiceGraph {
@@ -445,9 +441,7 @@ fn validate_choice_graph(len: usize, edges: &[(Endpoint, Endpoint)]) -> Result<(
 /// # Errors
 /// [`ProcessError::LanguageBudgetExceeded`] when the path ceiling is hit.
 pub fn choice_graph_paths(
-    len: usize,
-    edges: &[(Endpoint, Endpoint)],
-    limits: &Limits,
+    len: usize, edges: &[(Endpoint, Endpoint)], limits: &Limits,
 ) -> Result<Vec<Vec<usize>>, ProcessError> {
     let successors = |node: Endpoint| -> Vec<Endpoint> {
         edges
@@ -499,9 +493,7 @@ pub fn choice_graph_paths(
 /// # Errors
 /// [`ProcessError::LanguageBudgetExceeded`] when the product ceiling is hit.
 pub fn shuffle(
-    parts: &[Words],
-    order: &[(usize, usize)],
-    limits: &Limits,
+    parts: &[Words], order: &[(usize, usize)], limits: &Limits,
 ) -> Result<Words, ProcessError> {
     let mut total: usize = 1;
     for part in parts {

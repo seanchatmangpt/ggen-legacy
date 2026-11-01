@@ -65,18 +65,13 @@ pub(super) struct RdfXmlCodec;
 
 impl RdfCodec for RdfXmlCodec {
     fn parse(
-        &self,
-        text: &str,
-        base: &mut purrdf_iri::BaseScope,
-        _mode: LineParseMode,
+        &self, text: &str, base: &mut purrdf_iri::BaseScope, _mode: LineParseMode,
     ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
         super::parse::parse_rdfxml_without_panicking(text, base, None)
     }
 
     fn serialize_into(
-        &self,
-        graph: &SerGraph,
-        out: &mut TextSink<'_>,
+        &self, graph: &SerGraph, out: &mut TextSink<'_>,
     ) -> Result<(), RdfDiagnostic> {
         // Emitted subject by subject after two pre-passes: a grouping index, and the
         // namespace collection XML genuinely requires up front because every `xmlns:`
@@ -178,9 +173,7 @@ struct XmlRow {
 /// is `Some` (see [`declared_namespaces`]); `None` — the hot path — walks nothing
 /// extra.
 pub(super) fn parse_rdfxml_document(
-    text: &str,
-    base: &mut purrdf_iri::BaseScope,
-    namespaces: Option<&mut Vec<(String, String)>>,
+    text: &str, base: &mut purrdf_iri::BaseScope, namespaces: Option<&mut Vec<(String, String)>>,
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
     // The reader refuses element nesting past the parser limit, and that is also what
     // bounds the walk below: the tree it descends came from this very call, so its element
@@ -341,9 +334,7 @@ impl RdfXmlParser {
     /// any `xml:base` the root itself carries. Child elements get their own cloned
     /// context, so a subtree's `xml:base` never reaches this answer.
     fn parse_document(
-        &mut self,
-        root: Node<'_, '_>,
-        context: &ParseContext,
+        &mut self, root: Node<'_, '_>, context: &ParseContext,
     ) -> Result<purrdf_iri::BaseScope, RdfDiagnostic> {
         let context = context.for_child(root)?;
         if is_rdf(root, "RDF") {
@@ -357,9 +348,7 @@ impl RdfXmlParser {
     }
 
     fn parse_node_element(
-        &mut self,
-        element: Node<'_, '_>,
-        parent_context: &ParseContext,
+        &mut self, element: Node<'_, '_>, parent_context: &ParseContext,
     ) -> Result<XmlNode, RdfDiagnostic> {
         let context = parent_context.for_child(element)?;
         let subject = self.subject_for_node(element, &context)?;
@@ -403,10 +392,7 @@ impl RdfXmlParser {
     }
 
     fn parse_property_element(
-        &mut self,
-        subject: &XmlNode,
-        element: Node<'_, '_>,
-        parent_context: &ParseContext,
+        &mut self, subject: &XmlNode, element: Node<'_, '_>, parent_context: &ParseContext,
         li_counter: &mut usize,
     ) -> Result<(), RdfDiagnostic> {
         let context = parent_context.for_child(element)?;
@@ -562,10 +548,7 @@ impl RdfXmlParser {
     }
 
     fn insert_property_attribute_statements(
-        &mut self,
-        subject: &XmlNode,
-        element: Node<'_, '_>,
-        context: &ParseContext,
+        &mut self, subject: &XmlNode, element: Node<'_, '_>, context: &ParseContext,
     ) -> Result<(), RdfDiagnostic> {
         for attr in property_attrs(element) {
             let literal = self.context_literal(attr.value(), None, context)?;
@@ -581,9 +564,7 @@ impl RdfXmlParser {
     }
 
     fn parse_collection(
-        &mut self,
-        element: Node<'_, '_>,
-        context: &ParseContext,
+        &mut self, element: Node<'_, '_>, context: &ParseContext,
     ) -> Result<XmlTerm, RdfDiagnostic> {
         let items: Vec<Node<'_, '_>> = element.element_children().collect();
         // Every cell is minted before any member is parsed, so the cells are labelled in
@@ -621,9 +602,7 @@ impl RdfXmlParser {
     }
 
     fn parse_triple_element(
-        &mut self,
-        element: Node<'_, '_>,
-        context: &ParseContext,
+        &mut self, element: Node<'_, '_>, context: &ParseContext,
     ) -> Result<(XmlTerm, XmlTerm, XmlTerm), RdfDiagnostic> {
         let nodes: Vec<Node<'_, '_>> = element.element_children().collect();
         if nodes.len() != 1 {
@@ -663,9 +642,7 @@ impl RdfXmlParser {
     }
 
     fn triple_object(
-        &mut self,
-        property: Node<'_, '_>,
-        context: &ParseContext,
+        &mut self, property: Node<'_, '_>, context: &ParseContext,
     ) -> Result<XmlTerm, RdfDiagnostic> {
         let context = context.for_child(property)?;
         if let Some(resource) = attr_rdf(property, RDF_RESOURCE) {
@@ -697,9 +674,7 @@ impl RdfXmlParser {
     }
 
     fn subject_for_node(
-        &mut self,
-        element: Node<'_, '_>,
-        context: &ParseContext,
+        &mut self, element: Node<'_, '_>, context: &ParseContext,
     ) -> Result<XmlNode, RdfDiagnostic> {
         if let Some(about) = attr_rdf(element, RDF_ABOUT) {
             return Ok(XmlNode::Iri(self.iri_ref(about, context)?));
@@ -714,11 +689,7 @@ impl RdfXmlParser {
     }
 
     fn insert_statement(
-        &mut self,
-        subject: XmlTerm,
-        predicate: String,
-        object: XmlTerm,
-        reifier: Option<XmlNode>,
+        &mut self, subject: XmlTerm, predicate: String, object: XmlTerm, reifier: Option<XmlNode>,
         annotation: Option<XmlNode>,
     ) -> Result<(), RdfDiagnostic> {
         self.rows.push(XmlRow {
@@ -745,11 +716,7 @@ impl RdfXmlParser {
 
     /// Emit the RDF 1.0 reification quads for a property element carrying `rdf:ID`.
     fn insert_classic_reification(
-        &mut self,
-        reifier: XmlNode,
-        subject: XmlTerm,
-        predicate: String,
-        object: XmlTerm,
+        &mut self, reifier: XmlNode, subject: XmlTerm, predicate: String, object: XmlTerm,
     ) -> Result<(), RdfDiagnostic> {
         let reifier: XmlTerm = reifier.into();
         self.rows.push(XmlRow {
@@ -776,11 +743,7 @@ impl RdfXmlParser {
     }
 
     fn insert_reifier(
-        &mut self,
-        reifier: XmlNode,
-        subject: XmlTerm,
-        predicate: String,
-        object: XmlTerm,
+        &mut self, reifier: XmlNode, subject: XmlTerm, predicate: String, object: XmlTerm,
     ) {
         let quoted = XmlTerm::Triple(Box::new((subject, XmlTerm::Iri(predicate), object)));
         self.rows.push(XmlRow {
@@ -791,10 +754,7 @@ impl RdfXmlParser {
     }
 
     fn context_literal(
-        &self,
-        lexical: &str,
-        datatype: Option<&str>,
-        context: &ParseContext,
+        &self, lexical: &str, datatype: Option<&str>, context: &ParseContext,
     ) -> Result<RdfLiteral, RdfDiagnostic> {
         if let Some(datatype) = datatype {
             return Ok(RdfLiteral::typed(lexical, self.iri_ref(datatype, context)?));
@@ -907,9 +867,7 @@ fn is_rdf(element: Node<'_, '_>, local: &str) -> bool {
 /// RDF/XML §7.4: expand only `rdf:li` property elements, counting independently
 /// within each node element (including the node implied by `parseType="Resource"`).
 fn property_iri(
-    element: Node<'_, '_>,
-    base: &purrdf_iri::BaseScope,
-    li_counter: &mut usize,
+    element: Node<'_, '_>, base: &purrdf_iri::BaseScope, li_counter: &mut usize,
 ) -> Result<String, RdfDiagnostic> {
     if is_rdf(element, "li") {
         // A counter cannot exceed the number of elements in the resident XML tree.
@@ -922,8 +880,7 @@ fn property_iri(
 
 /// The IRI of a node element / property element: `namespace + local`.
 fn element_iri(
-    element: Node<'_, '_>,
-    base: &purrdf_iri::BaseScope,
+    element: Node<'_, '_>, base: &purrdf_iri::BaseScope,
 ) -> Result<String, RdfDiagnostic> {
     name_iri(
         element.tag_name().namespace(),
@@ -933,9 +890,7 @@ fn element_iri(
 }
 
 fn name_iri(
-    namespace: Option<&str>,
-    local: &str,
-    base: &purrdf_iri::BaseScope,
+    namespace: Option<&str>, local: &str, base: &purrdf_iri::BaseScope,
 ) -> Result<String, RdfDiagnostic> {
     let iri = format!("{}{local}", namespace.unwrap_or_default());
     validate_iri(&iri, base)?;
@@ -1140,9 +1095,7 @@ enum XmlLiteralStep<'a, 'input> {
 /// pushed in reverse so they pop in document order, and the [`XmlLiteralStep::Close`] pushed
 /// before them pops after the whole subtree.
 fn serialize_xml_node<W: TextOut + ?Sized>(
-    node: Node<'_, '_>,
-    apex_ns: Option<&[(String, String)]>,
-    out: &mut W,
+    node: Node<'_, '_>, apex_ns: Option<&[(String, String)]>, out: &mut W,
 ) -> Result<(), RdfDiagnostic> {
     let mut stack = vec![XmlLiteralStep::Open(node, true)];
     while let Some(step) = stack.pop() {
@@ -1231,9 +1184,7 @@ fn qualify(node: Node<'_, '_>, namespace: Option<&str>, local: &str) -> String {
 /// forced the allocation: a format argument has to exist as a value before it can be
 /// interpolated. Naming the shape instead lets the escaped bytes go straight through.
 fn push_xml_attribute<W: TextOut + ?Sized>(
-    name: &str,
-    value: &str,
-    out: &mut W,
+    name: &str, value: &str, out: &mut W,
 ) -> Result<(), RdfDiagnostic> {
     out.push(' ');
     out.push_str(name);
@@ -1388,12 +1339,8 @@ fn write_rdfxml<W: TextOut + ?Sized>(graph: &SerGraph, out: &mut W) -> Result<()
 /// `parseType="Triple"` property, matching the prior path's
 /// `<rid> rdf:reifies <<( s p o )>>` rendering.
 fn write_reifies<W: TextOut + ?Sized>(
-    out: &mut W,
-    indent: &str,
-    graph: &SerGraph,
-    reifier_index: &ReifierIndex,
-    (s, p, o): (usize, usize, usize),
-    namespaces: &BTreeMap<String, String>,
+    out: &mut W, indent: &str, graph: &SerGraph, reifier_index: &ReifierIndex,
+    (s, p, o): (usize, usize, usize), namespaces: &BTreeMap<String, String>,
 ) -> Result<(), RdfDiagnostic> {
     let name = serializer_qname(RDF_REIFIES_IRI, namespaces)?;
     let _ = writeln!(out, "{indent}<{name} rdf:parseType=\"Triple\">");
@@ -1426,9 +1373,7 @@ fn subject_key(graph: &SerGraph, tid: usize) -> Result<String, RdfDiagnostic> {
 /// `rdf:about` is an IRI REFERENCE, so it is spelled against the document base declared
 /// as `xml:base` on the root; `rdf:nodeID` is a blank-node label and is not.
 fn write_node_attribute<W: TextOut + ?Sized>(
-    out: &mut W,
-    graph: &SerGraph,
-    tid: usize,
+    out: &mut W, graph: &SerGraph, tid: usize,
 ) -> Result<(), RdfDiagnostic> {
     let term = RDF_XML.term(graph, tid)?;
     match term.kind {
@@ -1471,8 +1416,7 @@ fn write_node_attribute<W: TextOut + ?Sized>(
 /// terminates on any `SerGraph` — including one whose term table is self-reaching, which
 /// `write_property` itself relies on its producer to rule out.
 fn serializer_namespaces(
-    graph: &SerGraph,
-    subjects: &BTreeMap<String, (usize, Vec<PropertyItem>)>,
+    graph: &SerGraph, subjects: &BTreeMap<String, (usize, Vec<PropertyItem>)>,
     reifier_index: &ReifierIndex,
 ) -> Result<BTreeMap<String, String>, RdfDiagnostic> {
     let mut namespaces = BTreeMap::from([
@@ -1526,9 +1470,7 @@ fn serializer_namespaces(
 /// refused HERE — before a single byte is written — rather than at the element that
 /// would have carried it.
 fn register_namespace(
-    iri: &str,
-    namespaces: &mut BTreeMap<String, String>,
-    next: &mut usize,
+    iri: &str, namespaces: &mut BTreeMap<String, String>, next: &mut usize,
 ) -> Result<(), RdfDiagnostic> {
     let (namespace, _) = split_property_iri(iri)?;
     if !namespaces.contains_key(namespace) {
@@ -1546,11 +1488,8 @@ fn register_namespace(
 /// that failure with the message it has always raised, and this function's job is
 /// namespaces.
 fn enqueue_quoted_triple(
-    graph: &SerGraph,
-    reifier_index: &ReifierIndex,
-    object: usize,
-    pending: &mut Vec<(usize, usize, usize)>,
-    visited: &mut BTreeSet<usize>,
+    graph: &SerGraph, reifier_index: &ReifierIndex, object: usize,
+    pending: &mut Vec<(usize, usize, usize)>, visited: &mut BTreeSet<usize>,
 ) -> Result<(), RdfDiagnostic> {
     let term = RDF_XML.term(graph, object)?;
     if term.kind != SerTermKind::Triple {
@@ -1580,13 +1519,8 @@ fn enqueue_quoted_triple(
 /// Indentation stops growing at 64 spaces, so both traversal memory and output
 /// size are linear in nesting depth. Shallow documents retain their exact bytes.
 fn write_property<W: TextOut + ?Sized>(
-    out: &mut W,
-    indent: &str,
-    graph: &SerGraph,
-    reifier_index: &ReifierIndex,
-    mut predicate: usize,
-    mut object: usize,
-    namespaces: &BTreeMap<String, String>,
+    out: &mut W, indent: &str, graph: &SerGraph, reifier_index: &ReifierIndex,
+    mut predicate: usize, mut object: usize, namespaces: &BTreeMap<String, String>,
 ) -> Result<(), RdfDiagnostic> {
     let mut closings = Vec::new();
     loop {
@@ -1662,12 +1596,8 @@ fn property_indent<W: TextOut + ?Sized>(out: &mut W, base: usize, depth: usize, 
 }
 
 fn write_triple_node<W: TextOut + ?Sized>(
-    out: &mut W,
-    indent: &str,
-    graph: &SerGraph,
-    reifier_index: &ReifierIndex,
-    (s, p, o): (usize, usize, usize),
-    namespaces: &BTreeMap<String, String>,
+    out: &mut W, indent: &str, graph: &SerGraph, reifier_index: &ReifierIndex,
+    (s, p, o): (usize, usize, usize), namespaces: &BTreeMap<String, String>,
 ) -> Result<(), RdfDiagnostic> {
     let _ = write!(out, "{indent}<rdf:Description");
     write_node_attribute(out, graph, s)?;
@@ -1705,8 +1635,7 @@ fn iri_reference<'a>(graph: &SerGraph, iri: &'a str) -> Cow<'a, str> {
 /// element went out bound to an UNDECLARED prefix and the document was not
 /// namespace-well-formed at all. It fails closed instead.
 fn serializer_qname<'a>(
-    iri: &'a str,
-    namespaces: &'a BTreeMap<String, String>,
+    iri: &'a str, namespaces: &'a BTreeMap<String, String>,
 ) -> Result<SerializerQName<'a>, RdfDiagnostic> {
     let (namespace, local) = split_property_iri(iri)?;
     let prefix = namespaces.get(namespace).ok_or_else(|| {
@@ -2277,13 +2206,8 @@ mod term_walk_tests {
 
     /// The recursive reference of [`write_property`], with its triple-node helper.
     fn reference_property(
-        out: &mut String,
-        indent: &str,
-        graph: &SerGraph,
-        ix: &ReifierIndex,
-        predicate: usize,
-        object: usize,
-        namespaces: &BTreeMap<String, String>,
+        out: &mut String, indent: &str, graph: &SerGraph, ix: &ReifierIndex, predicate: usize,
+        object: usize, namespaces: &BTreeMap<String, String>,
     ) -> Result<(), RdfDiagnostic> {
         let name = serializer_qname(RDF_XML.value(RDF_XML.term(graph, predicate)?)?, namespaces)?;
         let term = RDF_XML.term(graph, object)?;

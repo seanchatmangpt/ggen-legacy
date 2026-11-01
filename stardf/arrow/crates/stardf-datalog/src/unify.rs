@@ -328,8 +328,7 @@ pub struct SortContext {
 impl SortContext {
     /// A sort context from its three components.
     pub fn new(
-        order: SortOrder,
-        term_sorts: BTreeMap<NodeId, NodeId>,
+        order: SortOrder, term_sorts: BTreeMap<NodeId, NodeId>,
         op_result_sort: BTreeMap<NodeId, NodeId>,
     ) -> Self {
         Self {
@@ -371,10 +370,7 @@ impl SortContext {
 /// Transactional: on any outcome other than [`Unified::Ok`], `s` is left exactly
 /// as it was found. See the [module docs](self).
 pub fn unify(
-    dag: &mut TermDag,
-    a: NodeId,
-    b: NodeId,
-    s: &mut Subst,
+    dag: &mut TermDag, a: NodeId, b: NodeId, s: &mut Subst,
 ) -> Result<Unified, StorageError> {
     let checkpoint = s.try_clone()?;
     let result = unify_at(dag, a, b, s, 0, None);
@@ -389,11 +385,7 @@ pub fn unify(
 /// Identical to [`unify`] except that binding a metavariable additionally checks
 /// `ctx` for a sort violation. Transactional, exactly like [`unify`].
 pub fn unify_sorted(
-    dag: &mut TermDag,
-    a: NodeId,
-    b: NodeId,
-    s: &mut Subst,
-    ctx: &SortContext,
+    dag: &mut TermDag, a: NodeId, b: NodeId, s: &mut Subst, ctx: &SortContext,
 ) -> Result<Unified, StorageError> {
     let checkpoint = s.try_clone()?;
     let result = unify_at(dag, a, b, s, 0, Some(ctx));
@@ -412,12 +404,7 @@ pub fn unify_sorted(
 /// duplicating this whole function) keeps the two entry points from drifting
 /// apart.
 fn unify_at(
-    dag: &mut TermDag,
-    a: NodeId,
-    b: NodeId,
-    s: &mut Subst,
-    depth: u32,
-    ctx: Option<&SortContext>,
+    dag: &mut TermDag, a: NodeId, b: NodeId, s: &mut Subst, depth: u32, ctx: Option<&SortContext>,
 ) -> Result<Unified, StorageError> {
     let a = whnf(dag, s, a, depth)?;
     let b = whnf(dag, s, b, depth)?;
@@ -514,12 +501,7 @@ fn whnf(dag: &mut TermDag, s: &Subst, node: NodeId, depth: u32) -> Result<NodeId
 /// Bind metavariable `m` (denoted by the already-whnf'd `meta_node`) to `t`
 /// (already whnf'd at the same `depth`), or report why no binding is possible.
 fn bind_meta(
-    dag: &mut TermDag,
-    s: &mut Subst,
-    m: MetaId,
-    meta_node: NodeId,
-    t: NodeId,
-    depth: u32,
+    dag: &mut TermDag, s: &mut Subst, m: MetaId, meta_node: NodeId, t: NodeId, depth: u32,
     ctx: Option<&SortContext>,
 ) -> Result<Unified, StorageError> {
     // Binding a meta to itself is vacuous.
@@ -640,10 +622,7 @@ pub fn apply(dag: &mut TermDag, s: &Subst, node: NodeId) -> Result<NodeId, Stora
 
 /// The recursive core of [`apply`].
 fn apply_at(
-    dag: &mut TermDag,
-    s: &Subst,
-    node: NodeId,
-    depth: u32,
+    dag: &mut TermDag, s: &Subst, node: NodeId, depth: u32,
     memo: &mut BTreeMap<(NodeId, u32), NodeId>,
 ) -> Result<NodeId, StorageError> {
     if let Some(&cached) = memo.get(&(node, depth)) {
@@ -701,10 +680,7 @@ pub fn shift(dag: &mut TermDag, node: NodeId, by: u32) -> Result<NodeId, Storage
 
 /// The recursive core of [`shift`].
 fn shift_at(
-    dag: &mut TermDag,
-    node: NodeId,
-    by: u32,
-    cutoff: u32,
+    dag: &mut TermDag, node: NodeId, by: u32, cutoff: u32,
     memo: &mut BTreeMap<(NodeId, u32), NodeId>,
 ) -> Result<NodeId, StorageError> {
     if let Some(&cached) = memo.get(&(node, cutoff)) {
@@ -758,10 +734,7 @@ fn shift_down(dag: &mut TermDag, node: NodeId, by: u32) -> Result<Option<NodeId>
 
 /// The recursive core of [`shift_down`].
 fn shift_down_at(
-    dag: &mut TermDag,
-    node: NodeId,
-    by: u32,
-    cutoff: u32,
+    dag: &mut TermDag, node: NodeId, by: u32, cutoff: u32,
     memo: &mut BTreeMap<(NodeId, u32), Option<NodeId>>,
 ) -> Result<Option<NodeId>, StorageError> {
     if let Some(&cached) = memo.get(&(node, cutoff)) {

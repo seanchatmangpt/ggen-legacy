@@ -360,8 +360,7 @@ fn blob_decoded_len(g: &Graph, digest: &str) -> Result<Option<usize>, CompactRef
 
 /// Look up a blob's decoded bytes in the insertion-ordered table.
 fn blob_bytes<'a>(
-    g: &'a Graph,
-    digest: &str,
+    g: &'a Graph, digest: &str,
 ) -> Result<Option<Cow<'a, [u8]>>, CompactRefusedError> {
     purrdf_lex::assoc::get(&g.blobs, digest)
         .map(|entry| {
@@ -621,9 +620,7 @@ impl ProvenanceSubjects {
 /// Observe a packaging role in the frame's own segment, using the shared closed
 /// provenance shape rather than a reserved class name in ordinary content.
 pub(crate) fn packaging_role(
-    provenance: &ProvenanceSubjects,
-    frame_type: &str,
-    streamable: bool,
+    provenance: &ProvenanceSubjects, frame_type: &str, streamable: bool,
 ) -> bool {
     streamable && frame_type == "index" && provenance.has_compaction()
 }
@@ -633,9 +630,7 @@ fn iri_is(g: &Graph, id: usize, value: &str) -> bool {
 }
 
 fn literal_fields<'a>(
-    g: &'a Graph,
-    node: usize,
-    predicate: &str,
+    g: &'a Graph, node: usize, predicate: &str,
 ) -> Result<Vec<&'a str>, CompactRefusedError> {
     g.quads
         .iter()
@@ -663,8 +658,7 @@ fn literal_fields<'a>(
 /// Refuses malformed roots or source heads, and absent or ambiguous current
 /// compaction provenance.
 pub fn compaction_signature_roots(
-    g: &Graph,
-    source_heads: &[Vec<u8>],
+    g: &Graph, source_heads: &[Vec<u8>],
 ) -> Result<Vec<String>, CompactRefusedError> {
     let mut expected_heads = source_heads.to_vec();
     expected_heads.sort_unstable();
@@ -861,9 +855,7 @@ fn detached_signature_leaf(frame_id: &[u8], cose: &[u8]) -> Vec<u8> {
 /// # Errors
 /// Refuses malformed detached evidence through [`detached_signature_pairs`].
 pub fn detached_signature_proof(
-    g: &Graph,
-    frame_id: &[u8],
-    cose: &[u8],
+    g: &Graph, frame_id: &[u8], cose: &[u8],
 ) -> Result<Option<mmr::Proof>, CompactRefusedError> {
     let pairs = detached_signature_pairs(g)?;
     let Some(leaf_index) = pairs
@@ -881,12 +873,8 @@ pub fn detached_signature_proof(
 
 /// Build the leading streaming index + compaction provenance (§3.3, §13.3).
 fn streaming_index(
-    g: &Graph,
-    blob_order: &[String],
-    timestamp: &str,
-    sealed_digest: Option<&str>,
-    sealed_size: Option<usize>,
-    content_digest: Option<&str>,
+    g: &Graph, blob_order: &[String], timestamp: &str, sealed_digest: Option<&str>,
+    sealed_size: Option<usize>, content_digest: Option<&str>,
 ) -> Result<GraphBuilder, CompactRefusedError> {
     // The detached-authorship union (§10.1): fresh frame COSE from
     // `g.signatures` (when `g` is a raw tail — never a repack's own
@@ -1093,10 +1081,7 @@ fn shifted_suppressions(g: &Graph, base: usize) -> Vec<Suppression> {
 /// The derived producers are order-independent, so the emitted `dct` bytes equal
 /// `trained_dict`/`raw_content_dict` of the corpus regardless of iteration order.
 fn build_pack_dicts(
-    g: &Graph,
-    blob_order: &[String],
-    sealed_digest: Option<&str>,
-    plan: &DictPlan,
+    g: &Graph, blob_order: &[String], sealed_digest: Option<&str>, plan: &DictPlan,
 ) -> Result<Vec<(String, Vec<u8>)>, CompactRefusedError> {
     if plan.dicts.is_empty() {
         return Ok(Vec::new());
@@ -1273,8 +1258,7 @@ pub struct CompactionParams<'a, S = (purrdf_ed25519::SigningKey, String)> {
 /// A timestamp that is not a valid XSD dateTime with an explicit UTC timezone
 /// is refused before any pack is emitted.
 pub fn compact_streamable<S: PackagingSigner>(
-    data: &[u8],
-    params: CompactionParams<'_, S>,
+    data: &[u8], params: CompactionParams<'_, S>,
 ) -> Result<Vec<u8>, CompactRefusedError> {
     let CompactionParams {
         timestamp,

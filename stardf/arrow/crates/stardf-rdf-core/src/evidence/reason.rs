@@ -122,11 +122,7 @@ impl<T: core::ops::Deref<Target = TermValue>> RetainedReason<T> {
     /// # Errors
     /// Returns malformed RDF reason declarations or original storage refusal.
     pub fn from_parts<S: Admission + ?Sized>(
-        cause: T,
-        concern: T,
-        constraint: Option<T>,
-        vault: Option<T>,
-        watermark: Option<T>,
+        cause: T, concern: T, constraint: Option<T>, vault: Option<T>, watermark: Option<T>,
         memory: &mut Memory<'_, S>,
     ) -> Result<Self, ReasonError> {
         let identity = ReasonDescription {
@@ -314,8 +310,7 @@ impl ReasonDescription<'_> {
     /// # Errors
     /// Refuses malformed declarations or any native spelling/storage failure.
     pub fn identity<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> Result<ReasonId, ReasonError> {
         if !matches!(self.cause, TermValue::Iri(value)
             if purrdf_iri::is_absolute(value).is_ok_and(|absolute| absolute))
@@ -376,9 +371,7 @@ impl<F: FnMut(&[u8]) -> Result<(), StorageError>> TextOut for IdentitySink<F> {
 }
 
 fn absorb_term<S: Admission + ?Sized>(
-    hash: &mut RecordHasher,
-    term: &TermValue,
-    memory: &mut Memory<'_, S>,
+    hash: &mut RecordHasher, term: &TermValue, memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     let mut len = 0usize;
     let mut count = IdentitySink {

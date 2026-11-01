@@ -200,9 +200,7 @@ pub struct GtsImportWithBlobs {
 /// returns `rdf-ir-gts-blob-external`: its bytes are held outside this file, so
 /// no inline read can produce them.
 pub fn import_gts_events_with_blobs(
-    bytes: &[u8],
-    selectors: &[GtsBlobSelector<'_>],
-    limits: GtsBlobLimits,
+    bytes: &[u8], selectors: &[GtsBlobSelector<'_>], limits: GtsBlobLimits,
 ) -> Result<GtsImportWithBlobs, RdfDiagnostic> {
     let collector = BlobCollector::new(selectors, limits)?;
     let (bundle, collector) =
@@ -271,8 +269,7 @@ pub(crate) struct BlobCollector<'a> {
 }
 
 fn metadata_field<'a>(
-    meta: Option<&'a Value>,
-    key: &str,
+    meta: Option<&'a Value>, key: &str,
 ) -> Result<Option<&'a Value>, RdfDiagnostic> {
     let Some(Value::Map(fields)) = meta else {
         return Ok(None);
@@ -345,9 +342,7 @@ struct RefusedOccurrence {
 /// is not an identity, so it can never satisfy a digest selector. Selector
 /// values are validated non-empty, so absence and emptiness cannot collide.
 fn matches(
-    selector: GtsBlobSelector<'_>,
-    digest: Option<&str>,
-    key: Option<&SelectionKey>,
+    selector: GtsBlobSelector<'_>, digest: Option<&str>, key: Option<&SelectionKey>,
 ) -> bool {
     match selector {
         GtsBlobSelector::Digest(expected) => digest == Some(expected),
@@ -359,8 +354,7 @@ fn matches(
 
 impl<'a> BlobCollector<'a> {
     fn new(
-        selectors: &[GtsBlobSelector<'a>],
-        limits: GtsBlobLimits,
+        selectors: &[GtsBlobSelector<'a>], limits: GtsBlobLimits,
     ) -> Result<Self, RdfDiagnostic> {
         if selectors.len() > 1024
             || selectors.iter().enumerate().any(|(index, selector)| {
@@ -409,9 +403,7 @@ impl<'a> BlobCollector<'a> {
     /// it decides what is returned to the caller, while this one exists solely
     /// to keep the earlier copy bounded.
     pub(crate) fn check_metadata_before_retention(
-        &self,
-        digest: &str,
-        metadata: Option<&Value>,
+        &self, digest: &str, metadata: Option<&Value>,
     ) -> Result<(), RdfDiagnostic> {
         // The record only holds declarations seen BEFORE this event, but the
         // declaration that first makes a digest selected under a representation

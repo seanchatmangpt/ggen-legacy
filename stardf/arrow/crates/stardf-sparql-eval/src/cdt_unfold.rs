@@ -115,12 +115,8 @@ use crate::solution::{Solution, SolutionSeq, VarSchema};
 // Out of line by design: see the thin-dispatcher invariant on `eval::eval_node`.
 #[inline(never)]
 pub(crate) fn eval_unfold<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    inner: &GraphPattern,
-    expression: &Expression,
-    element: &Variable,
-    companion: Option<&Variable>,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, inner: &GraphPattern, expression: &Expression, element: &Variable,
+    companion: Option<&Variable>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let mut lift = Lift::at_admitted(node, &ctx.growth)?;
     let Some(seq) = lift.absorb(0, eval_evaluated(inner, ctx)?) else {
@@ -296,11 +292,8 @@ pub(crate) fn eval_unfold<D: DatasetView + Sync>(
 ///
 /// Any hard failure `expression` itself raises.
 fn composite_of<D: DatasetView + Sync>(
-    linked: &mut crate::vm::Linked<'_, D::Id>,
-    expression: &Expression,
-    mu: &Solution<D::Id>,
-    schema: &VarSchema,
-    ctx: &mut EvalCtx<'_, D>,
+    linked: &mut crate::vm::Linked<'_, D::Id>, expression: &Expression, mu: &Solution<D::Id>,
+    schema: &VarSchema, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<crate::composite_value::CompositeValue>, EvalError> {
     let Some(term) = linked.term(Some(expression), mu, schema, ctx)? else {
         return Ok(None);
@@ -319,9 +312,7 @@ fn composite_of<D: DatasetView + Sync>(
 }
 
 fn expansion_at(
-    value: &CdtValue,
-    position: usize,
-    workspace: &crate::WorkspaceCapability,
+    value: &CdtValue, position: usize, workspace: &crate::WorkspaceCapability,
 ) -> Result<(Option<crate::WorkspaceTerm>, Option<crate::WorkspaceTerm>), EvalError> {
     match value.contents() {
         CdtContents::List(items) => Ok((
@@ -359,9 +350,7 @@ fn expansion_at(
 ///
 /// [`ScratchInterner::intern_checked`]: crate::scratch::ScratchInterner::intern_checked
 fn bind_admitted<D: DatasetView + Sync>(
-    row: &mut Solution<D::Id>,
-    column: Option<usize>,
-    value: Option<crate::WorkspaceTerm>,
+    row: &mut Solution<D::Id>, column: Option<usize>, value: Option<crate::WorkspaceTerm>,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<bool, EvalError> {
     let (Some(column), Some(value)) = (column, value) else {
@@ -403,9 +392,7 @@ fn bind_admitted<D: DatasetView + Sync>(
 
 #[cfg(test)]
 fn bind<D: DatasetView + Sync>(
-    row: &mut Solution<D::Id>,
-    column: Option<usize>,
-    value: Option<&TermValue>,
+    row: &mut Solution<D::Id>, column: Option<usize>, value: Option<&TermValue>,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<bool, EvalError> {
     let value = value

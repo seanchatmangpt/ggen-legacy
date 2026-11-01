@@ -49,8 +49,7 @@ impl CsvwReadOutcome {
 /// resource-limit breaches, or an invalid RDF result. Recommendation-defined
 /// recoverable conditions are returned as [`CsvwWarning`] values.
 pub fn read_csvw(
-    input: &CsvwInput,
-    config: &CsvwConfig,
+    input: &CsvwInput, config: &CsvwConfig,
 ) -> Result<CsvwReadOutcome, ProjectionError> {
     let mut metadata = load_metadata(input, config)?;
     annotate_tables(&mut metadata.group, input, config, &mut metadata.warnings)?;

@@ -42,10 +42,7 @@ type ValueQuad = (TermValue, TermValue, TermValue, Option<TermValue>);
 /// `None` axis unbound) — independent of any pack/dictionary machinery under
 /// test.
 fn brute_force_pattern(
-    dataset: &RdfDataset,
-    s: Option<&TermValue>,
-    p: Option<&TermValue>,
-    o: Option<&TermValue>,
+    dataset: &RdfDataset, s: Option<&TermValue>, p: Option<&TermValue>, o: Option<&TermValue>,
 ) -> FastSet<ValueQuad> {
     dataset
         .quads()
@@ -68,10 +65,7 @@ fn brute_force_pattern(
 /// `DatasetView::term_id_by_value` seam does for EVERY pattern position
 /// (subject, predicate, or object alike — see the module docs).
 fn pack_pattern(
-    dict: &PackDict,
-    triples: &TriplesRef<'_>,
-    s: Option<&TermValue>,
-    p: Option<&TermValue>,
+    dict: &PackDict, triples: &TriplesRef<'_>, s: Option<&TermValue>, p: Option<&TermValue>,
     o: Option<&TermValue>,
 ) -> FastSet<ValueQuad> {
     let s_id = s.map(|v| dict.id_by_value(v).expect("subject constant resolves"));

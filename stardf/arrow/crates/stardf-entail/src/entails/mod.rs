@@ -492,10 +492,7 @@ impl Prepared {
 /// report an inconsistent run refuses with, because a caller reading a refusal's certificate
 /// is owed the same true statement as a caller reading a verdict's.
 fn prepare(
-    premise: &RdfDataset,
-    regime: Regime,
-    imports: &ImportMap,
-    options: &EvalOptions,
+    premise: &RdfDataset, regime: Regime, imports: &ImportMap, options: &EvalOptions,
 ) -> Result<Prepared, EntailError> {
     let plan = plan_for(regime)?;
     let merged = imports::resolve(premise, imports)?;
@@ -657,10 +654,7 @@ pub(crate) fn resolved_imports_error<E>(error: EntailError<E>) -> EntailError<E>
 /// # Ok::<(), purrdf_lex::allocation::StorageError>(())
 /// ```
 pub fn certain_answers(
-    premise: &RdfDataset,
-    bgp: &[QTriple],
-    regime: Regime,
-    imports: &ImportMap,
+    premise: &RdfDataset, bgp: &[QTriple], regime: Regime, imports: &ImportMap,
 ) -> Result<CertainAnswers, EntailError> {
     certain_answers_with(premise, bgp, regime, imports, &EvalOptions::default())
 }
@@ -678,10 +672,7 @@ pub fn certain_answers(
 ///
 /// As [`certain_answers`].
 pub fn certain_answers_with(
-    premise: &RdfDataset,
-    bgp: &[QTriple],
-    regime: Regime,
-    imports: &ImportMap,
+    premise: &RdfDataset, bgp: &[QTriple], regime: Regime, imports: &ImportMap,
     options: &EvalOptions,
 ) -> Result<CertainAnswers, EntailError> {
     let prepared = prepare(premise, regime, imports, options)?;
@@ -783,9 +774,7 @@ pub fn certain_answers_with(
 /// there is — so in either case the row set holds every certain answer and IS exhaustive.
 /// `Undecided` carries its reason as the one limit, the same value [`entails`] renders.
 fn verdict_answers(
-    regime: Regime,
-    outcome: &EntailmentOutcome,
-    report: ReasoningReport,
+    regime: Regime, outcome: &EntailmentOutcome, report: ReasoningReport,
 ) -> CertainAnswers {
     let (rows, limits) = match outcome {
         EntailmentOutcome::Entailed(_) => (vec![Vec::new()], Vec::new()),
@@ -816,10 +805,7 @@ fn verdict_answers(
 /// decides is a different question, and this reports that fact instead of searching for its
 /// answer.
 fn unreachable_lanes(
-    premise: &RdfDataset,
-    question: &AsGraph,
-    regime: Regime,
-    closure: &Closure,
+    premise: &RdfDataset, question: &AsGraph, regime: Regime, closure: &Closure,
     options: &EvalOptions,
 ) -> Vec<UndecidedReason> {
     // Every triple is outstanding: nothing on this path discharged anything, so every lane is
@@ -1005,12 +991,8 @@ fn substituted(pat: &Pat, substitution: &BTreeMap<String, TermValue>) -> Option<
 /// [`EntailError::MatchBudget`] from either match, and whatever the fold's own re-chases
 /// refuse with.
 fn decide(
-    premise: &RdfDataset,
-    conclusion: &RdfDataset,
-    regime: Regime,
-    closure: Closure,
-    report: &ReasoningReport,
-    options: &EvalOptions,
+    premise: &RdfDataset, conclusion: &RdfDataset, regime: Regime, closure: Closure,
+    report: &ReasoningReport, options: &EvalOptions,
 ) -> Result<EntailmentOutcome, EntailError> {
     let pats: Vec<PatTriple> = conclusion_patterns(conclusion);
     Ok(match homomorphism::find_one(pats, &closure)? {
@@ -1099,10 +1081,7 @@ fn decide(
 /// # Ok::<(), purrdf_lex::allocation::StorageError>(())
 /// ```
 pub fn entails(
-    premise: &RdfDataset,
-    conclusion: &RdfDataset,
-    regime: Regime,
-    imports: &ImportMap,
+    premise: &RdfDataset, conclusion: &RdfDataset, regime: Regime, imports: &ImportMap,
 ) -> Result<EntailmentCertificate, EntailError> {
     entails_with(
         premise,
@@ -1120,10 +1099,7 @@ pub fn entails(
 ///
 /// As [`entails()`].
 pub fn entails_with(
-    premise: &RdfDataset,
-    conclusion: &RdfDataset,
-    regime: Regime,
-    imports: &ImportMap,
+    premise: &RdfDataset, conclusion: &RdfDataset, regime: Regime, imports: &ImportMap,
     options: &EvalOptions,
 ) -> Result<EntailmentCertificate, EntailError> {
     // Destructured rather than held whole: the closure MOVES into a homomorphism warrant
@@ -1156,12 +1132,8 @@ pub fn entails_with(
 /// letting its refusal end the fold would withhold an answer another lane was about to reach.
 /// The refusals are read only if the surviving residual does not map.
 fn fold(
-    premise: &RdfDataset,
-    conclusion: &RdfDataset,
-    regime: Regime,
-    closure: Closure,
-    report: &ReasoningReport,
-    options: &EvalOptions,
+    premise: &RdfDataset, conclusion: &RdfDataset, regime: Regime, closure: Closure,
+    report: &ReasoningReport, options: &EvalOptions,
 ) -> Result<EntailmentOutcome, EntailError> {
     let triples = default_graph_triples(conclusion);
     let mut pending: BTreeSet<usize> = (0..triples.len()).collect();
@@ -1255,10 +1227,7 @@ fn fold(
 /// a `refutation` answer spelled `refutation` rather than renamed by a fold that happened to
 /// run five lanes to reach it.
 fn compose(
-    regime: Regime,
-    parts: Vec<EntailmentWarrant>,
-    binding: Binding,
-    closure: Closure,
+    regime: Regime, parts: Vec<EntailmentWarrant>, binding: Binding, closure: Closure,
 ) -> EntailmentWarrant {
     let mut parts = parts;
     match parts.len() {
@@ -2595,8 +2564,7 @@ mod term_walk_tests {
     }
 
     fn reference_substituted(
-        pat: &Pat,
-        substitution: &BTreeMap<String, TermValue>,
+        pat: &Pat, substitution: &BTreeMap<String, TermValue>,
     ) -> Option<TermValue> {
         Some(match pat {
             Pat::Ground(term) => term.clone(),

@@ -1322,13 +1322,9 @@ impl ReasoningReport {
     /// ```
     #[must_use]
     pub fn new(
-        regime: Regime,
-        rules_fired: Vec<(RuleId, u64)>,
-        boundaries: Vec<Boundary>,
-        budget: BudgetReport,
-        inconsistency: Option<InconsistencyWitness>,
-        withheld_surrogates: u64,
-        termination: Option<TerminationCertificate>,
+        regime: Regime, rules_fired: Vec<(RuleId, u64)>, boundaries: Vec<Boundary>,
+        budget: BudgetReport, inconsistency: Option<InconsistencyWitness>,
+        withheld_surrogates: u64, termination: Option<TerminationCertificate>,
     ) -> Self {
         Self {
             regime,
@@ -1354,9 +1350,7 @@ impl ReasoningReport {
 
     /// Assemble the report for a run of `regime` over `ds` that measured `stats`.
     pub(crate) fn of_run<D: DatasetView>(
-        ds: &D,
-        regime: Regime,
-        stats: &RunStats,
+        ds: &D, regime: Regime, stats: &RunStats,
     ) -> Result<Self, crate::EntailError<D::ReadError>> {
         Self::of_chase_run(ds, regime, stats, None)
     }
@@ -1376,10 +1370,7 @@ impl ReasoningReport {
     /// [`EntailError::Inconsistent`](crate::EntailError), inside the
     /// [`InconsistentRun`] that also carries the witness.
     pub(crate) fn of_inconsistent_run<D: DatasetView>(
-        ds: &D,
-        regime: Regime,
-        stats: &RunStats,
-        witness: InconsistencyWitness,
+        ds: &D, regime: Regime, stats: &RunStats, witness: InconsistencyWitness,
     ) -> Result<Self, crate::EntailError<D::ReadError>> {
         Self::of_chase_run(ds, regime, stats, Some(witness))
     }
@@ -1390,10 +1381,7 @@ impl ReasoningReport {
     /// ([`RunStats::options`]), so a closure computed under raised limits names a
     /// different calculus from one computed under the defaults.
     fn of_chase_run<D: DatasetView>(
-        ds: &D,
-        regime: Regime,
-        stats: &RunStats,
-        inconsistency: Option<InconsistencyWitness>,
+        ds: &D, regime: Regime, stats: &RunStats, inconsistency: Option<InconsistencyWitness>,
     ) -> Result<Self, crate::EntailError<D::ReadError>> {
         Ok(Self {
             contract_hash: calculus_contract_hash_with(regime, &stats.options),
@@ -1804,9 +1792,7 @@ fn fired_rules(regime: Regime, stats: &RunStats) -> Vec<(RuleId, u64)> {
 /// faithfully, triple terms and literals included, so there is nothing it failed to
 /// handle. That is also what keeps [`Completeness::Exact`] honest for that regime.
 fn boundaries<D: DatasetView>(
-    ds: &D,
-    regime: Regime,
-    stats: &RunStats,
+    ds: &D, regime: Regime, stats: &RunStats,
 ) -> Result<Vec<Boundary>, crate::EntailError<D::ReadError>> {
     let survey = match regime {
         Regime::Rdf | Regime::Rdfs | Regime::OwlRl | Regime::D => DatasetSurvey::of(ds)?,

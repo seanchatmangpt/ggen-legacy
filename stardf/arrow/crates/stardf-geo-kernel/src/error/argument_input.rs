@@ -59,8 +59,7 @@ impl ArgumentInputError {
     /// Native storage failure replaces no successfully published diagnostic.
     #[must_use]
     pub fn capture(
-        value: &TermValue,
-        reason: ArgumentInputReason,
+        value: &TermValue, reason: ArgumentInputReason,
         observer: Option<&mut dyn crate::MetricWorkObserver>,
     ) -> super::GeoError {
         let mut progress = crate::context::WorkProgress::integer(observer);

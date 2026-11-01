@@ -16,9 +16,7 @@ struct ConstantImage<'a> {
 }
 
 fn constant_image<'a>(
-    edge: &'a PreparedEdge,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    edge: &'a PreparedEdge, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Option<ConstantImage<'a>>, GeoError> {
     if let Some(point) = constant_point(edge, context, progress)? {
         return Ok(Some(ConstantImage {
@@ -99,9 +97,7 @@ fn constant_image<'a>(
 }
 
 pub(super) fn intersections(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    context: &mut MetricContext,
+    left: &PreparedEdge, right: &PreparedEdge, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<ContactList>, GeoError> {
     let a = constant_image(left, context, progress)?;
@@ -136,12 +132,8 @@ pub(super) fn intersections(
 }
 
 fn intersections_with_points(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    a: Option<&LonLat>,
-    b: Option<&LonLat>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    left: &PreparedEdge, right: &PreparedEdge, a: Option<&LonLat>, b: Option<&LonLat>,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Option<ContactList>, GeoError> {
     let ((Some(point), _) | (None, Some(point))) = (a, b) else {
         return Ok(None);
@@ -206,9 +198,7 @@ fn intersections_with_points(
 }
 
 pub(super) fn constant_point<'a>(
-    edge: &'a PreparedEdge,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    edge: &'a PreparedEdge, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Option<&'a LonLat>, GeoError> {
     let Some(start) = edge.start() else {
         return Ok(None);
@@ -253,11 +243,8 @@ pub(super) fn constant_point<'a>(
 }
 
 fn contacts(
-    point: &LonLat,
-    left_constant: bool,
-    parameters: crate::atlas::point::ParameterIntervals,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    point: &LonLat, left_constant: bool, parameters: crate::atlas::point::ParameterIntervals,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<ContactList, GeoError> {
     admit_contact_count(parameters.len() as u64, context)?;
     context.with_metadata(progress, |context, progress, retained| {
@@ -292,9 +279,7 @@ fn contacts(
 }
 
 fn linear_parameters(
-    line: &SourceLinearEdge,
-    point: &LonLat,
-    context: &mut MetricContext,
+    line: &SourceLinearEdge, point: &LonLat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<crate::atlas::point::ParameterIntervals, GeoError> {
     context.with_metadata(progress, |context, progress, retained| {
@@ -379,10 +364,7 @@ mod tests {
     use crate::{AzimuthLengthArc, Metres};
 
     fn azimuth_arc(
-        start: (i64, i64),
-        azimuth: i64,
-        length: i64,
-        context: &mut MetricContext,
+        start: (i64, i64), azimuth: i64, length: i64, context: &mut MetricContext,
     ) -> PreparedEdge {
         PreparedEdge::AzimuthLength(crate::PreparedValue::resident(
             AzimuthLengthArc::new(

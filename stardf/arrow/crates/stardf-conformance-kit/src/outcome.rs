@@ -156,8 +156,7 @@ struct Description {
 
 impl Description {
     fn new(
-        iri: impl Into<String>,
-        mut types: Vec<String>,
+        iri: impl Into<String>, mut types: Vec<String>,
         mut properties: Vec<(String, DescriptionTerm)>,
     ) -> Self {
         types.sort();
@@ -209,9 +208,7 @@ impl<Role> Described<Role> {
     /// Describe the resource `iri` by its classes and `(predicate, term)` pairs.
     #[must_use]
     pub fn new(
-        iri: impl Into<String>,
-        types: Vec<String>,
-        properties: Vec<(String, DescriptionTerm)>,
+        iri: impl Into<String>, types: Vec<String>, properties: Vec<(String, DescriptionTerm)>,
     ) -> Self {
         Self(
             Description::new(iri, types, properties),
@@ -281,9 +278,7 @@ impl Report {
     /// # Errors
     /// [`GradeError::DuplicateAssertion`] when two records share a case IRI.
     pub fn new(
-        subject: SubjectDescription,
-        assertor: AssertorDescription,
-        records: Vec<ReportRecord>,
+        subject: SubjectDescription, assertor: AssertorDescription, records: Vec<ReportRecord>,
     ) -> Result<Self, GradeError> {
         Self::with_subjects(assertor, vec![SubjectReport { subject, records }])
     }
@@ -297,8 +292,7 @@ impl Report {
     /// one case IRI (whatever their profile and surface); `Malformed` when no
     /// subject is given or two subjects share an IRI.
     pub fn with_subjects(
-        assertor: AssertorDescription,
-        mut subjects: Vec<SubjectReport>,
+        assertor: AssertorDescription, mut subjects: Vec<SubjectReport>,
     ) -> Result<Self, GradeError> {
         if subjects.is_empty() {
             return Err(GradeError::Malformed(

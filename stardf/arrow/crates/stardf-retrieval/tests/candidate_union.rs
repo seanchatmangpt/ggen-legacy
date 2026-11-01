@@ -77,8 +77,7 @@ fn mocks() -> PropertyFunctionRegistry<'static> {
 }
 
 fn ranked_literals(
-    ranks: &[TermValue],
-    source: purrdf_retrieval::RankSource,
+    ranks: &[TermValue], source: purrdf_retrieval::RankSource,
 ) -> PropertyFunctionRegistry<'static> {
     let mut registry = PropertyFunctionRegistry::new();
     let mut declaration = ranked(
@@ -388,9 +387,7 @@ impl PropertyFunction for ArgumentProducer {
         2
     }
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        _: Option<u64>,
+        &self, args: &PfArgs<'_>, _: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -481,8 +478,7 @@ fn a_requested_prefix_above_the_producer_cap_is_reported_unfulfilled_not_exhaust
 }
 
 fn assembled(
-    rows: Vec<(u64, Term, purrdf_retrieval::RowBlock)>,
-    ending: StreamEnding,
+    rows: Vec<(u64, Term, purrdf_retrieval::RowBlock)>, ending: StreamEnding,
     duplicates: DuplicatePolicy,
 ) -> (CandidateExecutionResult<'static>, CandidateDepths) {
     let stratum = iri("scripted");
@@ -751,9 +747,7 @@ impl PropertyFunction for FaultingProducer {
         }
     }
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        _: Option<u64>,
+        &self, args: &PfArgs<'_>, _: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,

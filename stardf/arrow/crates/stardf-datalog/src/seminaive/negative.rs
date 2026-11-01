@@ -53,8 +53,7 @@ where
 {
     /// Freeze bounds over the original selected source once per probe input.
     pub(super) fn new<D: TermDictionary<Id = I>>(
-        rel: &RelationStore<D, N>,
-        values: [Option<I>; N],
+        rel: &RelationStore<D, N>, values: [Option<I>; N],
     ) -> Self {
         let bound = match (values[POSITION_SUBJECT], values[POSITION_OBJECT]) {
             (Some(subject), Some(object)) => Bound::Both(subject, object),
@@ -78,9 +77,7 @@ where
     /// Group atoms reserve every partition and row; a standalone atom's initial
     /// probe already reserved its first partition and each partition's first row.
     pub(super) fn next<const ALL: bool, D: TermDictionary<Id = I>>(
-        &mut self,
-        rel: &RelationStore<D, N>,
-        governor: &mut StepGovernor<'_>,
+        &mut self, rel: &RelationStore<D, N>, governor: &mut StepGovernor<'_>,
     ) -> ScanStep<I, N> {
         loop {
             if self.rows.is_none() {
@@ -189,12 +186,8 @@ where
     /// The initial probe also reserves its first partition and first matching row;
     /// further partitions and further rows each reserve their original credit.
     pub(super) fn advance<D: TermDictionary<Id = I>, E>(
-        &mut self,
-        atom: &NegatedAtom<N>,
-        solution: &SlotSolution<I, N>,
-        rel: &RelationStore<D, N>,
-        governor: &mut StepGovernor<'_>,
-        mut visit: impl FnMut(RowId) -> Result<bool, E>,
+        &mut self, atom: &NegatedAtom<N>, solution: &SlotSolution<I, N>, rel: &RelationStore<D, N>,
+        governor: &mut StepGovernor<'_>, mut visit: impl FnMut(RowId) -> Result<bool, E>,
         source_error: impl Fn(D::Error) -> E,
     ) -> Result<bool, E> {
         let rel = rel.read_source(self.source);
@@ -289,11 +282,8 @@ where
     /// Retain signed alternatives across pages and attach the decision exactly once.
     /// The execution owner keeps the same substitution and evidence workspace alive.
     pub(super) fn advance<D: TermDictionary<Id = I>>(
-        &mut self,
-        atom: &NegatedAtom<N>,
-        solution: &mut SlotSolution<I, N>,
-        rel: &RelationStore<D, N>,
-        governor: &mut StepGovernor<'_>,
+        &mut self, atom: &NegatedAtom<N>, solution: &mut SlotSolution<I, N>,
+        rel: &RelationStore<D, N>, governor: &mut StepGovernor<'_>,
         evidence: &mut Option<&mut dyn super::evidence::RuleEvidence<D, N>>,
     ) -> Result<(), super::EvalError<D::Error>> {
         use super::EvalError;
@@ -395,10 +385,8 @@ mod tests {
     }
 
     fn check_cuts<const N: usize>(
-        atom: &NegatedAtom<N>,
-        solution: &SlotSolution<u64, N>,
-        rel: &RelationStore<HostDictionary, N>,
-        stop_after: Option<usize>,
+        atom: &NegatedAtom<N>, solution: &SlotSolution<u64, N>,
+        rel: &RelationStore<HostDictionary, N>, stop_after: Option<usize>,
     ) -> (usize, u64)
     where
         Arity<N>: StoreShape<N>,

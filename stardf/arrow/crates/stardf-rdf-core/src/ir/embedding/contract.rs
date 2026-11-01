@@ -148,8 +148,7 @@ pub fn canonical_tlv(bytes: &[u8]) -> Result<TlvIter<'_>, EmbeddingError> {
 /// block has none: the one lookup of an optional field, after the whole block has
 /// been validated as canonical.
 pub(super) fn optional_tlv(
-    bytes: &[u8],
-    tag: u16,
+    bytes: &[u8], tag: u16,
 ) -> Result<Option<TlvEntryRef<'_>>, EmbeddingError> {
     Ok(canonical_tlv(bytes)?.find(|entry| entry.tag == tag))
 }
@@ -158,10 +157,7 @@ pub(super) fn optional_tlv(
 /// requires: absent is the missing field `context`, and present it must carry
 /// `wire` and be marked critical.
 pub(super) fn required_tlv<'a>(
-    bytes: &'a [u8],
-    tag: u16,
-    wire: TlvWireType,
-    context: &'static str,
+    bytes: &'a [u8], tag: u16, wire: TlvWireType, context: &'static str,
 ) -> Result<TlvEntryRef<'a>, EmbeddingError> {
     let entry = optional_tlv(bytes, tag)?.ok_or(EmbeddingError::Missing(context))?;
     if entry.wire_type != wire || !entry.critical {
@@ -178,10 +174,7 @@ pub(super) fn required_tlv<'a>(
 /// tags and their exact wire types. This helper supplies the semantic equality
 /// check shared by contract, target, and index validation paths.
 pub(crate) fn validate_sha256_field(
-    bytes: &[u8],
-    payload_tag: u16,
-    digest_tag: u16,
-    kind: DigestKind,
+    bytes: &[u8], payload_tag: u16, digest_tag: u16, kind: DigestKind,
 ) -> Result<(), EmbeddingError> {
     let mut payload = None;
     let mut stored = None;
@@ -232,11 +225,8 @@ pub struct ArtifactIdentity {
 impl ArtifactIdentity {
     /// Constructs a validated artifact identity.
     pub fn new(
-        identifier: impl Into<String>,
-        media_type: impl Into<String>,
-        digest: ContentDigest,
-        revision: Option<Vec<u8>>,
-        kind: ArtifactIdentityKind,
+        identifier: impl Into<String>, media_type: impl Into<String>, digest: ContentDigest,
+        revision: Option<Vec<u8>>, kind: ArtifactIdentityKind,
     ) -> Result<Self, EmbeddingError> {
         let identity = Self {
             identifier: identifier.into(),
@@ -332,10 +322,8 @@ pub struct StageImplementation {
 impl StageImplementation {
     /// Constructs and validates an applied stage implementation.
     pub fn new(
-        identifier: impl Into<String>,
-        digest: ContentDigest,
-        parameter_encoding: impl Into<String>,
-        parameters: Vec<u8>,
+        identifier: impl Into<String>, digest: ContentDigest,
+        parameter_encoding: impl Into<String>, parameters: Vec<u8>,
     ) -> Result<Self, EmbeddingError> {
         let implementation = Self {
             identifier: identifier.into(),
@@ -605,8 +593,7 @@ pub enum DimensionalityPolicy {
 impl DimensionalityPolicy {
     /// Constructs a fixed-dimensional policy.
     pub fn fixed(
-        dimension: u32,
-        postprocessing: PrefixPostprocessing,
+        dimension: u32, postprocessing: PrefixPostprocessing,
     ) -> Result<Self, EmbeddingError> {
         let policy = Self::Fixed(EffectivePrefix {
             dimension,
@@ -916,8 +903,7 @@ pub struct EffectiveSpace {
 /// text holding a NUL byte is refused as invalid text. Every identifier and text
 /// field of the contract and of the metadata is checked by this one rule.
 pub(super) fn validate_identifier(
-    value: &str,
-    context: &'static str,
+    value: &str, context: &'static str,
 ) -> Result<(), EmbeddingError> {
     if value.is_empty() {
         return Err(EmbeddingError::Missing(context));
@@ -944,11 +930,7 @@ pub(super) fn validate_identifier(
 /// is longer than a four-byte length can state, or when the block would grow
 /// past [`MAX_TLV_BLOCK_LEN`].
 pub fn push_tlv(
-    output: &mut Vec<u8>,
-    tag: u16,
-    wire_type: TlvWireType,
-    critical: bool,
-    value: &[u8],
+    output: &mut Vec<u8>, tag: u16, wire_type: TlvWireType, critical: bool, value: &[u8],
 ) -> Result<(), EmbeddingError> {
     validate_tlv_value(wire_type, value, 1)?;
     let value_length = u32::try_from(value.len()).map_err(|_| EmbeddingError::CountLimit {
@@ -1055,9 +1037,7 @@ pub(crate) fn validate_tlv_block(bytes: &[u8], depth: u8) -> Result<(), Embeddin
 }
 
 fn validate_tlv_value(
-    wire_type: TlvWireType,
-    value: &[u8],
-    depth: u8,
+    wire_type: TlvWireType, value: &[u8], depth: u8,
 ) -> Result<(), EmbeddingError> {
     match wire_type {
         TlvWireType::Bytes => Ok(()),

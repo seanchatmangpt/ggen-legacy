@@ -25,8 +25,7 @@ use purrdf_xsd::datatype::XSD_DOUBLE;
 use purrdf_xsd::datatype::XSD_INTEGER;
 
 pub(super) fn expand_document(
-    mut document: JsonValue,
-    context: &CompiledJsonLdContext,
+    mut document: JsonValue, context: &CompiledJsonLdContext,
 ) -> Result<Document, RdfDiagnostic> {
     // The reserved-label pre-pass reads the whole parsed document, for the same
     // reason the lowering pass does: a minted blank label must not collide with one
@@ -66,8 +65,7 @@ pub(super) fn expand_document(
 /// test is exact). Nested contexts are deliberately out of reach: a `@context` inside a
 /// `@graph` member governs that member, never the document.
 pub(super) fn document_base(
-    document: &JsonValue,
-    context: &CompiledJsonLdContext,
+    document: &JsonValue, context: &CompiledJsonLdContext,
 ) -> Result<Option<String>, RdfDiagnostic> {
     let entries: &[JsonValue] = match document {
         JsonValue::Array(entries) => entries,
@@ -197,11 +195,7 @@ impl Builder {
     }
 
     fn add_property(
-        &mut self,
-        graph: Option<&str>,
-        subject: String,
-        property: String,
-        value: Value,
+        &mut self, graph: Option<&str>, subject: String, property: String, value: Value,
     ) {
         let mut node = Node::new(subject);
         node.properties.entry(property).or_default().push(value);
@@ -226,10 +220,7 @@ impl Builder {
     /// node members. Blank-node labels are minted in walk order, so reordering these
     /// would silently relabel every anonymous node in the output.
     fn expand_graph_entry(
-        &mut self,
-        entry: &mut JsonValue,
-        graph: Option<&str>,
-        context: &CompiledJsonLdContext,
+        &mut self, entry: &mut JsonValue, graph: Option<&str>, context: &CompiledJsonLdContext,
     ) -> Result<(), RdfDiagnostic> {
         // `object_context` borrows the PARENT context, not the entry, so the active
         // context outlives the entry borrow that produced it.
@@ -353,19 +344,13 @@ impl Builder {
     /// entire point. Cloning the bounded case to keep one code path is a better trade
     /// than a second expander that could drift from this one.
     fn expand_graph_entry_in_place(
-        &mut self,
-        entry: &JsonValue,
-        graph: Option<&str>,
-        context: &CompiledJsonLdContext,
+        &mut self, entry: &JsonValue, graph: Option<&str>, context: &CompiledJsonLdContext,
     ) -> Result<(), RdfDiagnostic> {
         self.expand_graph_entry(&mut entry.clone(), graph, context)
     }
 
     fn expand_node(
-        &mut self,
-        value: &JsonValue,
-        graph: Option<&str>,
-        context: &CompiledJsonLdContext,
+        &mut self, value: &JsonValue, graph: Option<&str>, context: &CompiledJsonLdContext,
         disposition: NodeDisposition,
     ) -> Result<Node, RdfDiagnostic> {
         let object = value
@@ -411,10 +396,7 @@ impl Builder {
     }
 
     fn expand_node_members(
-        &mut self,
-        node: &mut Node,
-        members: &[ExpandedMember<'_>],
-        graph: Option<&str>,
+        &mut self, node: &mut Node, members: &[ExpandedMember<'_>], graph: Option<&str>,
         context: &CompiledJsonLdContext,
     ) -> Result<(), RdfDiagnostic> {
         for entry in members {
@@ -470,12 +452,8 @@ impl Builder {
     }
 
     fn expand_property(
-        &mut self,
-        node: &mut Node,
-        graph: Option<&str>,
-        context: &CompiledJsonLdContext,
-        entry: &ExpandedMember<'_>,
-        reverse_block: bool,
+        &mut self, node: &mut Node, graph: Option<&str>, context: &CompiledJsonLdContext,
+        entry: &ExpandedMember<'_>, reverse_block: bool,
     ) -> Result<(), RdfDiagnostic> {
         let definition = context.term(entry.original);
         let scoped = context.scoped_context(entry.original)?;
@@ -505,10 +483,7 @@ impl Builder {
     }
 
     fn expand_property_values(
-        &mut self,
-        raw: &JsonValue,
-        graph: Option<&str>,
-        context: &CompiledJsonLdContext,
+        &mut self, raw: &JsonValue, graph: Option<&str>, context: &CompiledJsonLdContext,
         definition: Option<&JsonLdTermDefinition>,
     ) -> Result<Vec<Value>, RdfDiagnostic> {
         if definition.is_some_and(|definition| {
@@ -572,10 +547,7 @@ impl Builder {
     }
 
     fn expand_value(
-        &mut self,
-        raw: &JsonValue,
-        graph: Option<&str>,
-        context: &CompiledJsonLdContext,
+        &mut self, raw: &JsonValue, graph: Option<&str>, context: &CompiledJsonLdContext,
         definition: Option<&JsonLdTermDefinition>,
     ) -> Result<Option<Value>, RdfDiagnostic> {
         if raw.is_null() {
@@ -699,10 +671,7 @@ impl Builder {
     }
 
     fn expand_graph_container(
-        &mut self,
-        raw: &JsonValue,
-        graph: Option<&str>,
-        context: &CompiledJsonLdContext,
+        &mut self, raw: &JsonValue, graph: Option<&str>, context: &CompiledJsonLdContext,
         definition: Option<&JsonLdTermDefinition>,
     ) -> Result<Vec<Value>, RdfDiagnostic> {
         let definition = definition.expect("@graph container requires a term definition");
@@ -753,10 +722,7 @@ impl Builder {
     }
 
     fn expand_graph_contents(
-        &mut self,
-        raw: &JsonValue,
-        graph_id: &str,
-        context: &CompiledJsonLdContext,
+        &mut self, raw: &JsonValue, graph_id: &str, context: &CompiledJsonLdContext,
     ) -> Result<(), RdfDiagnostic> {
         self.graphs.entry(Some(graph_id.to_owned())).or_default();
         for entry in non_null_values(raw) {
@@ -766,10 +732,7 @@ impl Builder {
     }
 
     fn expand_triple(
-        &mut self,
-        raw: &JsonValue,
-        graph: Option<&str>,
-        context: &CompiledJsonLdContext,
+        &mut self, raw: &JsonValue, graph: Option<&str>, context: &CompiledJsonLdContext,
     ) -> Result<Triple, RdfDiagnostic> {
         let object = raw
             .as_object()
@@ -823,10 +786,7 @@ impl Builder {
     }
 
     fn expand_id_map(
-        &mut self,
-        raw: &JsonValue,
-        graph: Option<&str>,
-        context: &CompiledJsonLdContext,
+        &mut self, raw: &JsonValue, graph: Option<&str>, context: &CompiledJsonLdContext,
         definition: Option<&JsonLdTermDefinition>,
     ) -> Result<Vec<Value>, RdfDiagnostic> {
         let object = raw
@@ -855,10 +815,7 @@ impl Builder {
     }
 
     fn expand_type_map(
-        &mut self,
-        raw: &JsonValue,
-        graph: Option<&str>,
-        context: &CompiledJsonLdContext,
+        &mut self, raw: &JsonValue, graph: Option<&str>, context: &CompiledJsonLdContext,
         definition: Option<&JsonLdTermDefinition>,
     ) -> Result<Vec<Value>, RdfDiagnostic> {
         let object = raw
@@ -885,10 +842,7 @@ impl Builder {
     }
 
     fn expand_index_map(
-        &mut self,
-        raw: &JsonValue,
-        graph: Option<&str>,
-        context: &CompiledJsonLdContext,
+        &mut self, raw: &JsonValue, graph: Option<&str>, context: &CompiledJsonLdContext,
         definition: Option<&JsonLdTermDefinition>,
     ) -> Result<Vec<Value>, RdfDiagnostic> {
         let object = raw
@@ -927,13 +881,8 @@ impl Builder {
         reason = "container expansion keeps independent id, type, and index injections explicit"
     )]
     fn expand_container_node(
-        &mut self,
-        raw: &JsonValue,
-        graph: Option<&str>,
-        context: &CompiledJsonLdContext,
-        definition: Option<&JsonLdTermDefinition>,
-        id: Option<&str>,
-        rdf_type: Option<&str>,
+        &mut self, raw: &JsonValue, graph: Option<&str>, context: &CompiledJsonLdContext,
+        definition: Option<&JsonLdTermDefinition>, id: Option<&str>, rdf_type: Option<&str>,
         index: Option<(&str, &str)>,
     ) -> Result<Value, RdfDiagnostic> {
         let mut object = match raw {
@@ -984,9 +933,7 @@ impl Builder {
 }
 
 fn expand_language_map(
-    raw: &JsonValue,
-    context: &CompiledJsonLdContext,
-    definition: Option<&JsonLdTermDefinition>,
+    raw: &JsonValue, context: &CompiledJsonLdContext, definition: Option<&JsonLdTermDefinition>,
 ) -> Result<Vec<Value>, RdfDiagnostic> {
     let object = raw
         .as_object()
@@ -1010,9 +957,7 @@ fn expand_language_map(
 }
 
 fn expand_scalar(
-    raw: &JsonValue,
-    context: &CompiledJsonLdContext,
-    definition: Option<&JsonLdTermDefinition>,
+    raw: &JsonValue, context: &CompiledJsonLdContext, definition: Option<&JsonLdTermDefinition>,
 ) -> Result<Value, RdfDiagnostic> {
     if let Some(mapping) = definition.and_then(JsonLdTermDefinition::type_mapping) {
         match mapping {
@@ -1076,8 +1021,7 @@ fn expand_scalar(
 }
 
 fn expand_value_object(
-    members: &[ExpandedMember<'_>],
-    context: &CompiledJsonLdContext,
+    members: &[ExpandedMember<'_>], context: &CompiledJsonLdContext,
 ) -> Result<Literal, RdfDiagnostic> {
     let value = member(members, "@value")
         .expect("caller checked @value member")
@@ -1161,8 +1105,7 @@ fn expand_value_object(
 }
 
 fn scalar_lexical_for_datatype(
-    value: &JsonValue,
-    datatype: Option<&str>,
+    value: &JsonValue, datatype: Option<&str>,
 ) -> Result<String, RdfDiagnostic> {
     match value {
         JsonValue::String(value) => Ok(value.clone()),
@@ -1202,8 +1145,7 @@ fn canonical_json_double(value: &Number) -> Result<String, RdfDiagnostic> {
 }
 
 fn effective_language<'a>(
-    context: &'a CompiledJsonLdContext,
-    definition: Option<&'a JsonLdTermDefinition>,
+    context: &'a CompiledJsonLdContext, definition: Option<&'a JsonLdTermDefinition>,
 ) -> Option<&'a str> {
     match definition.and_then(JsonLdTermDefinition::language_mapping) {
         Some(JsonLdNullable::Null) => None,
@@ -1213,8 +1155,7 @@ fn effective_language<'a>(
 }
 
 fn effective_direction(
-    context: &CompiledJsonLdContext,
-    definition: Option<&JsonLdTermDefinition>,
+    context: &CompiledJsonLdContext, definition: Option<&JsonLdTermDefinition>,
 ) -> Option<&'static str> {
     match definition.and_then(JsonLdTermDefinition::direction_mapping) {
         Some(JsonLdNullable::Null) => None,
@@ -1227,8 +1168,7 @@ fn effective_direction(
 /// `@context` of its own — the common case, which used to deep-clone the whole compiled
 /// context (term map, inverse index) for every node, value and graph object visited.
 fn object_context<'a>(
-    parent: &'a CompiledJsonLdContext,
-    object: &Map,
+    parent: &'a CompiledJsonLdContext, object: &Map,
 ) -> Result<Cow<'a, CompiledJsonLdContext>, RdfDiagnostic> {
     object.get("@context").map_or_else(
         || Ok(Cow::Borrowed(parent)),
@@ -1258,8 +1198,7 @@ struct ExpandedMember<'a> {
 }
 
 fn expanded_members<'a>(
-    context: &CompiledJsonLdContext,
-    object: &'a Map,
+    context: &CompiledJsonLdContext, object: &'a Map,
 ) -> Result<Vec<ExpandedMember<'a>>, RdfDiagnostic> {
     let mut seen = BTreeSet::new();
     let mut members = Vec::with_capacity(object.len());
@@ -1282,25 +1221,20 @@ fn expanded_members<'a>(
 }
 
 fn member<'a, 'b>(
-    members: &'b [ExpandedMember<'a>],
-    keyword: &str,
+    members: &'b [ExpandedMember<'a>], keyword: &str,
 ) -> Option<&'b ExpandedMember<'a>> {
     members.iter().find(|entry| entry.expanded == keyword)
 }
 
 fn expanded_member<'a>(
-    context: &CompiledJsonLdContext,
-    object: &'a Map,
-    keyword: &str,
+    context: &CompiledJsonLdContext, object: &'a Map, keyword: &str,
 ) -> Result<Option<&'a JsonValue>, RdfDiagnostic> {
     let members = expanded_members(context, object)?;
     Ok(member(&members, keyword).map(|member| member.value))
 }
 
 fn reject_unexpected_members(
-    members: &[ExpandedMember<'_>],
-    shape: &str,
-    allowed: &[&str],
+    members: &[ExpandedMember<'_>], shape: &str, allowed: &[&str],
 ) -> Result<(), RdfDiagnostic> {
     if let Some(member) = members
         .iter()
@@ -1315,10 +1249,7 @@ fn reject_unexpected_members(
 }
 
 fn expand_required(
-    context: &CompiledJsonLdContext,
-    value: &str,
-    vocab: bool,
-    document_relative: bool,
+    context: &CompiledJsonLdContext, value: &str, vocab: bool, document_relative: bool,
 ) -> Result<String, RdfDiagnostic> {
     context
         .expand_iri(value, vocab, document_relative)?
@@ -1326,8 +1257,7 @@ fn expand_required(
 }
 
 fn expand_id_value(
-    context: &CompiledJsonLdContext,
-    value: &JsonValue,
+    context: &CompiledJsonLdContext, value: &JsonValue,
 ) -> Result<String, RdfDiagnostic> {
     let value = value
         .as_str()
@@ -1361,10 +1291,7 @@ fn non_null_values(value: &JsonValue) -> impl Iterator<Item = &JsonValue> {
 }
 
 fn insert_expanded_control(
-    object: &mut Map,
-    context: &CompiledJsonLdContext,
-    keyword: &str,
-    value: JsonValue,
+    object: &mut Map, context: &CompiledJsonLdContext, keyword: &str, value: JsonValue,
 ) -> Result<(), RdfDiagnostic> {
     if expanded_member(context, object, keyword)?.is_some() {
         return Err(decode(format!(
@@ -1454,11 +1381,7 @@ impl Lowerer {
     }
 
     fn lower_annotations(
-        &mut self,
-        subject: &RdfTerm,
-        predicate: &str,
-        object: &RdfTerm,
-        annotations: &[Node],
+        &mut self, subject: &RdfTerm, predicate: &str, object: &RdfTerm, annotations: &[Node],
         graph: Option<&RdfTerm>,
     ) -> Result<(), RdfDiagnostic> {
         for annotation in annotations {
@@ -1493,9 +1416,7 @@ impl Lowerer {
     }
 
     fn lower_term(
-        &mut self,
-        term: &Term,
-        graph: Option<&RdfTerm>,
+        &mut self, term: &Term, graph: Option<&RdfTerm>,
     ) -> Result<RdfTerm, RdfDiagnostic> {
         match term {
             Term::Id(id) => id_term(id),
@@ -1522,9 +1443,7 @@ impl Lowerer {
     /// then the `rdf:first`/`rdf:rest` cells ([`build_rdf_list`]). An entry's
     /// annotations annotate its `rdf:first` statement.
     fn lower_list(
-        &mut self,
-        values: &[Value],
-        graph: Option<&RdfTerm>,
+        &mut self, values: &[Value], graph: Option<&RdfTerm>,
     ) -> Result<RdfTerm, RdfDiagnostic> {
         let cells: Vec<RdfTerm> = values.iter().map(|_| self.fresh_list_node()).collect();
         let items = values
@@ -1555,11 +1474,7 @@ impl Lowerer {
     }
 
     fn push(
-        &mut self,
-        subject: RdfTerm,
-        predicate: &str,
-        object: RdfTerm,
-        graph: Option<&RdfTerm>,
+        &mut self, subject: RdfTerm, predicate: &str, object: RdfTerm, graph: Option<&RdfTerm>,
     ) {
         self.quads
             .push(graph_quad(subject, predicate, object, graph));
@@ -1568,10 +1483,7 @@ impl Lowerer {
 
 /// The quad `(subject, predicate, object)`, in `graph` when one is given.
 fn graph_quad(
-    subject: RdfTerm,
-    predicate: &str,
-    object: RdfTerm,
-    graph: Option<&RdfTerm>,
+    subject: RdfTerm, predicate: &str, object: RdfTerm, graph: Option<&RdfTerm>,
 ) -> RdfQuad {
     let quad = RdfQuad::new(subject, predicate, object);
     match graph {

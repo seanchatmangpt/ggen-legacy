@@ -573,9 +573,7 @@ impl Memory {
 
     /// Append one tool-call provenance record.
     pub fn record_tool_call(
-        &self,
-        tool: &str,
-        options: ToolCallOptions<'_>,
+        &self, tool: &str, options: ToolCallOptions<'_>,
     ) -> Result<ToolCallRecord> {
         let tool = tool.trim();
         if tool.is_empty() {
@@ -889,9 +887,7 @@ impl Memory {
     /// The id of a `kind` record: BLAKE3 over the kind (its hash domain), the file
     /// length the record was appended at, and each part, NUL-separated.
     fn digest_id<'a>(
-        kind: Domain,
-        file_len: u64,
-        parts: impl IntoIterator<Item = &'a str>,
+        kind: Domain, file_len: u64, parts: impl IntoIterator<Item = &'a str>,
     ) -> String {
         let mut hasher = purrdf_hash::blake3::RecordHasher::new();
         hasher.update(kind.as_bytes());
@@ -1017,8 +1013,7 @@ fn shift_terms(terms: &[Term], base: usize) -> Vec<Term> {
 
 /// Shift locally-numbered quad rows into the segment's term-id space.
 fn shift_quads(
-    quads: &[(usize, usize, usize, Option<usize>)],
-    base: usize,
+    quads: &[(usize, usize, usize, Option<usize>)], base: usize,
 ) -> Vec<(usize, usize, usize, Option<usize>)> {
     quads
         .iter()
@@ -1028,8 +1023,7 @@ fn shift_quads(
 
 /// Shift locally-numbered annotation rows into the segment's term-id space.
 fn shift_annotations(
-    rows: &[(usize, usize, usize, Option<usize>)],
-    base: usize,
+    rows: &[(usize, usize, usize, Option<usize>)], base: usize,
 ) -> Vec<(usize, usize, usize, Option<usize>)> {
     shift_quads(rows, base)
 }
@@ -1040,11 +1034,8 @@ fn push_term(terms: &mut Vec<Term>, term: Term) -> usize {
 }
 
 fn push_annotation(
-    terms: &mut Vec<Term>,
-    annotations: &mut Vec<(usize, usize, usize, Option<usize>)>,
-    reifier: usize,
-    predicate: &str,
-    value: Term,
+    terms: &mut Vec<Term>, annotations: &mut Vec<(usize, usize, usize, Option<usize>)>,
+    reifier: usize, predicate: &str, value: Term,
 ) {
     let pred = push_term(terms, iri(predicate));
     let val = push_term(terms, value);

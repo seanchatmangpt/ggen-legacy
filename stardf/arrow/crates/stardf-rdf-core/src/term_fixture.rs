@@ -45,10 +45,7 @@ pub enum TermShape {
 /// This draws recursively: a generated term nests at most `budget` levels, and the
 /// generator is for tests of the walks, not one of them.
 pub fn term_value(
-    state: &mut u64,
-    next: fn(&mut u64) -> u64,
-    budget: &mut usize,
-    shape: TermShape,
+    state: &mut u64, next: fn(&mut u64) -> u64, budget: &mut usize, shape: TermShape,
 ) -> TermValue {
     use purrdf_iri::vocab::rdf::DIR_LANG_STRING as RDF_DIR_LANG_STRING;
     use purrdf_iri::vocab::rdf::LANG_STRING as RDF_LANG_STRING;
@@ -123,8 +120,7 @@ pub type Triple = (TermValue, TermValue, TermValue);
 /// # Errors
 /// Returns the original typed capacity or allocation refusal.
 pub fn intern_value(
-    builder: &mut RdfDatasetBuilder,
-    value: &TermValue,
+    builder: &mut RdfDatasetBuilder, value: &TermValue,
 ) -> Result<TermId, purrdf_lex::allocation::StorageError> {
     use purrdf_lex::allocation::{Memory, Resident};
     let mut resident = Resident;
@@ -179,9 +175,7 @@ pub fn empty_dataset() -> Arc<RdfDataset> {
 /// # Errors
 /// Returns the original capacity, allocation or RDF validation diagnostic.
 pub fn one_quad(
-    subject: &str,
-    predicate: &str,
-    object: &str,
+    subject: &str, predicate: &str, object: &str,
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
     build_page(&[(
         TermValue::iri(subject),
@@ -245,8 +239,7 @@ pub fn graph_membership_corpus(tag: &str, graphs: usize) -> Result<Arc<RdfDatase
 /// Refuses nonempty input with no destination page, or returns the original
 /// page construction diagnostic. Empty input may produce zero pages.
 pub fn split_pages(
-    triples: &[Triple],
-    page_count: usize,
+    triples: &[Triple], page_count: usize,
 ) -> Result<Vec<Arc<RdfDataset>>, RdfDiagnostic> {
     if page_count == 0 && !triples.is_empty() {
         return Err(RdfDiagnostic::error(
@@ -332,12 +325,7 @@ impl DatasetView for ForeignDatatypeView {
     fn probe_plan(&self, _s: bool, _p: bool, _o: bool, _g: GraphMatch) {}
 
     fn quads_for_pattern_with_plan(
-        &self,
-        _plan: &(),
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, _plan: &(), s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         self.quads_for_pattern(s, p, o, g)
     }
@@ -487,12 +475,7 @@ impl DatasetView for BudgetedView {
     fn probe_plan(&self, _s: bool, _p: bool, _o: bool, _g: GraphMatch) {}
 
     fn quads_for_pattern_with_plan(
-        &self,
-        _plan: &(),
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, _plan: &(), s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         self.quads_for_pattern(s, p, o, g)
     }
@@ -535,8 +518,7 @@ impl FallibleDatasetView for BudgetedView {
 /// # Errors
 /// Returns physical layout, admission or allocator refusal.
 pub fn intern_value_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-    builder: &mut RdfDatasetBuilder,
-    value: &TermValue,
+    builder: &mut RdfDatasetBuilder, value: &TermValue,
     memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<TermId, purrdf_lex::allocation::StorageError> {
     enum Step<'a> {

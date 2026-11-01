@@ -775,8 +775,7 @@ impl Draws {
 /// value), or the draws run out before `count` are found.
 #[must_use]
 pub fn misread_spellings(
-    count: usize,
-    spell: impl Fn(f64) -> Option<String>,
+    count: usize, spell: impl Fn(f64) -> Option<String>,
 ) -> Vec<(f64, String)> {
     let mut draws = Draws(0x6d69_7372_6561_6473);
     let mut found = Vec::with_capacity(count);
@@ -811,8 +810,7 @@ pub fn misread_spellings(
 /// When `spell` does not spell its value, or the draws run out before `count` are found.
 #[must_use]
 pub fn x87_misread_spellings(
-    count: usize,
-    spell: impl Fn(f64) -> Option<String>,
+    count: usize, spell: impl Fn(f64) -> Option<String>,
 ) -> Vec<(f64, String)> {
     let mut draws = Draws(0x7838_3773_7065_6c6c);
     let mut found = Vec::with_capacity(count);

@@ -92,12 +92,8 @@ impl NativeSparqlEngine {
         'd,
         D: DatasetView<ReadError = std::convert::Infallible> + Sync,
     >(
-        &'d self,
-        dataset: &'d D,
-        prepared: &PreparedQuery,
-        substitutions: &[(String, TermValue)],
-        options: QueryOptions<'d, 'd>,
-        destination: &mut RdfDatasetBuilder,
+        &'d self, dataset: &'d D, prepared: &PreparedQuery, substitutions: &[(String, TermValue)],
+        options: QueryOptions<'d, 'd>, destination: &mut RdfDatasetBuilder,
     ) -> Result<GraphBuildStats, GraphBuildError> {
         let staged = self.stage_construct(
             dataset,
@@ -132,12 +128,8 @@ impl NativeSparqlEngine {
         'd,
         D: DatasetView<ReadError = std::convert::Infallible> + Sync,
     >(
-        &'d self,
-        dataset: &'d D,
-        prepared: &PreparedQuery,
-        substitutions: &[(String, TermValue)],
-        options: QueryOptions<'d, 'd>,
-        state: &Arc<GovernorState>,
+        &'d self, dataset: &'d D, prepared: &PreparedQuery, substitutions: &[(String, TermValue)],
+        options: QueryOptions<'d, 'd>, state: &Arc<GovernorState>,
         destination: &mut RdfDatasetBuilder,
     ) -> Result<GraphBuildStats, GraphBuildError> {
         let staged = self.stage_construct(
@@ -167,12 +159,8 @@ impl NativeSparqlEngine {
         reason = "retains the existing fallible operation contract and adds its destination"
     )]
     pub fn construct_prepared_fallible_in_operation_into_view<'d, D>(
-        &'d self,
-        dataset: &'d D,
-        prepared: &PreparedQuery,
-        substitutions: &[(String, TermValue)],
-        options: QueryOptions<'d, 'd>,
-        state: &Arc<GovernorState>,
+        &'d self, dataset: &'d D, prepared: &PreparedQuery, substitutions: &[(String, TermValue)],
+        options: QueryOptions<'d, 'd>, state: &Arc<GovernorState>,
         destination: &mut RdfDatasetBuilder,
     ) -> FallibleGraphBuildResult<D::Error, D::Evidence>
     where
@@ -305,14 +293,9 @@ impl NativeSparqlEngine {
         reason = "Typed budget refusal stays inline so reporting does not allocate after admission fails"
     )]
     fn stage_construct<'d, D: DatasetView + Sync>(
-        &'d self,
-        dataset: &'d D,
-        prepared: &PreparedQuery,
-        substitutions: &[(String, TermValue)],
-        options: QueryOptions<'d, 'd>,
-        destination: &RdfDatasetBuilder,
-        state: Option<&Arc<GovernorState>>,
-        sequencing: super::Sequencing,
+        &'d self, dataset: &'d D, prepared: &PreparedQuery, substitutions: &[(String, TermValue)],
+        options: QueryOptions<'d, 'd>, destination: &RdfDatasetBuilder,
+        state: Option<&Arc<GovernorState>>, sequencing: super::Sequencing,
     ) -> Result<StagedGraph, GraphBuildError> {
         let workspace = super::bounded_workspace::reserve(
             dataset,
@@ -355,14 +338,9 @@ impl NativeSparqlEngine {
         reason = "Typed budget refusal stays inline so reporting does not allocate after admission fails"
     )]
     fn stage_construct_admitted<'d, D: DatasetView + Sync>(
-        &'d self,
-        dataset: &'d D,
-        prepared: &PreparedQuery,
-        substitutions: &[(String, TermValue)],
-        options: QueryOptions<'d, 'd>,
-        destination: &RdfDatasetBuilder,
-        state: Option<&Arc<GovernorState>>,
-        sequencing: super::Sequencing,
+        &'d self, dataset: &'d D, prepared: &PreparedQuery, substitutions: &[(String, TermValue)],
+        options: QueryOptions<'d, 'd>, destination: &RdfDatasetBuilder,
+        state: Option<&Arc<GovernorState>>, sequencing: super::Sequencing,
         workspace: &crate::workspace::QueryWorkspace<D::ReadError>,
         capture: &mut crate::QueryCoordinates,
     ) -> Result<StagedGraph, GraphBuildError> {
@@ -436,12 +414,8 @@ impl NativeSparqlEngine {
         reason = "Typed budget refusal stays inline so reporting does not allocate after admission fails"
     )]
     fn admit_construct<D: DatasetView + Sync>(
-        &self,
-        dataset: &D,
-        prepared: &PreparedQuery,
-        substitutions: &[(String, TermValue)],
-        options: QueryOptions<'_, '_>,
-        state: Option<&Arc<GovernorState>>,
+        &self, dataset: &D, prepared: &PreparedQuery, substitutions: &[(String, TermValue)],
+        options: QueryOptions<'_, '_>, state: Option<&Arc<GovernorState>>,
         workspace: &crate::workspace::QueryWorkspace<D::ReadError>,
     ) -> Result<(), GraphBuildError> {
         let capability = workspace.capability();
@@ -521,8 +495,7 @@ struct StagedGraph {
     reason = "Typed budget refusal stays inline so reporting does not allocate after admission fails"
 )]
 fn finish_staging<I: purrdf_core::ViewTermId>(
-    result: crate::construct::StagedConstruct<I>,
-    state: Option<&Arc<GovernorState>>,
+    result: crate::construct::StagedConstruct<I>, state: Option<&Arc<GovernorState>>,
 ) -> Result<StagedGraph, GraphBuildError> {
     let crate::construct::StagedConstruct {
         builder: staged,
@@ -575,8 +548,7 @@ fn finish_staging<I: purrdf_core::ViewTermId>(
     reason = "Typed budget refusal stays inline so reporting does not allocate after admission fails"
 )]
 fn publish(
-    staged: StagedGraph,
-    destination: &mut RdfDatasetBuilder,
+    staged: StagedGraph, destination: &mut RdfDatasetBuilder,
     governors: Option<crate::GovernorEvidence>,
 ) -> Result<GraphBuildStats, GraphBuildError> {
     let StagedGraph {

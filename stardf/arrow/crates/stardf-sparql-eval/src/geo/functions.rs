@@ -466,9 +466,7 @@ impl GeofFunction {
     }
 
     fn check_argument_count_metered(
-        self,
-        count: usize,
-        observer: Option<&mut dyn purrdf_geo_kernel::MetricWorkObserver>,
+        self, count: usize, observer: Option<&mut dyn purrdf_geo_kernel::MetricWorkObserver>,
     ) -> Result<(), GeoError> {
         let expected = self.arity();
         if !expected.accepts(count) {
@@ -642,8 +640,7 @@ impl purrdf_geo_kernel::MetricWorkObserver for GeoWork<'_> {
         error
     }
     fn native_storage(
-        &mut self,
-        producer: &mut dyn purrdf_geo_kernel::NativeStorageProducer,
+        &mut self, producer: &mut dyn purrdf_geo_kernel::NativeStorageProducer,
     ) -> Result<(), GeoError> {
         let admitted = self.storage.admitted_bytes();
         let mut work = Self::new(self.context);
@@ -653,8 +650,7 @@ impl purrdf_geo_kernel::MetricWorkObserver for GeoWork<'_> {
         )
     }
     fn retain_current(
-        &mut self,
-        control: core::alloc::Layout,
+        &mut self, control: core::alloc::Layout,
     ) -> Result<(purrdf_lex::allocation::SharedOwned<()>, usize), GeoError> {
         let admitted = self.storage.admitted_bytes();
         let replacement = crate::workspace::LexicalFrame::new(self.context.workspace());
@@ -678,8 +674,7 @@ impl purrdf_geo_kernel::MetricWorkObserver for GeoWork<'_> {
     }
 
     fn retain_produced(
-        &mut self,
-        control: core::alloc::Layout,
+        &mut self, control: core::alloc::Layout,
         producer: &mut dyn purrdf_geo_kernel::RetainedAllocationProducer,
     ) -> Result<purrdf_lex::allocation::SharedOwned<()>, GeoError> {
         purrdf_geo_kernel::retain_produced_with_storage(
@@ -737,9 +732,7 @@ impl purrdf_geo_kernel::MetricWorkObserver for GeoWork<'_> {
     }
 
     fn prepare_integer_scratch(
-        &mut self,
-        buffers: usize,
-        limbs: usize,
+        &mut self, buffers: usize, limbs: usize,
     ) -> Result<purrdf_xsd::integer::LimbScratch, GeoError> {
         let frame = crate::workspace::LexicalFrame::new(self.context.workspace());
         purrdf_xsd::integer::LimbScratch::new_with_storage(buffers, limbs, frame).map_err(
@@ -758,8 +751,7 @@ impl purrdf_geo_kernel::MetricWorkObserver for GeoWork<'_> {
     }
 
     fn prepare_binary64(
-        &mut self,
-        math: &mut purrdf_xsd::math::CoordinateMath,
+        &mut self, math: &mut purrdf_xsd::math::CoordinateMath,
     ) -> Result<purrdf_xsd::math::PreparedBinary64, purrdf_xsd::math::MathError> {
         let frame = crate::workspace::LexicalFrame::new(self.context.workspace());
         math.prepare_binary64_with_storage(frame)
@@ -779,10 +771,7 @@ impl purrdf_geo_kernel::MetricWorkObserver for GeoWork<'_> {
     }
 
     fn prepare_taylor_scratch(
-        &mut self,
-        coefficients: usize,
-        jets: usize,
-        zero: purrdf_xsd::math::FixedInterval,
+        &mut self, coefficients: usize, jets: usize, zero: purrdf_xsd::math::FixedInterval,
     ) -> Result<purrdf_xsd::math::TaylorScratch, GeoError> {
         let frame = crate::workspace::LexicalFrame::new(self.context.workspace());
         purrdf_xsd::math::TaylorScratch::new_with_storage(coefficients, jets, zero, frame).map_err(
@@ -800,9 +789,7 @@ impl purrdf_geo_kernel::MetricWorkObserver for GeoWork<'_> {
 
 impl GeoWork<'_> {
     fn storage_failure(
-        &self,
-        error: purrdf_lex::allocation::StorageError,
-        construct: &'static str,
+        &self, error: purrdf_lex::allocation::StorageError, construct: &'static str,
     ) -> GeoError {
         let mut frame = crate::workspace::LexicalFrame::new(self.context.workspace());
         self.context
@@ -812,8 +799,7 @@ impl GeoWork<'_> {
 }
 
 pub(crate) fn evaluate_standard(
-    function: GeofFunction,
-    call: &crate::user_fn::NativeFnCall<'_>,
+    function: GeofFunction, call: &crate::user_fn::NativeFnCall<'_>,
 ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
     // Original source containers die inside the computation scope, before this
     // frame can release their account. Numerical values keep intrinsic owners;
@@ -853,9 +839,7 @@ pub(crate) fn evaluate_standard(
 ///
 /// Preserves typed reference, argument and numerical refusals from the pure kernel.
 pub fn compute_standard(
-    function: GeofFunction,
-    profile: &purrdf_geo_kernel::GeoProfile,
-    args: &[&TermValue],
+    function: GeofFunction, profile: &purrdf_geo_kernel::GeoProfile, args: &[&TermValue],
     observer: &mut dyn purrdf_geo_kernel::MetricWorkObserver,
 ) -> Result<TermValue, GeoError> {
     compute_standard_with_preparation(
@@ -872,9 +856,7 @@ pub fn compute_standard(
 /// # Errors
 /// Preserves complete preparation, reference, numerical and governor refusals.
 pub fn compute_standard_with_preparation(
-    function: GeofFunction,
-    profile: &purrdf_geo_kernel::GeoProfile,
-    args: &[&TermValue],
+    function: GeofFunction, profile: &purrdf_geo_kernel::GeoProfile, args: &[&TermValue],
     observer: &mut dyn purrdf_geo_kernel::MetricWorkObserver,
     budget: purrdf_geo_kernel::PreparationBudget,
 ) -> Result<TermValue, GeoError> {
@@ -882,9 +864,7 @@ pub fn compute_standard_with_preparation(
 }
 
 fn compute_standard_in_storage(
-    function: GeofFunction,
-    profile: &purrdf_geo_kernel::GeoProfile,
-    args: &[&TermValue],
+    function: GeofFunction, profile: &purrdf_geo_kernel::GeoProfile, args: &[&TermValue],
     observer: &mut dyn purrdf_geo_kernel::MetricWorkObserver,
     mut budget: purrdf_geo_kernel::PreparationBudget,
     storage: Option<&purrdf_geo_kernel::carrier::CarrierStorage<'_>>,
@@ -1430,8 +1410,7 @@ fn compute_standard_in_storage(
 }
 
 fn standard_unit_factor<'profile>(
-    profile: &'profile purrdf_geo_kernel::GeoProfile,
-    argument: &TermValue,
+    profile: &'profile purrdf_geo_kernel::GeoProfile, argument: &TermValue,
     budget: &mut purrdf_geo_kernel::PreparationBudget,
     observer: &mut dyn purrdf_geo_kernel::MetricWorkObserver,
     storage: Option<&purrdf_geo_kernel::carrier::CarrierStorage<'_>>,
@@ -1458,8 +1437,7 @@ fn standard_unit_factor<'profile>(
 }
 
 fn validate_standard_literal(
-    literal: &GeometryLiteral,
-    profile: &purrdf_geo_kernel::GeoProfile,
+    literal: &GeometryLiteral, profile: &purrdf_geo_kernel::GeoProfile,
     budget: &mut purrdf_geo_kernel::PreparationBudget,
     observer: &mut dyn purrdf_geo_kernel::MetricWorkObserver,
 ) -> Result<(), GeoError> {
@@ -1479,10 +1457,8 @@ fn validate_standard_literal(
 }
 
 fn prepare_standard_geometry(
-    literal: &GeometryLiteral,
-    profile: &purrdf_geo_kernel::GeoProfile,
-    target: &purrdf_geo_kernel::Crs,
-    budget: &mut purrdf_geo_kernel::PreparationBudget,
+    literal: &GeometryLiteral, profile: &purrdf_geo_kernel::GeoProfile,
+    target: &purrdf_geo_kernel::Crs, budget: &mut purrdf_geo_kernel::PreparationBudget,
     observer: &mut dyn purrdf_geo_kernel::MetricWorkObserver,
 ) -> Result<purrdf_geo_kernel::PreparedGeometry, GeoError> {
     let mut context = budget.worker_context_metered(profile.reference(target)?, observer)?;
@@ -1507,8 +1483,7 @@ fn prepare_standard_geometry(
 }
 
 fn geographic_double(
-    value: &Rat,
-    context: &mut purrdf_geo_kernel::MetricContext,
+    value: &Rat, context: &mut purrdf_geo_kernel::MetricContext,
     observer: &mut dyn purrdf_geo_kernel::MetricWorkObserver,
 ) -> Result<TermValue, GeoError> {
     let reported = purrdf_geo_kernel::metric::reported_double_metered(value, context, observer)?;
@@ -1544,9 +1519,7 @@ fn geographic_double(
 
 /// Move the writer's admitted carrier through the one native RDF output home.
 fn geographic_carrier_term(
-    lexical: String,
-    kind: GeoTerm,
-    context: &mut purrdf_geo_kernel::MetricContext,
+    lexical: String, kind: GeoTerm, context: &mut purrdf_geo_kernel::MetricContext,
     observer: &mut dyn purrdf_geo_kernel::MetricWorkObserver,
 ) -> Result<TermValue, GeoError> {
     let format = match kind {
@@ -1558,8 +1531,7 @@ fn geographic_carrier_term(
 }
 
 fn write_derived_geometry(
-    derived: construct::DerivedGeometry,
-    vocab: &GeoVocab,
+    derived: construct::DerivedGeometry, vocab: &GeoVocab,
     context: &mut purrdf_geo_kernel::MetricContext,
     observer: &mut dyn purrdf_geo_kernel::MetricWorkObserver,
 ) -> Result<String, GeoError> {
@@ -1626,9 +1598,7 @@ fn write_derived_geometry(
 /// [`GeoError`] for which kind means whose mistake it was, and [`compute`] for the
 /// refusal itself rather than its seam-level effect.
 pub fn evaluate(
-    function: GeofFunction,
-    vocab: &GeoVocab,
-    args: &[&TermValue],
+    function: GeofFunction, vocab: &GeoVocab, args: &[&TermValue],
 ) -> Result<Option<TermValue>, EvalError> {
     match compute(function, vocab, args) {
         Ok(value) => Ok(Some(value)),
@@ -1657,9 +1627,7 @@ pub fn evaluate(
 /// typed domain refusals for well-formed arguments the operation is undefined
 /// on, and typed vocabulary/configuration refusals for missing host declarations.
 pub fn compute(
-    function: GeofFunction,
-    vocab: &GeoVocab,
-    args: &[&TermValue],
+    function: GeofFunction, vocab: &GeoVocab, args: &[&TermValue],
 ) -> Result<TermValue, GeoError> {
     if vocab.is_standard() {
         return compute_standard(
@@ -1710,9 +1678,7 @@ impl GeometryArguments<'_, '_> {
 }
 
 fn compute_carrier(
-    function: GeofFunction,
-    vocab: &GeoVocab,
-    args: &[&TermValue],
+    function: GeofFunction, vocab: &GeoVocab, args: &[&TermValue],
 ) -> Result<TermValue, GeoError> {
     // Wrong arity is fatal for every solution, including direct typed callers.
     function.check_argument_count(args.len())?;
@@ -1731,9 +1697,7 @@ fn compute_carrier(
 
 /// The body of [`evaluate`], in this crate's own error space.
 fn dispatch(
-    function: GeofFunction,
-    vocab: &GeoVocab,
-    args: &[&TermValue],
+    function: GeofFunction, vocab: &GeoVocab, args: &[&TermValue],
     decoded: &GeometryArguments<'_, '_>,
     mut observer: Option<&mut dyn purrdf_geo_kernel::MetricWorkObserver>,
 ) -> Result<TermValue, GeoError> {
@@ -1953,8 +1917,7 @@ fn unsupported_error(function: GeofFunction) -> GeoError {
 }
 
 fn unsupported_error_metered(
-    function: GeofFunction,
-    observer: Option<&mut dyn purrdf_geo_kernel::MetricWorkObserver>,
+    function: GeofFunction, observer: Option<&mut dyn purrdf_geo_kernel::MetricWorkObserver>,
 ) -> GeoError {
     let cause = match function.unsupported_reason() {
         Some(reason) => UnsupportedFunctionRefusal::Declared { function, reason },
@@ -1985,8 +1948,7 @@ pub use purrdf_geo_kernel::carrier::geometry_arg;
 /// cannot be present in three of them and absent from the fourth — an omission
 /// that would silently compare ordinates from two different spaces.
 fn geometry_pair<'a>(
-    decoded: &'a GeometryArguments<'_, '_>,
-    args: &[&TermValue],
+    decoded: &'a GeometryArguments<'_, '_>, args: &[&TermValue],
 ) -> Result<
     (
         std::borrow::Cow<'a, GeometryLiteral>,
@@ -2014,8 +1976,7 @@ fn geometry_pair<'a>(
 /// [`GeoError::ArgumentInput`] retaining what arrived, for a blank node, a triple term, a
 /// language-tagged literal, or a literal of any other datatype.
 fn unit_arg_metered<'a>(
-    value: &'a TermValue,
-    observer: Option<&mut dyn purrdf_geo_kernel::MetricWorkObserver>,
+    value: &'a TermValue, observer: Option<&mut dyn purrdf_geo_kernel::MetricWorkObserver>,
 ) -> Result<&'a str, GeoError> {
     match value {
         TermValue::Iri(iri) => Ok(iri),
@@ -2040,8 +2001,7 @@ fn unit_arg_metered<'a>(
 /// [`GeoError::ArgumentInput`] retaining what arrived, for a non-literal, a literal whose
 /// datatype is not in the XSD integer family, or a lexical form outside `i64`.
 fn integer_arg_metered(
-    value: &TermValue,
-    observer: Option<&mut dyn purrdf_geo_kernel::MetricWorkObserver>,
+    value: &TermValue, observer: Option<&mut dyn purrdf_geo_kernel::MetricWorkObserver>,
 ) -> Result<i64, GeoError> {
     let TermValue::Literal {
         lexical_form,
@@ -2082,8 +2042,7 @@ fn integer_arg_metered(
 /// [`GeoError::ArgumentInput`] retaining what arrived, for anything that is not a
 /// plain (non-language-tagged) `xsd:string` literal.
 fn string_arg_metered<'a>(
-    value: &'a TermValue,
-    observer: Option<&mut dyn purrdf_geo_kernel::MetricWorkObserver>,
+    value: &'a TermValue, observer: Option<&mut dyn purrdf_geo_kernel::MetricWorkObserver>,
 ) -> Result<&'a str, GeoError> {
     match value {
         TermValue::Literal {
@@ -2131,8 +2090,7 @@ fn double_term(value: &Rat) -> TermValue {
 }
 
 fn boolean_term_metered(
-    value: bool,
-    observer: Option<&mut dyn purrdf_geo_kernel::MetricWorkObserver>,
+    value: bool, observer: Option<&mut dyn purrdf_geo_kernel::MetricWorkObserver>,
 ) -> Result<TermValue, GeoError> {
     purrdf_geo_kernel::carrier::literal_from_display_metered(
         if value { "true" } else { "false" },
@@ -2178,11 +2136,8 @@ const fn spatial_dimension(dim: CoordDim) -> usize {
 /// and `0.0` is a coordinate the data never contained and that a caller cannot
 /// tell apart from a real one.
 fn planar_bound(
-    decoded: &GeometryArguments<'_, '_>,
-    value: &TermValue,
-    name: &'static str,
-    ordinate: measure::Ordinate,
-    pick: impl Fn(&Geometry) -> Option<Rat>,
+    decoded: &GeometryArguments<'_, '_>, value: &TermValue, name: &'static str,
+    ordinate: measure::Ordinate, pick: impl Fn(&Geometry) -> Option<Rat>,
 ) -> Result<TermValue, GeoError> {
     let literal = decoded.get(value)?;
     let picked =
@@ -2197,9 +2152,7 @@ fn planar_bound(
 /// geometry having no positions, and `0` would be an elevation the data never
 /// stated in either case.
 fn elevation_bound(
-    decoded: &GeometryArguments<'_, '_>,
-    value: &TermValue,
-    name: &'static str,
+    decoded: &GeometryArguments<'_, '_>, value: &TermValue, name: &'static str,
     pick: impl Fn(&Geometry) -> Option<Rat>,
 ) -> Result<TermValue, GeoError> {
     let literal = decoded.get(value)?;
@@ -2210,9 +2163,7 @@ fn elevation_bound(
 }
 
 fn missing_bound(
-    name: &'static str,
-    ordinate: measure::Ordinate,
-    has_positions: bool,
+    name: &'static str, ordinate: measure::Ordinate, has_positions: bool,
     observer: Option<&mut dyn purrdf_geo_kernel::MetricWorkObserver>,
 ) -> GeoError {
     GeoError::geometry_domain_metered(
@@ -2226,9 +2177,7 @@ fn missing_bound(
 }
 
 fn missing_member(
-    index: i64,
-    count: usize,
-    observer: Option<&mut dyn purrdf_geo_kernel::MetricWorkObserver>,
+    index: i64, count: usize, observer: Option<&mut dyn purrdf_geo_kernel::MetricWorkObserver>,
 ) -> GeoError {
     GeoError::geometry_domain_metered(
         purrdf_geo_kernel::GeometryDomainError::MissingMember { index, count },
@@ -2243,9 +2192,7 @@ fn missing_member(
 /// in the input's own coordinates; nothing here reprojects, so relabelling would
 /// be a claim the numbers do not support.
 fn derived_geometry(
-    decoded: &GeometryArguments<'_, '_>,
-    value: &TermValue,
-    build: impl Fn(&Geometry) -> Geometry,
+    decoded: &GeometryArguments<'_, '_>, value: &TermValue, build: impl Fn(&Geometry) -> Geometry,
 ) -> Result<TermValue, GeoError> {
     let literal = decoded.get(value)?;
     let derived = build(literal.geometry());
@@ -2259,9 +2206,7 @@ fn derived_geometry(
 /// unit, refused unless that unit is the one the caller declared for the
 /// geometry's own system.
 fn unit_measure(
-    decoded: &GeometryArguments<'_, '_>,
-    args: &[&TermValue],
-    measure: impl Fn(&Geometry) -> Rat,
+    decoded: &GeometryArguments<'_, '_>, args: &[&TermValue], measure: impl Fn(&Geometry) -> Rat,
     observer: Option<&mut dyn purrdf_geo_kernel::MetricWorkObserver>,
 ) -> Result<TermValue, GeoError> {
     let literal = decoded.get(args[0])?;
@@ -2275,9 +2220,7 @@ fn unit_measure(
 /// unit fixed to the metre, refused unless the caller declared the geometry's
 /// system to be measured in metres.
 fn metric_measure(
-    decoded: &GeometryArguments<'_, '_>,
-    args: &[&TermValue],
-    measure: impl Fn(&Geometry) -> Rat,
+    decoded: &GeometryArguments<'_, '_>, args: &[&TermValue], measure: impl Fn(&Geometry) -> Rat,
 ) -> Result<TermValue, GeoError> {
     let literal = decoded.get(args[0])?;
     decoded.vocab.require_metre(literal.crs())?;
@@ -2286,8 +2229,7 @@ fn metric_measure(
 
 /// The shared tail of `distance` and `metricDistance`.
 fn distance_term(
-    a: &GeometryLiteral,
-    b: &GeometryLiteral,
+    a: &GeometryLiteral, b: &GeometryLiteral,
     observer: Option<&mut dyn purrdf_geo_kernel::MetricWorkObserver>,
 ) -> Result<TermValue, GeoError> {
     let value = measure::distance(a.geometry(), b.geometry()).ok_or_else(|| {
@@ -2414,8 +2356,7 @@ mod tests {
                 Ok(())
             }
             fn retain_produced(
-                &mut self,
-                _: core::alloc::Layout,
+                &mut self, _: core::alloc::Layout,
                 _: &mut dyn purrdf_geo_kernel::RetainedAllocationProducer,
             ) -> Result<purrdf_lex::allocation::SharedOwned<()>, GeoError> {
                 self.requests += 1;
@@ -2507,9 +2448,7 @@ mod tests {
     /// separately, by [`expression_error`]/[`fatal_refusal`] here and by real query
     /// text in `tests/scalar_functions_e2e.rs`.
     fn call(
-        registry: &UserFunctionRegistry,
-        vocab: &GeoVocab,
-        function: GeofFunction,
+        registry: &UserFunctionRegistry, vocab: &GeoVocab, function: GeofFunction,
         args: &[TermValue],
     ) -> Result<TermValue, GeoError> {
         let iri = vocab.function(function.local_name());
@@ -2524,10 +2463,7 @@ mod tests {
 
     /// [`call`] for the one-argument functions, which are most of them.
     fn call1(
-        registry: &UserFunctionRegistry,
-        vocab: &GeoVocab,
-        function: GeofFunction,
-        arg: &TermValue,
+        registry: &UserFunctionRegistry, vocab: &GeoVocab, function: GeofFunction, arg: &TermValue,
     ) -> Result<TermValue, GeoError> {
         call(registry, vocab, function, std::slice::from_ref(arg))
     }
@@ -2552,10 +2488,7 @@ mod tests {
 
     /// Assert a call succeeded with an exact lexical form and datatype.
     fn assert_answer(
-        result: Result<TermValue, GeoError>,
-        what: &str,
-        lexical: &str,
-        datatype: &str,
+        result: Result<TermValue, GeoError>, what: &str, lexical: &str, datatype: &str,
     ) {
         let (got_lexical, got_datatype) = ok_literal(result, what);
         assert_eq!(got_lexical, lexical, "{what} answered the wrong value");
@@ -4046,10 +3979,7 @@ mod tests {
     /// **no** `ParserOptions` configuration — which is the module doc's claim
     /// about this seam, stated as a test.
     fn engine_call(
-        vocab: &GeoVocab,
-        registry: &UserFunctionRegistry,
-        local_name: &str,
-        args: &[TermValue],
+        vocab: &GeoVocab, registry: &UserFunctionRegistry, local_name: &str, args: &[TermValue],
     ) -> Result<Option<TermValue>, String> {
         let rendered: Vec<String> = args.iter().map(sparql_term).collect();
         let query = format!(

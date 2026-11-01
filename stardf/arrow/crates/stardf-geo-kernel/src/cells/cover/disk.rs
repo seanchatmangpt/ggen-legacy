@@ -71,10 +71,7 @@ pub(super) const CELL_SCRATCH_BYTES: u64 = 4096;
 
 impl Disk {
     pub(super) fn new(
-        profile: NativeGridProfile,
-        centre: &LonLat,
-        radius: &Metres,
-        budget: &mut CoverBudget<'_>,
+        profile: NativeGridProfile, centre: &LonLat, radius: &Metres, budget: &mut CoverBudget<'_>,
     ) -> Result<Self, GeoError> {
         // The exact proof precedes numerical preparation: a whole-surface disk
         // performs no outward conversion or per-cell metric computation.
@@ -90,9 +87,7 @@ impl Disk {
     }
 
     pub(super) fn classify(
-        &mut self,
-        cell: CellId,
-        budget: &mut CoverBudget<'_>,
+        &mut self, cell: CellId, budget: &mut CoverBudget<'_>,
     ) -> Result<Classification, GeoError> {
         match &mut self.numerical {
             Some(numerical) => numerical.classify(cell, budget),
@@ -103,10 +98,7 @@ impl Disk {
 
 impl NumericalDisk {
     fn new(
-        profile: NativeGridProfile,
-        centre: &LonLat,
-        radius: &Metres,
-        budget: &mut CoverBudget<'_>,
+        profile: NativeGridProfile, centre: &LonLat, radius: &Metres, budget: &mut CoverBudget<'_>,
     ) -> Result<Self, GeoError> {
         let reference = native_reference(profile);
         let policy = ExecutionPolicy::geometry();
@@ -203,9 +195,7 @@ impl NumericalDisk {
     }
 
     pub(super) fn classify(
-        &mut self,
-        cell: CellId,
-        budget: &mut CoverBudget<'_>,
+        &mut self, cell: CellId, budget: &mut CoverBudget<'_>,
     ) -> Result<Classification, GeoError> {
         budget.scratch(CELL_SCRATCH_BYTES)?;
         let policy = ExecutionPolicy::geometry();
@@ -320,9 +310,7 @@ impl NumericalDisk {
 
     /// The normal-sphere classification, or the band it leaves undecided.
     fn sphere_status(
-        &self,
-        footprint: &Footprint,
-        chunk: &CheckedBinary64,
+        &self, footprint: &Footprint, chunk: &CheckedBinary64,
     ) -> Result<Result<Classification, SphereBand>, MathError> {
         let separation = angle(&self.centre, &footprint.normal, self.pi, chunk)?;
         let chord = chord(&self.centre, &footprint.normal, chunk)?;
@@ -354,11 +342,7 @@ impl NumericalDisk {
 
     /// The classification from a certified enclosure of `d(C, M)`.
     fn metric_status(
-        &self,
-        footprint: &Footprint,
-        lower: f64,
-        upper: f64,
-        chunk: &CheckedBinary64,
+        &self, footprint: &Footprint, lower: f64, upper: f64, chunk: &CheckedBinary64,
     ) -> Result<Classification, MathError> {
         let spread = self.upper_metric.mul(footprint.point_cap, chunk)?;
         let distance = FloatInterval::from_bounds(lower, upper)?;
@@ -399,10 +383,7 @@ fn midpoint(value: FloatInterval, chunk: &CheckedBinary64) -> f64 {
 
 /// The geodetic unit normal of degree coordinates.
 fn degree_normal(
-    longitude: FloatInterval,
-    latitude: FloatInterval,
-    pi: FloatInterval,
-    math: &mut CoordinateMath,
+    longitude: FloatInterval, latitude: FloatInterval, pi: FloatInterval, math: &mut CoordinateMath,
 ) -> Result<[FloatInterval; 3], MathError> {
     let chunk = math.enter_chunk()?;
     let radians = pi.div(FloatInterval::point(180.0)?, &chunk)?;
@@ -418,8 +399,7 @@ fn degree_normal(
 }
 
 fn normalize(
-    vector: &[FloatInterval; 3],
-    chunk: &CheckedBinary64,
+    vector: &[FloatInterval; 3], chunk: &CheckedBinary64,
 ) -> Result<[FloatInterval; 3], MathError> {
     let norm = vector[0]
         .square(chunk)?
@@ -434,9 +414,7 @@ fn normalize(
 }
 
 fn chord(
-    a: &[FloatInterval; 3],
-    b: &[FloatInterval; 3],
-    chunk: &CheckedBinary64,
+    a: &[FloatInterval; 3], b: &[FloatInterval; 3], chunk: &CheckedBinary64,
 ) -> Result<FloatInterval, MathError> {
     let mut sum = FloatInterval::point(0.0)?;
     for (a, b) in a.iter().zip(b) {
@@ -448,10 +426,7 @@ fn chord(
 /// Enclose the angle between unit vectors from their chord `c`: `c <= theta`
 /// and, for `0 <= c <= 2`, `theta = 2 asin(c/2) <= c + c^3/4` (see the cell law).
 fn angle(
-    a: &[FloatInterval; 3],
-    b: &[FloatInterval; 3],
-    pi: FloatInterval,
-    chunk: &CheckedBinary64,
+    a: &[FloatInterval; 3], b: &[FloatInterval; 3], pi: FloatInterval, chunk: &CheckedBinary64,
 ) -> Result<FloatInterval, MathError> {
     let chord = chord(a, b, chunk)?;
     let high = FloatInterval::point(chord.upper().min(2.0))?;

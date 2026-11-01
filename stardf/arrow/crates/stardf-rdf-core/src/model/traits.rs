@@ -98,10 +98,7 @@ fn clone_term_at_depth<const DEPTH: u8>(term: &RdfTerm) -> RdfTerm {
 /// The heap fold's owned reconstruction of one triple from its folded children.
 #[inline]
 fn rebuild_clone(
-    original: &RdfTriple,
-    subject: RdfTerm,
-    predicate: String,
-    object: RdfTerm,
+    original: &RdfTriple, subject: RdfTerm, predicate: String, object: RdfTerm,
 ) -> RdfTriple {
     RdfTriple {
         subject,
@@ -450,8 +447,7 @@ fn literal_debug_script<'a>(literal: &'a RdfLiteral, out: &mut WorkList<DebugTok
 
 /// All ten authored location fields, retaining both integer widths and Options.
 fn location_debug_script<'a>(
-    location: &'a crate::RdfLocation,
-    out: &mut WorkList<DebugTok<'a>, 16>,
+    location: &'a crate::RdfLocation, out: &mut WorkList<DebugTok<'a>, 16>,
 ) {
     out.extend([
         Tok::Struct("RdfLocation"),

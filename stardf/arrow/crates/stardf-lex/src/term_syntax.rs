@@ -85,11 +85,7 @@ pub fn write_iri<W: TextOut + ?Sized>(iri: &str, out: &mut W) {
 /// );
 /// ```
 pub fn write_literal<W: TextOut + ?Sized>(
-    lexical_form: &str,
-    datatype: &str,
-    lang: Option<&str>,
-    dir: Option<&str>,
-    out: &mut W,
+    lexical_form: &str, datatype: &str, lang: Option<&str>, dir: Option<&str>, out: &mut W,
 ) {
     debug_assert!(
         dir.is_none() || lang.is_some(),

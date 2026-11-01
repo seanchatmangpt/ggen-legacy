@@ -60,10 +60,7 @@ pub(crate) fn round_ratio(negative: bool, n: &BigInt, d: &BigInt, format: &Forma
 /// Borrow source limbs and invoke the one IEEE rounding body with checked
 /// native destination admission. A caller's original refusal is unchanged.
 pub(crate) fn round_ratio_admitted_using(
-    negative: bool,
-    n: &BigInt,
-    d: &BigInt,
-    format: &Format,
+    negative: bool, n: &BigInt, d: &BigInt, format: &Format,
     storage: &impl crate::bigint::scratch::Allocate,
     admit: &mut impl FnMut(
         super::cost::NumericOperationLayout,

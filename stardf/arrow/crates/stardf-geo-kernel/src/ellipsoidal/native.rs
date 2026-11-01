@@ -29,10 +29,8 @@ impl Parameters {
 }
 
 pub(super) fn prepare(
-    boundary: &NativeBoundaryArrangement,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    boundary: &NativeBoundaryArrangement, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<RetainedBuilder<Parameters>, GeoError> {
     prepare_parameters(
         boundary
@@ -49,9 +47,7 @@ pub(super) fn prepare(
 /// samples carry original-cut tail bounds; they never replace the source set.
 pub(super) fn prepare_parameters<'a>(
     parameters: impl ExactSizeIterator<Item = [&'a SourceParameter; 2]>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<RetainedBuilder<Parameters>, GeoError> {
     let mut output = RetainedBuilder::default();
     output.reserve_admitted(parameters.len(), context, progress, retained)?;
@@ -133,13 +129,8 @@ pub(super) fn prepare_parameters<'a>(
 }
 
 pub(super) fn length(
-    edge: &PreparedEdge,
-    parameters: &Parameters,
-    ellipsoid: &crate::PreparedEllipsoid,
-    limits: (u32, u32),
-    budget: &Rat,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    edge: &PreparedEdge, parameters: &Parameters, ellipsoid: &crate::PreparedEllipsoid,
+    limits: (u32, u32), budget: &Rat, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<FixedInterval, MathError> {
     let width = fixed_from_rat(&parameters.endpoints[1], math)?
         .sub(&fixed_from_rat(&parameters.endpoints[0], math)?, math)?;

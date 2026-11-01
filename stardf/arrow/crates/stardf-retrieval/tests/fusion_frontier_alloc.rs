@@ -187,10 +187,7 @@ impl RankedStream for LazyStream {
 /// weights three strata; that is exactly the number of contributions a
 /// candidate here can accumulate.
 fn fixture(
-    total: u64,
-    duplicates: DuplicatePolicy,
-    pulls: &Arc<AtomicUsize>,
-    weight: Score,
+    total: u64, duplicates: DuplicatePolicy, pulls: &Arc<AtomicUsize>, weight: Score,
 ) -> (FusionProfile, Vec<(Iri, LazyStream)>) {
     let weights: BTreeMap<Iri, Score> = STRATA.iter().map(|name| (stratum(name), weight)).collect();
     let profile =
@@ -244,10 +241,7 @@ const BLOCKS: [&str; 3] = [
 /// peak bytes AND pulls, because either one alone can be flat while the other
 /// tracks the input.
 fn disjoint_fixture(
-    total: u64,
-    duplicates: DuplicatePolicy,
-    pulls: &Arc<AtomicUsize>,
-    weight: Score,
+    total: u64, duplicates: DuplicatePolicy, pulls: &Arc<AtomicUsize>, weight: Score,
 ) -> (FusionProfile, Vec<(Iri, LazyStream)>) {
     let weights: BTreeMap<Iri, Score> = STRATA.iter().map(|name| (stratum(name), weight)).collect();
     let profile =
@@ -352,10 +346,7 @@ fn measure_rows(total: u64, rows: usize, duplicates: DuplicatePolicy) -> Measure
 /// more for a longer stream still shows it, because the extra is charged to the
 /// warmed run too.
 fn measure_rows_at_weight(
-    total: u64,
-    rows: usize,
-    duplicates: DuplicatePolicy,
-    weight: Score,
+    total: u64, rows: usize, duplicates: DuplicatePolicy, weight: Score,
 ) -> Measurement {
     let _warm_up = measure_rows_at_weight_once(total, rows, duplicates, weight);
     measure_rows_at_weight_once(total, rows, duplicates, weight)
@@ -363,10 +354,7 @@ fn measure_rows_at_weight(
 
 /// One reading, taken however warm the thread happens to be.
 fn measure_rows_at_weight_once(
-    total: u64,
-    rows: usize,
-    duplicates: DuplicatePolicy,
-    weight: Score,
+    total: u64, rows: usize, duplicates: DuplicatePolicy, weight: Score,
 ) -> Measurement {
     let pulls = Arc::new(AtomicUsize::new(0));
     let (profile, streams) = fixture(total, duplicates, &pulls, weight);
@@ -393,10 +381,7 @@ fn measure_disjoint_rows(total: u64, rows: usize, duplicates: DuplicatePolicy) -
 /// are measured by the same instrument and a difference between them is a
 /// difference in the fusion rather than in how it was weighed.
 fn measure_built(
-    profile: &FusionProfile,
-    streams: Vec<(Iri, LazyStream)>,
-    rows: usize,
-    pulls: &Arc<AtomicUsize>,
+    profile: &FusionProfile, streams: Vec<(Iri, LazyStream)>, rows: usize, pulls: &Arc<AtomicUsize>,
 ) -> Measurement {
     // The window opens after the fixture is built, so what is measured is the
     // fusion's own working set and not the fixture's.

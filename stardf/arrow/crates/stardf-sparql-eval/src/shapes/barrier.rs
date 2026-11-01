@@ -68,14 +68,12 @@ impl<I: ViewTermId> BarrierState<I> {
 /// Exact between-position form with an eager, source-defined conjunction.
 /// Nested NAF remains the original dataset-only body, not a generated predicate.
 pub(crate) fn is_between(
-    pattern: &GraphPattern,
-    workspace: &WorkspaceCapability,
+    pattern: &GraphPattern, workspace: &WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     Ok(certificate(pattern, workspace)?.is_some())
 }
 fn certificate(
-    pattern: &GraphPattern,
-    workspace: &WorkspaceCapability,
+    pattern: &GraphPattern, workspace: &WorkspaceCapability,
 ) -> Result<Option<Between>, EvalError> {
     let GraphPattern::Filter { inner, expr } = pattern else {
         return Ok(None);
@@ -176,8 +174,7 @@ fn comparison(expression: &Expression) -> Option<(Between, bool)> {
     ))
 }
 fn dataset_only(
-    pattern: &GraphPattern,
-    workspace: &WorkspaceCapability,
+    pattern: &GraphPattern, workspace: &WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     let mut pending = AdmittedVec::new(workspace);
     pending.push(pattern)?;
@@ -200,9 +197,7 @@ fn dataset_only(
 }
 
 fn modify(
-    expression: &mut Expression,
-    keep_range: bool,
-    truth: &purrdf_sparql_algebra::Literal,
+    expression: &mut Expression, keep_range: bool, truth: &purrdf_sparql_algebra::Literal,
     workspace: &WorkspaceCapability,
 ) -> Result<(), EvalError> {
     let mut pending = AdmittedVec::new(workspace);
@@ -220,9 +215,7 @@ fn modify(
 }
 impl Plan {
     fn prepare(
-        pattern: &GraphPattern,
-        upstream: &SubstitutionSourceMap,
-        workspace: &WorkspaceCapability,
+        pattern: &GraphPattern, upstream: &SubstitutionSourceMap, workspace: &WorkspaceCapability,
     ) -> Result<Option<Self>, EvalError> {
         let Some(between) = certificate(pattern, workspace)? else {
             return Ok(None);
@@ -320,8 +313,7 @@ impl Plan {
 }
 
 fn stopped<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    ctx: &EvalCtx<'_, D>,
+    pattern: &GraphPattern, ctx: &EvalCtx<'_, D>,
 ) -> Result<Option<Evaluated<D::Id>>, EvalError> {
     let Some(tripped) = ctx.stop_check() else {
         return Ok(None);
@@ -336,12 +328,8 @@ fn stopped<D: DatasetView + Sync>(
 /// seam, or None for a nonmatch. An accepted producer never retries on failure.
 /// The caller must continue through existential_evidence/absence/VM negation.
 pub(crate) fn inner<D: DatasetView + Sync>(
-    site: usize,
-    pattern: &GraphPattern,
-    source: &SubstitutionSourceMap,
-    outer: &[Option<SolutionTerm<D::Id>>],
-    schema: &VarSchema,
-    ctx: &mut EvalCtx<'_, D>,
+    site: usize, pattern: &GraphPattern, source: &SubstitutionSourceMap,
+    outer: &[Option<SolutionTerm<D::Id>>], schema: &VarSchema, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<Evaluated<D::Id>>, EvalError> {
     // Numeric false does not discharge a reached arbitrary-source expression
     // declaration. No no-gap certificate exists in the original source API.
@@ -546,11 +534,8 @@ pub(crate) fn inner<D: DatasetView + Sync>(
     })))
 }
 fn boundary(
-    values: &[(usize, ParsedValue)],
-    bound: &ParsedValue,
-    after_equal: bool,
-    workspace: &WorkspaceCapability,
-    counters: &super::runtime::ShapeCounters,
+    values: &[(usize, ParsedValue)], bound: &ParsedValue, after_equal: bool,
+    workspace: &WorkspaceCapability, counters: &super::runtime::ShapeCounters,
 ) -> Result<usize, EvalError> {
     let mut lo = 0;
     let mut hi = values.len();

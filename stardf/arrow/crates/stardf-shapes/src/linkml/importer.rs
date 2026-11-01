@@ -30,8 +30,7 @@ enum ElementKind {
 }
 
 pub(super) fn import_package(
-    package: &LinkmlPackage,
-    config: &SchemaImportConfig,
+    package: &LinkmlPackage, config: &SchemaImportConfig,
 ) -> Result<ImportedShapes, LinkmlError> {
     let canonical = write_linkml(&package.document)?;
     if canonical != package.yaml {
@@ -50,8 +49,7 @@ pub(super) fn import_package(
 }
 
 pub(super) fn import_document(
-    document: &LinkmlDocument,
-    config: &SchemaImportConfig,
+    document: &LinkmlDocument, config: &SchemaImportConfig,
     visible_classes: Option<&BTreeSet<String>>,
 ) -> Result<ImportedShapes, LinkmlError> {
     let mut importer = NativeImporter::new(document)?;
@@ -378,12 +376,8 @@ where
 }
 
 fn verify_source_context<'a>(
-    package: &LinkmlPackage,
-    source_class: &str,
-    emitted_class: &str,
-    source_path: &str,
-    source_name: &str,
-    classes: &BTreeMap<&'a str, &'a Value>,
+    package: &LinkmlPackage, source_class: &str, emitted_class: &str, source_path: &str,
+    source_name: &str, classes: &BTreeMap<&'a str, &'a Value>,
 ) -> Result<&'a Object, LinkmlError> {
     let suffix = format!(
         "/properties/{}",
@@ -419,9 +413,7 @@ fn verify_source_context<'a>(
 }
 
 fn verify_generated_slot_name(
-    name: &str,
-    prefixes: &BTreeMap<String, String>,
-    source_path: &str,
+    name: &str, prefixes: &BTreeMap<String, String>, source_path: &str,
 ) -> Result<(), LinkmlError> {
     let Some((prefix, local)) = name.split_once(':') else {
         return Err(LinkmlError::new(format!(
@@ -577,8 +569,7 @@ impl NativeImporter {
     }
 
     fn build_pivot(
-        &mut self,
-        visible_classes: Option<&BTreeSet<String>>,
+        &mut self, visible_classes: Option<&BTreeSet<String>>,
     ) -> Result<(Value, BTreeSet<String>), LinkmlError> {
         self.audit_root()?;
         let mut definitions = Map::new();
@@ -726,10 +717,7 @@ impl NativeImporter {
     }
 
     fn class_schema(
-        &mut self,
-        name: &str,
-        visiting: &mut BTreeSet<String>,
-        depth: usize,
+        &mut self, name: &str, visiting: &mut BTreeSet<String>, depth: usize,
     ) -> Result<Value, LinkmlError> {
         if let Some(schema) = self.class_cache.get(name) {
             return Ok(schema.clone());
@@ -1015,11 +1003,7 @@ impl NativeImporter {
     }
 
     fn slot_schema(
-        &mut self,
-        slot: &Object,
-        path: &str,
-        visiting: &mut BTreeSet<String>,
-        depth: usize,
+        &mut self, slot: &Object, path: &str, visiting: &mut BTreeSet<String>, depth: usize,
     ) -> Result<(Value, bool), LinkmlError> {
         let required = optional_bool(slot, "required", path)?.unwrap_or(false);
         let minimum = optional_u64(slot, "minimum_cardinality", path)?;
@@ -1083,11 +1067,7 @@ impl NativeImporter {
     }
 
     fn expression_schema(
-        &mut self,
-        expression: &Object,
-        path: &str,
-        visiting: &mut BTreeSet<String>,
-        depth: usize,
+        &mut self, expression: &Object, path: &str, visiting: &mut BTreeSet<String>, depth: usize,
     ) -> Result<Value, LinkmlError> {
         if depth > MAX_ELEMENT_DEPTH {
             return Err(LinkmlError::new(format!(
@@ -1114,11 +1094,7 @@ impl NativeImporter {
     }
 
     fn range_schema(
-        &mut self,
-        range: &str,
-        visiting: &mut BTreeSet<String>,
-        depth: usize,
-        path: &str,
+        &mut self, range: &str, visiting: &mut BTreeSet<String>, depth: usize, path: &str,
     ) -> Result<Value, LinkmlError> {
         let scalar = match range {
             "string" | "ncname" | "nodeidentifier" | "objectidentifier" | "jsonpath"
@@ -1174,10 +1150,7 @@ impl NativeImporter {
     }
 
     fn type_schema(
-        &mut self,
-        name: &str,
-        visiting: &mut BTreeSet<String>,
-        depth: usize,
+        &mut self, name: &str, visiting: &mut BTreeSet<String>, depth: usize,
     ) -> Result<Value, LinkmlError> {
         if let Some(schema) = self.type_cache.get(name) {
             return Ok(schema.clone());
@@ -1333,10 +1306,7 @@ impl NativeImporter {
     }
 
     fn apply_scalar_fields(
-        &self,
-        source: &Object,
-        target: &mut Object,
-        path: &str,
+        &self, source: &Object, target: &mut Object, path: &str,
     ) -> Result<(), LinkmlError> {
         if let Some(pattern) = source.get("pattern") {
             let pattern = pattern
@@ -1385,13 +1355,8 @@ impl NativeImporter {
     }
 
     fn apply_compositions(
-        &mut self,
-        source: &Object,
-        path: &str,
-        visiting: &mut BTreeSet<String>,
-        depth: usize,
-        target: &mut Object,
-        class_expression: bool,
+        &mut self, source: &Object, path: &str, visiting: &mut BTreeSet<String>, depth: usize,
+        target: &mut Object, class_expression: bool,
     ) -> Result<(), LinkmlError> {
         for (native, schema) in [
             ("any_of", "anyOf"),
@@ -1460,11 +1425,7 @@ impl NativeImporter {
     }
 
     fn class_expression_schema(
-        &mut self,
-        expression: &Object,
-        path: &str,
-        visiting: &mut BTreeSet<String>,
-        depth: usize,
+        &mut self, expression: &Object, path: &str, visiting: &mut BTreeSet<String>, depth: usize,
     ) -> Result<Value, LinkmlError> {
         let parent = if let Some(parent) = expression.get("is_a") {
             let parent = parent
@@ -1582,11 +1543,7 @@ impl NativeImporter {
     }
 
     fn enter_element(
-        &self,
-        kind: &str,
-        name: &str,
-        visiting: &mut BTreeSet<String>,
-        depth: usize,
+        &self, kind: &str, name: &str, visiting: &mut BTreeSet<String>, depth: usize,
     ) -> Result<(), LinkmlError> {
         if depth > MAX_ELEMENT_DEPTH {
             return Err(LinkmlError::new(format!(
@@ -1626,11 +1583,7 @@ impl NativeImporter {
     /// members of a JSON-LD list are ordered, so `list_elements_ordered`
     /// widens nothing here).
     fn list_carrier_schema(
-        &mut self,
-        name: &str,
-        visiting: &mut BTreeSet<String>,
-        depth: usize,
-        path: &str,
+        &mut self, name: &str, visiting: &mut BTreeSet<String>, depth: usize, path: &str,
     ) -> Result<Option<Value>, LinkmlError> {
         let Some(slot) = self
             .classes
@@ -1864,10 +1817,7 @@ impl NativeImporter {
     }
 
     fn audit_element_fields(
-        &mut self,
-        object: &Object,
-        path: &str,
-        known: &[&str],
+        &mut self, object: &Object, path: &str, known: &[&str],
     ) -> Result<(), LinkmlError> {
         for (key, value) in object {
             if matches!(key.as_str(), "title" | "description") {
@@ -1945,11 +1895,7 @@ impl NativeImporter {
     }
 
     fn map_expression_locations(
-        &mut self,
-        pivot_path: &str,
-        native_path: &str,
-        source: &Object,
-        translated: &Value,
+        &mut self, pivot_path: &str, native_path: &str, source: &Object, translated: &Value,
     ) {
         let scalar_path = if translated
             .as_object()

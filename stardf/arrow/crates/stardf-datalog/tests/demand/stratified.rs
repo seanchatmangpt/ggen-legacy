@@ -19,9 +19,7 @@ where
 }
 
 fn parity<const N: usize>(
-    rules: &[DlClause<N>],
-    goal: &ClauseAtom<N>,
-    input: Store<N>,
+    rules: &[DlClause<N>], goal: &ClauseAtom<N>, input: Store<N>,
 ) -> BTreeSet<[String; N]>
 where
     Arity<N>: StoreShape<N>,

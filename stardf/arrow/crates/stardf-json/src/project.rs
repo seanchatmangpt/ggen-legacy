@@ -138,11 +138,7 @@ impl<'a> Writer<'a> {
     }
 
     fn typed(
-        &mut self,
-        subject: TermId,
-        predicate: &str,
-        value: &str,
-        datatype: &str,
+        &mut self, subject: TermId, predicate: &str, value: &str, datatype: &str,
     ) -> Result<(), JsonError> {
         let object = self
             .builder

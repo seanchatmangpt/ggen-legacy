@@ -155,9 +155,7 @@ impl OkfConfig {
     /// not end in a safe joining delimiter (`#`, `/`, or `:`), `type` is absent,
     /// or a recognized key is unsafe/reserved.
     pub fn new<I, S>(
-        namespace: impl Into<String>,
-        document_base_iri: impl Into<String>,
-        recognized_keys: I,
+        namespace: impl Into<String>, document_base_iri: impl Into<String>, recognized_keys: I,
     ) -> Result<Self, OkfError>
     where
         I: IntoIterator<Item = S>,
@@ -318,9 +316,7 @@ impl OkfBundle {
     ///
     /// Returns [`OkfError`] on a duplicate/unsafe path or a resource-limit breach.
     pub fn insert(
-        &mut self,
-        path: impl Into<String>,
-        document: impl Into<String>,
+        &mut self, path: impl Into<String>, document: impl Into<String>,
     ) -> Result<(), OkfError> {
         let path = path.into();
         let document = document.into();

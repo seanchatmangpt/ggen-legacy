@@ -106,10 +106,7 @@ impl Fixture {
 
     /// The two-pass construction, with the index built by `build` and read back by `load`.
     fn assemble<A: IndexArithmetic>(
-        rows: usize,
-        dims: usize,
-        prefix: usize,
-        params: Params,
+        rows: usize, dims: usize, prefix: usize, params: Params,
         build_index: fn(VectorMatrix, &DistanceMetric, Params) -> purrdf_hnsw::Result<HnswIndex<A>>,
         load: fn(&IndexGuardView<'_>, VectorMatrix) -> purrdf_hnsw::Result<HnswIndex<A>>,
     ) -> Self {

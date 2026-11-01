@@ -46,10 +46,7 @@ impl purrdf_hash::error::StructuredError for MetricUnitDirection {
 /// # Errors
 /// Refuses nonpositive factors and insufficient exact arithmetic admission.
 pub fn convert_unit(
-    value: &Rat,
-    metres_per_unit: &Rat,
-    dimension: MetricDimension,
-    context: &mut MetricContext,
+    value: &Rat, metres_per_unit: &Rat, dimension: MetricDimension, context: &mut MetricContext,
 ) -> Result<Rat, GeoError> {
     let mut progress = WorkProgress::new(None);
     convert(
@@ -67,10 +64,7 @@ pub fn convert_unit(
 /// # Errors
 /// Adds observer refusal to [`convert_unit`].
 pub fn convert_unit_metered(
-    value: &Rat,
-    metres_per_unit: &Rat,
-    dimension: MetricDimension,
-    context: &mut MetricContext,
+    value: &Rat, metres_per_unit: &Rat, dimension: MetricDimension, context: &mut MetricContext,
     observer: &mut dyn MetricWorkObserver,
 ) -> Result<Rat, GeoError> {
     let mut continuation =
@@ -90,9 +84,7 @@ pub fn convert_unit_metered(
 /// # Errors
 /// Refuses undeclared/nonpositive factors or insufficient exact admission.
 pub fn metres_from_unit(
-    value: &Rat,
-    metres_per_unit: &Rat,
-    context: &mut MetricContext,
+    value: &Rat, metres_per_unit: &Rat, context: &mut MetricContext,
 ) -> Result<Metres, GeoError> {
     let mut progress = WorkProgress::new(None);
     to_metres(value, metres_per_unit, context, &mut progress)
@@ -102,9 +94,7 @@ pub fn metres_from_unit(
 /// # Errors
 /// Preserves conversion and observer refusals without resetting context work.
 pub fn metres_from_unit_metered(
-    value: &Rat,
-    metres_per_unit: &Rat,
-    context: &mut MetricContext,
+    value: &Rat, metres_per_unit: &Rat, context: &mut MetricContext,
     observer: &mut dyn MetricWorkObserver,
 ) -> Result<Metres, GeoError> {
     let mut continuation =
@@ -114,9 +104,7 @@ pub fn metres_from_unit_metered(
 }
 
 pub(super) fn to_metres(
-    value: &Rat,
-    metres_per_unit: &Rat,
-    context: &mut MetricContext,
+    value: &Rat, metres_per_unit: &Rat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Metres, GeoError> {
     convert(
@@ -131,12 +119,8 @@ pub(super) fn to_metres(
 }
 
 fn convert(
-    value: &Rat,
-    metres_per_unit: &Rat,
-    dimension: MetricDimension,
-    direction: MetricUnitDirection,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    value: &Rat, metres_per_unit: &Rat, dimension: MetricDimension, direction: MetricUnitDirection,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Rat, GeoError> {
     progress.context_poll(context)?;
     let mut admission = ExactAdmission::new(context, progress);

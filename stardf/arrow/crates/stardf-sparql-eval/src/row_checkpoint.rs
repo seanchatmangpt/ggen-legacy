@@ -192,11 +192,7 @@ struct ChargeLog {
 
 impl ChargeLog {
     fn charge_fuel(
-        &mut self,
-        limit: u64,
-        point: Option<ChargePoint>,
-        units: u64,
-        mark: Option<usize>,
+        &mut self, limit: u64, point: Option<ChargePoint>, units: u64, mark: Option<usize>,
     ) -> Result<(), TrippedGovernor> {
         if self.refused {
             return Err(ExactDeferral::refusal(
@@ -226,10 +222,7 @@ impl ChargeLog {
     }
 
     fn charge_scratch(
-        &mut self,
-        limit: u64,
-        bytes: u64,
-        mark: Option<usize>,
+        &mut self, limit: u64, bytes: u64, mark: Option<usize>,
     ) -> Result<(), TrippedGovernor> {
         if self.refused {
             return Err(ExactDeferral::refusal(
@@ -305,19 +298,14 @@ impl ExactDeferral {
 
     /// Admit or refuse one fuel charge. The ordered commit decides the observable trip.
     pub(crate) fn charge_fuel(
-        &self,
-        point: Option<ChargePoint>,
-        units: u64,
-        mark: Option<usize>,
+        &self, point: Option<ChargePoint>, units: u64, mark: Option<usize>,
     ) -> Result<(), TrippedGovernor> {
         self.log().charge_fuel(self.fuel_left, point, units, mark)
     }
 
     /// Admit or refuse one explicit scratch charge.
     pub(crate) fn charge_scratch(
-        &self,
-        bytes: u64,
-        mark: Option<usize>,
+        &self, bytes: u64, mark: Option<usize>,
     ) -> Result<(), TrippedGovernor> {
         self.log().charge_scratch(self.scratch_left, bytes, mark)
     }
@@ -337,11 +325,7 @@ impl ExactDeferral {
     /// One exact operation on the worker's own arena: the same fuel, growth and
     /// transient admissions, in the same order, with one log acquisition.
     pub(crate) fn charge_numeric(
-        &self,
-        point: ChargePoint,
-        work: u64,
-        computed: usize,
-        bytes: u64,
+        &self, point: ChargePoint, work: u64, computed: usize, bytes: u64,
     ) -> Result<(), TrippedGovernor> {
         let mut log = self.log();
         log.charge_fuel(self.fuel_left, Some(point), work, Some(computed))?;
@@ -751,11 +735,8 @@ impl Committing {
 #[allow(clippy::inline_always)]
 #[inline(always)]
 fn commit_items<D: DatasetView + Sync, R, S>(
-    ctx: &mut EvalCtx<'_, D>,
-    point: Option<ChargePoint>,
-    committing: Committing,
-    rows: impl IntoIterator<Item = R, IntoIter: ExactSizeIterator>,
-    withheld: Option<u64>,
+    ctx: &mut EvalCtx<'_, D>, point: Option<ChargePoint>, committing: Committing,
+    rows: impl IntoIterator<Item = R, IntoIter: ExactSizeIterator>, withheld: Option<u64>,
     mut admit_row: impl FnMut(&mut EvalCtx<'_, D>, R) -> Result<S, EvalError>,
 ) -> Result<(Vec<S>, Option<ItemTrip>), EvalError> {
     let mut rows = rows.into_iter();
@@ -949,10 +930,8 @@ fn commit_items<D: DatasetView + Sync, R, S>(
 #[allow(clippy::inline_always)]
 #[inline(always)]
 fn count_worker_mints_to<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    values: &mut std::vec::IntoIter<(u64, TermValue)>,
-    interned: &mut usize,
-    upto: usize,
+    ctx: &mut EvalCtx<'_, D>, values: &mut std::vec::IntoIter<(u64, TermValue)>,
+    interned: &mut usize, upto: usize,
 ) {
     while *interned < upto {
         let Some((hash, value)) = values.next() else {
@@ -971,10 +950,8 @@ fn count_worker_mints_to<D: DatasetView + Sync>(
 #[allow(clippy::inline_always)]
 #[inline(always)]
 fn admit_rows<D: DatasetView + Sync, R, S>(
-    ctx: &mut EvalCtx<'_, D>,
-    rows: impl IntoIterator<Item = R, IntoIter: ExactSizeIterator>,
-    out: Vec<S>,
-    mut admit_row: impl FnMut(&mut EvalCtx<'_, D>, R) -> Result<S, EvalError>,
+    ctx: &mut EvalCtx<'_, D>, rows: impl IntoIterator<Item = R, IntoIter: ExactSizeIterator>,
+    out: Vec<S>, mut admit_row: impl FnMut(&mut EvalCtx<'_, D>, R) -> Result<S, EvalError>,
 ) -> Result<Vec<S>, EvalError> {
     let rows = rows.into_iter();
     let mut out = crate::parallel::reserve_concatenated_rows(out, [rows.len()])?;
@@ -1051,10 +1028,7 @@ impl RowCheckpoint {
     /// nothing is observed per row, which is how an execution governed by an answer cap
     /// or a cell ceiling alone has always evaluated these loops.
     pub(crate) fn for_rows<D: DatasetView + Sync>(
-        ctx: &EvalCtx<'_, D>,
-        point: ChargePoint,
-        forked: bool,
-        len: usize,
+        ctx: &EvalCtx<'_, D>, point: ChargePoint, forked: bool, len: usize,
     ) -> Self {
         let Some(state) = ctx.governor_state() else {
             return Self::with_mode(RowAdmission::Free, point);
@@ -1103,8 +1077,7 @@ impl RowCheckpoint {
     /// governor — an aggregate's accumulation, whose charge observes a latched trip
     /// whenever the execution is governed at all.
     pub(crate) fn sequential<D: DatasetView + Sync>(
-        ctx: &EvalCtx<'_, D>,
-        point: ChargePoint,
+        ctx: &EvalCtx<'_, D>, point: ChargePoint,
     ) -> Self {
         let admission = if ctx.governor_state().is_some() {
             RowAdmission::Sequential
@@ -1131,8 +1104,7 @@ impl RowCheckpoint {
     /// The governor that stopped this execution, once one has.
     #[inline]
     pub(crate) fn pass<D: DatasetView + Sync>(
-        &mut self,
-        ctx: &EvalCtx<'_, D>,
+        &mut self, ctx: &EvalCtx<'_, D>,
     ) -> Result<(), TrippedGovernor> {
         if self.admission == RowAdmission::Free {
             return Ok(());
@@ -1222,9 +1194,7 @@ impl RowCheckpoint {
 
     /// This worker's checkpoint once its chunk is done, `fresh` taking its place.
     pub(crate) fn finish<D: DatasetView + Sync>(
-        &mut self,
-        worker: &mut EvalCtx<'_, D>,
-        fresh: &Self,
+        &mut self, worker: &mut EvalCtx<'_, D>, fresh: &Self,
     ) -> Self {
         self.ledger.finish(worker);
         hand_back(self, fresh)
@@ -1242,10 +1212,7 @@ impl RowCheckpoint {
     #[allow(clippy::inline_always)]
     #[inline(always)]
     pub(crate) fn commit_rows<D: DatasetView + Sync, R>(
-        &self,
-        ctx: &mut EvalCtx<'_, D>,
-        rows: Vec<R>,
-        chunks: impl IntoIterator<Item = Self>,
+        &self, ctx: &mut EvalCtx<'_, D>, rows: Vec<R>, chunks: impl IntoIterator<Item = Self>,
     ) -> Result<(Vec<R>, Option<usize>), EvalError> {
         if self.admission != RowAdmission::Forked || ctx.governor_state().is_none() {
             return Ok((rows, None));
@@ -1267,12 +1234,8 @@ impl RowCheckpoint {
     #[allow(clippy::inline_always)]
     #[inline(always)]
     pub(crate) fn commit_into<D: DatasetView + Sync, R, S>(
-        &self,
-        ctx: &mut EvalCtx<'_, D>,
-        rows: Vec<R>,
-        _chunks: impl IntoIterator<Item = Self>,
-        out: Vec<S>,
-        admit_row: impl FnMut(&mut EvalCtx<'_, D>, R) -> Result<S, EvalError>,
+        &self, ctx: &mut EvalCtx<'_, D>, rows: Vec<R>, _chunks: impl IntoIterator<Item = Self>,
+        out: Vec<S>, admit_row: impl FnMut(&mut EvalCtx<'_, D>, R) -> Result<S, EvalError>,
     ) -> Result<(Vec<S>, Option<usize>), EvalError> {
         assert!(
             self.admission == RowAdmission::Free && ctx.governor_state().is_none(),
@@ -1294,10 +1257,7 @@ impl RowCheckpoint {
     #[allow(clippy::inline_always)]
     #[inline(always)]
     pub(crate) fn commit<D: DatasetView + Sync, R, S>(
-        &self,
-        ctx: &mut EvalCtx<'_, D>,
-        rows: Vec<R>,
-        chunks: impl IntoIterator<Item = Self>,
+        &self, ctx: &mut EvalCtx<'_, D>, rows: Vec<R>, chunks: impl IntoIterator<Item = Self>,
         mut admit_row: impl FnMut(&mut EvalCtx<'_, D>, R) -> Result<S, EvalError>,
     ) -> Result<(Vec<S>, Option<usize>), EvalError> {
         if self.admission != RowAdmission::Forked || ctx.governor_state().is_none() {
@@ -1331,10 +1291,7 @@ fn hand_back<L: Clone>(ledger: &mut L, fresh: &L) -> L {
 /// expression barrier, as the sequential loop's trip there is, and report the item the
 /// loop resumes at when a worker `stopped` at an item the commit admitted.
 fn settle_commit<D: DatasetView + Sync>(
-    ctx: &EvalCtx<'_, D>,
-    trip: Option<ItemTrip>,
-    stopped: bool,
-    evaluated: usize,
+    ctx: &EvalCtx<'_, D>, trip: Option<ItemTrip>, stopped: bool, evaluated: usize,
 ) -> Option<usize> {
     let latched = ctx.governor_state().and_then(|state| state.tripped());
     if trip == Some(ItemTrip::Work)
@@ -1391,9 +1348,7 @@ impl ItemLedger {
 
     /// This worker's ledger once its chunk is done, `fresh` taking its place.
     pub(crate) fn finish<D: DatasetView + Sync>(
-        &mut self,
-        worker: &mut EvalCtx<'_, D>,
-        fresh: &Self,
+        &mut self, worker: &mut EvalCtx<'_, D>, fresh: &Self,
     ) -> Self {
         self.ledger.finish(worker);
         hand_back(self, fresh)
@@ -1407,10 +1362,7 @@ impl ItemLedger {
     ///
     /// An allocation failure while admitting the replayed output.
     pub(crate) fn commit_rows<D: DatasetView + Sync, R>(
-        &self,
-        ctx: &mut EvalCtx<'_, D>,
-        rows: Vec<R>,
-        chunks: impl IntoIterator<Item = Self>,
+        &self, ctx: &mut EvalCtx<'_, D>, rows: Vec<R>, chunks: impl IntoIterator<Item = Self>,
     ) -> Result<(Vec<R>, Option<usize>), EvalError> {
         if !self.governed {
             return Ok((rows, None));
@@ -1426,11 +1378,9 @@ impl ItemLedger {
     ///
     /// An output capacity or conversion error.
     pub(crate) fn commit_into<D: DatasetView + Sync, R, S>(
-        &self,
-        ctx: &mut EvalCtx<'_, D>,
+        &self, ctx: &mut EvalCtx<'_, D>,
         rows: impl IntoIterator<Item = R, IntoIter: ExactSizeIterator>,
-        _chunks: impl IntoIterator<Item = Self>,
-        out: Vec<S>,
+        _chunks: impl IntoIterator<Item = Self>, out: Vec<S>,
         admit_row: impl FnMut(&mut EvalCtx<'_, D>, R) -> Result<S, EvalError>,
     ) -> Result<(Vec<S>, Option<usize>), EvalError> {
         assert!(
@@ -1448,8 +1398,7 @@ impl ItemLedger {
     ///
     /// An error `admit_row` raises.
     pub(crate) fn commit<D: DatasetView + Sync, R, S>(
-        &self,
-        ctx: &mut EvalCtx<'_, D>,
+        &self, ctx: &mut EvalCtx<'_, D>,
         rows: impl IntoIterator<Item = R, IntoIter: ExactSizeIterator>,
         chunks: impl IntoIterator<Item = Self>,
         mut admit_row: impl FnMut(&mut EvalCtx<'_, D>, R) -> Result<S, EvalError>,

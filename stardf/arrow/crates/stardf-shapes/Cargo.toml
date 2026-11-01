@@ -125,6 +125,13 @@ proc-macro2 = { version = "1", features = ["span-locations"] }
 # purrdf-jsonschema crate is excluded loudly from this tree
 # (crates/jsonschema = fixture data only — DISPOSITION.md), so no in-tree
 # package can satisfy the key.
+# CORRECTION (G03 offline ladder, 2026-10-31): that grep missed `tests/` —
+# tests/owl_value_semantics.rs:81,92,512,522 import purrdf_jsonschema, so the
+# target was unlinked without the dev-dep (4x E0433 under
+# `cargo check --workspace --all-targets`). The target is parked at
+# tests/disabled/owl_value_semantics.rs per D17 (exclusion over deep-fix),
+# receipt in tests/disabled/README.md; the dev-dep removal itself stands for
+# src/ (grep claim true there).
 
 # The shared test support: property-based generation for the never-panic,
 # monotonicity and product-refusal harnesses, and the `harness = false` runner
@@ -138,16 +145,9 @@ stardf-testkit = { path = "../stardf-testkit" }
 # `tests/`, so the library gains no edge to it.
 stardf-conformance-kit = { path = "../stardf-conformance-kit" }
 
-# The two JSON Schema oracle fixtures carry a test of their `validates` entry
-# point (the draft 2020-12 meta-schemas registered, and not), so `cargo test`
-# builds them with the test harness and runs it.
-[[example]]
-name = "graphql_oracle_fixture"
-test = true
-
-[[example]]
-name = "typescript_oracle_fixture"
-test = true
+# (lane 13, 2026-10-31) The two oracle-fixture `[[example]]` stanzas REMOVED:
+# the targets are parked at examples/disabled/ (jsonschema exclusion —
+# crates/jsonschema/DISPOSITION.md; see examples/disabled/README.md).
 
 # Complete native semantic expectations on the shared harness.
 # Actual WASM behaviors are selected separately in `make wasm-test`.

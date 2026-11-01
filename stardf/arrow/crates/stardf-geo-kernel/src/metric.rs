@@ -67,8 +67,7 @@ quantity!(SquareMetres, "An exact signed area in square metres.");
 /// Check the original closed-unit requirements in their existing order.
 /// The caller supplies its original resident or admitted exact comparator.
 pub(crate) fn unit_parameter_refusal(
-    lower: &Rat,
-    upper: Option<&Rat>,
+    lower: &Rat, upper: Option<&Rat>,
     mut compare: impl FnMut(&Rat, &Rat) -> Result<core::cmp::Ordering, GeoError>,
 ) -> Result<Option<crate::UnitParameterRequirement>, GeoError> {
     if compare(lower, &Rat::zero())?.is_lt() {
@@ -241,8 +240,7 @@ impl MetricEstimate {
     /// # Errors
     /// Preserves native numerical, checked layout, allocator and caller refusal.
     pub fn certificate_bytes_admitted(
-        &self,
-        admission: &mut crate::carrier::InputAdmission<'_, '_, '_>,
+        &self, admission: &mut crate::carrier::InputAdmission<'_, '_, '_>,
     ) -> Result<Vec<u8>, GeoError> {
         let mut output = CertificateWriter::new(admission);
         output.bytes(POINT_CERTIFICATE.as_bytes())?;
@@ -259,8 +257,7 @@ impl MetricEstimate {
 
     #[cfg(test)]
     pub(crate) fn from_quantized(
-        quantized_micrometres: Int,
-        binding: GeoBindingId,
+        quantized_micrometres: Int, binding: GeoBindingId,
     ) -> Result<Self, GeoError> {
         Self::from_quantized_using(
             quantized_micrometres,
@@ -272,11 +269,8 @@ impl MetricEstimate {
     }
 
     fn from_quantized_using(
-        quantized_micrometres: Int,
-        binding: GeoBindingId,
-        scratch: Option<&LimbScratch>,
-        zero_bound: Option<&Rat>,
-        progress: &mut WorkProgress<'_>,
+        quantized_micrometres: Int, binding: GeoBindingId, scratch: Option<&LimbScratch>,
+        zero_bound: Option<&Rat>, progress: &mut WorkProgress<'_>,
     ) -> Result<Self, GeoError> {
         if quantized_micrometres.is_negative() {
             return Err(crate::MetricInputError::negative_distance(
@@ -366,10 +360,7 @@ impl ReceiptOwnership {
     }
 
     pub(crate) fn prepare<T: crate::context::NativeDetached>(
-        self,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
-        value: T,
+        self, context: &mut MetricContext, progress: &mut WorkProgress<'_>, value: T,
     ) -> Result<T, GeoError> {
         let bytes = crate::context::persistent_numeric_bytes(&value, progress)?;
         context.admit_workspace(bytes)?;
@@ -383,9 +374,7 @@ impl ReceiptOwnership {
 
 impl MetricProofReceipt {
     pub(crate) fn into_shared_owned(
-        self,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        self, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<Self, GeoError> {
         let admission = ReceiptOwnership::for_operands([self.lower.exact(), self.upper.exact()])?;
         admission.prepare(context, progress, self)
@@ -450,9 +439,7 @@ impl<'a, 'observer, 'storage, 'account> CertificateWriter<'a, 'observer, 'storag
         self.text(text)
     }
     pub(crate) fn optional_decimal(
-        &mut self,
-        value: Option<&Rat>,
-        scale: u32,
+        &mut self, value: Option<&Rat>, scale: u32,
     ) -> Result<(), GeoError> {
         match value {
             Some(value) => self.decimal(value, scale),
@@ -529,8 +516,7 @@ macro_rules! source_bound_certificate {
         /// # Errors
         /// Preserves original physical, layout and work refusal.
         pub fn certificate_bytes_admitted(
-            &self,
-            admission: &mut $crate::carrier::InputAdmission<'_, '_, '_>,
+            &self, admission: &mut $crate::carrier::InputAdmission<'_, '_, '_>,
         ) -> Result<Vec<u8>, $crate::GeoError> {
             let mut output = $crate::metric::CertificateWriter::new(admission);
             output.bytes(self.law.digest().as_bytes())?;
@@ -545,10 +531,7 @@ pub(crate) use source_bound_certificate;
 /// Commit an answer only if the complete enclosure rounds to one result.
 #[cfg(test)]
 pub(crate) fn complete_point_enclosure(
-    lower: &Rat,
-    upper: &Rat,
-    binding: GeoBindingId,
-    precision_bits: u32,
+    lower: &Rat, upper: &Rat, binding: GeoBindingId, precision_bits: u32,
 ) -> Result<MetricEstimate, GeoError> {
     complete_point_enclosure_using(
         lower,
@@ -562,13 +545,8 @@ pub(crate) fn complete_point_enclosure(
 }
 
 fn complete_point_enclosure_using(
-    lower: &Rat,
-    upper: &Rat,
-    binding: GeoBindingId,
-    precision_bits: u32,
-    scratch: Option<&LimbScratch>,
-    zero_bound: Option<&Rat>,
-    progress: &mut WorkProgress<'_>,
+    lower: &Rat, upper: &Rat, binding: GeoBindingId, precision_bits: u32,
+    scratch: Option<&LimbScratch>, zero_bound: Option<&Rat>, progress: &mut WorkProgress<'_>,
 ) -> Result<MetricEstimate, GeoError> {
     let compare = |a: &Rat, b: &Rat| match scratch {
         Some(scratch) => a.compare_in(b, scratch).map_err(GeoError::NumericalScratch),
@@ -610,10 +588,7 @@ fn complete_point_enclosure_using(
 /// The same complete response, admitting every final original-rational
 /// comparison/round before copying into the worker's reusable destinations.
 pub(crate) fn complete_point_enclosure_observed(
-    lower: &Rat,
-    upper: &Rat,
-    binding: GeoBindingId,
-    context: &mut MetricContext,
+    lower: &Rat, upper: &Rat, binding: GeoBindingId, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<MetricEstimate, GeoError> {
     let shape = |value: &Rat| (value.numerator().bit_len(), value.denominator().bit_len());
@@ -709,8 +684,7 @@ fn binary64_half_ulp_power(bits: u64) -> i32 {
 }
 
 pub(crate) fn binary64_half_ulp_using(
-    bits: u64,
-    scratch: Option<&LimbScratch>,
+    bits: u64, scratch: Option<&LimbScratch>,
 ) -> Result<Rat, GeoError> {
     let power = binary64_half_ulp_power(bits);
     Ok(if power < 0 {

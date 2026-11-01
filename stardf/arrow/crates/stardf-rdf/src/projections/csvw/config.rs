@@ -48,10 +48,8 @@ impl CsvwVocabulary {
     /// Returns a configuration failure unless every value is an absolute IRI
     /// ending in `/` or `#`, so appending a local role name is unambiguous.
     pub fn new(
-        csvw_namespace: impl Into<String>,
-        rdf_namespace: impl Into<String>,
-        rdfs_namespace: impl Into<String>,
-        xsd_namespace: impl Into<String>,
+        csvw_namespace: impl Into<String>, rdf_namespace: impl Into<String>,
+        rdfs_namespace: impl Into<String>, xsd_namespace: impl Into<String>,
     ) -> Result<Self, ProjectionError> {
         let csvw_namespace = validate_namespace(csvw_namespace.into(), "CSVW")?;
         let rdf_namespace = validate_namespace(rdf_namespace.into(), "RDF")?;
@@ -136,8 +134,7 @@ impl CsvwContext {
     /// Returns a configuration failure for a relative context IRI, malformed
     /// prefix, non-absolute namespace, or namespace without an explicit boundary.
     pub fn new(
-        iri: impl Into<String>,
-        prefixes: BTreeMap<String, String>,
+        iri: impl Into<String>, prefixes: BTreeMap<String, String>,
     ) -> Result<Self, ProjectionError> {
         let iri = iri.into();
         validate_absolute_iri(&iri, "CSVW context")?;
@@ -247,13 +244,9 @@ impl CsvwConfig {
     /// Returns a configuration failure when an identity is not an absolute IRI or
     /// the record ceiling is zero or exceeds the portable `u32` range.
     pub fn new(
-        metadata_base_iri: impl Into<String>,
-        context: CsvwContext,
-        table_group_iri: impl Into<String>,
-        vocabulary: CsvwVocabulary,
-        mode: CsvwMode,
-        limits: ProjectionLimits,
-        max_records: usize,
+        metadata_base_iri: impl Into<String>, context: CsvwContext,
+        table_group_iri: impl Into<String>, vocabulary: CsvwVocabulary, mode: CsvwMode,
+        limits: ProjectionLimits, max_records: usize,
     ) -> Result<Self, ProjectionError> {
         let metadata_base_iri = metadata_base_iri.into();
         let table_group_iri = table_group_iri.into();

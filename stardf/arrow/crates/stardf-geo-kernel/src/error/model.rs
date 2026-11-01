@@ -118,8 +118,7 @@ impl purrdf_hash::error::StructuredError for ModelInputError {
 }
 impl ModelInputError {
     fn with_grid(
-        grid: &crate::operation::BilinearGrid,
-        progress: &mut crate::context::WorkProgress<'_>,
+        grid: &crate::operation::BilinearGrid, progress: &mut crate::context::WorkProgress<'_>,
         make: impl FnOnce(Box<crate::operation::BilinearGrid>) -> Self,
     ) -> super::GeoError {
         crate::context::Retained::produce(
@@ -138,11 +137,8 @@ impl ModelInputError {
     }
 
     pub(crate) fn grid_configuration(
-        origin: [crate::Rat; 2],
-        spacing: [crate::Rat; 2],
-        dimensions: (u32, u32),
-        node_count: usize,
-        reason: GridConfigurationReason,
+        origin: [crate::Rat; 2], spacing: [crate::Rat; 2], dimensions: (u32, u32),
+        node_count: usize, reason: GridConfigurationReason,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         let [origin, spacing] =
@@ -167,8 +163,7 @@ impl ModelInputError {
     }
 
     pub(crate) fn location(
-        grid: &crate::operation::BilinearGrid,
-        point: [&crate::Rat; 2],
+        grid: &crate::operation::BilinearGrid, point: [&crate::Rat; 2],
         cause: &crate::operation::GridLocationRefusal,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
@@ -186,16 +181,14 @@ impl ModelInputError {
     }
 
     pub(crate) fn missing_node(
-        grid: &crate::operation::BilinearGrid,
-        cause: crate::operation::GridMissingNode,
+        grid: &crate::operation::BilinearGrid, cause: crate::operation::GridMissingNode,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         Self::with_grid(grid, progress, |grid| Self::MissingNode { grid, cause })
     }
 
     pub(crate) fn source_rectangle(
-        domain: &crate::operation::MetricSourceDomain,
-        axis: usize,
+        domain: &crate::operation::MetricSourceDomain, axis: usize,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         super::GeoError::diagnostic_inputs(
@@ -214,11 +207,8 @@ impl ModelInputError {
     }
 
     pub(crate) fn inverse_rectangle(
-        grid: &crate::operation::BilinearGrid,
-        domain: &crate::operation::MetricSourceDomain,
-        upper: &[crate::Rat; 2],
-        axis: usize,
-        side: GridDomainSide,
+        grid: &crate::operation::BilinearGrid, domain: &crate::operation::MetricSourceDomain,
+        upper: &[crate::Rat; 2], axis: usize, side: GridDomainSide,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         super::GeoError::diagnostic_inputs(

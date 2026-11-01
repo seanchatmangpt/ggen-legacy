@@ -186,9 +186,7 @@ fn request(query: &str, bytes: usize) -> Result<Vec<String>, RdfDiagnostic> {
 
 /// Assert `outcome` answers exactly `expected`, or is the stack guard's diagnostic.
 fn assert_answer_or_stack_refusal(
-    outcome: &Result<Vec<String>, RdfDiagnostic>,
-    expected: &[&str],
-    what: &str,
+    outcome: &Result<Vec<String>, RdfDiagnostic>, expected: &[&str], what: &str,
 ) {
     let diagnostic = match outcome {
         Ok(answered) => {
@@ -395,8 +393,7 @@ fn service_with_nested_calls(depth: usize) -> String {
 /// Evaluate a prepared plan on a thread with `bytes` of stack, resolving its `SERVICE`
 /// in process against [`dataset`].
 fn evaluate_with_service(
-    prepared: &Arc<PreparedQuery>,
-    bytes: usize,
+    prepared: &Arc<PreparedQuery>, bytes: usize,
 ) -> Result<Vec<String>, RdfDiagnostic> {
     let prepared = Arc::clone(prepared);
     on_stack(bytes, move || {

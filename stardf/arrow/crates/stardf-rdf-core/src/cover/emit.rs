@@ -151,9 +151,7 @@ impl<'a> CoverBuilder<'a> {
     /// Refuses an inverted range or a range outside the actual source. The final
     /// coverage and continuation relationship are checked by [`Self::finish`].
     pub fn emit(
-        &mut self,
-        range: Range<usize>,
-        continues: Option<Range<usize>>,
+        &mut self, range: Range<usize>, continues: Option<Range<usize>>,
     ) -> Result<usize, EmitError> {
         let byte_length = self.source.len() as u64;
         validate_range(range.start as u64..range.end as u64, byte_length)?;

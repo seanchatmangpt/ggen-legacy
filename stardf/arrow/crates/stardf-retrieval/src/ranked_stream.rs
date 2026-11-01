@@ -256,8 +256,7 @@ impl StreamContract {
     /// # Errors
     /// Returns the original domain/key/container admission refusal.
     pub fn clone_admitted(
-        &self,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<Self, purrdf_sparql_eval::EvalError> {
         Ok(Self {
             rank_law: self.rank_law,
@@ -329,11 +328,8 @@ impl StreamContract {
     /// that reads its own from a loaded artifact.
     #[must_use]
     pub fn new(
-        rank_law: purrdf_sparql_eval::RankLaw,
-        duplicates: DuplicatePolicy,
-        fidelity: RankFidelity,
-        domains: CandidateDomains,
-        exclusion: ExclusionBasis,
+        rank_law: purrdf_sparql_eval::RankLaw, duplicates: DuplicatePolicy, fidelity: RankFidelity,
+        domains: CandidateDomains, exclusion: ExclusionBasis,
     ) -> Self {
         Self {
             rank_law,
@@ -1599,9 +1595,7 @@ pub trait RankedStream {
 
 /// The declared progression law, shared by scored and unscored consumers.
 pub(crate) fn validate_rank(
-    law: purrdf_sparql_eval::RankLaw,
-    previous: u64,
-    rank: u64,
+    law: purrdf_sparql_eval::RankLaw, previous: u64, rank: u64,
 ) -> Result<(), ProtocolError> {
     let expected = match law {
         purrdf_sparql_eval::RankLaw::Ordinal => previous.saturating_add(1),
@@ -1623,9 +1617,7 @@ pub(crate) fn validate_rank(
 
 /// Hold a producer's terminal claim against the rows actually consumed.
 pub(crate) fn validate_receipt(
-    receipt: &ProducerReceipt,
-    rows: u64,
-    last_rank: u64,
+    receipt: &ProducerReceipt, rows: u64, last_rank: u64,
 ) -> Result<(), ProtocolError> {
     let (declared, actual) = match receipt {
         ProducerReceipt::Exhausted { rows_emitted } => (Some(*rows_emitted), rows),
@@ -1645,10 +1637,7 @@ pub(crate) fn validate_receipt(
 
 /// Original row-domain certificate law. Candidate text is copied only on refusal.
 pub(crate) fn validate_declared_block(
-    stratum: &Iri,
-    domains: &CandidateDomains,
-    block: &RowBlock,
-    rank: u64,
+    stratum: &Iri, domains: &CandidateDomains, block: &RowBlock, rank: u64,
     item: impl FnOnce() -> Term,
 ) -> Result<(), ProtocolError> {
     let declared = || {
@@ -1678,10 +1667,7 @@ pub(crate) fn validate_declared_block(
 
 /// Original one-block-per-candidate law, shared without a second domain algorithm.
 pub(crate) fn validate_candidate_block(
-    item: &Term,
-    stratum: &Iri,
-    block: &RowBlock,
-    placed: Option<(&Iri, &DomainTag)>,
+    item: &Term, stratum: &Iri, block: &RowBlock, placed: Option<(&Iri, &DomainTag)>,
 ) -> Result<(), ProtocolError> {
     let (Some(tag), Some((named_by, previous))) = (block.tag(), placed) else {
         return Ok(());

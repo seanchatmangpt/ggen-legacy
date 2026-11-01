@@ -373,9 +373,7 @@ pub fn analysis_form<O: ?Sized + Sink>(input: &str, out: &mut O) {
 /// The first scalar is accepted unconditionally; subsequent calls decide the
 /// boundary before their scalar. The callback retains each law's own state.
 fn next_borrowed_segment(
-    text: &str,
-    start: usize,
-    mut step: impl FnMut(char, usize, &str, bool) -> bool,
+    text: &str, start: usize, mut step: impl FnMut(char, usize, &str, bool) -> bool,
 ) -> Option<(usize, &str)> {
     let rest = &text[start..];
     let mut chars = rest.char_indices();

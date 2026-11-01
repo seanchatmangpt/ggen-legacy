@@ -20,11 +20,8 @@ pub(super) struct SourceJoin {
 }
 
 pub(super) fn prepare(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    left: &PreparedEdge, right: &PreparedEdge, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<Option<SourceJoin>, GeoError> {
     let (PreparedEdge::Transformed(a), PreparedEdge::Transformed(b)) = (left, right) else {
         return Ok(None);
@@ -116,9 +113,7 @@ pub(super) fn prepare(
 /// exactly. This proves a symbolic shared subcurve without inventing target
 /// coordinates or treating interval residual zero as equality.
 pub(super) fn complete(
-    source: &SourceJoin,
-    edges: [&PreparedEdge; 2],
-    context: &mut MetricContext,
+    source: &SourceJoin, edges: [&PreparedEdge; 2], context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let policy = context.policy();
@@ -149,10 +144,7 @@ pub(super) fn into_contact(source: SourceJoin) -> CurveIntersection {
 }
 
 pub(super) fn complete_local(
-    source: &SourceJoin,
-    domain: &RootBox2,
-    iterations: u32,
-    math: &mut CoordinateMath,
+    source: &SourceJoin, domain: &RootBox2, iterations: u32, math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, MathError> {
     let map = |parameters: &[Rat; 2], parameter: &FixedInterval, math: &mut CoordinateMath| {
@@ -179,10 +171,7 @@ pub(super) fn complete_local(
 }
 
 pub(super) fn injective_on(
-    source: &SourceJoin,
-    hull: &FixedInterval,
-    iterations: u32,
-    math: &mut CoordinateMath,
+    source: &SourceJoin, hull: &FixedInterval, iterations: u32, math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, MathError> {
     let (_, derivative) = source.line.normal(hull, iterations, math, progress)?;
@@ -196,9 +185,7 @@ pub(super) fn injective_on(
 }
 
 pub(super) fn contains_source_endpoint(
-    domain: &RootBox2,
-    endpoints: &[CurveIntersection],
-    math: &mut CoordinateMath,
+    domain: &RootBox2, endpoints: &[CurveIntersection], math: &mut CoordinateMath,
 ) -> Result<bool, MathError> {
     for endpoint in endpoints {
         let (CurveIntersection::SymbolicEndpoint { left, right }

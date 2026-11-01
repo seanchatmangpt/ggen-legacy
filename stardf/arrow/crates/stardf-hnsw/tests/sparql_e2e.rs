@@ -62,8 +62,7 @@ fn registry(space: &Arc<HnswSpace>) -> PropertyFunctionRegistry<'static> {
 
 /// Evaluate `query` with `registry` in scope and return the solution rows as terms.
 fn answer(
-    registry: &PropertyFunctionRegistry<'static>,
-    query: &str,
+    registry: &PropertyFunctionRegistry<'static>, query: &str,
 ) -> Vec<Vec<Option<TermValue>>> {
     let data = dataset();
     let result = NativeSparqlEngine::new()
@@ -244,12 +243,8 @@ mod bounded_native_workspace {
     }
 
     fn run(
-        engine: &NativeSparqlEngine,
-        source: &SegmentedSession,
-        query: &str,
-        prepared: &PreparedQuery,
-        options: QueryOptions<'_, '_>,
-        route: Route,
+        engine: &NativeSparqlEngine, source: &SegmentedSession, query: &str,
+        prepared: &PreparedQuery, options: QueryOptions<'_, '_>, route: Route,
     ) -> RetainedSparqlResult {
         match route {
             Route::Text => {

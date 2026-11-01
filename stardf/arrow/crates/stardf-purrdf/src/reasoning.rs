@@ -336,9 +336,7 @@ impl<'a> ClosureRelations<'a> {
 /// rule mints none either. Both keep answering, with their relations derived over the
 /// closure like every other regime's.
 fn relations_over_closure<E>(
-    relations: &ClosureRelations<'_>,
-    closure: &RdfDataset,
-    surrogates: &BTreeSet<String>,
+    relations: &ClosureRelations<'_>, closure: &RdfDataset, surrogates: &BTreeSet<String>,
 ) -> Result<Option<PropertyFunctionRegistry<'static>>, ReasoningError<E>> {
     let Some(build) = relations.rebuild else {
         return Ok(None);
@@ -422,11 +420,8 @@ fn relations_over_closure<E>(
 /// premise is refused rather than closed without its imports.
 /// [`query_with_entailment_closure_governed`] takes the table.
 pub fn query_with_entailment<D: DatasetView>(
-    engine: &NativeSparqlEngine,
-    dataset: &D,
-    request: SparqlRequest<'_>,
-    entailment: QueryEntailment<'_>,
-    options: QueryOptions<'_, '_>,
+    engine: &NativeSparqlEngine, dataset: &D, request: SparqlRequest<'_>,
+    entailment: QueryEntailment<'_>, options: QueryOptions<'_, '_>,
     relations: &ClosureRelations<'_>,
 ) -> Result<(SparqlResult, ReasoningReport), ReasoningError<D::ReadError>> {
     // Parse first so invalid queries fail before potentially expensive closure work.
@@ -605,9 +600,7 @@ struct Closed {
 /// entry) and the merge is closed; the report — and an inconsistent run's refusal — is then
 /// restated `ontology-import-resolved`.
 fn close_premise<D: DatasetView>(
-    dataset: &D,
-    closure: &EntailmentClosure<'_>,
-    pattern: &[QTriple],
+    dataset: &D, closure: &EntailmentClosure<'_>, pattern: &[QTriple],
     stop: Option<&Arc<dyn purrdf_datalog::StopSignal>>,
 ) -> Result<Closed, ReasoningError<D::ReadError>> {
     dataset
@@ -661,10 +654,7 @@ fn close_premise<D: DatasetView>(
 /// and raises the ONE boundary only this call site can: [`Construct::NonHornTBox`], which says
 /// the combined approach was tried first and declined.
 fn close_lane<D: DatasetView>(
-    dataset: &D,
-    entailment: QueryEntailment<'_>,
-    pattern: &[QTriple],
-    limits: &EvalOptions,
+    dataset: &D, entailment: QueryEntailment<'_>, pattern: &[QTriple], limits: &EvalOptions,
     stop: Option<&Arc<dyn purrdf_datalog::StopSignal>>,
 ) -> Result<Closed, ReasoningError<D::ReadError>> {
     let plain = |(dataset, report): (Arc<RdfDataset>, ReasoningReport)| Closed {
@@ -958,13 +948,9 @@ impl purrdf_datalog::StopSignal for ClosureStop {
 /// what the `purrdf query --path-relation --entailment …` and Python
 /// `path_relations=`-plus-`entailment=` pairings both supply.
 pub fn query_with_entailment_governed<D: DatasetView>(
-    engine: &NativeSparqlEngine,
-    dataset: &D,
-    request: SparqlRequest<'_>,
-    entailment: QueryEntailment<'_>,
-    options: QueryOptions<'_, '_>,
-    relations: &ClosureRelations<'_>,
-    governors: &QueryGovernors,
+    engine: &NativeSparqlEngine, dataset: &D, request: SparqlRequest<'_>,
+    entailment: QueryEntailment<'_>, options: QueryOptions<'_, '_>,
+    relations: &ClosureRelations<'_>, governors: &QueryGovernors,
 ) -> Result<GovernedEntailment, ReasoningError<D::ReadError>> {
     let imports = ImportMap::default();
     query_with_entailment_closure_governed(
@@ -1000,13 +986,9 @@ pub fn query_with_entailment_governed<D: DatasetView>(
 /// As [`query_with_entailment_governed`], plus the import refusals above (as
 /// [`ReasoningError::Entailment`]).
 pub fn query_with_entailment_closure_governed<D: DatasetView>(
-    engine: &NativeSparqlEngine,
-    dataset: &D,
-    request: SparqlRequest<'_>,
-    closure: &EntailmentClosure<'_>,
-    options: QueryOptions<'_, '_>,
-    relations: &ClosureRelations<'_>,
-    governors: &QueryGovernors,
+    engine: &NativeSparqlEngine, dataset: &D, request: SparqlRequest<'_>,
+    closure: &EntailmentClosure<'_>, options: QueryOptions<'_, '_>,
+    relations: &ClosureRelations<'_>, governors: &QueryGovernors,
 ) -> Result<GovernedEntailment, ReasoningError<D::ReadError>> {
     let entailment = closure.entailment;
     // Parse first, exactly as the ungoverned lane does: an invalid query is a failure rather
@@ -1121,8 +1103,7 @@ pub fn query_with_entailment_closure_governed<D: DatasetView>(
 /// A no-op when the run minted no witness, which is every lane but the OWL-Direct combined
 /// approach — so the ordinary governed query pays one `is_empty` for the guarantee.
 fn withhold_surrogates_from_outcome(
-    outcome: GovernedOutcome,
-    surrogates: &BTreeSet<String>,
+    outcome: GovernedOutcome, surrogates: &BTreeSet<String>,
 ) -> Result<GovernedOutcome, RdfDiagnostic> {
     if surrogates.is_empty() {
         return Ok(outcome);
@@ -1567,9 +1548,7 @@ fn restrict_witness_bindings(query: &Query, surrogates: &BTreeSet<String>) -> Qu
 
 /// [`restrict_witness_bindings`] over one graph pattern.
 fn restrict_pattern(
-    pattern: &GraphPattern,
-    observable: &BTreeSet<String>,
-    witnesses: &[Vec<Option<GroundTerm>>],
+    pattern: &GraphPattern, observable: &BTreeSet<String>, witnesses: &[Vec<Option<GroundTerm>>],
 ) -> GraphPattern {
     let recurse = |inner: &GraphPattern| Child::new(restrict_pattern(inner, observable, witnesses));
     match pattern {
@@ -1713,8 +1692,7 @@ fn restrict_pattern(
 /// only remove a row whose two variables were both bound to a witness, which is not the
 /// condition being excluded.
 fn exclude_witnesses<'a>(
-    pattern: GraphPattern,
-    variables: impl Iterator<Item = &'a String>,
+    pattern: GraphPattern, variables: impl Iterator<Item = &'a String>,
     witnesses: &[Vec<Option<GroundTerm>>],
 ) -> GraphPattern {
     let mut restricted = pattern;
@@ -1748,8 +1726,7 @@ fn exclude_witnesses<'a>(
 /// nothing and the RDF 1.2 statement-layer overlay of an untouched result is carried through
 /// by identity rather than by a copy.
 fn withhold_surrogate_triples(
-    result: &mut SparqlResult,
-    surrogates: &BTreeSet<String>,
+    result: &mut SparqlResult, surrogates: &BTreeSet<String>,
 ) -> Result<bool, RdfDiagnostic> {
     if surrogates.is_empty() {
         return Ok(false);
@@ -2252,12 +2229,8 @@ mod tests {
         fn probe_plan(&self, _: bool, _: bool, _: bool, _: purrdf_core::GraphMatch) {}
 
         fn quads_for_pattern_with_plan(
-            &self,
-            (): &Self::ProbePlan,
-            s: Option<Self::Id>,
-            p: Option<Self::Id>,
-            o: Option<Self::Id>,
-            g: purrdf_core::GraphMatch,
+            &self, (): &Self::ProbePlan, s: Option<Self::Id>, p: Option<Self::Id>,
+            o: Option<Self::Id>, g: purrdf_core::GraphMatch,
         ) -> impl Iterator<Item = purrdf_core::QuadIds> + '_ {
             self.quads_for_pattern(s, p, o, g)
         }

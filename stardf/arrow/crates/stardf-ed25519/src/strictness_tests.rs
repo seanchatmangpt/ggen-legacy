@@ -64,10 +64,7 @@ const REFERENCE_VERDICTS: &str = include_str!("../tests/vectors/strictness_vecto
 /// `label`, after checking the triple built here is the one it was frozen
 /// for.
 fn reference_verdict(
-    label: &str,
-    key: &[u8; 32],
-    message: &[u8],
-    signature: &Signature,
+    label: &str, key: &[u8; 32], message: &[u8], signature: &Signature,
 ) -> (bool, bool) {
     let file = VectorFile::parse(REFERENCE_VERDICTS).expect("strictness vectors");
     let record = file

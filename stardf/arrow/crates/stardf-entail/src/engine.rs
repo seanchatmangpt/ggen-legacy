@@ -170,8 +170,7 @@ pub(crate) fn copy_of<D: DatasetView>(
 /// dropped them would delete every reifier in a caller's data the moment they asked for
 /// entailment, and no assertion about the quads would notice.
 pub(crate) fn copy_into<D: DatasetView>(
-    b: &mut RdfDatasetBuilder,
-    ds: &D,
+    b: &mut RdfDatasetBuilder, ds: &D,
 ) -> Result<(), EntailError<D::ReadError>> {
     ds.checked_read(|ds| {
         for quad in ds.quads() {
@@ -315,10 +314,7 @@ pub(crate) fn term_positions<D: DatasetView>(ds: &D) -> impl Iterator<Item = D::
 /// evaluating. A malformed or cyclic collection is [`EntailError::MalformedList`] rather
 /// than a closure over its well-formed prefix.
 pub(crate) fn close<D: DatasetView>(
-    ds: &D,
-    regime: Regime,
-    options: &EvalOptions,
-    stop: Option<&Arc<dyn StopSignal>>,
+    ds: &D, regime: Regime, options: &EvalOptions, stop: Option<&Arc<dyn StopSignal>>,
 ) -> Result<(Arc<RdfDataset>, RunStats), EntailError<D::ReadError>> {
     ds.checked_read(|ds| {
         let (program, attribution) = program_with_attribution(regime);
@@ -448,10 +444,7 @@ pub(super) fn chase_error<E>(error: ChaseError) -> EntailError<E> {
 /// graph, so a clash in the second named graph leaves the default graph's conclusions
 /// tallied in `rules_fired` and both evaluations' join steps summed into the budget.
 fn refuse<D: DatasetView>(
-    ds: &D,
-    regime: Regime,
-    stats: &RunStats,
-    witness: InconsistencyWitness,
+    ds: &D, regime: Regime, stats: &RunStats, witness: InconsistencyWitness,
 ) -> EntailError<D::ReadError> {
     match ReasoningReport::of_inconsistent_run(ds, regime, stats, witness.clone()) {
         Ok(report) => EntailError::Inconsistent(Box::new(InconsistentRun::new(witness, report))),
@@ -535,9 +528,7 @@ struct GraphRun {
 
 /// Push `conclusion` into `b`, in `graph`.
 fn emit(
-    b: &mut RdfDatasetBuilder,
-    conclusion: &Conclusion,
-    graph: Option<TermId>,
+    b: &mut RdfDatasetBuilder, conclusion: &Conclusion, graph: Option<TermId>,
 ) -> Result<(), EntailError> {
     let s = intern_into(b, &conclusion.subject)?;
     let p = intern_into(b, &conclusion.predicate)?;
@@ -569,10 +560,7 @@ fn emit(
 /// [`Construct::AxiomaticTriples`](crate::Construct::AxiomaticTriples) says both this and
 /// the unbounded `rdf:_n` family in one boundary.
 fn close_graph<D: DatasetView>(
-    ds: &D,
-    input: GraphRunInput<'_>,
-    graph: Option<&TermValue>,
-    plans: &mut PlanCache,
+    ds: &D, input: GraphRunInput<'_>, graph: Option<&TermValue>, plans: &mut PlanCache,
 ) -> Result<GraphRun, EntailError<D::ReadError>> {
     let GraphRunInput {
         regime,
@@ -690,10 +678,7 @@ fn close_graph<D: DatasetView>(
 /// [`EntailError::MalformedList`] if an RDF collection an OWL 2 axiom points at is not a
 /// well-formed collection.
 pub(crate) fn seed<D: DatasetView>(
-    ds: &D,
-    regime: Regime,
-    program: &[DlClause],
-    graph: Option<&TermValue>,
+    ds: &D, regime: Regime, program: &[DlClause], graph: Option<&TermValue>,
 ) -> Result<(RelationStore, Terms), EntailError<D::ReadError>> {
     ds.checked_read(|ds| {
         let mut terms = Terms::default();
@@ -835,12 +820,8 @@ pub(crate) fn seed<D: DatasetView>(
 /// neither — so a witness surface is never looked up, because the fact carrying it was
 /// already dropped.
 fn chase_graph(
-    program: &[DlClause],
-    attribution: &[ChaseRule],
-    edb: RelationStore,
-    terms: &Terms,
-    options: &EvalOptions,
-    stop: Option<&Arc<dyn StopSignal>>,
+    program: &[DlClause], attribution: &[ChaseRule], edb: RelationStore, terms: &Terms,
+    options: &EvalOptions, stop: Option<&Arc<dyn StopSignal>>,
 ) -> Result<GraphRun, EntailError> {
     let outcome = chase_with(
         program,
@@ -951,11 +932,8 @@ fn observe_literal(literals: &mut LiteralIndex, surface: &str, value: &TermValue
 /// triple a caller can look for in their data. What remains is exactly the triples that
 /// are.
 fn first_clash(
-    evaluation: &purrdf_datalog::seminaive::Evaluation,
-    attribution: &[ChaseRule],
-    terms: &Terms,
-    regime: Regime,
-    graph: Option<&TermValue>,
+    evaluation: &purrdf_datalog::seminaive::Evaluation, attribution: &[ChaseRule], terms: &Terms,
+    regime: Regime, graph: Option<&TermValue>,
 ) -> Option<InconsistencyWitness> {
     let owl = matches!(regime, Regime::OwlRl);
     evaluation
@@ -968,10 +946,7 @@ fn first_clash(
 
 /// The witness a clash derivation carries.
 fn witness_of(
-    derivation: &Derivation,
-    attribution: &[ChaseRule],
-    terms: &Terms,
-    owl: bool,
+    derivation: &Derivation, attribution: &[ChaseRule], terms: &Terms, owl: bool,
     graph: Option<&TermValue>,
 ) -> InconsistencyWitness {
     // The rule is read from the clash row's own subject where it names one, and from the
@@ -1086,8 +1061,7 @@ impl Refuter {
 
     /// Seed and close one premise once, retaining original native owners.
     pub(crate) fn seed<D: DatasetView>(
-        &self,
-        ds: &D,
+        &self, ds: &D,
     ) -> Result<Seeded<'_>, EntailError<D::ReadError>> {
         let (edb, terms) = seed(ds, self.regime, self.program.rules(), None)?;
         let mut source = Hasher::new();
@@ -1137,8 +1111,7 @@ impl Refuter {
 impl Seeded<'_> {
     /// Refute one whitelisted scenario through the same native maintained model.
     pub(crate) fn refute(
-        &mut self,
-        added: &[[TermValue; 3]],
+        &mut self, added: &[[TermValue; 3]],
     ) -> Result<Option<Clash>, EntailError> {
         self.evaluate_with(added)?;
         let Some(witness) = self.first_clash()? else {

@@ -35,11 +35,7 @@ pub(crate) struct NormalArguments<T> {
 }
 
 pub(crate) fn phase_speed<A: NormalArithmetic>(
-    c: &A::Value,
-    e2: &A::Value,
-    sin0: &A::Value,
-    h: &A::Value,
-    dsigma: &A::Value,
+    c: &A::Value, e2: &A::Value, sin0: &A::Value, h: &A::Value, dsigma: &A::Value,
     arithmetic: &mut A,
 ) -> Result<A::Value, MathError> {
     let e_sin0 = arithmetic.mul(e2, sin0)?;
@@ -52,8 +48,7 @@ pub(crate) fn phase_speed<A: NormalArithmetic>(
 }
 
 pub(crate) fn evaluate<A: NormalArithmetic>(
-    args: &NormalArguments<A::Value>,
-    arithmetic: &mut A,
+    args: &NormalArguments<A::Value>, arithmetic: &mut A,
 ) -> Result<NormalImage<A::Value>, MathError> {
     let (sin, cos) = arithmetic.sin_cos(&args.phase)?;
     let v = [

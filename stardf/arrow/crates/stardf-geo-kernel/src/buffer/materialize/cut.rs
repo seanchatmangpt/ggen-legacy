@@ -15,19 +15,13 @@ use crate::{AxisOrder, Coord, GeoError, LonLat, MetricContext, Rat, SourceLinear
 use purrdf_xsd::integer::ExactOperation::{Linear, RationalAdd, RationalDivide, RationalReduce};
 
 pub(super) fn lifted(
-    point: &LonLat,
-    center: &LonLat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    point: &LonLat, center: &LonLat, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Coord, GeoError> {
     lifted_from_longitude(point, center.longitude(), context, progress)
 }
 
 pub(super) fn lifted_from_longitude(
-    point: &LonLat,
-    origin: &Rat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    point: &LonLat, origin: &Rat, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Coord, GeoError> {
     let shape = |value: &Rat| (value.numerator().bit_len(), value.denominator().bit_len());
     let cost = purrdf_xsd::integer::ExactArithmeticCost::rational_difference_integer_interval(
@@ -77,31 +71,22 @@ pub(super) fn lifted_from_longitude(
 }
 
 pub(super) fn polygons(
-    ring: RetainedBuilder<Coord>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    total: &mut u64,
-    retained: &mut MaterializationStorage,
+    ring: RetainedBuilder<Coord>, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
+    total: &mut u64, retained: &mut MaterializationStorage,
 ) -> Result<Vec<crate::Rings>, GeoError> {
     polygons_in_turns(ring, -1..=1, context, progress, total, retained)
 }
 
 pub(super) fn atlas_polygons(
-    ring: RetainedBuilder<Coord>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    total: &mut u64,
-    retained: &mut MaterializationStorage,
+    ring: RetainedBuilder<Coord>, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
+    total: &mut u64, retained: &mut MaterializationStorage,
 ) -> Result<Vec<crate::Rings>, GeoError> {
     polygons_in_turns(ring, -2..=2, context, progress, total, retained)
 }
 
 fn polygons_in_turns(
-    mut ring: RetainedBuilder<Coord>,
-    turns: core::ops::RangeInclusive<i64>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    total: &mut u64,
+    mut ring: RetainedBuilder<Coord>, turns: core::ops::RangeInclusive<i64>,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>, total: &mut u64,
     retained: &mut MaterializationStorage,
 ) -> Result<Vec<crate::Rings>, GeoError> {
     let west = Rat::from_i64(-180);
@@ -169,9 +154,7 @@ fn polygons_in_turns(
 }
 
 fn publish_piece(
-    ring: RetainedBuilder<Coord>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    ring: RetainedBuilder<Coord>, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     retained: &mut MaterializationStorage,
 ) -> Result<crate::Rings, GeoError> {
     let ring = retained.output_array(ring, context, progress)?;
@@ -181,12 +164,8 @@ fn publish_piece(
 }
 
 fn clip(
-    ring: &[Coord],
-    cut: &Rat,
-    upper: bool,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut MaterializationStorage,
+    ring: &[Coord], cut: &Rat, upper: bool, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut MaterializationStorage,
 ) -> Result<RetainedBuilder<Coord>, GeoError> {
     let capacity = ring
         .len()
@@ -279,21 +258,15 @@ fn clip(
     Ok(result)
 }
 fn inside(
-    point: &Coord,
-    cut: &Rat,
-    upper: bool,
-    context: &mut MetricContext,
+    point: &Coord, cut: &Rat, upper: bool, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let order = compare_rat(point.x(), cut, context, progress)?;
     Ok(if upper { order.is_le() } else { order.is_ge() })
 }
 fn push(
-    point: Coord,
-    output: &mut RetainedBuilder<Coord>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut MaterializationStorage,
+    point: Coord, output: &mut RetainedBuilder<Coord>, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut MaterializationStorage,
 ) -> Result<(), GeoError> {
     if let Some(last) = output.last()
         && coordinate_order(last, &point, context, progress)?.is_eq()
@@ -306,9 +279,7 @@ fn push(
 }
 
 pub(super) fn canonicalize(
-    ring: &mut [Coord],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    ring: &mut [Coord], context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     let count = ring.len().saturating_sub(1);
     if count == 0 {

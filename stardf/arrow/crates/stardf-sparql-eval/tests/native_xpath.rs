@@ -19,8 +19,7 @@ use purrdf_sparql_eval::{
 use support::{render_cell, solutions};
 
 fn select(
-    engine: &NativeSparqlEngine,
-    expression: &str,
+    engine: &NativeSparqlEngine, expression: &str,
 ) -> Result<Vec<Option<TermValue>>, RdfDiagnostic> {
     let query = format!("SELECT ({expression} AS ?value) WHERE {{}}");
     let (_, mut rows) = solutions(engine.query(
@@ -639,10 +638,7 @@ fn texts(values: &[(&str, &str)]) -> Arc<purrdf_core::RdfDataset> {
 
 /// The single cell of `SELECT ?r WHERE { ex:{subject} ex:v ?t BIND({call} AS ?r) }`.
 fn bound(
-    engine: &NativeSparqlEngine,
-    data: &Arc<purrdf_core::RdfDataset>,
-    subject: &str,
-    call: &str,
+    engine: &NativeSparqlEngine, data: &Arc<purrdf_core::RdfDataset>, subject: &str, call: &str,
 ) -> Result<String, RdfDiagnostic> {
     let query = format!(
         "SELECT ?r WHERE {{ <http://example.org/{subject}> <http://example.org/v> ?t \

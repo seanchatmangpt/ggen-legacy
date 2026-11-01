@@ -318,8 +318,7 @@ impl<'a> Checker<'a> {
 /// Collect `$label` declarations under one shape expression. Crate-visible:
 /// the validator reuses it to build its inclusion table.
 pub(crate) fn collect_triple_labels_shape_expr<'a>(
-    expr: &'a ShapeExpr,
-    out: &mut Vec<(&'a str, &'a TripleExpr)>,
+    expr: &'a ShapeExpr, out: &mut Vec<(&'a str, &'a TripleExpr)>,
 ) {
     for node in ExprRef::Shape(expr).walk() {
         let ExprRef::Triple(expr) = node else {

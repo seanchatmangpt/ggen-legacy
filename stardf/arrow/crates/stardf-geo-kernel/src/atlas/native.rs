@@ -26,9 +26,7 @@ pub(crate) struct NativeBoundary {
 }
 
 pub(crate) fn select_boundary(
-    region: &PreparedRegion,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    region: &PreparedRegion, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Option<NativeBoundary>, GeoError> {
     let (PreparedRegion::Polygons(polygons) | PreparedRegion::ComplementOfPolygons(polygons)) =
         region
@@ -62,11 +60,8 @@ pub(crate) fn select_boundary(
 }
 
 fn select_disjoint(
-    region: &PreparedRegion,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
-    temporary: &mut u64,
+    region: &PreparedRegion, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
+    retained: &mut u64, temporary: &mut u64,
 ) -> Result<(RetainedBuilder<NativeRing>, bool), GeoError> {
     let (PreparedRegion::Polygons(polygons) | PreparedRegion::ComplementOfPolygons(polygons)) =
         region
@@ -242,9 +237,7 @@ fn select_disjoint(
 }
 
 fn membership(
-    region: &PreparedRegion,
-    states: &[bool],
-    context: &mut MetricContext,
+    region: &PreparedRegion, states: &[bool], context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let (PreparedRegion::Polygons(polygons) | PreparedRegion::ComplementOfPolygons(polygons)) =
@@ -279,12 +272,8 @@ fn membership(
 }
 
 fn representative_states(
-    index: usize,
-    rings: &[&PreparedCurve],
-    representatives: &[usize],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    temporary: &mut u64,
+    index: usize, rings: &[&PreparedCurve], representatives: &[usize], context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, temporary: &mut u64,
 ) -> Result<RetainedBuilder<bool>, GeoError> {
     let edge = rings[index]
         .edges()
@@ -354,9 +343,7 @@ fn representative_states(
 }
 
 fn representative(
-    edge: &crate::PreparedEdge,
-    bits: u32,
-    context: &mut MetricContext,
+    edge: &crate::PreparedEdge, bits: u32, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<[FixedInterval; 2], GeoError> {
     let policy = context.policy();

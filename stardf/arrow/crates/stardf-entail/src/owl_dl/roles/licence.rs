@@ -55,8 +55,7 @@ enum Pending {
 impl super::RoleProgram {
     /// Follow only retained compiler decisions, never another role search.
     pub(crate) fn path_inputs<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        transitions: impl IntoIterator<Item = (Role, usize)>,
+        &self, transitions: impl IntoIterator<Item = (Role, usize)>,
         inclusions: impl IntoIterator<Item = (Role, Role)>,
         stop: Option<&dyn purrdf_datalog::StopSignal>,
         memory: &mut purrdf_lex::allocation::Memory<'_, S>,
@@ -122,11 +121,8 @@ impl super::RoleProgram {
     }
 
     fn select_input<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        input: Input,
-        seen: &mut purrdf_lex::allocation::OrderedTable<Input, ()>,
-        selected: &mut Vec<Input>,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, input: Input, seen: &mut purrdf_lex::allocation::OrderedTable<Input, ()>,
+        selected: &mut Vec<Input>, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<(), Error> {
         self.source
             .sources
@@ -139,10 +135,7 @@ impl super::RoleProgram {
     }
 
     fn select_inclusion<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        sub: Role,
-        sup: Role,
-        pending: &mut Vec<Pending>,
+        &self, sub: Role, sup: Role, pending: &mut Vec<Pending>,
         memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<(), Error> {
         if sub == sup {
@@ -167,11 +160,8 @@ impl super::RoleProgram {
     }
 
     fn select_order<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        task: Pending,
-        pending: &mut Vec<Pending>,
-        seen: &mut purrdf_lex::allocation::OrderedTable<Input, ()>,
-        selected: &mut Vec<Input>,
+        &self, task: Pending, pending: &mut Vec<Pending>,
+        seen: &mut purrdf_lex::allocation::OrderedTable<Input, ()>, selected: &mut Vec<Input>,
         memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<(), Error> {
         use super::order::Step;
@@ -209,10 +199,7 @@ impl super::RoleProgram {
     }
 
     fn select_transition<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        role: Role,
-        index: usize,
-        pending: &mut Vec<Pending>,
+        &self, role: Role, index: usize, pending: &mut Vec<Pending>,
         memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<(), Error> {
         let position = self

@@ -197,9 +197,7 @@ impl VerifyingKey {
     ///    canonical encoding of S·B - k·A against R's bytes, else
     ///    [`SignatureError::Mismatch`].
     pub fn verify_strict(
-        &self,
-        message: &[u8],
-        signature: &Signature,
+        &self, message: &[u8], signature: &Signature,
     ) -> Result<(), SignatureError> {
         let s = Scalar::from_canonical_bytes(&signature.s).ok_or(SignatureError::NonCanonicalS)?;
         let r = Point::decode(&signature.r).ok_or(SignatureError::InvalidR)?;

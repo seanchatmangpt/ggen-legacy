@@ -53,11 +53,7 @@ impl std::fmt::Debug for Sources {
 
 impl Sources {
     pub(crate) fn publish<S: Admission + ?Sized>(
-        &mut self,
-        inputs: &[Input],
-        anchor: Triple,
-        shared: Range<usize>,
-        start: usize,
+        &mut self, inputs: &[Input], anchor: Triple, shared: Range<usize>, start: usize,
         memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         if inputs.iter().all(|input| self.owners.get(input).is_some()) {
@@ -86,8 +82,7 @@ impl Sources {
     }
 
     pub(super) fn release<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         self.owners.release(memory)?;
         memory.release_vec(self.origins)?;

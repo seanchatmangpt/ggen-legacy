@@ -86,10 +86,7 @@ enum Job<'a> {
 trait Sink: TextOut {
     /// A nested composite: schedule its rendering, or account for its length.
     fn composite<'a>(
-        &mut self,
-        jobs: &mut Vec<Job<'a>>,
-        value: &'a CdtValue,
-        memory: &mut Memory<'_>,
+        &mut self, jobs: &mut Vec<Job<'a>>, value: &'a CdtValue, memory: &mut Memory<'_>,
     ) -> Result<(), StorageError>;
 }
 
@@ -122,10 +119,7 @@ impl TextOut for Measure {
 
 impl Sink for Measure {
     fn composite<'a>(
-        &mut self,
-        _jobs: &mut Vec<Job<'a>>,
-        value: &'a CdtValue,
-        _memory: &mut Memory<'_>,
+        &mut self, _jobs: &mut Vec<Job<'a>>, value: &'a CdtValue, _memory: &mut Memory<'_>,
     ) -> Result<(), StorageError> {
         self.0 = self.0.saturating_add(value.extent().bytes);
         Ok(())
@@ -167,8 +161,7 @@ pub fn canonical_lexical(value: &CdtValue) -> String {
 /// # Errors
 /// Returns original admission, allocator or checked-layout refusal.
 pub fn try_canonical_lexical(
-    value: &CdtValue,
-    storage: &mut impl Storage,
+    value: &CdtValue, storage: &mut impl Storage,
 ) -> Result<(String, usize), StorageError> {
     let mut memory = Memory::new(storage);
     memory.scope(|memory| {
@@ -219,10 +212,7 @@ impl TextOut for FixedText {
 }
 impl Sink for FixedText {
     fn composite<'a>(
-        &mut self,
-        jobs: &mut Vec<Job<'a>>,
-        value: &'a CdtValue,
-        memory: &mut Memory<'_>,
+        &mut self, jobs: &mut Vec<Job<'a>>, value: &'a CdtValue, memory: &mut Memory<'_>,
     ) -> Result<(), StorageError> {
         push_value(jobs, value, memory)
     }
@@ -260,8 +250,7 @@ pub fn canonical_key_lexical(key: &CdtKey) -> String {
 }
 
 pub(crate) fn try_canonical_key_lexical(
-    key: &CdtKey,
-    memory: &mut Memory<'_>,
+    key: &CdtKey, memory: &mut Memory<'_>,
 ) -> Result<String, StorageError> {
     memory.scope(|memory| {
         let length = key_lexical_len(key);
@@ -282,8 +271,7 @@ pub(crate) fn try_canonical_key_lexical(
 /// A nested composite answers from its carried measure, so this costs the element's
 /// own leaves and nothing below a composite.
 pub(crate) fn try_term_lexical_len(
-    term: &CdtTerm,
-    memory: &mut Memory<'_>,
+    term: &CdtTerm, memory: &mut Memory<'_>,
 ) -> Result<usize, StorageError> {
     let mut out = Measure(0);
     let mut jobs = Vec::new();
@@ -294,8 +282,7 @@ pub(crate) fn try_term_lexical_len(
 
 /// Measure the original triple renderer before its checked box is born.
 pub(crate) fn try_triple_lexical_len(
-    triple: &CdtTripleTerm,
-    memory: &mut Memory<'_>,
+    triple: &CdtTripleTerm, memory: &mut Memory<'_>,
 ) -> Result<usize, StorageError> {
     let mut output = Measure(0);
     let mut jobs = Vec::new();
@@ -314,9 +301,7 @@ pub(crate) fn key_lexical_len(key: &CdtKey) -> usize {
 /// Drive the renderer's job stack into a sink. Iterative: nesting costs heap, never
 /// stack.
 fn run<S: Sink>(
-    out: &mut S,
-    mut jobs: Vec<Job<'_>>,
-    memory: &mut Memory<'_>,
+    out: &mut S, mut jobs: Vec<Job<'_>>, memory: &mut Memory<'_>,
 ) -> Result<(), StorageError> {
     while let Some(job) = jobs.pop() {
         match job {
@@ -337,9 +322,7 @@ fn run<S: Sink>(
 
 /// Push the jobs for a composite, in reverse emission order (the stack pops LIFO).
 fn push_value<'a>(
-    jobs: &mut Vec<Job<'a>>,
-    value: &'a CdtValue,
-    memory: &mut Memory<'_>,
+    jobs: &mut Vec<Job<'a>>, value: &'a CdtValue, memory: &mut Memory<'_>,
 ) -> Result<(), StorageError> {
     match value.contents() {
         CdtContents::List(items) => {
@@ -370,9 +353,7 @@ fn push_value<'a>(
 
 /// Push the jobs for a triple term, in reverse emission order.
 fn push_triple<'a>(
-    jobs: &mut Vec<Job<'a>>,
-    triple: &'a CdtTripleTerm,
-    memory: &mut Memory<'_>,
+    jobs: &mut Vec<Job<'a>>, triple: &'a CdtTripleTerm, memory: &mut Memory<'_>,
 ) -> Result<(), StorageError> {
     memory.push(jobs, Job::Punct(TRIPLE_TERM_CLOSE))?;
     memory.push(jobs, Job::Punct(" "))?;

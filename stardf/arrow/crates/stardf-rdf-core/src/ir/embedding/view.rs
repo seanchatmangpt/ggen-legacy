@@ -709,9 +709,7 @@ impl<'a> EffectiveMatrixView<'a> {
     /// involve no arithmetic, are read without it through
     /// [`EffectiveMatrixView::raw_prefix_bytes`] and [`EffectiveMatrixView::native_f32_row`].
     pub fn f32_row(
-        self,
-        row: u64,
-        arithmetic: Resolved<Exact>,
+        self, row: u64, arithmetic: Resolved<Exact>,
     ) -> Result<EffectiveF32Row<'a>, EmbeddingError> {
         if self.matrix.dtype()? != VectorDtype::F32 {
             return Err(EmbeddingError::UnsupportedCode {
@@ -739,9 +737,7 @@ impl<'a> EffectiveMatrixView<'a> {
     /// stored bytes are read without it through [`EffectiveMatrixView::raw_prefix_bytes`]
     /// and [`EffectiveMatrixView::native_f64_row`].
     pub fn f64_row(
-        self,
-        row: u64,
-        arithmetic: Resolved<Exact>,
+        self, row: u64, arithmetic: Resolved<Exact>,
     ) -> Result<EffectiveF64Row<'a>, EmbeddingError> {
         if self.matrix.dtype()? != VectorDtype::F64 {
             return Err(EmbeddingError::UnsupportedCode {
@@ -1060,10 +1056,7 @@ pub struct L2F32Scalars<'a> {
 
 impl<'a> L2F32Scalars<'a> {
     fn new(
-        bytes: &'a [u8],
-        row: u64,
-        dimension: u32,
-        arithmetic: Resolved<Exact>,
+        bytes: &'a [u8], row: u64, dimension: u32, arithmetic: Resolved<Exact>,
     ) -> Result<Self, EmbeddingError> {
         let norm = deterministic_norm_f32(bytes, row, dimension, arithmetic)?;
         Ok(Self {
@@ -1103,10 +1096,7 @@ pub struct L2F64Scalars<'a> {
 
 impl<'a> L2F64Scalars<'a> {
     fn new(
-        bytes: &'a [u8],
-        row: u64,
-        dimension: u32,
-        arithmetic: Resolved<Exact>,
+        bytes: &'a [u8], row: u64, dimension: u32, arithmetic: Resolved<Exact>,
     ) -> Result<Self, EmbeddingError> {
         let norm = deterministic_norm_f64(bytes, row, dimension, arithmetic)?;
         Ok(Self {
@@ -1833,9 +1823,7 @@ impl<'a> EmbeddingView<'a> {
 
     /// Finds the unique effective matrix for a target set and vector space.
     pub fn effective_matrix(
-        &self,
-        target_set: TargetSetId,
-        vector_space: VectorSpaceId,
+        &self, target_set: TargetSetId, vector_space: VectorSpaceId,
     ) -> Result<Option<EffectiveMatrixView<'a>>, EmbeddingError> {
         let mut key = [0u8; 64];
         key[..32].copy_from_slice(target_set.as_bytes());
@@ -1893,10 +1881,7 @@ impl<'a> EmbeddingView<'a> {
     }
 
     fn external_binding_by_artifact(
-        &self,
-        scope_kind: ExternalScopeKind,
-        scope_id: [u8; 32],
-        digest: ContentDigest,
+        &self, scope_kind: ExternalScopeKind, scope_id: [u8; 32], digest: ContentDigest,
         length: u64,
     ) -> Option<ExternalBindingView<'a>> {
         external_lookup_ordinal(
@@ -2077,9 +2062,7 @@ fn validate_complete_relations(view: &EmbeddingView<'_>) -> Result<(), Embedding
 }
 
 fn validate_borrowed_triple_relations(
-    view: &EmbeddingView<'_>,
-    edges: &[BorrowedBuiltinEdge],
-    target: TargetView<'_>,
+    view: &EmbeddingView<'_>, edges: &[BorrowedBuiltinEdge], target: TargetView<'_>,
 ) -> Result<(), EmbeddingError> {
     let counts = [32, 33, 34].map(|kind| edge_count(edges, target.id(), kind));
     match borrowed_u32(target, 1)? {
@@ -2116,16 +2099,13 @@ fn validate_borrowed_triple_relations(
 }
 
 fn borrowed_required_target_id(
-    target: TargetView<'_>,
-    tag: u16,
-    context: &'static str,
+    target: TargetView<'_>, tag: u16, context: &'static str,
 ) -> Result<TargetId, EmbeddingError> {
     borrowed_target_id(target, tag)?.ok_or(EmbeddingError::Missing(context))
 }
 
 fn borrowed_target_id(
-    target: TargetView<'_>,
-    tag: u16,
+    target: TargetView<'_>, tag: u16,
 ) -> Result<Option<TargetId>, EmbeddingError> {
     target
         .identity_bytes()
@@ -2149,10 +2129,7 @@ fn borrowed_u32(target: TargetView<'_>, tag: u16) -> Result<Option<u32>, Embeddi
 }
 
 fn validate_borrowed_term_position(
-    view: &EmbeddingView<'_>,
-    id: TargetId,
-    allowed_forms: &[u32],
-    context: &'static str,
+    view: &EmbeddingView<'_>, id: TargetId, allowed_forms: &[u32], context: &'static str,
 ) -> Result<(), EmbeddingError> {
     let term = view
         .target(id)
@@ -2169,10 +2146,7 @@ fn validate_borrowed_term_position(
 }
 
 fn require_borrowed_composite_graph(
-    view: &EmbeddingView<'_>,
-    composite: TargetId,
-    expected_graph: TargetId,
-    context: &'static str,
+    view: &EmbeddingView<'_>, composite: TargetId, expected_graph: TargetId, context: &'static str,
 ) -> Result<(), EmbeddingError> {
     let target = view
         .target(composite)
@@ -2344,10 +2318,7 @@ impl<'a> TokenSpansView<'a> {
 
 impl<'a> MatricesView<'a> {
     fn matrix_at(
-        self,
-        index: usize,
-        directory: DirectoryView<'a>,
-        fully_verified: bool,
+        self, index: usize, directory: DirectoryView<'a>, fully_verified: bool,
     ) -> Option<MatrixView<'a>> {
         let start = MATRIX_HEADER_LENGTH.checked_add(index.checked_mul(MATRIX_RECORD_LENGTH)?)?;
         let record = self.bytes.get(start..start + MATRIX_RECORD_LENGTH)?;
@@ -2506,9 +2477,7 @@ fn open_framing(bytes: &[u8]) -> Result<(DirectoryView<'_>, ArtifactRoot), Embed
 }
 
 fn validate_directory(
-    directory: DirectoryView<'_>,
-    first_section_offset: u64,
-    trailer_offset: u64,
+    directory: DirectoryView<'_>, first_section_offset: u64, trailer_offset: u64,
 ) -> Result<(), EmbeddingError> {
     let count = directory.entries.len() / 64;
     let mut previous_key = None;
@@ -2637,9 +2606,7 @@ fn validate_trailer(bytes: &[u8], offset: u64, file_length: u64) -> Result<(), E
 }
 
 fn required_section(
-    directory: DirectoryView<'_>,
-    kind: u32,
-    instance: u32,
+    directory: DirectoryView<'_>, kind: u32, instance: u32,
 ) -> Result<SectionView<'_>, EmbeddingError> {
     directory
         .find(SectionKey::new(kind, instance))
@@ -3739,10 +3706,7 @@ impl EmbeddingView<'_> {
     }
 
     fn require_target_kind(
-        &self,
-        id: TargetId,
-        allowed: &[TargetKind],
-        context: &'static str,
+        &self, id: TargetId, allowed: &[TargetKind], context: &'static str,
     ) -> Result<(), EmbeddingError> {
         let target = self
             .target(id)
@@ -4323,10 +4287,7 @@ fn validate_loss_contract(bytes: &[u8]) -> Result<(), EmbeddingError> {
 }
 
 fn require_nonempty_tlv<'a>(
-    bytes: &'a [u8],
-    tag: u16,
-    wire: TlvWireType,
-    context: &'static str,
+    bytes: &'a [u8], tag: u16, wire: TlvWireType, context: &'static str,
 ) -> Result<&'a str, EmbeddingError> {
     let entry = required_tlv(bytes, tag, wire, context)?;
     if entry.value.is_empty() {
@@ -4336,9 +4297,7 @@ fn require_nonempty_tlv<'a>(
 }
 
 fn required_digest(
-    bytes: &[u8],
-    tag: u16,
-    context: &'static str,
+    bytes: &[u8], tag: u16, context: &'static str,
 ) -> Result<[u8; 32], EmbeddingError> {
     let entry = required_tlv(bytes, tag, TlvWireType::Digest32, context)?;
     Ok(array32(entry.value, 0))
@@ -4434,9 +4393,7 @@ impl<'a> Iterator for BlockListIter<'a> {
 impl ExactSizeIterator for BlockListIter<'_> {}
 
 fn validate_target_ordinal(
-    kind: TargetKind,
-    flags: u32,
-    ordinal: u64,
+    kind: TargetKind, flags: u32, ordinal: u64,
 ) -> Result<(), EmbeddingError> {
     let present = flags & SOURCE_ORDINAL_PRESENT != 0;
     if present == (ordinal == u64::MAX) {
@@ -4470,9 +4427,7 @@ fn validate_relation_kind(kind: u32) -> Result<(), EmbeddingError> {
 }
 
 fn validate_relation_endpoints(
-    kind: u32,
-    subject: TargetKind,
-    object: TargetKind,
+    kind: u32, subject: TargetKind, object: TargetKind,
 ) -> Result<(), EmbeddingError> {
     let valid = match kind {
         1 => (TargetKind::Corpus, TargetKind::Document),
@@ -4503,10 +4458,7 @@ fn validate_relation_endpoints(
 // `_arithmetic` is the proof, not an input: holding it means this thread's float
 // environment was checked, so the fold below computes the bits §13.2 defines.
 fn deterministic_norm_f32(
-    bytes: &[u8],
-    row: u64,
-    dimension: u32,
-    _arithmetic: Resolved<Exact>,
+    bytes: &[u8], row: u64, dimension: u32, _arithmetic: Resolved<Exact>,
 ) -> Result<f64, EmbeddingError> {
     let precision = Precision::enter();
     let ops = precision.binary64();
@@ -4529,10 +4481,7 @@ fn deterministic_norm_f32(
 // `_arithmetic` is the proof, not an input: holding it means this thread's float
 // environment was checked, so the fold below computes the bits §13.2 defines.
 fn deterministic_norm_f64(
-    bytes: &[u8],
-    row: u64,
-    dimension: u32,
-    _arithmetic: Resolved<Exact>,
+    bytes: &[u8], row: u64, dimension: u32, _arithmetic: Resolved<Exact>,
 ) -> Result<f64, EmbeddingError> {
     let precision = Precision::enter();
     let ops = precision.binary64();
@@ -4579,11 +4528,7 @@ pub(crate) fn norm_fold(ops: Binary64<'_>, value: f64, scale: &mut f64, ssq: &mu
 }
 
 fn finish_norm(
-    ops: Binary64<'_>,
-    scale: f64,
-    ssq: f64,
-    row: u64,
-    dimension: u32,
+    ops: Binary64<'_>, scale: f64, ssq: f64, row: u64, dimension: u32,
 ) -> Result<f64, EmbeddingError> {
     if scale == 0.0 {
         return Err(EmbeddingError::ZeroNorm { row, dimension });
@@ -4617,10 +4562,7 @@ fn native_floats<T: NativeFloat>(bytes: &[u8]) -> Option<&[T]> {
 }
 
 fn borrowed_span<'a>(
-    bytes: &'a [u8],
-    offset: u64,
-    length: u64,
-    context: &'static str,
+    bytes: &'a [u8], offset: u64, length: u64, context: &'static str,
 ) -> Result<&'a [u8], EmbeddingError> {
     let start = host_usize(offset, context)?;
     let length = host_usize(length, context)?;
@@ -4637,10 +4579,7 @@ fn borrowed_span<'a>(
 }
 
 fn fixed_record(
-    bytes: &[u8],
-    table_offset: usize,
-    record_size: usize,
-    index: usize,
+    bytes: &[u8], table_offset: usize, record_size: usize, index: usize,
 ) -> Result<&[u8], EmbeddingError> {
     let start = table_offset
         .checked_add(
@@ -4677,10 +4616,7 @@ fn array32(bytes: &[u8], offset: usize) -> [u8; 32] {
 }
 
 fn require_u32(
-    bytes: &[u8],
-    offset: usize,
-    expected: u32,
-    context: &'static str,
+    bytes: &[u8], offset: usize, expected: u32, context: &'static str,
 ) -> Result<(), EmbeddingError> {
     if read_u32(bytes, offset)? != expected {
         return Err(EmbeddingError::Malformed(context));
@@ -4689,10 +4625,7 @@ fn require_u32(
 }
 
 fn require_u64(
-    bytes: &[u8],
-    offset: usize,
-    expected: u64,
-    context: &'static str,
+    bytes: &[u8], offset: usize, expected: u64, context: &'static str,
 ) -> Result<(), EmbeddingError> {
     if read_u64(bytes, offset)? != expected {
         return Err(EmbeddingError::Malformed(context));
@@ -4708,9 +4641,7 @@ fn require_zero(bytes: &[u8], context: &'static str) -> Result<(), EmbeddingErro
 }
 
 fn require_minimum(
-    bytes: &[u8],
-    minimum: usize,
-    context: &'static str,
+    bytes: &[u8], minimum: usize, context: &'static str,
 ) -> Result<(), EmbeddingError> {
     if bytes.len() < minimum {
         return Err(EmbeddingError::InvalidSpan {
@@ -4737,9 +4668,7 @@ fn bounded_count(value: u64, field: &'static str, nonzero: bool) -> Result<usize
 }
 
 fn checked_product_u64(
-    count: usize,
-    width: usize,
-    context: &'static str,
+    count: usize, width: usize, context: &'static str,
 ) -> Result<u64, EmbeddingError> {
     let value = count
         .checked_mul(width)
@@ -4770,9 +4699,7 @@ fn validate_zero_padding(bytes: &[u8], start: u64, end: u64) -> Result<(), Embed
 }
 
 fn validate_zero_padding_usize(
-    bytes: &[u8],
-    start: usize,
-    end: usize,
+    bytes: &[u8], start: usize, end: usize,
 ) -> Result<(), EmbeddingError> {
     let padding = bytes.get(start..end).ok_or(EmbeddingError::Truncated)?;
     let (words, tail) = padding.as_chunks::<8>();
@@ -4820,11 +4747,7 @@ fn binary_search_ids(bytes: &[u8], wanted: &[u8; 32]) -> Option<usize> {
 }
 
 fn binary_search_records(
-    bytes: &[u8],
-    table_offset: usize,
-    record_size: usize,
-    count: usize,
-    wanted: &[u8; 32],
+    bytes: &[u8], table_offset: usize, record_size: usize, count: usize, wanted: &[u8; 32],
 ) -> Option<usize> {
     let mut low = 0;
     let mut high = count;
@@ -4841,11 +4764,7 @@ fn binary_search_records(
 }
 
 fn indexed_ordinal(
-    bytes: &[u8],
-    table_offset: usize,
-    record_size: usize,
-    count: usize,
-    wanted: &[u8; 32],
+    bytes: &[u8], table_offset: usize, record_size: usize, count: usize, wanted: &[u8; 32],
     ordinal_offset: usize,
 ) -> Option<usize> {
     let index = binary_search_records(bytes, table_offset, record_size, count, wanted)?;
@@ -4854,11 +4773,7 @@ fn indexed_ordinal(
 }
 
 fn indexed_composite_ordinal(
-    bytes: &[u8],
-    table_offset: usize,
-    record_size: usize,
-    count: usize,
-    wanted: &[u8; 64],
+    bytes: &[u8], table_offset: usize, record_size: usize, count: usize, wanted: &[u8; 64],
     ordinal_offset: usize,
 ) -> Option<usize> {
     let mut low = 0;
@@ -4887,13 +4802,8 @@ fn external_lookup_key(record: &[u8]) -> (u32, [u8; 32], [u8; 32], u64) {
 }
 
 fn external_lookup_ordinal(
-    bytes: &[u8],
-    table_offset: usize,
-    count: usize,
-    scope_kind: u32,
-    scope_id: &[u8; 32],
-    digest: &[u8; 32],
-    length: u64,
+    bytes: &[u8], table_offset: usize, count: usize, scope_kind: u32, scope_id: &[u8; 32],
+    digest: &[u8; 32], length: u64,
 ) -> Option<usize> {
     let wanted = (scope_kind, *scope_id, *digest, length);
     let mut low = 0;
@@ -4914,13 +4824,8 @@ fn external_lookup_ordinal(
 }
 
 fn validate_id_ordinal_index(
-    bytes: &[u8],
-    index_offset: usize,
-    index_record_size: usize,
-    count: usize,
-    source_offset: usize,
-    source_record_size: usize,
-    context: &'static str,
+    bytes: &[u8], index_offset: usize, index_record_size: usize, count: usize,
+    source_offset: usize, source_record_size: usize, context: &'static str,
 ) -> Result<(), EmbeddingError> {
     let mut previous = None;
     for index in 0..count {
@@ -4953,9 +4858,7 @@ fn validate_id_ordinal_index(
 }
 
 fn validate_matrix_key_index(
-    bytes: &[u8],
-    index_offset: usize,
-    count: usize,
+    bytes: &[u8], index_offset: usize, count: usize,
 ) -> Result<(), EmbeddingError> {
     let context = "family/target-set matrix index";
     let mut previous = None;
@@ -5000,10 +4903,7 @@ fn validate_matrix_key_index(
 }
 
 fn effective_projection_key(
-    bytes: &[u8],
-    projection_offset: usize,
-    matrix_count: usize,
-    projection_ordinal: usize,
+    bytes: &[u8], projection_offset: usize, matrix_count: usize, projection_ordinal: usize,
 ) -> Result<[u8; 64], EmbeddingError> {
     let projection = fixed_record(
         bytes,
@@ -5033,10 +4933,7 @@ fn effective_projection_key(
 }
 
 fn validate_effective_projection_index(
-    bytes: &[u8],
-    index_offset: usize,
-    projection_offset: usize,
-    matrix_count: usize,
+    bytes: &[u8], index_offset: usize, projection_offset: usize, matrix_count: usize,
     projection_count: usize,
 ) -> Result<(), EmbeddingError> {
     let context = "target-set/vector-space projection index";
@@ -5083,9 +4980,7 @@ fn validate_effective_projection_index(
 }
 
 fn validate_external_lookup_index(
-    bytes: &[u8],
-    index_offset: usize,
-    count: usize,
+    bytes: &[u8], index_offset: usize, count: usize,
 ) -> Result<(), EmbeddingError> {
     let context = "external binding lookup index";
     let mut previous = None;

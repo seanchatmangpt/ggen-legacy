@@ -225,9 +225,7 @@ pub(crate) fn number_end(bytes: &[u8], at: usize) -> Result<usize, Error> {
 }
 
 pub(crate) fn number_end_observed(
-    bytes: &[u8],
-    at: usize,
-    progress: &mut impl FnMut(usize) -> Result<(), Error>,
+    bytes: &[u8], at: usize, progress: &mut impl FnMut(usize) -> Result<(), Error>,
 ) -> Result<usize, Error> {
     let digit = |at: usize| bytes.get(at).is_some_and(u8::is_ascii_digit);
     let mut digits = |mut at: usize| -> Result<usize, Error> {
@@ -472,9 +470,7 @@ impl Number {
     /// `None` when the float is not `finite`. Both widths spell through here, so
     /// they differ only in their digits and their window.
     fn from_shortest(
-        finite: bool,
-        value: impl fmt::LowerExp,
-        positional: RangeInclusive<i32>,
+        finite: bool, value: impl fmt::LowerExp, positional: RangeInclusive<i32>,
     ) -> Option<Self> {
         finite.then(|| Self(layout(&format!("{value:e}"), positional)))
     }

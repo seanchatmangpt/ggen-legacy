@@ -179,8 +179,7 @@ impl CompositeSource {
     /// if the retained owners plus this projection's own bookkeeping exceed
     /// `limits`.
     pub fn from_selection(
-        view: Arc<CompositeDatasetView>,
-        graphs: impl IntoIterator<Item = TermValue>,
+        view: Arc<CompositeDatasetView>, graphs: impl IntoIterator<Item = TermValue>,
         limits: ViewLimits,
     ) -> Result<Self, RdfDiagnostic> {
         Ok(Self {
@@ -407,10 +406,7 @@ impl CompositeSource {
         }
     }
     fn lookup_literal(
-        &self,
-        lexical: &str,
-        datatype: &str,
-        language: Option<&str>,
+        &self, lexical: &str, datatype: &str, language: Option<&str>,
         direction: Option<crate::RdfTextDirection>,
     ) -> Option<LocalId> {
         let original = match &self.carrier {
@@ -485,10 +481,7 @@ impl CompositeSource {
     /// seam yields exactly the rows its unkeyed twin yields filtered by `g`, in the
     /// same order, threading `g` changes how much is visited and nothing else.
     fn metadata_rows(
-        &self,
-        table: Table,
-        subject: Option<LocalId>,
-        g: GraphMatch<LocalId>,
+        &self, table: Table, subject: Option<LocalId>, g: GraphMatch<LocalId>,
     ) -> impl Iterator<Item = QuadIds<LocalId>> + '_ {
         // Three carriers, so the fourth arm is never built.
         type Unused = std::iter::Empty<QuadIds<LocalId>>;
@@ -546,10 +539,7 @@ impl CompositeSource {
     /// branch, and the native and delta arms are built without allocating.
     /// Sources and values stay borrowed, including recursive selections.
     fn probe(
-        &self,
-        table: Table,
-        plan: QuadProbePlan,
-        (s, p, o, g): Pattern<LocalId>,
+        &self, table: Table, plan: QuadProbePlan, (s, p, o, g): Pattern<LocalId>,
     ) -> impl Iterator<Item = QuadIds<LocalId>> + '_ {
         if !matches!(table, Table::Ordinary) {
             return Cursor::Fourth(
@@ -599,11 +589,7 @@ impl CompositeSource {
         }
     }
     fn estimate(
-        &self,
-        s: Option<LocalId>,
-        p: Option<LocalId>,
-        o: Option<LocalId>,
-        g: GraphMatch<LocalId>,
+        &self, s: Option<LocalId>, p: Option<LocalId>, o: Option<LocalId>, g: GraphMatch<LocalId>,
     ) -> u64 {
         match &self.carrier {
             Carrier::Native(ds) => local_native_pattern(s, p, o, g)
@@ -744,8 +730,7 @@ struct SelectedGraphs {
 
 impl SelectedGraphs {
     fn project(
-        view: Arc<CompositeDatasetView>,
-        graphs: impl IntoIterator<Item = TermValue>,
+        view: Arc<CompositeDatasetView>, graphs: impl IntoIterator<Item = TermValue>,
         limits: ViewLimits,
     ) -> Result<Self, RdfDiagnostic> {
         let inner: &CompositeDatasetView = &view;
@@ -989,12 +974,8 @@ impl SelectedGraphs {
     /// composite). One boxed hop per selected-graph probe severs that cycle and
     /// costs nothing on the native and delta arms, which never take it.
     fn probe_graph(
-        &self,
-        plan: QuadProbePlan,
-        s: Option<CompositeViewId>,
-        p: Option<CompositeViewId>,
-        o: Option<CompositeViewId>,
-        graph: CompositeViewId,
+        &self, plan: QuadProbePlan, s: Option<CompositeViewId>, p: Option<CompositeViewId>,
+        o: Option<CompositeViewId>, graph: CompositeViewId,
     ) -> Box<dyn Iterator<Item = QuadIds<CompositeViewId>> + '_> {
         Box::new(CompositeDatasetView::quads_for_pattern_with_plan(
             &self.view,
@@ -1160,8 +1141,7 @@ impl CompositeDatasetView {
     /// # Errors
     /// Refuses invalid graph names or retention ceilings.
     pub fn with_shared_scopes(
-        sources: Vec<Arc<RdfDataset>>,
-        limits: ViewLimits,
+        sources: Vec<Arc<RdfDataset>>, limits: ViewLimits,
     ) -> Result<Self, RdfDiagnostic> {
         Self::from_shared_sources(
             sources.into_iter().map(CompositeSource::new).collect(),
@@ -1172,8 +1152,7 @@ impl CompositeDatasetView {
     /// # Errors
     /// Refuses invalid graph names, exhausted scope IDs or retention ceilings.
     pub fn from_sources(
-        sources: Vec<CompositeSource>,
-        limits: ViewLimits,
+        sources: Vec<CompositeSource>, limits: ViewLimits,
     ) -> Result<Self, RdfDiagnostic> {
         Self::from_bound_sources(rebind(sources, ScopeBinding::Independent), limits)
     }
@@ -1181,8 +1160,7 @@ impl CompositeDatasetView {
     /// # Errors
     /// Refuses invalid graph names or retention ceilings.
     pub fn from_shared_sources(
-        sources: Vec<CompositeSource>,
-        limits: ViewLimits,
+        sources: Vec<CompositeSource>, limits: ViewLimits,
     ) -> Result<Self, RdfDiagnostic> {
         Self::from_bound_sources(rebind(sources, ScopeBinding::Shared), limits)
     }
@@ -1202,8 +1180,7 @@ impl CompositeDatasetView {
     /// # Errors
     /// Refuses invalid graph names, exhausted scope IDs or retention ceilings.
     pub fn from_bound_sources(
-        sources: Vec<CompositeSource>,
-        limits: ViewLimits,
+        sources: Vec<CompositeSource>, limits: ViewLimits,
     ) -> Result<Self, RdfDiagnostic> {
         let blanks: Vec<BTreeSet<BlankScope>> =
             sources.iter().map(CompositeSource::blank_scopes).collect();
@@ -1253,9 +1230,7 @@ impl CompositeDatasetView {
     /// Refuses invalid graph names, exhausted scope IDs or retention ceilings —
     /// the same refusals, with the same diagnostics, as composing from scratch.
     pub fn extend(
-        &self,
-        source: CompositeSource,
-        limits: ViewLimits,
+        &self, source: CompositeSource, limits: ViewLimits,
     ) -> Result<Self, RdfDiagnostic> {
         let blank = source.blank_scopes();
         // Reserving a scope that standardization already handed out would shift
@@ -1395,12 +1370,8 @@ impl CompositeDatasetView {
         q
     }
     fn pattern(
-        &self,
-        index: usize,
-        s: Option<CompositeViewId>,
-        p: Option<CompositeViewId>,
-        o: Option<CompositeViewId>,
-        g: GraphMatch<CompositeViewId>,
+        &self, index: usize, s: Option<CompositeViewId>, p: Option<CompositeViewId>,
+        o: Option<CompositeViewId>, g: GraphMatch<CompositeViewId>,
     ) -> Option<Pattern<LocalId>> {
         let local = |value| match value {
             Some(id) => self.local_id(index, id).map(Some),
@@ -1446,21 +1417,14 @@ impl CompositeDatasetView {
     /// The plan is copied into the cursor, which borrows only this view. Results
     /// and iteration order match [`DatasetView::quads_for_pattern`].
     pub fn quads_for_pattern_with_plan(
-        &self,
-        plan: &QuadProbePlan,
-        s: Option<CompositeViewId>,
-        p: Option<CompositeViewId>,
-        o: Option<CompositeViewId>,
-        g: GraphMatch<CompositeViewId>,
+        &self, plan: &QuadProbePlan, s: Option<CompositeViewId>, p: Option<CompositeViewId>,
+        o: Option<CompositeViewId>, g: GraphMatch<CompositeViewId>,
     ) -> impl Iterator<Item = QuadIds<CompositeViewId>> + '_ + use<'_> {
         self.probe(Table::Ordinary, *plan, (s, p, o, g))
     }
 
     fn probe(
-        &self,
-        table: Table,
-        plan: QuadProbePlan,
-        (s, p, o, g): Pattern<CompositeViewId>,
+        &self, table: Table, plan: QuadProbePlan, (s, p, o, g): Pattern<CompositeViewId>,
     ) -> impl Iterator<Item = QuadIds<CompositeViewId>> + '_ {
         // Sources are walked forward only, so the cursor keeps ONE source's
         // rows live at a time rather than `flat_map`'s front and back pair.
@@ -1598,10 +1562,7 @@ struct Prefix {
 
 impl Prefix {
     fn append(
-        &mut self,
-        mut source: CompositeSource,
-        blank: BTreeSet<BlankScope>,
-        limits: ViewLimits,
+        &mut self, mut source: CompositeSource, blank: BTreeSet<BlankScope>, limits: ViewLimits,
     ) -> Result<(), RdfDiagnostic> {
         let index = self.sources.len();
         source.retain(&mut self.stats);
@@ -1802,11 +1763,8 @@ impl Prefix {
 /// Alias the last pushed source against every source composed before it, and
 /// report how many of its terms stay canonical in their own right.
 fn alias_last(
-    sources: &[CompositeSource],
-    scopes: &[BTreeMap<BlankScope, BlankScope>],
-    mappings: &mut Vec<Arc<AliasMap>>,
-    reverse: &mut Vec<Arc<ReverseMap>>,
-    work: &mut ViewWork,
+    sources: &[CompositeSource], scopes: &[BTreeMap<BlankScope, BlankScope>],
+    mappings: &mut Vec<Arc<AliasMap>>, reverse: &mut Vec<Arc<ReverseMap>>, work: &mut ViewWork,
 ) -> Result<usize, RdfDiagnostic> {
     let index = sources.len() - 1;
     let source = &sources[index];
@@ -1894,8 +1852,7 @@ impl DatasetView for CompositeDatasetView {
     }
 
     fn reserve_owned_workspace(
-        &self,
-        _: u64,
+        &self, _: u64,
     ) -> Option<Result<crate::OwnedWorkspaceReservation<Self::ReadError>, Self::ReadError>> {
         Some(Ok(crate::NoopReservation::owned()))
     }
@@ -1949,30 +1906,20 @@ impl DatasetView for CompositeDatasetView {
         physical_plan([s, p, o, !matches!(g, GraphMatch::Any)])
     }
     fn quads_for_pattern(
-        &self,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         let plan = self.probe_plan(s.is_some(), p.is_some(), o.is_some(), g);
         self.probe(Table::Ordinary, plan, (s, p, o, g))
     }
     fn quads_for_pattern_with_plan(
-        &self,
-        plan: &Self::ProbePlan,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
-        g: GraphMatch<Self::Id>,
+        &self, plan: &Self::ProbePlan, s: Option<Self::Id>, p: Option<Self::Id>,
+        o: Option<Self::Id>, g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         Self::quads_for_pattern_with_plan(self, plan, s, p, o, g)
     }
     fn cardinality_estimate(
-        &self,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: GraphMatch<Self::Id>,
     ) -> u64 {
         self.sources[..self.user_sources].iter().enumerate().fold(
@@ -2010,8 +1957,7 @@ impl DatasetView for CompositeDatasetView {
         )
     }
     fn annotations_of_with_graph(
-        &self,
-        s: Self::Id,
+        &self, s: Self::Id,
     ) -> impl Iterator<Item = (Self::Id, Self::Id, Option<Self::Id>)> + '_ {
         self.probe(
             Table::Annotation,
@@ -2025,8 +1971,7 @@ impl DatasetView for CompositeDatasetView {
     /// see [`DatasetView::reifier_quads_in_graph`] for the trait contract this
     /// satisfies. The trait default would probe every source's whole reifier table.
     fn reifier_quads_in_graph(
-        &self,
-        g: GraphMatch<Self::Id>,
+        &self, g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         // The composition is per source and per row, so it composes with the graph
         // seam rather than erasing it: this is `reifier_quads` with the graph axis
@@ -2047,8 +1992,7 @@ impl DatasetView for CompositeDatasetView {
     /// See [`reifier_quads_in_graph`](DatasetView::reifier_quads_in_graph) above: the
     /// same per-source narrowing, over the ANNOTATION stream.
     fn annotation_quads_in_graph(
-        &self,
-        g: GraphMatch<Self::Id>,
+        &self, g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         // See `reifier_quads_in_graph` above: the same narrowing over the ANNOTATION
         // stream.
@@ -2114,10 +2058,7 @@ enum Table {
 /// without allocating. Carrier adapters retain their own graph/identity
 /// translations.
 fn metadata_probe<D: DatasetView>(
-    source: &D,
-    table: Table,
-    subject: Option<D::Id>,
-    graph: GraphMatch<D::Id>,
+    source: &D, table: Table, subject: Option<D::Id>, graph: GraphMatch<D::Id>,
 ) -> impl Iterator<Item = QuadIds<D::Id>> + '_ {
     match (table, subject) {
         (Table::Ordinary, _) => Cursor::Empty,
@@ -2138,11 +2079,7 @@ fn metadata_probe<D: DatasetView>(
 }
 
 fn matches_pattern<I: Copy + Eq>(
-    q: QuadIds<I>,
-    s: Option<I>,
-    p: Option<I>,
-    o: Option<I>,
-    g: GraphMatch<I>,
+    q: QuadIds<I>, s: Option<I>, p: Option<I>, o: Option<I>, g: GraphMatch<I>,
 ) -> bool {
     s.is_none_or(|id| id == q.s)
         && p.is_none_or(|id| id == q.p)
@@ -2150,10 +2087,7 @@ fn matches_pattern<I: Copy + Eq>(
         && g.matches(q.g)
 }
 fn local_native_pattern(
-    s: Option<LocalId>,
-    p: Option<LocalId>,
-    o: Option<LocalId>,
-    g: GraphMatch<LocalId>,
+    s: Option<LocalId>, p: Option<LocalId>, o: Option<LocalId>, g: GraphMatch<LocalId>,
 ) -> Option<Pattern<TermId>> {
     let local = |id| match id {
         None => Some(None),
@@ -2186,9 +2120,7 @@ fn local_native_graph(g: GraphMatch<LocalId>) -> Option<GraphMatch<TermId>> {
 /// was found — and the triple is looked up by their handles once all three answers
 /// exist. Every term's answer is recorded in `memo` as soon as it is known.
 fn lookup_source_term(
-    source: &CompositeSource,
-    target: &CompositeSource,
-    id: LocalId,
+    source: &CompositeSource, target: &CompositeSource, id: LocalId,
     scope: impl Fn(BlankScope) -> Option<BlankScope> + Copy,
     memo: &mut FastMap<LocalId, Option<LocalId>>,
 ) -> Option<LocalId> {
@@ -2265,8 +2197,7 @@ fn lookup_source_term(
 ///
 /// On an id `view` did not mint.
 pub(crate) fn owned_value<D: DatasetView<ReadError = Infallible>>(
-    view: &D,
-    id: D::Id,
+    view: &D, id: D::Id,
 ) -> TermValue {
     view.term_value(id)
         .expect("an id the view minted resolves to a value")

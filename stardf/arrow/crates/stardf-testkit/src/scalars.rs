@@ -95,10 +95,7 @@ impl<R> Debug for Sweep<R> {
 /// joined reading — it was not silently absorbed. The third case never pins an
 /// error: which diagnostic fires is an accident of where the split landed.
 pub fn run<R: PartialEq + Debug>(
-    scan: fn(&str) -> R,
-    sweeps: &[Sweep<R>],
-    scalars: &[char],
-    separates: fn(char) -> bool,
+    scan: fn(&str) -> R, sweeps: &[Sweep<R>], scalars: &[char], separates: fn(char) -> bool,
 ) -> usize {
     let mut cases = 0;
     for sweep in sweeps {

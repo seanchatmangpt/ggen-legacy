@@ -208,9 +208,7 @@ impl<I: ViewTermId> PathSet<I> {
         self.insert_record(value, Some(evidence))
     }
     fn insert_record(
-        &mut self,
-        value: I,
-        evidence: Option<crate::evidence_exec::RowEvidence>,
+        &mut self, value: I, evidence: Option<crate::evidence_exec::RowEvidence>,
     ) -> bool {
         if self.values.storage.failed.get() {
             return false;
@@ -279,10 +277,7 @@ impl<I: ViewTermId> PathSet<I> {
         }
     }
     fn insert_composed(
-        &mut self,
-        target: I,
-        premise: &crate::evidence_exec::RowEvidence,
-        step: &Self,
+        &mut self, target: I, premise: &crate::evidence_exec::RowEvidence, step: &Self,
     ) {
         if premise.is_virtual() && step.evidence.is_empty() && self.evidence.is_empty() {
             self.insert(target);
@@ -499,9 +494,7 @@ struct NegatedSets<I: ViewTermId = TermId> {
 /// `elements`' excluded predicates resolved to dataset ids, each element looked up in
 /// element order and filed under the direction it excludes.
 fn resolve_negated<D: DatasetView + Sync>(
-    elements: &[NegatedPathElement],
-    dataset: &D,
-    workspace: &crate::WorkspaceCapability,
+    elements: &[NegatedPathElement], dataset: &D, workspace: &crate::WorkspaceCapability,
     source_error: impl Fn(D::ReadError) -> EvalError,
 ) -> Result<NegatedSets<D::Id>, EvalError> {
     let mut forward = None;
@@ -581,8 +574,7 @@ impl<'p, I: ViewTermId> PathProgram<'p, I> {
     /// and folds their static properties.
     #[cfg(test)]
     fn compile<D: DatasetView<Id = I> + Sync>(
-        path: &'p PropertyPathExpression,
-        dataset: &D,
+        path: &'p PropertyPathExpression, dataset: &D,
     ) -> Self {
         Self::compile_admitted(
             path,
@@ -596,9 +588,7 @@ impl<'p, I: ViewTermId> PathProgram<'p, I> {
     /// Compile the same program while each buffer retains its actual capacity
     /// admission. Lookup failures remain typed at the query's source checkpoint.
     fn compile_admitted<D: DatasetView<Id = I> + Sync>(
-        path: &'p PropertyPathExpression,
-        dataset: &D,
-        workspace: &crate::WorkspaceCapability,
+        path: &'p PropertyPathExpression, dataset: &D, workspace: &crate::WorkspaceCapability,
         source_error: impl Fn(D::ReadError) -> EvalError,
     ) -> Result<Self, EvalError> {
         enum Build<'p> {
@@ -756,9 +746,7 @@ fn pop_child(built: &mut crate::AdmittedVec<usize>) -> usize {
 
 /// The indices of the last `count` children built, in source order.
 fn pop_children(
-    built: &mut crate::AdmittedVec<usize>,
-    count: usize,
-    workspace: &crate::WorkspaceCapability,
+    built: &mut crate::AdmittedVec<usize>, count: usize, workspace: &crate::WorkspaceCapability,
 ) -> Result<crate::AdmittedVec<usize>, EvalError> {
     let mut children = crate::AdmittedVec::with_capacity(count, workspace)?;
     for _ in 0..count {
@@ -807,10 +795,7 @@ impl<D: DatasetView + Sync> PathCtx<'_, D> {
     /// Retain the original matched edge's declaration at the actual leaf read.
     /// Failure stops this traversal before any endpoint can be published.
     fn insert_claim(
-        &self,
-        out: &mut PathSet<D::Id>,
-        quad: &purrdf_core::QuadIds<D::Id>,
-        target: D::Id,
+        &self, out: &mut PathSet<D::Id>, quad: &purrdf_core::QuadIds<D::Id>, target: D::Id,
     ) {
         let evidence = match &self.evidence_input {
             Some(input) => match input.claim(quad, &self.growth) {
@@ -877,9 +862,7 @@ impl<D: DatasetView + Sync> PathCtx<'_, D> {
 #[cfg(test)]
 impl<'a, D: DatasetView + Sync> PathCtx<'a, D> {
     fn resident(
-        dataset: &'a D,
-        scope: GraphScope<D::Id>,
-        program: PathProgram<'a, D::Id>,
+        dataset: &'a D, scope: GraphScope<D::Id>, program: PathProgram<'a, D::Id>,
         governors: Option<crate::workspace::SharedWorkspace<crate::GovernorState>>,
     ) -> Self {
         let growth = crate::WorkspaceCapability::default();
@@ -921,9 +904,7 @@ impl<'a, D: DatasetView + Sync> PathCtx<'a, D> {
 // Out of line by design: see the thin-dispatcher invariant on `eval::eval_node`.
 #[inline(never)]
 pub(crate) fn eval_path<D: DatasetView + Sync>(
-    subject: &TermPattern,
-    path: &PropertyPathExpression,
-    object: &TermPattern,
+    subject: &TermPattern, path: &PropertyPathExpression, object: &TermPattern,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<SolutionSeq<D::Id>, EvalError> {
     let dataset = ctx.dataset;
@@ -1223,9 +1204,7 @@ enum Endpoint<I: ViewTermId = TermId> {
 
 /// Resolve an endpoint term to a [`Endpoint`].
 fn resolve_end<D: DatasetView + Sync>(
-    term: &TermPattern,
-    dataset: &D,
-    workspace: &crate::WorkspaceCapability,
+    term: &TermPattern, dataset: &D, workspace: &crate::WorkspaceCapability,
     source_error: impl Fn(D::ReadError) -> EvalError,
 ) -> Result<Endpoint<D::Id>, EvalError> {
     match term {
@@ -1271,9 +1250,7 @@ fn resolve_end<D: DatasetView + Sync>(
 /// The output schema: the visible variable endpoints in subject-then-object order,
 /// deduplicated (a repeated variable is one column).
 fn path_schema(
-    subject: &TermPattern,
-    object: &TermPattern,
-    workspace: &crate::WorkspaceCapability,
+    subject: &TermPattern, object: &TermPattern, workspace: &crate::WorkspaceCapability,
 ) -> Result<VarSchema, EvalError> {
     VarSchema::from_vars_admitted(
         [visible_var(subject), visible_var(object)]
@@ -1328,10 +1305,7 @@ fn node_universe<D: DatasetView + Sync>(ctx: &PathCtx<'_, D>) -> Result<PathSet<
 /// pushes the frame whose answer it needs or returns its own value to the frame
 /// beneath it. The root frame's value is the answer.
 fn reach<D: DatasetView + Sync>(
-    op: usize,
-    node: D::Id,
-    forward: bool,
-    ctx: &PathCtx<'_, D>,
+    op: usize, node: D::Id, forward: bool, ctx: &PathCtx<'_, D>,
 ) -> Result<SetRef<D::Id>, EvalError> {
     let mut frames = PathVec::from_iter(
         [Frame::Reach(ReachFrame::new(op, node, forward))],
@@ -1470,9 +1444,7 @@ impl<I: ViewTermId> Frame<I> {
     /// Advance this frame: with `returned`, the value of the frame it last called, or
     /// with `None` on its first step.
     fn step<D: DatasetView<Id = I> + Sync>(
-        &mut self,
-        returned: Option<Value<I>>,
-        ctx: &PathCtx<'_, D>,
+        &mut self, returned: Option<Value<I>>, ctx: &PathCtx<'_, D>,
     ) -> Step<I> {
         match self {
             Self::Reach(frame) => frame.step(returned, ctx),
@@ -1538,9 +1510,7 @@ impl<I: ViewTermId> ReachFrame<I> {
     }
 
     fn step<D: DatasetView<Id = I> + Sync>(
-        &mut self,
-        returned: Option<Value<I>>,
-        ctx: &PathCtx<'_, D>,
+        &mut self, returned: Option<Value<I>>, ctx: &PathCtx<'_, D>,
     ) -> Step<I> {
         if let Some(value) = returned {
             let mut set = value.into_set();
@@ -1613,9 +1583,7 @@ impl<I: ViewTermId> ReachFrame<I> {
 
     /// Return `set`, memoized under this request's key unless the budget cut it short.
     fn finish<D: DatasetView<Id = I> + Sync>(
-        &self,
-        set: PathSet<I>,
-        ctx: &PathCtx<'_, D>,
+        &self, set: PathSet<I>, ctx: &PathCtx<'_, D>,
     ) -> Step<I> {
         let result = SetRef::new(set);
         if !ctx.stopped() {
@@ -1668,9 +1636,7 @@ impl<I: ViewTermId> SequenceFrame<I> {
     }
 
     fn step<D: DatasetView<Id = I> + Sync>(
-        &mut self,
-        returned: Option<Value<I>>,
-        ctx: &PathCtx<'_, D>,
+        &mut self, returned: Option<Value<I>>, ctx: &PathCtx<'_, D>,
     ) -> Step<I> {
         if let Some(value) = returned {
             let reached = value.into_reach();
@@ -1728,9 +1694,7 @@ impl<I: ViewTermId> AlternativeFrame<I> {
     }
 
     fn step<D: DatasetView<Id = I> + Sync>(
-        &mut self,
-        returned: Option<Value<I>>,
-        ctx: &PathCtx<'_, D>,
+        &mut self, returned: Option<Value<I>>, ctx: &PathCtx<'_, D>,
     ) -> Step<I> {
         if let Some(value) = returned {
             self.out.extend_witnesses(value.into_reach().as_ref());
@@ -1787,9 +1751,7 @@ impl<I: ViewTermId> ClosureFrame<I> {
     }
 
     fn step<D: DatasetView<Id = I> + Sync>(
-        &mut self,
-        returned: Option<Value<I>>,
-        ctx: &PathCtx<'_, D>,
+        &mut self, returned: Option<Value<I>>, ctx: &PathCtx<'_, D>,
     ) -> Step<I> {
         if let Some(value) = returned {
             let reached = value.into_reach();
@@ -1950,11 +1912,7 @@ const LINEAR_RANGE_PREFIX: u32 = 64;
 
 impl<I: ViewTermId> RangeFrame<I> {
     fn new(
-        inner: usize,
-        node: I,
-        forward: bool,
-        min: u32,
-        max: Option<u32>,
+        inner: usize, node: I, forward: bool, min: u32, max: Option<u32>,
         storage: &PathStorageOwner,
     ) -> Self {
         Self {
@@ -2160,9 +2118,7 @@ impl<I: ViewTermId> StepLevelFrame<I> {
     }
 
     fn step<D: DatasetView<Id = I> + Sync>(
-        &mut self,
-        returned: Option<Value<I>>,
-        ctx: &PathCtx<'_, D>,
+        &mut self, returned: Option<Value<I>>, ctx: &PathCtx<'_, D>,
     ) -> Step<I> {
         match returned {
             None => note_level_advance(),
@@ -2210,11 +2166,7 @@ struct ApplyPowerFrame<I: ViewTermId> {
 
 impl<I: ViewTermId> ApplyPowerFrame<I> {
     fn new(
-        inner: usize,
-        current: PathSet<I>,
-        forward: bool,
-        bit: u32,
-        powers: PowerMemoOwner<I>,
+        inner: usize, current: PathSet<I>, forward: bool, bit: u32, powers: PowerMemoOwner<I>,
     ) -> Self {
         let storage = current.values.storage.clone();
         Self {
@@ -2229,9 +2181,7 @@ impl<I: ViewTermId> ApplyPowerFrame<I> {
     }
 
     fn step<D: DatasetView<Id = I> + Sync>(
-        &mut self,
-        returned: Option<Value<I>>,
-        ctx: &PathCtx<'_, D>,
+        &mut self, returned: Option<Value<I>>, ctx: &PathCtx<'_, D>,
     ) -> Step<I> {
         if let Some(value) = returned {
             let reached = value.into_reach();
@@ -2292,11 +2242,7 @@ struct PowerReachFrame<I: ViewTermId> {
 
 impl<I: ViewTermId> PowerReachFrame<I> {
     const fn new(
-        inner: usize,
-        node: I,
-        forward: bool,
-        bit: u32,
-        powers: PowerMemoOwner<I>,
+        inner: usize, node: I, forward: bool, bit: u32, powers: PowerMemoOwner<I>,
     ) -> Self {
         Self {
             inner,
@@ -2322,9 +2268,7 @@ impl<I: ViewTermId> PowerReachFrame<I> {
 
     /// Return `reached`, memoized unless the budget cut it short.
     fn finish<D: DatasetView<Id = I> + Sync>(
-        &self,
-        reached: SetRef<I>,
-        ctx: &PathCtx<'_, D>,
+        &self, reached: SetRef<I>, ctx: &PathCtx<'_, D>,
     ) -> Step<I> {
         if !ctx.stopped() {
             self.powers
@@ -2350,9 +2294,7 @@ impl<I: ViewTermId> PowerReachFrame<I> {
     }
 
     fn step<D: DatasetView<Id = I> + Sync>(
-        &mut self,
-        returned: Option<Value<I>>,
-        ctx: &PathCtx<'_, D>,
+        &mut self, returned: Option<Value<I>>, ctx: &PathCtx<'_, D>,
     ) -> Step<I> {
         let Some(value) = returned else {
             return self.start();
@@ -2418,8 +2360,7 @@ struct PathBag<I: ViewTermId> {
 }
 impl<I: ViewTermId> PathBag<I> {
     fn from_set(
-        set: PathSet<I>,
-        workspace: &crate::WorkspaceCapability,
+        set: PathSet<I>, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let mut bag = Self {
             nodes: set.values.values,
@@ -2442,9 +2383,7 @@ impl<I: ViewTermId> PathBag<I> {
         }
     }
     fn push(
-        &mut self,
-        node: I,
-        evidence: Option<crate::evidence_exec::RowEvidence>,
+        &mut self, node: I, evidence: Option<crate::evidence_exec::RowEvidence>,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<(), EvalError> {
         let position = self.nodes.len();
@@ -2477,10 +2416,7 @@ impl<I: ViewTermId> std::ops::Deref for PathBag<I> {
 ///
 /// The same work-list machine as [`reach`], over [`BagFrame`]s and with no memo.
 fn bag_reach<D: DatasetView + Sync>(
-    op: usize,
-    node: D::Id,
-    forward: bool,
-    ctx: &PathCtx<'_, D>,
+    op: usize, node: D::Id, forward: bool, ctx: &PathCtx<'_, D>,
 ) -> Result<PathBag<D::Id>, EvalError> {
     let mut frames = crate::AdmittedVec::new(&ctx.growth);
     frames.push(BagFrame::Reach { op, node, forward })?;
@@ -2548,9 +2484,7 @@ enum BagFrame<I: ViewTermId> {
 
 impl<I: ViewTermId> BagFrame<I> {
     fn step<D: DatasetView<Id = I> + Sync>(
-        &mut self,
-        returned: Option<PathBag<I>>,
-        ctx: &PathCtx<'_, D>,
+        &mut self, returned: Option<PathBag<I>>, ctx: &PathCtx<'_, D>,
     ) -> Result<BagStep<I>, EvalError> {
         Ok(match self {
             Self::Reach { op, node, forward } => Self::request(op, *node, forward, ctx)?,
@@ -2639,10 +2573,7 @@ impl<I: ViewTermId> BagFrame<I> {
     /// Answer a request: a leaf is stepped here; a sequence or alternative becomes its
     /// operator frame. Every `^` at the op is resolved into the direction flag first.
     fn request<D: DatasetView<Id = I> + Sync>(
-        op: &mut usize,
-        node: I,
-        forward: &mut bool,
-        ctx: &PathCtx<'_, D>,
+        op: &mut usize, node: I, forward: &mut bool, ctx: &PathCtx<'_, D>,
     ) -> Result<BagStep<I>, EvalError> {
         while let PathOp::Reverse(inner) = &ctx.program.ops[*op] {
             *op = *inner;
@@ -2705,10 +2636,7 @@ impl<I: ViewTermId> BagFrame<I> {
 /// One predicate hop. Forward: objects of `(node, p, ?)`; backward: subjects of
 /// `(?, p, node)`. A predicate absent from the dataset (`None`) yields nothing.
 fn step_predicate<D: DatasetView + Sync>(
-    predicate: Option<D::Id>,
-    node: D::Id,
-    forward: bool,
-    ctx: &PathCtx<'_, D>,
+    predicate: Option<D::Id>, node: D::Id, forward: bool, ctx: &PathCtx<'_, D>,
 ) -> PathSet<D::Id> {
     let Some(pid) = predicate else {
         return PathSet::new(&ctx.storage);
@@ -2750,10 +2678,7 @@ fn step_predicate<D: DatasetView + Sync>(
 /// [`NegatedSets`]). Reads the sets the program resolved once, so no excluded IRI
 /// is looked up on a traversal step.
 fn step_negated<D: DatasetView + Sync>(
-    sets: &NegatedSets<D::Id>,
-    node: D::Id,
-    forward: bool,
-    ctx: &PathCtx<'_, D>,
+    sets: &NegatedSets<D::Id>, node: D::Id, forward: bool, ctx: &PathCtx<'_, D>,
 ) -> PathSet<D::Id> {
     let mut out = PathSet::new(&ctx.storage);
     if let Some(excluded) = &sets.forward {
@@ -2769,10 +2694,7 @@ fn step_negated<D: DatasetView + Sync>(
 /// the direction-parameterised primitive `step_negated` composes twice (once
 /// per element kind) to get the full negated-set relation.
 fn step_excluding<D: DatasetView + Sync>(
-    excluded: &[D::Id],
-    node: D::Id,
-    forward: bool,
-    ctx: &PathCtx<'_, D>,
+    excluded: &[D::Id], node: D::Id, forward: bool, ctx: &PathCtx<'_, D>,
 ) -> PathSet<D::Id> {
     let mut out = PathSet::new(&ctx.storage);
     let mut stopped = false;
@@ -2811,10 +2733,7 @@ fn step_excluding<D: DatasetView + Sync>(
 /// `<any>` / `<any:ns>`: one hop along any predicate, optionally restricted to
 /// predicates whose IRI begins with the namespace prefix.
 fn step_wildcard<D: DatasetView + Sync>(
-    namespace: Option<&NamedNode>,
-    node: D::Id,
-    forward: bool,
-    ctx: &PathCtx<'_, D>,
+    namespace: Option<&NamedNode>, node: D::Id, forward: bool, ctx: &PathCtx<'_, D>,
 ) -> PathSet<D::Id> {
     let prefix = namespace.map(NamedNode::as_str);
     let pred_ok = |pid: D::Id| -> bool {
@@ -2972,11 +2891,8 @@ mod tests {
     /// Evaluate a path and materialise the named columns as local-name rows, sorted
     /// for order-insensitive multiset comparison.
     fn run(
-        ds: &RdfDataset,
-        subject: &TermPattern,
-        path: &PropertyPathExpression,
-        object: &TermPattern,
-        vars: &[&str],
+        ds: &RdfDataset, subject: &TermPattern, path: &PropertyPathExpression,
+        object: &TermPattern, vars: &[&str],
     ) -> Vec<Vec<Option<String>>> {
         let mut ctx = EvalCtx::new(ds);
         let seq = eval_path(subject, path, object, &mut ctx).expect("path eval");
@@ -3018,10 +2934,7 @@ mod tests {
 
     /// The local-name set reachable from `start` along `path` (forward).
     fn reach_locals(
-        ds: &RdfDataset,
-        path: &PropertyPathExpression,
-        start: &str,
-        forward: bool,
+        ds: &RdfDataset, path: &PropertyPathExpression, start: &str, forward: bool,
     ) -> Vec<String> {
         let sid = ds
             .term_id_by_value(&named_node_to_value(&nn(start)))
@@ -3988,8 +3901,7 @@ mod recursion_free_tests {
     }
 
     fn reference_build_negated_cache<D: DatasetView + Sync>(
-        path: &PropertyPathExpression,
-        dataset: &D,
+        path: &PropertyPathExpression, dataset: &D,
     ) -> BTreeMap<usize, NegatedSets<D::Id>> {
         let mut cache = BTreeMap::new();
         reference_collect_negated(path, dataset, &mut cache);
@@ -3997,9 +3909,7 @@ mod recursion_free_tests {
     }
 
     fn reference_collect_negated<D: DatasetView + Sync>(
-        path: &PropertyPathExpression,
-        dataset: &D,
-        cache: &mut BTreeMap<usize, NegatedSets<D::Id>>,
+        path: &PropertyPathExpression, dataset: &D, cache: &mut BTreeMap<usize, NegatedSets<D::Id>>,
     ) {
         use PropertyPathExpression as P;
         match path {
@@ -4046,10 +3956,7 @@ mod recursion_free_tests {
     }
 
     fn reference_reach_cached<D: DatasetView + Sync>(
-        path: &PropertyPathExpression,
-        node: D::Id,
-        forward: bool,
-        ctx: &ReferenceCtx<'_, D>,
+        path: &PropertyPathExpression, node: D::Id, forward: bool, ctx: &ReferenceCtx<'_, D>,
     ) -> Rc<BTreeSet<D::Id>> {
         if ctx.base.stopped() {
             return Rc::new(BTreeSet::new());
@@ -4070,10 +3977,7 @@ mod recursion_free_tests {
     }
 
     fn reference_reach_uncached<D: DatasetView + Sync>(
-        path: &PropertyPathExpression,
-        node: D::Id,
-        forward: bool,
-        ctx: &ReferenceCtx<'_, D>,
+        path: &PropertyPathExpression, node: D::Id, forward: bool, ctx: &ReferenceCtx<'_, D>,
     ) -> BTreeSet<D::Id> {
         use PropertyPathExpression as P;
         match path {
@@ -4117,10 +4021,7 @@ mod recursion_free_tests {
     }
 
     fn reference_sequence_reach<D: DatasetView + Sync>(
-        elements: &[PropertyPathExpression],
-        node: D::Id,
-        forward: bool,
-        ctx: &ReferenceCtx<'_, D>,
+        elements: &[PropertyPathExpression], node: D::Id, forward: bool, ctx: &ReferenceCtx<'_, D>,
     ) -> BTreeSet<D::Id> {
         let mut frontier = BTreeSet::from([node]);
         for k in 0..elements.len() {
@@ -4168,10 +4069,7 @@ mod recursion_free_tests {
     }
 
     fn reference_simple_reach_multiset<D: DatasetView + Sync>(
-        path: &PropertyPathExpression,
-        node: D::Id,
-        forward: bool,
-        ctx: &ReferenceCtx<'_, D>,
+        path: &PropertyPathExpression, node: D::Id, forward: bool, ctx: &ReferenceCtx<'_, D>,
     ) -> Vec<D::Id> {
         use PropertyPathExpression as P;
         match path {
@@ -4214,10 +4112,7 @@ mod recursion_free_tests {
     }
 
     fn reference_step_predicate<D: DatasetView + Sync>(
-        p: &NamedNode,
-        node: D::Id,
-        forward: bool,
-        ctx: &ReferenceCtx<'_, D>,
+        p: &NamedNode, node: D::Id, forward: bool, ctx: &ReferenceCtx<'_, D>,
     ) -> BTreeSet<D::Id> {
         let pid = ctx
             .base
@@ -4230,10 +4125,7 @@ mod recursion_free_tests {
     }
 
     fn reference_step_negated<D: DatasetView + Sync>(
-        elems: &[NegatedPathElement],
-        node: D::Id,
-        forward: bool,
-        ctx: &ReferenceCtx<'_, D>,
+        elems: &[NegatedPathElement], node: D::Id, forward: bool, ctx: &ReferenceCtx<'_, D>,
     ) -> BTreeSet<D::Id> {
         let sets = &ctx.negated[&address(elems)];
         let mut out = BTreeSet::new();
@@ -4247,10 +4139,7 @@ mod recursion_free_tests {
     }
 
     fn reference_closure<D: DatasetView + Sync>(
-        inner: &PropertyPathExpression,
-        node: D::Id,
-        forward: bool,
-        ctx: &ReferenceCtx<'_, D>,
+        inner: &PropertyPathExpression, node: D::Id, forward: bool, ctx: &ReferenceCtx<'_, D>,
     ) -> BTreeSet<D::Id> {
         let mut result = BTreeSet::new();
         let mut visited: DetHashSet<D::Id> = DetHashSet::default();
@@ -4279,9 +4168,7 @@ mod recursion_free_tests {
     }
 
     fn reference_closure_multi<D: DatasetView + Sync>(
-        inner: &PropertyPathExpression,
-        seeds: &BTreeSet<D::Id>,
-        forward: bool,
+        inner: &PropertyPathExpression, seeds: &BTreeSet<D::Id>, forward: bool,
         ctx: &ReferenceCtx<'_, D>,
     ) -> BTreeSet<D::Id> {
         let mut result = BTreeSet::new();
@@ -4315,11 +4202,7 @@ mod recursion_free_tests {
     }
 
     fn reference_range_reach<D: DatasetView + Sync>(
-        inner: &PropertyPathExpression,
-        node: D::Id,
-        forward: bool,
-        min: u32,
-        max: Option<u32>,
+        inner: &PropertyPathExpression, node: D::Id, forward: bool, min: u32, max: Option<u32>,
         ctx: &ReferenceCtx<'_, D>,
     ) -> BTreeSet<D::Id> {
         let mut out = BTreeSet::new();
@@ -4356,10 +4239,7 @@ mod recursion_free_tests {
     }
 
     fn reference_advance_to_min<D: DatasetView + Sync>(
-        inner: &PropertyPathExpression,
-        current: &mut BTreeSet<D::Id>,
-        forward: bool,
-        min: u32,
+        inner: &PropertyPathExpression, current: &mut BTreeSet<D::Id>, forward: bool, min: u32,
         ctx: &ReferenceCtx<'_, D>,
     ) -> bool {
         if min <= LINEAR_RANGE_PREFIX {
@@ -4396,12 +4276,8 @@ mod recursion_free_tests {
     }
 
     fn reference_apply_power<D: DatasetView + Sync>(
-        inner: &PropertyPathExpression,
-        current: &BTreeSet<D::Id>,
-        forward: bool,
-        bit: u32,
-        ctx: &ReferenceCtx<'_, D>,
-        powers: &mut PowerReachCache<D::Id>,
+        inner: &PropertyPathExpression, current: &BTreeSet<D::Id>, forward: bool, bit: u32,
+        ctx: &ReferenceCtx<'_, D>, powers: &mut PowerReachCache<D::Id>,
     ) -> Option<BTreeSet<D::Id>> {
         let mut out = BTreeSet::new();
         for source in current {
@@ -4420,12 +4296,8 @@ mod recursion_free_tests {
     }
 
     fn reference_power_reach<D: DatasetView + Sync>(
-        inner: &PropertyPathExpression,
-        node: D::Id,
-        forward: bool,
-        bit: u32,
-        ctx: &ReferenceCtx<'_, D>,
-        powers: &mut PowerReachCache<D::Id>,
+        inner: &PropertyPathExpression, node: D::Id, forward: bool, bit: u32,
+        ctx: &ReferenceCtx<'_, D>, powers: &mut PowerReachCache<D::Id>,
     ) -> Rc<BTreeSet<D::Id>> {
         let key = (bit, node);
         if let Some(cached) = powers.get(&key) {
@@ -4460,9 +4332,7 @@ mod recursion_free_tests {
     }
 
     fn reference_step_level<D: DatasetView + Sync>(
-        inner: &PropertyPathExpression,
-        current: &BTreeSet<D::Id>,
-        forward: bool,
+        inner: &PropertyPathExpression, current: &BTreeSet<D::Id>, forward: bool,
         ctx: &ReferenceCtx<'_, D>,
     ) -> Option<BTreeSet<D::Id>> {
         let mut next = BTreeSet::new();
@@ -4630,8 +4500,7 @@ mod recursion_free_tests {
 
     /// A fresh reference context over `base`.
     fn reference_ctx<'a>(
-        case: &'a Case,
-        base: &'a PathCtx<'a, RdfDataset>,
+        case: &'a Case, base: &'a PathCtx<'a, RdfDataset>,
     ) -> ReferenceCtx<'a, RdfDataset> {
         ReferenceCtx {
             base,
@@ -4789,8 +4658,7 @@ mod recursion_free_tests {
 
     /// `path`, wrapped in `levels` applications of `wrap`.
     fn nested(
-        mut path: PropertyPathExpression,
-        levels: usize,
+        mut path: PropertyPathExpression, levels: usize,
         wrap: fn(Child<PropertyPathExpression>) -> PropertyPathExpression,
     ) -> PropertyPathExpression {
         for _ in 0..levels {

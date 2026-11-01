@@ -453,9 +453,7 @@ struct BundleCore<H> {
 
 impl<H> BundleCore<H> {
     fn new(
-        lookaside: RdfLookaside,
-        blobs: Arc<ContentStore>,
-        provenance: DatasetProvenance,
+        lookaside: RdfLookaside, blobs: Arc<ContentStore>, provenance: DatasetProvenance,
     ) -> Self {
         Self {
             lookaside,
@@ -512,9 +510,7 @@ impl<H> BundleCore<H> {
 
     /// The one pin check: `pinned` must equal `actual` or the attach hard-fails.
     fn verify_pin(
-        graph: &str,
-        pinned: ContentDigest,
-        actual: ContentDigest,
+        graph: &str, pinned: ContentDigest, actual: ContentDigest,
     ) -> Result<(), PipelineBundleError> {
         if pinned == actual {
             return Ok(());
@@ -592,8 +588,7 @@ impl<H> BundleCore<H> {
 
     /// Canonicalize either carrier and fold its complete content identity.
     fn digest_in<D: DatasetView<ReadError = core::convert::Infallible>>(
-        &self,
-        view: &D,
+        &self, view: &D,
     ) -> Result<ContentDigest, PipelineBundleError> {
         let canonical = try_canonicalize_view(view, CanonHash::Sha256)
             .map_err(|source| canon_refusal(CanonScopeName::Carrier, source))?
@@ -603,8 +598,7 @@ impl<H> BundleCore<H> {
     }
 
     fn residue_digest_in<D: DatasetView<ReadError = core::convert::Infallible>>(
-        &self,
-        view: &D,
+        &self, view: &D,
     ) -> Result<ContentDigest, PipelineBundleError> {
         let residue = ResidueView(view);
         let canonical = try_canonicalize_view(&residue, CanonHash::Sha256)
@@ -625,9 +619,7 @@ impl<H> BundleCore<H> {
     /// The pipeline root over already-computed leaves. See [`PIPELINE_ROOT_DOMAIN`]
     /// for what each section is and why.
     fn pipeline_root_over(
-        &self,
-        leaves: &BTreeMap<HandleKey, ContentDigest>,
-        residue: ContentDigest,
+        &self, leaves: &BTreeMap<HandleKey, ContentDigest>, residue: ContentDigest,
     ) -> ContentDigest {
         let mut hasher = Sha256::new();
         hasher.update(PIPELINE_ROOT_DOMAIN.as_bytes());
@@ -696,9 +688,7 @@ fn iri_named_graphs<D: DatasetView>(view: &D) -> Vec<HandleKey> {
 /// extra guards harmless, so the sets here are a cost bound, never a
 /// correctness one.
 fn retain_source_owners(
-    view: &CompositeDatasetView,
-    ledger: &Arc<RetentionLedger>,
-    retained: &mut Vec<RetentionGuard>,
+    view: &CompositeDatasetView, ledger: &Arc<RetentionLedger>, retained: &mut Vec<RetentionGuard>,
 ) {
     let mut seen_views = std::collections::BTreeSet::new();
     let mut seen_owners = std::collections::BTreeSet::new();
@@ -802,8 +792,7 @@ impl<D: DatasetView> DatasetView for ResidueView<'_, D> {
     }
 
     fn reserve_workspace(
-        &self,
-        bytes: u64,
+        &self, bytes: u64,
     ) -> Result<impl crate::WorkspaceReservation<Error = Self::ReadError> + '_, Self::ReadError>
     {
         self.0.reserve_workspace(bytes)
@@ -812,8 +801,7 @@ impl<D: DatasetView> DatasetView for ResidueView<'_, D> {
         self.0.max_owned_term_bytes()
     }
     fn reserve_owned_workspace(
-        &self,
-        bytes: u64,
+        &self, bytes: u64,
     ) -> Option<Result<crate::OwnedWorkspaceReservation<Self::ReadError>, Self::ReadError>> {
         self.0.reserve_owned_workspace(bytes)
     }
@@ -854,21 +842,13 @@ impl<D: DatasetView> DatasetView for ResidueView<'_, D> {
     }
 
     fn probe_plan(
-        &self,
-        _s: bool,
-        _p: bool,
-        _o: bool,
-        _g: GraphMatch<Self::Id>,
+        &self, _s: bool, _p: bool, _o: bool, _g: GraphMatch<Self::Id>,
     ) -> Self::ProbePlan {
     }
 
     fn quads_for_pattern_with_plan(
-        &self,
-        _plan: &Self::ProbePlan,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
-        g: GraphMatch<Self::Id>,
+        &self, _plan: &Self::ProbePlan, s: Option<Self::Id>, p: Option<Self::Id>,
+        o: Option<Self::Id>, g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         self.quads_for_pattern(s, p, o, g)
     }
@@ -882,11 +862,8 @@ impl<D: DatasetView> DatasetView for ResidueView<'_, D> {
     }
 
     fn annotation_quads_for_range<'a>(
-        &'a self,
-        predicate: Option<Self::Id>,
-        object: Option<Self::Id>,
-        graph: GraphMatch<Self::Id>,
-        range: &'a crate::AnnotationValueRange<'a>,
+        &'a self, predicate: Option<Self::Id>, object: Option<Self::Id>,
+        graph: GraphMatch<Self::Id>, range: &'a crate::AnnotationValueRange<'a>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + 'a {
         self.0
             .annotation_quads_for_range(predicate, object, graph, range)
@@ -903,8 +880,7 @@ impl<D: DatasetView> DatasetView for ResidueView<'_, D> {
     /// default here would silently reinstate a whole-table scan for every wrapped
     /// carrier.
     fn reifier_quads_in_graph(
-        &self,
-        g: GraphMatch<Self::Id>,
+        &self, g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         // The residue is a ROW filter, so it composes with the graph seam instead of
         // erasing it: hand `g` to the wrapped view — which may be able to skip whole
@@ -920,8 +896,7 @@ impl<D: DatasetView> DatasetView for ResidueView<'_, D> {
     /// See [`reifier_quads_in_graph`](DatasetView::reifier_quads_in_graph) above: the
     /// same composition, over the ANNOTATION stream.
     fn annotation_quads_in_graph(
-        &self,
-        g: GraphMatch<Self::Id>,
+        &self, g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         // See `reifier_quads_in_graph` above: the same composition over the
         // ANNOTATION stream.
@@ -975,9 +950,7 @@ impl<H> PipelineBundle<H> {
     /// travels with it. Attach typed handles afterwards via
     /// [`pin_handle`](Self::pin_handle).
     pub fn new(
-        dataset: Arc<RdfDataset>,
-        lookaside: RdfLookaside,
-        blobs: Arc<ContentStore>,
+        dataset: Arc<RdfDataset>, lookaside: RdfLookaside, blobs: Arc<ContentStore>,
         provenance: DatasetProvenance,
     ) -> Self {
         Self {
@@ -1111,10 +1084,7 @@ impl<H> PipelineBundle<H> {
     /// would shift an already-pinned graph's digest;
     /// [`PipelineBundleError::Canonicalization`] if a graph refuses canonicalization.
     pub fn accumulate_named_graph(
-        &mut self,
-        graph: impl Into<HandleKey>,
-        graph_quads: &RdfDataset,
-        payload: H,
+        &mut self, graph: impl Into<HandleKey>, graph_quads: &RdfDataset, payload: H,
     ) -> Result<(), PipelineBundleError> {
         let graph = graph.into();
         // Containment first: nothing is folded until the contribution is known to
@@ -1239,9 +1209,7 @@ impl<H> PipelineBundle<H> {
     /// [`PipelineBundleError::AdmissionBreach`] if composing the one-source view
     /// would exceed `limits`.
     pub fn to_view_bundle(
-        &self,
-        ledger: &Arc<RetentionLedger>,
-        limits: ViewLimits,
+        &self, ledger: &Arc<RetentionLedger>, limits: ViewLimits,
     ) -> Result<PipelineViewBundle<H>, PipelineBundleError>
     where
         H: Clone,
@@ -1257,9 +1225,7 @@ impl<H> PipelineBundle<H> {
     /// [`PipelineBundleError::AdmissionBreach`] if composing the one-source view
     /// would exceed `limits`.
     pub fn into_view_bundle(
-        self,
-        ledger: &Arc<RetentionLedger>,
-        limits: ViewLimits,
+        self, ledger: &Arc<RetentionLedger>, limits: ViewLimits,
     ) -> Result<PipelineViewBundle<H>, PipelineBundleError> {
         PipelineViewBundle::over_dataset(&self.dataset, self.core, ledger, limits)
     }
@@ -1365,12 +1331,8 @@ impl<H> PipelineViewBundle<H> {
     /// [`PipelineBundleError::AdmissionBreach`] if composing the one-source view
     /// would exceed `limits`.
     pub fn from_dataset(
-        dataset: &Arc<RdfDataset>,
-        lookaside: RdfLookaside,
-        blobs: Arc<ContentStore>,
-        provenance: DatasetProvenance,
-        ledger: &Arc<RetentionLedger>,
-        limits: ViewLimits,
+        dataset: &Arc<RdfDataset>, lookaside: RdfLookaside, blobs: Arc<ContentStore>,
+        provenance: DatasetProvenance, ledger: &Arc<RetentionLedger>, limits: ViewLimits,
     ) -> Result<Self, PipelineBundleError> {
         Self::over_dataset(
             dataset,
@@ -1406,11 +1368,8 @@ impl<H> PipelineViewBundle<H> {
     /// over everything the carrier then holds.
     #[must_use]
     pub fn from_view(
-        view: impl Into<Arc<CompositeDatasetView>>,
-        lookaside: RdfLookaside,
-        blobs: Arc<ContentStore>,
-        provenance: DatasetProvenance,
-        ledger: &Arc<RetentionLedger>,
+        view: impl Into<Arc<CompositeDatasetView>>, lookaside: RdfLookaside,
+        blobs: Arc<ContentStore>, provenance: DatasetProvenance, ledger: &Arc<RetentionLedger>,
         limits: ViewLimits,
     ) -> Self {
         let view = view.into();
@@ -1438,12 +1397,8 @@ impl<H> PipelineViewBundle<H> {
     /// [`PipelineBundleError::AdmissionBreach`] if composing the one-source view
     /// would exceed `limits`.
     pub fn from_delta(
-        delta: &Arc<DeltaDatasetView>,
-        lookaside: RdfLookaside,
-        blobs: Arc<ContentStore>,
-        provenance: DatasetProvenance,
-        ledger: &Arc<RetentionLedger>,
-        limits: ViewLimits,
+        delta: &Arc<DeltaDatasetView>, lookaside: RdfLookaside, blobs: Arc<ContentStore>,
+        provenance: DatasetProvenance, ledger: &Arc<RetentionLedger>, limits: ViewLimits,
     ) -> Result<Self, PipelineBundleError> {
         let view = CompositeDatasetView::from_bound_sources(
             vec![CompositeSource::from_delta(Arc::clone(delta))],
@@ -1469,9 +1424,7 @@ impl<H> PipelineViewBundle<H> {
     /// graph-preserving source and record it as the sole owner of every graph it
     /// addresses.
     fn over_dataset(
-        dataset: &Arc<RdfDataset>,
-        core: BundleCore<H>,
-        ledger: &Arc<RetentionLedger>,
+        dataset: &Arc<RdfDataset>, core: BundleCore<H>, ledger: &Arc<RetentionLedger>,
         limits: ViewLimits,
     ) -> Result<Self, PipelineBundleError> {
         let view = CompositeDatasetView::from_bound_sources(
@@ -1705,10 +1658,7 @@ impl<H> PipelineViewBundle<H> {
     /// would shift an already-pinned graph's digest;
     /// [`PipelineBundleError::Canonicalization`] if a digest cannot be computed.
     pub fn accumulate_named_graph(
-        &mut self,
-        graph: impl Into<HandleKey>,
-        graph_quads: &Arc<RdfDataset>,
-        payload: H,
+        &mut self, graph: impl Into<HandleKey>, graph_quads: &Arc<RdfDataset>, payload: H,
     ) -> Result<(), PipelineBundleError> {
         let graph = graph.into();
         // Containment first: nothing is appended until the contribution is known to
@@ -1857,9 +1807,7 @@ fn canon_refusal(scope: CanonScopeName, source: CanonError) -> PipelineBundleErr
 /// commits, so the digest a refusal was decided on and the digest the committed
 /// carrier answers with are the same bytes by construction.
 fn flat_graph_digest(
-    dataset: &RdfDataset,
-    work: &DigestWorkCounter,
-    graph: &str,
+    dataset: &RdfDataset, work: &DigestWorkCounter, graph: &str,
 ) -> Result<ContentDigest, PipelineBundleError> {
     let digest = try_graph_digest_view(dataset, graph)
         .map_err(|source| canon_refusal(CanonScopeName::Graph(graph.to_owned()), source))?;
@@ -1878,9 +1826,7 @@ fn flat_graph_digest(
 ///
 /// [`PipelineBundleError::Canonicalization`] if `<graph>`'s subgraph is refused.
 fn composed_graph_digest(
-    view: &CompositeDatasetView,
-    sole: &BTreeMap<HandleKey, SoleGraph>,
-    work: &DigestWorkCounter,
+    view: &CompositeDatasetView, sole: &BTreeMap<HandleKey, SoleGraph>, work: &DigestWorkCounter,
     graph: &str,
 ) -> Result<ContentDigest, PipelineBundleError> {
     let digest = match sole.get(graph) {
@@ -1910,9 +1856,7 @@ fn composed_graph_digest(
 /// exactly the canonicalizations a successful one would: the hit accounting is the
 /// same discipline [`BundleCore::cached`] performs.
 fn seeded_flat_digest(
-    dataset: &RdfDataset,
-    work: &DigestWorkCounter,
-    seed: &mut BTreeMap<HandleKey, ContentDigest>,
+    dataset: &RdfDataset, work: &DigestWorkCounter, seed: &mut BTreeMap<HandleKey, ContentDigest>,
     graph: &str,
 ) -> Result<ContentDigest, PipelineBundleError> {
     if let Some(hit) = seed.get(graph) {
@@ -1931,11 +1875,8 @@ fn seeded_flat_digest(
 ///
 /// [`PipelineBundleError::Canonicalization`] if `<graph>`'s subgraph is refused.
 fn seeded_composed_digest(
-    view: &CompositeDatasetView,
-    sole: &BTreeMap<HandleKey, SoleGraph>,
-    work: &DigestWorkCounter,
-    seed: &mut BTreeMap<HandleKey, ContentDigest>,
-    graph: &str,
+    view: &CompositeDatasetView, sole: &BTreeMap<HandleKey, SoleGraph>, work: &DigestWorkCounter,
+    seed: &mut BTreeMap<HandleKey, ContentDigest>, graph: &str,
 ) -> Result<ContentDigest, PipelineBundleError> {
     if let Some(hit) = seed.get(graph) {
         DigestWorkCounter::bump(&work.graph_cache_hits);

@@ -179,9 +179,7 @@ impl LossLedger {
     /// # Errors
     /// Returns the original storage refusal before changing the ledger.
     pub fn record_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &mut self,
-        entry: LossEntry,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &mut self, entry: LossEntry, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         memory.push(&mut self.entries, entry)
     }
@@ -671,9 +669,7 @@ const RESEARCH_OBJECT_RDF_PROFILE: &[(&str, &str)] = &[
 ];
 
 fn contract_profile(
-    from: &'static str,
-    to: &'static str,
-    profile: &'static [(&'static str, &'static str)],
+    from: &'static str, to: &'static str, profile: &'static [(&'static str, &'static str)],
 ) -> LossLedger {
     LossLedger::contract(
         profile
@@ -2323,10 +2319,7 @@ pub fn check_ledger_sound(ledger: &LossLedger, from: &str, to: &str) -> Result<(
 /// The first refusal borrows its original code and pair operands; it allocates
 /// nothing. Empty ledgers remain sound, including for unregistered pairs.
 pub fn check_ledger_sound_in<'a>(
-    profile: &LossProfile,
-    ledger: &'a LossLedger,
-    from: &'a str,
-    to: &'a str,
+    profile: &LossProfile, ledger: &'a LossLedger, from: &'a str, to: &'a str,
 ) -> Result<(), LossSoundnessError<'a>> {
     for entry in ledger.entries() {
         if entry.from != from || entry.to != to {

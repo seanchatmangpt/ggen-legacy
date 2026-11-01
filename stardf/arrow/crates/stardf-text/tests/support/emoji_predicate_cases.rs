@@ -11,11 +11,11 @@ fn protected_scalars() -> Vec<bool> {
     let mut protected = vec![false; 0x11_0000];
     for (data, wanted) in [
         (
-            include_str!("../../../iri/unicode/17.0.0/emoji-data.txt"),
+            include_str!("../../../stardf-iri/unicode/17.0.0/emoji-data.txt"),
             "Extended_Pictographic",
         ),
         (
-            include_str!("../../../iri/unicode/17.0.0/GraphemeBreakProperty.txt"),
+            include_str!("../../../stardf-iri/unicode/17.0.0/GraphemeBreakProperty.txt"),
             "Regional_Indicator",
         ),
     ] {
@@ -42,11 +42,11 @@ pub(crate) fn every_emoji_spelling_and_protected_scalar_matches_the_input_data()
     let mut atoms = BTreeSet::new();
     for (data, expected_rows) in [
         (
-            include_str!("../../../iri/unicode/17.0.0/emoji-test.txt"),
+            include_str!("../../../stardf-iri/unicode/17.0.0/emoji-test.txt"),
             5225,
         ),
         (
-            include_str!("../../../iri/unicode/17.0.0/emoji-variation-sequences.txt"),
+            include_str!("../../../stardf-iri/unicode/17.0.0/emoji-variation-sequences.txt"),
             742,
         ),
     ] {

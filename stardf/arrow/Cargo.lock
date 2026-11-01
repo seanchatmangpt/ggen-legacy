@@ -312,11 +312,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f2032f911046de80f0a198e0901378627c33f59ea0ac00e363d481118bd70a53"
 
 [[package]]
-name = "avec-arrow"
-version = "26.10.29"
-source = "git+https://github.com/seanchatmangpt/avec?rev=67c0ec1#67c0ec1bad0bf4a81b2512e60f554b137ae596d9"
-
-[[package]]
 name = "base64"
 version = "0.21.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2263,39 +2258,37 @@ checksum = "6ce2be8dc25455e1f91df71bfa12ad37d7af1092ae736f3a6cd0e37bc7810596"
 
 [[package]]
 name = "stardf-alloc-probe"
-version = "26.9.29"
+version = "26.11.1"
 
 [[package]]
 name = "stardf-arrow"
-version = "26.9.29"
+version = "26.11.1"
 
 [[package]]
 name = "stardf-arrow-bench"
-version = "0.1.0"
+version = "26.11.1"
 dependencies = [
  "stardf-arrow-core",
 ]
 
 [[package]]
 name = "stardf-arrow-capi"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
- "avec-arrow",
  "stardf-arrow-core",
  "stardf-columnar",
 ]
 
 [[package]]
 name = "stardf-arrow-core"
-version = "0.1.0"
+version = "26.11.1"
 dependencies = [
- "avec-arrow",
  "blake3",
 ]
 
 [[package]]
 name = "stardf-arrow-rs"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-hash",
  "stardf-testkit",
@@ -2303,14 +2296,14 @@ dependencies = [
 
 [[package]]
 name = "stardf-branchless"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-hash",
 ]
 
 [[package]]
 name = "stardf-cdt"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-alloc-probe",
  "stardf-events",
@@ -2324,7 +2317,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-columnar"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "blake3",
  "stardf-arrow-core",
@@ -2347,7 +2340,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-core"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "hashbrown 0.17.1",
  "regex",
@@ -2382,14 +2375,14 @@ dependencies = [
 
 [[package]]
 name = "stardf-deflate"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-hash",
 ]
 
 [[package]]
 name = "stardf-duckdb"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "frozen-duckdb",
  "stardf-arrow-rs",
@@ -2414,7 +2407,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-entail"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "hashbrown 0.17.1",
  "stardf-alloc-probe",
@@ -2430,14 +2423,14 @@ dependencies = [
 
 [[package]]
 name = "stardf-events"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-hash",
 ]
 
 [[package]]
 name = "stardf-geo"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-core",
  "stardf-geo-kernel",
@@ -2452,7 +2445,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-geo-kernel"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "sha2",
  "stardf-alloc-probe",
@@ -2468,7 +2461,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-glob"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-alloc-probe",
  "stardf-core",
@@ -2480,7 +2473,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-gts"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "aes-gcm",
  "fastrand",
@@ -2503,11 +2496,11 @@ dependencies = [
 
 [[package]]
 name = "stardf-hash"
-version = "26.9.29"
+version = "26.11.1"
 
 [[package]]
 name = "stardf-hnsw"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "rayon",
  "stardf-alloc-probe",
@@ -2522,7 +2515,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-iri"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-hash",
  "stardf-lex",
@@ -2531,7 +2524,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-json"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-alloc-probe",
  "stardf-core",
@@ -2544,14 +2537,14 @@ dependencies = [
 
 [[package]]
 name = "stardf-lex"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-hash",
 ]
 
 [[package]]
 name = "stardf-markdown"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-core",
  "stardf-hash",
@@ -2561,7 +2554,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-mime"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-core",
  "stardf-hash",
@@ -2575,7 +2568,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-n3"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "hashbrown 0.17.1",
  "num-bigint",
@@ -2592,19 +2585,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "stardf-process"
-version = "26.9.29"
-dependencies = [
- "avec-arrow",
- "stardf-branchless",
- "stardf-hash",
- "stardf-lex",
- "stardf-xsd",
-]
-
-[[package]]
 name = "stardf-rdf"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "hashbrown 0.17.1",
  "proc-macro2",
@@ -2631,7 +2613,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-retrieval"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-alloc-probe",
  "stardf-core",
@@ -2648,7 +2630,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-rs"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-alloc-probe",
  "stardf-arrow-rs",
@@ -2670,7 +2652,6 @@ dependencies = [
  "stardf-markdown",
  "stardf-mime",
  "stardf-n3",
- "stardf-process",
  "stardf-rdf",
  "stardf-retrieval",
  "stardf-shapes",
@@ -2686,6 +2667,15 @@ dependencies = [
  "stardf-toml",
  "stardf-validate",
  "stardf-xsd",
+]
+
+[[package]]
+name = "stardf-scan-duckdb"
+version = "26.11.1"
+dependencies = [
+ "frozen-duckdb",
+ "stardf-arrow-core",
+ "stardf-columnar",
 ]
 
 [[package]]
@@ -2716,7 +2706,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-shex"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-alloc-probe",
  "stardf-core",
@@ -2748,7 +2738,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-sparql-algebra"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "regex",
  "stardf-alloc-probe",
@@ -2763,7 +2753,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-sparql-conformance"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-cdt",
  "stardf-conformance-kit",
@@ -2785,7 +2775,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-sparql-eval"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "getrandom 0.4.3",
  "hashbrown 0.17.1",
@@ -2809,7 +2799,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-sparql-results"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-alloc-probe",
  "stardf-arrow-rs",
@@ -2823,7 +2813,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-sql"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-core",
  "stardf-hash",
@@ -2836,7 +2826,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-stack"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "libc",
  "stardf-hash",
@@ -2846,7 +2836,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-testkit"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "regex",
  "regex-syntax",
@@ -2857,7 +2847,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-text"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-alloc-probe",
  "stardf-core",
@@ -2873,7 +2863,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-toml"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-core",
  "stardf-hash",
@@ -2886,7 +2876,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-validate"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "sha2",
  "stardf-alloc-probe",
@@ -2908,7 +2898,7 @@ dependencies = [
 
 [[package]]
 name = "stardf-xsd"
-version = "26.9.29"
+version = "26.11.1"
 dependencies = [
  "stardf-alloc-probe",
  "stardf-hash",

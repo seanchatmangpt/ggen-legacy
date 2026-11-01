@@ -37,8 +37,7 @@ pub fn english_in_place(word: &mut String) {
 }
 
 fn english_with<E>(
-    word: &mut String,
-    create: impl FnOnce(&str) -> Result<Stem, E>,
+    word: &mut String, create: impl FnOnce(&str) -> Result<Stem, E>,
 ) -> Result<(), E> {
     let mut latin = false;
     for letter in word.chars() {
@@ -74,8 +73,7 @@ fn english_with<E>(
 /// Native suffix replacements never exceed the original scalar count; the
 /// existing byte-length Letter capacity is therefore a certified upper bound.
 pub(crate) fn english_in_place_owned(
-    word: &mut String,
-    workspace: &purrdf_sparql_eval::WorkspaceCapability,
+    word: &mut String, workspace: &purrdf_sparql_eval::WorkspaceCapability,
 ) -> Result<(), crate::TextError> {
     let mut owner = None;
     english_with(word, |input| {
@@ -326,10 +324,7 @@ struct Rule {
 }
 
 const fn rule(
-    suffix: &'static str,
-    replacement: &'static str,
-    region: usize,
-    predecessors: &'static str,
+    suffix: &'static str, replacement: &'static str, region: usize, predecessors: &'static str,
 ) -> Rule {
     Rule {
         suffix,

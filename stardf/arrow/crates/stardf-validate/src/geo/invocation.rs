@@ -154,9 +154,7 @@ pub(super) struct Phase<'a> {
 }
 impl Phase<'_> {
     pub(super) fn retain_phase(
-        &self,
-        budget: &mut PreparationBudget,
-        retained: u64,
+        &self, budget: &mut PreparationBudget, retained: u64,
     ) -> Result<(), GeoError> {
         let peak = budget
             .workspace_bytes()

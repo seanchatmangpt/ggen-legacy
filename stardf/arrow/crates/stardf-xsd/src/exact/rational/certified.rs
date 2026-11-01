@@ -117,8 +117,7 @@ impl Rational {
     /// # Errors
     /// Returns the first admission or allocation refusal before publication.
     pub fn detached_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         Ok(Self {
             numerator: self.numerator.detached_with_memory(memory)?,
@@ -131,8 +130,7 @@ impl Rational {
     /// # Errors
     /// Returns a refused shared-control allocation with the original value live.
     pub fn publish_detached(
-        &mut self,
-        original: &purrdf_lex::allocation::SharedOwned<()>,
+        &mut self, original: &purrdf_lex::allocation::SharedOwned<()>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         self.numerator.publish_detached(original)?;
         self.denominator.publish_detached(original)
@@ -223,18 +221,13 @@ impl Rational {
     /// # Errors
     /// Refuses capacity or availability separately from division by zero.
     pub fn div_in(
-        &self,
-        rhs: &Self,
-        scratch: &LimbScratch,
+        &self, rhs: &Self, scratch: &LimbScratch,
     ) -> Result<Option<Self>, LimbScratchError> {
         self.product_using(rhs, true, scratch)
     }
 
     pub(super) fn sum_using(
-        &self,
-        rhs: &Self,
-        subtract: bool,
-        storage: &impl Allocate,
+        &self, rhs: &Self, subtract: bool, storage: &impl Allocate,
     ) -> Result<Self, LimbScratchError> {
         let [left_n, left_d] = self.integer_operands();
         let [right_n, right_d] = rhs.integer_operands();
@@ -269,10 +262,7 @@ impl Rational {
     }
 
     pub(super) fn product_using(
-        &self,
-        rhs: &Self,
-        divide: bool,
-        storage: &impl Allocate,
+        &self, rhs: &Self, divide: bool, storage: &impl Allocate,
     ) -> Result<Option<Self>, LimbScratchError> {
         if divide && rhs.is_zero() {
             return Ok(None);
@@ -323,9 +313,7 @@ impl Rational {
     /// # Errors
     /// Refuses destination exhaustion or capacity without allocating a fallback.
     pub fn from_dyadic_integer_in(
-        numerator: &Int,
-        fractional_bits: u32,
-        scratch: &LimbScratch,
+        numerator: &Int, fractional_bits: u32, scratch: &LimbScratch,
     ) -> Result<Self, LimbScratchError> {
         let (num, den) = crate::ieee::ratio::dyadic_ratio_in(numerator, fractional_bits, scratch)?;
         Ok(Self::from_reduced_bigints(num, den))
@@ -344,17 +332,13 @@ impl Rational {
     /// # Errors
     /// Refuses destination exhaustion without an allocating fallback.
     pub fn from_decimal_in(
-        mantissa: &Int,
-        scale: u32,
-        scratch: &LimbScratch,
+        mantissa: &Int, scale: u32, scratch: &LimbScratch,
     ) -> Result<Self, LimbScratchError> {
         Self::from_decimal_using(mantissa, scale, scratch)
     }
 
     fn from_decimal_using(
-        mantissa: &Int,
-        scale: u32,
-        storage: &impl Allocate,
+        mantissa: &Int, scale: u32, storage: &impl Allocate,
     ) -> Result<Self, LimbScratchError> {
         if mantissa.is_zero() {
             return Ok(Self::ZERO);
@@ -400,15 +384,13 @@ impl Rational {
     /// # Errors
     /// Refuses capacity or destination exhaustion without a resident fallback.
     pub fn from_binary64_in(
-        value: f64,
-        scratch: &LimbScratch,
+        value: f64, scratch: &LimbScratch,
     ) -> Result<Option<Self>, LimbScratchError> {
         Self::from_binary64_using(value, scratch)
     }
 
     fn from_binary64_using(
-        value: f64,
-        storage: &impl Allocate,
+        value: f64, storage: &impl Allocate,
     ) -> Result<Option<Self>, LimbScratchError> {
         let Some(decoded) = crate::ieee::dyadic::Binary64Dyadic::decode(value) else {
             return Ok(None);
@@ -467,8 +449,7 @@ impl Rational {
     /// # Errors
     /// Returns the callback's refusal without constructing the value.
     pub fn parse_decimal_admitted<E>(
-        text: &str,
-        admit: &mut impl FnMut(usize, u64) -> Result<(), E>,
+        text: &str, admit: &mut impl FnMut(usize, u64) -> Result<(), E>,
     ) -> Result<Option<Self>, E> {
         match Self::parse_decimal_using(text, admit, &Unbounded) {
             Ok(value) => Ok(value),
@@ -487,17 +468,13 @@ impl Rational {
     /// Distinguishes the caller's original admission from native destination
     /// capacity or allocator refusal; no resident destination is substituted.
     pub fn parse_decimal_in<E>(
-        text: &str,
-        admit: &mut impl FnMut(usize, u64) -> Result<(), E>,
-        scratch: &LimbScratch,
+        text: &str, admit: &mut impl FnMut(usize, u64) -> Result<(), E>, scratch: &LimbScratch,
     ) -> Result<Option<Self>, DecimalConstructionError<E>> {
         Self::parse_decimal_using(text, admit, scratch)
     }
 
     fn parse_decimal_using<E>(
-        text: &str,
-        admit: &mut impl FnMut(usize, u64) -> Result<(), E>,
-        storage: &impl Allocate,
+        text: &str, admit: &mut impl FnMut(usize, u64) -> Result<(), E>, storage: &impl Allocate,
     ) -> Result<Option<Self>, DecimalConstructionError<E>> {
         let Some(lexeme) = scan_decimal(text) else {
             return Ok(None);
@@ -566,8 +543,7 @@ impl Rational {
     /// # Errors
     /// Refuses checked bit/limb layout overflow before any native allocation.
     pub fn decimal_scratch_layout(
-        digits: usize,
-        power: u64,
+        digits: usize, power: u64,
     ) -> Result<(usize, usize), LimbScratchError> {
         let bits = ExactArithmeticCost::decimal(digits, power)
             .ok_or(LimbScratchError::SizeOverflow)?
@@ -602,15 +578,13 @@ impl Rational {
     /// # Errors
     /// Refuses destination exhaustion or capacity without an allocating fallback.
     pub fn finite_decimal_scale_in(
-        &self,
-        scratch: &LimbScratch,
+        &self, scratch: &LimbScratch,
     ) -> Result<Option<u64>, LimbScratchError> {
         self.finite_decimal_scale_using(scratch)
     }
 
     fn finite_decimal_scale_using(
-        &self,
-        storage: &impl Allocate,
+        &self, storage: &impl Allocate,
     ) -> Result<Option<u64>, LimbScratchError> {
         if self.bigint_denominator().bit_len() == 1 {
             return Ok(Some(0));
@@ -650,9 +624,7 @@ impl Rational {
     /// original rounding and formatting bodies before any output allocation.
     #[must_use]
     pub fn to_decimal_string_with(
-        &self,
-        max_scale: u32,
-        rounding: crate::ieee::ratio::Rounding,
+        &self, max_scale: u32, rounding: crate::ieee::ratio::Rounding,
     ) -> String {
         let mantissa = self.round_to_scale_with(max_scale, rounding);
         let mut out = String::new();
@@ -680,9 +652,7 @@ impl Rational {
     /// # Errors
     /// Refuses destination exhaustion without an allocating fallback.
     pub fn round_to_scale_in(
-        &self,
-        scale: u32,
-        scratch: &LimbScratch,
+        &self, scale: u32, scratch: &LimbScratch,
     ) -> Result<Int, LimbScratchError> {
         self.round_to_scale_with_in(scale, crate::ieee::ratio::Rounding::NearestEven, scratch)
     }
@@ -702,19 +672,13 @@ impl Rational {
     /// # Errors
     /// Refuses destination exhaustion without an allocation fallback.
     pub fn round_to_scale_with_in(
-        &self,
-        scale: u32,
-        rounding: crate::ieee::ratio::Rounding,
-        scratch: &LimbScratch,
+        &self, scale: u32, rounding: crate::ieee::ratio::Rounding, scratch: &LimbScratch,
     ) -> Result<Int, LimbScratchError> {
         self.round_to_scale_using(scale, rounding, scratch)
     }
 
     fn round_to_scale_using(
-        &self,
-        scale: u32,
-        rounding: crate::ieee::ratio::Rounding,
-        storage: &impl Allocate,
+        &self, scale: u32, rounding: crate::ieee::ratio::Rounding, storage: &impl Allocate,
     ) -> Result<Int, LimbScratchError> {
         let factor = Int::pow10_using(scale, storage)?;
         Ok(crate::ieee::ratio::round_product_using(
@@ -728,9 +692,7 @@ impl Rational {
     }
 
     pub(super) fn compare_resident(
-        &self,
-        other: &Self,
-        storage: &impl Allocate,
+        &self, other: &Self, storage: &impl Allocate,
     ) -> Result<Ordering, LimbScratchError> {
         self.compare_using(other, storage, |_, evaluate| evaluate())
     }
@@ -739,9 +701,7 @@ impl Rational {
     /// # Errors
     /// Refuses destination exhaustion without an allocating product fallback.
     pub fn compare_in(
-        &self,
-        other: &Self,
-        scratch: &LimbScratch,
+        &self, other: &Self, scratch: &LimbScratch,
     ) -> Result<Ordering, LimbScratchError> {
         self.compare_using(other, scratch, |_, evaluate| evaluate())
     }
@@ -758,8 +718,7 @@ impl Rational {
     /// # Errors
     /// Returns checked-bound overflow or the callback's first refusal.
     pub fn compare_admitted<E>(
-        &self,
-        other: &Self,
+        &self, other: &Self,
         run: impl FnMut(ExactArithmeticCost, &mut RationalComparisonBody<'_>) -> Result<Ordering, E>,
     ) -> Result<Ordering, RationalComparisonError<E>> {
         self.compare_admitted_using(other, &Unbounded, run)
@@ -770,9 +729,7 @@ impl Rational {
     /// Returns checked-bound overflow or the callback's admission/body refusal;
     /// the supplied body has no heap fallback on arena exhaustion.
     pub fn compare_admitted_in<E>(
-        &self,
-        other: &Self,
-        scratch: &LimbScratch,
+        &self, other: &Self, scratch: &LimbScratch,
         run: impl FnMut(ExactArithmeticCost, &mut RationalComparisonBody<'_>) -> Result<Ordering, E>,
     ) -> Result<Ordering, RationalComparisonError<E>> {
         self.compare_admitted_using(other, scratch, run)
@@ -785,8 +742,7 @@ impl Rational {
     /// # Errors
     /// Returns checked-bound overflow or the caller's first admission/body failure.
     pub fn compare_admitted_by<E>(
-        &self,
-        other: &Self,
+        &self, other: &Self,
         mut run: impl FnMut(
             ExactArithmeticCost,
             &mut RationalNativeComparisonBody<'_>,
@@ -799,9 +755,7 @@ impl Rational {
     }
 
     fn compare_admitted_using<E>(
-        &self,
-        other: &Self,
-        storage: &impl Allocate,
+        &self, other: &Self, storage: &impl Allocate,
         mut run: impl FnMut(ExactArithmeticCost, &mut RationalComparisonBody<'_>) -> Result<Ordering, E>,
     ) -> Result<Ordering, RationalComparisonError<E>> {
         self.compare_using(other, storage, |phase, evaluate| {
@@ -847,9 +801,7 @@ impl Rational {
     }
 
     fn compare_using<E>(
-        &self,
-        other: &Self,
-        storage: &impl Allocate,
+        &self, other: &Self, storage: &impl Allocate,
         mut run: impl FnMut(ComparisonPhase, &mut RationalComparisonBody<'_>) -> Result<Ordering, E>,
     ) -> Result<Ordering, E> {
         let mut phase = None;
@@ -908,21 +860,13 @@ impl Rational {
     /// # Errors
     /// Refuses destination exhaustion or capacity without an allocating fallback.
     pub fn difference_in_integer_interval_in(
-        &self,
-        other: &Self,
-        lower: i64,
-        upper: i64,
-        scratch: &LimbScratch,
+        &self, other: &Self, lower: i64, upper: i64, scratch: &LimbScratch,
     ) -> Result<bool, LimbScratchError> {
         self.difference_in_integer_interval_using(other, lower, upper, scratch)
     }
 
     fn difference_in_integer_interval_using(
-        &self,
-        other: &Self,
-        lower: i64,
-        upper: i64,
-        storage: &impl Allocate,
+        &self, other: &Self, lower: i64, upper: i64, storage: &impl Allocate,
     ) -> Result<bool, LimbScratchError> {
         if lower >= upper {
             return Ok(false);
@@ -954,19 +898,13 @@ impl Rational {
     /// # Errors
     /// Refuses destination exhaustion; a zero period returns `Ok(None)`.
     pub fn modulo_integer_in(
-        &self,
-        origin: i64,
-        period: u64,
-        scratch: &LimbScratch,
+        &self, origin: i64, period: u64, scratch: &LimbScratch,
     ) -> Result<Option<Self>, LimbScratchError> {
         self.modulo_integer_using(origin, period, scratch)
     }
 
     fn modulo_integer_using(
-        &self,
-        origin: i64,
-        period: u64,
-        storage: &impl Allocate,
+        &self, origin: i64, period: u64, storage: &impl Allocate,
     ) -> Result<Option<Self>, LimbScratchError> {
         if period == 0 {
             return Ok(None);
@@ -1116,9 +1054,7 @@ fn scan_exponent(bytes: &[u8], from: usize) -> Option<(i64, usize)> {
 /// Borrow an unchanged factor or divide it exactly under the original storage.
 /// Unit gcds must not introduce a deep clone of already owned heap limbs.
 fn cancelled_operand<'a>(
-    value: &'a Int,
-    divisor: &Int,
-    storage: &impl Allocate,
+    value: &'a Int, divisor: &Int, storage: &impl Allocate,
 ) -> Result<Cow<'a, Int>, LimbScratchError> {
     if divisor.is_one() {
         Ok(Cow::Borrowed(value))

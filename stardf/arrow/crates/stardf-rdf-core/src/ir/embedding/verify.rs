@@ -220,8 +220,7 @@ pub fn verify_embedding<'a>(
 
 /// Structurally reopens the same immutable resident bytes under a prior proof.
 pub fn reopen_prevalidated<'a>(
-    bytes: &'a [u8],
-    certificate: &ResidentEmbeddingCertificate<'a>,
+    bytes: &'a [u8], certificate: &ResidentEmbeddingCertificate<'a>,
 ) -> Result<EmbeddingView<'a>, EmbeddingError> {
     let mut view = EmbeddingView::from_bytes(bytes)?;
     if !certificate.matches(bytes, view.artifact_root()) {
@@ -233,9 +232,7 @@ pub fn reopen_prevalidated<'a>(
 
 /// Verifies the exact attached pack and, optionally, its certified RDF identity.
 pub fn verify_embedding_source(
-    embedding: &EmbeddingView<'_>,
-    source_bytes: &[u8],
-    mode: SourceVerificationMode,
+    embedding: &EmbeddingView<'_>, source_bytes: &[u8], mode: SourceVerificationMode,
 ) -> Result<SourceVerificationReport, EmbeddingError> {
     let source = embedding.source();
     let actual_length = u64::try_from(source_bytes.len())
@@ -281,8 +278,7 @@ pub fn verify_embedding_source(
 
 /// Checks exact bytes against one generic external-artifact binding.
 pub fn verify_external_artifact(
-    binding: ExternalBindingView<'_>,
-    bytes: &[u8],
+    binding: ExternalBindingView<'_>, bytes: &[u8],
 ) -> Result<ContentDigest, EmbeddingError> {
     let actual_length = u64::try_from(bytes.len())
         .map_err(|_| EmbeddingError::ArithmeticOverflow("external artifact byte length"))?;
@@ -303,8 +299,7 @@ pub fn verify_external_artifact(
 
 /// Checks exact bytes and independently certifies a pack-backed external binding.
 pub fn verify_external_pack(
-    binding: ExternalBindingView<'_>,
-    bytes: &[u8],
+    binding: ExternalBindingView<'_>, bytes: &[u8],
 ) -> Result<RdfcDigest, EmbeddingError> {
     verify_external_artifact(binding, bytes)?;
     let expected = binding
@@ -317,8 +312,7 @@ pub fn verify_external_pack(
 
 /// Rejects a comparison across distinct effective vector spaces.
 pub fn require_compatible_vector_spaces(
-    left: super::identity::VectorSpaceId,
-    right: super::identity::VectorSpaceId,
+    left: super::identity::VectorSpaceId, right: super::identity::VectorSpaceId,
 ) -> Result<(), EmbeddingError> {
     if left == right {
         Ok(())
@@ -500,8 +494,7 @@ fn scan_matrix_scalars(matrix: MatrixView<'_>) -> Result<u64, EmbeddingError> {
 }
 
 fn verify_projection(
-    view: &EmbeddingView<'_>,
-    projection: ProjectionView<'_>,
+    view: &EmbeddingView<'_>, projection: ProjectionView<'_>,
 ) -> Result<(), EmbeddingError> {
     let matrix = view
         .matrix(projection.matrix_id())
@@ -566,9 +559,7 @@ fn verify_projection(
 }
 
 fn projection_hasher(
-    matrix: MatrixView<'_>,
-    projection: ProjectionView<'_>,
-    postprocessing: PrefixPostprocessing,
+    matrix: MatrixView<'_>, projection: ProjectionView<'_>, postprocessing: PrefixPostprocessing,
 ) -> Result<FramedHasher, EmbeddingError> {
     let mut hasher = FramedHasher::new(D_PROJECTION_CONTENT);
     hasher.field(&matrix.dtype()?.code().to_le_bytes());
@@ -636,8 +627,7 @@ fn verify_source_dataset_target(view: &EmbeddingView<'_>) -> Result<(), Embeddin
 }
 
 fn verify_source_ordinals(
-    embedding: &EmbeddingView<'_>,
-    pack: &PackView<'_>,
+    embedding: &EmbeddingView<'_>, pack: &PackView<'_>,
 ) -> Result<u64, EmbeddingError> {
     let dataset = dataset_from_view(pack).map_err(EmbeddingError::source_pack)?;
     // The refusal REASON is carried through rather than replaced by a fixed string:
@@ -674,12 +664,8 @@ fn verify_source_ordinals(
 }
 
 fn target_from_source_ordinal(
-    target: TargetView<'_>,
-    ordinal: u64,
-    pack: &PackView<'_>,
-    dataset: &RdfDataset,
-    labels: &BTreeMap<TermId, Box<str>>,
-    dataset_target: TargetId,
+    target: TargetView<'_>, ordinal: u64, pack: &PackView<'_>, dataset: &RdfDataset,
+    labels: &BTreeMap<TermId, Box<str>>, dataset_target: TargetId,
 ) -> Result<TargetId, EmbeddingError> {
     let kind = target.kind()?;
     let mismatch = || EmbeddingError::OrdinalMismatch {
@@ -718,10 +704,7 @@ fn target_from_source_ordinal(
 }
 
 fn term_target_id(
-    pack: &PackView<'_>,
-    id: u64,
-    dataset: &RdfDataset,
-    labels: &BTreeMap<TermId, Box<str>>,
+    pack: &PackView<'_>, id: u64, dataset: &RdfDataset, labels: &BTreeMap<TermId, Box<str>>,
     dataset_target: TargetId,
 ) -> Result<TargetId, EmbeddingError> {
     if id == 0 || id > pack.dict().n_terms() {
@@ -737,9 +720,7 @@ fn term_target_id(
 /// its subject, predicate and object are each derived fully, in that order, and the
 /// first failure ends the derivation; the triple's own id is derived from the three.
 fn term_value_target_id(
-    value: &TermValue,
-    dataset: &RdfDataset,
-    labels: &BTreeMap<TermId, Box<str>>,
+    value: &TermValue, dataset: &RdfDataset, labels: &BTreeMap<TermId, Box<str>>,
     dataset_target: TargetId,
 ) -> Result<TargetId, EmbeddingError> {
     value.try_fold(
@@ -788,11 +769,8 @@ fn term_value_target_id(
 }
 
 fn graph_target_id(
-    pack: &PackView<'_>,
-    graph: Option<PackId>,
-    dataset: &RdfDataset,
-    labels: &BTreeMap<TermId, Box<str>>,
-    dataset_target: TargetId,
+    pack: &PackView<'_>, graph: Option<PackId>, dataset: &RdfDataset,
+    labels: &BTreeMap<TermId, Box<str>>, dataset_target: TargetId,
 ) -> Result<TargetId, EmbeddingError> {
     let graph_name = graph
         .map(|id| term_target_id(pack, id.get(), dataset, labels, dataset_target))
@@ -806,11 +784,8 @@ fn graph_target_id(
 }
 
 fn statement_target_id(
-    pack: &PackView<'_>,
-    quad: QuadIds<PackId>,
-    dataset: &RdfDataset,
-    labels: &BTreeMap<TermId, Box<str>>,
-    dataset_target: TargetId,
+    pack: &PackView<'_>, quad: QuadIds<PackId>, dataset: &RdfDataset,
+    labels: &BTreeMap<TermId, Box<str>>, dataset_target: TargetId,
 ) -> Result<TargetId, EmbeddingError> {
     Ok(RdfStatementTarget {
         graph: graph_target_id(pack, quad.g, dataset, labels, dataset_target)?,
@@ -823,12 +798,8 @@ fn statement_target_id(
 }
 
 fn statement_from_triple_target_id(
-    pack: &PackView<'_>,
-    triple: PackId,
-    graph: Option<PackId>,
-    dataset: &RdfDataset,
-    labels: &BTreeMap<TermId, Box<str>>,
-    dataset_target: TargetId,
+    pack: &PackView<'_>, triple: PackId, graph: Option<PackId>, dataset: &RdfDataset,
+    labels: &BTreeMap<TermId, Box<str>>, dataset_target: TargetId,
 ) -> Result<TargetId, EmbeddingError> {
     let guard = pack
         .resolve(triple)
@@ -848,11 +819,8 @@ fn statement_from_triple_target_id(
 }
 
 fn reifier_target_id(
-    pack: &PackView<'_>,
-    quad: QuadIds<PackId>,
-    dataset: &RdfDataset,
-    labels: &BTreeMap<TermId, Box<str>>,
-    dataset_target: TargetId,
+    pack: &PackView<'_>, quad: QuadIds<PackId>, dataset: &RdfDataset,
+    labels: &BTreeMap<TermId, Box<str>>, dataset_target: TargetId,
 ) -> Result<TargetId, EmbeddingError> {
     Ok(RdfReifierTarget {
         graph: graph_target_id(pack, quad.g, dataset, labels, dataset_target)?,
@@ -871,12 +839,8 @@ fn reifier_target_id(
 }
 
 fn annotation_target_matches(
-    pack: &PackView<'_>,
-    quad: QuadIds<PackId>,
-    dataset: &RdfDataset,
-    labels: &BTreeMap<TermId, Box<str>>,
-    dataset_target: TargetId,
-    expected: TargetId,
+    pack: &PackView<'_>, quad: QuadIds<PackId>, dataset: &RdfDataset,
+    labels: &BTreeMap<TermId, Box<str>>, dataset_target: TargetId, expected: TargetId,
 ) -> Result<bool, EmbeddingError> {
     // rdf:reifies is not functional. One annotation row can describe several
     // statement bindings; the target identity selects the binding it names.
@@ -910,9 +874,7 @@ fn annotation_target_matches(
 }
 
 fn compare_digest(
-    kind: DigestKind,
-    expected: &[u8; 32],
-    actual: &[u8; 32],
+    kind: DigestKind, expected: &[u8; 32], actual: &[u8; 32],
 ) -> Result<(), EmbeddingError> {
     if expected == actual {
         Ok(())

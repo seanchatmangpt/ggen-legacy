@@ -390,8 +390,7 @@ impl MutableDataset {
     /// [`GraphExistenceMode::Implicit`] explicitly for row-driven lifetime.
     #[must_use]
     pub fn new_with_graph_existence(
-        base: impl Into<DatasetHandle>,
-        mode: GraphExistenceMode,
+        base: impl Into<DatasetHandle>, mode: GraphExistenceMode,
     ) -> Self {
         Self {
             graph_existence: mode,
@@ -563,10 +562,7 @@ impl MutableDataset {
     /// # Errors
     /// Refuses invalid unpublished delta records through snapshot admission.
     pub fn records_for_pattern(
-        &self,
-        s: Option<&TermValue>,
-        p: Option<&TermValue>,
-        o: Option<&TermValue>,
+        &self, s: Option<&TermValue>, p: Option<&TermValue>, o: Option<&TermValue>,
         g: GraphMatchValue<'_>,
     ) -> Result<Vec<RecordValues>, crate::RdfDiagnostic> {
         use crate::DatasetView as _;
@@ -617,8 +613,7 @@ impl MutableDataset {
     /// identities this destination owns. An identity may be visited more than once.
     /// The first `Break` ends the visit.
     pub fn visit_blank_identities<B>(
-        &self,
-        mut visit: impl FnMut(&str, crate::BlankScope) -> ControlFlow<B>,
+        &self, mut visit: impl FnMut(&str, crate::BlankScope) -> ControlFlow<B>,
     ) -> ControlFlow<B> {
         // OPT-50: walk the lazily built dense blank-id index over the base instead
         // of resolving every term in the term space. The index is built once, in
@@ -1335,8 +1330,7 @@ impl MutableDataset {
     /// Returns the callback's first error before withdrawing that entry. Earlier
     /// withdrawals remain applied to this mutable branch; retained snapshots are unchanged.
     pub fn try_withdraw_named_graph_declarations<E>(
-        &mut self,
-        mut checkpoint: impl FnMut() -> Result<(), E>,
+        &mut self, mut checkpoint: impl FnMut() -> Result<(), E>,
     ) -> Result<(), E> {
         let base = self.base.clone();
         for graph in base.named_graphs() {
@@ -1454,8 +1448,7 @@ impl MutableDataset {
     /// # Errors
     /// Refuses retention overflow or invalid RDF records before publication.
     pub fn freeze_with_limits(
-        &self,
-        limits: super::view_accounting::ViewLimits,
+        &self, limits: super::view_accounting::ViewLimits,
     ) -> Result<Arc<RdfDataset>, crate::RdfDiagnostic> {
         let view = self.snapshot_view_with_limits(limits)?;
         let mut builder = self.base.rebuild_builder();
@@ -1504,8 +1497,7 @@ impl MutableDataset {
     /// # Errors
     /// Refuses retention overflow or invalid delta records before publication.
     pub fn snapshot_view_with_limits(
-        &self,
-        limits: super::view_accounting::ViewLimits,
+        &self, limits: super::view_accounting::ViewLimits,
     ) -> Result<DeltaDatasetView, crate::RdfDiagnostic> {
         let base_id = |id| match id {
             MutTermId::Base(id) => id,
@@ -1603,9 +1595,7 @@ impl MutableDataset {
     /// `admission` sees every row and declaration as it is interned, and refuses the
     /// delta as soon as it exceeds a retention limit, before the freeze.
     fn append_delta(
-        &self,
-        builder: &mut RdfDatasetBuilder,
-        admission: &mut DeltaAdmission<'_>,
+        &self, builder: &mut RdfDatasetBuilder, admission: &mut DeltaAdmission<'_>,
     ) -> Result<(), crate::RdfDiagnostic> {
         // Preserve authored term admission order before replaying derived base
         // conversions. Native indexes order by term identity, so minting a derived
@@ -1685,9 +1675,7 @@ impl<'a> DeltaAdmission<'a> {
     const CHECK_EVERY: usize = 1024;
 
     fn new(
-        base: &'a RdfDataset,
-        suppressed: usize,
-        converted: usize,
+        base: &'a RdfDataset, suppressed: usize, converted: usize,
         limits: super::view_accounting::ViewLimits,
     ) -> Self {
         Self {
@@ -1704,8 +1692,7 @@ impl<'a> DeltaAdmission<'a> {
     /// The snapshot's retention as of what `builder` holds now, and the delta's own
     /// `(terms, rows, payload)`.
     fn stats(
-        &self,
-        builder: &RdfDatasetBuilder,
+        &self, builder: &RdfDatasetBuilder,
     ) -> (super::view_accounting::ViewStats, (usize, usize, usize)) {
         let extent = builder.pending_extent(self.graphs.len());
         let (terms, rows, payload) = extent;
@@ -1729,8 +1716,7 @@ impl<'a> DeltaAdmission<'a> {
 
     /// Check the limits against what `builder` holds now.
     fn check(
-        &self,
-        builder: &RdfDatasetBuilder,
+        &self, builder: &RdfDatasetBuilder,
     ) -> Result<(usize, usize, usize), crate::RdfDiagnostic> {
         let (stats, extent) = self.stats(builder);
         self.limits.check(&stats)?;
@@ -1740,9 +1726,7 @@ impl<'a> DeltaAdmission<'a> {
     /// Account one interned row (or declaration) naming `graph`, checking the limits
     /// every [`Self::CHECK_EVERY`] rows.
     fn row(
-        &mut self,
-        builder: &RdfDatasetBuilder,
-        graph: Option<TermId>,
+        &mut self, builder: &RdfDatasetBuilder, graph: Option<TermId>,
     ) -> Result<(), crate::RdfDiagnostic> {
         if let Some(graph) = graph
             && self.last_graph != Some(graph)
@@ -1843,10 +1827,7 @@ pub(crate) enum StatementKind {
     Annotation,
 }
 pub(crate) const fn classify_statement(
-    physical: StatementKind,
-    infer_ordinary: bool,
-    original_reifier: bool,
-    effective_reifier: bool,
+    physical: StatementKind, infer_ordinary: bool, original_reifier: bool, effective_reifier: bool,
 ) -> StatementKind {
     match physical {
         StatementKind::Ordinary if infer_ordinary && effective_reifier => StatementKind::Annotation,
@@ -1951,10 +1932,7 @@ impl DatasetMut for MutableDataset {
     }
 
     fn quads_for_pattern(
-        &self,
-        s: Option<&TermValue>,
-        p: Option<&TermValue>,
-        o: Option<&TermValue>,
+        &self, s: Option<&TermValue>, p: Option<&TermValue>, o: Option<&TermValue>,
         g: GraphMatchValue<'_>,
     ) -> Vec<QuadValues> {
         // Resolve each bound position to a MutTermId without minting; a bound value

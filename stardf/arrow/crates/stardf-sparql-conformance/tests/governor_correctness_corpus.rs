@@ -135,11 +135,8 @@ fn render(result: &SparqlResult) -> String {
 
 /// The ungoverned answer for one case, or the diagnostic that prevented one.
 fn ungoverned(
-    engine: &NativeSparqlEngine,
-    dataset: &Arc<RdfDataset>,
-    query: &str,
-    remote: &purrdf_sparql_eval::InProcessServiceResolver,
-    aggregates: Option<&AggregateRegistry>,
+    engine: &NativeSparqlEngine, dataset: &Arc<RdfDataset>, query: &str,
+    remote: &purrdf_sparql_eval::InProcessServiceResolver, aggregates: Option<&AggregateRegistry>,
 ) -> Result<SparqlResult, String> {
     // The declared parser options and both registries together, as the one
     // environment the query text is read against.

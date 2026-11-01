@@ -1,6 +1,6 @@
 //! Canonical 64-byte quad physical layout (spec:
 //! stardf/docs/jira/v26.10.31/01-master-plan.md; mirrored from
-//! avec/crates/avec-arrow/src/layout.rs).
+//! cgap/crates/cgap-arrow/src/layout.rs).
 //!
 //! One quad is exactly one cache line: no implicit padding, no split-line
 //! records, every offset both a field start and the next field's alignment

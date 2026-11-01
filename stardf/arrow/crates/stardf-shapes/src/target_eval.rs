@@ -102,9 +102,7 @@ pub(crate) fn declared_shape_targets(data: &ShaclData, shape: &Term) -> Vec<Term
 /// Propagates a conformance check that hard-fails — a failure SHACL requires be
 /// reported, never read as "does not conform".
 pub(crate) fn where_targets(
-    data: &ShaclData,
-    shape: &Shape,
-    request: &crate::engine::ValidationRequest,
+    data: &ShaclData, shape: &Shape, request: &crate::engine::ValidationRequest,
     model: Option<&std::sync::Arc<crate::shapes::ModelOwner>>,
 ) -> Result<Vec<TermId>, crate::error::ShapesError> {
     let lowered = crate::plan::lower_shapes_in_model(std::iter::once(shape), model)?;
@@ -142,10 +140,7 @@ pub(crate) fn where_targets(
 ///
 /// Propagates an evaluation failure: an unanswerable target is not an empty one.
 pub(crate) fn node_expression_targets(
-    data: &ShaclData,
-    shape: &Term,
-    expr: &NodeExpr,
-    request: &crate::engine::ValidationRequest,
+    data: &ShaclData, shape: &Term, expr: &NodeExpr, request: &crate::engine::ValidationRequest,
     model: Option<&std::sync::Arc<crate::shapes::ModelOwner>>,
 ) -> Result<Vec<Term>, crate::error::ShapesError> {
     crate::expression::eval_node_expr_in_run(data, shape, expr, request, model).map_err(|error| {
@@ -189,11 +184,8 @@ pub(crate) fn node_expression_targets(
 /// subjects / objects of a predicate are nodes by construction. The smallest set
 /// found is returned.
 fn narrowing(
-    data: &ShaclData,
-    shape: &Shape,
-    disallows: &ConformanceDisallows,
-    model: Option<&crate::shapes::ModelOwner>,
-    depth: u32,
+    data: &ShaclData, shape: &Shape, disallows: &ConformanceDisallows,
+    model: Option<&crate::shapes::ModelOwner>, depth: u32,
 ) -> Result<Option<Vec<TermId>>, crate::PreparationRefusal> {
     if depth > MAX_NARROWING_DEPTH
         || shape.deactivated
@@ -271,9 +263,7 @@ fn narrowing(
 /// predicate (inverse predicate) path when it requires at least one value. See
 /// [`narrowing`] for the conditions.
 fn property_narrowing(
-    data: &ShaclData,
-    view: crate::shapes::PropertyView<'_>,
-    disallows: &ConformanceDisallows,
+    data: &ShaclData, view: crate::shapes::PropertyView<'_>, disallows: &ConformanceDisallows,
 ) -> Option<Vec<TermId>> {
     let property = view.property;
     // A computed value node (`sh:values`, `sh:defaultValue`) satisfies

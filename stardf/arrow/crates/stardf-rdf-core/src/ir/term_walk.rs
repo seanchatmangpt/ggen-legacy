@@ -176,8 +176,7 @@ impl TermValue {
     ///
     /// The first error `leaf` or `triple` returns.
     pub fn try_fold<T, E>(
-        &self,
-        mut leaf: impl FnMut(&Self) -> Result<T, E>,
+        &self, mut leaf: impl FnMut(&Self) -> Result<T, E>,
         mut triple: impl FnMut(T, T, T) -> Result<T, E>,
     ) -> Result<T, E> {
         try_fold_nested(
@@ -193,9 +192,7 @@ impl TermValue {
 
     /// [`Self::try_fold`] for a fold that cannot fail.
     pub fn fold<T>(
-        &self,
-        mut leaf: impl FnMut(&Self) -> T,
-        mut triple: impl FnMut(T, T, T) -> T,
+        &self, mut leaf: impl FnMut(&Self) -> T, mut triple: impl FnMut(T, T, T) -> T,
     ) -> T {
         match self.try_fold::<T, Infallible>(|term| Ok(leaf(term)), |s, p, o| Ok(triple(s, p, o))) {
             Ok(answer) => answer,
@@ -210,8 +207,7 @@ impl TermValue {
     /// The first error `leaf` or `triple` returns. Whatever of the term is still
     /// unvisited is dropped over a work list.
     pub fn try_fold_owned<T, E>(
-        self,
-        mut leaf: impl FnMut(Self) -> Result<T, E>,
+        self, mut leaf: impl FnMut(Self) -> Result<T, E>,
         mut triple: impl FnMut(T, T, T) -> Result<T, E>,
     ) -> Result<T, E> {
         match self.try_fold_owned_with_memory(
@@ -339,8 +335,7 @@ impl TermValue {
     /// The first `Break` ends the visit and is returned. Triple nesting is walked
     /// iteratively through [`Self::visit_terms`].
     pub fn visit_blank_identities<B>(
-        &self,
-        mut visit: impl FnMut(&str, crate::BlankScope) -> ControlFlow<B>,
+        &self, mut visit: impl FnMut(&str, crate::BlankScope) -> ControlFlow<B>,
     ) -> ControlFlow<B> {
         self.visit_blank_identities_with_memory(
             |label, scope, _| visit(label, scope),
@@ -403,8 +398,7 @@ impl TermValue {
     /// ([`TermVisit::Close`]), so a writer can bracket it. The first `Break` ends the
     /// visit and is returned.
     pub fn visit_terms_pre_post<B>(
-        &self,
-        mut visit: impl FnMut(TermVisit<'_>) -> ControlFlow<B>,
+        &self, mut visit: impl FnMut(TermVisit<'_>) -> ControlFlow<B>,
     ) -> ControlFlow<B> {
         let mut pending: WorkList<TermVisit<'_>, 16> = WorkList::with(TermVisit::Open(self));
         while let Some(event) = pending.pop() {
@@ -436,11 +430,7 @@ impl TermValue {
     ///
     /// The first error `leaf` or `text` returns.
     pub fn try_write_nested<W: ?Sized, E>(
-        &self,
-        out: &mut W,
-        open: &str,
-        separator: &str,
-        close: &str,
+        &self, out: &mut W, open: &str, separator: &str, close: &str,
         mut leaf: impl FnMut(&mut W, &Self) -> Result<(), E>,
         mut text: impl FnMut(&mut W, &str) -> Result<(), E>,
     ) -> Result<(), E> {
@@ -469,9 +459,7 @@ impl TermValue {
         E,
         S: purrdf_lex::allocation::Admission + ?Sized,
     >(
-        &self,
-        out: &mut W,
-        delimiters: [&str; 3],
+        &self, out: &mut W, delimiters: [&str; 3],
         mut leaf: impl FnMut(&mut W, &Self, &mut purrdf_lex::allocation::Memory<'_, S>) -> Result<(), E>,
         mut text: impl FnMut(&mut W, &str, &mut purrdf_lex::allocation::Memory<'_, S>) -> Result<(), E>,
         memory: &mut purrdf_lex::allocation::Memory<'_, S>,
@@ -528,9 +516,7 @@ impl TermValue {
 ///
 /// The first error `leaf` or `triple` returns.
 pub fn fold_term<D: DatasetView<ReadError = Infallible> + ?Sized, T, E>(
-    view: &D,
-    id: D::Id,
-    mut leaf: impl FnMut(D::Id, TermRef<'_, D::Id>) -> Result<T, E>,
+    view: &D, id: D::Id, mut leaf: impl FnMut(D::Id, TermRef<'_, D::Id>) -> Result<T, E>,
     mut triple: impl FnMut(D::Id, T, T, T) -> Result<T, E>,
 ) -> Result<T, E> {
     try_fold_term(view, id, &mut leaf, &mut triple, |error| match error {})
@@ -542,9 +528,7 @@ pub fn fold_term<D: DatasetView<ReadError = Infallible> + ?Sized, T, E>(
 /// # Errors
 /// Returns the first read, leaf or triple-combination error.
 pub fn try_fold_term<D: DatasetView + ?Sized, T, E>(
-    view: &D,
-    id: D::Id,
-    mut leaf: impl FnMut(D::Id, TermRef<'_, D::Id>) -> Result<T, E>,
+    view: &D, id: D::Id, mut leaf: impl FnMut(D::Id, TermRef<'_, D::Id>) -> Result<T, E>,
     mut triple: impl FnMut(D::Id, T, T, T) -> Result<T, E>,
     mut read_error: impl FnMut(D::ReadError) -> E,
 ) -> Result<T, E> {
@@ -558,9 +542,7 @@ pub fn try_fold_term<D: DatasetView + ?Sized, T, E>(
 /// # Errors
 /// Returns the first backing read, callback or working-buffer allocation error.
 pub fn try_fold_term_with_storage<D: DatasetView + ?Sized, T, E>(
-    view: &D,
-    id: D::Id,
-    mut leaf: impl FnMut(D::Id, TermRef<'_, D::Id>) -> Result<T, E>,
+    view: &D, id: D::Id, mut leaf: impl FnMut(D::Id, TermRef<'_, D::Id>) -> Result<T, E>,
     mut triple: impl FnMut(D::Id, T, T, T) -> Result<T, E>,
     mut read_error: impl FnMut(D::ReadError) -> E,
     storage_error: impl FnMut(std::collections::TryReserveError) -> E,
@@ -608,9 +590,7 @@ pub enum Nested<N, T> {
 ///
 /// The first error `enter` or `triple` returns.
 pub fn try_fold_nested<N: Copy, C: ?Sized, T, E>(
-    root: N,
-    ctx: &mut C,
-    mut enter: impl FnMut(&mut C, N) -> Result<Nested<N, T>, E>,
+    root: N, ctx: &mut C, mut enter: impl FnMut(&mut C, N) -> Result<Nested<N, T>, E>,
     mut triple: impl FnMut(&mut C, N, T, T, T) -> Result<T, E>,
 ) -> Result<T, E> {
     try_fold_nested_with_storage(root, ctx, &mut enter, &mut triple, |error| {
@@ -627,9 +607,7 @@ pub fn try_fold_nested<N: Copy, C: ?Sized, T, E>(
 /// admission cannot borrow two independent accounts for one live allocation.
 trait FoldBuffers<N, T, E> {
     fn push_step(
-        &mut self,
-        steps: &mut WorkList<FoldStep<N>, 32>,
-        step: FoldStep<N>,
+        &mut self, steps: &mut WorkList<FoldStep<N>, 32>, step: FoldStep<N>,
     ) -> Result<(), E>;
     fn reserve_answers(&mut self, answers: &mut Vec<T>, required: usize) -> Result<(), E>;
     fn push_answer(&mut self, answers: &mut Vec<T>, answer: T) -> Result<(), E>;
@@ -642,9 +620,7 @@ impl<N, T, E, F: FnMut(std::collections::TryReserveError) -> E> FoldBuffers<N, T
     for ResidentFold<F>
 {
     fn push_step(
-        &mut self,
-        steps: &mut WorkList<FoldStep<N>, 32>,
-        step: FoldStep<N>,
+        &mut self, steps: &mut WorkList<FoldStep<N>, 32>, step: FoldStep<N>,
     ) -> Result<(), E> {
         steps.try_push(step).map_err(&mut self.0)
     }
@@ -674,9 +650,7 @@ where
     F: FnMut(purrdf_lex::allocation::StorageError, &mut purrdf_lex::allocation::Memory<'_, S>) -> E,
 {
     fn push_step(
-        &mut self,
-        steps: &mut WorkList<FoldStep<N>, 32>,
-        step: FoldStep<N>,
+        &mut self, steps: &mut WorkList<FoldStep<N>, 32>, step: FoldStep<N>,
     ) -> Result<(), E> {
         steps
             .try_push_admitted(step, self.memory)
@@ -706,11 +680,8 @@ where
 /// admitted folds. The callbacks own returned payloads; scratch is destroyed
 /// before its original native grant is refunded.
 fn try_fold_nested_buffered<N: Copy, C: ?Sized, T, E, B: FoldBuffers<N, T, E>>(
-    root: N,
-    ctx: &mut C,
-    mut enter: impl FnMut(&mut C, N, &mut B) -> Result<Nested<N, T>, E>,
-    mut triple: impl FnMut(&mut C, N, T, T, T, &mut B) -> Result<T, E>,
-    buffers: &mut B,
+    root: N, ctx: &mut C, mut enter: impl FnMut(&mut C, N, &mut B) -> Result<Nested<N, T>, E>,
+    mut triple: impl FnMut(&mut C, N, T, T, T, &mut B) -> Result<T, E>, buffers: &mut B,
 ) -> Result<T, E> {
     let (s, p, o) = match enter(ctx, root, buffers)? {
         Nested::Leaf(answer) => return Ok(answer),
@@ -754,9 +725,7 @@ fn try_fold_nested_buffered<N: Copy, C: ?Sized, T, E, B: FoldBuffers<N, T, E>>(
 }
 
 fn try_fold_nested_with_storage<N: Copy, C: ?Sized, T, E>(
-    root: N,
-    ctx: &mut C,
-    mut enter: impl FnMut(&mut C, N) -> Result<Nested<N, T>, E>,
+    root: N, ctx: &mut C, mut enter: impl FnMut(&mut C, N) -> Result<Nested<N, T>, E>,
     mut triple: impl FnMut(&mut C, N, T, T, T) -> Result<T, E>,
     storage_error: impl FnMut(std::collections::TryReserveError) -> E,
 ) -> Result<T, E> {
@@ -785,8 +754,7 @@ pub fn try_fold_nested_with_memory<
     E,
     S: purrdf_lex::allocation::Admission + ?Sized,
 >(
-    root: N,
-    ctx: &mut C,
+    root: N, ctx: &mut C,
     mut enter: impl FnMut(
         &mut C,
         N,
@@ -838,8 +806,7 @@ pub fn try_fold_term_with_memory<
     E,
     S: purrdf_lex::allocation::Admission + ?Sized,
 >(
-    view: &D,
-    id: D::Id,
+    view: &D, id: D::Id,
     mut leaf: impl FnMut(
         D::Id,
         TermRef<'_, D::Id>,
@@ -877,8 +844,7 @@ pub fn try_fold_term_with_memory<
 /// triple term whose components the walk should descend into, or `Continue(None)` for
 /// a node with nothing below it. The first `Break` ends the visit and is returned.
 pub fn visit_nested<N: Copy, B>(
-    root: N,
-    mut visit: impl FnMut(N) -> ControlFlow<B, Option<[N; 3]>>,
+    root: N, mut visit: impl FnMut(N) -> ControlFlow<B, Option<[N; 3]>>,
 ) -> ControlFlow<B> {
     let Some([s, p, o]) = visit(root)? else {
         return ControlFlow::Continue(());
@@ -957,8 +923,7 @@ impl TermValue {
     /// Returns the first original visitor, allocation or accounting refusal. Partial
     /// terms die before the shared traversal refunds their original charge.
     pub fn try_clone_with_memory<E, S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
         mut before: impl FnMut(&Self) -> Result<(), E>,
     ) -> Result<Self, OwnedTermFoldError<E>> {
         try_fold_nested_with_memory(
@@ -994,8 +959,7 @@ impl TermValue {
     /// Preserves checked layout, traversal or original refund refusal. Failed
     /// traversal destroys this value while its enclosing original grant is live.
     pub fn release_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         use purrdf_lex::allocation::StorageError;
         let bytes = try_fold_nested_with_memory(
@@ -1044,8 +1008,7 @@ pub(crate) fn try_owned_text(source: &str) -> Result<String, std::collections::T
 }
 
 fn shallow_clone<E>(
-    term: &TermValue,
-    mut text: impl FnMut(&str) -> Result<String, E>,
+    term: &TermValue, mut text: impl FnMut(&str) -> Result<String, E>,
 ) -> Result<TermValue, E> {
     Ok(match term {
         TermValue::Iri(iri) => TermValue::Iri(text(iri)?),
@@ -1072,17 +1035,13 @@ fn shallow_clone<E>(
 /// `shallow` does not call equal decides; a triple's components are compared after
 /// the triple itself, subject first.
 fn try_compare_pairs(
-    a: &TermValue,
-    b: &TermValue,
-    shallow: impl Fn(&TermValue, &TermValue) -> Ordering,
+    a: &TermValue, b: &TermValue, shallow: impl Fn(&TermValue, &TermValue) -> Ordering,
 ) -> Result<Ordering, std::collections::TryReserveError> {
     compare_pairs_with(a, b, shallow, WorkList::try_push)
 }
 
 fn compare_pairs_with<'a, E>(
-    a: &'a TermValue,
-    b: &'a TermValue,
-    shallow: impl Fn(&TermValue, &TermValue) -> Ordering,
+    a: &'a TermValue, b: &'a TermValue, shallow: impl Fn(&TermValue, &TermValue) -> Ordering,
     mut push: impl FnMut(
         &mut WorkList<(&'a TermValue, &'a TermValue), 16>,
         (&'a TermValue, &'a TermValue),
@@ -1224,9 +1183,7 @@ impl TermValue {
     /// Preserves the first layout, admission or allocator refusal. Temporary
     /// traversal storage is destroyed before its original account is released.
     pub fn try_cmp_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        other: &Self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, other: &Self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Ordering, purrdf_lex::allocation::StorageError> {
         let baseline = memory.admitted_bytes();
         let result = memory.scope(|memory| {
@@ -1329,8 +1286,7 @@ impl TermValue {
     /// # Errors
     /// Returns an actual work-list allocation refusal.
     pub fn try_hash<H: Hasher>(
-        &self,
-        state: &mut H,
+        &self, state: &mut H,
     ) -> Result<(), std::collections::TryReserveError> {
         self.hash_with(state, WorkList::try_push)
     }
@@ -1340,9 +1296,7 @@ impl TermValue {
     /// # Errors
     /// Refuses before work-list growth and releases scratch after the walk ends.
     pub fn try_hash_with_memory<H: Hasher, S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        state: &mut H,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, state: &mut H, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         let baseline = memory.admitted_bytes();
         memory.scope(|memory| {
@@ -1354,8 +1308,7 @@ impl TermValue {
     }
 
     fn hash_with<'a, H: Hasher, E>(
-        &'a self,
-        state: &mut H,
+        &'a self, state: &mut H,
         mut push: impl FnMut(&mut WorkList<&'a Self, 16>, &'a Self) -> Result<(), E>,
     ) -> Result<(), E> {
         let mut pending: WorkList<&Self, 16> = WorkList::with(self);
@@ -1410,15 +1363,13 @@ fn debug_script<'a>(value: &'a TermValue, out: &mut WorkList<ValueTok<'a>, 32>) 
     }
 }
 fn debug_script_with_memory<'a, S: purrdf_lex::allocation::Admission + ?Sized>(
-    value: &'a TermValue,
-    out: &mut WorkList<ValueTok<'a>, 32>,
+    value: &'a TermValue, out: &mut WorkList<ValueTok<'a>, 32>,
     memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<(), purrdf_lex::allocation::StorageError> {
     debug_script_tokens(value, &mut |token| out.try_push_admitted(token, memory))
 }
 fn debug_script_tokens<'a, E>(
-    value: &'a TermValue,
-    append: &mut impl FnMut(ValueTok<'a>) -> Result<(), E>,
+    value: &'a TermValue, append: &mut impl FnMut(ValueTok<'a>) -> Result<(), E>,
 ) -> Result<(), E> {
     match value {
         TermValue::Iri(iri) => {
@@ -1487,9 +1438,7 @@ impl TermValue {
     /// # Errors
     /// Returns output formatting or physical storage refusal.
     pub fn write_debug_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        f: &mut fmt::Formatter<'_>,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, f: &mut fmt::Formatter<'_>, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<(), purrdf_lex::walk::DebugWriteError> {
         purrdf_lex::walk::write_debug_with_memory(f, self, debug_script_with_memory, memory)
     }
@@ -1973,8 +1922,7 @@ mod tests {
 
     /// The recursive reference of [`TermValue::try_fold`].
     fn reference_try_fold<T, E>(
-        term: &TermValue,
-        leaf: &mut impl FnMut(&TermValue) -> Result<T, E>,
+        term: &TermValue, leaf: &mut impl FnMut(&TermValue) -> Result<T, E>,
         triple: &mut impl FnMut(T, T, T) -> Result<T, E>,
     ) -> Result<T, E> {
         match term {

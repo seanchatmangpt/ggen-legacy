@@ -15,15 +15,21 @@
 
 [package]
 name = "stardf-n3"
-description = "PurRDF native Notation3 (N3): parsing, semi-naive reasoning and backward proofs over RDF 1.2"
-version = "26.9.29"
+# Lane 07-publish-metadata (2026-10-31): v26.11.1 first-class closure —
+# description/keywords/categories/repository now workspace-inherited; homepage
+# restored as a workspace inherit (slice 8/20 vendoring posture dropped it for
+# the unpublished path-only crate; publishability restores it).
+description.workspace = true
+# Lane 08-dual-key (2026-10-31): closure version inherits the workspace 26.11.1.
+version.workspace = true
 edition = "2024"
-publish = false
+publish = true
 license = "MIT OR Apache-2.0 OR MulanPSL-2.0"
-repository = "https://github.com/seanchatmangpt/ggen-legacy"
+repository.workspace = true
+homepage.workspace = true
 rust-version = "1.98"
-keywords = ["n3", "notation3", "rdf", "reasoning", "datalog"]
-categories = ["algorithms", "data-structures"]
+keywords.workspace = true
+categories.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -40,21 +46,23 @@ name = "purrdf_n3"
 # The N3 parser produces term and triple constructors over RDF 1.2's term
 # model; graph formulas, @forAll/@forSome quantification and log: payload
 # terms lower onto the same term identities the codecs mint.
-stardf-rdf = { path = "../stardf-rdf" }
+# Lane H03 gate-closure (2026-10-31): dual-keyed per the G5 version+path law
+# (the 21:05 ladder receipt named this row).
+stardf-rdf = { version = "=26.11.1", path = "../stardf-rdf" }
 # One spelling of IRI resolution for @base/@prefix expansion — the same
 # relative-reference resolution the other codecs use, not a second one.
-stardf-iri = { path = "../stardf-iri" }
+stardf-iri = { workspace = true }
 # The clause-term constructors that wrap a caller's text and the N3 tokenizer's
 # punctuation/keyword vocabulary share the lex crate's one spelling.
-stardf-lex = { path = "../stardf-lex" }
+stardf-lex = { workspace = true }
 # Fixed-key interning of formula-scoped terms and content-addressed proof node
 # identity hash with purrdf-hash's `FixedHasher`. Fixed-key (not RandomState)
 # because wasm32 has no entropy source and iteration order must never reach an
 # output path.
-stardf-hash = { path = "../stardf-hash" }
+stardf-hash = { workspace = true }
 # SWAR digit-run scan in the tokenizer (OPT-46/OPT-51): the lexer consumes
 # [0-9]{8k} whole words via purrdf_branchless::swar::byte_lane_in_range.
-stardf-branchless = { path = "../stardf-branchless" }
+stardf-branchless = { workspace = true }
 # Formula-scoped dictionaries and the backward prover's premise tables hash
 # with the same `FixedHasher` (declared above). Fixed-key (not RandomState)
 # for wasm32's absent entropy source and deterministic output paths.
@@ -72,8 +80,10 @@ wasm-bindgen = { version = "=0.2.129", optional = true }
 wasm = ["dep:wasm-bindgen"]
 
 [dev-dependencies]
-stardf-testkit = { path = "../stardf-testkit" }
-stardf-alloc-probe = { path = "../stardf-alloc-probe" }
+# Lane H03 gate-closure (2026-10-31): both dev-deps dual-keyed per the G5
+# version+path law (the 21:05 ladder receipt named these rows).
+stardf-testkit = { version = "=26.11.1", path = "../stardf-testkit" }
+stardf-alloc-probe = { version = "=26.11.1", path = "../stardf-alloc-probe" }
 
 # The same production parser, prover and proof assertions execute natively and
 # in Node through the workspace wasm runner; no libtest runtime is assumed on

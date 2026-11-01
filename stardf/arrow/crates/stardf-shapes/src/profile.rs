@@ -185,8 +185,7 @@ impl ShaclProfile {
     /// [`XPathProfileConflict`] when an override would replace the XPath law
     /// required by the selected dated bundle.
     pub fn resolve_xpath(
-        self,
-        selection: Option<(Profile, Limits)>,
+        self, selection: Option<(Profile, Limits)>,
     ) -> Result<Option<(Profile, Limits)>, XPathProfileConflict> {
         let Some(required) = self.xpath_profile() else {
             return Ok(selection);
@@ -219,10 +218,7 @@ impl ShaclProfile {
     /// a query form incompatible with `purpose`. `SERVICE` is refused under every
     /// law because PurRDF's SHACL execution is local and deterministic.
     pub fn admit_query(
-        self,
-        purpose: QueryPurpose,
-        query: &Query,
-        parameters: &[&str],
+        self, purpose: QueryPurpose, query: &Query, parameters: &[&str],
     ) -> Result<(), AdmissionRefusal> {
         crate::prebinding::admit(self, purpose, query, parameters.iter().copied())
     }
@@ -389,8 +385,7 @@ impl Request {
     /// Carry this law through the existing query/native scopes, and defer error
     /// projection until the actual governor and typed source/report result agree.
     pub(crate) fn run<T>(
-        &self,
-        operation: impl FnOnce() -> Result<T, crate::report::CompleteValidationError>,
+        &self, operation: impl FnOnce() -> Result<T, crate::report::CompleteValidationError>,
     ) -> Result<T, crate::report::CompleteValidationError> {
         let execute = || {
             let scope = crate::query_law::enter(self.profile, self.sources.as_ref());
@@ -554,9 +549,7 @@ pub struct AdmissionRefusal {
 
 impl AdmissionRefusal {
     pub(crate) fn new(
-        profile: ShaclProfile,
-        purpose: QueryPurpose,
-        reason: AdmissionReason,
+        profile: ShaclProfile, purpose: QueryPurpose, reason: AdmissionReason,
         variable: Option<String>,
     ) -> Self {
         Self {

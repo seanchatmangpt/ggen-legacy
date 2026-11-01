@@ -15,9 +15,7 @@ type ParameterBounds = (Rat, Rat);
 type ParameterPair = (ParameterBounds, ParameterBounds);
 
 pub(super) fn intersections(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    context: &mut MetricContext,
+    left: &PreparedEdge, right: &PreparedEdge, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<ContactList>, GeoError> {
     let (PreparedEdge::ShortestGeodesic(a), PreparedEdge::ShortestGeodesic(b)) = (left, right)
@@ -74,12 +72,8 @@ pub(super) fn intersections(
 }
 
 fn materialize(
-    first: [(Rat, Rat); 2],
-    second: [(Rat, Rat); 2],
-    start: &LonLat,
-    end: &LonLat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    first: [(Rat, Rat); 2], second: [(Rat, Rat); 2], start: &LonLat, end: &LonLat,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Option<ContactList>, GeoError> {
     admit_contact_count(1, context)?;
     let retained = first.iter().chain(&second).fold(
@@ -125,12 +119,8 @@ fn materialize(
 }
 
 fn partial(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    a: &ShortestGeodesicArc,
-    b: &ShortestGeodesicArc,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    left: &PreparedEdge, right: &PreparedEdge, a: &ShortestGeodesicArc, b: &ShortestGeodesicArc,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Option<ContactList>, GeoError> {
     for (i, first) in [a.start().point(), a.end().point()].into_iter().enumerate() {
         if crate::atlas::point::exact_source(right, first, context, progress)? != Some(true) {
@@ -173,12 +163,8 @@ fn partial(
 }
 
 fn interior_parameters(
-    a: &ShortestGeodesicArc,
-    on_a: &LonLat,
-    b: &ShortestGeodesicArc,
-    on_b: &LonLat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    a: &ShortestGeodesicArc, on_a: &LonLat, b: &ShortestGeodesicArc, on_b: &LonLat,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<ParameterPair, GeoError> {
     let policy = context.policy();
     let mut refinement = None;
@@ -225,9 +211,7 @@ fn interior_parameters(
 }
 
 fn contains(
-    container: &PreparedEdge,
-    candidate: &ShortestGeodesicArc,
-    context: &mut MetricContext,
+    container: &PreparedEdge, candidate: &ShortestGeodesicArc, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     for point in [candidate.start().point(), candidate.end().point()] {
@@ -239,9 +223,7 @@ fn contains(
 }
 
 fn ordered_parameters(
-    outer: &ShortestGeodesicArc,
-    inner: &ShortestGeodesicArc,
-    context: &mut MetricContext,
+    outer: &ShortestGeodesicArc, inner: &ShortestGeodesicArc, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<([(Rat, Rat); 2], bool), GeoError> {
     let policy = context.policy();

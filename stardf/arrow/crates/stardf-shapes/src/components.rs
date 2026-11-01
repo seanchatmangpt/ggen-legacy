@@ -174,9 +174,7 @@ impl ComponentRegistry {
     /// registry does not read as a component: the class rules name the attachment, not
     /// its subject.
     pub(crate) fn parse_collecting(
-        data: &RdfDataset,
-        prefixes: &PrefixResolver,
-        profile: crate::profile::ShaclProfile,
+        data: &RdfDataset, prefixes: &PrefixResolver, profile: crate::profile::ShaclProfile,
     ) -> Result<Self, String> {
         let rdf_type = Term::NamedNode(NamedNode::from(rdf::TYPE));
         let mut component_iris: Vec<String> = Vec::new();
@@ -402,8 +400,7 @@ impl ComponentRegistry {
 /// Retain a REC declaration failure in canonical declaration order, rather than
 /// the dataset's acquisition order. Query syntax failures are collected elsewhere.
 fn retain_rec_declaration_refusal(
-    first: &mut Option<(String, crate::profile::AdmissionRefusal)>,
-    declaration: String,
+    first: &mut Option<(String, crate::profile::AdmissionRefusal)>, declaration: String,
     refusal: &QueryRefusal,
 ) {
     if let QueryRefusal::Dated(refusal) = refusal
@@ -457,8 +454,7 @@ pub(crate) fn substitute_message_templates(msg: &str, bindings: &[(String, Term)
 /// Render every message of a result against `bindings` (SHACL-SPARQL §5.3.3),
 /// each keeping its datatype, language tag and base direction, in canonical order.
 pub(crate) fn render_message_templates(
-    messages: &[Literal],
-    bindings: &[(String, Term)],
+    messages: &[Literal], bindings: &[(String, Term)],
 ) -> Vec<Literal> {
     crate::report::canonical_messages(
         messages
@@ -479,21 +475,11 @@ pub(crate) fn render_message_templates(
 pub(crate) fn eval_ask_validator<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + crate::sparql::FocusGraphSource,
 >(
-    dataset: &D,
-    focus: &Term,
-    focus_id: Option<D::Id>,
-    value_nodes: &[Term],
-    validator: &ComponentValidator,
-    bindings: &[(String, Term)],
-    component: &NamedNode,
-    source_shape: &Term,
-    path: Option<&Path>,
-    severity: &Severity,
-    messages: &[Literal],
-    annotations: &[crate::shapes::ResultAnnotation],
-    shapes_graph_iri: Option<&str>,
-    current_shape: Option<&Term>,
-    invocation: crate::query_law::Invocation<'_>,
+    dataset: &D, focus: &Term, focus_id: Option<D::Id>, value_nodes: &[Term],
+    validator: &ComponentValidator, bindings: &[(String, Term)], component: &NamedNode,
+    source_shape: &Term, path: Option<&Path>, severity: &Severity, messages: &[Literal],
+    annotations: &[crate::shapes::ResultAnnotation], shapes_graph_iri: Option<&str>,
+    current_shape: Option<&Term>, invocation: crate::query_law::Invocation<'_>,
 ) -> Result<Vec<ValidationResult>, crate::error::ShapesError> {
     let ComponentValidator::Ask { ask } = validator else {
         return Err("expected ASK validator, got SELECT".into());
@@ -664,19 +650,10 @@ pub(crate) fn eval_ask_validator<
 pub(crate) fn eval_select_validator<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + crate::sparql::FocusGraphSource,
 >(
-    dataset: &D,
-    focus: &Term,
-    focus_id: Option<D::Id>,
-    validator: &ComponentValidator,
-    bindings: &[(String, Term)],
-    component: &NamedNode,
-    source_shape: &Term,
-    path: Option<&Path>,
-    severity: &Severity,
-    messages: &[Literal],
-    annotations: &[crate::shapes::ResultAnnotation],
-    shapes_graph_iri: Option<&str>,
-    current_shape: Option<&Term>,
+    dataset: &D, focus: &Term, focus_id: Option<D::Id>, validator: &ComponentValidator,
+    bindings: &[(String, Term)], component: &NamedNode, source_shape: &Term, path: Option<&Path>,
+    severity: &Severity, messages: &[Literal], annotations: &[crate::shapes::ResultAnnotation],
+    shapes_graph_iri: Option<&str>, current_shape: Option<&Term>,
     invocation: crate::query_law::Invocation<'_>,
     report: Option<crate::sparql::SparqlReportContext<'_>>,
 ) -> Result<Vec<ValidationResult>, crate::error::ShapesError> {
@@ -861,6 +838,8 @@ pub(crate) fn eval_select_validator<
 // ── Internal helpers ─────────────────────────────────────────────────────────
 
 /// Return the first object for `(subject, predicate, ?)`, if any.
+// Unused in this tree (upstream unit-test consumer not carried); kept verbatim.
+#[allow(dead_code)]
 fn first_object_of(data: &RdfDataset, subject: &Term, predicate: &str) -> Option<Term> {
     objects_of(data, subject, predicate).into_iter().next()
 }
@@ -900,9 +879,7 @@ fn severity_of_node(data: &RdfDataset, node: &Term) -> Result<Option<Severity>, 
 /// admits only ASK-based validators as values of `sh:validator` and SELECT-based ones as
 /// values of `sh:nodeValidator` and `sh:propertyValidator`.
 fn validator_kind(
-    data: &RdfDataset,
-    validator: &Term,
-    instances: &mut ShaclInstances<'_>,
+    data: &RdfDataset, validator: &Term, instances: &mut ShaclInstances<'_>,
 ) -> Result<ValidatorKind, String> {
     let mut is_ask = false;
     let mut is_select = false;
@@ -957,9 +934,7 @@ fn class_rule(attachment: &str) -> &'static str {
 /// Extensions). A SHACL-JS `sh:JSValidator` is judged by the same rules: it is neither
 /// ASK- nor SELECT-based, so it is a violation under every attachment.
 fn declared_validators(
-    data: &RdfDataset,
-    component: &Term,
-    instances: &mut ShaclInstances<'_>,
+    data: &RdfDataset, component: &Term, instances: &mut ShaclInstances<'_>,
 ) -> Vec<(&'static str, Term, Result<ValidatorKind, Violation>)> {
     let mut out = Vec::new();
     for attachment in [sh::NODE_VALIDATOR, sh::PROPERTY_VALIDATOR, sh::VALIDATOR] {
@@ -983,10 +958,7 @@ fn declared_validators(
 /// for the message): the [`Violation`] of the attachment's class rule when
 /// [`validator_kind`] refuses it or its form is not the one the attachment takes.
 fn attachment_class(
-    data: &RdfDataset,
-    owner: &str,
-    attachment: &'static str,
-    node: &Term,
+    data: &RdfDataset, owner: &str, attachment: &'static str, node: &Term,
     instances: &mut ShaclInstances<'_>,
 ) -> Result<ValidatorKind, Violation> {
     let expects_ask = attachment == sh::VALIDATOR;
@@ -1032,13 +1004,8 @@ fn is_reserved_parameter_name(name: &str) -> bool {
 /// The syntax-rule [`Violation`] of the declaration. A pre-binding violation is not
 /// one: it is returned on the parsed validator ([`Validator::prebinding`]).
 fn parse_validator(
-    data: &RdfDataset,
-    context: (&PrefixResolver, crate::profile::ShaclProfile),
-    component: &Term,
-    validator: &Term,
-    attachment: &'static str,
-    param_names: &[String],
-    kind: ValidatorKind,
+    data: &RdfDataset, context: (&PrefixResolver, crate::profile::ShaclProfile), component: &Term,
+    validator: &Term, attachment: &'static str, param_names: &[String], kind: ValidatorKind,
 ) -> Result<Validator, Violation> {
     let (prefixes, profile) = context;
     let component_iri = match component {
@@ -1187,12 +1154,8 @@ fn parse_validator(
 
 /// Parse a single constraint component node and its parameters / validators.
 fn parse_component(
-    data: &RdfDataset,
-    prefixes: &PrefixResolver,
-    component: &Term,
-    component_iri: &str,
-    instances: &mut ShaclInstances<'_>,
-    ill_formed: &mut Vec<IllFormedDeclaration>,
+    data: &RdfDataset, prefixes: &PrefixResolver, component: &Term, component_iri: &str,
+    instances: &mut ShaclInstances<'_>, ill_formed: &mut Vec<IllFormedDeclaration>,
     profile: crate::profile::ShaclProfile,
 ) -> Result<Component, String> {
     let component_declaration = format!("the constraint component <{component_iri}>");
@@ -1439,9 +1402,7 @@ mod tests {
     }
 
     fn validate_fixture_with_imports(
-        ttl: &str,
-        base_iri: &str,
-        imports: &crate::imports::ShapesImports,
+        ttl: &str, base_iri: &str, imports: &crate::imports::ShapesImports,
     ) -> Result<crate::report::ValidationReport, crate::error::ShapesError> {
         let document = parse_turtle_document(ttl, Some(base_iri)).expect("fixture parses");
         let dataset = document.dataset;

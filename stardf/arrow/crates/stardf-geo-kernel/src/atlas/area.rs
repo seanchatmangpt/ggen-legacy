@@ -50,9 +50,7 @@ enum PoleGauge {
 
 impl PoleGauge {
     fn latitude<A: NormalArithmetic>(
-        self,
-        value: &A::Value,
-        arithmetic: &mut A,
+        self, value: &A::Value, arithmetic: &mut A,
     ) -> Result<A::Value, MathError> {
         if self == Self::South {
             arithmetic.neg(value)
@@ -68,8 +66,7 @@ impl AreaPotential {
             .mul(&FixedInterval::from_i64(4, math)?, math)
     }
     fn prepare(
-        ellipsoid: &crate::PreparedEllipsoid,
-        math: &mut CoordinateMath,
+        ellipsoid: &crate::PreparedEllipsoid, math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<Self, MathError> {
         let one = FixedInterval::from_i64(1, math)?;
@@ -153,17 +150,14 @@ impl AreaPotential {
 }
 
 pub(crate) fn surface_area_in(
-    ellipsoid: &crate::PreparedEllipsoid,
-    math: &mut CoordinateMath,
+    ellipsoid: &crate::PreparedEllipsoid, math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<FixedInterval, MathError> {
     AreaPotential::prepare(ellipsoid, math, progress)?.surface_in(math)
 }
 
 fn potential_polynomial<A: NormalArithmetic>(
-    latitude: &A::Value,
-    coefficients: &[A::Value],
-    arithmetic: &mut A,
+    latitude: &A::Value, coefficients: &[A::Value], arithmetic: &mut A,
 ) -> Result<A::Value, MathError> {
     let mut polynomial = coefficients
         .last()
@@ -177,11 +171,8 @@ fn potential_polynomial<A: NormalArithmetic>(
 }
 
 fn density<A: NormalArithmetic>(
-    normal: &[A::Value; 3],
-    derivative: &[A::Value; 3],
-    coefficients: &[A::Value],
-    gauge: PoleGauge,
-    arithmetic: &mut A,
+    normal: &[A::Value; 3], derivative: &[A::Value; 3], coefficients: &[A::Value],
+    gauge: PoleGauge, arithmetic: &mut A,
 ) -> Result<A::Value, MathError> {
     let latitude = gauge.latitude(&normal[2], arithmetic)?;
     let polynomial = potential_polynomial(&latitude, coefficients, arithmetic)?;
@@ -200,12 +191,8 @@ fn density<A: NormalArithmetic>(
 /// the regular pole. This retains the same generated potential and tail;
 /// no independent area formula or sampled trigonometric correlation is used.
 fn parallel_integral(
-    line: &ChartLine,
-    potential: &AreaPotential,
-    parameter: &FixedInterval,
-    iterations: u32,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    line: &ChartLine, potential: &AreaPotential, parameter: &FixedInterval, iterations: u32,
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<Option<(FixedInterval, FixedInterval)>, MathError> {
     if !matches!(line, ChartLine::Linear(_)) {
         return Ok(None);
@@ -238,12 +225,8 @@ fn parallel_integral(
 }
 
 fn panel_integral(
-    line: &ChartLine,
-    potential: &AreaPotential,
-    parameter: &FixedInterval,
-    allowed: &FixedInterval,
-    iterations: u32,
-    math: &mut CoordinateMath,
+    line: &ChartLine, potential: &AreaPotential, parameter: &FixedInterval,
+    allowed: &FixedInterval, iterations: u32, math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<(FixedInterval, FixedInterval), MathError> {
     if let Some(value) = parallel_integral(line, potential, parameter, iterations, math, progress)?
@@ -364,11 +347,8 @@ fn panel_integral(
 /// the image has no such model or the model cannot certify this panel; the
 /// caller's first-order panel enclosure then decides it.
 fn transformed_taylor_integral(
-    curve: &crate::operation::OperationImageCurve,
-    potential: &AreaPotential,
-    parameter: &FixedInterval,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    curve: &crate::operation::OperationImageCurve, potential: &AreaPotential,
+    parameter: &FixedInterval, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<Option<(FixedInterval, FixedInterval)>, MathError> {
     use crate::ellipsoidal::jet::{MercatorPolynomial, ORDER};
     let zero = Rat::zero();
@@ -421,12 +401,8 @@ fn transformed_taylor_integral(
 }
 
 fn integrate_range(
-    line: &ChartLine,
-    potential: &AreaPotential,
-    parameter: FixedInterval,
-    (iterations, depth_limit): (u32, u32),
-    budget: &FixedInterval,
-    math: &mut CoordinateMath,
+    line: &ChartLine, potential: &AreaPotential, parameter: FixedInterval,
+    (iterations, depth_limit): (u32, u32), budget: &FixedInterval, math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<FixedInterval, MathError> {
     let bytes = (depth_limit as usize + 2).saturating_mul(4096);
@@ -483,10 +459,8 @@ pub(crate) struct RingArea {
 /// implicit contact tails, so they do not replace the true selected boundary.
 pub(crate) fn selected_area(
     boundary: &arcs::arrangement::NativeBoundaryArrangement,
-    parameters: &[crate::ellipsoidal::native::Parameters],
-    budget: &Rat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    parameters: &[crate::ellipsoidal::native::Parameters], budget: &Rat,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<RingArea, GeoError> {
     let bytes = (boundary.fragments().len() as u64).saturating_mul(4096);
     context.admit_workspace(bytes)?;
@@ -529,12 +503,8 @@ pub(crate) fn selected_area(
 }
 
 fn tail_bound(
-    line: &ChartLine,
-    potential: &AreaPotential,
-    parameter: &FixedInterval,
-    iterations: u32,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    line: &ChartLine, potential: &AreaPotential, parameter: &FixedInterval, iterations: u32,
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<FixedInterval, MathError> {
     if let Some((integral, remainder)) =
         parallel_integral(line, potential, parameter, iterations, math, progress)?
@@ -583,9 +553,7 @@ fn tail_bound(
 }
 
 pub(crate) fn ring_area(
-    curve: &PreparedCurve,
-    budget: &Rat,
-    context: &mut MetricContext,
+    curve: &PreparedCurve, budget: &Rat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<RingArea, GeoError> {
     let zero = Rat::zero();
@@ -627,9 +595,7 @@ mod tests {
     };
 
     fn coordinate(
-        longitude: i64,
-        latitude: i64,
-        reference: &GeographicReference,
+        longitude: i64, latitude: i64, reference: &GeographicReference,
     ) -> PreparedCoordinate {
         PreparedCoordinate::new(
             Coord::xy(Rat::from_i64(longitude), Rat::from_i64(latitude)),
@@ -638,9 +604,7 @@ mod tests {
         .unwrap()
     }
     fn polygon_geometry(
-        ring: PreparedCurve,
-        side: OrientedInterior,
-        context: &mut MetricContext,
+        ring: PreparedCurve, side: OrientedInterior, context: &mut MetricContext,
     ) -> PreparedGeometry {
         let polygon = PreparedPolygon::from_curves(vec![ring], side, context).unwrap();
         PreparedGeometry::from_parts(
@@ -773,9 +737,7 @@ mod tests {
     }
 
     fn geodesic_ring(
-        vertices: &[(i64, i64)],
-        reference: &GeographicReference,
-        context: &mut MetricContext,
+        vertices: &[(i64, i64)], reference: &GeographicReference, context: &mut MetricContext,
     ) -> PreparedCurve {
         PreparedCurve::new(
             vertices

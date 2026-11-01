@@ -50,8 +50,7 @@ pub trait CorpusProfile:
     /// # Errors
     /// Returns the source's original support or read failure.
     fn resolve<D: DatasetView>(
-        value: &Self::Selector,
-        source: &D,
+        value: &Self::Selector, source: &D,
     ) -> Result<Option<GraphMatch<D::Id>>, D::ReadError>;
 }
 
@@ -70,8 +69,7 @@ impl CorpusProfile for GraphLanguage {
         Some(value)
     }
     fn resolve<D: DatasetView>(
-        value: &Self::Selector,
-        source: &D,
+        value: &Self::Selector, source: &D,
     ) -> Result<Option<GraphMatch<D::Id>>, D::ReadError> {
         value.resolve(source)
     }
@@ -97,8 +95,7 @@ impl CorpusProfile for GraphFree {
         None
     }
     fn resolve<D: DatasetView>(
-        (): &Self::Selector,
-        source: &D,
+        (): &Self::Selector, source: &D,
     ) -> Result<Option<GraphMatch<D::Id>>, D::ReadError> {
         source.checked_read(|_| Some(GraphMatch::Default))
     }

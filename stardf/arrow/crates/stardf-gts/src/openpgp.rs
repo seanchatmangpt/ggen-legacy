@@ -434,8 +434,7 @@ pub fn parse_transport_key(armored: &str) -> Result<TransportKey> {
 /// fingerprint of the secret key's public material, matching the Python
 /// `Signer.from_gpg_secret_key` behavior.
 pub fn parse_secret_signing_key(
-    armored: &str,
-    kid_override: Option<&str>,
+    armored: &str, kid_override: Option<&str>,
 ) -> Result<OpenPgpSigningKey> {
     let data = strip_armor(armored)?;
     for (tag, body) in iter_packets(&data)? {

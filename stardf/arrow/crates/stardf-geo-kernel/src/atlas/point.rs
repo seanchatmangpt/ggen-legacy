@@ -26,9 +26,7 @@ use purrdf_xsd::{
 /// # Errors
 /// Refuses reference mismatch, unresolved contact, and numerical/governor limits.
 pub fn contact(
-    edge: &PreparedEdge,
-    point: &LonLat,
-    context: &mut MetricContext,
+    edge: &PreparedEdge, point: &LonLat, context: &mut MetricContext,
 ) -> Result<bool, GeoError> {
     observed(edge, point, context, None)
 }
@@ -37,17 +35,13 @@ pub fn contact(
 /// # Errors
 /// Adds observer refusal to [`contact`].
 pub fn contact_metered(
-    edge: &PreparedEdge,
-    point: &LonLat,
-    context: &mut MetricContext,
+    edge: &PreparedEdge, point: &LonLat, context: &mut MetricContext,
     observer: &mut dyn MetricWorkObserver,
 ) -> Result<bool, GeoError> {
     observed(edge, point, context, Some(observer))
 }
 fn observed(
-    edge: &PreparedEdge,
-    point: &LonLat,
-    context: &mut MetricContext,
+    edge: &PreparedEdge, point: &LonLat, context: &mut MetricContext,
     observer: Option<&mut dyn MetricWorkObserver>,
 ) -> Result<bool, GeoError> {
     context.begin(1)?;
@@ -58,9 +52,7 @@ fn observed(
 }
 
 pub(crate) fn contact_with_progress(
-    edge: &PreparedEdge,
-    point: &LonLat,
-    context: &mut MetricContext,
+    edge: &PreparedEdge, point: &LonLat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     // Public entry or enclosing atlas inventory validated the immutable source
@@ -86,9 +78,7 @@ pub(crate) fn contact_with_progress(
 }
 
 pub(super) fn exact_source(
-    edge: &PreparedEdge,
-    point: &LonLat,
-    context: &mut MetricContext,
+    edge: &PreparedEdge, point: &LonLat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<bool>, GeoError> {
     let mut admission = ExactAdmission::new(context, progress);
@@ -226,12 +216,8 @@ pub(super) fn exact_source(
 }
 
 fn midpoint_normal_witness(
-    line: &arcs::ChartLine,
-    parameter: &FixedInterval,
-    query: &[FixedInterval; 3],
-    iterations: u32,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    line: &arcs::ChartLine, parameter: &FixedInterval, query: &[FixedInterval; 3], iterations: u32,
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, purrdf_xsd::math::MathError> {
     if !query.iter().all(|value| value.lower() == value.upper()) {
         return Ok(false);
@@ -250,12 +236,8 @@ fn midpoint_normal_witness(
 /// between its endpoint images. This supplies existence for off-grid targets;
 /// no numerical root proposal or rounded image coordinate supplies a witness.
 fn axis_panel_witness(
-    line: &arcs::ChartLine,
-    parameter: &FixedInterval,
-    point: &LonLat,
-    iterations: u32,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    line: &arcs::ChartLine, parameter: &FixedInterval, point: &LonLat, iterations: u32,
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<Option<bool>, purrdf_xsd::math::MathError> {
     let arcs::ChartLine::Transformed {
         curve,
@@ -327,9 +309,7 @@ fn axis_panel_witness(
 /// parameters even when the query uses another longitude frame; nonpolar
 /// 360-degree paths retain both endpoint visits rather than becoming constant.
 fn linear_parameters(
-    line: &crate::SourceLinearEdge,
-    point: &LonLat,
-    admission: &mut ExactAdmission<'_, '_>,
+    line: &crate::SourceLinearEdge, point: &LonLat, admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<ParameterIntervals, GeoError> {
     admission.with_metadata(|admission, retained| {
         let start = line.start().point();
@@ -434,10 +414,7 @@ fn linear_parameters(
 /// Complete parameters of every independently proved exact point visit.
 /// Unknown equality remains a precision refusal; it never becomes a contact.
 pub(crate) fn parameter_enclosures(
-    edge: &PreparedEdge,
-    point: &LonLat,
-    bits: u32,
-    context: &mut MetricContext,
+    edge: &PreparedEdge, point: &LonLat, bits: u32, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<ParameterIntervals, GeoError> {
     if edge.binding_id() != context.reference().id() {
@@ -507,10 +484,7 @@ pub(crate) fn parameter_enclosures(
 /// panel derivative proves uniqueness; exact singleton normal equality at an
 /// original dyadic parameter proves existence independently of root rounding.
 pub(crate) fn monotone_parameters(
-    edge: &PreparedEdge,
-    point: &LonLat,
-    bits: u32,
-    context: &mut MetricContext,
+    edge: &PreparedEdge, point: &LonLat, bits: u32, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<ParameterIntervals>, GeoError> {
     let policy = context.policy();
@@ -592,9 +566,7 @@ pub(crate) fn monotone_parameters(
 
 /// Complete injectivity shared by literal and symbolic point contacts.
 pub(crate) fn image_injective(
-    edge: &PreparedEdge,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    edge: &PreparedEdge, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let analytic = if let PreparedEdge::Transformed(image) = edge {
         image.analytic_in_parameter(context, progress)?
@@ -627,10 +599,8 @@ pub(crate) fn image_injective(
 }
 
 pub(super) fn injective_component(
-    line: &arcs::ChartLine,
-    derivative: Option<&[FixedInterval; 3]>,
-    (whole, analytic, iterations): (&FixedInterval, bool, u32),
-    math: &mut CoordinateMath,
+    line: &arcs::ChartLine, derivative: Option<&[FixedInterval; 3]>,
+    (whole, analytic, iterations): (&FixedInterval, bool, u32), math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, purrdf_xsd::math::MathError> {
     let strict = |value: &FixedInterval| {
@@ -668,10 +638,7 @@ pub(super) fn injective_component(
 /// subarcs. Its unrounded parameter is the first subarc length divided by the
 /// original length; public rounded distance fields never enter this ratio.
 fn shortest_parameter(
-    arc: &crate::ShortestGeodesicArc,
-    point: &LonLat,
-    bits: u32,
-    context: &mut MetricContext,
+    arc: &crate::ShortestGeodesicArc, point: &LonLat, bits: u32, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<ParameterIntervals, GeoError> {
     let reference = crate::numerical::reference_clone(context, progress)?;
@@ -739,9 +706,7 @@ fn shortest_parameter(
     })
 }
 fn midpoint_candidate(
-    arc: &crate::ShortestGeodesicArc,
-    point: &LonLat,
-    admission: &mut ExactAdmission<'_, '_>,
+    arc: &crate::ShortestGeodesicArc, point: &LonLat, admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<bool, GeoError> {
     if !point.latitude().is_zero() {
         return Ok(false);
@@ -790,9 +755,7 @@ fn midpoint_candidate(
 }
 
 fn midpoint_contact(
-    edge: &PreparedEdge,
-    point: &LonLat,
-    context: &mut MetricContext,
+    edge: &PreparedEdge, point: &LonLat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     // The half-turn about the query's equatorial axis interchanges the exact
@@ -856,9 +819,7 @@ pub(super) enum ShortestAxis {
     Meridian(Rat),
 }
 pub(super) fn shortest_axis(
-    arc: &crate::ShortestGeodesicArc,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    arc: &crate::ShortestGeodesicArc, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Option<ShortestAxis>, GeoError> {
     let a = arc.start().point();
     let b = arc.end().point();
@@ -902,10 +863,7 @@ pub(super) fn shortest_axis(
     })
 }
 fn shortest_symmetry(
-    start: &LonLat,
-    end: &LonLat,
-    point: &LonLat,
-    admission: &mut ExactAdmission<'_, '_>,
+    start: &LonLat, end: &LonLat, point: &LonLat, admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<Option<bool>, GeoError> {
     use ExactOperation::{RationalAdd, RationalCompare};
     if start.latitude().is_zero() && end.latitude().is_zero() {
@@ -1007,10 +965,7 @@ fn shortest_symmetry(
 }
 
 fn attempt(
-    edge: &PreparedEdge,
-    point: &LonLat,
-    bits: u32,
-    context: &mut MetricContext,
+    edge: &PreparedEdge, point: &LonLat, bits: u32, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let policy = context.policy();
@@ -1136,9 +1091,7 @@ enum AxisHint {
 /// once its original length is at least 2πa. This is a set certificate only;
 /// repeated traversal remains part of the original scalar arclength law.
 pub(crate) fn covers_equator(
-    arc: &crate::AzimuthLengthArc,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    arc: &crate::AzimuthLengthArc, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let azimuth = normalize_admitted(arc.azimuth(), context, progress)?;
     let on_equator = ExactAdmission::new(context, progress).rational(
@@ -1214,9 +1167,7 @@ pub(crate) fn covers_equator(
 /// A conserved meridian has period four original quarter-meridian lengths.
 /// Return its exact selected plane only after proving complete-period coverage.
 pub(crate) fn covered_meridian(
-    arc: &crate::AzimuthLengthArc,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    arc: &crate::AzimuthLengthArc, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     retained: &mut u64,
 ) -> Result<Option<Rat>, GeoError> {
     let Some(plane) = crate::geodesic::meridian_plane_degrees_admitted(
@@ -1276,12 +1227,8 @@ pub(crate) fn covered_meridian(
 
 impl AxisHint {
     fn distance(
-        &self,
-        target: &LonLat,
-        start: &LonLat,
-        ellipsoid: &crate::PreparedEllipsoid,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, target: &LonLat, start: &LonLat, ellipsoid: &crate::PreparedEllipsoid,
+        math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<FixedInterval, purrdf_xsd::math::MathError> {
         match self {
             Self::Outside => Err(purrdf_xsd::math::MathError::Domain("excluded axial point")),
@@ -1333,24 +1280,17 @@ impl AxisHint {
     }
 }
 pub(super) fn normalize_admitted(
-    angle: &Rat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    angle: &Rat, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Rat, GeoError> {
     normalize_from_admitted(angle, 0, context, progress)
 }
 pub(super) fn longitude_admitted(
-    angle: &Rat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    angle: &Rat, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Rat, GeoError> {
     normalize_from_admitted(angle, -180, context, progress)
 }
 fn normalize_from_admitted(
-    angle: &Rat,
-    origin: i64,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    angle: &Rat, origin: i64, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Rat, GeoError> {
     // The degree law's fixed integer offsets are at most nine bits. All reduced
     // intermediates have width <=2B+16; four rational-add cost bounds include
@@ -1370,9 +1310,7 @@ fn normalize_from_admitted(
     })
 }
 fn axis_hint(
-    arc: &crate::AzimuthLengthArc,
-    point: &LonLat,
-    context: &mut MetricContext,
+    arc: &crate::AzimuthLengthArc, point: &LonLat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<AxisHint>, GeoError> {
     let azimuth = normalize_admitted(arc.azimuth(), context, progress)?;
@@ -1481,9 +1419,7 @@ fn axis_hint(
 pub(crate) type ParameterIntervals = RetainedBuilder<(Rat, Rat)>;
 
 pub(super) fn parameter_intervals<const N: usize>(
-    values: [(Rat, Rat); N],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    values: [(Rat, Rat); N], context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<ParameterIntervals, GeoError> {
     context.with_metadata(progress, |context, progress, retained| {
         let mut output = ParameterIntervals::default();
@@ -1499,18 +1435,13 @@ pub(super) fn parameter_intervals<const N: usize>(
 /// Complete original-law axial visits, including every full-revolution revisit.
 /// Every returned interval encloses one isolated nonconstant parameter event.
 pub(super) fn axis_contact_parameters(
-    arc: &crate::AzimuthLengthArc,
-    point: &LonLat,
-    context: &mut MetricContext,
+    arc: &crate::AzimuthLengthArc, point: &LonLat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<ParameterIntervals>, GeoError> {
     axis_contact_parameters_with_precision(arc, point, 80, context, progress)
 }
 fn axis_contact_parameters_with_precision(
-    arc: &crate::AzimuthLengthArc,
-    point: &LonLat,
-    minimum_bits: u32,
-    context: &mut MetricContext,
+    arc: &crate::AzimuthLengthArc, point: &LonLat, minimum_bits: u32, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<ParameterIntervals>, GeoError> {
     let Some(axis) = axis_hint(arc, point, context, progress)? else {
@@ -1668,9 +1599,7 @@ fn axis_contact_parameters_with_precision(
 /// tangent, so its integrated chord would have strictly positive projection.
 /// Thus an original start witness is the unique event under this exact bound.
 fn injective_start_parameter(
-    arc: &crate::AzimuthLengthArc,
-    point: &LonLat,
-    context: &mut MetricContext,
+    arc: &crate::AzimuthLengthArc, point: &LonLat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<ParameterIntervals>, GeoError> {
     let same = ExactAdmission::new(context, progress).rational(

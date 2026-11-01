@@ -87,9 +87,7 @@ impl purrdf_lex::json::record::Within for GeoCallError {
     }
 
     fn within_native(
-        self,
-        token: &str,
-        allocation: Option<&dyn purrdf_lex::json::record::RecordAllocation>,
+        self, token: &str, allocation: Option<&dyn purrdf_lex::json::record::RecordAllocation>,
     ) -> Self {
         match self {
             Self::Decode(error) => Self::Decode(error.within_native(token, allocation)),
@@ -98,9 +96,7 @@ impl purrdf_lex::json::record::Within for GeoCallError {
     }
 
     fn within_index_native(
-        self,
-        index: usize,
-        allocation: Option<&dyn purrdf_lex::json::record::RecordAllocation>,
+        self, index: usize, allocation: Option<&dyn purrdf_lex::json::record::RecordAllocation>,
     ) -> Self {
         match self {
             Self::Decode(error) => Self::Decode(error.within_index_native(index, allocation)),

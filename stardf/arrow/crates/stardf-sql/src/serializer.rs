@@ -63,10 +63,7 @@ impl SelectStatement {
     /// COLUMNS pattern is single-quote-escaped verbatim, never concatenated
     /// SQL.
     fn serialize_select_item(
-        item: &SelectItem,
-        sql: &mut String,
-        params: &mut Vec<SqlLiteral>,
-        depth: usize,
+        item: &SelectItem, sql: &mut String, params: &mut Vec<SqlLiteral>, depth: usize,
     ) -> Result<(), AstError> {
         if depth > Self::MAX_DEPTH {
             return Err(AstError::RecursionLimitExceeded(Self::MAX_DEPTH));
@@ -277,11 +274,7 @@ impl SelectStatement {
     }
 
     pub(super) fn serialize_expr(
-        expr: &SqlExpr,
-        sql: &mut String,
-        params: &mut Vec<SqlLiteral>,
-        depth: usize,
-        pos: ScopePos,
+        expr: &SqlExpr, sql: &mut String, params: &mut Vec<SqlLiteral>, depth: usize, pos: ScopePos,
     ) -> Result<(), AstError> {
         if depth > Self::MAX_DEPTH {
             return Err(AstError::RecursionLimitExceeded(Self::MAX_DEPTH));

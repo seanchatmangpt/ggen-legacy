@@ -303,9 +303,7 @@ fn quad_ref_len(q: &QuadRef<'_>) -> usize {
 
 /// Exercise the generic contract, including its pinned rows and both batch paths.
 fn resident_generic_reads<D>(
-    view: &D,
-    ids: &[purrdf_core::TermId],
-    values: &[purrdf_core::TermValue],
+    view: &D, ids: &[purrdf_core::TermId], values: &[purrdf_core::TermValue],
 ) -> usize
 where
     D: purrdf_core::DatasetView<Id = purrdf_core::TermId, ReadError = std::convert::Infallible>,

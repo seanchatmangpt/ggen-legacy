@@ -6,9 +6,7 @@
 use purrdf_datalog::clause::{ClauseAtom, DlClause};
 
 pub(crate) fn closure_rules<const N: usize>(
-    base: &str,
-    closure: &str,
-    atom: impl Fn(&str, &str, &str) -> ClauseAtom<N>,
+    base: &str, closure: &str, atom: impl Fn(&str, &str, &str) -> ClauseAtom<N>,
 ) -> Vec<DlClause<N>> {
     vec![
         DlClause::datalog(atom("?s", closure, "?o"), vec![atom("?s", base, "?o")]),

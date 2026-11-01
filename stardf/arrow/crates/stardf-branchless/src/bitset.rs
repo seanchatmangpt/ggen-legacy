@@ -338,6 +338,10 @@ pub const fn parity_u32(x: u32) -> u32 {
 /// from bcinr crates/bcinr-logic/src/algorithms/blsi_u64.rs:24
 #[inline]
 #[must_use]
+// This IS the named kernel the workspace mandates for the `x & -x` idiom
+// (see the doc above); clippy's method-form suggestion does not apply to the
+// kernel's own body.
+#[allow(clippy::manual_isolate_lowest_one)]
 pub const fn isolate_lowest_u64(x: u64) -> u64 {
     x & x.wrapping_neg()
 }

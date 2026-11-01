@@ -342,10 +342,7 @@ impl<P: CorpusProfile> PartitionFilter<P> {
 ///
 /// [`Analyzer`]: crate::Analyzer
 pub fn rank_partition<P: CorpusProfile>(
-    index: &TextIndex<P>,
-    partition: &PartitionKey<P>,
-    needle: &[String],
-    limit: Option<u64>,
+    index: &TextIndex<P>, partition: &PartitionKey<P>, needle: &[String], limit: Option<u64>,
 ) -> Result<Vec<Scored>, TextError> {
     let terms = distinct_terms(needle);
     if terms.is_empty() {
@@ -371,10 +368,7 @@ pub fn rank_partition<P: CorpusProfile>(
 ///   asking for a row a partition does not have is a question with an honest empty
 ///   answer rather than an error.
 pub fn select<P: CorpusProfile>(
-    index: &TextIndex<P>,
-    needle: &[String],
-    filter: &PartitionFilter<P>,
-    ceiling: Option<u64>,
+    index: &TextIndex<P>, needle: &[String], filter: &PartitionFilter<P>, ceiling: Option<u64>,
     partition_rank: Option<u32>,
 ) -> Result<Vec<Scored>, TextError> {
     select_counted(
@@ -411,12 +405,8 @@ pub struct ScopedTerm<'a> {
 /// Refuses undeclared field predicates, scopes outside the analyzed needle,
 /// or the original scorer's typed numeric/data failure.
 pub fn select_scoped<P: CorpusProfile>(
-    index: &TextIndex<P>,
-    needle: &[String],
-    filter: &PartitionFilter<P>,
-    scopes: &[ScopedTerm<'_>],
-    ceiling: Option<u64>,
-    partition_rank: Option<u32>,
+    index: &TextIndex<P>, needle: &[String], filter: &PartitionFilter<P>,
+    scopes: &[ScopedTerm<'_>], ceiling: Option<u64>, partition_rank: Option<u32>,
 ) -> Result<Vec<Scored>, TextError> {
     select_scoped_counted(
         index,
@@ -430,12 +420,8 @@ pub fn select_scoped<P: CorpusProfile>(
 }
 
 pub(crate) fn select_scoped_counted<P: CorpusProfile>(
-    index: &TextIndex<P>,
-    needle: &[String],
-    filter: &PartitionFilter<P>,
-    scopes: &[ScopedTerm<'_>],
-    ceiling: Option<u64>,
-    partition_rank: Option<u32>,
+    index: &TextIndex<P>, needle: &[String], filter: &PartitionFilter<P>,
+    scopes: &[ScopedTerm<'_>], ceiling: Option<u64>, partition_rank: Option<u32>,
     work: &mut ScoringWork,
 ) -> Result<Vec<Scored>, TextError> {
     let terms = distinct_terms(needle);
@@ -468,9 +454,7 @@ pub(crate) fn select_scoped_counted<P: CorpusProfile>(
 }
 
 pub(crate) fn matches_scopes<P: CorpusProfile>(
-    index: &TextIndex<P>,
-    document: u32,
-    scopes: &[ScopedTerm<'_>],
+    index: &TextIndex<P>, document: u32, scopes: &[ScopedTerm<'_>],
 ) -> Result<bool, TextError> {
     for scope in scopes {
         if index.term_frequency_in_predicate(document, scope.term, scope.predicate)? == 0 {
@@ -485,11 +469,8 @@ pub(crate) fn matches_scopes<P: CorpusProfile>(
 /// the tokens or any scoring weight. Explicit `ScopedTerm` requirements above
 /// instead denote separately required token/field constraints.
 pub(crate) fn matches_predicate<'a, P: CorpusProfile>(
-    index: &TextIndex<P>,
-    document: u32,
-    terms: impl IntoIterator<Item = &'a str>,
-    predicate: Option<&TermValue>,
-    workspace: &WorkspaceCapability,
+    index: &TextIndex<P>, document: u32, terms: impl IntoIterator<Item = &'a str>,
+    predicate: Option<&TermValue>, workspace: &WorkspaceCapability,
 ) -> Result<bool, TextError> {
     let Some(predicate) = predicate else {
         return Ok(true);
@@ -503,12 +484,8 @@ pub(crate) fn matches_predicate<'a, P: CorpusProfile>(
 }
 
 fn select_counted_with_membership<P: CorpusProfile>(
-    index: &TextIndex<P>,
-    needle: &[String],
-    filter: &PartitionFilter<P>,
-    ceiling: Option<u64>,
-    partition_rank: Option<u32>,
-    work: &mut ScoringWork,
+    index: &TextIndex<P>, needle: &[String], filter: &PartitionFilter<P>, ceiling: Option<u64>,
+    partition_rank: Option<u32>, work: &mut ScoringWork,
     membership: &mut impl FnMut(u32) -> Result<bool, TextError>,
 ) -> Result<Vec<Scored>, TextError> {
     let rows = select_counted_membership_owned(
@@ -528,12 +505,8 @@ fn select_counted_with_membership<P: CorpusProfile>(
 
 /// [`select`], adding the work it did to `work`.
 pub(crate) fn select_counted<P: CorpusProfile>(
-    index: &TextIndex<P>,
-    needle: &[String],
-    filter: &PartitionFilter<P>,
-    ceiling: Option<u64>,
-    partition_rank: Option<u32>,
-    work: &mut ScoringWork,
+    index: &TextIndex<P>, needle: &[String], filter: &PartitionFilter<P>, ceiling: Option<u64>,
+    partition_rank: Option<u32>, work: &mut ScoringWork,
 ) -> Result<Vec<Scored>, TextError> {
     let rows = select_counted_owned(
         index,
@@ -550,13 +523,9 @@ pub(crate) fn select_counted<P: CorpusProfile>(
 }
 
 pub(crate) fn select_counted_owned<'a, P: CorpusProfile>(
-    index: &TextIndex<P>,
-    needle: impl ExactSizeIterator<Item = &'a str>,
-    matches: impl Fn(&PartitionKey<P>) -> bool,
-    ceiling: Option<u64>,
-    partition_rank: Option<u32>,
-    work: &mut ScoringWork,
-    workspace: &WorkspaceCapability,
+    index: &TextIndex<P>, needle: impl ExactSizeIterator<Item = &'a str>,
+    matches: impl Fn(&PartitionKey<P>) -> bool, ceiling: Option<u64>, partition_rank: Option<u32>,
+    work: &mut ScoringWork, workspace: &WorkspaceCapability,
 ) -> Result<AdmittedVec<Scored>, TextError> {
     select_counted_membership_owned(
         index,
@@ -579,15 +548,12 @@ pub(crate) struct CandidateSelection<P, M> {
 }
 
 pub(crate) fn select_counted_membership_owned<'a, E: From<TextError>, P: CorpusProfile>(
-    index: &TextIndex<P>,
-    needle: impl ExactSizeIterator<Item = &'a str>,
+    index: &TextIndex<P>, needle: impl ExactSizeIterator<Item = &'a str>,
     mut selection: CandidateSelection<
         impl Fn(&PartitionKey<P>) -> bool,
         impl FnMut(u32) -> Result<bool, E>,
     >,
-    ceiling: Option<u64>,
-    partition_rank: Option<u32>,
-    work: &mut ScoringWork,
+    ceiling: Option<u64>, partition_rank: Option<u32>, work: &mut ScoringWork,
     workspace: &WorkspaceCapability,
 ) -> Result<AdmittedVec<Scored>, E> {
     let terms = distinct_terms_owned(needle, workspace)?;
@@ -639,9 +605,7 @@ pub(crate) fn select_counted_membership_owned<'a, E: From<TextError>, P: CorpusP
 /// asked about something that is not there, which is a different thing from a
 /// document that scored nothing.
 pub fn explain<P: CorpusProfile>(
-    index: &TextIndex<P>,
-    document: u32,
-    needle: &[String],
+    index: &TextIndex<P>, document: u32, needle: &[String],
 ) -> Result<Vec<TermContribution>, TextError> {
     let terms = distinct_terms(needle);
     let Some(partition) = index.partition_key_of(document) else {
@@ -734,8 +698,7 @@ pub(crate) fn distinct_terms(needle: &[String]) -> Vec<&str> {
 }
 
 pub(crate) fn distinct_terms_owned<'a>(
-    needle: impl ExactSizeIterator<Item = &'a str>,
-    workspace: &WorkspaceCapability,
+    needle: impl ExactSizeIterator<Item = &'a str>, workspace: &WorkspaceCapability,
 ) -> Result<AdmittedVec<&'a str>, TextError> {
     let mut terms = admitted(AdmittedVec::with_capacity(needle.len(), workspace))?;
     for term in needle {
@@ -755,10 +718,7 @@ pub(crate) fn distinct_terms_owned<'a>(
 
 /// Rank one partition against already-distinct, already-sorted `terms`.
 fn rank_terms<P: CorpusProfile>(
-    index: &TextIndex<P>,
-    partition: &PartitionKey<P>,
-    terms: &[&str],
-    limit: Option<u64>,
+    index: &TextIndex<P>, partition: &PartitionKey<P>, terms: &[&str], limit: Option<u64>,
     work: &mut ScoringWork,
 ) -> Result<Vec<Scored>, TextError> {
     Ok(rank_terms_owned(
@@ -775,12 +735,8 @@ fn rank_terms<P: CorpusProfile>(
 }
 
 fn rank_terms_owned<E: From<TextError>, P: CorpusProfile>(
-    index: &TextIndex<P>,
-    partition: &PartitionKey<P>,
-    terms: &[&str],
-    limit: Option<u64>,
-    work: &mut ScoringWork,
-    workspace: &WorkspaceCapability,
+    index: &TextIndex<P>, partition: &PartitionKey<P>, terms: &[&str], limit: Option<u64>,
+    work: &mut ScoringWork, workspace: &WorkspaceCapability,
     membership: &mut impl FnMut(u32) -> Result<bool, E>,
 ) -> Result<AdmittedVec<Scored>, E> {
     let Some(partition) = admitted(index.partition_key_owned(partition, workspace))? else {
@@ -826,12 +782,8 @@ struct CandidateOccurrence<'a> {
 /// independent of field weights: a matching document can legitimately score
 /// zero, and still participates in the canonical tie order.
 fn candidates_owned<E: From<TextError>, P: CorpusProfile>(
-    index: &TextIndex<P>,
-    partition: &PartitionKey<P>,
-    terms: &[&str],
-    work: &mut ScoringWork,
-    workspace: &WorkspaceCapability,
-    membership: &mut impl FnMut(u32) -> Result<bool, E>,
+    index: &TextIndex<P>, partition: &PartitionKey<P>, terms: &[&str], work: &mut ScoringWork,
+    workspace: &WorkspaceCapability, membership: &mut impl FnMut(u32) -> Result<bool, E>,
 ) -> Result<AdmittedVec<Candidate>, E> {
     if index.partition_stats(partition).is_none() {
         return Ok(AdmittedVec::new(workspace));
@@ -902,9 +854,7 @@ fn candidates_owned<E: From<TextError>, P: CorpusProfile>(
 /// partition, which [`TextIndex::document_frequency`] reads off the dictionary
 /// in two binary searches without visiting a single posting.
 fn prepare_terms<'c, 'p, P: CorpusProfile>(
-    index: &TextIndex<P>,
-    partition: &PartitionKey<P>,
-    corpus: &'c PreparedCorpus<'p>,
+    index: &TextIndex<P>, partition: &PartitionKey<P>, corpus: &'c PreparedCorpus<'p>,
     terms: &[&str],
 ) -> Result<PreparedQuery<'c, 'p>, TextError> {
     prepare_terms_owned(
@@ -917,11 +867,8 @@ fn prepare_terms<'c, 'p, P: CorpusProfile>(
 }
 
 fn prepare_terms_owned<'c, 'p, P: CorpusProfile>(
-    index: &TextIndex<P>,
-    partition: &PartitionKey<P>,
-    corpus: &'c PreparedCorpus<'p>,
-    terms: &[&str],
-    workspace: &WorkspaceCapability,
+    index: &TextIndex<P>, partition: &PartitionKey<P>, corpus: &'c PreparedCorpus<'p>,
+    terms: &[&str], workspace: &WorkspaceCapability,
 ) -> Result<PreparedQuery<'c, 'p>, TextError> {
     let mut frequencies = admitted(AdmittedVec::with_capacity(terms.len(), workspace))?;
     for &term in terms {
@@ -943,11 +890,8 @@ fn prepare_terms_owned<'c, 'p, P: CorpusProfile>(
 /// reach the same additions in the same order, so the two scores are one number
 /// rather than two numbers that agree.
 fn score_document<'a, P: CorpusProfile>(
-    index: &TextIndex<P>,
-    query: &PreparedQuery<'_, '_>,
-    document: u32,
-    held: impl Iterator<Item = (usize, &'a [(u32, u64)])>,
-    work: &mut ScoringWork,
+    index: &TextIndex<P>, query: &PreparedQuery<'_, '_>, document: u32,
+    held: impl Iterator<Item = (usize, &'a [(u32, u64)])>, work: &mut ScoringWork,
     workspace: &WorkspaceCapability,
 ) -> Result<Candidate, TextError> {
     let field_count = index.ranking_profile().fields().len();
@@ -1008,12 +952,8 @@ pub(crate) struct ScoringWork {
 /// Work is independent of the corpus: one binary search per needle term for its
 /// document frequency, and one field-input assembly per held term.
 pub(crate) fn score_located_owned<P: CorpusProfile>(
-    index: &TextIndex<P>,
-    document: u32,
-    terms: &[&str],
-    located: &[(usize, &[(u32, u64)])],
-    work: &mut ScoringWork,
-    workspace: &WorkspaceCapability,
+    index: &TextIndex<P>, document: u32, terms: &[&str], located: &[(usize, &[(u32, u64)])],
+    work: &mut ScoringWork, workspace: &WorkspaceCapability,
 ) -> Result<(BoundedScore, usize), TextError> {
     let Some(partition) = admitted(index.partition_key_of_owned(document, workspace))? else {
         return Err(query_error(
@@ -1076,9 +1016,7 @@ impl core::ops::Deref for OwnedOrder {
 /// The existing native BinaryHeap and strict ByRank law, with its actual Vec
 /// backing pre-admitted. `from`/`into_vec` move that backing without copying it.
 fn order_owned(
-    candidates: AdmittedVec<Candidate>,
-    keep: Option<usize>,
-    workspace: &WorkspaceCapability,
+    candidates: AdmittedVec<Candidate>, keep: Option<usize>, workspace: &WorkspaceCapability,
 ) -> Result<OwnedOrder, TextError> {
     let wanted = keep.map_or(candidates.len(), |keep| keep.min(candidates.len()));
     let capacity = if keep.is_some_and(|keep| keep < candidates.len()) {

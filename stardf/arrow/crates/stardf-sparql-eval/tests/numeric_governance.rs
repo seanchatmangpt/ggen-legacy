@@ -34,9 +34,7 @@ const XSD: &str = "http://www.w3.org/2001/XMLSchema#";
 const STAT: &str = "http://example.org/stat#";
 
 fn governed(
-    query: &str,
-    options: QueryOptions<'_, '_>,
-    governors: &QueryGovernors,
+    query: &str, options: QueryOptions<'_, '_>, governors: &QueryGovernors,
 ) -> GovernedOutcome {
     let query = format!("PREFIX xsd: <{XSD}>\n{query}");
     NativeSparqlEngine::new()
@@ -76,10 +74,7 @@ fn first_cell(outcome: &GovernedOutcome) -> String {
 /// the neighbour's own consumption: the neighbour must answer, `refused` must trip
 /// that dimension. Returns the neighbour's answer.
 fn refused_beside(
-    refused: &str,
-    neighbour: &str,
-    options: QueryOptions<'_, '_>,
-    dimension: ResourceDimension,
+    refused: &str, neighbour: &str, options: QueryOptions<'_, '_>, dimension: ResourceDimension,
 ) -> String {
     let metered = governed(neighbour, options, &QueryGovernors::METERED);
     assert!(

@@ -48,10 +48,7 @@ impl Emitter {
         })
     }
     fn fact(
-        &mut self,
-        subject: &str,
-        predicate: &'static str,
-        value: Object<'_>,
+        &mut self, subject: &str, predicate: &'static str, value: Object<'_>,
     ) -> Result<(), TomlError> {
         let subject = self.builder.intern_iri(subject)?;
         let object = match value {
@@ -69,12 +66,7 @@ impl Emitter {
         Ok(())
     }
     fn describe(
-        &mut self,
-        subject: &str,
-        class: &str,
-        document: &str,
-        index: usize,
-        span: &Range<usize>,
+        &mut self, subject: &str, class: &str, document: &str, index: usize, span: &Range<usize>,
     ) -> Result<(), TomlError> {
         self.fact(
             subject,
@@ -241,9 +233,7 @@ fn temporal_lexical(text: &str) -> String {
 }
 
 fn required<'a>(
-    dataset: &'a RdfDataset,
-    subject: TermId,
-    predicate: &str,
+    dataset: &'a RdfDataset, subject: TermId, predicate: &str,
 ) -> Result<TermRef<'a>, TomlError> {
     let predicate = dataset
         .term_id_by_iri(predicate)
@@ -277,10 +267,7 @@ fn required<'a>(
 }
 
 fn literal<'a>(
-    dataset: &'a RdfDataset,
-    subject: TermId,
-    predicate: &str,
-    datatype: &str,
+    dataset: &'a RdfDataset, subject: TermId, predicate: &str, datatype: &str,
 ) -> Result<&'a str, TomlError> {
     match required(dataset, subject, predicate)? {
         TermRef::Literal {
@@ -308,9 +295,7 @@ fn number(dataset: &RdfDataset, subject: TermId, predicate: &str) -> Result<u64,
 /// reconstructs bytes; re-analysis and exact RDF metadata comparison then reject
 /// forged keys, spans, kinds, semantics, parentage, identities and extra facts.
 pub fn decode_document(
-    dataset: &RdfDataset,
-    document: &str,
-    profile: &Profile,
+    dataset: &RdfDataset, document: &str, profile: &Profile,
 ) -> Result<String, TomlError> {
     BaseIri::parse(document)?;
     let root = dataset

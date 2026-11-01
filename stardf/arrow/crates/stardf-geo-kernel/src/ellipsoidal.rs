@@ -155,8 +155,7 @@ impl GeometryMetricEstimate {
     /// # Errors
     /// Preserves native numerical, checked layout, allocator and caller refusal.
     pub fn certificate_bytes_admitted(
-        &self,
-        admission: &mut crate::carrier::InputAdmission<'_, '_, '_>,
+        &self, admission: &mut crate::carrier::InputAdmission<'_, '_, '_>,
     ) -> Result<Vec<u8>, GeoError> {
         let mut output = crate::metric::CertificateWriter::new(admission);
         output.bytes(GEOMETRY_METRIC_CERTIFICATE.as_bytes())?;
@@ -176,9 +175,7 @@ impl GeometryMetricEstimate {
 /// # Errors
 /// Refuses unresolved completed rounding, environment/resource failure and cancellation.
 pub fn source_linear_length(
-    start: &LonLat,
-    end: &LonLat,
-    context: &mut MetricContext,
+    start: &LonLat, end: &LonLat, context: &mut MetricContext,
 ) -> Result<GeometryMetricEstimate, GeoError> {
     context.begin(1)?;
     linear_metric(start, end, GeometryMetricLaw::Length, context)
@@ -189,9 +186,7 @@ pub fn source_linear_length(
 /// # Errors
 /// Uses the same strict numerical and operational contract as source-linear length.
 pub fn source_linear_area_integral(
-    start: &LonLat,
-    end: &LonLat,
-    context: &mut MetricContext,
+    start: &LonLat, end: &LonLat, context: &mut MetricContext,
 ) -> Result<GeometryMetricEstimate, GeoError> {
     context.begin(1)?;
     linear_metric(start, end, GeometryMetricLaw::AreaIntegral, context)
@@ -205,8 +200,7 @@ pub fn source_linear_area_integral(
 /// Refuses a non-geodesic edge, reference mismatch, unresolved branch or
 /// incomplete numerical admission. Quantized inverse areas are never inputs.
 pub fn geodesic_area_integral(
-    edge: &PreparedEdge,
-    context: &mut MetricContext,
+    edge: &PreparedEdge, context: &mut MetricContext,
 ) -> Result<GeometryMetricEstimate, GeoError> {
     context.begin(1)?;
     let mut progress = WorkProgress::new(None);
@@ -263,8 +257,7 @@ pub fn geodesic_area_integral(
 /// # Errors
 /// Refuses mixed references and any unresolved numerical or operational result.
 pub fn length(
-    geometry: &PreparedGeometry,
-    context: &mut MetricContext,
+    geometry: &PreparedGeometry, context: &mut MetricContext,
 ) -> Result<GeometryMetricEstimate, GeoError> {
     prepared_length(geometry, GeometryMetricLaw::Length, context, None)
 }
@@ -274,8 +267,7 @@ pub fn length(
 /// # Errors
 /// Applies the same strict completion contract as geographic length.
 pub fn perimeter(
-    geometry: &PreparedGeometry,
-    context: &mut MetricContext,
+    geometry: &PreparedGeometry, context: &mut MetricContext,
 ) -> Result<GeometryMetricEstimate, GeoError> {
     prepared_length(geometry, GeometryMetricLaw::Perimeter, context, None)
 }
@@ -285,9 +277,7 @@ pub fn perimeter(
 /// # Errors
 /// Includes the observer's latched refusal in the ordinary metric contract.
 pub fn length_metered(
-    geometry: &PreparedGeometry,
-    context: &mut MetricContext,
-    observer: &mut dyn MetricWorkObserver,
+    geometry: &PreparedGeometry, context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
 ) -> Result<GeometryMetricEstimate, GeoError> {
     prepared_length(geometry, GeometryMetricLaw::Length, context, Some(observer))
 }
@@ -297,9 +287,7 @@ pub fn length_metered(
 /// # Errors
 /// Includes the observer's latched refusal in the ordinary metric contract.
 pub fn perimeter_metered(
-    geometry: &PreparedGeometry,
-    context: &mut MetricContext,
-    observer: &mut dyn MetricWorkObserver,
+    geometry: &PreparedGeometry, context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
 ) -> Result<GeometryMetricEstimate, GeoError> {
     prepared_length(
         geometry,
@@ -317,8 +305,7 @@ pub fn perimeter_metered(
 /// # Errors
 /// Refuses a missing reference operation and every incomplete numerical result.
 pub fn area(
-    geometry: &PreparedGeometry,
-    context: &mut MetricContext,
+    geometry: &PreparedGeometry, context: &mut MetricContext,
 ) -> Result<GeometryMetricEstimate, GeoError> {
     area_observed(geometry, context, None)
 }
@@ -328,16 +315,13 @@ pub fn area(
 /// # Errors
 /// Refuses every observer, reference, arrangement or numerical failure.
 pub fn area_metered(
-    geometry: &PreparedGeometry,
-    context: &mut MetricContext,
-    observer: &mut dyn MetricWorkObserver,
+    geometry: &PreparedGeometry, context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
 ) -> Result<GeometryMetricEstimate, GeoError> {
     area_observed(geometry, context, Some(observer))
 }
 
 fn area_observed(
-    geometry: &PreparedGeometry,
-    context: &mut MetricContext,
+    geometry: &PreparedGeometry, context: &mut MetricContext,
     observer: Option<&mut dyn MetricWorkObserver>,
 ) -> Result<GeometryMetricEstimate, GeoError> {
     if geometry.reference() != context.reference() {
@@ -356,15 +340,13 @@ fn area_observed(
 /// # Errors
 /// Refuses a missing reference operation or incomplete arrangement/integration.
 pub fn region_area(
-    region: &PreparedRegion,
-    context: &mut MetricContext,
+    region: &PreparedRegion, context: &mut MetricContext,
 ) -> Result<GeometryMetricEstimate, GeoError> {
     region_area_inner(region, context, None)
 }
 
 fn region_area_inner(
-    region: &PreparedRegion,
-    context: &mut MetricContext,
+    region: &PreparedRegion, context: &mut MetricContext,
     observer: Option<&mut dyn MetricWorkObserver>,
 ) -> Result<GeometryMetricEstimate, GeoError> {
     context.begin(0)?;
@@ -559,9 +541,7 @@ fn region_area_inner(
 }
 
 fn selected_native_area(
-    region: &PreparedRegion,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    region: &PreparedRegion, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<GeometryMetricEstimate, GeoError> {
     let boundary = crate::atlas::arcs::arrangement::native_boundary_in(region, context, progress)?;
     let mut retained = boundary.workspace_receipt();
@@ -614,9 +594,7 @@ fn selected_native_area(
 }
 
 fn prepared_length(
-    geometry: &PreparedGeometry,
-    law: GeometryMetricLaw,
-    context: &mut MetricContext,
+    geometry: &PreparedGeometry, law: GeometryMetricLaw, context: &mut MetricContext,
     observer: Option<&mut dyn MetricWorkObserver>,
 ) -> Result<GeometryMetricEstimate, GeoError> {
     if geometry.reference() != context.reference() {
@@ -828,11 +806,8 @@ fn edge_operand_bits(edge: &PreparedEdge, ellipsoid: &crate::PreparedEllipsoid) 
 }
 
 fn integrate_curve(
-    curve: &PreparedCurve,
-    ellipsoid: &crate::PreparedEllipsoid,
-    (max_depth, max_iterations): (u32, u32),
-    budget: &Rat,
-    math: &mut CoordinateMath,
+    curve: &PreparedCurve, ellipsoid: &crate::PreparedEllipsoid,
+    (max_depth, max_iterations): (u32, u32), budget: &Rat, math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<FixedInterval, MathError> {
     let mut total = FixedInterval::from_i64(0, math)?;
@@ -864,11 +839,8 @@ fn integrate_curve(
 }
 
 fn integrate_image(
-    image: &crate::operation::OperationImageCurve,
-    (max_depth, max_iterations): (u32, u32),
-    budget: &Rat,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    image: &crate::operation::OperationImageCurve, (max_depth, max_iterations): (u32, u32),
+    budget: &Rat, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<FixedInterval, MathError> {
     integrate_image_on(
         image,
@@ -881,11 +853,8 @@ fn integrate_image(
 }
 
 fn integrate_image_on(
-    image: &crate::operation::OperationImageCurve,
-    (max_depth, max_iterations): (u32, u32),
-    budget: &Rat,
-    range: Option<[&Rat; 2]>,
-    math: &mut CoordinateMath,
+    image: &crate::operation::OperationImageCurve, (max_depth, max_iterations): (u32, u32),
+    budget: &Rat, range: Option<[&Rat; 2]>, math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<FixedInterval, MathError> {
     if let Some([start, end]) = image.exact_linear_endpoints_in(range, math, progress)? {
@@ -1029,10 +998,8 @@ fn metric_budget(law: GeometryMetricLaw) -> Rat {
 }
 
 fn metric_error_bound(
-    law: GeometryMetricLaw,
-    value: &Rat,
-    mut admission: Option<&mut crate::numerical::ExactAdmission<'_, '_>>,
-    retained: &mut u64,
+    law: GeometryMetricLaw, value: &Rat,
+    mut admission: Option<&mut crate::numerical::ExactAdmission<'_, '_>>, retained: &mut u64,
 ) -> Result<Rat, GeoError> {
     use purrdf_xsd::integer::ExactOperation;
     let absolute = match law {
@@ -1070,10 +1037,7 @@ fn metric_error_bound(
 }
 
 fn linear_metric(
-    start: &LonLat,
-    end: &LonLat,
-    law: GeometryMetricLaw,
-    context: &mut MetricContext,
+    start: &LonLat, end: &LonLat, law: GeometryMetricLaw, context: &mut MetricContext,
 ) -> Result<GeometryMetricEstimate, GeoError> {
     let ellipsoid = context.reference().ellipsoid().clone();
     let max_depth = context.policy().limits().max_subdivision_levels;
@@ -1103,9 +1067,7 @@ fn linear_metric(
 }
 
 fn complete_metric(
-    law: GeometryMetricLaw,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    law: GeometryMetricLaw, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     mut evaluate: impl FnMut(
         &mut CoordinateMath,
         &mut WorkProgress<'_>,
@@ -1239,13 +1201,8 @@ struct LinearOperands {
 }
 
 pub(crate) fn integrate_linear(
-    edge: (&LonLat, &LonLat),
-    law: GeometryMetricLaw,
-    ellipsoid: &crate::PreparedEllipsoid,
-    max_depth: u32,
-    budget: &Rat,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    edge: (&LonLat, &LonLat), law: GeometryMetricLaw, ellipsoid: &crate::PreparedEllipsoid,
+    max_depth: u32, budget: &Rat, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<FixedInterval, MathError> {
     let (start, end) = edge;
     let zero = FixedInterval::from_i64(0, math)?;
@@ -1332,12 +1289,8 @@ pub(crate) fn integrate_linear(
 }
 
 fn panel_integral(
-    operands: &LinearOperands,
-    law: GeometryMetricLaw,
-    middle: &FixedInterval,
-    interval: &FixedInterval,
-    half: &FixedInterval,
-    math: &mut CoordinateMath,
+    operands: &LinearOperands, law: GeometryMetricLaw, middle: &FixedInterval,
+    interval: &FixedInterval, half: &FixedInterval, math: &mut CoordinateMath,
 ) -> Result<(FixedInterval, FixedInterval), MathError> {
     let panel = purrdf_xsd::math::SymmetricTaylorPanel::new(middle, interval, half, math)?;
     purrdf_xsd::math::integrate_taylor_panel(8, 64, panel, math, |parameter, workspace, math| {
@@ -1346,11 +1299,8 @@ fn panel_integral(
 }
 
 fn evaluate_jet<'scope>(
-    operands: &LinearOperands,
-    law: GeometryMetricLaw,
-    t: &FixedInterval,
-    workspace: &mut TaylorWorkspace<'scope>,
-    math: &mut CoordinateMath,
+    operands: &LinearOperands, law: GeometryMetricLaw, t: &FixedInterval,
+    workspace: &mut TaylorWorkspace<'scope>, math: &mut CoordinateMath,
 ) -> Result<TaylorJet<'scope>, MathError> {
     let one_value = FixedInterval::from_i64(1, math)?;
     let one = workspace.constant(one_value.clone(), math)?;

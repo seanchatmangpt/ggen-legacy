@@ -94,17 +94,14 @@ impl Subsumptions {
     /// Reflexive pairs are never sent to the tableau: `C ⊑ C` holds in every interpretation,
     /// so asking would spend a decision to learn an axiom of the logic.
     pub(crate) fn decide(
-        session: &mut Session<'_>,
-        classes: &[(u32, u32)],
+        session: &mut Session<'_>, classes: &[(u32, u32)],
     ) -> Result<Self, crate::EntailError> {
         Self::decide_until(session, classes, || true)
     }
 
     /// The same matrix, retaining processed cells if the caller cancels.
     pub(super) fn decide_until(
-        session: &mut Session<'_>,
-        classes: &[(u32, u32)],
-        mut poll: impl FnMut() -> bool,
+        session: &mut Session<'_>, classes: &[(u32, u32)], mut poll: impl FnMut() -> bool,
     ) -> Result<Self, crate::EntailError> {
         let kb = session.kb();
         let seeds: Vec<u32> = classes.iter().map(|&(_, concept)| concept).collect();
@@ -191,10 +188,7 @@ impl Subsumptions {
     /// Include native negative/undecided runs for the combined service's run binding.
     /// A negative saturated cell has no signed proof basis and must not become a claim.
     pub(super) fn claims_with_native_decisions(
-        &self,
-        kb: &Kb,
-        classes: &[(u32, u32)],
-        native_decisions: bool,
+        &self, kb: &Kb, classes: &[(u32, u32)], native_decisions: bool,
     ) -> Vec<Claim> {
         debug_assert_eq!(
             self.bases.len(),
@@ -338,10 +332,7 @@ impl ClassHierarchy {
 
     /// Preserve all established pairs; cancellation interrupts only direct reduction.
     pub(super) fn derive_until(
-        kb: &Kb,
-        classes: &[(u32, u32)],
-        m: &Subsumptions,
-        mut poll: impl FnMut() -> bool,
+        kb: &Kb, classes: &[(u32, u32)], m: &Subsumptions, mut poll: impl FnMut() -> bool,
     ) -> Self {
         let name = |i: usize| kb.interner.value(classes[i].0).clone();
         let n = classes.len();

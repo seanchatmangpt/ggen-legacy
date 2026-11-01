@@ -71,8 +71,7 @@ fn declaration(space: &Arc<HnswSpace>) -> purrdf_sparql_eval::RankedDeclaration 
 /// than defaulted, because the top of an axis is the one direction a default
 /// must never go.
 fn declaration_with(
-    space: &Arc<HnswSpace>,
-    vector_order: OrderFidelity,
+    space: &Arc<HnswSpace>, vector_order: OrderFidelity,
 ) -> purrdf_sparql_eval::RankedDeclaration {
     HnswRelation::new(Arc::clone(space)).ranked_declaration(
         stratum(),

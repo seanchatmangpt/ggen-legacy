@@ -403,10 +403,7 @@ crate::debug_non_exhaustive!([const SECURITY: usize] ShakeReader<SECURITY> { pos
 
 /// Feed the one shared block buffer into the one Keccak absorption body.
 fn absorb<const N: usize>(
-    state: &mut [u64; LANES],
-    buffer: &mut BlockBuffer<N>,
-    rate: usize,
-    data: &[u8],
+    state: &mut [u64; LANES], buffer: &mut BlockBuffer<N>, rate: usize, data: &[u8],
 ) {
     buffer.absorb(rate, data, |blocks| absorb_blocks(state, rate, blocks));
 }
@@ -414,10 +411,7 @@ fn absorb<const N: usize>(
 /// Finish either byte-aligned FIPS 202 mode with its delimited suffix and
 /// pad10*1. Its first output block is the state after this last absorption.
 fn finish_absorbing<const N: usize>(
-    state: &mut [u64; LANES],
-    buffer: &mut BlockBuffer<N>,
-    rate: usize,
-    suffix: u8,
+    state: &mut [u64; LANES], buffer: &mut BlockBuffer<N>, rate: usize, suffix: u8,
 ) {
     let (block, filled) = buffer.block_mut(rate);
     block[filled] = suffix;

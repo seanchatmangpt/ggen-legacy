@@ -199,9 +199,7 @@ impl PreparedEllipsoid {
     /// # Errors
     /// Refuses invalid axes and limits before each exact derived operation.
     pub fn new_in_budget(
-        semimajor: Rat,
-        inverse_flattening: Rat,
-        budget: &mut crate::PreparationBudget,
+        semimajor: Rat, inverse_flattening: Rat, budget: &mut crate::PreparationBudget,
     ) -> Result<Self, GeoError> {
         Self::new_in_budget_observed(semimajor, inverse_flattening, budget, None)
     }
@@ -213,18 +211,14 @@ impl PreparedEllipsoid {
     /// # Errors
     /// Preserves invalid axes, native work, cancellation and physical refusal.
     pub fn new_in_budget_metered(
-        semimajor: Rat,
-        inverse_flattening: Rat,
-        budget: &mut crate::PreparationBudget,
+        semimajor: Rat, inverse_flattening: Rat, budget: &mut crate::PreparationBudget,
         observer: &mut dyn crate::MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::new_in_budget_observed(semimajor, inverse_flattening, budget, Some(observer))
     }
 
     fn new_in_budget_observed(
-        semimajor: Rat,
-        inverse_flattening: Rat,
-        budget: &mut crate::PreparationBudget,
+        semimajor: Rat, inverse_flattening: Rat, budget: &mut crate::PreparationBudget,
         observer: Option<&mut dyn crate::MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         let (mut cost, detached) = Self::construction_cost(&semimajor, &inverse_flattening)?;
@@ -269,8 +263,7 @@ impl PreparedEllipsoid {
     }
 
     fn construction_cost(
-        semimajor: &Rat,
-        inverse_flattening: &Rat,
+        semimajor: &Rat, inverse_flattening: &Rat,
     ) -> Result<(purrdf_xsd::integer::ExactArithmeticCost, usize), GeoError> {
         use purrdf_xsd::integer::{ExactArithmeticCost, ExactOperation as Op};
         let a = (
@@ -354,9 +347,7 @@ impl PreparedEllipsoid {
     }
 
     fn new_admitted(
-        semimajor: &Rat,
-        inverse_flattening: &Rat,
-        values: &crate::numerical::ExactValues<'_>,
+        semimajor: &Rat, inverse_flattening: &Rat, values: &crate::numerical::ExactValues<'_>,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> Result<Self, GeoError> {
         if !values
@@ -479,8 +470,7 @@ impl PreparedEllipsoid {
     }
 
     pub(crate) fn flattening_with(
-        &self,
-        values: &crate::numerical::ExactValues<'_>,
+        &self, values: &crate::numerical::ExactValues<'_>,
     ) -> Result<Rat, purrdf_xsd::integer::LimbScratchError> {
         Ok(values
             .reciprocal(&self.inverse_flattening)?
@@ -574,8 +564,7 @@ impl crate::context::NativeDetached for GeographicReference {
     }
 
     fn publish(
-        &mut self,
-        original: &purrdf_lex::allocation::SharedOwned<()>,
+        &mut self, original: &purrdf_lex::allocation::SharedOwned<()>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         self.ellipsoid.publish(original)
     }
@@ -702,8 +691,7 @@ impl GeographicReference {
     /// Hash the original preimage using the caller's one native integer renderer.
     /// Identity caches store only this fixed-width result, never render buffers.
     pub(crate) fn compute_identity_with<E>(
-        &self,
-        mut frame_integer: impl FnMut(&crate::Int, &mut blake3::Hasher) -> Result<(), E>,
+        &self, mut frame_integer: impl FnMut(&crate::Int, &mut blake3::Hasher) -> Result<(), E>,
     ) -> Result<GeoBindingId, E> {
         let axes = match self.axes {
             AxisOrder::LonLat => b"longitude-latitude".as_slice(),
@@ -900,8 +888,7 @@ impl ExecutionPolicy {
 
 /// Hash an injectively framed descriptor without materializing its preimage.
 pub(crate) fn hash_fields<'a>(
-    domain: Domain,
-    fields: impl IntoIterator<Item = &'a [u8]>,
+    domain: Domain, fields: impl IntoIterator<Item = &'a [u8]>,
 ) -> Digest32 {
     let mut hasher = blake3::Hasher::new();
     hasher.update(domain.as_bytes());
@@ -951,10 +938,8 @@ mod tests {
 
     /// One completed distance: its profile identity, certificate and value.
     fn completed(
-        reference: &GeographicReference,
-        limits: ExecutionLimits,
-        backend: Option<purrdf_xsd::math::FloatProductBackend>,
-        prepared: bool,
+        reference: &GeographicReference, limits: ExecutionLimits,
+        backend: Option<purrdf_xsd::math::FloatProductBackend>, prepared: bool,
         pair: &(crate::LonLat, crate::LonLat),
     ) -> (super::GeoBindingId, Vec<u8>, Rat) {
         let policy = ExecutionPolicy::new(limits).unwrap();

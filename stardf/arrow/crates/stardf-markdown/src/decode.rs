@@ -163,9 +163,7 @@ struct NodeFacts {
 /// [`DecodeError::Reconstruct`]: exactly [`reconstruct`]'s refusals,
 /// in exactly its order.
 pub fn decode_document(
-    dataset: &RdfDataset,
-    vocabulary: &Vocabulary,
-    document_id: &str,
+    dataset: &RdfDataset, vocabulary: &Vocabulary, document_id: &str,
 ) -> Result<String, DecodeError> {
     let mut byte_length: Option<u64> = None;
     let mut source_digest: Option<String> = None;

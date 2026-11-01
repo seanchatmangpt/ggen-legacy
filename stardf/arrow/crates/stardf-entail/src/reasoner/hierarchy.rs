@@ -14,11 +14,7 @@ pub(super) struct Relations {
 
 impl Relations {
     pub(super) fn record_pair(
-        &mut self,
-        left: TermValue,
-        right: TermValue,
-        forward: bool,
-        backward: bool,
+        &mut self, left: TermValue, right: TermValue, forward: bool, backward: bool,
     ) {
         if forward {
             self.subsumptions.push((left.clone(), right.clone()));
@@ -32,11 +28,8 @@ impl Relations {
     }
 
     pub(super) fn reduce(
-        &mut self,
-        n: usize,
-        name: &impl Fn(usize) -> TermValue,
-        holds: &impl Fn(usize, usize) -> bool,
-        poll: &mut impl FnMut() -> bool,
+        &mut self, n: usize, name: &impl Fn(usize) -> TermValue,
+        holds: &impl Fn(usize, usize) -> bool, poll: &mut impl FnMut() -> bool,
     ) {
         'derive: {
             // Representatives come from a union-find over the established

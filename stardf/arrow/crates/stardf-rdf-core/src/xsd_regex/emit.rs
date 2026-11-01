@@ -60,9 +60,7 @@ use super::scan::{Scanner, Token};
 /// textual, not aware of any of the rewrites below).
 #[cfg(test)]
 pub(super) fn translate(
-    pattern: &str,
-    dot_all: bool,
-    case_insensitive: bool,
+    pattern: &str, dot_all: bool, case_insensitive: bool,
 ) -> Result<String, XsdRegexError> {
     translate_with(
         pattern,
@@ -180,10 +178,7 @@ fn push_char_ranges(out: &mut String, chars: &[char]) {
 /// Translate under an explicit [`CaseMode`] (see the documentation above,
 /// whose `case_insensitive` is [`CaseMode::EngineFold`]).
 pub(super) fn translate_with(
-    pattern: &str,
-    dot_all: bool,
-    multi_line: bool,
-    case: CaseMode,
+    pattern: &str, dot_all: bool, multi_line: bool, case: CaseMode,
 ) -> Result<Translated, XsdRegexError> {
     let case_insensitive = case == CaseMode::EngineFold;
     let mut shape = ShapeObserver::default();

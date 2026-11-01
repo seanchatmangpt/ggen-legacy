@@ -175,8 +175,7 @@ impl DatasetView for Host {
     }
 
     fn reserve_owned_workspace(
-        &self,
-        bytes: u64,
+        &self, bytes: u64,
     ) -> Option<Result<OwnedWorkspaceReservation<Deleted>, Deleted>> {
         self.storage_live_budget()?;
         Some((|| {
@@ -279,9 +278,7 @@ impl DatasetView for Host {
     purrdf_core::fixed_store_capabilities!(quoted_triples);
 
     fn certified_value_order(
-        &self,
-        left: HostId,
-        right: HostId,
+        &self, left: HostId, right: HostId,
     ) -> Result<Option<std::cmp::Ordering>, Deleted> {
         self.certificates.fetch_add(1, Ordering::Relaxed);
         match self.certificate {
@@ -304,11 +301,7 @@ impl DatasetView for Host {
     fn probe_plan(&self, _: bool, _: bool, _: bool, _: GraphMatch<HostId>) {}
 
     fn quads_for_pattern_with_plan(
-        &self,
-        (): &(),
-        s: Option<HostId>,
-        p: Option<HostId>,
-        o: Option<HostId>,
+        &self, (): &(), s: Option<HostId>, p: Option<HostId>, o: Option<HostId>,
         g: GraphMatch<HostId>,
     ) -> impl Iterator<Item = QuadIds<HostId>> + '_ {
         self.probes.lock().expect("probe lock").push([s, p, o]);

@@ -80,9 +80,7 @@ fn zstd_level(level: Option<i32>) -> CompressionLevel {
 /// Decode one transform. `identity` borrows its input (no copy of the whole
 /// payload); every real codec produces an owned buffer.
 fn decode_one<'a>(
-    codec: &Codec,
-    data: &'a [u8],
-    limit: usize,
+    codec: &Codec, data: &'a [u8], limit: usize,
 ) -> Result<Cow<'a, [u8]>, CodecError> {
     if codec.cls == "encrypt" {
         return Err(CodecError::Unavailable {
@@ -158,9 +156,7 @@ fn dict_compressor(level: Option<i32>, dict: &[u8]) -> Result<DictCompressor, Co
 }
 
 fn encode_zstd_with_dict(
-    data: &[u8],
-    level: Option<i32>,
-    dict: &[u8],
+    data: &[u8], level: Option<i32>, dict: &[u8],
 ) -> Result<Vec<u8>, CodecError> {
     Ok(dict_compressor(level, dict)?.compress_independent_frame(data))
 }
@@ -174,9 +170,7 @@ fn encode_zstd_with_dict(
 /// encoding. That is the whole point: the dictionary buys density without
 /// costing the delta-transfer property.
 fn encode_zstd_rsyncable(
-    data: &[u8],
-    level: Option<i32>,
-    dict: Option<&[u8]>,
+    data: &[u8], level: Option<i32>, dict: Option<&[u8]>,
 ) -> Result<Vec<u8>, CodecError> {
     let mut out = Vec::with_capacity(data.len());
     match dict {
@@ -206,9 +200,7 @@ fn encode_zstd_rsyncable(
 /// Encode one transform. `identity` borrows its input (no copy of the whole
 /// payload); every real codec produces an owned buffer.
 fn encode_one<'a>(
-    name: &str,
-    data: &'a [u8],
-    options: EncodeOptions<'_>,
+    name: &str, data: &'a [u8], options: EncodeOptions<'_>,
 ) -> Result<Cow<'a, [u8]>, CodecError> {
     match name {
         "identity" => Ok(Cow::Borrowed(data)),
@@ -234,9 +226,7 @@ fn encode_one<'a>(
 
 /// Encode `data` through codec names in array order with explicit options (§8.2).
 pub fn encode_chain_with_options(
-    chain: &[String],
-    data: &[u8],
-    options: EncodeOptions<'_>,
+    chain: &[String], data: &[u8], options: EncodeOptions<'_>,
 ) -> Result<Vec<u8>, CodecError> {
     if let Some(level) = options.zstd_level
         && !chain
@@ -347,9 +337,7 @@ fn decoded_limit(limit: usize) -> CodecError {
 /// Returns a codec error for unavailable transforms, corrupt bytes or an output
 /// exceeding `limit`. No oversized decoded buffer is returned or retained.
 pub fn decode_chain_bounded(
-    chain: &[Codec],
-    data: &[u8],
-    limit: usize,
+    chain: &[Codec], data: &[u8], limit: usize,
 ) -> Result<Vec<u8>, CodecError> {
     decode_chain_with_decrypt_bounded(chain, data, None, limit)
 }
@@ -359,9 +347,7 @@ pub type Decryptor<'a> = dyn Fn(&Codec, &[u8]) -> Result<Vec<u8>, CodecError> + 
 
 /// Reverse a resolved codec chain, handing encrypt-class transforms to `decrypt`.
 pub fn decode_chain_with_decrypt(
-    chain: &[Codec],
-    data: &[u8],
-    decrypt: Option<&Decryptor<'_>>,
+    chain: &[Codec], data: &[u8], decrypt: Option<&Decryptor<'_>>,
 ) -> Result<Vec<u8>, CodecError> {
     decode_chain_with_decrypt_bounded(chain, data, decrypt, usize::MAX)
 }
@@ -371,10 +357,7 @@ pub fn decode_chain_with_decrypt(
 /// This internal callback contract is stronger than the public unbounded
 /// decryptor API. Each decrypted output is checked again before the next transform.
 pub(crate) fn decode_chain_with_decrypt_bounded(
-    chain: &[Codec],
-    data: &[u8],
-    decrypt: Option<&Decryptor<'_>>,
-    limit: usize,
+    chain: &[Codec], data: &[u8], decrypt: Option<&Decryptor<'_>>, limit: usize,
 ) -> Result<Vec<u8>, CodecError> {
     let mut current = Cow::Borrowed(data);
     for codec in chain.iter().rev() {

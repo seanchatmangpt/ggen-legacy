@@ -220,10 +220,7 @@ impl<T: NativeDetached, const N: usize> NativeDetached for [T; N] {
 /// owns the original lease intrinsically before this stack carrier is consumed;
 /// the admitted native value shape contains no separate unowned container.
 pub(crate) fn persistent_numeric<T: NativeDetached>(
-    value: T,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    value: T, context: &mut MetricContext, progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<T, GeoError> {
     persistent_numeric_owned(value, context, progress, retained).map(|value| value.value)
 }
@@ -244,9 +241,7 @@ impl<T> PersistentNumeric<T> {
     /// its already admitted allowance once; neither the live charge nor the
     /// original physical owner changes while temporary aliases still exist.
     pub(crate) fn transfer_allowance(
-        &self,
-        temporary: &mut u64,
-        retained: &mut u64,
+        &self, temporary: &mut u64, retained: &mut u64,
     ) -> Result<u64, GeoError> {
         let bytes = self.workspace_bytes.get();
         let remaining = temporary
@@ -275,10 +270,7 @@ impl<T> Deref for PersistentNumeric<T> {
 }
 
 pub(crate) fn persistent_numeric_owned<T: NativeDetached>(
-    value: T,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    value: T, context: &mut MetricContext, progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<PersistentNumeric<T>, GeoError> {
     let result = persistent_numeric_from(&value, context, progress, retained);
     drop(value);
@@ -288,10 +280,7 @@ pub(crate) fn persistent_numeric_owned<T: NativeDetached>(
 /// Copy a borrowed native value inside the original detached factory, rather
 /// than creating an unowned intermediate with a resident deep clone.
 pub(crate) fn persistent_numeric_from<T: NativeDetached>(
-    value: &T,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    value: &T, context: &mut MetricContext, progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<PersistentNumeric<T>, GeoError> {
     let bytes = persistent_numeric_bytes(value, progress)?;
     context.retain_workspace(bytes, retained)?;
@@ -308,8 +297,7 @@ pub(crate) fn persistent_numeric_from<T: NativeDetached>(
 }
 
 pub(crate) fn persistent_numeric_bytes<T: NativeDetached>(
-    value: &T,
-    progress: &WorkProgress<'_>,
+    value: &T, progress: &WorkProgress<'_>,
 ) -> Result<u64, GeoError> {
     numeric_fields_bytes(value.layout_bytes().map_err(GeoError::Storage)?, progress)
 }
@@ -317,8 +305,7 @@ pub(crate) fn persistent_numeric_bytes<T: NativeDetached>(
 /// The shared physical factory; metric and cell budgets keep their own policy
 /// counters around this one original immutable publication body.
 pub(crate) fn produce_persistent_numeric<T: NativeDetached>(
-    value: T,
-    progress: &mut WorkProgress<'_>,
+    value: T, progress: &mut WorkProgress<'_>,
 ) -> Result<PersistentNumeric<T>, GeoError> {
     let result = produce_persistent_numeric_from(&value, progress);
     drop(value);
@@ -328,8 +315,7 @@ pub(crate) fn produce_persistent_numeric<T: NativeDetached>(
 /// Copy a borrowed original operand only inside its actual detached factory.
 /// A failure diagnostic must not first deep-clone caller-owned magnitude limbs.
 pub(crate) fn produce_persistent_numeric_from<T: NativeDetached>(
-    value: &T,
-    progress: &mut WorkProgress<'_>,
+    value: &T, progress: &mut WorkProgress<'_>,
 ) -> Result<PersistentNumeric<T>, GeoError> {
     produce_persistent_numeric_fields(
         value.layout_bytes().map_err(GeoError::Storage)?,
@@ -342,9 +328,7 @@ pub(crate) fn produce_persistent_numeric_from<T: NativeDetached>(
 /// The caller certifies the sum of those fields' native layouts before this
 /// same factory runs; no resident intermediate clone precedes admission.
 pub(crate) fn persistent_numeric_fields<T: NativeDetached>(
-    payload_bytes: usize,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    payload_bytes: usize, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     retained: &mut u64,
     make: impl FnOnce(&mut Memory<'_, dyn Admission + '_>) -> Result<T, GeoError>,
 ) -> Result<T, GeoError> {
@@ -361,8 +345,7 @@ pub(crate) fn persistent_numeric_fields<T: NativeDetached>(
 }
 
 fn numeric_fields_bytes(
-    payload_bytes: usize,
-    progress: &WorkProgress<'_>,
+    payload_bytes: usize, progress: &WorkProgress<'_>,
 ) -> Result<u64, GeoError> {
     if payload_bytes == 0 {
         return Ok(0);
@@ -374,8 +357,7 @@ fn numeric_fields_bytes(
 }
 
 pub(crate) fn produce_persistent_numeric_fields<T: NativeDetached>(
-    payload_bytes: usize,
-    progress: &mut WorkProgress<'_>,
+    payload_bytes: usize, progress: &mut WorkProgress<'_>,
     make: impl FnOnce(&mut Memory<'_, dyn Admission + '_>) -> Result<T, GeoError>,
 ) -> Result<PersistentNumeric<T>, GeoError> {
     let bytes = numeric_fields_bytes(payload_bytes, progress)?;
@@ -483,9 +465,7 @@ impl<S> fmt::Debug for RetainedProductionFailure<S> {
 /// Returns an ownership-carrying cause, or the original refusal together with
 /// the unpublished storage capability. Storage is never duplicated or replaced.
 pub fn retain_produced_with_storage<S: Admission + Send + Sync + 'static>(
-    control: Layout,
-    producer: &mut dyn RetainedAllocationProducer,
-    mut storage: S,
+    control: Layout, producer: &mut dyn RetainedAllocationProducer, mut storage: S,
 ) -> Result<SharedOwned<()>, RetainedProductionFailure<S>> {
     let result = {
         let mut memory = Memory::new(&mut storage as &mut dyn Admission);
@@ -583,10 +563,7 @@ pub(crate) struct Produced<T> {
 /// Returns the original cause or the first physical refusal. An unpriced cause
 /// is a hard ownership error, never a resident-copy fallback.
 pub fn retain_failure_with_storage<S: Admission + Send + Sync + 'static>(
-    error: GeoError,
-    storage: &mut S,
-    replacement: S,
-    admitted: usize,
+    error: GeoError, storage: &mut S, replacement: S, admitted: usize,
 ) -> GeoError {
     let bytes = match error.native_text_bytes() {
         Ok(bytes) => bytes,
@@ -643,8 +620,7 @@ impl<T> Retained<T> {
     /// original account. Both controls are admitted before transfer; failure
     /// destroys the payload while that original account remains live.
     pub(crate) fn publish_original(
-        value: T,
-        progress: &mut WorkProgress<'_>,
+        value: T, progress: &mut WorkProgress<'_>,
     ) -> Result<Self, GeoError> {
         let (allocation, admitted_bytes) = progress.retain_current(Self::allocation_layout())?;
         let mut pending = Some(Produced {
@@ -692,10 +668,7 @@ impl<T> Retained<T> {
     }
 
     pub(crate) fn new_admitted(
-        value: T,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
-        retained: &mut u64,
+        value: T, context: &mut MetricContext, progress: &mut WorkProgress<'_>, retained: &mut u64,
     ) -> Result<Self, GeoError> {
         let bytes = Self::required_bytes(progress)?;
         context.retain_workspace(bytes, retained)?;
@@ -712,11 +685,8 @@ impl<T> Retained<T> {
     /// its exact control layout. Payload buffers retain their own original
     /// scalar owners; the enclosing phase destroys this control before refund.
     pub(crate) fn new_in_math(
-        value: T,
-        math: &mut purrdf_xsd::math::CoordinateMath,
-        progress: &mut WorkProgress<'_>,
-        retained: &mut usize,
-        policy: crate::ExecutionPolicy,
+        value: T, math: &mut purrdf_xsd::math::CoordinateMath, progress: &mut WorkProgress<'_>,
+        retained: &mut usize, policy: crate::ExecutionPolicy,
     ) -> Result<Self, GeoError> {
         let bytes = usize::try_from(Self::required_bytes(progress)?)
             .map_err(|_| GeoError::Storage(StorageError::SizeOverflow))?;
@@ -772,8 +742,7 @@ impl<T> Produced<T> {
     }
 
     pub(crate) fn produce(
-        progress: &mut WorkProgress<'_>,
-        control: Layout,
+        progress: &mut WorkProgress<'_>, control: Layout,
         make: impl FnOnce(&mut Memory<'_, dyn Admission + '_>) -> Result<T, GeoError>,
         publish: impl FnOnce(&mut T, &SharedOwned<()>) -> Result<(), GeoError>,
     ) -> Result<Self, GeoError> {
@@ -787,8 +756,7 @@ impl<T> Produced<T> {
             F: FnOnce(&mut Memory<'_, dyn Admission + '_>) -> Result<T, GeoError>,
         {
             fn produce(
-                &mut self,
-                memory: &mut Memory<'_, dyn Admission + '_>,
+                &mut self, memory: &mut Memory<'_, dyn Admission + '_>,
             ) -> Result<(), GeoError> {
                 self.value = Some(self.make.take().expect("one retained factory")(memory)?);
                 self.admitted_bytes = memory.admitted_bytes();
@@ -983,8 +951,7 @@ impl<T> RetainedValues<T> {
     /// The original Vec moves once; no slice copy or allocation replacement is
     /// used to publish it. Its original owner lives through buffer destruction.
     pub(crate) fn from_vec(
-        values: Vec<T>,
-        progress: &mut WorkProgress<'_>,
+        values: Vec<T>, progress: &mut WorkProgress<'_>,
     ) -> Result<Self, GeoError> {
         Self::from_vec_with(values, progress, |_, _| Ok(()), |_, _| Ok(()))
     }
@@ -993,8 +960,7 @@ impl<T> RetainedValues<T> {
     /// The native callback admits any sorting scratch and detached cell payload
     /// before birth; publication keeps that one original account on each cell.
     pub(crate) fn from_vec_with(
-        mut values: Vec<T>,
-        progress: &mut WorkProgress<'_>,
+        mut values: Vec<T>, progress: &mut WorkProgress<'_>,
         prepare: impl FnOnce(&mut Vec<T>, &mut Memory<'_, dyn Admission + '_>) -> Result<(), GeoError>,
         publish: impl FnOnce(&mut Vec<T>, &SharedOwned<()>) -> Result<(), GeoError>,
     ) -> Result<Self, GeoError> {
@@ -1020,10 +986,7 @@ impl<T> RetainedValues<T> {
     /// Each row callback must preserve intrinsic payload owners; this home
     /// admits the actual new table and control before the first row is copied.
     pub(crate) fn inserted_with(
-        &self,
-        index: usize,
-        value: T,
-        progress: &mut WorkProgress<'_>,
+        &self, index: usize, value: T, progress: &mut WorkProgress<'_>,
         mut copy: impl FnMut(&T) -> Result<T, GeoError>,
     ) -> Result<Self, GeoError> {
         let required = self
@@ -1177,9 +1140,7 @@ impl<T> RetainedBuilder<T> {
     /// # Errors
     /// Preserves checked layout, cumulative work/storage and allocator refusal.
     pub fn push_in_budget(
-        &mut self,
-        value: T,
-        budget: &mut crate::PreparationBudget,
+        &mut self, value: T, budget: &mut crate::PreparationBudget,
     ) -> Result<(), GeoError> {
         budget.retain(1, 0)?;
         let required = self
@@ -1209,10 +1170,7 @@ impl<T> RetainedBuilder<T> {
         self
     }
     pub(crate) fn reserve_metadata_admitted(
-        &mut self,
-        additional: usize,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &mut self, additional: usize, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
         retained: &mut u64,
     ) -> Result<(), GeoError> {
         crate::carrier::reserve_metadata(&mut (self, retained), additional, context, progress)
@@ -1227,9 +1185,7 @@ impl<T> RetainedBuilder<T> {
     }
 
     pub(crate) fn replacement_bytes(
-        &self,
-        required: usize,
-        progress: &WorkProgress<'_>,
+        &self, required: usize, progress: &WorkProgress<'_>,
     ) -> Result<Option<usize>, GeoError> {
         if required <= self.capacity() {
             return Ok(None);
@@ -1247,9 +1203,7 @@ impl<T> RetainedBuilder<T> {
     }
 
     pub(crate) fn reserve(
-        &mut self,
-        required: usize,
-        progress: &mut WorkProgress<'_>,
+        &mut self, required: usize, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         if required <= self.capacity() {
             return Ok(());
@@ -1282,9 +1236,7 @@ impl<T> RetainedBuilder<T> {
     }
 
     pub(crate) fn push(
-        &mut self,
-        value: T,
-        progress: &mut WorkProgress<'_>,
+        &mut self, value: T, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         let required = self
             .len()
@@ -1312,10 +1264,7 @@ impl<T> RetainedBuilder<T> {
     }
 
     pub(crate) fn reserve_admitted(
-        &mut self,
-        required: usize,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &mut self, required: usize, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
         retained: &mut u64,
     ) -> Result<(), GeoError> {
         let Some(bytes) = self.replacement_bytes(required, progress)? else {
@@ -1342,10 +1291,7 @@ impl<T> RetainedBuilder<T> {
     /// The ordinary native replacement body destroys the old buffer before the
     /// baseline changes; both physical owners are admitted during that overlap.
     pub(crate) fn reserve_prepared(
-        &mut self,
-        required: usize,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &mut self, required: usize, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         let Some(bytes) = self.replacement_bytes(required, progress)? else {
             return Ok(());
@@ -1378,10 +1324,7 @@ impl<T> RetainedBuilder<T> {
     }
 
     pub(crate) fn push_admitted(
-        &mut self,
-        value: T,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &mut self, value: T, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
         retained: &mut u64,
     ) -> Result<(), GeoError> {
         let required = self
@@ -1395,12 +1338,8 @@ impl<T> RetainedBuilder<T> {
     /// Use the same original buffer replacement inside a numerical phase.
     /// Both policy reservations stay live until the old buffer is destroyed.
     pub(crate) fn reserve_in_math(
-        &mut self,
-        required: usize,
-        math: &mut purrdf_xsd::math::CoordinateMath,
-        progress: &mut WorkProgress<'_>,
-        retained: &mut usize,
-        policy: crate::ExecutionPolicy,
+        &mut self, required: usize, math: &mut purrdf_xsd::math::CoordinateMath,
+        progress: &mut WorkProgress<'_>, retained: &mut usize, policy: crate::ExecutionPolicy,
     ) -> Result<(), GeoError> {
         self.reserve_numerical(required, math, progress, retained)
             .map_err(|error| crate::numerical::geo_math_error(&error, policy))
@@ -1408,11 +1347,8 @@ impl<T> RetainedBuilder<T> {
 
     /// Preserve the original typed numerical seam while sharing native growth.
     pub(crate) fn reserve_numerical(
-        &mut self,
-        required: usize,
-        math: &mut purrdf_xsd::math::CoordinateMath,
-        progress: &mut WorkProgress<'_>,
-        retained: &mut usize,
+        &mut self, required: usize, math: &mut purrdf_xsd::math::CoordinateMath,
+        progress: &mut WorkProgress<'_>, retained: &mut usize,
     ) -> Result<(), purrdf_xsd::math::MathError> {
         use purrdf_xsd::math::MathError;
         let Some(bytes) = self
@@ -1440,23 +1376,16 @@ impl<T> RetainedBuilder<T> {
     }
 
     pub(crate) fn push_in_math(
-        &mut self,
-        value: T,
-        math: &mut purrdf_xsd::math::CoordinateMath,
-        progress: &mut WorkProgress<'_>,
-        retained: &mut usize,
-        policy: crate::ExecutionPolicy,
+        &mut self, value: T, math: &mut purrdf_xsd::math::CoordinateMath,
+        progress: &mut WorkProgress<'_>, retained: &mut usize, policy: crate::ExecutionPolicy,
     ) -> Result<(), GeoError> {
         self.push_numerical(value, math, progress, retained)
             .map_err(|error| crate::numerical::geo_math_error(&error, policy))
     }
 
     pub(crate) fn push_numerical(
-        &mut self,
-        value: T,
-        math: &mut purrdf_xsd::math::CoordinateMath,
-        progress: &mut WorkProgress<'_>,
-        retained: &mut usize,
+        &mut self, value: T, math: &mut purrdf_xsd::math::CoordinateMath,
+        progress: &mut WorkProgress<'_>, retained: &mut usize,
     ) -> Result<(), purrdf_xsd::math::MathError> {
         let required = self
             .len()
@@ -1470,9 +1399,7 @@ impl<T> RetainedBuilder<T> {
     }
 
     pub(crate) fn release_admitted(
-        self,
-        context: &mut MetricContext,
-        retained: &mut u64,
+        self, context: &mut MetricContext, retained: &mut u64,
     ) -> Result<(), GeoError> {
         let bytes = u64::try_from(self.admitted_bytes())
             .map_err(|_| GeoError::Storage(StorageError::SizeOverflow))?;
@@ -1484,10 +1411,7 @@ impl<T> RetainedBuilder<T> {
     /// owner until the consuming iterator actually dies. Both arrays use the
     /// enclosing producer's checked policy receipt; moved cell owners survive.
     pub(crate) fn append_admitted(
-        &mut self,
-        source: Self,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &mut self, source: Self, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
         retained: &mut u64,
     ) -> Result<(), GeoError> {
         let previous = u64::try_from(source.admitted_bytes())
@@ -1526,8 +1450,7 @@ impl<T> RetainedBuilder<T> {
     }
 
     pub(crate) fn dedup_by<E>(
-        &mut self,
-        same: impl FnMut(&T, &T) -> Result<bool, E>,
+        &mut self, same: impl FnMut(&T, &T) -> Result<bool, E>,
     ) -> Result<(), E> {
         let kept = purrdf_lex::walk::try_partition_unique_by(self, same)?;
         self.truncate(kept);
@@ -1914,8 +1837,7 @@ mod tests {
             error
         }
         fn native_storage(
-            &mut self,
-            producer: &mut dyn crate::NativeStorageProducer,
+            &mut self, producer: &mut dyn crate::NativeStorageProducer,
         ) -> Result<(), GeoError> {
             let admitted = self.1.live;
             let mut work = Self(
@@ -1928,8 +1850,7 @@ mod tests {
             producer.produce(&mut Memory::resume(&mut self.1, admitted), &mut work)
         }
         fn retain_current(
-            &mut self,
-            control: Layout,
+            &mut self, control: Layout,
         ) -> Result<(SharedOwned<()>, usize), GeoError> {
             let admitted = self.1.live;
             let replacement = Owner {
@@ -1948,9 +1869,7 @@ mod tests {
         }
 
         fn retain_produced(
-            &mut self,
-            control: Layout,
-            producer: &mut dyn RetainedAllocationProducer,
+            &mut self, control: Layout, producer: &mut dyn RetainedAllocationProducer,
         ) -> Result<SharedOwned<()>, GeoError> {
             retain_produced_with_storage(
                 control,
@@ -1969,9 +1888,7 @@ mod tests {
         }
 
         fn prepare_integer_scratch(
-            &mut self,
-            buffers: usize,
-            limbs: usize,
+            &mut self, buffers: usize, limbs: usize,
         ) -> Result<purrdf_xsd::integer::LimbScratch, GeoError> {
             purrdf_xsd::integer::LimbScratch::new_with_storage(
                 buffers,
@@ -2115,25 +2032,19 @@ mod tests {
         struct Identity;
         impl RootSystem2 for Identity {
             fn image(
-                &mut self,
-                domain: &RootBox2,
-                _: &mut CoordinateMath,
+                &mut self, domain: &RootBox2, _: &mut CoordinateMath,
             ) -> Result<RootBox2, MathError> {
                 Ok(domain.clone())
             }
             fn jacobian(
-                &mut self,
-                _: &RootBox2,
-                math: &mut CoordinateMath,
+                &mut self, _: &RootBox2, math: &mut CoordinateMath,
             ) -> Result<RootJacobian2, MathError> {
                 let zero = FixedInterval::from_i64(0, math)?;
                 let one = FixedInterval::from_i64(1, math)?;
                 Ok([[one.clone(), zero.clone()], [zero, one]])
             }
             fn complete(
-                &mut self,
-                enclosure: &RootBox2,
-                _: &mut CoordinateMath,
+                &mut self, enclosure: &RootBox2, _: &mut CoordinateMath,
             ) -> Result<bool, MathError> {
                 Ok(enclosure.iter().all(|value| value.lower() == value.upper()))
             }

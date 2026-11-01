@@ -638,10 +638,7 @@ impl GtsFoldView {
     /// candidate is returned with its public tag. Returns `(String::new(),
     /// None)` when no literal matches.
     pub fn public_literal(
-        &self,
-        s_tid: usize,
-        p_iri: &str,
-        scope: Option<&str>,
+        &self, s_tid: usize, p_iri: &str, scope: Option<&str>,
     ) -> (String, Option<String>) {
         let mut candidates: Vec<usize> = self
             .objects(s_tid, p_iri, scope)
@@ -676,11 +673,7 @@ impl GtsFoldView {
     /// English, then the best other tagged candidate, then an untagged one —
     /// with the flag set to `true`.
     pub fn public_literal_with_fallback(
-        &self,
-        s_tid: usize,
-        p_iri: &str,
-        requested: &[String],
-        scope: Option<&str>,
+        &self, s_tid: usize, p_iri: &str, requested: &[String], scope: Option<&str>,
     ) -> (String, Option<String>, bool) {
         let candidates: Vec<usize> = self
             .objects(s_tid, p_iri, scope)
@@ -697,11 +690,7 @@ impl GtsFoldView {
     /// row is returned using the [`GtsFoldView::public_literal_with_fallback`]
     /// ordering.
     pub fn public_texts(
-        &self,
-        s_tid: usize,
-        p_iri: &str,
-        requested: &[String],
-        scope: Option<&str>,
+        &self, s_tid: usize, p_iri: &str, requested: &[String], scope: Option<&str>,
     ) -> Vec<(String, Option<String>, bool)> {
         let candidates: Vec<usize> = self
             .objects(s_tid, p_iri, scope)
@@ -802,9 +791,7 @@ impl GtsFoldView {
     }
 
     fn select_literal(
-        &self,
-        candidates: &[usize],
-        requested: &[String],
+        &self, candidates: &[usize], requested: &[String],
     ) -> Option<(String, Option<String>, bool)> {
         if candidates.is_empty() {
             return None;
@@ -820,9 +807,7 @@ impl GtsFoldView {
     }
 
     fn filter_literals(
-        &self,
-        candidates: &[usize],
-        requested: &[String],
+        &self, candidates: &[usize], requested: &[String],
     ) -> Vec<(String, Option<String>, bool)> {
         if candidates.is_empty() {
             return Vec::new();
@@ -844,8 +829,7 @@ impl GtsFoldView {
     }
 
     fn fallback_literal(
-        &self,
-        by_bcp: &BTreeMap<String, Vec<LitRow>>,
+        &self, by_bcp: &BTreeMap<String, Vec<LitRow>>,
     ) -> Option<(String, Option<String>, bool)> {
         if let Some(rows) = by_bcp.get("en") {
             let (text, bcp, _) = &rows[0];

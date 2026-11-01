@@ -47,10 +47,7 @@ enum Frame<'v> {
 
 /// The line break and indentation of a nesting depth (pretty only).
 fn line_break<S: Admission + ?Sized>(
-    out: &mut String,
-    unit: &str,
-    depth: usize,
-    memory: &mut Memory<'_, S>,
+    out: &mut String, unit: &str, depth: usize, memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     memory.push_char(out, '\n')?;
     for _ in 0..depth {
@@ -62,10 +59,7 @@ fn line_break<S: Admission + ?Sized>(
 /// Write a scalar, or open its original container onto the admitted work list.
 #[inline]
 fn write_value<'v, S: Admission + ?Sized>(
-    out: &mut String,
-    value: &'v Value,
-    escapes: JsonEscapes,
-    frames: &mut Vec<Frame<'v>>,
+    out: &mut String, value: &'v Value, escapes: JsonEscapes, frames: &mut Vec<Frame<'v>>,
     memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     match value {
@@ -105,10 +99,7 @@ pub fn write_into(out: &mut String, value: &Value, format: Format<'_>) {
 ///
 /// Returns checked layout, allocator or original admission refusal.
 pub fn write_into_with_memory<S: Admission + ?Sized>(
-    out: &mut String,
-    value: &Value,
-    format: Format<'_>,
-    memory: &mut Memory<'_, S>,
+    out: &mut String, value: &Value, format: Format<'_>, memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     let baseline = memory.admitted_bytes();
     let output_capacity = out.capacity();
@@ -172,9 +163,7 @@ pub fn write_into_with_memory<S: Admission + ?Sized>(
 ///
 /// Returns the original physical refusal; failed output dies before refund.
 pub fn write_with_memory<S: Admission + ?Sized>(
-    value: &Value,
-    format: Format<'_>,
-    memory: &mut Memory<'_, S>,
+    value: &Value, format: Format<'_>, memory: &mut Memory<'_, S>,
 ) -> Result<String, StorageError> {
     memory.scope(|memory| {
         let mut out = String::new();

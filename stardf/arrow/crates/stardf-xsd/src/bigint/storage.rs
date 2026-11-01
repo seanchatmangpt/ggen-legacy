@@ -64,8 +64,7 @@ impl Mag {
 
     /// A fully sized native arithmetic destination, refusing physical allocation.
     pub(crate) fn try_destination(
-        capacity: usize,
-        length: usize,
+        capacity: usize, length: usize,
     ) -> Result<Self, super::LimbScratchError> {
         if length > capacity {
             return Err(super::LimbScratchError::SizeOverflow);

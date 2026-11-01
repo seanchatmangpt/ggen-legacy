@@ -221,10 +221,7 @@ impl ShapesImports {
     /// already names a document, since keeping either would be a choice made on the
     /// caller's behalf.
     pub fn insert(
-        &mut self,
-        iri: &str,
-        dataset: Arc<RdfDataset>,
-        prefixes: Vec<(String, String)>,
+        &mut self, iri: &str, dataset: Arc<RdfDataset>, prefixes: Vec<(String, String)>,
     ) -> Result<(), ShapesImportError> {
         self.map
             .try_insert(iri, dataset)
@@ -306,9 +303,7 @@ impl ShapesImports {
     ///
     /// [`ShapesImportError::InvalidLink`] when a link's value is not an IRI.
     pub fn link_data_graph<D: DatasetView<ReadError = std::convert::Infallible>>(
-        &mut self,
-        data: &D,
-        loaded: &[&str],
+        &mut self, data: &D, loaded: &[&str],
     ) -> Result<(), ShapesImportError> {
         for link in data_graph_links(data, loaded)? {
             if !self.links.contains(&link) {
@@ -672,9 +667,7 @@ pub struct ResolvedShapesGraph {
 /// pair of graphs of the closure that are two versions of one series or of which one
 /// declares `owl:incompatibleWith` the other.
 pub fn resolve_shapes_imports(
-    dataset: &Arc<RdfDataset>,
-    prefixes: &[(String, String)],
-    loaded: &[&str],
+    dataset: &Arc<RdfDataset>, prefixes: &[(String, String)], loaded: &[&str],
     imports: &ShapesImports,
 ) -> Result<ResolvedShapesGraph, ShapesImportError> {
     let widened;
@@ -765,8 +758,7 @@ pub fn resolve_shapes_imports(
 ///
 /// [`ShapesImportError::InvalidLink`] naming every anchor's value that is not an IRI.
 pub fn data_graph_links<D: DatasetView<ReadError = std::convert::Infallible>>(
-    data: &D,
-    loaded: &[&str],
+    data: &D, loaded: &[&str],
 ) -> Result<Vec<String>, ShapesImportError> {
     data_graph_links_by(data, &TermValue::iri(SH_SHAPES_GRAPH_LINK), loaded)
 }
@@ -774,9 +766,7 @@ pub fn data_graph_links<D: DatasetView<ReadError = std::convert::Infallible>>(
 /// [`data_graph_links`] with the `sh:shapesGraph` term already built, so a caller reading
 /// several graphs spells it once.
 pub(crate) fn data_graph_links_by<D: DatasetView<ReadError = std::convert::Infallible>>(
-    data: &D,
-    link: &TermValue,
-    loaded: &[&str],
+    data: &D, link: &TermValue, loaded: &[&str],
 ) -> Result<Vec<String>, ShapesImportError> {
     let Some(predicate) = data.term_id_by_value(link).unwrap() else {
         return Ok(Vec::new());
@@ -841,9 +831,7 @@ pub(crate) fn data_graph_links_by<D: DatasetView<ReadError = std::convert::Infal
 /// [`ShapesImportError::InvalidLink`] for a non-IRI link value;
 /// [`ShapesImportError::UnheldLink`] naming every linked graph `shapes` does not hold.
 pub fn check_data_graph_links<D: DatasetView<ReadError = std::convert::Infallible>>(
-    data: &D,
-    loaded: &[&str],
-    shapes: &crate::shapes::Shapes,
+    data: &D, loaded: &[&str], shapes: &crate::shapes::Shapes,
 ) -> Result<(), ShapesImportError> {
     let links = data_graph_links(data, loaded)?;
     if links.is_empty() {
@@ -905,8 +893,7 @@ mod tests {
     /// The `(focus node, result path)` of every result of validating [`DATA`] against
     /// `shapes`, read under [`SHAPES_IRI`] with `imports`.
     fn results(
-        shapes: &str,
-        imports: &ShapesImports,
+        shapes: &str, imports: &ShapesImports,
     ) -> Result<Vec<(String, String)>, ShapesError> {
         let report = validate_graphs_with_config(
             DATA,

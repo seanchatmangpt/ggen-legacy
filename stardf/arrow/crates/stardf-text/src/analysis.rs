@@ -293,9 +293,7 @@ impl Analyzer {
     }
 
     pub(crate) fn terms_owned(
-        &self,
-        input: &str,
-        workspace: &WorkspaceCapability,
+        &self, input: &str, workspace: &WorkspaceCapability,
     ) -> Result<AdmittedVec<QueryString>, TextError> {
         let mut scratch = AnalyzerScratch::default();
         scratch.normalization.workspace = workspace.clone();
@@ -307,9 +305,7 @@ impl Analyzer {
     }
 
     pub(crate) fn analysis_form_owned(
-        &self,
-        input: &str,
-        workspace: &WorkspaceCapability,
+        &self, input: &str, workspace: &WorkspaceCapability,
     ) -> Result<QueryString, TextError> {
         let mut scratch = NormalizationScratch {
             workspace: workspace.clone(),
@@ -333,10 +329,7 @@ impl Analyzer {
     /// # Errors
     /// Propagates analysis refusal before invoking the sink.
     pub fn analyze_each(
-        &self,
-        input: &str,
-        scratch: &mut String,
-        mut sink: impl FnMut(Token<'_>),
+        &self, input: &str, scratch: &mut String, mut sink: impl FnMut(Token<'_>),
     ) -> Result<(), TextError> {
         let mut buffers = AnalyzerScratch::default();
         std::mem::swap(scratch, &mut buffers.normalization.output);
@@ -351,10 +344,7 @@ impl Analyzer {
     /// # Errors
     /// Strict input errors and position exhaustion are refused before the sink runs.
     pub fn analyze_each_with_scratch(
-        &self,
-        input: &str,
-        scratch: &mut AnalyzerScratch,
-        mut sink: impl FnMut(Token<'_>),
+        &self, input: &str, scratch: &mut AnalyzerScratch, mut sink: impl FnMut(Token<'_>),
     ) -> Result<(), TextError> {
         self.analyze_into(input, scratch, &mut |token| {
             sink(token);
@@ -362,9 +352,7 @@ impl Analyzer {
         })
     }
     fn analyze_into(
-        &self,
-        input: &str,
-        scratch: &mut AnalyzerScratch,
+        &self, input: &str, scratch: &mut AnalyzerScratch,
         sink: &mut impl FnMut(Token<'_>) -> Result<(), TextError>,
     ) -> Result<(), TextError> {
         normalize_into(
@@ -595,10 +583,7 @@ impl Analyzer {
         &text[..end]
     }
     fn fill_word_ranges(
-        &self,
-        text: &str,
-        split_punctuation: bool,
-        ranges: &mut Vec<Range<usize>>,
+        &self, text: &str, split_punctuation: bool, ranges: &mut Vec<Range<usize>>,
         segmentation: &mut SegmentationScratch,
     ) {
         ranges.clear();
@@ -619,12 +604,8 @@ impl Analyzer {
         );
     }
     fn segment_run(
-        &self,
-        text: &str,
-        range: Range<usize>,
-        split_punctuation: bool,
-        out: &mut Vec<Range<usize>>,
-        segmentation: &mut SegmentationScratch,
+        &self, text: &str, range: Range<usize>, split_punctuation: bool,
+        out: &mut Vec<Range<usize>>, segmentation: &mut SegmentationScratch,
     ) {
         let mut begin = range.start;
         for (relative, c) in text[range.clone()].char_indices() {
@@ -637,11 +618,7 @@ impl Analyzer {
         self.segment_chunk(text, begin..range.end, split_punctuation, out, segmentation);
     }
     fn segment_chunk(
-        &self,
-        text: &str,
-        range: Range<usize>,
-        tailor: bool,
-        out: &mut Vec<Range<usize>>,
+        &self, text: &str, range: Range<usize>, tailor: bool, out: &mut Vec<Range<usize>>,
         segmentation: &mut SegmentationScratch,
     ) {
         let part = &text[range.clone()];
@@ -740,9 +717,7 @@ struct DecodedOwner<'a> {
 }
 
 fn decode_owned<'a>(
-    input: &'a str,
-    mode: purrdf_lex::html::Mode,
-    workspace: &WorkspaceCapability,
+    input: &'a str, mode: purrdf_lex::html::Mode, workspace: &WorkspaceCapability,
 ) -> Result<DecodedOwner<'a>, TextError> {
     // The reader/counter are shared at the HTML home; this does not decode once
     // unpriced just to discover what the subsequent allocation would require.
@@ -802,11 +777,8 @@ impl Alignment for Unaligned {
 }
 
 fn normalize_into<A: Alignment>(
-    input: &str,
-    mode: InputMode,
-    accent: AccentFold,
-    scratch: &mut NormalizationScratch<A::Metadata>,
-    alignment: &mut A,
+    input: &str, mode: InputMode, accent: AccentFold,
+    scratch: &mut NormalizationScratch<A::Metadata>, alignment: &mut A,
 ) -> Result<(), TextError> {
     admit_source_size_owned(input.len(), "analysis input", &scratch.workspace)?;
     scratch.output.clear();
@@ -986,11 +958,8 @@ fn normalize_into<A: Alignment>(
 }
 
 fn emit_scalars_owned<A: Alignment>(
-    output: &mut String,
-    scalars: &[TaggedScalar<A::Metadata>],
-    alignment: &mut A,
-    workspace: &WorkspaceCapability,
-    allocation: &mut Option<WorkspaceAllocation>,
+    output: &mut String, scalars: &[TaggedScalar<A::Metadata>], alignment: &mut A,
+    workspace: &WorkspaceCapability, allocation: &mut Option<WorkspaceAllocation>,
 ) -> Result<(), TextError> {
     let added = scalars
         .iter()
@@ -1065,21 +1034,16 @@ fn normalize_run_owned<M: Copy>(
     scalars: &mut Vec<TaggedScalar<M>>,
     scratch_and_owner: (&mut Vec<TaggedScalar<M>>, &mut Option<WorkspaceAllocation>),
     order_and_owner: (&mut Vec<usize>, &mut Option<WorkspaceAllocation>),
-    scalar_owner: &mut Option<WorkspaceAllocation>,
-    accent: AccentFold,
-    workspace: &WorkspaceCapability,
-    merge: impl FnMut(&mut M, M),
+    scalar_owner: &mut Option<WorkspaceAllocation>, accent: AccentFold,
+    workspace: &WorkspaceCapability, merge: impl FnMut(&mut M, M),
 ) -> Result<(), TextError> {
     let (scratch, scratch_owner) = scratch_and_owner;
     let (order, order_owner) = order_and_owner;
     fn decompose<const COMPAT: bool, M: Copy>(
-        scalars: &mut Vec<TaggedScalar<M>>,
-        scratch: &mut Vec<TaggedScalar<M>>,
-        order: &mut Vec<usize>,
-        scalar_owner: &mut Option<WorkspaceAllocation>,
+        scalars: &mut Vec<TaggedScalar<M>>, scratch: &mut Vec<TaggedScalar<M>>,
+        order: &mut Vec<usize>, scalar_owner: &mut Option<WorkspaceAllocation>,
         scratch_owner: &mut Option<WorkspaceAllocation>,
-        order_owner: &mut Option<WorkspaceAllocation>,
-        workspace: &WorkspaceCapability,
+        order_owner: &mut Option<WorkspaceAllocation>, workspace: &WorkspaceCapability,
     ) -> Result<(), TextError> {
         let count =
             purrdf_lex::unicode::decomposed_len::<COMPAT, _>(scalars).ok_or_else(overflow)?;
@@ -1090,11 +1054,9 @@ fn normalize_run_owned<M: Copy>(
         Ok(())
     }
     fn fold<M: Copy>(
-        scalars: &mut Vec<TaggedScalar<M>>,
-        scratch: &mut Vec<TaggedScalar<M>>,
+        scalars: &mut Vec<TaggedScalar<M>>, scratch: &mut Vec<TaggedScalar<M>>,
         scalar_owner: &mut Option<WorkspaceAllocation>,
-        scratch_owner: &mut Option<WorkspaceAllocation>,
-        workspace: &WorkspaceCapability,
+        scratch_owner: &mut Option<WorkspaceAllocation>, workspace: &WorkspaceCapability,
     ) -> Result<(), TextError> {
         let mut count = Some(0usize);
         for scalar in scalars.iter() {
@@ -1145,9 +1107,7 @@ fn normalize_run_owned<M: Copy>(
 }
 
 fn admit_source_size_owned(
-    bytes: usize,
-    kind: &str,
-    workspace: &WorkspaceCapability,
+    bytes: usize, kind: &str, workspace: &WorkspaceCapability,
 ) -> Result<(), TextError> {
     if bytes > u32::MAX as usize {
         return Err(query_error(
@@ -1248,10 +1208,7 @@ fn letter_sides(text: &str, at: usize, len: usize) -> bool {
             .is_some_and(unicode::is_letter)
 }
 fn project(
-    normalized: &AlignedText,
-    text: String,
-    range: Range<usize>,
-    coarse: bool,
+    normalized: &AlignedText, text: String, range: Range<usize>, coarse: bool,
 ) -> Projection {
     let sources = normalized.contributors(range.clone());
     let highlight =
@@ -1265,9 +1222,7 @@ fn project(
     }
 }
 fn dictionary_key<'a>(
-    word: &str,
-    profile: &AnalyzerProfile,
-    scratch: &'a mut NormalizationScratch<()>,
+    word: &str, profile: &AnalyzerProfile, scratch: &'a mut NormalizationScratch<()>,
 ) -> Result<&'a str, TextError> {
     normalize_into(
         word,

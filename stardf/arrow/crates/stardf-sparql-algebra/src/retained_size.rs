@@ -34,8 +34,7 @@ impl Query {
     /// # Errors
     /// Returns checked native working-storage refusal.
     pub fn retained_size_bytes_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> Result<usize, StorageError> {
         self.retained_bytes_with_memory(memory, false)
     }
@@ -47,16 +46,13 @@ impl Query {
     /// # Errors
     /// Returns checked layout sum or native traversal-storage refusal.
     pub fn raw_owned_bytes_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> Result<usize, StorageError> {
         self.retained_bytes_with_memory(memory, true)
     }
 
     fn retained_bytes_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
-        raw: bool,
+        &self, memory: &mut Memory<'_, S>, raw: bool,
     ) -> Result<usize, StorageError> {
         let (pattern, head) = match self {
             Self::Select {
@@ -125,9 +121,7 @@ impl Query {
 
 /// The original template statistic, including quoted terms.
 fn templated_all<S: Admission + ?Sized>(
-    template: &[QuadPattern],
-    memory: &mut Memory<'_, S>,
-    raw: bool,
+    template: &[QuadPattern], memory: &mut Memory<'_, S>, raw: bool,
 ) -> Result<usize, StorageError> {
     let mut total = 0usize;
     for quad in template {
@@ -141,9 +135,7 @@ fn templated_all<S: Admission + ?Sized>(
 
 /// Every node's original conservative share; native walk storage is not counted.
 fn tree_bytes_with_memory<S: Admission + ?Sized>(
-    root: NodeRef<'_>,
-    memory: &mut Memory<'_, S>,
-    raw: bool,
+    root: NodeRef<'_>, memory: &mut Memory<'_, S>, raw: bool,
 ) -> Result<usize, StorageError> {
     let mut total = 0usize;
     let mut shared_nodes = purrdf_lex::allocation::OrderedTable::<usize, ()>::default();

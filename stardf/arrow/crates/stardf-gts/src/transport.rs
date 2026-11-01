@@ -197,8 +197,7 @@ pub fn strip_transport_suffix(name: &str) -> Option<(&str, TransportEncoding)> {
 /// the last member or frame that do not begin another, return `Err` and **no**
 /// bytes: there is no partial success.
 pub fn decode_transport(
-    data: &[u8],
-    encoding: TransportEncoding,
+    data: &[u8], encoding: TransportEncoding,
 ) -> Result<Vec<u8>, TransportError> {
     let mut out = Vec::new();
     transport_reader(data, Some(encoding))?
@@ -236,8 +235,7 @@ pub type SniffedStream<R> = Chain<Cursor<Vec<u8>>, R>;
 ///
 /// Returns the underlying reader's error if the leading window cannot be read.
 pub fn sniff_transport<R: Read>(
-    mut reader: R,
-    source_name: Option<&str>,
+    mut reader: R, source_name: Option<&str>,
 ) -> io::Result<(Option<TransportEncoding>, SniffedStream<R>)> {
     let mut window = [0u8; MAGIC_WINDOW];
     let mut filled = 0;
@@ -498,8 +496,7 @@ impl<R: Read> Read for TransportReader<R> {
 /// frame header (a leading skippable frame is skipped first). gzip's adapter is
 /// infallible to construct and reports damage on the first read instead.
 pub fn transport_reader<R: Read>(
-    reader: R,
-    encoding: Option<TransportEncoding>,
+    reader: R, encoding: Option<TransportEncoding>,
 ) -> Result<TransportReader<R>, TransportError> {
     let inner = match encoding {
         None => TransportReaderInner::Plain(reader),
@@ -520,8 +517,7 @@ pub fn transport_reader<R: Read>(
 
 /// Detect and decode in one step, borrowing `data` unchanged when it is not wrapped.
 pub fn decode_detected<'a>(
-    data: &'a [u8],
-    source_name: Option<&str>,
+    data: &'a [u8], source_name: Option<&str>,
 ) -> Result<Cow<'a, [u8]>, TransportError> {
     match detect_transport(data, source_name) {
         None => Ok(Cow::Borrowed(data)),

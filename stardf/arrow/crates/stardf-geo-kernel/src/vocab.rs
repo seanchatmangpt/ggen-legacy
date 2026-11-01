@@ -492,8 +492,7 @@ impl GeoVocab {
     /// `geof:` is, so the function is inert until the caller supplies it rather
     /// than inventing a namespace to answer from.
     pub fn simple_features_type(
-        &self,
-        kind: crate::geom::GeometryKind,
+        &self, kind: crate::geom::GeometryKind,
     ) -> Result<String, GeoError> {
         let iri = self.require_simple_features_type(kind, None)?;
         // The `sf:` local names are the Simple Features class names, which are
@@ -520,8 +519,7 @@ impl GeoVocab {
     /// # Errors
     /// Refuses an absent class namespace, or the observer's original admission.
     pub fn require_simple_features_type(
-        &self,
-        kind: crate::geom::GeometryKind,
+        &self, kind: crate::geom::GeometryKind,
         observer: Option<&mut dyn crate::MetricWorkObserver>,
     ) -> Result<SimpleFeaturesType<'_>, GeoError> {
         self.simple_features_type_view(kind).ok_or_else(|| {
@@ -538,8 +536,7 @@ impl GeoVocab {
     /// configuration diagnostic under their own physical output account.
     #[must_use]
     pub fn simple_features_type_view(
-        &self,
-        kind: crate::geom::GeometryKind,
+        &self, kind: crate::geom::GeometryKind,
     ) -> Option<SimpleFeaturesType<'_>> {
         self.simple_features_ns
             .as_deref()
@@ -586,10 +583,8 @@ impl GeoVocabBuilder {
     /// would make every term IRI a bare local name, which would collide with
     /// every other vocabulary in the dataset.
     pub fn new(
-        core_namespace: impl Into<String>,
-        function_namespace: impl Into<String>,
-        default_wkt_crs: Crs,
-        geojson_crs: Crs,
+        core_namespace: impl Into<String>, function_namespace: impl Into<String>,
+        default_wkt_crs: Crs, geojson_crs: Crs,
     ) -> Result<Self, GeoError> {
         let core_ns = core_namespace.into();
         let function_ns = function_namespace.into();
@@ -625,9 +620,7 @@ impl GeoVocabBuilder {
     /// change every measurement's meaning with no symptom; a repeat of the same
     /// declaration is harmless and is accepted.
     pub fn declare_crs_unit(
-        mut self,
-        crs: &Crs,
-        unit: impl Into<String>,
+        mut self, crs: &Crs, unit: impl Into<String>,
     ) -> Result<Self, GeoError> {
         let unit = unit.into();
         if unit.is_empty() {
@@ -687,8 +680,7 @@ impl GeoVocabBuilder {
     ///
     /// [`GeoError::Vocabulary`] if `iri` is empty.
     pub fn declare_simple_features_namespace(
-        mut self,
-        iri: impl Into<String>,
+        mut self, iri: impl Into<String>,
     ) -> Result<Self, GeoError> {
         let iri = iri.into();
         if iri.is_empty() {

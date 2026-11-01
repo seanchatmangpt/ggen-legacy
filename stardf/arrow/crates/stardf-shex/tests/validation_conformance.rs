@@ -303,9 +303,7 @@ fn read_sem_acts(url: &str) -> Result<Vec<SemAct>, String> {
 /// registered, any `sht:semActs` fire as start actions, and any
 /// `sht:shapeExterns` schema resolves the entry's `EXTERNAL` shapes.
 fn validate_entry(
-    entry: &Entry,
-    schema: &ExactSchema,
-    data: &RdfDataset,
+    entry: &Entry, schema: &ExactSchema, data: &RdfDataset,
     associations: &[(TermValue, ShapeSelector)],
 ) -> Result<ResultShapeMap, String> {
     let extern_acts = match &entry.sem_acts_url {

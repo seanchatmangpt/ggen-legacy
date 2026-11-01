@@ -260,9 +260,7 @@ enum RawRecordRef<'a> {
 /// bulk encoder can reuse two buffers across every term instead of allocating
 /// a fresh `Vec` per record; the byte output is unchanged.
 fn encode_record_into(
-    out: &mut Vec<u8>,
-    value: &TermValue,
-    value_to_id: &FastMap<TermValue, PackTermId>,
+    out: &mut Vec<u8>, value: &TermValue, value_to_id: &FastMap<TermValue, PackTermId>,
 ) {
     out.clear();
     match value {
@@ -1324,11 +1322,7 @@ impl PackDict {
     /// own depth is recorded once all three are known. A refusal is found at the same
     /// entry a recursive search would find it.
     fn triple_term_depth(
-        &self,
-        id: PackTermId,
-        budget: usize,
-        depth: &mut [Option<usize>],
-        on_path: &mut [bool],
+        &self, id: PackTermId, budget: usize, depth: &mut [Option<usize>], on_path: &mut [bool],
     ) -> Result<usize, PackDictError> {
         enum Step {
             /// Search this entry with this much budget left.
@@ -2252,10 +2246,7 @@ mod tests {
 
     /// The recursive reference of [`PackDict::triple_term_depth`].
     fn reference_depth(
-        dict: &PackDict,
-        id: PackTermId,
-        budget: usize,
-        depth: &mut [Option<usize>],
+        dict: &PackDict, id: PackTermId, budget: usize, depth: &mut [Option<usize>],
         on_path: &mut [bool],
     ) -> Result<usize, PackDictError> {
         let idx = usize::try_from(id - 1).expect("a test id fits usize");

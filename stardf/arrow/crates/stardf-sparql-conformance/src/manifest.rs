@@ -428,9 +428,7 @@ impl IncludeWalk {
     /// The body of [`Self::load`], run with `canonical` already on the stack so an
     /// early return still unwinds it.
     fn load_within(
-        &mut self,
-        canonical: &Path,
-        depth: usize,
+        &mut self, canonical: &Path, depth: usize,
     ) -> Result<Vec<SparqlTestCase>, String> {
         let Loaded {
             mut cases,
@@ -688,9 +686,7 @@ fn load_one(manifest_path: &Path) -> Result<Loaded, String> {
 /// Enforce the index rule documented on [`load`] for a manifest discovery finds
 /// that declares `mf:include`.
 fn check_index(
-    manifest_path: &Path,
-    has_entries: bool,
-    includes: &[PathBuf],
+    manifest_path: &Path, has_entries: bool, includes: &[PathBuf],
 ) -> Result<(), String> {
     let name = manifest_path
         .file_name()
@@ -761,8 +757,7 @@ pub fn index_members(manifest_path: &Path) -> Result<Option<Vec<PathBuf>>, Strin
 /// EMPTY collection (`()` is `rdf:nil`, which has no `rdf:first`) from an absent
 /// property — and those two must be diagnosed differently.
 fn declares_property(
-    dataset: &std::sync::Arc<purrdf_core::RdfDataset>,
-    local: &str,
+    dataset: &std::sync::Arc<purrdf_core::RdfDataset>, local: &str,
 ) -> Result<bool, String> {
     let query = format!(
         "PREFIX mf: <{MF}>\n\
@@ -773,8 +768,7 @@ fn declares_property(
 
 /// Resolve this manifest's `mf:include` collection to local manifest paths.
 fn load_includes(
-    dataset: &std::sync::Arc<purrdf_core::RdfDataset>,
-    manifest_path: &Path,
+    dataset: &std::sync::Arc<purrdf_core::RdfDataset>, manifest_path: &Path,
     resolver: &BaseResolver,
 ) -> Result<Vec<PathBuf>, String> {
     let query = format!(
@@ -841,8 +835,7 @@ fn list_entry_iris(
 /// Set `regime` for each test that declares an `sd:entailmentRegime` list,
 /// choosing the regime the native reasoner should materialize under.
 fn load_entailment_regimes(
-    dataset: &std::sync::Arc<purrdf_core::RdfDataset>,
-    cases: &mut [SparqlTestCase],
+    dataset: &std::sync::Arc<purrdf_core::RdfDataset>, cases: &mut [SparqlTestCase],
 ) -> Result<(), String> {
     let query = format!(
         "PREFIX mf: <{MF}>\n\
@@ -880,8 +873,7 @@ fn load_entailment_regimes(
 /// [`RequiredFeature`]s is refused by name: a requirement the harness does not model
 /// would otherwise run the case without the behavior it depends on.
 fn load_required_features(
-    dataset: &std::sync::Arc<purrdf_core::RdfDataset>,
-    cases: &mut [SparqlTestCase],
+    dataset: &std::sync::Arc<purrdf_core::RdfDataset>, cases: &mut [SparqlTestCase],
 ) -> Result<(), String> {
     let query = format!(
         "PREFIX mf: <{MF}>\n\
@@ -942,8 +934,7 @@ type ExpectedState = (Vec<PathBuf>, Vec<(String, PathBuf)>);
 /// the `ut:request` update file, the pre-state (`ut:data`/`ut:graphData`), and
 /// the expected post-state (`mf:result` → `ut:data`/`ut:graphData`).
 fn load_update_details(
-    dataset: &std::sync::Arc<purrdf_core::RdfDataset>,
-    resolver: &BaseResolver,
+    dataset: &std::sync::Arc<purrdf_core::RdfDataset>, resolver: &BaseResolver,
     cases: &mut [SparqlTestCase],
 ) -> Result<(), String> {
     let query = format!(
@@ -1024,8 +1015,7 @@ fn load_update_details(
 /// dog-fooded query-and-decode path to read the `rs:ResultSet` Turtle result
 /// encoding, rather than duplicating a second ad hoc SPARQL runner.
 pub(crate) fn query_rows(
-    dataset: &std::sync::Arc<purrdf_core::RdfDataset>,
-    query: &str,
+    dataset: &std::sync::Arc<purrdf_core::RdfDataset>, query: &str,
 ) -> Result<Vec<BTreeMap<String, TermValue>>, String> {
     let engine = NativeSparqlEngine::new();
     let result = engine
@@ -1198,9 +1188,7 @@ impl BaseResolver {
 
 /// Map a resolved fixture IRI to its repository file, for manifest and FROM sources.
 pub(crate) fn fixture_path(
-    workspace_root: &Path,
-    base: &str,
-    iri: &str,
+    workspace_root: &Path, base: &str, iri: &str,
 ) -> Result<PathBuf, String> {
     let relative = iri.strip_prefix(BASE_ROOT).ok_or_else(|| {
         format!(

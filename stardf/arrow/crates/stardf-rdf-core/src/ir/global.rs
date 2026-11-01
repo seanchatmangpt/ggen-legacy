@@ -362,8 +362,7 @@ impl GlobalDictionary {
     /// their ranges through the arena) and pushes strings to the arena only on a
     /// MISS. Idempotent: equal values map to one id, minted in insertion order.
     fn intern_lookup(
-        &mut self,
-        lookup: GlobalTermLookup<'_>,
+        &mut self, lookup: GlobalTermLookup<'_>,
     ) -> Result<GlobalTermId, StorageError> {
         let hash = hash_lookup_value(&lookup);
         match self.find(&lookup, hash) {
@@ -375,8 +374,7 @@ impl GlobalDictionary {
     /// Reserve the entire miss before recording ranges or invalidating caches.
     /// This is shared by ordinary and already-validated ingress.
     fn reserve_missing(
-        &mut self,
-        lookup: &GlobalTermLookup<'_>,
+        &mut self, lookup: &GlobalTermLookup<'_>,
     ) -> Result<GlobalTermId, StorageError> {
         let bytes = match &lookup {
             GlobalTermLookup::Iri(iri) => iri.len(),
@@ -438,9 +436,7 @@ impl GlobalDictionary {
     /// `hash_lookup_value(&lookup)` and the caller must already have established
     /// that [`find`](Self::find) missed.
     fn insert_missing(
-        &mut self,
-        lookup: GlobalTermLookup<'_>,
-        hash: u64,
+        &mut self, lookup: GlobalTermLookup<'_>, hash: u64,
     ) -> Result<GlobalTermId, StorageError> {
         let id = self.reserve_missing(&lookup)?;
         let i = id.index();
@@ -541,8 +537,7 @@ impl GlobalDictionary {
     /// Refuse resident address/allocation exhaustion while composing independent
     /// dictionaries. Partial private dictionary growth is never published on error.
     pub(crate) fn try_reintern_validated(
-        &mut self,
-        value: &TermValue,
+        &mut self, value: &TermValue,
     ) -> Result<GlobalTermId, StorageError> {
         try_fold_nested(
             value,
@@ -581,9 +576,7 @@ impl GlobalDictionary {
 
     /// Intern a blank node. Identity is `(label, scope)` (C0.2).
     pub fn intern_blank(
-        &mut self,
-        label: &str,
-        scope: BlankScope,
+        &mut self, label: &str, scope: BlankScope,
     ) -> Result<GlobalTermId, StorageError> {
         self.intern_lookup(GlobalTermLookup::Blank { label, scope })
     }
@@ -597,10 +590,7 @@ impl GlobalDictionary {
     /// their existing scopes intact, before the literal. Reverse lookup therefore
     /// finds those identities even when no bare statement position carries them.
     pub fn intern_literal(
-        &mut self,
-        lexical: &str,
-        datatype: GlobalTermId,
-        language: Option<&str>,
+        &mut self, lexical: &str, datatype: GlobalTermId, language: Option<&str>,
         direction: Option<RdfTextDirection>,
     ) -> Result<GlobalTermId, StorageError> {
         self.try_intern_literal(lexical, datatype, language, direction)
@@ -610,10 +600,7 @@ impl GlobalDictionary {
     /// embedded identity passes the same checked admission as the literal itself;
     /// occurrence order and scopes come from the shared composite token scanner.
     fn try_intern_literal(
-        &mut self,
-        lexical: &str,
-        datatype: GlobalTermId,
-        language: Option<&str>,
+        &mut self, lexical: &str, datatype: GlobalTermId, language: Option<&str>,
         direction: Option<RdfTextDirection>,
     ) -> Result<GlobalTermId, StorageError> {
         let blanks = match self.resolve(datatype) {
@@ -637,10 +624,7 @@ impl GlobalDictionary {
     /// Intern a triple term (RDF 1.2 quoted triple) from already-resolved component
     /// ids. Identified structurally by the resolved `(s, p, o)` (C0.3).
     pub fn intern_triple(
-        &mut self,
-        s: GlobalTermId,
-        p: GlobalTermId,
-        o: GlobalTermId,
+        &mut self, s: GlobalTermId, p: GlobalTermId, o: GlobalTermId,
     ) -> Result<GlobalTermId, StorageError> {
         self.intern_lookup(GlobalTermLookup::Triple { s, p, o })
     }

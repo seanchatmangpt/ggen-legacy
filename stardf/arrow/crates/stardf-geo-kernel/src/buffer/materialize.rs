@@ -142,10 +142,7 @@ impl OffsetRegion {
     /// Refuses an uncertified continuous source image or incomplete precision,
     /// work, workspace or output admission without returning partial geometry.
     pub fn materialize(
-        &self,
-        profile: &GeoProfile,
-        target: &Crs,
-        context: &mut MetricContext,
+        &self, profile: &GeoProfile, target: &Crs, context: &mut MetricContext,
     ) -> Result<BufferMaterialization, GeoError> {
         self.materialize_points_inner(profile, target, None, context, None, false)
     }
@@ -154,10 +151,7 @@ impl OffsetRegion {
     /// # Errors
     /// Preserves all materialization errors and the observer's original refusal.
     pub fn materialize_metered(
-        &self,
-        profile: &GeoProfile,
-        target: &Crs,
-        context: &mut MetricContext,
+        &self, profile: &GeoProfile, target: &Crs, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<BufferMaterialization, GeoError> {
         self.materialize_points_inner(profile, target, None, context, Some(observer), false)
@@ -167,10 +161,7 @@ impl OffsetRegion {
     /// # Errors
     /// Also refuses a different source or absent retained preparation receipt.
     pub fn materialize_prepared(
-        &self,
-        profile: &GeoProfile,
-        target: &Crs,
-        receipt: &crate::context::PreparedSourceReceipt,
+        &self, profile: &GeoProfile, target: &Crs, receipt: &crate::context::PreparedSourceReceipt,
         context: &mut MetricContext,
     ) -> Result<BufferMaterialization, GeoError> {
         self.materialize_points_inner(profile, target, Some(receipt), context, None, false)
@@ -180,12 +171,8 @@ impl OffsetRegion {
     /// # Errors
     /// Preserves receipt validation, materialization and observer errors.
     pub fn materialize_prepared_metered(
-        &self,
-        profile: &GeoProfile,
-        target: &Crs,
-        receipt: &crate::context::PreparedSourceReceipt,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, profile: &GeoProfile, target: &Crs, receipt: &crate::context::PreparedSourceReceipt,
+        context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<BufferMaterialization, GeoError> {
         self.materialize_points_inner(
             profile,
@@ -202,10 +189,7 @@ impl OffsetRegion {
     /// Refuses nonpoint sources, uncertified chart/cut-locus cases and incomplete
     /// output/work/workspace/precision admission; never publishes a partial union.
     pub fn materialize_points(
-        &self,
-        profile: &GeoProfile,
-        target: &Crs,
-        context: &mut MetricContext,
+        &self, profile: &GeoProfile, target: &Crs, context: &mut MetricContext,
     ) -> Result<BufferMaterialization, GeoError> {
         self.materialize_points_inner(profile, target, None, context, None, true)
     }
@@ -214,10 +198,7 @@ impl OffsetRegion {
     /// # Errors
     /// Also preserves the observer's original refusal without partial geometry.
     pub fn materialize_points_metered(
-        &self,
-        profile: &GeoProfile,
-        target: &Crs,
-        context: &mut MetricContext,
+        &self, profile: &GeoProfile, target: &Crs, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<BufferMaterialization, GeoError> {
         self.materialize_points_inner(profile, target, None, context, Some(observer), true)
@@ -230,10 +211,7 @@ impl OffsetRegion {
     /// # Errors
     /// Refuses a different or absent retained source and all materialization errors.
     pub fn materialize_points_prepared(
-        &self,
-        profile: &GeoProfile,
-        target: &Crs,
-        receipt: &crate::context::PreparedSourceReceipt,
+        &self, profile: &GeoProfile, target: &Crs, receipt: &crate::context::PreparedSourceReceipt,
         context: &mut MetricContext,
     ) -> Result<BufferMaterialization, GeoError> {
         self.materialize_points_inner(profile, target, Some(receipt), context, None, true)
@@ -244,12 +222,8 @@ impl OffsetRegion {
     /// # Errors
     /// Also preserves the observer's original refusal.
     pub fn materialize_points_prepared_metered(
-        &self,
-        profile: &GeoProfile,
-        target: &Crs,
-        receipt: &crate::context::PreparedSourceReceipt,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, profile: &GeoProfile, target: &Crs, receipt: &crate::context::PreparedSourceReceipt,
+        context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<BufferMaterialization, GeoError> {
         self.materialize_points_inner(
             profile,
@@ -261,13 +235,9 @@ impl OffsetRegion {
         )
     }
     fn materialize_points_inner(
-        &self,
-        profile: &GeoProfile,
-        target: &Crs,
-        receipt: Option<&crate::context::PreparedSourceReceipt>,
-        context: &mut MetricContext,
-        observer: Option<&mut dyn MetricWorkObserver>,
-        point_only: bool,
+        &self, profile: &GeoProfile, target: &Crs,
+        receipt: Option<&crate::context::PreparedSourceReceipt>, context: &mut MetricContext,
+        observer: Option<&mut dyn MetricWorkObserver>, point_only: bool,
     ) -> Result<BufferMaterialization, GeoError> {
         let target_reference = profile.reference(target)?;
         if target_reference != self.source.reference() {
@@ -487,8 +457,7 @@ impl OffsetRegion {
 }
 
 fn prepare_disks(
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     retained: &mut MaterializationStorage,
 ) -> Result<PreparedGeodesic, GeoError> {
     let reference = crate::numerical::reference_clone(context, progress)?;
@@ -533,12 +502,8 @@ struct DiskRequest<'call, 'source> {
 }
 
 fn point_polygons(
-    request: DiskRequest<'_, '_>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    total: &mut u64,
-    retained: &mut MaterializationStorage,
-    global_output: &mut bool,
+    request: DiskRequest<'_, '_>, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
+    total: &mut u64, retained: &mut MaterializationStorage, global_output: &mut bool,
 ) -> Result<GeometryBody, GeoError> {
     let DiskRequest {
         centers,
@@ -740,10 +705,8 @@ fn point_polygons(
 /// Export centers only for the certified polygon approximation. The complete
 /// symbolic sources remain in OffsetRegion and every exact metric inventory.
 fn point_centers<'source>(
-    source: &'source crate::PreparedGeometry,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut MaterializationStorage,
+    source: &'source crate::PreparedGeometry, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut MaterializationStorage,
 ) -> Result<RetainedBuilder<Cow<'source, LonLat>>, GeoError> {
     let count = source
         .points()
@@ -791,8 +754,7 @@ fn point_centers<'source>(
 }
 
 fn certify_center_grid(
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     let reference = crate::numerical::reference_clone(context, progress)?;
     let policy = context.policy();
@@ -821,9 +783,7 @@ fn certify_center_grid(
 }
 
 fn carrier_admitted(
-    point: &LonLat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    point: &LonLat, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     retained: &mut MaterializationStorage,
 ) -> Result<Coord, GeoError> {
     let axes = context.reference().axes();
@@ -847,10 +807,7 @@ fn carrier_admitted(
     retained.retain_native(coordinate, context, progress)
 }
 fn coordinate_order(
-    a: &Coord,
-    b: &Coord,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    a: &Coord, b: &Coord, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<core::cmp::Ordering, GeoError> {
     crate::numerical::ExactAdmission::new(context, progress).expression_result(
         purrdf_xsd::integer::ExactOperation::RationalCompare,
@@ -867,9 +824,7 @@ fn coordinate_order(
     )
 }
 fn admit_vertex_count(
-    count: u64,
-    total: &mut u64,
-    context: &MetricContext,
+    count: u64, total: &mut u64, context: &MetricContext,
 ) -> Result<(), GeoError> {
     let complete = total
         .checked_add(count)
@@ -889,9 +844,7 @@ fn admit_vertex_count(
 /// diameter upper bound for every original or symbolic center, including its
 /// entire cut locus, without a center-coordinate approximation.
 fn whole_disk(
-    radius: &Rat,
-    prepared: &PreparedGeodesic,
-    context: &mut MetricContext,
+    radius: &Rat, prepared: &PreparedGeodesic, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let padded = padded_whole_radius(radius, context, progress)?;
@@ -923,9 +876,7 @@ fn whole_disk(
 }
 
 fn padded_whole_radius(
-    radius: &Rat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    radius: &Rat, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Rat, GeoError> {
     let guard = decimal("0.099998");
     crate::numerical::ExactAdmission::new(context, progress).expression_result(
@@ -937,9 +888,7 @@ fn padded_whole_radius(
 }
 
 fn meridian_diameter(
-    prepared: &PreparedGeodesic,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    prepared: &PreparedGeodesic, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<crate::MetricProofReceipt, GeoError> {
     let north = LonLat::new(Rat::zero(), Rat::from_i64(90)).expect("exact north pole");
     let south = LonLat::new(Rat::zero(), Rat::from_i64(-90)).expect("exact south pole");
@@ -962,9 +911,7 @@ fn meridian_diameter(
 }
 
 fn whole_surface_ring(
-    axes: AxisOrder,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    axes: AxisOrder, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     retained: &mut MaterializationStorage,
 ) -> Result<crate::Rings, GeoError> {
     let mut coordinates = RetainedBuilder::default();
@@ -982,12 +929,8 @@ fn whole_surface_ring(
 }
 
 fn polar_disk(
-    center: &LonLat,
-    radius: &Rat,
-    prepared: &PreparedGeodesic,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut MaterializationStorage,
+    center: &LonLat, radius: &Rat, prepared: &PreparedGeodesic, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut MaterializationStorage,
 ) -> Result<Vec<Vec<Coord>>, GeoError> {
     let diameter = meridian_diameter(prepared, context, progress)?;
     let padded = padded_whole_radius(radius, context, progress)?;
@@ -1086,9 +1029,7 @@ enum CircleDomain {
 }
 
 fn circle_domain(
-    radius: &Rat,
-    ellipsoid: &crate::PreparedEllipsoid,
-    context: &mut MetricContext,
+    radius: &Rat, ellipsoid: &crate::PreparedEllipsoid, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<CircleDomain, GeoError> {
     use purrdf_xsd::integer::ExactOperation::{RationalAdd, RationalCompare, RationalMultiply};
@@ -1118,10 +1059,7 @@ fn circle_domain(
 }
 
 fn circle_count(
-    center: &LonLat,
-    radius: &Rat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    center: &LonLat, radius: &Rat, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<CircleCount, GeoError> {
     let reference = crate::numerical::reference_clone(context, progress)?;
     let domain = circle_domain(radius, reference.ellipsoid(), context, progress)?;
@@ -1160,12 +1098,8 @@ fn circle_count(
 /// count. This avoids constructing large compound rational denominators solely
 /// to establish an inequality, while preserving the smallest admitted dyadic N.
 fn circle_count_attempt(
-    center: &LonLat,
-    radius: &Rat,
-    reference: &crate::GeographicReference,
-    domain: CircleDomain,
-    policy: crate::ExecutionPolicy,
-    math: &mut purrdf_xsd::math::CoordinateMath,
+    center: &LonLat, radius: &Rat, reference: &crate::GeographicReference, domain: CircleDomain,
+    policy: crate::ExecutionPolicy, math: &mut purrdf_xsd::math::CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<CircleCount, purrdf_xsd::math::MathError> {
     use crate::numerical::fixed_from_rat;
@@ -1311,11 +1245,8 @@ struct PoleClearanceChart {
 /// bounded below by pi*m/2 and pi*m. Each meridian ray therefore meets its
 /// boundary at most once when its pole is inside, twice when outside.
 fn pole_clearance_chart(
-    center: &LonLat,
-    rho: &purrdf_xsd::math::FixedInterval,
-    ellipsoid: &crate::PreparedEllipsoid,
-    domain: CircleDomain,
-    math: &mut purrdf_xsd::math::CoordinateMath,
+    center: &LonLat, rho: &purrdf_xsd::math::FixedInterval, ellipsoid: &crate::PreparedEllipsoid,
+    domain: CircleDomain, math: &mut purrdf_xsd::math::CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<PoleClearanceChart>, purrdf_xsd::math::MathError> {
     use crate::numerical::fixed_from_rat;

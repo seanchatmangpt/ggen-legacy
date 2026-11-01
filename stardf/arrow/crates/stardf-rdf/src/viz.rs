@@ -731,8 +731,7 @@ pub fn project_dataset(dataset: &RdfDataset, spec: &VizSpec) -> Result<VizProjec
 
 /// Project graph-like caller input into the renderer-neutral Statement Incidence Model.
 pub fn project_graph_input(
-    input: &VizGraphInput,
-    spec: &VizSpec,
+    input: &VizGraphInput, spec: &VizSpec,
 ) -> Result<VizProjection, VizError> {
     let mut builder = ProjectionBuilder::new(spec);
     builder.add_default_graph();
@@ -865,12 +864,8 @@ impl<'a> ProjectionBuilder<'a> {
     }
 
     fn add_quad(
-        &mut self,
-        subject: TermValue,
-        predicate: String,
-        object: TermValue,
-        graph_name: Option<TermValue>,
-        subject_is_reifier: bool,
+        &mut self, subject: TermValue, predicate: String, object: TermValue,
+        graph_name: Option<TermValue>, subject_is_reifier: bool,
     ) -> Result<(), VizError> {
         if !self.graph_selected(graph_name.as_ref()) {
             return Ok(());
@@ -900,10 +895,7 @@ impl<'a> ProjectionBuilder<'a> {
     }
 
     fn add_reifier(
-        &mut self,
-        reifier: TermValue,
-        triple: TermValue,
-        graph_name: Option<TermValue>,
+        &mut self, reifier: TermValue, triple: TermValue, graph_name: Option<TermValue>,
     ) -> Result<(), VizError> {
         if !self.graph_selected(graph_name.as_ref()) {
             return Ok(());
@@ -935,10 +927,7 @@ impl<'a> ProjectionBuilder<'a> {
     }
 
     fn add_annotation(
-        &mut self,
-        reifier: TermValue,
-        predicate: &str,
-        object: TermValue,
+        &mut self, reifier: TermValue, predicate: &str, object: TermValue,
         graph_name: Option<TermValue>,
     ) -> Result<(), VizError> {
         if !self.graph_selected(graph_name.as_ref()) {
@@ -1034,10 +1023,7 @@ impl<'a> ProjectionBuilder<'a> {
     }
 
     fn statement_id(
-        &mut self,
-        subject: TermValue,
-        predicate: String,
-        object: TermValue,
+        &mut self, subject: TermValue, predicate: String, object: TermValue,
     ) -> Result<VizStatementId, VizError> {
         let subject_ref = self.value_ref(subject)?;
         let predicate_id = self.predicate_id(predicate)?;
@@ -1055,10 +1041,7 @@ impl<'a> ProjectionBuilder<'a> {
     /// The statement id of a subject, predicate and object whose references already
     /// exist, minting the statement on first sight.
     fn finish_statement(
-        &mut self,
-        subject_ref: VizValueRef,
-        predicate_id: VizTermId,
-        object_ref: VizValueRef,
+        &mut self, subject_ref: VizValueRef, predicate_id: VizTermId, object_ref: VizValueRef,
     ) -> Result<VizStatementId, VizError> {
         let key = statement_key(&subject_ref, &predicate_id, &object_ref);
         if let Some(id) = self.statement_by_key.get(&key) {
@@ -1257,9 +1240,7 @@ impl<'a> ProjectionBuilder<'a> {
     }
 
     fn add_reference(
-        &mut self,
-        statement: &VizStatementId,
-        site: VizReferenceSite,
+        &mut self, statement: &VizStatementId, site: VizReferenceSite,
     ) -> Result<(), VizError> {
         let site_key = purrdf_lex::json::write_compact(&site.to_json());
         let id = VizReferenceId(self.mint_id("reference", &format!("{}|{site_key}", statement.0))?);
@@ -1347,11 +1328,7 @@ impl<'a> ProjectionBuilder<'a> {
     }
 
     fn add_statement_diagnostic(
-        &mut self,
-        statement: &VizStatementId,
-        code: &str,
-        message: &str,
-        dialect: VizDialect,
+        &mut self, statement: &VizStatementId, code: &str, message: &str, dialect: VizDialect,
     ) -> Result<(), VizError> {
         let key = format!("{}|{code}", statement.0);
         let id = self.mint_id("diagnostic", &key)?;
@@ -1676,8 +1653,7 @@ fn value_ref_key(value: &VizValueRef) -> &str {
 }
 
 fn value_ref_depth(
-    value: &VizValueRef,
-    statements: &BTreeMap<VizStatementId, StatementDraft>,
+    value: &VizValueRef, statements: &BTreeMap<VizStatementId, StatementDraft>,
 ) -> u32 {
     match value {
         VizValueRef::Term { .. } => 0,
@@ -2562,8 +2538,7 @@ mod term_walk_tests {
 
     /// The recursive reference of [`ProjectionBuilder::value_ref`].
     fn reference_ref(
-        builder: &mut ProjectionBuilder<'_>,
-        value: TermValue,
+        builder: &mut ProjectionBuilder<'_>, value: TermValue,
     ) -> Result<VizValueRef, VizError> {
         match value {
             TermValue::Triple { s, p, o } => {

@@ -129,10 +129,7 @@ pub(crate) struct Collection {
 /// predecessor. Anything else refuses: reasoning over the well-formed PREFIX of a broken
 /// collection answers a question the caller did not ask.
 pub(crate) fn read_collection(
-    indexed: &Indexed,
-    head: &TermValue,
-    previous: &TermValue,
-    what: &str,
+    indexed: &Indexed, head: &TermValue, previous: &TermValue, what: &str,
 ) -> Result<Collection, String> {
     let (first, rest, nil) = (
         TermValue::iri(RDF_FIRST),
@@ -203,8 +200,7 @@ pub(crate) fn read_collection(
 /// tag and direction, so [`show`] can leave the datatype off without losing anything that
 /// distinguishes it from another literal.
 fn implicit_datatype(
-    language: Option<&String>,
-    direction: Option<RdfTextDirection>,
+    language: Option<&String>, direction: Option<RdfTextDirection>,
 ) -> &'static str {
     if language.is_some() {
         purrdf_iri::vocab::language_datatype_iri(direction.is_some())
@@ -300,9 +296,7 @@ mod tests {
 
     /// A language-tagged literal, optionally carrying a base direction.
     fn tagged(
-        lexical_form: &str,
-        language: &str,
-        direction: Option<RdfTextDirection>,
+        lexical_form: &str, language: &str, direction: Option<RdfTextDirection>,
     ) -> TermValue {
         TermValue::Literal {
             lexical_form: lexical_form.to_owned(),

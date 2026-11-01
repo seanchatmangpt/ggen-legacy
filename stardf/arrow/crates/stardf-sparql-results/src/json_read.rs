@@ -48,7 +48,7 @@ use std::ops::Range;
 
 use purrdf_core::TermBox;
 use purrdf_core::blank_label::{LabelAlphabet, decode_blank_label_with_memory};
-use purrdf_core::{BlankScope, RdfTextDirection, TermValue};
+use purrdf_core::{RdfTextDirection, TermValue};
 use purrdf_lex::json::{self, Event, Kind, Limits, Reader, Value};
 
 use crate::error::{Error, ReadReason, ReadRefusal, ReadShape, ReadToken};
@@ -169,9 +169,7 @@ purrdf_lex::error_source!(ReadError { Lexical, Storage });
 /// # Errors
 /// Returns the original syntax/shape refusal or typed storage failure.
 pub fn from_json_with_memory<S: Admission + ?Sized>(
-    bytes: &[u8],
-    max_cells: Option<u64>,
-    memory: &mut Memory<'_, S>,
+    bytes: &[u8], max_cells: Option<u64>, memory: &mut Memory<'_, S>,
 ) -> Result<BoundedParsedSolutions, ReadError> {
     let initial_bytes = memory.admitted_bytes();
     let result = (|| {
@@ -232,9 +230,7 @@ pub fn from_json_bounded(bytes: &[u8], max_cells: u64) -> Result<BoundedParsedSo
 }
 
 fn bounded_document<S: Admission + ?Sized>(
-    bytes: &[u8],
-    max_cells: u64,
-    memory: &mut Memory<'_, S>,
+    bytes: &[u8], max_cells: u64, memory: &mut Memory<'_, S>,
 ) -> Result<BoundedParsedSolutions, Error> {
     let variables = scan_variables(bytes, memory)?;
     // Zero-column rows carry no cells, so the cells-per-row governor has no
@@ -266,8 +262,7 @@ fn bounded_document<S: Admission + ?Sized>(
 /// First bounded-decoder pass: locate and decode `head.vars`, skipping every other value
 /// without building a JSON tree.
 fn scan_variables<S: Admission + ?Sized>(
-    bytes: &[u8],
-    memory: &mut Memory<'_, S>,
+    bytes: &[u8], memory: &mut Memory<'_, S>,
 ) -> Result<Vec<String>, Error> {
     let mut reader =
         Reader::from_slice(bytes, LIMITS).map_err(|error| syntax_with_memory(error, memory))?;
@@ -295,10 +290,7 @@ fn scan_variables<S: Admission + ?Sized>(
 /// Second bounded-decoder pass: locate `results.bindings`, materializing only the prefix
 /// admitted by `row_limit`.
 fn scan_bindings<S: Admission + ?Sized>(
-    bytes: &[u8],
-    variables: &[String],
-    row_limit: Option<usize>,
-    memory: &mut Memory<'_, S>,
+    bytes: &[u8], variables: &[String], row_limit: Option<usize>, memory: &mut Memory<'_, S>,
 ) -> BoundedRowsResult {
     let mut reader =
         Reader::from_slice(bytes, LIMITS).map_err(|error| syntax_with_memory(error, memory))?;
@@ -406,8 +398,7 @@ pub fn from_json_boolean(bytes: &[u8]) -> Result<bool, Error> {
 /// writer's (`queryForm`/`queryHash`/`engine`/`solutions[].sources[]`, all
 /// strings).
 pub fn provenance_from_json(
-    bytes: &[u8],
-    namespace: &ProvenanceNamespace,
+    bytes: &[u8], namespace: &ProvenanceNamespace,
 ) -> Result<ResultProvenance, Error> {
     let doc = read_document(bytes)?;
     let obj = doc.as_object().ok_or_else(|| {
@@ -472,8 +463,7 @@ pub fn provenance_from_json(
 /// where it stands and its span kept, and its rows are decoded once `head.vars`
 /// is known.
 fn select_document<S: Admission + ?Sized>(
-    reader: &mut Reader<'_>,
-    memory: &mut Memory<'_, S>,
+    reader: &mut Reader<'_>, memory: &mut Memory<'_, S>,
 ) -> Step<ParsedSolutions> {
     if reader.peek_kind() != Some(Kind::Object) {
         reader
@@ -583,8 +573,7 @@ enum Bindings {
 
 /// A `head` value: its `vars`, or the refusal it earns.
 fn read_head<S: Admission + ?Sized>(
-    reader: &mut Reader<'_>,
-    memory: &mut Memory<'_, S>,
+    reader: &mut Reader<'_>, memory: &mut Memory<'_, S>,
 ) -> Step<Vec<String>> {
     if reader.peek_kind() != Some(Kind::Object) {
         reader
@@ -615,9 +604,7 @@ fn read_head<S: Admission + ?Sized>(
 
 /// A string-only array: its strings, or `item_error` at its first other item.
 fn string_items<S: Admission + ?Sized>(
-    reader: &mut Reader<'_>,
-    item_error: ReadShape,
-    memory: &mut Memory<'_, S>,
+    reader: &mut Reader<'_>, item_error: ReadShape, memory: &mut Memory<'_, S>,
 ) -> Step<Vec<String>> {
     reader
         .next_event_with_memory(memory)
@@ -664,9 +651,7 @@ fn string_items<S: Admission + ?Sized>(
 /// A `results` value: its `bindings` array, decoded when `variables` are
 /// known and checked otherwise, or the refusal it earns.
 fn read_results<'a, S: Admission + ?Sized>(
-    reader: &mut Reader<'a>,
-    variables: Option<&[String]>,
-    scratch: &mut RowScratch<'a>,
+    reader: &mut Reader<'a>, variables: Option<&[String]>, scratch: &mut RowScratch<'a>,
     memory: &mut Memory<'_, S>,
 ) -> Step<Bindings> {
     if reader.peek_kind() != Some(Kind::Object) {
@@ -709,9 +694,7 @@ fn read_results<'a, S: Admission + ?Sized>(
 /// A `bindings` array, the cursor on its `[`: every row, or the first row's
 /// refusal once the rest of the array is checked.
 fn binding_rows<'a, S: Admission + ?Sized>(
-    reader: &mut Reader<'a>,
-    variables: &[String],
-    scratch: &mut RowScratch<'a>,
+    reader: &mut Reader<'a>, variables: &[String], scratch: &mut RowScratch<'a>,
     memory: &mut Memory<'_, S>,
 ) -> Step<Vec<BindingRow>> {
     reader
@@ -767,9 +750,7 @@ struct RowScratch<'a> {
 /// Query Results JSON grammar does not constrain binding members to
 /// `head.vars`, so the reader projects onto the declared variables.
 fn binding_row<'a, S: Admission + ?Sized>(
-    reader: &mut Reader<'a>,
-    variables: &[String],
-    scratch: &mut RowScratch<'a>,
+    reader: &mut Reader<'a>, variables: &[String], scratch: &mut RowScratch<'a>,
     memory: &mut Memory<'_, S>,
 ) -> Step<BindingRow> {
     if reader.peek_kind() != Some(Kind::Object) {
@@ -1089,8 +1070,7 @@ impl BindingFields<'_> {
 /// A member's value, the cursor on it: the string it holds, or
 /// [`Member::Other`] once a value of another kind has been checked.
 fn string_member<'a, S: Admission + ?Sized>(
-    reader: &mut Reader<'a>,
-    memory: &mut Memory<'_, S>,
+    reader: &mut Reader<'a>, memory: &mut Memory<'_, S>,
 ) -> Result<Member<'a>, Error> {
     if reader.peek_kind() == Some(Kind::String) {
         let Event::String(text) = reader
@@ -1121,9 +1101,7 @@ fn string_member<'a, S: Admission + ?Sized>(
 /// `value` object is read as a triple term's components before the `type` that
 /// says whether it is one may have been seen.
 fn binding<'a, S: Admission + ?Sized>(
-    reader: &mut Reader<'a>,
-    open: &mut Vec<Open<'a>>,
-    memory: &mut Memory<'_, S>,
+    reader: &mut Reader<'a>, open: &mut Vec<Open<'a>>, memory: &mut Memory<'_, S>,
 ) -> Step<TermValue> {
     open.clear();
     if reader.peek_kind() != Some(Kind::Object) {
@@ -1261,10 +1239,7 @@ fn binding<'a, S: Admission + ?Sized>(
 /// language-tagged literal is `rdf:langString` (or `rdf:dirLangString` with a
 /// base direction), and a plain literal is `xsd:string`.
 fn resolve_datatype<S: Admission + ?Sized>(
-    datatype: Option<&str>,
-    has_lang: bool,
-    has_dir: bool,
-    memory: &mut Memory<'_, S>,
+    datatype: Option<&str>, has_lang: bool, has_dir: bool, memory: &mut Memory<'_, S>,
 ) -> Result<String, Error> {
     memory
         .string(match datatype {
@@ -1276,8 +1251,7 @@ fn resolve_datatype<S: Admission + ?Sized>(
 }
 
 fn owned_text<S: Admission + ?Sized>(
-    text: Cow<'_, str>,
-    memory: &mut Memory<'_, S>,
+    text: Cow<'_, str>, memory: &mut Memory<'_, S>,
 ) -> Result<String, Error> {
     match text {
         Cow::Borrowed(text) => memory.string(text).map_err(Error::Storage),
@@ -1286,8 +1260,7 @@ fn owned_text<S: Admission + ?Sized>(
 }
 
 fn release_text<S: Admission + ?Sized>(
-    text: Cow<'_, str>,
-    memory: &mut Memory<'_, S>,
+    text: Cow<'_, str>, memory: &mut Memory<'_, S>,
 ) -> Result<(), Error> {
     match text {
         Cow::Borrowed(_) => Ok(()),
@@ -1296,8 +1269,7 @@ fn release_text<S: Admission + ?Sized>(
 }
 
 fn binding_text<S: Admission + ?Sized>(
-    value: Option<BindingValue<'_>>,
-    memory: &mut Memory<'_, S>,
+    value: Option<BindingValue<'_>>, memory: &mut Memory<'_, S>,
 ) -> Result<String, Error> {
     match value {
         Some(BindingValue::String(text)) => owned_text(text, memory),
@@ -1311,8 +1283,7 @@ fn binding_text<S: Admission + ?Sized>(
 }
 
 fn release_error<S: Admission + ?Sized>(
-    error: Error,
-    memory: &mut Memory<'_, S>,
+    error: Error, memory: &mut Memory<'_, S>,
 ) -> Result<(), Error> {
     match error {
         Error::Format(ReadRefusal { format: _, reason }) => match reason {
@@ -1340,8 +1311,7 @@ fn release_error<S: Admission + ?Sized>(
 
 /// Release an original parser vector and each independently admitted payload.
 fn release_items<T, S: Admission + ?Sized>(
-    mut items: Vec<T>,
-    memory: &mut Memory<'_, S>,
+    mut items: Vec<T>, memory: &mut Memory<'_, S>,
     mut release: impl FnMut(T, &mut Memory<'_, S>) -> Result<(), Error>,
 ) -> Result<(), Error> {
     // Keep the original allocation for Memory::release_vec to destroy and refund.
@@ -1354,8 +1324,7 @@ fn release_items<T, S: Admission + ?Sized>(
 }
 
 fn release_row<S: Admission + ?Sized>(
-    row: BindingRow,
-    memory: &mut Memory<'_, S>,
+    row: BindingRow, memory: &mut Memory<'_, S>,
 ) -> Result<(), Error> {
     release_items(row, memory, |term, memory| match term {
         Some(term) => release_term(term, memory),
@@ -1364,15 +1333,13 @@ fn release_row<S: Admission + ?Sized>(
 }
 
 fn release_term<S: Admission + ?Sized>(
-    term: TermValue,
-    memory: &mut Memory<'_, S>,
+    term: TermValue, memory: &mut Memory<'_, S>,
 ) -> Result<(), Error> {
     term.release_with_memory(memory).map_err(Error::Storage)
 }
 
 fn release_parts<S: Admission + ?Sized>(
-    parts: TripleParts,
-    memory: &mut Memory<'_, S>,
+    parts: TripleParts, memory: &mut Memory<'_, S>,
 ) -> Result<(), Error> {
     for term in [parts.subject, parts.predicate, parts.object]
         .into_iter()
@@ -1387,8 +1354,7 @@ fn release_parts<S: Admission + ?Sized>(
 }
 
 fn release_binding_value<S: Admission + ?Sized>(
-    value: BindingValue<'_>,
-    memory: &mut Memory<'_, S>,
+    value: BindingValue<'_>, memory: &mut Memory<'_, S>,
 ) -> Result<(), Error> {
     match value {
         BindingValue::String(text) => release_text(text, memory),
@@ -1403,8 +1369,7 @@ fn release_binding_value<S: Admission + ?Sized>(
 }
 
 fn release_fields<S: Admission + ?Sized>(
-    fields: &mut BindingFields<'_>,
-    memory: &mut Memory<'_, S>,
+    fields: &mut BindingFields<'_>, memory: &mut Memory<'_, S>,
 ) -> Result<(), Error> {
     for member in [
         fields.kind.take(),
@@ -1427,8 +1392,7 @@ fn release_fields<S: Admission + ?Sized>(
 }
 
 fn release_scratch<S: Admission + ?Sized>(
-    mut scratch: RowScratch<'_>,
-    memory: &mut Memory<'_, S>,
+    mut scratch: RowScratch<'_>, memory: &mut Memory<'_, S>,
 ) -> Result<(), Error> {
     while let Some(open) = scratch.open.pop() {
         match open {
@@ -1457,8 +1421,7 @@ fn fmt_with_memory<S: Admission + ?Sized>(shape: ReadShape, _memory: &mut Memory
 }
 
 fn syntax_with_memory<S: Admission + ?Sized>(
-    error: json::Error,
-    _memory: &mut Memory<'_, S>,
+    error: json::Error, _memory: &mut Memory<'_, S>,
 ) -> Error {
     match error.kind() {
         json::ErrorKind::Storage(storage)
@@ -1486,9 +1449,7 @@ fn read_document(bytes: &[u8]) -> Result<Value, Error> {
 
 /// Read the next value, requiring it to open an object; `message` otherwise.
 fn open_object<S: Admission + ?Sized>(
-    reader: &mut Reader<'_>,
-    message: ReadShape,
-    memory: &mut Memory<'_, S>,
+    reader: &mut Reader<'_>, message: ReadShape, memory: &mut Memory<'_, S>,
 ) -> Result<(), Error> {
     match reader
         .next_event_with_memory(memory)
@@ -1501,9 +1462,7 @@ fn open_object<S: Admission + ?Sized>(
 
 /// Read the next value, requiring it to open an array; `message` otherwise.
 fn open_array<S: Admission + ?Sized>(
-    reader: &mut Reader<'_>,
-    message: ReadShape,
-    memory: &mut Memory<'_, S>,
+    reader: &mut Reader<'_>, message: ReadShape, memory: &mut Memory<'_, S>,
 ) -> Result<(), Error> {
     match reader
         .next_event_with_memory(memory)
@@ -1516,8 +1475,7 @@ fn open_array<S: Admission + ?Sized>(
 
 /// The next member name of the open object, decoded, or `None` at its `}`.
 fn next_key<S: Admission + ?Sized>(
-    reader: &mut Reader<'_>,
-    memory: &mut Memory<'_, S>,
+    reader: &mut Reader<'_>, memory: &mut Memory<'_, S>,
 ) -> Result<Option<&'static str>, Error> {
     let Some(raw) = reader
         .next_key_with_memory(memory)
@@ -1551,8 +1509,7 @@ fn next_key<S: Admission + ?Sized>(
 
 /// Decode the first `vars` array in a `head` object, skipping other fields.
 fn head_variables<S: Admission + ?Sized>(
-    reader: &mut Reader<'_>,
-    memory: &mut Memory<'_, S>,
+    reader: &mut Reader<'_>, memory: &mut Memory<'_, S>,
 ) -> Result<Vec<String>, Error> {
     open_object(reader, ReadShape::Head, memory)?;
     let mut variables = None;
@@ -1570,9 +1527,7 @@ fn head_variables<S: Admission + ?Sized>(
 
 /// Read a string-only JSON array.
 fn string_array<S: Admission + ?Sized>(
-    reader: &mut Reader<'_>,
-    item_error: ReadShape,
-    memory: &mut Memory<'_, S>,
+    reader: &mut Reader<'_>, item_error: ReadShape, memory: &mut Memory<'_, S>,
 ) -> Result<Vec<String>, Error> {
     open_array(reader, ReadShape::Array, memory)?;
     let mut items = Vec::new();
@@ -1605,9 +1560,7 @@ fn string_array<S: Admission + ?Sized>(
 
 /// Read the first `bindings` array in a `results` object through a bounded sink.
 fn bounded_results<S: Admission + ?Sized>(
-    reader: &mut Reader<'_>,
-    variables: &[String],
-    row_limit: Option<usize>,
+    reader: &mut Reader<'_>, variables: &[String], row_limit: Option<usize>,
     memory: &mut Memory<'_, S>,
 ) -> BoundedRowsResult {
     open_object(reader, ReadShape::Results, memory)?;
@@ -1627,9 +1580,7 @@ fn bounded_results<S: Admission + ?Sized>(
 /// Decode the prefix of a bindings array that fits `row_limit`, then syntax-scan the
 /// suffix without constructing its tree.
 fn bounded_binding_array<S: Admission + ?Sized>(
-    reader: &mut Reader<'_>,
-    variables: &[String],
-    row_limit: Option<usize>,
+    reader: &mut Reader<'_>, variables: &[String], row_limit: Option<usize>,
     memory: &mut Memory<'_, S>,
 ) -> BoundedRowsResult {
     open_array(reader, ReadShape::Bindings, memory)?;
@@ -1662,6 +1613,7 @@ fn bounded_binding_array<S: Admission + ?Sized>(
 mod tests {
     use super::*;
     use crate::json::to_json;
+    use purrdf_core::BlankScope;
     use purrdf_core::SparqlResult;
     use purrdf_core::TermBox;
     use purrdf_core::vocab::rdf::{

@@ -381,9 +381,7 @@ impl ExactSchema {
     /// values (`MAXINCLUSIVE 5` and `MAXINCLUSIVE 5.0000000000000000001`, one `5` in
     /// the AST). Bounds spelled differently with one value (`5` and `5.0`) merge.
     pub fn resolve_imports(
-        self,
-        root_iri: Option<&str>,
-        resolver: &dyn Fn(&str) -> Result<Self>,
+        self, root_iri: Option<&str>, resolver: &dyn Fn(&str) -> Result<Self>,
     ) -> Result<Self> {
         // Every source's declarations with their bounds, root first, then imports in
         // the order `resolve_imports` asks for them.
@@ -471,8 +469,7 @@ impl ExactSchema {
     /// constraint's address — built per call, while the schema is borrowed and cannot
     /// move.
     fn by_constraint<T>(
-        &self,
-        per: impl Fn(&NodeConstraint, &ExactBounds) -> T,
+        &self, per: impl Fn(&NodeConstraint, &ExactBounds) -> T,
     ) -> FastMap<usize, T> {
         let mut map = FastMap::default();
         let mut add = |expr: &ShapeExpr, groups: &[ExactBounds]| {
@@ -494,9 +491,7 @@ impl ExactSchema {
 /// node's value against the bound exactly as written.
 #[must_use]
 pub fn validate_exact(
-    schema: &ExactSchema,
-    data: &RdfDataset,
-    map: &[(TermValue, ShapeSelector)],
+    schema: &ExactSchema, data: &RdfDataset, map: &[(TermValue, ShapeSelector)],
     options: &ValidationOptions<'_>,
 ) -> ResultShapeMap {
     let bounds = schema.bounds_by_constraint();
@@ -509,10 +504,7 @@ pub fn validate_exact(
 ///
 /// As [`crate::validate_shape_map`].
 pub fn validate_shape_map_exact(
-    schema: &ExactSchema,
-    data: &RdfDataset,
-    map_src: &str,
-    base: Option<&str>,
+    schema: &ExactSchema, data: &RdfDataset, map_src: &str, base: Option<&str>,
     options: &ValidationOptions<'_>,
 ) -> Result<ResultShapeMap> {
     let bounds = schema.bounds_by_constraint();
@@ -535,11 +527,8 @@ pub fn validate_shape_map_exact(
 /// As [`crate::validate_with_xpath`]: a typed operational refusal; pattern-language
 /// errors remain findings.
 pub fn validate_exact_with_xpath(
-    schema: &ExactSchema,
-    data: &RdfDataset,
-    map: &[(TermValue, ShapeSelector)],
-    options: &ValidationOptions<'_>,
-    profile: purrdf_core::xsd_regex::xpath::Profile,
+    schema: &ExactSchema, data: &RdfDataset, map: &[(TermValue, ShapeSelector)],
+    options: &ValidationOptions<'_>, profile: purrdf_core::xsd_regex::xpath::Profile,
     limits: purrdf_core::xsd_regex::xpath::Limits,
 ) -> core::result::Result<ResultShapeMap, purrdf_core::xsd_regex::xpath::Error> {
     crate::validate::XPathValidator::exact(schema).validate(data, map, options, profile, limits)
@@ -552,12 +541,8 @@ pub fn validate_exact_with_xpath(
 ///
 /// As [`crate::validate_shape_map_with_xpath`].
 pub fn validate_shape_map_exact_with_xpath(
-    schema: &ExactSchema,
-    data: &RdfDataset,
-    map_src: &str,
-    base: Option<&str>,
-    options: &ValidationOptions<'_>,
-    profile: purrdf_core::xsd_regex::xpath::Profile,
+    schema: &ExactSchema, data: &RdfDataset, map_src: &str, base: Option<&str>,
+    options: &ValidationOptions<'_>, profile: purrdf_core::xsd_regex::xpath::Profile,
     limits: purrdf_core::xsd_regex::xpath::Limits,
 ) -> core::result::Result<ResultShapeMap, crate::error::XPathValidationError> {
     crate::shapemap::validate_shape_map_with_validator(

@@ -159,9 +159,7 @@ impl ContentStore {
     ///
     /// [`ContentStoreError::DigestMismatch`] if `stored` != `SHA-256(bytes)`.
     pub fn insert_checked(
-        &mut self,
-        stored: ContentDigest,
-        bytes: Bytes,
+        &mut self, stored: ContentDigest, bytes: Bytes,
     ) -> Result<ContentDigest, ContentStoreError> {
         let actual = ContentDigest::of(&bytes);
         if actual != stored {

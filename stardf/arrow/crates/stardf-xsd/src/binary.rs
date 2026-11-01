@@ -386,9 +386,7 @@ fn base64_shape(lexical: &str) -> Result<Base64Shape, BinaryReadError> {
 
 /// The one native base64 group decoder; validation uses a zero-allocation sink.
 fn decode_base64_groups(
-    lexical: &str,
-    shape: Base64Shape,
-    mut emit: impl FnMut(&[u8]),
+    lexical: &str, shape: Base64Shape, mut emit: impl FnMut(&[u8]),
 ) -> Result<(), BinaryReadError> {
     let mut input = base64_bytes(lexical);
     for group in 0..shape.groups {

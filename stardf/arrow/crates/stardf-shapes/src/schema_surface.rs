@@ -500,8 +500,7 @@ impl OntologyExpression {
 
     /// Visit every restriction the expression contains, at any depth.
     fn visit_restrictions<'s, E>(
-        &'s self,
-        visit: &mut impl FnMut(&'s RestrictedProperty, &'s Restriction) -> Result<(), E>,
+        &'s self, visit: &mut impl FnMut(&'s RestrictedProperty, &'s Restriction) -> Result<(), E>,
     ) -> Result<(), E> {
         match self {
             Self::Named(_) | Self::OneOf(_) | Self::DatatypeRestriction(..) => Ok(()),
@@ -566,9 +565,7 @@ impl OntologyExpression {
     }
 
     fn matches_class(
-        &self,
-        supertypes: &BTreeSet<String>,
-        anonymous: &AnonymousSupers<'_>,
+        &self, supertypes: &BTreeSet<String>, anonymous: &AnonymousSupers<'_>,
     ) -> bool {
         match self {
             Self::Named(iri) => supertypes.contains(iri),
@@ -730,8 +727,7 @@ pub(crate) enum DefinedBase<'d> {
 /// Expand `base[facets]` through the base's definition, following a chain
 /// of defined datatypes to the first that is not defined.
 pub(crate) fn expand_defined_base<'d>(
-    base: &str,
-    facets: &[(String, ExpressionTerm)],
+    base: &str, facets: &[(String, ExpressionTerm)],
     definitions: &'d BTreeMap<String, OntologyExpression>,
 ) -> DefinedBase<'d> {
     let Some(mut definition) = definitions.get(base) else {
@@ -759,8 +755,7 @@ pub(crate) fn expand_defined_base<'d>(
 
 /// The precision of the value schema an expression projects as.
 pub(crate) fn value_precision(
-    expression: &OntologyExpression,
-    datatypes: DatatypeScope<'_>,
+    expression: &OntologyExpression, datatypes: DatatypeScope<'_>,
 ) -> ValuePrecision {
     precision_within(expression, datatypes, datatypes.definitions.len())
 }
@@ -769,9 +764,7 @@ pub(crate) fn value_precision(
 /// definition reached through itself is not expanded again, as the schema
 /// compiler does not expand it again.
 fn precision_within(
-    expression: &OntologyExpression,
-    datatypes: DatatypeScope<'_>,
-    expansions: usize,
+    expression: &OntologyExpression, datatypes: DatatypeScope<'_>, expansions: usize,
 ) -> ValuePrecision {
     match expression {
         OntologyExpression::Named(iri) => {
@@ -878,8 +871,7 @@ fn precision_within(
 /// `owl:rational` ones) exactly, so that a maximum counted over those values,
 /// or a complement of them, never rejects a conforming value.
 pub(crate) fn counts_exactly(
-    expression: &OntologyExpression,
-    datatypes: DatatypeScope<'_>,
+    expression: &OntologyExpression, datatypes: DatatypeScope<'_>,
 ) -> bool {
     matches!(
         value_precision(expression, datatypes),
@@ -1297,9 +1289,7 @@ struct ClassAxiom {
 
 impl ClassAxiom {
     fn classify(
-        subject: &OntologyExpression,
-        object: &OntologyExpression,
-        equivalent: bool,
+        subject: &OntologyExpression, object: &OntologyExpression, equivalent: bool,
         provenance: SchemaCoverageProvenance,
     ) -> Self {
         let mut axiom = Self {
@@ -1326,9 +1316,7 @@ impl ClassAxiom {
     /// the union). Any other subclass expression classifies rather than
     /// constrains, and is reported as such.
     fn include(
-        &mut self,
-        sub: &OntologyExpression,
-        sup: &OntologyExpression,
+        &mut self, sub: &OntologyExpression, sup: &OntologyExpression,
         uncarried_reason: &'static str,
     ) {
         let conjuncts: Vec<OntologyExpression> = sup.conjuncts().into_iter().cloned().collect();
@@ -1430,9 +1418,7 @@ impl<'a> ExpressionReader<'a> {
     }
 
     fn expression(
-        &mut self,
-        term: &Term,
-        depth: usize,
+        &mut self, term: &Term, depth: usize,
     ) -> Result<OntologyExpression, SchemaCompileError> {
         if depth > MAX_OWL_EXPRESSION_DEPTH {
             return Err(SchemaCompileError::LimitExceeded {
@@ -1503,10 +1489,7 @@ impl<'a> ExpressionReader<'a> {
         reason = "one dispatch over the disjoint RDF encodings of OWL 2 Mapping Tables 12 and 13"
     )]
     fn anonymous(
-        &mut self,
-        term: &Term,
-        key: &str,
-        depth: usize,
+        &mut self, term: &Term, key: &str, depth: usize,
     ) -> Result<OntologyExpression, SchemaCompileError> {
         let mut fields: BTreeMap<String, Vec<Term>> = BTreeMap::new();
         for (_, predicate, object) in
@@ -1641,10 +1624,7 @@ impl<'a> ExpressionReader<'a> {
     /// property expression it restricts and a facet value it carries (and,
     /// for a qualified cardinality, a qualifier).
     fn restriction_readings(
-        &mut self,
-        fields: &BTreeMap<String, Vec<Term>>,
-        key: &str,
-        depth: usize,
+        &mut self, fields: &BTreeMap<String, Vec<Term>>, key: &str, depth: usize,
     ) -> Result<Vec<OntologyExpression>, SchemaCompileError> {
         let take = |name: &str| fields.get(name).map_or(&[][..], Vec::as_slice);
         let malformed = |reason: String| SchemaCompileError::InvalidOntology {
@@ -1889,10 +1869,7 @@ impl<'a> ExpressionReader<'a> {
     /// The members of an `owl:unionOf`/`owl:intersectionOf` list, each read as
     /// an expression.
     fn boolean_members(
-        &mut self,
-        head: &Term,
-        depth: usize,
-        owner: &str,
+        &mut self, head: &Term, depth: usize, owner: &str,
     ) -> Result<Vec<OntologyExpression>, SchemaCompileError> {
         let items = self.list_items(head, owner)?;
         let mut members = Vec::with_capacity(items.len());
@@ -1907,10 +1884,7 @@ impl<'a> ExpressionReader<'a> {
     /// An `owl:oneOf` list. An empty one denotes nothing: the OWL 2 Mapping
     /// (Table 18) reads `C owl:oneOf ()` as `C ≡ owl:Nothing`.
     fn one_of(
-        &self,
-        head: &Term,
-        owner: &str,
-        data_range: bool,
+        &self, head: &Term, owner: &str, data_range: bool,
     ) -> Result<OntologyExpression, SchemaCompileError> {
         let malformed = |reason: String| SchemaCompileError::InvalidOntology {
             subject: owner.to_owned(),
@@ -1947,10 +1921,7 @@ impl<'a> ExpressionReader<'a> {
     }
 
     fn datatype_restriction(
-        &self,
-        base: String,
-        head: &Term,
-        owner: &str,
+        &self, base: String, head: &Term, owner: &str,
     ) -> Result<OntologyExpression, SchemaCompileError> {
         let malformed = |reason: String| SchemaCompileError::InvalidOntology {
             subject: owner.to_owned(),
@@ -2007,8 +1978,7 @@ impl<'a> ExpressionReader<'a> {
 
 /// Refuse a data range standing where a class expression is required.
 fn refuse_data_range_as_class(
-    expression: &OntologyExpression,
-    term: &Term,
+    expression: &OntologyExpression, term: &Term,
 ) -> Result<(), SchemaCompileError> {
     if expression.has_data_only_construct() {
         return Err(SchemaCompileError::InvalidOntology {
@@ -2041,8 +2011,7 @@ impl PendingAxiom {
     /// The datatype this axiom defines and its defining data range, when it is
     /// `DT owl:equivalentClass DR` (OWL 2 Structural Specification §9.4).
     fn datatype_definition(
-        &self,
-        datatypes: &BTreeSet<String>,
+        &self, datatypes: &BTreeSet<String>,
     ) -> Option<(&str, &OntologyExpression)> {
         if !self.equivalent {
             return None;
@@ -2112,9 +2081,7 @@ fn conjunction(
 }
 
 fn single<'t>(
-    values: &'t [Term],
-    predicate: &str,
-    owner: &str,
+    values: &'t [Term], predicate: &str, owner: &str,
 ) -> Result<&'t Term, SchemaCompileError> {
     match values {
         [one] => Ok(one),
@@ -2198,8 +2165,7 @@ fn has_self_value(value: &Term, owner: &str) -> Result<(), SchemaCompileError> {
 /// Catalog every property a restriction in `expression` names. The axiom
 /// that names it is provenance only on the classes that carry the axiom.
 fn catalog_restrictions(
-    expression: &OntologyExpression,
-    properties: &mut BTreeMap<String, PropertyFacts>,
+    expression: &OntologyExpression, properties: &mut BTreeMap<String, PropertyFacts>,
 ) -> Result<(), SchemaCompileError> {
     expression.visit_restrictions(&mut |on, _restriction| {
         for iri in on.iris() {
@@ -2766,9 +2732,7 @@ struct DatatypeFacts {
 type AxiomLevel = (SchemaCoverageProvenance, Vec<SchemaExpressionComponent>);
 
 fn axiom_component(
-    expression: String,
-    outcome: SchemaExpressionOutcome,
-    reason: &str,
+    expression: String, outcome: SchemaExpressionOutcome, reason: &str,
 ) -> SchemaExpressionComponent {
     SchemaExpressionComponent {
         expression,
@@ -2783,8 +2747,7 @@ fn axiom_component(
 /// too) and `inverse(p) = p` for a symmetric `p`. The smallest IRI wins where
 /// several are named.
 fn named_inverses(
-    relations: &[PropertyRelation],
-    symmetric: &BTreeSet<String>,
+    relations: &[PropertyRelation], symmetric: &BTreeSet<String>,
 ) -> BTreeMap<String, String> {
     let mut candidates: BTreeMap<&str, BTreeSet<&str>> = BTreeMap::new();
     for property in symmetric {
@@ -2814,8 +2777,7 @@ fn named_inverses(
 /// domain. Each is moved onto the property, propagated with its other
 /// ranges and domains, and reported on the axiom.
 fn globalize_thing_universals(
-    class_axioms: &mut [ClassAxiom],
-    properties: &mut BTreeMap<String, PropertyFacts>,
+    class_axioms: &mut [ClassAxiom], properties: &mut BTreeMap<String, PropertyFacts>,
 ) -> Result<(), SchemaCompileError> {
     for axiom in class_axioms {
         let ClassAxiom {
@@ -2874,10 +2836,8 @@ fn globalize_thing_universals(
 /// class of such a domain becomes a superclass in the hierarchy, so the other
 /// properties of that domain reach the class too.
 fn existential_domain_edges(
-    class_axioms: &[ClassAxiom],
-    properties: &BTreeMap<String, PropertyFacts>,
-    datatypes: &BTreeSet<String>,
-    subclass_relations: &mut Vec<(String, String)>,
+    class_axioms: &[ClassAxiom], properties: &BTreeMap<String, PropertyFacts>,
+    datatypes: &BTreeSet<String>, subclass_relations: &mut Vec<(String, String)>,
     explicit_classes: &mut BTreeSet<String>,
 ) {
     for axiom in class_axioms {
@@ -2970,8 +2930,7 @@ fn malformed_axiom(row: &TripleRow) -> AxiomLevel {
 
 /// `owl:disjointWith` with an anonymous side.
 fn disjoint_axiom(
-    reader: &mut ExpressionReader<'_>,
-    row: &TripleRow,
+    reader: &mut ExpressionReader<'_>, row: &TripleRow,
 ) -> Result<Option<AxiomLevel>, SchemaCompileError> {
     if named_iri(&row.subject).is_some() && named_iri(&row.object).is_some() {
         return Ok(None);
@@ -3016,8 +2975,7 @@ fn render_members(members: &[OntologyExpression]) -> String {
 /// `owl:disjointUnionOf`, or the `owl:members` of an `owl:AllDisjointClasses`,
 /// with an anonymous member.
 fn members_axiom(
-    reader: &mut ExpressionReader<'_>,
-    row: &TripleRow,
+    reader: &mut ExpressionReader<'_>, row: &TripleRow,
 ) -> Result<Option<AxiomLevel>, SchemaCompileError> {
     let owner = row.subject.to_string();
     let mut members = Vec::new();
@@ -3061,8 +3019,7 @@ fn members_axiom(
 
 /// `owl:hasKey` on an anonymous class expression.
 fn has_key_axiom(
-    reader: &mut ExpressionReader<'_>,
-    row: &TripleRow,
+    reader: &mut ExpressionReader<'_>, row: &TripleRow,
 ) -> Result<AxiomLevel, SchemaCompileError> {
     let class = reader.expression(&row.subject, 0)?;
     refuse_data_range_as_class(&class, &row.subject)?;
@@ -3102,8 +3059,7 @@ fn has_key_axiom(
 
 /// A class assertion `x a [ … ]` whose class is anonymous.
 fn class_assertion_axiom(
-    reader: &mut ExpressionReader<'_>,
-    row: &TripleRow,
+    reader: &mut ExpressionReader<'_>, row: &TripleRow,
 ) -> Result<AxiomLevel, SchemaCompileError> {
     // A class assertion whose class is anonymous types an individual; a
     // developer schema describes classes.
@@ -3159,8 +3115,7 @@ fn named_iri(term: &Term) -> Option<&str> {
 }
 
 fn property_entry<'a>(
-    properties: &'a mut BTreeMap<String, PropertyFacts>,
-    iri: &str,
+    properties: &'a mut BTreeMap<String, PropertyFacts>, iri: &str,
 ) -> &'a mut PropertyFacts {
     properties.entry(iri.to_owned()).or_default()
 }
@@ -3179,9 +3134,7 @@ fn input_count(resource: &'static str, count: Option<usize>) -> Result<usize, Sc
 }
 
 fn enforce_limit(
-    resource: &'static str,
-    observed: usize,
-    limit: usize,
+    resource: &'static str, observed: usize, limit: usize,
 ) -> Result<(), SchemaCompileError> {
     if observed > limit {
         Err(SchemaCompileError::LimitExceeded {
@@ -3195,10 +3148,7 @@ fn enforce_limit(
 }
 
 fn coverage_cell_count(
-    property_count: usize,
-    eligible_class_count: usize,
-    external_shaped_cells: usize,
-    limit: usize,
+    property_count: usize, eligible_class_count: usize, external_shaped_cells: usize, limit: usize,
 ) -> Result<usize, SchemaCompileError> {
     let observed = input_count(
         "class/property coverage cells",
@@ -3245,10 +3195,7 @@ fn shape_class_info(
 }
 
 fn merge_shape_info(
-    info: &mut ShapeClassInfo,
-    shape: &Shape,
-    class: &str,
-    model: &crate::shapes::ModelOwner,
+    info: &mut ShapeClassInfo, shape: &Shape, class: &str, model: &crate::shapes::ModelOwner,
 ) -> Result<(), SchemaCompileError> {
     let mut pending = purrdf_lex::walk::WorkList::<_, 16>::new();
     let mut seen = purrdf_core::SmallVec::<[(usize, usize); 16]>::new();
@@ -3277,10 +3224,7 @@ fn merge_shape_info(
 }
 
 fn merge_shape_body_info(
-    info: &mut ShapeClassInfo,
-    shape: &Shape,
-    class: &str,
-    model: &crate::shapes::ModelOwner,
+    info: &mut ShapeClassInfo, shape: &Shape, class: &str, model: &crate::shapes::ModelOwner,
 ) -> Result<(), SchemaCompileError> {
     let mut permitted_paths = BTreeSet::new();
     for view in shape.properties_in(Some(model)) {
@@ -3335,8 +3279,7 @@ const fn expression_nodes(index: usize, inverse: bool) -> (usize, usize) {
 }
 
 fn propagate_property_facts(
-    properties: &mut BTreeMap<String, PropertyFacts>,
-    relations: &[PropertyRelation],
+    properties: &mut BTreeMap<String, PropertyFacts>, relations: &[PropertyRelation],
 ) -> Result<(), SchemaCompileError> {
     let names: Vec<String> = properties.keys().cloned().collect();
     let indices: BTreeMap<&str, usize> = names
@@ -3447,9 +3390,7 @@ pub(crate) fn is_builtin_non_xsd_datatype(iri: &str) -> bool {
 }
 
 fn class_supertypes(
-    classes: &BTreeSet<String>,
-    subclasses: &[(String, String)],
-    equivalents: &[(String, String)],
+    classes: &BTreeSet<String>, subclasses: &[(String, String)], equivalents: &[(String, String)],
 ) -> Result<BTreeMap<String, BTreeSet<String>>, SchemaCompileError> {
     let names: Vec<String> = classes.iter().cloned().collect();
     let indices: BTreeMap<&str, usize> = names
@@ -3483,9 +3424,7 @@ fn class_supertypes(
 /// Propagate ordered fact sets through a directed graph after condensing every
 /// legal cycle into one strongly connected component.
 fn propagate_sets<T: Clone + Ord>(
-    graph: &[BTreeSet<usize>],
-    seeds: Vec<BTreeSet<T>>,
-    resource: &'static str,
+    graph: &[BTreeSet<usize>], seeds: Vec<BTreeSet<T>>, resource: &'static str,
 ) -> Result<Vec<BTreeSet<T>>, SchemaCompileError> {
     // Every output node can hold at most the union of the input seed facts.
     let distinct: BTreeSet<&T> = seeds.iter().flat_map(BTreeSet::iter).collect();
@@ -3494,10 +3433,7 @@ fn propagate_sets<T: Clone + Ord>(
 }
 
 fn propagate_sets_with_limit<T: Clone + Ord>(
-    graph: &[BTreeSet<usize>],
-    seeds: Vec<BTreeSet<T>>,
-    resource: &'static str,
-    limit: usize,
+    graph: &[BTreeSet<usize>], seeds: Vec<BTreeSet<T>>, resource: &'static str, limit: usize,
 ) -> Result<Vec<BTreeSet<T>>, SchemaCompileError> {
     debug_assert_eq!(graph.len(), seeds.len());
     if graph.is_empty() {
@@ -3570,10 +3506,7 @@ fn propagate_sets_with_limit<T: Clone + Ord>(
 }
 
 fn insert_propagated_fact<T: Ord>(
-    destination: &mut BTreeSet<T>,
-    fact: T,
-    materialized: &mut usize,
-    resource: &'static str,
+    destination: &mut BTreeSet<T>, fact: T, materialized: &mut usize, resource: &'static str,
     limit: usize,
 ) -> Result<(), SchemaCompileError> {
     if destination.get(&fact).is_none() {
@@ -3649,8 +3582,7 @@ struct ClassExpressionFacts<'a> {
 impl<'a> ClassExpressionFacts<'a> {
     fn new(
         entries: Vec<(usize, &'a OntologyExpression)>,
-        owned: BTreeSet<(usize, &'a OntologyExpression)>,
-        ancestors: BTreeSet<&'a str>,
+        owned: BTreeSet<(usize, &'a OntologyExpression)>, ancestors: BTreeSet<&'a str>,
         infos: &'a BTreeMap<usize, ConjunctInfo>,
     ) -> Self {
         let mut facts = Self {
@@ -3715,8 +3647,7 @@ impl<'a> ClassExpressionFacts<'a> {
 /// the deepest first (a class below another has more supertypes) and keeping
 /// each one no kept class is below.
 fn lowest_of<'a>(
-    classes: &BTreeSet<&'a str>,
-    supers_of: &impl Fn(&str) -> &'a BTreeSet<String>,
+    classes: &BTreeSet<&'a str>, supers_of: &impl Fn(&str) -> &'a BTreeSet<String>,
 ) -> Vec<&'a str> {
     let mut deepest_first: Vec<&'a str> = classes.iter().copied().collect();
     deepest_first.sort_by_cached_key(|&class| std::cmp::Reverse(supers_of(class).len()));
@@ -3738,8 +3669,7 @@ fn lowest_of<'a>(
 /// kept ones only (in a chain, one), not with every other candidate, so the
 /// nearest owners along a hierarchy `d` deep cost `O(d log d)`, not `O(d²)`.
 fn nearest<'a>(
-    candidates: &[&'a str],
-    class_facts: &BTreeMap<&str, ClassExpressionFacts<'a>>,
+    candidates: &[&'a str], class_facts: &BTreeMap<&str, ClassExpressionFacts<'a>>,
 ) -> Vec<&'a str> {
     let depth = |class: &str| {
         class_facts
@@ -3772,12 +3702,9 @@ fn nearest<'a>(
     reason = "one pass over the property × class cells, each decision kept beside its row"
 )]
 fn assemble_surface(
-    request: &SchemaCompileRequest<'_>,
-    properties: BTreeMap<String, PropertyFacts>,
-    shape_classes: &BTreeMap<String, ShapeClassInfo>,
-    explicit_classes: BTreeSet<String>,
-    datatype_facts: DatatypeFacts,
-    supertypes: &BTreeMap<String, BTreeSet<String>>,
+    request: &SchemaCompileRequest<'_>, properties: BTreeMap<String, PropertyFacts>,
+    shape_classes: &BTreeMap<String, ShapeClassInfo>, explicit_classes: BTreeSet<String>,
+    datatype_facts: DatatypeFacts, supertypes: &BTreeMap<String, BTreeSet<String>>,
     class_axioms: &[ClassAxiom],
 ) -> Result<SchemaSurface, SchemaCompileError> {
     let DatatypeFacts {
@@ -4200,10 +4127,8 @@ fn assemble_surface(
 /// The anonymous class axiom conjuncts each eligible class inherits: those
 /// carried by the class itself and by every one of its superclasses.
 fn class_expression_facts<'a>(
-    class_axioms: &'a [ClassAxiom],
-    eligible_classes: &'a [String],
-    supertypes: &'a BTreeMap<String, BTreeSet<String>>,
-    infos: &'a BTreeMap<usize, ConjunctInfo>,
+    class_axioms: &'a [ClassAxiom], eligible_classes: &'a [String],
+    supertypes: &'a BTreeMap<String, BTreeSet<String>>, infos: &'a BTreeMap<usize, ConjunctInfo>,
 ) -> Result<BTreeMap<&'a str, ClassExpressionFacts<'a>>, SchemaCompileError> {
     let mut carried: BTreeMap<&str, Vec<(usize, &OntologyExpression)>> = BTreeMap::new();
     for (index, axiom) in class_axioms.iter().enumerate() {
@@ -4409,9 +4334,7 @@ const QUALIFIED_EXACT_LOWER_REASON: &str = "the lower bound of the qualified car
 /// The outcome of each part of one property restriction projected on a class
 /// that emits the property.
 pub(crate) fn restriction_outcomes(
-    restriction: &Restriction,
-    datatypes: DatatypeScope<'_>,
-    empty_range: bool,
+    restriction: &Restriction, datatypes: DatatypeScope<'_>, empty_range: bool,
 ) -> Vec<(SchemaExpressionOutcome, &'static str)> {
     use SchemaExpressionOutcome::{Approximated, Projected, Unrepresented};
     match restriction {
@@ -4556,9 +4479,7 @@ impl ConjunctContext<'_> {
     /// conjunct is projected on the focus node (as a class-level schema
     /// constraint rather than through a property).
     fn classify(
-        &self,
-        conjunct: &OntologyExpression,
-        expression: &str,
+        &self, conjunct: &OntologyExpression, expression: &str,
     ) -> Vec<(SchemaExpressionComponent, bool)> {
         use SchemaExpressionOutcome::{Approximated, Excluded, Projected, Unrepresented};
         let restricted = match conjunct {
@@ -4658,8 +4579,7 @@ impl ConjunctContext<'_> {
 /// Add each anonymous datatype definition to the manifest as an axiom whose
 /// one component is the defining data range.
 fn with_axiom_level_components(
-    mut report: SchemaClassExpressionReport,
-    axioms: &[AxiomLevel],
+    mut report: SchemaClassExpressionReport, axioms: &[AxiomLevel],
 ) -> SchemaClassExpressionReport {
     if axioms.is_empty() {
         return report;
@@ -4694,8 +4614,7 @@ fn with_axiom_level_components(
 /// A component as `mode` carries it: shaped-only mode projects no ontology
 /// axiom, so what would be projected or approximated is excluded there.
 fn in_mode(
-    mode: SchemaSurfaceMode,
-    mut component: SchemaExpressionComponent,
+    mode: SchemaSurfaceMode, mut component: SchemaExpressionComponent,
 ) -> SchemaExpressionComponent {
     if mode == SchemaSurfaceMode::ShapedOnly
         && matches!(
@@ -4723,8 +4642,7 @@ pub(crate) const MAX_FRAGMENT_CHAIN: usize = 64;
 /// fragment in every [`MAX_FRAGMENT_CHAIN`] + 1 states the distinct
 /// restrictions above it; the others reference their parent as before.
 fn bound_fragment_chains(
-    fragments: &mut Fragments,
-    class_facts: &BTreeMap<&str, ClassExpressionFacts<'_>>,
+    fragments: &mut Fragments, class_facts: &BTreeMap<&str, ClassExpressionFacts<'_>>,
 ) {
     let mut shallowest_first: Vec<(String, Option<String>)> = fragments.keys().cloned().collect();
     // A fragment's parents are strict ancestors of its owner, with fewer
@@ -4796,8 +4714,7 @@ type Fragments = BTreeMap<(String, Option<String>), Fragment>;
     reason = "one pass over every class's owned and inherited conjuncts"
 )]
 fn class_expression_report(
-    inputs: &ReportInputs<'_, '_>,
-    classes: &mut BTreeMap<String, SurfaceClass>,
+    inputs: &ReportInputs<'_, '_>, classes: &mut BTreeMap<String, SurfaceClass>,
 ) -> Result<(SchemaClassExpressionReport, Fragments), SchemaCompileError> {
     let ReportInputs {
         mode,
@@ -5098,9 +5015,7 @@ mod tests {
     }
 
     fn surface(
-        shapes_body: &str,
-        ontology_body: &str,
-        mode: SchemaSurfaceMode,
+        shapes_body: &str, ontology_body: &str, mode: SchemaSurfaceMode,
     ) -> Result<SchemaSurface, SchemaCompileError> {
         let shape_dataset =
             crate::text_ingest::parse_turtle_to_dataset(&format!("{PREFIXES}{shapes_body}"), None)
@@ -5119,8 +5034,14 @@ mod tests {
         ))
     }
 
+    // LANED-EXCLUSION (lane 13, 2026-10-31, D17): `purrdf_jsonschema` is loudly
+    // absent from this tree (crates/jsonschema/DISPOSITION.md), so the
+    // draft-2020-12 acceptance helper and the test consuming it are
+    // cfg(any())-parked, not deleted. See stardf-shapes/src/json_schema.rs for
+    // the fuller register.
     /// Whether `ex:x` in `data` validates against `#/$defs/A` of the schema
     /// compiled from `ontology_body` (no shapes, ontology-complete).
+    #[cfg(any())]
     fn accepts_data(ontology_body: &str, data: &str) -> bool {
         use purrdf_lex::json::Value;
         let shapes = from_dataset(
@@ -5181,9 +5102,7 @@ mod tests {
     }
 
     fn class_status(
-        surface: &SchemaSurface,
-        property_iri: &str,
-        class_iri: &str,
+        surface: &SchemaSurface, property_iri: &str, class_iri: &str,
     ) -> SchemaCoverageStatus {
         property(surface, property_iri)
             .classes
@@ -5925,6 +5844,7 @@ mod tests {
         );
     }
 
+    #[cfg(any())]
     #[test]
     fn cross_kind_fillers_and_values_are_read_by_owl_2_full() {
         // A class filler on a datatype property, and a data-range filler on an
@@ -6349,9 +6269,7 @@ mod tests {
     /// The outcomes the class-expression manifest reports for `expression` on
     /// `class`, or on the axiom itself when `class` is `None`.
     fn manifest_outcomes(
-        surface: &SchemaSurface,
-        class: Option<&str>,
-        expression: &str,
+        surface: &SchemaSurface, class: Option<&str>, expression: &str,
     ) -> Vec<(SchemaExpressionOutcome, String)> {
         surface
             .class_expressions

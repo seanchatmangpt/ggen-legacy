@@ -156,10 +156,7 @@ pub trait EvidenceSource<I: purrdf_core::ViewTermId>: Sync {
     /// # Errors
     /// Returns the original declaration failure, never a semantic unknown.
     fn service_row(
-        &self,
-        _endpoint: &str,
-        _position: usize,
-        _variables: &[purrdf_sparql_algebra::Variable],
+        &self, _endpoint: &str, _position: usize, _variables: &[purrdf_sparql_algebra::Variable],
         _binding: &[Option<purrdf_core::TermValue>],
     ) -> Result<Option<ServiceRowEvidence<'_>>, EvalError> {
         Ok(None)
@@ -172,9 +169,7 @@ pub trait EvidenceSource<I: purrdf_core::ViewTermId>: Sync {
     /// # Errors
     /// Returns the original caller declaration failure.
     fn lossy_producer_reason(
-        &self,
-        _producer: &str,
-        _evidence: &str,
+        &self, _producer: &str, _evidence: &str,
     ) -> Result<Option<ReasonId>, EvalError> {
         Ok(None)
     }
@@ -187,10 +182,8 @@ pub trait EvidenceSource<I: purrdf_core::ViewTermId>: Sync {
     /// # Errors
     /// Returns the original declaration failure, never a semantic unknown.
     fn expression_gap(
-        &self,
-        _expression: &purrdf_sparql_algebra::Expression,
-        _variables: &[purrdf_sparql_algebra::Variable],
-        _row: &[Option<crate::SolutionTerm<I>>],
+        &self, _expression: &purrdf_sparql_algebra::Expression,
+        _variables: &[purrdf_sparql_algebra::Variable], _row: &[Option<crate::SolutionTerm<I>>],
         _graph: purrdf_core::GraphMatch<I>,
     ) -> Result<Option<ReasonId>, EvalError> {
         Ok(None)
@@ -204,8 +197,7 @@ pub trait EvidenceSource<I: purrdf_core::ViewTermId>: Sync {
     /// # Errors
     /// Returns an original declaration/read failure.
     fn sum_nonnegative(
-        &self,
-        _aggregate: &purrdf_sparql_algebra::AggregateExpression,
+        &self, _aggregate: &purrdf_sparql_algebra::AggregateExpression,
         _graph: purrdf_core::GraphMatch<I>,
     ) -> Result<bool, EvalError> {
         Ok(false)
@@ -221,8 +213,7 @@ pub(crate) struct EvidenceOwner {
 
 impl EvidenceOwner {
     pub(crate) fn new(
-        owner: Option<QueryEvidence>,
-        workspace: &WorkspaceCapability,
+        owner: Option<QueryEvidence>, workspace: &WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         Ok(Self {
             state: SharedWorkspace::new_admitted(Mutex::new(owner), workspace)?,
@@ -230,8 +221,7 @@ impl EvidenceOwner {
     }
 
     pub(crate) fn query_owner(
-        &self,
-        workspace: &WorkspaceCapability,
+        &self, workspace: &WorkspaceCapability,
     ) -> Result<QueryEvidence, EvalError> {
         let mut owner = self.state.lock().map_err(|_| {
             NativeDiagnostic::error(
@@ -253,9 +243,7 @@ impl EvidenceOwner {
     /// An input with no declarations adopts the producer's actual owner; an
     /// already admitted input imports through the canonical evidence home.
     pub(crate) fn bind_native_evidence(
-        &self,
-        row: &RowEvidence,
-        workspace: &WorkspaceCapability,
+        &self, row: &RowEvidence, workspace: &WorkspaceCapability,
     ) -> Result<RowEvidence, EvalError> {
         if row.is_virtual() {
             return Ok(row.clone());
@@ -280,8 +268,7 @@ impl EvidenceOwner {
     }
 
     pub(crate) fn retained_owner(
-        &self,
-        workspace: &WorkspaceCapability,
+        &self, workspace: &WorkspaceCapability,
     ) -> Result<Option<QueryEvidence>, EvalError> {
         self.state.lock().map(|owner| owner.clone()).map_err(|_| {
             NativeDiagnostic::error(
@@ -301,8 +288,7 @@ pub(crate) struct EvidenceInput<'d, I: purrdf_core::ViewTermId> {
 
 impl<'d, I: purrdf_core::ViewTermId> EvidenceInput<'d, I> {
     pub(crate) fn new(
-        source: &'d dyn EvidenceSource<I>,
-        workspace: &WorkspaceCapability,
+        source: &'d dyn EvidenceSource<I>, workspace: &WorkspaceCapability,
         owner: Option<QueryEvidence>,
     ) -> Result<Self, EvalError> {
         Ok(Self {
@@ -312,9 +298,7 @@ impl<'d, I: purrdf_core::ViewTermId> EvidenceInput<'d, I> {
     }
 
     pub(crate) fn claim(
-        &self,
-        quad: &purrdf_core::QuadIds<I>,
-        workspace: &WorkspaceCapability,
+        &self, quad: &purrdf_core::QuadIds<I>, workspace: &WorkspaceCapability,
     ) -> Result<RowEvidence, EvalError> {
         let Some(record) = self.source.claim(quad)? else {
             return Ok(RowEvidence::default());
@@ -323,9 +307,7 @@ impl<'d, I: purrdf_core::ViewTermId> EvidenceInput<'d, I> {
     }
 
     fn retain_declaration(
-        &self,
-        record: &EvidenceRecord,
-        workspace: &WorkspaceCapability,
+        &self, record: &EvidenceRecord, workspace: &WorkspaceCapability,
     ) -> Result<RowEvidence, EvalError> {
         if record.is_default() {
             return Ok(RowEvidence::default());
@@ -354,12 +336,8 @@ impl<'d, I: purrdf_core::ViewTermId> EvidenceInput<'d, I> {
     }
 
     pub(crate) fn service_row(
-        &self,
-        endpoint: &str,
-        position: usize,
-        variables: &[purrdf_sparql_algebra::Variable],
-        binding: &[Option<purrdf_core::TermValue>],
-        workspace: &WorkspaceCapability,
+        &self, endpoint: &str, position: usize, variables: &[purrdf_sparql_algebra::Variable],
+        binding: &[Option<purrdf_core::TermValue>], workspace: &WorkspaceCapability,
     ) -> Result<RowEvidence, EvalError> {
         let Some(declaration) = self
             .source
@@ -381,9 +359,7 @@ impl<'d, I: purrdf_core::ViewTermId> EvidenceInput<'d, I> {
     }
 
     pub(crate) fn service_scope(
-        &self,
-        endpoint: &str,
-        workspace: &WorkspaceCapability,
+        &self, endpoint: &str, workspace: &WorkspaceCapability,
     ) -> Result<RowEvidence, EvalError> {
         let scope = self.source.service_scope(endpoint)?;
         self.retain_scope(&RowEvidence::default(), scope, workspace)
@@ -393,9 +369,7 @@ impl<'d, I: purrdf_core::ViewTermId> EvidenceInput<'d, I> {
     /// A matched claim or path derivation establishes its witness independently
     /// of missing edges elsewhere. Keep polarity, reasons and frame unchanged.
     pub(crate) fn found_witness(
-        &self,
-        row: &RowEvidence,
-        workspace: &WorkspaceCapability,
+        &self, row: &RowEvidence, workspace: &WorkspaceCapability,
     ) -> Result<RowEvidence, EvalError> {
         if row.with_record(EvidenceRecord::completeness)? == SearchCompleteness::Complete {
             return Ok(row.clone());
@@ -408,19 +382,14 @@ impl<'d, I: purrdf_core::ViewTermId> EvidenceInput<'d, I> {
     }
 
     pub(crate) fn scope_evidence(
-        &self,
-        row: &RowEvidence,
-        graph: purrdf_core::GraphMatch<I>,
+        &self, row: &RowEvidence, graph: purrdf_core::GraphMatch<I>,
         workspace: &WorkspaceCapability,
     ) -> Result<RowEvidence, EvalError> {
         self.retain_scope(row, self.source.scope(graph)?, workspace)
     }
 
     fn retain_scope(
-        &self,
-        row: &RowEvidence,
-        scope: EvidenceScope,
-        workspace: &WorkspaceCapability,
+        &self, row: &RowEvidence, scope: EvidenceScope, workspace: &WorkspaceCapability,
     ) -> Result<RowEvidence, EvalError> {
         if scope.completeness == SearchCompleteness::Complete && scope.missing_reason.is_none() {
             return Ok(row.clone());
@@ -437,10 +406,7 @@ impl<'d, I: purrdf_core::ViewTermId> EvidenceInput<'d, I> {
     /// Translate the actual registered search attestation, independently of
     /// operational cursor exhaustion and independently of candidate polarity.
     pub(crate) fn lossy_producer_evidence(
-        &self,
-        producer: &str,
-        evidence: &str,
-        workspace: &WorkspaceCapability,
+        &self, producer: &str, evidence: &str, workspace: &WorkspaceCapability,
     ) -> Result<RowEvidence, EvalError> {
         let reason = self
             .source
@@ -464,14 +430,12 @@ impl<'d, I: purrdf_core::ViewTermId> EvidenceInput<'d, I> {
     }
 
     pub(crate) fn aggregate_evidence(
-        &self,
-        row: &RowEvidence,
+        &self, row: &RowEvidence,
         aggregates: &[(
             purrdf_sparql_algebra::Variable,
             purrdf_sparql_algebra::AggregateExpression,
         )],
-        graph: purrdf_core::GraphMatch<I>,
-        workspace: &WorkspaceCapability,
+        graph: purrdf_core::GraphMatch<I>, workspace: &WorkspaceCapability,
     ) -> Result<RowEvidence, EvalError> {
         let row = self.scope_evidence(row, graph, workspace)?;
         if aggregates.is_empty() {
@@ -486,12 +450,9 @@ impl<'d, I: purrdf_core::ViewTermId> EvidenceInput<'d, I> {
     }
 
     pub(crate) fn expression_evidence(
-        &self,
-        expression: &purrdf_sparql_algebra::Expression,
-        variables: &[purrdf_sparql_algebra::Variable],
-        row: &crate::solution::RetainedRow<I>,
-        graph: purrdf_core::GraphMatch<I>,
-        workspace: &WorkspaceCapability,
+        &self, expression: &purrdf_sparql_algebra::Expression,
+        variables: &[purrdf_sparql_algebra::Variable], row: &crate::solution::RetainedRow<I>,
+        graph: purrdf_core::GraphMatch<I>, workspace: &WorkspaceCapability,
     ) -> Result<Option<RowEvidence>, EvalError> {
         let Some(reason) = self
             .source
@@ -512,9 +473,7 @@ impl<'d, I: purrdf_core::ViewTermId> EvidenceInput<'d, I> {
     }
 
     pub(crate) fn absence_evidence(
-        &self,
-        row: &RowEvidence,
-        graph: purrdf_core::GraphMatch<I>,
+        &self, row: &RowEvidence, graph: purrdf_core::GraphMatch<I>,
         workspace: &WorkspaceCapability,
     ) -> Result<RowEvidence, EvalError> {
         let scope = self.source.scope(graph)?;
@@ -543,9 +502,7 @@ impl<'d, I: purrdf_core::ViewTermId> EvidenceInput<'d, I> {
     /// scope establish closure. Missing closure is a membership gap, never an
     /// inverted claim or an operational-error fallback.
     pub(crate) fn negative_evidence(
-        &self,
-        witness: &RowEvidence,
-        graph: purrdf_core::GraphMatch<I>,
+        &self, witness: &RowEvidence, graph: purrdf_core::GraphMatch<I>,
         workspace: &WorkspaceCapability,
     ) -> Result<RowEvidence, EvalError> {
         let guarded = self.absence_evidence(witness, graph, workspace)?;
@@ -561,11 +518,8 @@ impl<'d, I: purrdf_core::ViewTermId> EvidenceInput<'d, I> {
     /// Retain an existential witness bag using the original query dictionary.
     /// Only a completed, closed empty search opposes the existential predicate.
     pub(crate) fn existential_evidence<'r>(
-        &self,
-        witnesses: impl IntoIterator<Item = &'r RowEvidence>,
-        search: &RowEvidence,
-        graph: purrdf_core::GraphMatch<I>,
-        workspace: &WorkspaceCapability,
+        &self, witnesses: impl IntoIterator<Item = &'r RowEvidence>, search: &RowEvidence,
+        graph: purrdf_core::GraphMatch<I>, workspace: &WorkspaceCapability,
     ) -> Result<RowEvidence, EvalError> {
         if let Some(combined) = RowEvidence::existential_witnesses(witnesses, search)? {
             return Ok(combined);
@@ -578,8 +532,7 @@ impl<'d, I: purrdf_core::ViewTermId> EvidenceInput<'d, I> {
 
     /// Admit the caller's question against the source's explicit whole scope.
     pub(crate) fn answer_request(
-        &self,
-        mut request: purrdf_core::evidence::AnswerRequest,
+        &self, mut request: purrdf_core::evidence::AnswerRequest,
     ) -> Result<purrdf_core::evidence::AnswerRequest, EvalError> {
         let scope = self.source.scope(purrdf_core::GraphMatch::Any)?;
         request.input_completeness = request.input_completeness.worse(scope.completeness);
@@ -588,12 +541,9 @@ impl<'d, I: purrdf_core::ViewTermId> EvidenceInput<'d, I> {
     }
 
     pub(crate) fn with_answer_status<R>(
-        &self,
-        rows: &crate::solution::SolutionSeq<I>,
-        mut request: purrdf_core::evidence::AnswerRequest,
-        workspace: &WorkspaceCapability,
-        exhausted: bool,
-        visit: impl FnOnce(purrdf_core::evidence::AnswerStatus<'_>) -> R,
+        &self, rows: &crate::solution::SolutionSeq<I>,
+        mut request: purrdf_core::evidence::AnswerRequest, workspace: &WorkspaceCapability,
+        exhausted: bool, visit: impl FnOnce(purrdf_core::evidence::AnswerStatus<'_>) -> R,
     ) -> Result<R, EvalError> {
         request = self.answer_request(request)?;
         request.input_completeness = request.input_completeness.worse(
@@ -617,12 +567,8 @@ impl<'d, I: purrdf_core::ViewTermId> EvidenceInput<'d, I> {
     }
 
     pub(crate) fn with_ledger<N: purrdf_core::evidence::LedgerNodes, R>(
-        &self,
-        rows: &crate::solution::SolutionSeq<I>,
-        terms: &[LedgerRowTerms<'_>],
-        nodes: &N,
-        vocabulary: &purrdf_core::evidence::LedgerVocabulary<'_>,
-        workspace: &WorkspaceCapability,
+        &self, rows: &crate::solution::SolutionSeq<I>, terms: &[LedgerRowTerms<'_>], nodes: &N,
+        vocabulary: &purrdf_core::evidence::LedgerVocabulary<'_>, workspace: &WorkspaceCapability,
         visit: impl FnOnce(&EvidenceLedger<'_, N>) -> R,
     ) -> Result<R, EvalError> {
         self.with_ledger_selection(
@@ -639,11 +585,8 @@ impl<'d, I: purrdf_core::ViewTermId> EvidenceInput<'d, I> {
     }
 
     pub(crate) fn with_accepted_ledger<N: purrdf_core::evidence::LedgerNodes, R>(
-        &self,
-        rows: &crate::solution::SolutionSeq<I>,
-        read: &AcceptedLedgerRead<'_, N>,
-        workspace: &WorkspaceCapability,
-        visit: impl FnOnce(&EvidenceLedger<'_, N>) -> R,
+        &self, rows: &crate::solution::SolutionSeq<I>, read: &AcceptedLedgerRead<'_, N>,
+        workspace: &WorkspaceCapability, visit: impl FnOnce(&EvidenceLedger<'_, N>) -> R,
     ) -> Result<R, EvalError> {
         self.with_ledger_selection(
             rows,
@@ -659,11 +602,8 @@ impl<'d, I: purrdf_core::ViewTermId> EvidenceInput<'d, I> {
     }
 
     fn with_ledger_selection<N: purrdf_core::evidence::LedgerNodes, R>(
-        &self,
-        rows: &crate::solution::SolutionSeq<I>,
-        read: &LedgerRead<'_, N>,
-        workspace: &WorkspaceCapability,
-        visit: impl FnOnce(&EvidenceLedger<'_, N>) -> R,
+        &self, rows: &crate::solution::SolutionSeq<I>, read: &LedgerRead<'_, N>,
+        workspace: &WorkspaceCapability, visit: impl FnOnce(&EvidenceLedger<'_, N>) -> R,
     ) -> Result<R, EvalError> {
         if read.terms.len() != rows.rows.len() {
             return Err(NativeDiagnostic::error(
@@ -764,11 +704,8 @@ impl<'d, I: purrdf_core::ViewTermId> EvidenceInput<'d, I> {
     }
 
     pub(crate) fn with_accepted_rows<R>(
-        &self,
-        rows: &crate::solution::SolutionSeq<I>,
-        accepted: &[ReasonId],
-        workspace: &WorkspaceCapability,
-        visit: impl FnOnce(AcceptedAnswerRows<'_, I>) -> R,
+        &self, rows: &crate::solution::SolutionSeq<I>, accepted: &[ReasonId],
+        workspace: &WorkspaceCapability, visit: impl FnOnce(AcceptedAnswerRows<'_, I>) -> R,
     ) -> Result<R, EvalError> {
         let owner = self.owner.query_owner(workspace)?;
         owner.with_accepted_payloads(
@@ -817,10 +754,7 @@ impl QueryEvidence {
     /// Refuses cross-owner evidence, noncanonical acceptance and reasons absent
     /// from the actual retained answer, including intermediate-only reasons.
     pub fn with_accepted_payloads<T, R>(
-        &self,
-        rows: &[T],
-        evidence: fn(&T) -> &RowEvidence,
-        accepted: &[ReasonId],
+        &self, rows: &[T], evidence: fn(&T) -> &RowEvidence, accepted: &[ReasonId],
         visit: impl FnOnce(AcceptedPayloadRows<'_, T>) -> R,
     ) -> Result<R, EvalError> {
         let records = self
@@ -835,11 +769,8 @@ impl QueryEvidence {
     }
 
     fn accepted_payloads_locked<'a, T>(
-        &self,
-        rows: &'a [T],
-        evidence: fn(&T) -> &RowEvidence,
-        records: &'a EvidenceWorkspace<EvidenceAdmission>,
-        accepted: &'a [ReasonId],
+        &self, rows: &'a [T], evidence: fn(&T) -> &RowEvidence,
+        records: &'a EvidenceWorkspace<EvidenceAdmission>, accepted: &'a [ReasonId],
     ) -> Result<AcceptedPayloadRows<'a, T>, EvalError> {
         for row in rows {
             if !self.owns(evidence(row)) {
@@ -936,8 +867,7 @@ pub(crate) enum StatusFailure {
 
 /// The one admission/error boundary used by both streaming and final answers.
 pub(crate) fn with_native_answer<R>(
-    request: purrdf_core::evidence::AnswerRequest,
-    workspace: &WorkspaceCapability,
+    request: purrdf_core::evidence::AnswerRequest, workspace: &WorkspaceCapability,
     run: impl FnOnce(
         &mut purrdf_core::evidence::AnswerAccumulator<&mut LexicalFrame>,
     ) -> Result<R, StatusFailure>,
@@ -1001,10 +931,7 @@ impl EvidenceAdmission {
     }
 
     pub(crate) fn storage_error(
-        &self,
-        storage: StorageError,
-        context: &'static str,
-        workspace: &WorkspaceCapability,
+        &self, storage: StorageError, context: &'static str, workspace: &WorkspaceCapability,
     ) -> EvalError {
         match self.0.lock() {
             Ok(mut frame) => frame
@@ -1142,8 +1069,7 @@ impl QueryEvidence {
     }
 
     pub(crate) fn undecided_reasons(
-        &self,
-        reasons: impl Clone + Iterator<Item = ReasonId>,
+        &self, reasons: impl Clone + Iterator<Item = ReasonId>,
     ) -> Result<RowEvidence, EvalError> {
         self.require_reasons(reasons.clone())?;
         let mut table = self
@@ -1172,8 +1098,7 @@ impl QueryEvidence {
     }
 
     fn retain_in_order(
-        &self,
-        record: &EvidenceRecord,
+        &self, record: &EvidenceRecord,
         order: Option<&purrdf_core::evidence::StandpointOrder<purrdf_hash::hex::Digest32>>,
     ) -> Result<RowEvidence, EvalError> {
         self.require_reasons(record.reasons().iter().copied())?;
@@ -1219,8 +1144,7 @@ impl QueryEvidence {
     }
 
     fn retain_reason<'a>(
-        &self,
-        id: ReasonId,
+        &self, id: ReasonId,
         source: impl FnOnce() -> Result<Option<ReasonDescription<'a>>, EvalError>,
     ) -> Result<(), EvalError> {
         let table = self
@@ -1248,8 +1172,7 @@ impl QueryEvidence {
     /// # Errors
     /// Returns the original payload, identity-scratch or dictionary refusal.
     pub fn declare_reason(
-        &self,
-        description: ReasonDescription<'_>,
+        &self, description: ReasonDescription<'_>,
     ) -> Result<ReasonId, EvalError> {
         let mut frame = LexicalFrame::new(&self.state.workspace);
         let id = description
@@ -1269,9 +1192,7 @@ impl QueryEvidence {
     }
 
     fn publish_reason(
-        &self,
-        description: ReasonDescription<'_>,
-        expected: ReasonId,
+        &self, description: ReasonDescription<'_>, expected: ReasonId,
     ) -> Result<ReasonId, EvalError> {
         let workspace = &self.state.workspace;
         let cause = workspace.clone_term(description.cause)?;
@@ -1345,10 +1266,7 @@ impl QueryEvidence {
     /// # Errors
     /// Refuses detached/cross-query ids and all native publication failures.
     pub fn combine(
-        &self,
-        left: &RowEvidence,
-        right: &RowEvidence,
-        law: EvidenceCombination,
+        &self, left: &RowEvidence, right: &RowEvidence, law: EvidenceCombination,
     ) -> Result<RowEvidence, EvalError> {
         if !self.owns(left) || !self.owns(right) {
             return Err(self.invariant("evidence rows belong to different query owners"));
@@ -1372,10 +1290,7 @@ impl QueryEvidence {
     /// # Errors
     /// Returns native refusal or an invalid query-local owner.
     pub fn with_completeness(
-        &self,
-        row: &RowEvidence,
-        completeness: SearchCompleteness,
-        reason: Option<ReasonId>,
+        &self, row: &RowEvidence, completeness: SearchCompleteness, reason: Option<ReasonId>,
     ) -> Result<RowEvidence, EvalError> {
         if !self.owns(row) {
             return Err(self.invariant("evidence row belongs to another query owner"));
@@ -1414,8 +1329,7 @@ impl QueryEvidence {
     }
 
     fn aggregate_evidence(
-        &self,
-        row: &RowEvidence,
+        &self, row: &RowEvidence,
         aggregates: &[(
             purrdf_sparql_algebra::Variable,
             purrdf_sparql_algebra::AggregateExpression,
@@ -1451,8 +1365,7 @@ impl QueryEvidence {
     }
 
     fn with_aggregate_bounds(
-        &self,
-        row: &RowEvidence,
+        &self, row: &RowEvidence,
         bounds: &[(
             purrdf_hash::hex::Digest32,
             purrdf_core::evidence::AggregateBound,
@@ -1464,8 +1377,7 @@ impl QueryEvidence {
     }
 
     fn transform(
-        &self,
-        row: &RowEvidence,
+        &self, row: &RowEvidence,
         update: impl FnOnce(
             &EvidenceRecord,
             &mut Memory<'_, EvidenceAdmission>,
@@ -1513,8 +1425,7 @@ impl RowEvidence {
     /// closed empty invocation opposes EXISTS; other empty searches retain their
     /// original uncertainty without inventing an external scope or reason.
     pub(crate) fn native_existential<'r>(
-        witnesses: impl IntoIterator<Item = &'r Self>,
-        search: &Self,
+        witnesses: impl IntoIterator<Item = &'r Self>, search: &Self,
         fallback_owner: impl FnOnce() -> Result<QueryEvidence, EvalError>,
     ) -> Result<Self, EvalError> {
         if let Some(record) = Self::existential_witnesses(witnesses, search)? {
@@ -1534,8 +1445,7 @@ impl RowEvidence {
     /// Negation consumes only the original native closure and completeness.
     /// An incomplete declaration remains a membership gap, with its owner intact.
     pub(crate) fn native_negative(
-        &self,
-        fallback_owner: impl FnOnce() -> Result<QueryEvidence, EvalError>,
+        &self, fallback_owner: impl FnOnce() -> Result<QueryEvidence, EvalError>,
     ) -> Result<Self, EvalError> {
         if self.is_undecided()
             || !self.permits_closed_absence()
@@ -1591,8 +1501,7 @@ impl RowEvidence {
     /// An empty bag carries no polarity witness; its absence licence belongs to
     /// the caller's declared scope rather than this combination kernel.
     pub(crate) fn existential_witnesses<'r>(
-        witnesses: impl IntoIterator<Item = &'r Self>,
-        search: &Self,
+        witnesses: impl IntoIterator<Item = &'r Self>, search: &Self,
     ) -> Result<Option<Self>, EvalError> {
         let mut combined: Option<Self> = None;
         for witness in witnesses {
@@ -1740,8 +1649,7 @@ impl RowEvidence {
     }
 
     pub(crate) fn project_columns(
-        &self,
-        columns: &[purrdf_hash::hex::Digest32],
+        &self, columns: &[purrdf_hash::hex::Digest32],
     ) -> Result<Self, EvalError> {
         let Some(owner) = &self.owner else {
             return Ok(self.clone());
@@ -1790,9 +1698,7 @@ impl RowEvidence {
     /// # Errors
     /// Refuses unknown identities, absent owners and poisoned reason tables.
     pub fn with_reason<R>(
-        &self,
-        id: ReasonId,
-        read: impl FnOnce(ReasonDescription<'_>) -> R,
+        &self, id: ReasonId, read: impl FnOnce(ReasonDescription<'_>) -> R,
     ) -> Result<R, EvalError> {
         let Some(owner) = &self.owner else {
             return Err(NativeDiagnostic::error(

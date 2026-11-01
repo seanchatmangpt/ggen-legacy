@@ -180,9 +180,7 @@ impl ShaclData {
     /// Build a holder from the Core dataset, the SPARQL dataset, and the optional
     /// shapes-graph IRI.
     pub fn new(
-        core: Arc<RdfDataset>,
-        sparql: Arc<RdfDataset>,
-        shapes_graph_iri: Option<String>,
+        core: Arc<RdfDataset>, sparql: Arc<RdfDataset>, shapes_graph_iri: Option<String>,
     ) -> Self {
         let same = Arc::ptr_eq(&core, &sparql);
         let core = Arc::new(ShaclDatasetView::native(core));
@@ -198,8 +196,7 @@ impl ShaclData {
     /// Both views must use compatible typed RDF identities; local term handles
     /// remain private to each view. No owned dataset is materialized here.
     pub fn from_views(
-        core: Arc<ShaclDatasetView>,
-        sparql: Arc<ShaclDatasetView>,
+        core: Arc<ShaclDatasetView>, sparql: Arc<ShaclDatasetView>,
         shapes_graph_iri: Option<String>,
     ) -> Self {
         Self::from_views_with_supplement(core, sparql, shapes_graph_iri, &[])
@@ -210,10 +207,8 @@ impl ShaclData {
     /// triples, when the caller asked for them (SHACL 1.2 Core §6.3,
     /// `subClassOfInShapesGraph`). Both views must intern every IRI of the pairs.
     pub(crate) fn from_views_with_supplement(
-        core: Arc<ShaclDatasetView>,
-        sparql: Arc<ShaclDatasetView>,
-        shapes_graph_iri: Option<String>,
-        supplement: &[(String, String)],
+        core: Arc<ShaclDatasetView>, sparql: Arc<ShaclDatasetView>,
+        shapes_graph_iri: Option<String>, supplement: &[(String, String)],
     ) -> Self {
         Self::from_shared_views_with_supplement(
             core,
@@ -224,10 +219,8 @@ impl ShaclData {
     }
 
     fn from_shared_views_with_supplement(
-        core: Arc<ShaclDatasetView>,
-        sparql: Arc<ShaclDatasetView>,
-        shapes_graph_iri: Option<Arc<str>>,
-        supplement: &[(String, String)],
+        core: Arc<ShaclDatasetView>, sparql: Arc<ShaclDatasetView>,
+        shapes_graph_iri: Option<Arc<str>>, supplement: &[(String, String)],
     ) -> Self {
         let class_membership =
             ClassMembershipView::from_view_with_supplement(Arc::clone(&core), supplement);
@@ -361,8 +354,7 @@ impl ShaclData {
     /// dictionary only when this graph needs additional class identities.
     /// Data rows remain unchanged; only term namespaces and SHACL type are extended.
     fn with_class_supplement_from(
-        &self,
-        supplement: &[(String, String)],
+        &self, supplement: &[(String, String)],
         terms: impl FnOnce() -> Result<Arc<RdfDataset>, crate::error::ShapesError>,
     ) -> Result<Self, crate::error::ShapesError> {
         let missing = supplement
@@ -458,10 +450,7 @@ impl ShaclData {
 /// position does not resolve (a term not interned in `ds` matches nothing).
 #[inline]
 pub fn quads_for_pattern_ids(
-    ds: &impl ShaclRead,
-    s: Option<TermId>,
-    p: Option<TermId>,
-    o: Option<TermId>,
+    ds: &impl ShaclRead, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
     graph: GraphFilter,
 ) -> impl Iterator<Item = QuadIds> + '_ {
     ds.quads_for_pattern(s, p, o, graph.as_graph_match())
@@ -493,10 +482,7 @@ pub(crate) fn objects_of(ds: &impl ShaclRead, subject: &Term, predicate: &str) -
 /// ([`crate::path`], [`crate::engine`]) stays in id space via
 /// [`quads_for_pattern_ids`].
 pub fn native_quads(
-    ds: &impl ShaclRead,
-    subject: Option<&Term>,
-    predicate: Option<&Term>,
-    object: Option<&Term>,
+    ds: &impl ShaclRead, subject: Option<&Term>, predicate: Option<&Term>, object: Option<&Term>,
     graph: GraphFilter,
 ) -> Vec<(Term, NamedNode, Term)> {
     let s_id = match subject {

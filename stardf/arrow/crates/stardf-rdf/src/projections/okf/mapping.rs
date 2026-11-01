@@ -141,16 +141,14 @@ struct Projector<'a> {
 /// Returns a typed configuration, term, integrity, cardinality, syntax, package,
 /// or resource-limit failure.
 pub fn project_okf_terms<D: DatasetView>(
-    view: &D,
-    config: &OkfGenerationConfig,
+    view: &D, config: &OkfGenerationConfig,
 ) -> Result<OkfProjection, ProjectionError> {
     Projector::load(view, config)?.project()
 }
 
 impl<'a> Projector<'a> {
     fn load<D: DatasetView>(
-        view: &D,
-        config: &'a OkfGenerationConfig,
+        view: &D, config: &'a OkfGenerationConfig,
     ) -> Result<Self, ProjectionError> {
         config.validate()?;
         let mut cache = BTreeMap::new();
@@ -474,10 +472,7 @@ impl<'a> Projector<'a> {
     }
 
     fn mapped_path_stem(
-        &mut self,
-        subject: &ProjectionTerm,
-        predicate: &str,
-        rendering: OkfTermRendering,
+        &mut self, subject: &ProjectionTerm, predicate: &str, rendering: OkfTermRendering,
     ) -> Result<String, ProjectionError> {
         let selection = self.config.graph_selection();
         let indices = self.by_subject.get(subject).map_or(&[][..], Vec::as_slice);
@@ -509,8 +504,7 @@ impl<'a> Projector<'a> {
     }
 
     fn populate_frontmatter(
-        &mut self,
-        documents: &mut [ConceptDocument],
+        &mut self, documents: &mut [ConceptDocument],
     ) -> Result<(), ProjectionError> {
         let mappings = self.config.frontmatter().clone();
         for document in documents {
@@ -548,19 +542,13 @@ impl<'a> Projector<'a> {
     }
 
     fn map_optional_field(
-        &mut self,
-        subject: &ProjectionTerm,
-        field: &str,
-        mapping: Option<&OkfFieldMapping>,
+        &mut self, subject: &ProjectionTerm, field: &str, mapping: Option<&OkfFieldMapping>,
     ) -> Result<Option<YamlField>, ProjectionError> {
         mapping.map_or(Ok(None), |mapping| self.map_field(subject, field, mapping))
     }
 
     fn map_field(
-        &mut self,
-        subject: &ProjectionTerm,
-        field: &str,
-        mapping: &OkfFieldMapping,
+        &mut self, subject: &ProjectionTerm, field: &str, mapping: &OkfFieldMapping,
     ) -> Result<Option<YamlField>, ProjectionError> {
         let indices = self.matching_indices(subject, mapping.predicates());
         let mut values = BTreeSet::new();
@@ -608,8 +596,7 @@ impl<'a> Projector<'a> {
     }
 
     fn populate_bodies(
-        &mut self,
-        documents: &mut [ConceptDocument],
+        &mut self, documents: &mut [ConceptDocument],
     ) -> Result<(), ProjectionError> {
         let targets: BTreeMap<ProjectionTerm, (String, String)> = documents
             .iter()
@@ -816,9 +803,7 @@ impl<'a> Projector<'a> {
     }
 
     fn matching_indices(
-        &self,
-        subject: &ProjectionTerm,
-        predicates: &BTreeSet<String>,
+        &self, subject: &ProjectionTerm, predicates: &BTreeSet<String>,
     ) -> Vec<usize> {
         self.subject_indices(subject)
             .iter()
@@ -831,10 +816,7 @@ impl<'a> Projector<'a> {
     }
 
     fn enforce_value_limit(
-        &self,
-        count: usize,
-        field: &str,
-        subject: &ProjectionTerm,
+        &self, count: usize, field: &str, subject: &ProjectionTerm,
     ) -> Result<(), ProjectionError> {
         if count > self.config.max_values_per_field() {
             return Err(ProjectionError::limit(format!(
@@ -847,11 +829,7 @@ impl<'a> Projector<'a> {
     }
 
     fn cardinality_error(
-        &self,
-        field: &str,
-        subject: &ProjectionTerm,
-        expected: &str,
-        actual: usize,
+        &self, field: &str, subject: &ProjectionTerm, expected: &str, actual: usize,
     ) -> Result<ProjectionError, ProjectionError> {
         Ok(ProjectionError::integrity(format!(
             "OKF `{field}` for {} requires {expected} distinct value(s); found {actual}",
@@ -861,10 +839,7 @@ impl<'a> Projector<'a> {
 }
 
 fn yaml_scalar(
-    term: &ProjectionTerm,
-    mode: OkfValueMode,
-    config: &OkfGenerationConfig,
-    field: &str,
+    term: &ProjectionTerm, mode: OkfValueMode, config: &OkfGenerationConfig, field: &str,
 ) -> Result<YamlScalar, ProjectionError> {
     match mode {
         OkfValueMode::Text { rendering } => {
@@ -946,9 +921,7 @@ fn typed_xsd_value(term: &ProjectionTerm, field: &str) -> Result<XsdValue, Proje
 }
 
 fn term_text(
-    term: &ProjectionTerm,
-    rendering: OkfTermRendering,
-    config: &OkfGenerationConfig,
+    term: &ProjectionTerm, rendering: OkfTermRendering, config: &OkfGenerationConfig,
 ) -> Result<String, ProjectionError> {
     match rendering {
         OkfTermRendering::Lexical => Ok(lexical_term_text(term)),
@@ -1038,9 +1011,7 @@ fn render_document(frontmatter: &Frontmatter, body: &str) -> Result<String, Proj
 }
 
 fn render_yaml_entry(
-    output: &mut String,
-    key: &str,
-    value: &YamlField,
+    output: &mut String, key: &str, value: &YamlField,
 ) -> Result<(), ProjectionError> {
     output.push_str(key);
     match value {
@@ -1075,9 +1046,7 @@ fn render_yaml_scalar(value: &YamlScalar) -> Result<String, ProjectionError> {
 }
 
 fn render_body_section(
-    heading: Option<&str>,
-    style: OkfBodyStyle,
-    values: BTreeSet<String>,
+    heading: Option<&str>, style: OkfBodyStyle, values: BTreeSet<String>,
 ) -> String {
     let mut lines = Vec::new();
     if let Some(heading) = heading {
@@ -1099,9 +1068,7 @@ fn render_body_section(
 }
 
 fn render_link_section(
-    heading: Option<&str>,
-    relation_label: Option<&str>,
-    style: OkfLinkStyle,
+    heading: Option<&str>, relation_label: Option<&str>, style: OkfLinkStyle,
     links: BTreeSet<String>,
 ) -> String {
     let mut lines = Vec::new();
@@ -1304,9 +1271,7 @@ mod tests {
     const RELATED: &str = "https://example.org/related";
 
     fn mapping(
-        predicate: &str,
-        cardinality: OkfCardinality,
-        mode: OkfValueMode,
+        predicate: &str, cardinality: OkfCardinality, mode: OkfValueMode,
     ) -> OkfFieldMapping {
         OkfFieldMapping::new(BTreeSet::from([predicate.to_owned()]), cardinality, mode)
             .expect("mapping")
@@ -1354,8 +1319,7 @@ mod tests {
     }
 
     fn config_with(
-        categories: BTreeMap<String, OkfCategory>,
-        path_strategy: OkfPathStrategy,
+        categories: BTreeMap<String, OkfCategory>, path_strategy: OkfPathStrategy,
     ) -> OkfGenerationConfig {
         let text = OkfValueMode::Text {
             rendering: OkfTermRendering::Lexical,

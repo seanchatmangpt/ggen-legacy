@@ -45,11 +45,7 @@ impl Rounding {
     /// `Equal` or `Greater`), and `inexact` whether the excess is nonzero at all.
     #[must_use]
     pub(crate) const fn increments(
-        self,
-        negative: bool,
-        odd: bool,
-        half: Ordering,
-        inexact: bool,
+        self, negative: bool, odd: bool, half: Ordering, inexact: bool,
     ) -> bool {
         if !inexact {
             return false;

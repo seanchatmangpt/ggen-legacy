@@ -192,9 +192,7 @@ pub(crate) fn resolve_triple(tp: &TriplePattern, schema: &VarSchema) -> TripleOr
         .expect("resident template ordinal storage")
 }
 pub(crate) fn resolve_triple_admitted(
-    tp: &TriplePattern,
-    schema: &VarSchema,
-    workspace: &WorkspaceCapability,
+    tp: &TriplePattern, schema: &VarSchema, workspace: &WorkspaceCapability,
 ) -> Result<TripleOrdinal, EvalError> {
     Ok(TripleOrdinal {
         subject: resolve_term_admitted(&tp.subject, schema, workspace)?,
@@ -217,9 +215,7 @@ pub(crate) fn resolve_term(term: &TermPattern, schema: &VarSchema) -> TermOrdina
         .expect("resident template ordinal storage")
 }
 pub(crate) fn resolve_term_admitted(
-    term: &TermPattern,
-    schema: &VarSchema,
-    workspace: &WorkspaceCapability,
+    term: &TermPattern, schema: &VarSchema, workspace: &WorkspaceCapability,
 ) -> Result<TermOrdinal, EvalError> {
     enum Step<'t> {
         Term(&'t TermPattern),
@@ -273,8 +269,7 @@ pub(crate) fn resolve_term_admitted(
 /// Resolve one [`NamedNodePattern`] predicate position against `schema`. See
 /// [`TermOrdinal`]'s doc comment.
 pub(crate) fn resolve_predicate(
-    pattern: &NamedNodePattern,
-    schema: &VarSchema,
+    pattern: &NamedNodePattern, schema: &VarSchema,
 ) -> PredicateOrdinal {
     match pattern {
         NamedNodePattern::NamedNode(_) => PredicateOrdinal::Ground,
@@ -307,9 +302,7 @@ pub(crate) fn resolve_predicate(
 /// (a plan-time slot versus a `WITH`-defaulted pattern) and each rejects a non-IRI
 /// graph name at its own site.
 pub(crate) fn positionally_ill_formed(
-    subject: &TermValue,
-    predicate: &TermValue,
-    object: &TermValue,
+    subject: &TermValue, predicate: &TermValue, object: &TermValue,
 ) -> bool {
     !matches!(subject, TermValue::Iri(_) | TermValue::Blank { .. })
         || !matches!(predicate, TermValue::Iri(_))
@@ -362,10 +355,7 @@ fn triple_term_well_formed(term: &TermValue) -> bool {
 /// after it is minted. The walk keeps its own work list, so a term nested to any
 /// depth costs no more machine stack.
 pub(crate) fn instantiate_ground_term(
-    term: &TermPattern,
-    blanks: &mut TemplateBlanks,
-    counter: &mut u64,
-    prefix: Option<&str>,
+    term: &TermPattern, blanks: &mut TemplateBlanks, counter: &mut u64, prefix: Option<&str>,
 ) -> Option<TermValue> {
     instantiate_ground_term_admitted(
         term,
@@ -382,10 +372,7 @@ pub(crate) fn instantiate_ground_term(
     })
 }
 pub(crate) fn instantiate_ground_term_admitted(
-    term: &TermPattern,
-    blanks: &mut TemplateBlanks,
-    counter: &mut u64,
-    prefix: Option<&str>,
+    term: &TermPattern, blanks: &mut TemplateBlanks, counter: &mut u64, prefix: Option<&str>,
     workspace: &WorkspaceCapability,
 ) -> Result<Option<WorkspaceTerm>, EvalError> {
     enum Step<'t> {
@@ -455,10 +442,7 @@ pub(crate) fn instantiate_ground_term_admitted(
 /// after it is minted. The walk keeps its own work list, so a term nested to any
 /// depth costs no more machine stack.
 pub(crate) fn instantiate_term<D: DatasetView + Sync>(
-    term: &TermPattern,
-    ordinal: &TermOrdinal,
-    row: &Solution<D::Id>,
-    blanks: &mut TemplateBlanks,
+    term: &TermPattern, ordinal: &TermOrdinal, row: &Solution<D::Id>, blanks: &mut TemplateBlanks,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<TermValue>, EvalError> {
     instantiate_term_admitted(term, ordinal, row, blanks, ctx)?
@@ -470,10 +454,7 @@ pub(crate) fn instantiate_term<D: DatasetView + Sync>(
         .transpose()
 }
 pub(crate) fn instantiate_term_admitted<D: DatasetView + Sync>(
-    term: &TermPattern,
-    ordinal: &TermOrdinal,
-    row: &Solution<D::Id>,
-    blanks: &mut TemplateBlanks,
+    term: &TermPattern, ordinal: &TermOrdinal, row: &Solution<D::Id>, blanks: &mut TemplateBlanks,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<WorkspaceTerm>, EvalError> {
     if ctx.expression_barrier.observed().is_some() {
@@ -568,9 +549,7 @@ pub(crate) fn instantiate_term_admitted<D: DatasetView + Sync>(
 /// `ordinal` is `predicate`'s [`PredicateOrdinal`], resolved once per template —
 /// see [`instantiate_term`] and [`TermOrdinal`]'s doc comments.
 pub(crate) fn instantiate_predicate<D: DatasetView + Sync>(
-    predicate: &NamedNodePattern,
-    ordinal: &PredicateOrdinal,
-    row: &Solution<D::Id>,
+    predicate: &NamedNodePattern, ordinal: &PredicateOrdinal, row: &Solution<D::Id>,
     ctx: &EvalCtx<'_, D>,
 ) -> Result<Option<TermValue>, EvalError> {
     instantiate_predicate_admitted(predicate, ordinal, row, ctx)?
@@ -582,9 +561,7 @@ pub(crate) fn instantiate_predicate<D: DatasetView + Sync>(
         .transpose()
 }
 pub(crate) fn instantiate_predicate_admitted<D: DatasetView + Sync>(
-    predicate: &NamedNodePattern,
-    ordinal: &PredicateOrdinal,
-    row: &Solution<D::Id>,
+    predicate: &NamedNodePattern, ordinal: &PredicateOrdinal, row: &Solution<D::Id>,
     ctx: &EvalCtx<'_, D>,
 ) -> Result<Option<WorkspaceTerm>, EvalError> {
     match predicate {
@@ -616,8 +593,7 @@ pub(crate) fn instantiate_predicate_admitted<D: DatasetView + Sync>(
 /// distinct). Minted labels carry the context's deterministic
 /// [`EvalCtx::bnode_mint_prefix`], when one is set.
 fn fresh_blank_admitted<D: DatasetView + Sync>(
-    template: &purrdf_sparql_algebra::BlankNode,
-    blanks: &mut TemplateBlanks,
+    template: &purrdf_sparql_algebra::BlankNode, blanks: &mut TemplateBlanks,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<WorkspaceTerm>, EvalError> {
     let label = if let Some(existing) = blanks.get(template) {
@@ -644,11 +620,8 @@ fn blank_value(label: &str, workspace: &WorkspaceCapability) -> Result<Workspace
 /// With `prefix: None` the minted label is exactly `c{n}` — byte-identical to
 /// every pre-prefix caller; with `Some(prefix)` it is `{prefix}c{n}`.
 fn mint_blank_admitted(
-    template: &purrdf_sparql_algebra::BlankNode,
-    blanks: &mut TemplateBlanks,
-    counter: &mut u64,
-    prefix: Option<&str>,
-    workspace: &WorkspaceCapability,
+    template: &purrdf_sparql_algebra::BlankNode, blanks: &mut TemplateBlanks, counter: &mut u64,
+    prefix: Option<&str>, workspace: &WorkspaceCapability,
 ) -> Result<WorkspaceTerm, EvalError> {
     let label = if let Some(existing) = blanks.get(template) {
         existing.clone()
@@ -668,16 +641,14 @@ fn mint_blank_admitted(
 /// prefix; the empty prefix asks whether any such identity exists. A destination
 /// without default-scope blanks retains the caller's ordinary mint spelling.
 pub(crate) fn destination_mint_prefix(
-    requested: Option<&str>,
-    occupied: impl FnMut(&str) -> bool,
+    requested: Option<&str>, occupied: impl FnMut(&str) -> bool,
 ) -> Option<String> {
     destination_mint_prefix_admitted(requested, occupied, &WorkspaceCapability::resident())
         .expect("resident destination namespace storage")
         .map(|text| text.as_str().to_owned())
 }
 pub(crate) fn destination_mint_prefix_admitted(
-    requested: Option<&str>,
-    mut occupied: impl FnMut(&str) -> bool,
+    requested: Option<&str>, mut occupied: impl FnMut(&str) -> bool,
     workspace: &WorkspaceCapability,
 ) -> Result<Option<SharedText>, EvalError> {
     if !occupied("") {
@@ -702,8 +673,7 @@ pub(crate) fn template_has_blank_node(template: &[QuadPattern]) -> bool {
         .expect("resident template blank classification")
 }
 pub(crate) fn template_has_blank_node_admitted(
-    template: &[QuadPattern],
-    workspace: &WorkspaceCapability,
+    template: &[QuadPattern], workspace: &WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     for quad in template {
         if term_pattern_has_blank_node_admitted(&quad.triple.subject, workspace)?
@@ -719,8 +689,7 @@ pub(crate) fn template_has_blank_node_admitted(
 /// quoted-triple positions — subject before object, over a work list rather than the
 /// call stack, ending at the first blank node found.
 pub(crate) fn term_pattern_has_blank_node_admitted(
-    term: &TermPattern,
-    workspace: &WorkspaceCapability,
+    term: &TermPattern, workspace: &WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     let mut pending = AdmittedVec::new(workspace);
     pending.push(term)?;
@@ -774,9 +743,7 @@ mod term_walk_tests {
         }
     }
     fn mint_blank(
-        template: &str,
-        blanks: &mut DetHashMap<String, String>,
-        counter: &mut u64,
+        template: &str, blanks: &mut DetHashMap<String, String>, counter: &mut u64,
         prefix: Option<&str>,
     ) -> TermValue {
         if let Some(existing) = blanks.get(template) {
@@ -794,9 +761,7 @@ mod term_walk_tests {
         }
     }
     fn fresh_blank<D: DatasetView + Sync>(
-        template: &str,
-        blanks: &mut DetHashMap<String, String>,
-        ctx: &mut EvalCtx<'_, D>,
+        template: &str, blanks: &mut DetHashMap<String, String>, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<Option<TermValue>, crate::EvalError> {
         let label = if let Some(existing) = blanks.get(template) {
             existing.clone()
@@ -864,9 +829,7 @@ mod term_walk_tests {
 
     /// The recursive reference for [`instantiate_ground_term`].
     fn ground_reference(
-        term: &TermPattern,
-        blanks: &mut DetHashMap<String, String>,
-        counter: &mut u64,
+        term: &TermPattern, blanks: &mut DetHashMap<String, String>, counter: &mut u64,
     ) -> Option<TermValue> {
         match term {
             TermPattern::NamedNode(n) => Some(named_node_to_value(n)),
@@ -913,11 +876,8 @@ mod term_walk_tests {
 
     /// The recursive reference for [`instantiate_term`].
     fn instantiate_reference<D: DatasetView + Sync>(
-        term: &TermPattern,
-        ordinal: &TermOrdinal,
-        row: &Solution<D::Id>,
-        blanks: &mut DetHashMap<String, String>,
-        ctx: &mut EvalCtx<'_, D>,
+        term: &TermPattern, ordinal: &TermOrdinal, row: &Solution<D::Id>,
+        blanks: &mut DetHashMap<String, String>, ctx: &mut EvalCtx<'_, D>,
     ) -> Option<TermValue> {
         match term {
             TermPattern::NamedNode(n) => Some(named_node_to_value(n)),

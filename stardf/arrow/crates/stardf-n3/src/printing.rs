@@ -467,8 +467,7 @@ fn compact_iri(iri: &str, prefixes: &BTreeMap<String, String>) -> Option<String>
 }
 
 pub(crate) fn used_prefixes(
-    prefixes: &BTreeMap<String, String>,
-    triples: &[Triple],
+    prefixes: &BTreeMap<String, String>, triples: &[Triple],
 ) -> BTreeSet<String> {
     let mut used = BTreeSet::new();
     for t in triples {
@@ -482,8 +481,7 @@ pub(crate) fn used_prefixes(
 }
 
 fn used_prefixes_for_trig(
-    prefixes: &BTreeMap<String, String>,
-    triples: &[Triple],
+    prefixes: &BTreeMap<String, String>, triples: &[Triple],
 ) -> BTreeSet<String> {
     let mut used = BTreeSet::new();
     for t in triples {
@@ -504,10 +502,7 @@ fn used_prefixes_for_trig(
 }
 
 fn collect_used_prefixes(
-    term: &Term,
-    pos: Position,
-    prefixes: &BTreeMap<String, String>,
-    used: &mut BTreeSet<String>,
+    term: &Term, pos: Position, prefixes: &BTreeMap<String, String>, used: &mut BTreeSet<String>,
 ) {
     match term {
         Term::Iri(iri) => {
@@ -544,8 +539,7 @@ fn collect_used_prefixes(
 }
 
 fn prefix_for_iri<'a>(
-    iri: &str,
-    prefixes: &'a BTreeMap<String, String>,
+    iri: &str, prefixes: &'a BTreeMap<String, String>,
 ) -> Option<(&'a str, &'a str)> {
     let mut best: Option<(&str, &str)> = None;
     for (prefix, base) in prefixes {

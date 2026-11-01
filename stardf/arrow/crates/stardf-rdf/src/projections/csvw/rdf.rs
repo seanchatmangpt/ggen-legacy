@@ -17,8 +17,7 @@ use super::config::{CsvwConfig, CsvwMode};
 use super::model::{CsvwAnnotations, CsvwCell, CsvwRow, CsvwTable, CsvwTableGroup};
 
 pub(crate) fn table_group_to_rdf(
-    group: &CsvwTableGroup,
-    config: &CsvwConfig,
+    group: &CsvwTableGroup, config: &CsvwConfig,
 ) -> Result<Arc<RdfDataset>, ProjectionError> {
     let mut converter = Converter {
         builder: RdfDatasetBuilder::new(),
@@ -84,11 +83,7 @@ impl Converter<'_> {
     }
 
     fn convert_row(
-        &mut self,
-        table: &CsvwTable,
-        row: &CsvwRow,
-        table_node: Option<TermId>,
-        table_index: usize,
+        &mut self, table: &CsvwTable, row: &CsvwRow, table_node: Option<TermId>, table_index: usize,
     ) -> Result<(), ProjectionError> {
         let standard = self.config.mode() == CsvwMode::Standard;
         let row_node = standard
@@ -185,11 +180,7 @@ impl Converter<'_> {
     }
 
     fn emit_list(
-        &mut self,
-        cell: &CsvwCell,
-        table: usize,
-        row: usize,
-        column: usize,
+        &mut self, cell: &CsvwCell, table: usize, row: usize, column: usize,
     ) -> Result<TermId, ProjectionError> {
         let nil = self.rdf("nil")?;
         let vocab = ListVocab {
@@ -215,9 +206,7 @@ impl Converter<'_> {
     }
 
     fn emit_annotations(
-        &mut self,
-        subject: TermId,
-        annotations: &CsvwAnnotations,
+        &mut self, subject: TermId, annotations: &CsvwAnnotations,
     ) -> Result<(), ProjectionError> {
         for (property, value) in annotations {
             let predicate = self.builder.intern_iri(property)?;
@@ -358,8 +347,7 @@ impl Converter<'_> {
     }
 
     fn value_literal(
-        &mut self,
-        value: &super::model::CsvwValue,
+        &mut self, value: &super::model::CsvwValue,
     ) -> Result<TermId, purrdf_lex::allocation::StorageError> {
         self.builder.intern_literal(RdfLiteral {
             lexical_form: value.lexical.clone(),
@@ -373,25 +361,20 @@ impl Converter<'_> {
     }
 
     fn simple_literal(
-        &mut self,
-        value: &str,
+        &mut self, value: &str,
     ) -> Result<TermId, purrdf_lex::allocation::StorageError> {
         self.builder.intern_literal(RdfLiteral::simple(value))
     }
 
     fn typed_literal(
-        &mut self,
-        lexical: &str,
-        datatype: String,
+        &mut self, lexical: &str, datatype: String,
     ) -> Result<TermId, purrdf_lex::allocation::StorageError> {
         self.builder
             .intern_literal(RdfLiteral::typed(lexical, datatype))
     }
 
     fn type_quad(
-        &mut self,
-        subject: TermId,
-        csvw_type: &str,
+        &mut self, subject: TermId, csvw_type: &str,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         let predicate = self.rdf("type")?;
         let object = self.csvw(csvw_type)?;
@@ -425,10 +408,7 @@ impl Converter<'_> {
     }
 
     fn quad(
-        &mut self,
-        subject: TermId,
-        predicate: TermId,
-        object: TermId,
+        &mut self, subject: TermId, predicate: TermId, object: TermId,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         self.builder.push_quad(subject, predicate, object, None)
     }
@@ -446,10 +426,7 @@ fn row_variables(table: &CsvwTable, row: &CsvwRow) -> BTreeMap<String, String> {
 }
 
 fn expand_url(
-    template: &str,
-    variables: &BTreeMap<String, String>,
-    table_url: &str,
-    config: &CsvwConfig,
+    template: &str, variables: &BTreeMap<String, String>, table_url: &str, config: &CsvwConfig,
 ) -> Result<String, ProjectionError> {
     let mut output = String::with_capacity(template.len() + 16);
     let mut rest = template;

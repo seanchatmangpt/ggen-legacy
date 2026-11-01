@@ -410,12 +410,8 @@ impl RdfBundle {
     /// content store and indexes a content-addressed [`ArtifactRecord`]
     /// referencing them (builder). The bytes never travel inside the record.
     pub fn add_artifact(
-        &mut self,
-        artifact_id: ArtifactId,
-        unit_id: UnitId,
-        logical_path: impl Into<String>,
-        role: impl Into<String>,
-        content: Vec<u8>,
+        &mut self, artifact_id: ArtifactId, unit_id: UnitId, logical_path: impl Into<String>,
+        role: impl Into<String>, content: Vec<u8>,
     ) -> ContentDigest {
         let blob_id = self.blobs.insert(content);
         self.artifacts.insert(ArtifactRecord {
@@ -508,12 +504,8 @@ impl RdfBundle {
     ///
     /// The first [`BundleError`] encountered.
     pub fn load(
-        dataset: Arc<RdfDataset>,
-        provenance: DatasetProvenance,
-        units: UnitCatalog,
-        artifacts: ArtifactIndex,
-        blobs: ContentStore,
-        segments: SegmentUnitMap,
+        dataset: Arc<RdfDataset>, provenance: DatasetProvenance, units: UnitCatalog,
+        artifacts: ArtifactIndex, blobs: ContentStore, segments: SegmentUnitMap,
     ) -> Result<Self, BundleError> {
         let bundle = Self {
             dataset,

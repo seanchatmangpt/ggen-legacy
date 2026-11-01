@@ -82,10 +82,8 @@ impl purrdf_hash::error::StructuredError for TransverseInputError {
 impl TransverseInputError {
     pub(crate) fn capture(
         projection: &crate::operation::TransverseMercator,
-        point: Option<&crate::operation::OperationPoint>,
-        comparison: Option<&crate::Rat>,
-        reason: TransverseInputReason,
-        progress: &mut crate::context::WorkProgress<'_>,
+        point: Option<&crate::operation::OperationPoint>, comparison: Option<&crate::Rat>,
+        reason: TransverseInputReason, progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         super::GeoError::diagnostic_inputs(
             projection,

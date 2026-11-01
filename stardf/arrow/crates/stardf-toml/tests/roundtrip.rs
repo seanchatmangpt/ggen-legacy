@@ -516,8 +516,7 @@ fn frozen_toml_conformance_checks_grammar_and_typed_values() {
 }
 
 fn check_tagged(
-    document: &purrdf_toml::Document<'_>,
-    expected: &purrdf_lex::json::Value,
+    document: &purrdf_toml::Document<'_>, expected: &purrdf_lex::json::Value,
 ) -> Result<(), String> {
     use purrdf_lex::json::Value;
     use purrdf_toml::Float;

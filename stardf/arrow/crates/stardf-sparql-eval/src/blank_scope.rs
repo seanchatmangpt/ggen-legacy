@@ -92,8 +92,7 @@ pub(crate) fn is_joined_blank(variable: &Variable) -> bool {
 /// basic graph pattern whose pieces share a label.
 /// The same hidden-column identity law, with actual admitted array growth.
 pub(crate) fn visible_columns_admitted(
-    schema: &VarSchema,
-    workspace: &crate::WorkspaceCapability,
+    schema: &VarSchema, workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<AdmittedVec<usize>>, crate::EvalError> {
     if !schema.vars().iter().any(is_joined_blank) {
         return Ok(None);
@@ -112,8 +111,7 @@ pub(crate) fn visible_columns_admitted(
 /// non-distinguished variable never merges two of them — and `seq` is returned as it
 /// is when it carries no such column.
 pub(crate) fn without_joined_blanks_admitted<I: ViewTermId>(
-    seq: SolutionSeq<I>,
-    workspace: &crate::WorkspaceCapability,
+    seq: SolutionSeq<I>, workspace: &crate::WorkspaceCapability,
 ) -> Result<SolutionSeq<I>, crate::EvalError> {
     if !seq.schema.vars().iter().any(is_joined_blank) {
         return Ok(seq);
@@ -162,8 +160,7 @@ pub(crate) fn join_shared_blanks(pattern: &GraphPattern) -> Option<GraphPattern>
 }
 
 pub(crate) fn join_shared_blanks_with_memory(
-    pattern: &GraphPattern,
-    memory: &mut Memory<'_, LexicalFrame>,
+    pattern: &GraphPattern, memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<Option<GraphPattern>> {
     if !needs_with_memory(Node::Pattern(pattern), memory)? {
         return Ok(None);
@@ -187,9 +184,7 @@ pub(crate) fn join_shared_blanks_in_query(query: &Query) -> Option<Query> {
 
 /// Carry a replacement WHERE without cloning the discarded original.
 pub(crate) fn query_with_pattern_with_memory(
-    query: &Query,
-    pattern: GraphPattern,
-    memory: &mut Memory<'_, LexicalFrame>,
+    query: &Query, pattern: GraphPattern, memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<Query> {
     Ok(query.clone_with_pattern_with_memory(pattern, memory)?)
 }
@@ -200,8 +195,7 @@ pub(crate) fn query_with_pattern_with_memory(
 
 /// Mutable leaves in the same written order.
 fn spine_leaves_mut_with_memory<'a>(
-    pattern: &'a mut GraphPattern,
-    out: &mut AdmittedVec<&'a mut GraphPattern>,
+    pattern: &'a mut GraphPattern, out: &mut AdmittedVec<&'a mut GraphPattern>,
     memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<()> {
     let mut pending = purrdf_lex::walk::WorkList::<&'a mut GraphPattern, 8>::with(pattern);
@@ -225,8 +219,7 @@ fn spine_leaves_mut_with_memory<'a>(
 }
 
 fn leaf_has_blank_with_memory(
-    leaf: &GraphPattern,
-    memory: &mut Memory<'_, LexicalFrame>,
+    leaf: &GraphPattern, memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<bool> {
     visit_leaf_labels_with_memory(
         leaf,
@@ -236,8 +229,7 @@ fn leaf_has_blank_with_memory(
     )
 }
 fn leaf_has_raw_blank_with_memory(
-    leaf: &GraphPattern,
-    memory: &mut Memory<'_, LexicalFrame>,
+    leaf: &GraphPattern, memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<bool> {
     visit_leaf_labels_with_memory(
         leaf,
@@ -249,8 +241,7 @@ fn leaf_has_raw_blank_with_memory(
 
 /// One original shared-label counting law; borrowed labels avoid copying during detection.
 fn shared_label_names<'a>(
-    leaves: &[&'a GraphPattern],
-    memory: &mut Memory<'_, LexicalFrame>,
+    leaves: &[&'a GraphPattern], memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<AdmittedVec<&'a str>> {
     let workspace = memory.admission_mut().workspace().clone();
     let mut output = AdmittedVec::new(&workspace);
@@ -391,8 +382,7 @@ enum Node<'a> {
 
 fn extend_pending<'a>(
     pending: &mut purrdf_lex::walk::WorkList<Node<'a>, 16>,
-    nodes: impl IntoIterator<Item = Node<'a>>,
-    memory: &mut Memory<'_, LexicalFrame>,
+    nodes: impl IntoIterator<Item = Node<'a>>, memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<()> {
     for node in nodes {
         pending.try_push_admitted(node, memory)?;
@@ -401,8 +391,7 @@ fn extend_pending<'a>(
 }
 
 fn aggregate_needs_with_memory(
-    aggregate: &AggregateExpression,
-    memory: &mut Memory<'_, LexicalFrame>,
+    aggregate: &AggregateExpression, memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<bool> {
     for expression in aggregate.args() {
         if needs_with_memory(Node::Expression(expression), memory)? {
@@ -630,8 +619,7 @@ pub(crate) enum ChildMut<'a> {
 /// pattern only (its aggregates' expressions are reached through
 /// [`take_aggregates`], after it). A `SERVICE` body is left as written.
 pub(crate) fn for_each_child_mut<'a>(
-    node: &'a mut GraphPattern,
-    visit: &mut impl FnMut(ChildMut<'a>),
+    node: &'a mut GraphPattern, visit: &mut impl FnMut(ChildMut<'a>),
 ) {
     match node {
         GraphPattern::Bgp { .. }
@@ -792,9 +780,7 @@ struct TakenAggregate {
 /// function, scalar values, sort keys and `DISTINCT` flag. Only expressions change,
 /// never their count, so the rebuilt aggregate is as valid as the original.
 fn take_aggregates_with_memory(
-    node: &mut GraphPattern,
-    out: &mut AdmittedVec<Expression>,
-    all: bool,
+    node: &mut GraphPattern, out: &mut AdmittedVec<Expression>, all: bool,
     memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<AdmittedVec<TakenAggregate>> {
     let capability = memory.admission_mut().workspace().clone();
@@ -843,10 +829,8 @@ fn take_aggregates_with_memory(
 }
 
 fn restore_aggregates_with_memory(
-    node: &mut GraphPattern,
-    taken: AdmittedVec<TakenAggregate>,
-    rewritten: &mut impl Iterator<Item = Expression>,
-    memory: &mut Memory<'_, LexicalFrame>,
+    node: &mut GraphPattern, taken: AdmittedVec<TakenAggregate>,
+    rewritten: &mut impl Iterator<Item = Expression>, memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<()> {
     let GraphPattern::Group { aggregates, .. } = node else {
         debug_assert!(taken.is_empty(), "only GROUP BY has taken aggregates");
@@ -918,8 +902,7 @@ fn rewrite_pattern(pattern: GraphPattern, next_spine: &mut usize) -> GraphPatter
 }
 
 fn copy_label_names(
-    names: &[&str],
-    memory: &mut Memory<'_, LexicalFrame>,
+    names: &[&str], memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<Vec<String>> {
     let mut copied = Vec::new();
     memory.reserve(&mut copied, names.len())?;
@@ -930,8 +913,7 @@ fn copy_label_names(
     Ok(copied)
 }
 fn release_label_names(
-    mut names: Vec<String>,
-    memory: &mut Memory<'_, LexicalFrame>,
+    mut names: Vec<String>, memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<()> {
     #[expect(
         clippy::iter_with_drain,
@@ -945,9 +927,7 @@ fn release_label_names(
 }
 
 fn rewrite_pattern_with_memory(
-    pattern: GraphPattern,
-    next_spine: &mut usize,
-    memory: &mut Memory<'_, LexicalFrame>,
+    pattern: GraphPattern, next_spine: &mut usize, memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<GraphPattern> {
     map_patterns_with_memory(
         pattern,
@@ -1071,8 +1051,7 @@ fn resident_owned_pattern(
 /// its children, using the same iterative reconstruction as blank scoping.
 /// The callback's returned context is passed to its immediate pattern children.
 pub(crate) fn map_patterns_with_memory(
-    pattern: GraphPattern,
-    all_aggregates: bool,
+    pattern: GraphPattern, all_aggregates: bool,
     transform: &mut impl FnMut(
         &mut GraphPattern,
         bool,
@@ -1225,9 +1204,7 @@ fn rename_leaf(leaf: &mut GraphPattern, shared: &[String], spine: usize) {
 
 #[cfg(test)]
 fn rename_labels(
-    leaf: &mut GraphPattern,
-    shared: &[String],
-    mint: &mut impl FnMut(&str) -> Variable,
+    leaf: &mut GraphPattern, shared: &[String], mint: &mut impl FnMut(&str) -> Variable,
 ) {
     let capability = crate::WorkspaceCapability::resident();
     rename_labels_with_memory(
@@ -1240,8 +1217,7 @@ fn rename_labels(
 }
 
 fn rename_labels_with_memory(
-    leaf: &mut GraphPattern,
-    shared: &[String],
+    leaf: &mut GraphPattern, shared: &[String],
     mint: &mut impl FnMut(&str, &mut Memory<'_, LexicalFrame>) -> PrepResult<Variable>,
     memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<()> {
@@ -1271,8 +1247,7 @@ fn rename_labels_with_memory(
 /// [`rename_leaf`] for one term position, a quoted triple's subject and object
 /// included at every level, over a work list.
 fn rename_term_with_memory(
-    term: &mut TermPattern,
-    shared: &[String],
+    term: &mut TermPattern, shared: &[String],
     mint: &mut impl FnMut(&str, &mut Memory<'_, LexicalFrame>) -> PrepResult<Variable>,
     memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<()> {
@@ -1367,8 +1342,7 @@ mod walk_tests {
     }
 
     fn reference_any_spine_leaf(
-        pattern: &GraphPattern,
-        test: &mut impl FnMut(&GraphPattern) -> bool,
+        pattern: &GraphPattern, test: &mut impl FnMut(&GraphPattern) -> bool,
     ) -> bool {
         match pattern {
             GraphPattern::Join { left, right }
@@ -1507,8 +1481,7 @@ mod walk_tests {
     }
 
     fn reference_spine_leaves_mut<'a>(
-        pattern: &'a mut GraphPattern,
-        out: &mut Vec<&'a mut GraphPattern>,
+        pattern: &'a mut GraphPattern, out: &mut Vec<&'a mut GraphPattern>,
     ) {
         if !is_spine(pattern) {
             out.push(pattern);

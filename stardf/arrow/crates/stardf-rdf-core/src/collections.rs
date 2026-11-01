@@ -424,9 +424,7 @@ where
 ///
 /// [`ListError`] when the collection is malformed; see [`ListErrorKind`].
 pub fn walk_rdf_list<Id: Copy + Eq>(
-    head: Id,
-    nil: Option<Id>,
-    first: impl FnMut(Id) -> SoleObject<Id>,
+    head: Id, nil: Option<Id>, first: impl FnMut(Id) -> SoleObject<Id>,
     rest: impl FnMut(Id) -> SoleObject<Id>,
 ) -> Result<Vec<Id>, ListError<Id>> {
     walk_rdf_list_with_memory(
@@ -446,11 +444,8 @@ pub fn walk_rdf_list<Id: Copy + Eq>(
 /// # Errors
 /// Returns native storage refusal separately from malformed collection input.
 pub fn walk_rdf_list_with_memory<Id: Copy + Eq, S: purrdf_lex::allocation::Admission + ?Sized>(
-    head: Id,
-    nil: Option<Id>,
-    first: impl FnMut(Id) -> SoleObject<Id>,
-    rest: impl FnMut(Id) -> SoleObject<Id>,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    head: Id, nil: Option<Id>, first: impl FnMut(Id) -> SoleObject<Id>,
+    rest: impl FnMut(Id) -> SoleObject<Id>, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<Result<Vec<Id>, ListError<Id>>, purrdf_lex::allocation::StorageError> {
     let mut members = Vec::new();
     for item in RdfListWalk::new(head, nil, first, rest) {
@@ -474,9 +469,7 @@ pub fn walk_rdf_list_with_memory<Id: Copy + Eq, S: purrdf_lex::allocation::Admis
 /// `length` cells apart meet exactly there. Every cell they visit was already
 /// validated by the walk that found the cycle, so each has one `rdf:rest`.
 fn cycle_start<Id: Copy + Eq>(
-    head: Id,
-    length: usize,
-    rest: &mut impl FnMut(Id) -> SoleObject<Id>,
+    head: Id, length: usize, rest: &mut impl FnMut(Id) -> SoleObject<Id>,
 ) -> (usize, Id) {
     let mut step = |cell: Id| match rest(cell) {
         SoleObject::One(next) => next,
@@ -564,9 +557,7 @@ impl ListVocab<crate::model::RdfTerm> {
 /// assert_eq!(empty, "nil");
 /// ```
 pub fn build_rdf_list<T, I>(
-    members: I,
-    vocab: &ListVocab<T>,
-    mut cell: impl FnMut(usize) -> T,
+    members: I, vocab: &ListVocab<T>, mut cell: impl FnMut(usize) -> T,
     mut emit: impl FnMut(T, T, T),
 ) -> T
 where
@@ -595,9 +586,7 @@ where
 ///
 /// Returns the first error from `cell` or `emit`.
 pub fn try_build_rdf_list<T, I, E>(
-    members: I,
-    vocab: &ListVocab<T>,
-    cell: impl FnMut(usize) -> Result<T, E>,
+    members: I, vocab: &ListVocab<T>, cell: impl FnMut(usize) -> Result<T, E>,
     emit: impl FnMut(T, T, T) -> Result<(), E>,
 ) -> Result<T, E>
 where
@@ -614,11 +603,8 @@ where
 /// # Errors
 /// Returns the first cell, copy or emission error.
 pub fn try_build_rdf_list_with_copy<T, I, E>(
-    members: I,
-    vocab: &ListVocab<T>,
-    mut cell: impl FnMut(usize) -> Result<T, E>,
-    mut copy: impl FnMut(&T) -> Result<T, E>,
-    mut emit: impl FnMut(T, T, T) -> Result<(), E>,
+    members: I, vocab: &ListVocab<T>, mut cell: impl FnMut(usize) -> Result<T, E>,
+    mut copy: impl FnMut(&T) -> Result<T, E>, mut emit: impl FnMut(T, T, T) -> Result<(), E>,
 ) -> Result<T, E>
 where
     I: IntoIterator<Item = T>,
@@ -689,8 +675,7 @@ pub enum ListCellUse<Id> {
 /// assert!(cells.contains("c0") && cells.contains("c1"));
 /// ```
 pub fn convertible_list_cells<Id: Copy + Eq + std::hash::Hash>(
-    tails: impl IntoIterator<Item = Id>,
-    mut well_formed: impl FnMut(Id) -> Option<ListCellUse<Id>>,
+    tails: impl IntoIterator<Item = Id>, mut well_formed: impl FnMut(Id) -> Option<ListCellUse<Id>>,
 ) -> crate::FastSet<Id> {
     let mut cells = crate::FastSet::default();
     for tail in tails {
@@ -757,10 +742,7 @@ mod tests {
     /// id. Each cons cell is a fresh blank node under a caller-unique `tag` prefix so
     /// separate lists never share a cell.
     fn build_list_tagged(
-        b: &mut RdfDatasetBuilder,
-        tag: &str,
-        members: &[TermId],
-        graph: Option<TermId>,
+        b: &mut RdfDatasetBuilder, tag: &str, members: &[TermId], graph: Option<TermId>,
     ) -> TermId {
         let first = rdf(b, "first");
         let rest = rdf(b, "rest");

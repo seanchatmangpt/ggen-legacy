@@ -378,9 +378,7 @@ const DECLARED_GRAPH_ROWS: [u32; 2] = [1_000, 10_000];
 /// A graph declared on the mutable layer over the `BASE_QUADS` base, holding `rows`
 /// added quads `(d{n}, p, e{n}, declared)`, and those quads in insertion order.
 fn declared_graph_with_rows(
-    base: &Arc<RdfDataset>,
-    rows: u32,
-    mode: GraphExistenceMode,
+    base: &Arc<RdfDataset>, rows: u32, mode: GraphExistenceMode,
 ) -> (MutableDataset, Vec<QuadValues>) {
     let mut cow = MutableDataset::new_with_graph_existence(Arc::clone(base), mode);
     let graph = iri("declared");

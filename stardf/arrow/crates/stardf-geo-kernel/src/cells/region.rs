@@ -27,10 +27,7 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Refuses a reference mismatch and incomplete precision/work/memory/output admission.
     pub fn cover_region_fixed(
-        self,
-        region: &PreparedRegion,
-        level: u8,
-        limits: FixedCoverLimits,
+        self, region: &PreparedRegion, level: u8, limits: FixedCoverLimits,
     ) -> Result<CellCover, GeoError> {
         self.cover_region_mixed(
             region,
@@ -45,18 +42,12 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Refuses a reference mismatch and incomplete precision/work/memory/output admission.
     pub fn cover_region_mixed(
-        self,
-        region: &PreparedRegion,
-        levels: CoverLevels,
-        limits: MixedCoverLimits,
+        self, region: &PreparedRegion, levels: CoverLevels, limits: MixedCoverLimits,
     ) -> Result<CellCover, GeoError> {
         self.cover_region(region, levels, limits, None)
     }
     fn cover_region(
-        self,
-        region: &PreparedRegion,
-        levels: CoverLevels,
-        limits: MixedCoverLimits,
+        self, region: &PreparedRegion, levels: CoverLevels, limits: MixedCoverLimits,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<CellCover, GeoError> {
         let mut budget = CoverBudget::new_metered(limits, observer)?;
@@ -99,10 +90,7 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Adds observer refusal to the complete region-cover contract.
     pub fn cover_region_mixed_metered(
-        self,
-        region: &PreparedRegion,
-        levels: CoverLevels,
-        limits: MixedCoverLimits,
+        self, region: &PreparedRegion, levels: CoverLevels, limits: MixedCoverLimits,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<CellCover, GeoError> {
         self.cover_region(region, levels, limits, Some(observer))
@@ -111,10 +99,7 @@ impl CubeHilbertQ62V1 {
     /// # Errors
     /// Refuses invalid level or incomplete observer/resource admission.
     pub fn cover_region_fixed_metered(
-        self,
-        region: &PreparedRegion,
-        level: u8,
-        limits: FixedCoverLimits,
+        self, region: &PreparedRegion, level: u8, limits: FixedCoverLimits,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<CellCover, GeoError> {
         self.cover_region(
@@ -127,11 +112,8 @@ impl CubeHilbertQ62V1 {
 }
 
 fn classify(
-    region: &PreparedRegion,
-    boundary: Option<&crate::atlas::boundary::RegionBoundary>,
-    cell: CellId,
-    budget: &mut CoverBudget<'_>,
-    grid: CubeHilbertQ62V1,
+    region: &PreparedRegion, boundary: Option<&crate::atlas::boundary::RegionBoundary>,
+    cell: CellId, budget: &mut CoverBudget<'_>, grid: CubeHilbertQ62V1,
 ) -> Result<Classification, GeoError> {
     match region {
         PreparedRegion::Empty => return Ok(Classification::Outside),
@@ -183,10 +165,8 @@ fn classify(
 }
 
 fn boundary_intersects(
-    boundary: &crate::atlas::boundary::RegionBoundary,
-    enclosure: &ChartEnclosure,
-    budget: &mut CoverBudget<'_>,
-    grid: CubeHilbertQ62V1,
+    boundary: &crate::atlas::boundary::RegionBoundary, enclosure: &ChartEnclosure,
+    budget: &mut CoverBudget<'_>, grid: CubeHilbertQ62V1,
 ) -> Result<Option<bool>, GeoError> {
     let bounds = &enclosure.bounds;
     let mut uncertain = false;
@@ -214,10 +194,8 @@ fn boundary_intersects(
 }
 
 fn rectangle_intersects(
-    boundary: &crate::atlas::boundary::RegionBoundary,
-    rectangle: [&crate::Rat; 4],
-    budget: &mut CoverBudget<'_>,
-    grid: CubeHilbertQ62V1,
+    boundary: &crate::atlas::boundary::RegionBoundary, rectangle: [&crate::Rat; 4],
+    budget: &mut CoverBudget<'_>, grid: CubeHilbertQ62V1,
 ) -> Result<bool, GeoError> {
     let mut context = budget.context(native_reference(grid.profile))?;
     let result = {

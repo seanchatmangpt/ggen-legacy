@@ -82,13 +82,8 @@ impl ExecutionReceipt {
     /// Mint a receipt over canonical outcome data.
     #[must_use]
     pub fn mint(
-        plan_id: impl Into<String>,
-        run_id: impl Into<String>,
-        status: RunStatus,
-        duration_us: u64,
-        outcome: &Value,
-        subject_digest: &str,
-        base_digest: &str,
+        plan_id: impl Into<String>, run_id: impl Into<String>, status: RunStatus, duration_us: u64,
+        outcome: &Value, subject_digest: &str, base_digest: &str,
         corresponds_to_steps: Vec<String>,
     ) -> Self {
         let plan_id: String = plan_id.into();

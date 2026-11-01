@@ -189,11 +189,7 @@ impl OboMeta {
 /// Validate an annotated value's predicate IRI and its metadata: the one law
 /// property values, synonyms and xrefs share.
 fn validate_annotated(
-    predicate: &str,
-    what: &str,
-    meta: Option<&OboMeta>,
-    depth: usize,
-    config: &OboGraphsConfig,
+    predicate: &str, what: &str, meta: Option<&OboMeta>, depth: usize, config: &OboGraphsConfig,
 ) -> Result<(), ProjectionError> {
     validate_absolute_iri(predicate, what)?;
     meta.map_or(Ok(()), |meta| meta.validate(depth, config))
@@ -696,9 +692,7 @@ fn normalize_values<T: Ord>(values: &mut Vec<T>) {
 }
 
 fn ensure_unique_by<T>(
-    values: &[T],
-    key: impl Fn(&T) -> &str,
-    description: &str,
+    values: &[T], key: impl Fn(&T) -> &str, description: &str,
 ) -> Result<(), ProjectionError> {
     if values.windows(2).any(|pair| key(&pair[0]) >= key(&pair[1])) {
         return Err(ProjectionError::integrity(format!(

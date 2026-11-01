@@ -113,8 +113,7 @@ impl<'a, S: Admission, L: LedgerSource<'a>> LedgerDataset<'a, S, L> {
     }
 
     fn statement_ids(
-        &self,
-        statement: LedgerStatement<'a>,
+        &self, statement: LedgerStatement<'a>,
     ) -> Result<QuadIds<LedgerTermId>, LedgerReadError> {
         let Some(s) = self.term_id_by_value(statement.subject)? else {
             return self.fail(LedgerReadError::SourceChanged);
@@ -144,8 +143,7 @@ impl<'a, S: Admission, L: LedgerSource<'a>> DatasetView for LedgerDataset<'a, S,
     }
 
     fn reserve_workspace(
-        &self,
-        bytes: u64,
+        &self, bytes: u64,
     ) -> Result<impl WorkspaceReservation<Error = Self::ReadError> + '_, Self::ReadError> {
         if let Some(error) = self.read_error() {
             return Err(error);
@@ -204,11 +202,7 @@ impl<'a, S: Admission, L: LedgerSource<'a>> DatasetView for LedgerDataset<'a, S,
     fn probe_plan(&self, _: bool, _: bool, _: bool, _: GraphMatch<Self::Id>) -> Self::ProbePlan {}
 
     fn quads_for_pattern_with_plan(
-        &self,
-        (): &Self::ProbePlan,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, (): &Self::ProbePlan, s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         self.quads_for_pattern(s, p, o, g)

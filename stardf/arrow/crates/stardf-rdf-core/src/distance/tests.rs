@@ -180,11 +180,7 @@ fn reference_squared_euclidean(a: &[f64], b: &[f64]) -> f64 {
 
 /// The reference finished distance, or `None` when it is not finite.
 pub(super) fn reference_distance(
-    measure: Measure,
-    a: &[f64],
-    a_norm: f64,
-    b: &[f64],
-    b_norm: f64,
+    measure: Measure, a: &[f64], a_norm: f64, b: &[f64], b_norm: f64,
 ) -> Option<f64> {
     let value = match measure {
         Measure::SquaredEuclidean => reference_squared_euclidean(a, b),
@@ -306,10 +302,7 @@ const MEASURES: [Measure; 3] = [
 /// Every API of every path, over one matrix at one storage width pair, against the
 /// reference model. Returns how many comparisons were made.
 fn check_group<Q: Store, T: Store>(
-    paths: &[Resolved<Exact>],
-    executed: &mut Executed,
-    query: &[f64],
-    rows: &[Vec<f64>],
+    paths: &[Resolved<Exact>], executed: &mut Executed, query: &[f64], rows: &[Vec<f64>],
     offset: usize,
 ) -> usize {
     let dims = query.len();

@@ -607,9 +607,7 @@ pub(crate) fn nodes_eq(a: NodeRef<'_>, b: NodeRef<'_>) -> bool {
 }
 
 fn expand_admitted<'a, S: purrdf_lex::allocation::Admission + ?Sized>(
-    node: NodeRef<'a>,
-    stack: &mut Tokens<'a>,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    node: NodeRef<'a>, stack: &mut Tokens<'a>, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<(), purrdf_lex::allocation::StorageError> {
     let before = stack.len();
     let mut failure = None;
@@ -632,9 +630,7 @@ fn expand_admitted<'a, S: purrdf_lex::allocation::Admission + ?Sized>(
 
 /// The same script comparison, with actual before-growth spill admission.
 pub(crate) fn nodes_eq_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-    a: NodeRef<'_>,
-    b: NodeRef<'_>,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    a: NodeRef<'_>, b: NodeRef<'_>, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<bool, purrdf_lex::allocation::StorageError> {
     let (mut left, mut right) = (Tokens::with(Tok::Node(a)), Tokens::with(Tok::Node(b)));
     let equal = loop {
@@ -659,9 +655,7 @@ impl GraphPattern {
     /// # Errors
     /// Returns checked layout, physical allocation or admission refusal.
     pub fn eq_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        other: &Self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, other: &Self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<bool, purrdf_lex::allocation::StorageError> {
         nodes_eq_with_memory(NodeRef::Pattern(self), NodeRef::Pattern(other), memory)
     }
@@ -685,9 +679,7 @@ pub(crate) fn node_hash<H: Hasher>(node: NodeRef<'_>, state: &mut H) {
 
 /// Feed the same structural script with before-growth admission.
 pub(crate) fn node_hash_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-    node: NodeRef<'_>,
-    state: &mut impl Hasher,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    node: NodeRef<'_>, state: &mut impl Hasher, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<(), purrdf_lex::allocation::StorageError> {
     let mut stack = Tokens::with(Tok::Node(node));
     let result = (|| {
@@ -771,9 +763,7 @@ impl GroundTerm {
     /// # Errors
     /// Returns concrete layout, admission or allocator refusal.
     pub fn eq_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        other: &Self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, other: &Self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<bool, purrdf_lex::allocation::StorageError> {
         nodes_eq_with_memory(NodeRef::Ground(self), NodeRef::Ground(other), memory)
     }

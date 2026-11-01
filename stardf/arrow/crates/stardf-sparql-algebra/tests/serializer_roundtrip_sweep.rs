@@ -432,8 +432,7 @@ fn alpha_variable(variable: &Variable, aliases: &BTreeMap<Variable, Variable>) -
 }
 
 fn alpha_named(
-    name: &NamedNodePattern,
-    aliases: &BTreeMap<Variable, Variable>,
+    name: &NamedNodePattern, aliases: &BTreeMap<Variable, Variable>,
 ) -> NamedNodePattern {
     match name {
         NamedNodePattern::Variable(v) => NamedNodePattern::Variable(alpha_variable(v, aliases)),
@@ -540,9 +539,7 @@ fn variable_occurrences(pattern: &GraphPattern) -> Vec<Variable> {
 /// Derive aliases from corresponding typed variable positions, requiring a
 /// bijection and exact ordinary names. No renderer naming algorithm is repeated.
 fn hidden_aliases(
-    original: &GraphPattern,
-    reparsed: &GraphPattern,
-    reserved: &BTreeSet<Variable>,
+    original: &GraphPattern, reparsed: &GraphPattern, reserved: &BTreeSet<Variable>,
 ) -> Result<BTreeMap<Variable, Variable>, String> {
     let source = variable_occurrences(original);
     let target = variable_occurrences(reparsed);
@@ -651,8 +648,7 @@ fn roundtrip(original: &Query) -> Result<(), String> {
 /// [`normalize_join_assoc`]'s own discipline: a future enum variant is a
 /// compile error here until this function is taught its shape.
 fn normalize_update_op(
-    op: &GraphUpdateOperation,
-    aliases: &BTreeMap<Variable, Variable>,
+    op: &GraphUpdateOperation, aliases: &BTreeMap<Variable, Variable>,
 ) -> GraphUpdateOperation {
     match op {
         GraphUpdateOperation::InsertData { data } => {
@@ -773,8 +769,7 @@ fn template_variables(operation: &GraphUpdateOperation) -> BTreeSet<Variable> {
 }
 
 fn update_aliases(
-    original: &Update,
-    reparsed: &Update,
+    original: &Update, reparsed: &Update,
 ) -> Result<Vec<BTreeMap<Variable, Variable>>, String> {
     if original.operations.len() != reparsed.operations.len() {
         return Err("the carrier changed the number of update operations".to_owned());

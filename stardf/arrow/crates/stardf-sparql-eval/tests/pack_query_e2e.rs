@@ -156,8 +156,7 @@ fn build_fixture() -> Arc<RdfDataset> {
 /// for a `PackView` (id type [`purrdf_core::PackId`]) as well as for the production
 /// `RdfDataset` (id type [`purrdf_core::TermId`]).
 fn run<D: DatasetView<ReadError = std::convert::Infallible> + Sync>(
-    dataset: &D,
-    query: &str,
+    dataset: &D, query: &str,
 ) -> SparqlResult {
     let engine = NativeSparqlEngine::new();
     let prepared = engine.prepare_query(query, None).expect("prepare");
@@ -177,8 +176,7 @@ fn row_key(row: &[Option<TermValue>]) -> String {
 /// same rows once both are sorted (a `SELECT` without `ORDER BY` is a bag). `min_rows`
 /// guards against a vacuous pass (empty == empty).
 fn assert_pack_matches_source(
-    query: &str,
-    min_rows: usize,
+    query: &str, min_rows: usize,
 ) -> (Vec<String>, Vec<Vec<Option<TermValue>>>) {
     let single = build_fixture();
     let bytes = build_pack_bytes(&single);

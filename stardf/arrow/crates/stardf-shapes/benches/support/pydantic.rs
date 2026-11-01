@@ -70,10 +70,7 @@ impl Fixture {
     }
 
     fn from_parts(
-        definitions: usize,
-        mode: Mode,
-        compiled: CompiledSchema,
-        config: PydanticConfig,
+        definitions: usize, mode: Mode, compiled: CompiledSchema, config: PydanticConfig,
     ) -> Self {
         let fixture = Self {
             definitions,

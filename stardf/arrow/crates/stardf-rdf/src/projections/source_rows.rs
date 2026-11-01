@@ -66,8 +66,7 @@ impl SourceAnnotation {
 /// The stable identifier of a source row: `prefix`, then the SHA-256 of the
 /// row's compact JSON (members in declaration order, an absent graph `null`).
 pub(crate) fn source_identifier(
-    prefix: &str,
-    value: &impl ToJson,
+    prefix: &str, value: &impl ToJson,
 ) -> Result<String, ProjectionError> {
     stable_identifier(prefix, &to_vec(value))
 }

@@ -37,8 +37,7 @@ impl GraphSelection {
     /// Returns a configuration error for an empty scope or a relative
     /// named-graph IRI.
     pub fn include(
-        default_graph: bool,
-        named_graphs: BTreeSet<String>,
+        default_graph: bool, named_graphs: BTreeSet<String>,
     ) -> Result<Self, ProjectionError> {
         let selection = Self::Include {
             default_graph,
@@ -142,11 +141,8 @@ impl SubjectSelector {
     /// Returns a configuration error for incomplete, contradictory, or relative
     /// IRI policy.
     pub fn new(
-        type_predicate: Option<String>,
-        any_types: BTreeSet<String>,
-        all_types: BTreeSet<String>,
-        none_types: BTreeSet<String>,
-        iri_prefixes: BTreeSet<String>,
+        type_predicate: Option<String>, any_types: BTreeSet<String>, all_types: BTreeSet<String>,
+        none_types: BTreeSet<String>, iri_prefixes: BTreeSet<String>,
     ) -> Result<Self, ProjectionError> {
         let selector = Self {
             type_predicate,

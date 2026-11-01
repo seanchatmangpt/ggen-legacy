@@ -51,9 +51,7 @@ pub(super) struct Decode<'d, 'observer, 'storage, 'account> {
 }
 impl Decode<'_, '_, '_, '_> {
     pub(super) fn array<I: ExactSizeIterator>(
-        &self,
-        values: I,
-        mut encode: impl FnMut(I::Item) -> Result<Value, GeoCallError>,
+        &self, values: I, mut encode: impl FnMut(I::Item) -> Result<Value, GeoCallError>,
     ) -> Result<Value, GeoCallError> {
         let mut output = Vec::new();
         self.storage
@@ -66,9 +64,7 @@ impl Decode<'_, '_, '_, '_> {
     }
 
     pub(super) fn owned_array<T>(
-        &self,
-        values: Vec<T>,
-        encode: impl FnMut(T) -> Result<Value, GeoCallError>,
+        &self, values: Vec<T>, encode: impl FnMut(T) -> Result<Value, GeoCallError>,
     ) -> Result<Value, GeoCallError> {
         let bytes = core::alloc::Layout::array::<T>(values.capacity())
             .map_err(|_| StorageError::SizeOverflow)?
@@ -111,8 +107,7 @@ impl Decode<'_, '_, '_, '_> {
     }
 
     pub(super) fn integer_text(
-        &self,
-        value: &purrdf_geo_kernel::Int,
+        &self, value: &purrdf_geo_kernel::Int,
     ) -> Result<String, GeoCallError> {
         self.admission
             .borrow_mut()
@@ -121,8 +116,7 @@ impl Decode<'_, '_, '_, '_> {
     }
 
     pub(super) fn certificate(
-        &self,
-        body: impl FnOnce(&mut InputAdmission<'_, '_, '_>) -> Result<Vec<u8>, GeoError>,
+        &self, body: impl FnOnce(&mut InputAdmission<'_, '_, '_>) -> Result<Vec<u8>, GeoError>,
     ) -> Result<String, GeoCallError> {
         let bytes = body(&mut self.admission.borrow_mut())?;
         let result = self.hex(&bytes);
@@ -148,10 +142,7 @@ impl Decode<'_, '_, '_, '_> {
     }
 
     pub(super) fn decimal_text(
-        &self,
-        value: &Rat,
-        scale: Option<u32>,
-        rounding: purrdf_xsd::ieee::ratio::Rounding,
+        &self, value: &Rat, scale: Option<u32>, rounding: purrdf_xsd::ieee::ratio::Rounding,
     ) -> Result<String, GeoCallError> {
         self.admission
             .borrow_mut()
@@ -167,9 +158,7 @@ impl Decode<'_, '_, '_, '_> {
     }
 
     pub(super) fn record<'a>(
-        &'a self,
-        value: &'a Value,
-        expecting: &str,
+        &'a self, value: &'a Value, expecting: &str,
     ) -> Result<Record<'a>, DecodeError> {
         Record::new_native(value, expecting, Some(self.allocation))
     }
@@ -202,9 +191,7 @@ impl Decode<'_, '_, '_, '_> {
     }
 
     pub(super) fn location(
-        &self,
-        longitude: Rat,
-        latitude: Rat,
+        &self, longitude: Rat, latitude: Rat,
     ) -> Result<purrdf_geo_kernel::LonLat, GeoCallError> {
         self.admission
             .borrow_mut()
@@ -213,9 +200,7 @@ impl Decode<'_, '_, '_, '_> {
     }
 
     pub(super) fn binary_location(
-        &self,
-        longitude: f64,
-        latitude: f64,
+        &self, longitude: f64, latitude: f64,
     ) -> Result<purrdf_geo_kernel::LonLat, GeoCallError> {
         let mut admission = self.admission.borrow_mut();
         let longitude = admission.binary64("longitude", longitude)?;
@@ -224,11 +209,7 @@ impl Decode<'_, '_, '_, '_> {
     }
 
     pub(super) fn closed_box(
-        &self,
-        west: Rat,
-        south: Rat,
-        east: Rat,
-        north: Rat,
+        &self, west: Rat, south: Rat, east: Rat, north: Rat,
     ) -> Result<purrdf_geo_kernel::cells::ClosedBox, GeoCallError> {
         self.admission
             .borrow_mut()
@@ -237,9 +218,7 @@ impl Decode<'_, '_, '_, '_> {
     }
 
     pub(super) fn threshold(
-        &self,
-        lexical: &str,
-        datatype: purrdf_xsd::XsdDatatype,
+        &self, lexical: &str, datatype: purrdf_xsd::XsdDatatype,
     ) -> Result<purrdf_geo_kernel::XsdDoubleMetres, GeoCallError> {
         purrdf_xsd::ieee::environment::check().map_err(GeoError::FloatEnvironment)?;
         let _scope = purrdf_xsd::ieee::Binary64Scope::enter();
@@ -281,8 +260,7 @@ impl Decode<'_, '_, '_, '_> {
     }
 
     pub(super) fn literal(
-        &self,
-        literal: purrdf_core::RdfLiteral,
+        &self, literal: purrdf_core::RdfLiteral,
     ) -> Result<purrdf_core::TermValue, GeoCallError> {
         let result = self
             .storage
@@ -309,9 +287,7 @@ impl Decode<'_, '_, '_, '_> {
     }
 
     pub(super) fn items<T, E: Within>(
-        &self,
-        value: &Value,
-        read: impl FnMut(&Value) -> Result<T, E>,
+        &self, value: &Value, read: impl FnMut(&Value) -> Result<T, E>,
     ) -> Result<Vec<T>, E> {
         self.storage.items(value, read)
     }
@@ -324,8 +300,7 @@ impl Decode<'_, '_, '_, '_> {
     }
 
     pub(super) fn shared<T>(
-        &self,
-        value: T,
+        &self, value: T,
     ) -> Result<purrdf_lex::allocation::Shared<T>, GeoCallError> {
         self.storage
             .native(|memory| {
@@ -375,9 +350,7 @@ impl json::ReadObserver for Progress<'_, '_, '_, '_> {
 /// All JSON limits are lifted here; caller policy and actual checked buffer
 /// layouts govern the read instead of an invented per-node resource ceiling.
 pub(super) fn record<T>(
-    text: &str,
-    policy: ExecutionPolicy,
-    observer: Option<&mut dyn MetricWorkObserver>,
+    text: &str, policy: ExecutionPolicy, observer: Option<&mut dyn MetricWorkObserver>,
     read: impl FnOnce(&Value, &Decode<'_, '_, '_, '_>) -> Result<T, GeoCallError>,
 ) -> Result<(T, PreparationBudget), GeoCallError> {
     record_outcome(text, policy, observer, read, |result, _decode| result)
@@ -387,9 +360,7 @@ pub(super) fn record<T>(
 /// envelope. The same reader and typed body serve plain records and responses;
 /// lexical refusals can be encoded without copying or detaching their payload.
 pub(super) fn record_outcome<T, R>(
-    text: &str,
-    policy: ExecutionPolicy,
-    observer: Option<&mut dyn MetricWorkObserver>,
+    text: &str, policy: ExecutionPolicy, observer: Option<&mut dyn MetricWorkObserver>,
     read: impl FnOnce(&Value, &Decode<'_, '_, '_, '_>) -> Result<T, GeoCallError>,
     finish: impl FnOnce(Result<T, GeoCallError>, &Decode<'_, '_, '_, '_>) -> Result<R, GeoCallError>,
 ) -> Result<(R, PreparationBudget), GeoCallError> {
@@ -489,8 +460,7 @@ pub(super) fn record_outcome<T, R>(
 /// The same typed body over a pre-existing caller-owned value. This door adds
 /// no implicit profile ceiling to the resident public from_value contracts.
 pub(super) fn value<T>(
-    value: &Value,
-    read: impl FnOnce(&Value, &Decode<'_, '_, '_, '_>) -> Result<T, GeoCallError>,
+    value: &Value, read: impl FnOnce(&Value, &Decode<'_, '_, '_, '_>) -> Result<T, GeoCallError>,
 ) -> Result<T, GeoCallError> {
     let mut capacity = Capacity {
         limit: u64::MAX,
@@ -516,8 +486,7 @@ pub(super) fn value<T>(
 /// ordinary returned Rust value is transferred to its caller; no resident
 /// builder is used before the actual checked native allocations.
 pub(super) fn produce<T>(
-    policy: ExecutionPolicy,
-    observer: Option<&mut dyn MetricWorkObserver>,
+    policy: ExecutionPolicy, observer: Option<&mut dyn MetricWorkObserver>,
     body: impl FnOnce(&Decode<'_, '_, '_, '_>) -> Result<T, GeoCallError>,
 ) -> Result<T, GeoCallError> {
     let mut capacity = Capacity {
@@ -556,9 +525,7 @@ pub(super) fn produce<T>(
 }
 
 fn exact_fields<'v>(
-    value: &'v Value,
-    storage: &CarrierStorage<'_>,
-    admission: &RefCell<InputAdmission<'_, '_, '_>>,
+    value: &'v Value, storage: &CarrierStorage<'_>, admission: &RefCell<InputAdmission<'_, '_, '_>>,
 ) -> Result<Vec<(&'v str, Rat)>, GeoCallError> {
     let mut pending = Vec::new();
     let mut parsed = Vec::new();

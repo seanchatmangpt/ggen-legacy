@@ -679,9 +679,7 @@ fn the_k_returned_are_the_true_k_nearest_of_a_crowded_space() {
 /// Open a space over exactly `bytes` with exactly `bindings` — the seam the
 /// generation tests below vary one argument of at a time.
 fn space_over(
-    bytes: &[u8],
-    target_set: TargetSetId,
-    vector_space: VectorSpaceId,
+    bytes: &[u8], target_set: TargetSetId, vector_space: VectorSpaceId,
     bindings: Vec<(TargetId, TermValue)>,
 ) -> EmbeddingSpace {
     EmbeddingSpace::from_artifact(

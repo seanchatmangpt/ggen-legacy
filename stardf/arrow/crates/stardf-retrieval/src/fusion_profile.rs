@@ -257,9 +257,7 @@ impl DecayRule {
     /// was measured to deliver, and returning it as one would quote a
     /// resolution nothing established.
     pub fn deepest_rank_within_width(
-        self,
-        weight: Score,
-        max_width: u64,
+        self, weight: Score, max_width: u64,
     ) -> Result<ToleratedDepth, FusionError> {
         deepest_rank_within_width(self, weight, max_width)
     }
@@ -338,9 +336,7 @@ impl FusionProfile {
     /// Refuses zero smoothing, empty or zero weights, mismatched precision,
     /// an unrepresentable rank-one sum, or an unrepresentable stratum count.
     pub fn with_decay(
-        weights: BTreeMap<Iri, Score>,
-        decay: DecayRule,
-        precision: Precision,
+        weights: BTreeMap<Iri, Score>, decay: DecayRule, precision: Precision,
     ) -> Result<Self, FusionError> {
         if decay.k() == 0 {
             return Err(FusionError::InvalidK { k: 0 });
@@ -437,9 +433,7 @@ impl FusionProfile {
     /// # Errors
     /// Refuses a zero tolerance or an unusable arithmetic operand.
     pub fn deepest_rank_within_width(
-        &self,
-        stratum: &Iri,
-        max_width: u64,
+        &self, stratum: &Iri, max_width: u64,
     ) -> Result<Option<ToleratedDepth>, FusionError> {
         self.weight(stratum)
             .map(|weight| deepest_rank_within_width(self.decay, weight, max_width))

@@ -104,10 +104,7 @@ pub(in crate::json_schema) fn value<T: Source + ?Sized>(ctx: &mut Ctx<'_>, sourc
 }
 
 pub(in crate::json_schema) fn member(
-    ctx: &mut Ctx<'_>,
-    members: &mut Vec<(String, Value)>,
-    name: &str,
-    value: Value,
+    ctx: &mut Ctx<'_>, members: &mut Vec<(String, Value)>, name: &str, value: Value,
 ) {
     if let Some((_, previous)) = members.iter_mut().find(|(key, _)| key == name) {
         *previous = value;
@@ -124,8 +121,7 @@ pub(in crate::json_schema) fn member(
 }
 
 pub(in crate::json_schema) fn object(
-    ctx: &mut Ctx<'_>,
-    mut members: Vec<(String, Value)>,
+    ctx: &mut Ctx<'_>, mut members: Vec<(String, Value)>,
 ) -> Value {
     if let Some(policy) = &mut ctx.tool
         && !(policy.charge(1) && policy.native_nodes(1))
@@ -137,8 +133,7 @@ pub(in crate::json_schema) fn object(
 }
 
 pub(in crate::json_schema) fn array(
-    ctx: &mut Ctx<'_>,
-    values: impl IntoIterator<Item = Value>,
+    ctx: &mut Ctx<'_>, values: impl IntoIterator<Item = Value>,
 ) -> Value {
     if ctx.tool.is_some() {
         super::native_array(ctx, values)

@@ -91,8 +91,7 @@ pub(super) fn strip_x_flag_whitespace(pattern: &str) -> String {
 
 /// The same textual x rule, with admitted allocation and original byte offsets.
 pub(super) fn strip_bounded(
-    pattern: &str,
-    budget: &mut super::xpath::Budget<'_>,
+    pattern: &str, budget: &mut super::xpath::Budget<'_>,
 ) -> Result<(String, Vec<usize>), super::xpath::Error> {
     use super::xpath::Resource;
     budget.charge_wide(Resource::CompileSlots, (pattern.len() as u128) * 2 + 1)?;

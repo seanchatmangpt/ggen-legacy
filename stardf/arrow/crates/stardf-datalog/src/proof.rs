@@ -535,8 +535,7 @@ where
 {
     /// A context over a program, its seeded EDB and the model the evaluation produced.
     pub fn new(
-        rules: &'a [DlClause<N>],
-        edb: &'a RelationStore<TermInterner, N>,
+        rules: &'a [DlClause<N>], edb: &'a RelationStore<TermInterner, N>,
         model: &'a RelationStore<TermInterner, N>,
     ) -> Self {
         Self { rules, edb, model }
@@ -630,10 +629,7 @@ where
     /// through [`decode`](Self::decode), which reports the same defect as a
     /// [`ProofError::Malformed`] rejection instead.
     pub fn by_rule(
-        &mut self,
-        goal: ShapeFact<N>,
-        rule: usize,
-        premises: &[ProofId],
+        &mut self, goal: ShapeFact<N>, rule: usize, premises: &[ProofId],
     ) -> Result<ProofId, StorageError> {
         self.by_rule_head(goal, rule, 0, premises)
     }
@@ -646,11 +642,7 @@ where
     /// # Panics
     /// Panics if a premise was not already interned in this arena.
     pub fn by_rule_head(
-        &mut self,
-        goal: ShapeFact<N>,
-        rule: usize,
-        head: usize,
-        premises: &[ProofId],
+        &mut self, goal: ShapeFact<N>, rule: usize, head: usize, premises: &[ProofId],
     ) -> Result<ProofId, StorageError> {
         for premise in premises {
             assert!(
@@ -810,9 +802,7 @@ where
     /// answers for the one it was asked about, and an unrelated defective term elsewhere in
     /// the arena neither excuses nor condemns it.
     pub fn check(
-        &self,
-        root: ProofId,
-        ctx: &ProofContext<'_, N>,
+        &self, root: ProofId, ctx: &ProofContext<'_, N>,
     ) -> Result<ShapeFact<N>, ProofError<N>> {
         let reachable = self.reachable_from(root)?;
         let mut proven: BTreeMap<usize, ShapeFact<N>> = BTreeMap::new();
@@ -866,10 +856,7 @@ where
 
     /// Check ONE node, given the facts its premises were already proved to establish.
     fn check_step(
-        &self,
-        index: usize,
-        proven: &BTreeMap<usize, ShapeFact<N>>,
-        ctx: &ProofContext<'_, N>,
+        &self, index: usize, proven: &BTreeMap<usize, ShapeFact<N>>, ctx: &ProofContext<'_, N>,
     ) -> Result<ShapeFact<N>, ProofError<N>> {
         match &self.terms[index] {
             ProofTerm::Axiom { goal } => {
@@ -893,13 +880,8 @@ where
 
     /// Re-derive one rule application and compare the result against the stated conclusion.
     fn check_rule_step(
-        &self,
-        index: usize,
-        (rule, head): (usize, usize),
-        premises: &[ProofId],
-        stated: &ShapeFact<N>,
-        proven: &BTreeMap<usize, ShapeFact<N>>,
-        ctx: &ProofContext<'_, N>,
+        &self, index: usize, (rule, head): (usize, usize), premises: &[ProofId],
+        stated: &ShapeFact<N>, proven: &BTreeMap<usize, ShapeFact<N>>, ctx: &ProofContext<'_, N>,
     ) -> Result<ShapeFact<N>, ProofError<N>> {
         let clause = ctx
             .rules
@@ -1376,9 +1358,7 @@ where
 /// generalized diagonal (a variable repeated inside one atom) and the join (a variable shared
 /// across atoms) are BOTH re-checked by one rule.
 fn match_atom<'r, 'f, const N: usize>(
-    atom: &'r ClauseAtom<N>,
-    fact: &'f ShapeFact<N>,
-    subst: &mut BTreeMap<&'r str, &'f str>,
+    atom: &'r ClauseAtom<N>, fact: &'f ShapeFact<N>, subst: &mut BTreeMap<&'r str, &'f str>,
 ) -> bool
 where
     Arity<N>: StoreShape<N>,
@@ -1387,9 +1367,7 @@ where
 }
 
 fn match_atom_surfaces<'r, 'f, const N: usize>(
-    atom: &'r ClauseAtom<N>,
-    surfaces: [&'f str; N],
-    subst: &mut BTreeMap<&'r str, &'f str>,
+    atom: &'r ClauseAtom<N>, surfaces: [&'f str; N], subst: &mut BTreeMap<&'r str, &'f str>,
 ) -> bool {
     for (term, surface) in atom.terms().into_iter().zip(surfaces) {
         match term {
@@ -1420,11 +1398,8 @@ fn match_atom_surfaces<'r, 'f, const N: usize>(
 /// One continuation per depth retains its original row cursor; no evaluator
 /// frame, reported witness or join plan decides this closed-world obligation.
 fn negated_group_is_satisfied<const N: usize>(
-    group: &crate::guard::Negation<N>,
-    substitution: &BTreeMap<&str, &str>,
-    context: &ProofContext<'_, N>,
-    rule: usize,
-    ordinal: usize,
+    group: &crate::guard::Negation<N>, substitution: &BTreeMap<&str, &str>,
+    context: &ProofContext<'_, N>, rule: usize, ordinal: usize,
 ) -> Result<bool, ProofError<N>>
 where
     Arity<N>: StoreShape<N>,
@@ -1503,9 +1478,7 @@ fn resolved_surface(term: &ClauseTerm, subst: &BTreeMap<&str, &str>) -> Option<S
 
 /// Instantiate a rule head under `subst` — the checker's OWN conclusion.
 fn ground_atom<const N: usize>(
-    head: &ClauseAtom<N>,
-    rule: usize,
-    subst: &BTreeMap<&str, &str>,
+    head: &ClauseAtom<N>, rule: usize, subst: &BTreeMap<&str, &str>,
 ) -> Result<ShapeFact<N>, ProofError<N>>
 where
     Arity<N>: StoreShape<N>,
@@ -1540,9 +1513,7 @@ where
 /// A ground position whose surface the model never interned constrains to zero rows, so the
 /// atom is not satisfied.
 fn negated_atom_is_satisfied<const N: usize>(
-    atom: &ClauseAtom<N>,
-    subst: &BTreeMap<&str, &str>,
-    model: &RelationStore<TermInterner, N>,
+    atom: &ClauseAtom<N>, subst: &BTreeMap<&str, &str>, model: &RelationStore<TermInterner, N>,
 ) -> bool
 where
     Arity<N>: StoreShape<N>,

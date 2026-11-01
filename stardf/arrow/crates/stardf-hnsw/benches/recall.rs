@@ -241,10 +241,7 @@ fn report(name: &str, rows: usize, dims: usize) {
 /// both cases: a reassociated index's recall is the fraction of the EXACT nearest rows it
 /// offered, never a fraction of its own arithmetic's ordering.
 fn sweep<A: Arithmetic>(
-    arithmetic: &str,
-    mut index: HnswIndex<A>,
-    norms: &[f64],
-    exact_ordered: &[Vec<Ranked>],
+    arithmetic: &str, mut index: HnswIndex<A>, norms: &[f64], exact_ordered: &[Vec<Ranked>],
 ) {
     println!("  arithmetic={arithmetic}");
     // The rank table does not depend on `ef`, and `ordered` covers every row, so one buffer

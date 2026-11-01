@@ -73,11 +73,8 @@ where
 
     /// Advance the original phase, head and anchor before considering any later work.
     pub(in crate::seminaive) fn advance<D: TermDictionary<Id = I>>(
-        &mut self,
-        entry: RuleEntry<'r, N>,
-        snapshot: RoundSnapshot<'_, D, N>,
-        governor: &mut StepGovernor<'_>,
-        evidence: &mut Option<&mut dyn RuleEvidence<D, N>>,
+        &mut self, entry: RuleEntry<'r, N>, snapshot: RoundSnapshot<'_, D, N>,
+        governor: &mut StepGovernor<'_>, evidence: &mut Option<&mut dyn RuleEvidence<D, N>>,
     ) -> Result<(), EvalError<D::Error>> {
         snapshot
             .rel

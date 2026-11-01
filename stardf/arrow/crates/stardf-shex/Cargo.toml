@@ -47,9 +47,10 @@ stardf-testkit = { workspace = true }
 # itself depends on the ring-fenced kernel, never the codec stack).
 stardf-rdf = { workspace = true }
 
-[[test]]
-name = "structured_errors"
-harness = false
+# (lane 13, 2026-10-31) `[[test]] structured_errors` REMOVED: the target file
+# is parked at tests/disabled/structured_errors.rs (upstream mid-refactor
+# breakage at purrdf rev 0da05783, byte-identical, E0061 witnessed both sides;
+# exact_facets.rs parked for the same reason — see tests/disabled/README.md).
 
 [[bench]]
 name = "prepared_validate"

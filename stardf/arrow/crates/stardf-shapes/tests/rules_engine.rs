@@ -56,9 +56,7 @@ fn data(ttl: &str) -> ShaclData {
 
 /// Run the rules and return the inferred triples as `(s, p, o)` strings.
 fn run(
-    data_ttl: &str,
-    shapes_body: &str,
-    options: &RuleOptions,
+    data_ttl: &str, shapes_body: &str, options: &RuleOptions,
 ) -> Result<Vec<(String, String, String)>, String> {
     let shapes = shapes(shapes_body)?;
     let inference = infer(&data(data_ttl), &shapes, options).map_err(|error| error.to_string())?;

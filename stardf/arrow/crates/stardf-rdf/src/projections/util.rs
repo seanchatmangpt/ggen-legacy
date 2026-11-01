@@ -15,9 +15,7 @@ use purrdf_lex::json::record::ToJson;
 /// value holds them, numbers as their lexemes, strings in the one short-form
 /// spelling.
 pub(crate) fn canonical_json_bounded<T: ToJson + ?Sized>(
-    value: &T,
-    limits: ProjectionLimits,
-    description: &str,
+    value: &T, limits: ProjectionLimits, description: &str,
 ) -> Result<Vec<u8>, ProjectionError> {
     let bytes = purrdf_lex::json::write_compact(&value.to_json()).into_bytes();
     if bytes.len() > limits.max_artifact_bytes() {
@@ -42,9 +40,7 @@ pub(crate) fn canonical_json_bounded<T: ToJson + ?Sized>(
 /// Returns a configuration error for a missing or unsupported role, a binding
 /// `check` refuses, or a binding shared by two roles.
 pub(crate) fn validate_role_map<R: Copy + Ord + fmt::Debug>(
-    map: &BTreeMap<R, String>,
-    roles: &[R],
-    vocabulary: &str,
+    map: &BTreeMap<R, String>, roles: &[R], vocabulary: &str,
     check: impl Fn(R, &str) -> Result<(), ProjectionError>,
 ) -> Result<(), ProjectionError> {
     for &role in roles {
@@ -76,9 +72,7 @@ pub(crate) fn validate_role_map<R: Copy + Ord + fmt::Debug>(
 ///
 /// Returns a configuration error naming `role` of `vocabulary`.
 pub(crate) fn validate_compact_term(
-    vocabulary: &str,
-    role: impl fmt::Debug,
-    term: &str,
+    vocabulary: &str, role: impl fmt::Debug, term: &str,
 ) -> Result<(), ProjectionError> {
     if term.is_empty() || term.starts_with('@') || term.chars().any(char::is_whitespace) {
         return Err(ProjectionError::configuration(format!(
@@ -98,9 +92,7 @@ pub(crate) fn validate_compact_term(
 ///
 /// Returns `refusal()` as an integrity error at the first adjacent repeat.
 pub(crate) fn reject_duplicate_keys<T, K: PartialEq + ?Sized>(
-    sorted: &[T],
-    key: impl Fn(&T) -> &K,
-    refusal: impl FnOnce() -> String,
+    sorted: &[T], key: impl Fn(&T) -> &K, refusal: impl FnOnce() -> String,
 ) -> Result<(), ProjectionError> {
     if sorted.windows(2).any(|pair| key(&pair[0]) == key(&pair[1])) {
         return Err(ProjectionError::integrity(refusal()));
@@ -114,8 +106,7 @@ pub(crate) fn reject_duplicate_keys<T, K: PartialEq + ?Sized>(
 ///
 /// Returns an integrity error naming `description`.
 pub(crate) fn reject_duplicates<T: PartialEq>(
-    sorted: &[T],
-    description: &str,
+    sorted: &[T], description: &str,
 ) -> Result<(), ProjectionError> {
     reject_duplicate_keys(
         sorted,
@@ -158,9 +149,7 @@ impl RecordBudget {
     /// Returns a limit error when the sum overflows or the running count
     /// passes the maximum.
     pub(crate) fn consume(
-        &mut self,
-        amounts: &[usize],
-        description: &str,
+        &mut self, amounts: &[usize], description: &str,
     ) -> Result<(), ProjectionError> {
         self.used = amounts
             .iter()
@@ -184,9 +173,7 @@ impl RecordBudget {
 ///
 /// Returns a syntax error located at `path` when the record is shorter.
 pub(crate) fn csv_field<'a>(
-    record: &'a purrdf_core::csv::StringRecord,
-    index: usize,
-    path: &str,
+    record: &'a purrdf_core::csv::StringRecord, index: usize, path: &str,
 ) -> Result<&'a str, ProjectionError> {
     record.get(index).ok_or_else(|| {
         ProjectionError::syntax(format!("CSV row is missing field {index}")).at_path(path)
@@ -273,8 +260,7 @@ pub(crate) use iri_role_group;
 ///
 /// Returns a configuration error naming the second role and the shared IRI.
 pub(crate) fn validate_distinct_roles<'a>(
-    vocabulary: &str,
-    roles: impl IntoIterator<Item = (&'static str, &'a str)>,
+    vocabulary: &str, roles: impl IntoIterator<Item = (&'static str, &'a str)>,
 ) -> Result<(), ProjectionError> {
     let mut seen = std::collections::BTreeSet::new();
     for (role, iri) in roles {
@@ -313,8 +299,7 @@ pub(crate) fn validate_portable_bound(value: usize, field: &str) -> Result<(), P
 ///
 /// Returns [`validate_absolute_iri`]'s refusal naming `field`.
 pub(crate) fn absolute_iri(
-    value: impl Into<String>,
-    field: &str,
+    value: impl Into<String>, field: &str,
 ) -> Result<String, ProjectionError> {
     let value = value.into();
     validate_absolute_iri(&value, field)?;
@@ -328,8 +313,7 @@ pub(crate) fn absolute_iri(
 ///
 /// Returns `refusal()` as an integrity error at the first pair out of order.
 pub(crate) fn require_strictly_sorted<T: Ord>(
-    values: &[T],
-    refusal: impl FnOnce() -> String,
+    values: &[T], refusal: impl FnOnce() -> String,
 ) -> Result<(), ProjectionError> {
     if values.windows(2).any(|pair| pair[0] >= pair[1]) {
         return Err(ProjectionError::integrity(refusal()));
@@ -339,10 +323,7 @@ pub(crate) fn require_strictly_sorted<T: Ord>(
 
 /// Push the all-IRI default-graph triple `subject predicate object`.
 pub(crate) fn push_iri_triple(
-    builder: &mut purrdf_core::RdfDatasetBuilder,
-    subject: &str,
-    predicate: &str,
-    object: &str,
+    builder: &mut purrdf_core::RdfDatasetBuilder, subject: &str, predicate: &str, object: &str,
 ) -> Result<(), ProjectionError> {
     let subject = builder.intern_iri(subject)?;
     let predicate = builder.intern_iri(predicate)?;
@@ -368,8 +349,7 @@ pub(crate) fn byte_entries(
 ///
 /// Returns `validate`'s refusal.
 pub(crate) fn validated<T>(
-    value: T,
-    validate: impl FnOnce(&T) -> Result<(), ProjectionError>,
+    value: T, validate: impl FnOnce(&T) -> Result<(), ProjectionError>,
 ) -> Result<T, ProjectionError> {
     validate(&value)?;
     Ok(value)

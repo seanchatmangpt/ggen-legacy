@@ -17,9 +17,7 @@ use crate::term::Term;
 /// Compare produced node-expression output against the expected list: exact RDF
 /// 1.2 term equality, in order, or as a multiset under `ignore_order`.
 pub fn compare_outputs(
-    produced: &[Term],
-    expected: &[Term],
-    ignore_order: bool,
+    produced: &[Term], expected: &[Term], ignore_order: bool,
 ) -> Result<(), String> {
     let agree = if ignore_order {
         let mut p: Vec<&Term> = produced.iter().collect();

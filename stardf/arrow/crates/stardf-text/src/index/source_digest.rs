@@ -26,8 +26,7 @@ impl SourceDigest {
     /// Apply a literal observed by the original source owner, independently of
     /// the consumer's requested delta. Nonliteral coverage is handled separately.
     pub(super) fn observe<P: CorpusProfile>(
-        &mut self,
-        side: purrdf_core::source::SourceSide,
+        &mut self, side: purrdf_core::source::SourceSide,
         row: purrdf_core::source::SourceRowRef<'_>,
     ) -> Result<(), crate::TextError> {
         let purrdf_core::TermValue::Literal {

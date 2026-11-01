@@ -391,9 +391,7 @@ impl Ord for RankedRow {
 }
 
 pub(crate) fn effective_row(
-    exact: Resolved<Exact>,
-    matrix: EffectiveMatrixView<'_>,
-    row: u64,
+    exact: Resolved<Exact>, matrix: EffectiveMatrixView<'_>, row: u64,
 ) -> Vec<f32> {
     matrix
         .f32_row(row, exact)
@@ -412,10 +410,7 @@ fn dot(exact: Resolved<Exact>, matrix: EffectiveMatrixView<'_>, row: u64, query:
 }
 
 pub(crate) fn top_k(
-    exact: Resolved<Exact>,
-    matrix: EffectiveMatrixView<'_>,
-    query: &[f32],
-    count: usize,
+    exact: Resolved<Exact>, matrix: EffectiveMatrixView<'_>, query: &[f32], count: usize,
     excluded_row: u64,
 ) -> Vec<RankedRow> {
     let mut best = BinaryHeap::<Reverse<RankedRow>>::with_capacity(count + 1);
@@ -440,11 +435,8 @@ pub(crate) fn top_k(
 }
 
 pub(crate) fn rerank(
-    exact: Resolved<Exact>,
-    matrix: EffectiveMatrixView<'_>,
-    query: &[f32],
-    candidates: &[RankedRow],
-    count: usize,
+    exact: Resolved<Exact>, matrix: EffectiveMatrixView<'_>, query: &[f32],
+    candidates: &[RankedRow], count: usize,
 ) -> Vec<RankedRow> {
     let mut reranked = candidates
         .iter()

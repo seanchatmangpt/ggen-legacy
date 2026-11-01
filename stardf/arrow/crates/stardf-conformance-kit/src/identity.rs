@@ -18,10 +18,7 @@ pub(crate) struct Identities {
 
 impl Identities {
     pub(crate) fn link(
-        &mut self,
-        from_domain: &str,
-        from: (&str, BlankScope),
-        to_domain: &str,
+        &mut self, from_domain: &str, from: (&str, BlankScope), to_domain: &str,
         to: (&str, BlankScope),
     ) {
         let TermValue::Blank { label, .. } = self.blank(to_domain, to.0, to.1) else {

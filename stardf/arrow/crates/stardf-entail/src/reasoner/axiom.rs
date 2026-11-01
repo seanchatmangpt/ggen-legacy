@@ -201,11 +201,7 @@ pub(crate) fn holds_role(session: &mut Session<'_>, subject: u32, negated_reach:
 /// `x` and `y` are the fresh blank-node symbols; `negated_reach` is the interned
 /// `¬∃sup.{y}` the caller built for them.
 pub(crate) fn holds_role_inclusion(
-    session: &mut Session<'_>,
-    x: u32,
-    sub: u32,
-    y: u32,
-    negated_reach: u32,
+    session: &mut Session<'_>, x: u32, sub: u32, y: u32, negated_reach: u32,
 ) -> Verdict {
     session.refutes(&Assumptions {
         types: &[(x, negated_reach)],

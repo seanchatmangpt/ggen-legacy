@@ -109,8 +109,7 @@ impl<I: TermIdentity> RowLog<I> {
     }
 
     pub(super) fn reserve_in<A: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, A>,
+        &mut self, memory: &mut Memory<'_, A>,
     ) -> Result<(), StorageError> {
         let Self::Sparse {
             live,
@@ -126,8 +125,7 @@ impl<I: TermIdentity> RowLog<I> {
     }
 
     pub(super) fn flush_retired_in<A: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, A>,
+        &mut self, memory: &mut Memory<'_, A>,
     ) -> Result<(), StorageError> {
         if let Self::Sparse {
             supplemental: true,
@@ -163,10 +161,7 @@ impl<I: TermIdentity> RowLog<I> {
     }
 
     pub(super) fn copy_sparse_until_in<A: Admission + ?Sized>(
-        &self,
-        copy: &mut Self,
-        cursor: &mut u64,
-        memory: &mut Memory<'_, A>,
+        &self, copy: &mut Self, cursor: &mut u64, memory: &mut Memory<'_, A>,
         mut allow: impl FnMut(usize) -> bool,
     ) -> Result<bool, StorageError> {
         let Self::Sparse {
@@ -212,9 +207,7 @@ impl<I: TermIdentity> RowLog<I> {
     }
 
     pub(super) fn append_in<A: Admission + ?Sized>(
-        &mut self,
-        row: Row<I>,
-        memory: &mut Memory<'_, A>,
+        &mut self, row: Row<I>, memory: &mut Memory<'_, A>,
     ) {
         assert_eq!(
             row.0.index(),
@@ -262,9 +255,7 @@ impl<I: TermIdentity> RowLog<I> {
     }
 
     pub(super) fn restore_in<A: Admission + ?Sized>(
-        &mut self,
-        row: Row<I>,
-        memory: &mut Memory<'_, A>,
+        &mut self, row: Row<I>, memory: &mut Memory<'_, A>,
     ) {
         self.check_restore(row);
         match self {
@@ -301,9 +292,7 @@ impl<I: TermIdentity> RowLog<I> {
 }
 
 fn publish_live<I: TermIdentity, A: Admission + ?Sized>(
-    live: &mut OrderedTable<u64, Row<I>>,
-    row: Row<I>,
-    supplemental: bool,
+    live: &mut OrderedTable<u64, Row<I>>, row: Row<I>, supplemental: bool,
     memory: &mut Memory<'_, A>,
 ) {
     let bytes = live

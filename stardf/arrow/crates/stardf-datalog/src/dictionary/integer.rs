@@ -134,16 +134,13 @@ impl<I: TermIdentity + Into<u64>> TermDictionary for IntegerDictionary<'_, I> {
     }
 
     fn compare_terms(
-        &self,
-        left: DictionaryTerm<'_, I>,
-        right: DictionaryTerm<'_, I>,
+        &self, left: DictionaryTerm<'_, I>, right: DictionaryTerm<'_, I>,
     ) -> Result<Ordering, Self::Error> {
         Ok(self.identity(left)?.cmp(&self.identity(right)?))
     }
 
     fn with_interned<T, const N: usize>(
-        &mut self,
-        terms: [DictionaryTerm<'_, I>; N],
+        &mut self, terms: [DictionaryTerm<'_, I>; N],
         validate: impl FnOnce(&Self, [I; N]) -> Result<T, DictionaryError<Self::Error>>,
     ) -> Result<T, DictionaryError<Self::Error>> {
         let ids =

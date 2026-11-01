@@ -151,10 +151,7 @@ impl<'a, 'd, D: DatasetView + Sync> InternedSolutions<'a, 'd, D> {
     /// Refuses missing columns, unbound/invalid token coordinates, source reads,
     /// or before-growth storage failures. Positions are unsigned token ordinals.
     pub fn longest_first_spans(
-        &self,
-        domain: &[&str],
-        start: &str,
-        end: &str,
+        &self, domain: &[&str], start: &str, end: &str,
     ) -> Result<crate::shapes::spans::SpanSelection<'a, D::Id>, crate::EvalError> {
         let workspace = &self.ctx.growth;
         let invalid = || {
@@ -279,9 +276,7 @@ impl<'a, 'd, D: DatasetView + Sync> InternedSolutions<'a, 'd, D> {
     /// Refuses absent evidence declarations, invalid row/content nodes, foreign
     /// evidence owners or original native physical admission failures.
     pub fn with_evidence_ledger<N: purrdf_core::evidence::LedgerNodes, R>(
-        &self,
-        terms: &[crate::evidence_exec::LedgerRowTerms<'_>],
-        nodes: &N,
+        &self, terms: &[crate::evidence_exec::LedgerRowTerms<'_>], nodes: &N,
         vocabulary: &purrdf_core::evidence::LedgerVocabulary<'_>,
         visit: impl FnOnce(&crate::evidence_exec::EvidenceLedger<'_, N>) -> R,
     ) -> Result<R, crate::EvalError> {
@@ -298,8 +293,7 @@ impl<'a, 'd, D: DatasetView + Sync> InternedSolutions<'a, 'd, D> {
     /// Refuses noncanonical or absent reasons, foreign owners or an invalid
     /// original dictionary before publishing any merged row.
     pub fn with_accepted_rows<R>(
-        &self,
-        accepted: &[purrdf_core::evidence::ReasonId],
+        &self, accepted: &[purrdf_core::evidence::ReasonId],
         visit: impl FnOnce(crate::evidence_exec::AcceptedAnswerRows<'_, D::Id>) -> R,
     ) -> Result<R, crate::EvalError> {
         let input = self.evidence_input()?;
@@ -315,8 +309,7 @@ impl<'a, 'd, D: DatasetView + Sync> InternedSolutions<'a, 'd, D> {
     /// Refuses invalid acceptance, RDF declarations or original native failures
     /// before publishing the merged ledger.
     pub fn with_accepted_evidence_ledger<N: purrdf_core::evidence::LedgerNodes, R>(
-        &self,
-        read: &crate::evidence_exec::AcceptedLedgerRead<'_, N>,
+        &self, read: &crate::evidence_exec::AcceptedLedgerRead<'_, N>,
         visit: impl FnOnce(&crate::evidence_exec::EvidenceLedger<'_, N>) -> R,
     ) -> Result<R, crate::EvalError> {
         self.evidence_input()?
@@ -364,9 +357,7 @@ impl<'a, 'd, D: DatasetView + Sync> InternedSolutions<'a, 'd, D> {
     /// leaves unbound", which is what every caller of a projected-variable lookup
     /// already treats identically.
     pub fn try_cell(
-        &self,
-        row: &Solution<D::Id>,
-        column: usize,
+        &self, row: &Solution<D::Id>, column: usize,
     ) -> Result<Option<TermValue>, crate::EvalError> {
         row.get(column)
             .copied()
@@ -382,10 +373,7 @@ impl<'a, 'd, D: DatasetView + Sync> InternedSolutions<'a, 'd, D> {
     /// # Errors
     /// Preserves the original dataset read or workspace admission failure.
     pub fn try_cell_owned(
-        &self,
-        row: &Solution<D::Id>,
-        column: usize,
-        workspace: &crate::WorkspaceCapability,
+        &self, row: &Solution<D::Id>, column: usize, workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<crate::WorkspaceTerm>, crate::EvalError> {
         row.get(column)
             .copied()
@@ -480,8 +468,7 @@ pub struct InternedGraph<'a> {
 
 impl<'a> InternedGraph<'a> {
     pub(crate) const fn new(
-        graph: &'a purrdf_core::DatasetHandle,
-        workspace: &'a crate::WorkspaceCapability,
+        graph: &'a purrdf_core::DatasetHandle, workspace: &'a crate::WorkspaceCapability,
     ) -> Self {
         Self { graph, workspace }
     }

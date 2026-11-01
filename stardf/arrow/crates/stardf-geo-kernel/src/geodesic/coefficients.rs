@@ -12,8 +12,7 @@ use super::{ChunkObserver, SolveError};
 type CoefficientArray<I> = crate::context::Produced<SmallVec<[I; 9]>>;
 
 pub(super) fn detached_array_bytes<const N: usize>(
-    source: &SmallVec<[purrdf_xsd::math::FixedInterval; N]>,
-    owner_bytes: usize,
+    source: &SmallVec<[purrdf_xsd::math::FixedInterval; N]>, owner_bytes: usize,
 ) -> Result<usize, MathError> {
     let buffer = if source.len() > N {
         core::alloc::Layout::array::<purrdf_xsd::math::FixedInterval>(source.len())
@@ -42,8 +41,7 @@ pub(super) fn detached_array_bytes<const N: usize>(
 }
 
 pub(super) fn mapped_array<I, J, const N: usize>(
-    source: &SmallVec<[I; N]>,
-    chunks: &mut ChunkObserver<'_, '_>,
+    source: &SmallVec<[I; N]>, chunks: &mut ChunkObserver<'_, '_>,
     mut convert: impl FnMut(&I) -> Result<J, MathError>,
 ) -> Result<crate::context::Produced<SmallVec<[J; N]>>, SolveError> {
     let mut values = chunks.array::<[J; N]>(source.len())?;
@@ -54,8 +52,7 @@ pub(super) fn mapped_array<I, J, const N: usize>(
 }
 
 pub(super) fn detached_array<const N: usize>(
-    source: &SmallVec<[purrdf_xsd::math::FixedInterval; N]>,
-    chunks: &mut ChunkObserver<'_, '_>,
+    source: &SmallVec<[purrdf_xsd::math::FixedInterval; N]>, chunks: &mut ChunkObserver<'_, '_>,
 ) -> Result<crate::context::Produced<SmallVec<[purrdf_xsd::math::FixedInterval; N]>>, SolveError> {
     let make = |memory: &mut purrdf_lex::allocation::Memory<
         '_,
@@ -98,10 +95,7 @@ pub(super) fn detached_array<const N: usize>(
 /// Generate sqrt(1+z) and 1/(1+d sqrt(1+z)) coefficients from their equations.
 /// The caller admits both complete arrays before entering this function.
 pub(super) fn generate<I: CertifiedInterval>(
-    d: &I,
-    order: usize,
-    chunks: &mut ChunkObserver<'_, '_>,
-    math: &mut IntervalContext<'_>,
+    d: &I, order: usize, chunks: &mut ChunkObserver<'_, '_>, math: &mut IntervalContext<'_>,
 ) -> Result<(CoefficientArray<I>, CoefficientArray<I>), SolveError> {
     if math.binary64_ops().is_none()
         && math.limits().precision_bits >= 192
@@ -176,9 +170,7 @@ pub(super) fn generate<I: CertifiedInterval>(
 }
 
 fn unit_coefficient<I: CertifiedInterval>(
-    value: &I,
-    one: &I,
-    math: &mut IntervalContext<'_>,
+    value: &I, one: &I, math: &mut IntervalContext<'_>,
 ) -> Result<I, MathError> {
     let lower = value.lower().max(&one.upper().negated()).clone();
     let upper = value.upper().min(one.upper()).clone();

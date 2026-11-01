@@ -366,11 +366,7 @@ impl Journal {
 
     /// The first native hierarchy discovery owns one immutable predecessor.
     pub(super) fn role_rule(
-        &mut self,
-        requested: Role,
-        parent: Role,
-        child: Role,
-        input: Input,
+        &mut self, requested: Role, parent: Role, child: Role, input: Input,
     ) -> Result<(), StorageError> {
         if requested == child || self.role_rules.0.get(&(requested, child)).is_some() {
             return Ok(());
@@ -384,10 +380,7 @@ impl Journal {
         result.map(|_| ())
     }
     pub(super) fn reach_step(
-        &mut self,
-        pattern: usize,
-        root: usize,
-        step: reach::Step,
+        &mut self, pattern: usize, root: usize, step: reach::Step,
     ) -> Result<(), StorageError> {
         #[cfg(test)]
         self.publication_refusal()?;
@@ -398,11 +391,7 @@ impl Journal {
     }
 
     pub(super) fn reach_extend(
-        &mut self,
-        pattern: usize,
-        owner: usize,
-        step: reach::Step,
-        target: usize,
+        &mut self, pattern: usize, owner: usize, step: reach::Step, target: usize,
     ) -> Result<(), StorageError> {
         #[cfg(test)]
         self.publication_refusal()?;
@@ -477,9 +466,7 @@ impl Journal {
 
     /// Reserve under the same original owner before publishing an observation.
     pub(crate) fn push(
-        &mut self,
-        mutation: Mutation,
-        cause: Option<Cause>,
+        &mut self, mutation: Mutation, cause: Option<Cause>,
     ) -> Result<(), StorageError> {
         let cause = cause.unwrap_or(self.cause);
         assert_ne!(

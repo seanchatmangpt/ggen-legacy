@@ -529,12 +529,8 @@ impl From<FusionError> for SearchError {
 // `RankedStream` trait carries the same reasoning for its own futures.
 #[allow(clippy::future_not_send)]
 pub async fn search<S, D>(
-    request: &RetrievalRequest,
-    registry: &PropertyFunctionRegistry<'static>,
-    statistics: &S,
-    dataset: &D,
-    env: &AdmissionEnvironment<'_>,
-    profile: &FusionProfile,
+    request: &RetrievalRequest, registry: &PropertyFunctionRegistry<'static>, statistics: &S,
+    dataset: &D, env: &AdmissionEnvironment<'_>, profile: &FusionProfile,
 ) -> Result<SearchResult, SearchError>
 where
     S: Statistics,
@@ -564,12 +560,8 @@ where
 // no independently configured second search pipeline is introduced.
 #[allow(clippy::future_not_send, clippy::too_many_arguments)]
 pub async fn search_scoped<S, D>(
-    request: &RetrievalRequest,
-    registry: &PropertyFunctionRegistry<'static>,
-    statistics: &S,
-    dataset: &D,
-    env: &AdmissionEnvironment<'_>,
-    profile: &FusionProfile,
+    request: &RetrievalRequest, registry: &PropertyFunctionRegistry<'static>, statistics: &S,
+    dataset: &D, env: &AdmissionEnvironment<'_>, profile: &FusionProfile,
     bindings: &crate::ConstraintBindings<'_>,
     source: &dyn purrdf_sparql_eval::EvidenceSource<D::Id>,
 ) -> Result<crate::ScopedExecution<SearchResult>, SearchError>
@@ -634,12 +626,8 @@ impl<E: std::error::Error + 'static, V: std::fmt::Debug + 'static> std::error::E
 /// Preserves original search failures and typed operational errors with receipts.
 #[allow(clippy::future_not_send, clippy::too_many_arguments)]
 pub async fn search_scoped_fallible<S, D>(
-    request: &RetrievalRequest,
-    registry: &PropertyFunctionRegistry<'static>,
-    statistics: &S,
-    dataset: &D,
-    env: &AdmissionEnvironment<'_>,
-    profile: &FusionProfile,
+    request: &RetrievalRequest, registry: &PropertyFunctionRegistry<'static>, statistics: &S,
+    dataset: &D, env: &AdmissionEnvironment<'_>, profile: &FusionProfile,
     bindings: &crate::ConstraintBindings<'_>,
     source: &dyn purrdf_sparql_eval::EvidenceSource<D::Id>,
 ) -> Result<
@@ -685,12 +673,8 @@ where
     reason = "the existing search inputs carry the operation factory so resident admission stays after compilation"
 )]
 async fn search_bound<S, D, F>(
-    request: &RetrievalRequest,
-    registry: &PropertyFunctionRegistry<'static>,
-    statistics: &S,
-    dataset: &D,
-    env: &AdmissionEnvironment<'_>,
-    profile: &FusionProfile,
+    request: &RetrievalRequest, registry: &PropertyFunctionRegistry<'static>, statistics: &S,
+    dataset: &D, env: &AdmissionEnvironment<'_>, profile: &FusionProfile,
     scope: Option<(
         &crate::ConstraintBindings<'_>,
         &dyn purrdf_sparql_eval::EvidenceSource<D::Id>,
@@ -769,9 +753,7 @@ where
 // the same allowance on `search`.
 #[allow(clippy::future_not_send)]
 async fn read_and_fuse<D>(
-    compiled: &CompiledRetrieval,
-    registry: &PropertyFunctionRegistry<'static>,
-    dataset: &D,
+    compiled: &CompiledRetrieval, registry: &PropertyFunctionRegistry<'static>, dataset: &D,
     profile: &FusionProfile,
     scope: Option<(
         &crate::ConstraintBindings<'_>,
@@ -992,9 +974,7 @@ where
 // Awaited in the one task `search` runs in; see the same allowance there.
 #[allow(clippy::future_not_send)]
 async fn read_to_its_end(
-    mut stream: RankedStreamImpl<'_>,
-    stratum: &Iri,
-    announced: &PfAttestation,
+    mut stream: RankedStreamImpl<'_>, stratum: &Iri, announced: &PfAttestation,
 ) -> Result<ProducerStatus, ProtocolError> {
     let workspace = stream
         .workspace()
@@ -1143,9 +1123,7 @@ impl<'d> RankedStreamAdapter<'d> {
     /// names it in [`SearchResult::unweighted_strata`] and fuses the rest.
     #[must_use]
     pub fn new(
-        stream: RankedStreamImpl<'d>,
-        contract: StreamContract,
-        profile: &FusionProfile,
+        stream: RankedStreamImpl<'d>, contract: StreamContract, profile: &FusionProfile,
         stratum: &Iri,
     ) -> Option<Self> {
         Some(Self {

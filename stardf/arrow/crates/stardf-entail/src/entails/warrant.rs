@@ -584,10 +584,7 @@ impl CompositeWarrant {
     /// Mint a composite. Crate-internal: the only producer is
     /// [`entails`](super::entails)'s fold.
     pub(crate) const fn new(
-        regime: Regime,
-        parts: Vec<EntailmentWarrant>,
-        binding: Binding,
-        closure: Closure,
+        regime: Regime, parts: Vec<EntailmentWarrant>, binding: Binding, closure: Closure,
     ) -> Self {
         Self {
             regime,
@@ -681,10 +678,7 @@ pub(crate) struct Replay {
 /// `None` is a failed check. Runs no reasoner: every lane's checker is lookups against the
 /// closure the constituent carries, plus a re-reading of the conclusion.
 fn replay(
-    part: &EntailmentWarrant,
-    premise: &RdfDataset,
-    conclusion: &RdfDataset,
-    triples: &[Triple],
+    part: &EntailmentWarrant, premise: &RdfDataset, conclusion: &RdfDataset, triples: &[Triple],
     pending: &BTreeSet<usize>,
 ) -> Option<Replay> {
     // The closure of a premise holds the premise: every lane copies the input through and adds

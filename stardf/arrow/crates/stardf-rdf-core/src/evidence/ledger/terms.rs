@@ -68,8 +68,7 @@ impl<'a, S: Admission> BorrowedLedgerTerms<'a, S> {
     /// # Errors
     /// Preserves native admission or allocator refusal before each array growth.
     pub fn new(
-        roots: impl IntoIterator<Item = &'a TermValue>,
-        iris: impl IntoIterator<Item = &'a str>,
+        roots: impl IntoIterator<Item = &'a TermValue>, iris: impl IntoIterator<Item = &'a str>,
         admission: S,
     ) -> Result<Self, StorageError> {
         Self::try_new(
@@ -85,8 +84,7 @@ impl<'a, S: Admission> BorrowedLedgerTerms<'a, S> {
 
     pub(super) fn try_new<E>(
         roots: impl IntoIterator<Item = Result<&'a TermValue, E>>,
-        iris: impl IntoIterator<Item = Result<&'a str, E>>,
-        mut admission: S,
+        iris: impl IntoIterator<Item = Result<&'a str, E>>, mut admission: S,
     ) -> Result<Self, TermBuildError<E>> {
         let mut memory = Memory::new(&mut admission);
         let (terms, order) = memory.try_scope(|memory| {
@@ -222,9 +220,7 @@ pub(super) enum TermBuildError<E> {
 purrdf_lex::variant_from!(impl<E> TermBuildError<E> { Storage(StorageError) });
 
 fn intern<'a, S: Admission + ?Sized>(
-    term: LedgerTerm<'a>,
-    terms: &mut Vec<LedgerTerm<'a>>,
-    order: &mut Vec<LedgerTermId>,
+    term: LedgerTerm<'a>, terms: &mut Vec<LedgerTerm<'a>>, order: &mut Vec<LedgerTermId>,
     memory: &mut Memory<'_, S>,
 ) -> Result<LedgerTermId, StorageError> {
     let position = match find(term.as_ref(), terms, order) {
@@ -244,9 +240,7 @@ fn intern<'a, S: Admission + ?Sized>(
 }
 
 fn find(
-    term: TermRef<'_, LedgerTermId>,
-    terms: &[LedgerTerm<'_>],
-    order: &[LedgerTermId],
+    term: TermRef<'_, LedgerTermId>, terms: &[LedgerTerm<'_>], order: &[LedgerTermId],
 ) -> Result<LedgerTermId, usize> {
     order
         .binary_search_by(|id| compare(terms[id.0].as_ref(), term))
@@ -254,10 +248,7 @@ fn find(
 }
 
 fn register_composite<S: Admission + ?Sized>(
-    lexical: &str,
-    datatype: &str,
-    terms: &mut Vec<LedgerTerm<'_>>,
-    order: &mut Vec<LedgerTermId>,
+    lexical: &str, datatype: &str, terms: &mut Vec<LedgerTerm<'_>>, order: &mut Vec<LedgerTermId>,
     memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     let mut blanks = crate::cdt_blank::cdt_embedded_blanks_with_memory(lexical, datatype, memory)?;
@@ -318,8 +309,7 @@ fn tag(term: TermRef<'_, LedgerTermId>) -> u8 {
 type Binding = (*const TermValue, LedgerTermId);
 
 fn describe<'a>(
-    term: &'a TermValue,
-    children: &[Binding],
+    term: &'a TermValue, children: &[Binding],
     mut iri: impl FnMut(&'a str) -> Result<Option<LedgerTermId>, StorageError>,
 ) -> Result<Option<TermRef<'a, LedgerTermId>>, StorageError> {
     Ok(Some(match term {
@@ -360,8 +350,7 @@ fn describe<'a>(
 }
 
 fn walk_ids<'a, S: Admission + ?Sized>(
-    root: &'a TermValue,
-    memory: &mut Memory<'_, S>,
+    root: &'a TermValue, memory: &mut Memory<'_, S>,
     mut resolve: impl FnMut(
         &'a TermValue,
         &[Binding],

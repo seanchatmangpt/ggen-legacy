@@ -272,10 +272,7 @@ impl<'a, D: FallibleDatasetView, R: WorkspaceReservation<Error = D::Error>> Capt
     }
 
     fn literal(
-        &mut self,
-        lexical: &str,
-        datatype: D::Id,
-        language: Option<&str>,
+        &mut self, lexical: &str, datatype: D::Id, language: Option<&str>,
         direction: Option<RdfTextDirection>,
     ) -> StateResult<D, Term> {
         let guard = self
@@ -606,9 +603,7 @@ impl<'a, D: FallibleDatasetView, R: WorkspaceReservation<Error = D::Error>> Capt
     }
 
     fn refine(
-        &self,
-        mut colors: Vec<usize>,
-        incidence: &[Vec<usize>],
+        &self, mut colors: Vec<usize>, incidence: &[Vec<usize>],
     ) -> StateResult<D, Vec<usize>> {
         // A nonterminal round strictly splits at least one nonempty cell. There
         // are at most n cells, so n + 1 rounds include the final stable check,
@@ -672,11 +667,7 @@ impl<'a, D: FallibleDatasetView, R: WorkspaceReservation<Error = D::Error>> Capt
     }
 
     fn automorphism(
-        &self,
-        a: usize,
-        b: usize,
-        incidence: &[Vec<usize>],
-        identity: &mut [usize],
+        &self, a: usize, b: usize, incidence: &[Vec<usize>], identity: &mut [usize],
     ) -> bool {
         let mut affected: Vec<_> = incidence[a].iter().chain(&incidence[b]).copied().collect();
         affected.sort_unstable();

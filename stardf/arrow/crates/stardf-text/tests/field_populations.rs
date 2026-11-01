@@ -15,11 +15,7 @@ const FROZEN_LENGTH: u64 = 1 << 24;
 const FROZEN_WEIGHT: Fixed = Fixed::from_raw((1_i128 << 24) * 1_000_000_000_000);
 
 fn reference_score(
-    documents: u64,
-    frequency: u64,
-    populations: &[u64],
-    totals: &[u128],
-    profile: &RankingProfile,
+    documents: u64, frequency: u64, populations: &[u64], totals: &[u128], profile: &RankingProfile,
     inputs: &[FieldInput],
 ) -> i128 {
     let parameters: Vec<_> = profile

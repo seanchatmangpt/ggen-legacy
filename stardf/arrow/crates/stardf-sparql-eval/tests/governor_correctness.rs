@@ -478,9 +478,7 @@ fn result_image(result: &SparqlResult) -> String {
 
 /// The governed answer under `governors`.
 fn governed(
-    dataset: &Arc<RdfDataset>,
-    query: &str,
-    governors: &QueryGovernors,
+    dataset: &Arc<RdfDataset>, query: &str, governors: &QueryGovernors,
 ) -> Result<GovernedOutcome, String> {
     NativeSparqlEngine::new()
         .query_governed(dataset, request(query), QueryOptions::EMPTY, governors)

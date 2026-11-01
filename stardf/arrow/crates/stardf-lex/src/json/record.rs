@@ -83,8 +83,7 @@ pub trait IntoJsonNative {
     /// # Errors
     /// Returns checked layout, admission or physical allocation refusal.
     fn into_json_native<S: crate::allocation::Admission + ?Sized>(
-        self,
-        memory: &mut crate::allocation::Memory<'_, S>,
+        self, memory: &mut crate::allocation::Memory<'_, S>,
     ) -> Result<Value, crate::allocation::StorageError>;
 }
 
@@ -104,8 +103,7 @@ native_owned_value!(Value, Object, Vec<Value>, String, bool, ());
 
 impl IntoJsonNative for &str {
     fn into_json_native<S: crate::allocation::Admission + ?Sized>(
-        self,
-        memory: &mut crate::allocation::Memory<'_, S>,
+        self, memory: &mut crate::allocation::Memory<'_, S>,
     ) -> Result<Value, crate::allocation::StorageError> {
         memory.string(self).map(Value::String)
     }
@@ -113,8 +111,7 @@ impl IntoJsonNative for &str {
 
 impl<T: IntoJsonNative> IntoJsonNative for Option<T> {
     fn into_json_native<S: crate::allocation::Admission + ?Sized>(
-        self,
-        memory: &mut crate::allocation::Memory<'_, S>,
+        self, memory: &mut crate::allocation::Memory<'_, S>,
     ) -> Result<Value, crate::allocation::StorageError> {
         self.map_or(Ok(Value::Null), |value| value.into_json_native(memory))
     }
@@ -141,17 +138,14 @@ native_integer_value!(
 pub trait RecordAllocation {
     /// Retain native diagnostic fields and presentation under the original account.
     fn diagnostic(
-        &self,
-        reason: DecodeReason<'_>,
+        &self, reason: DecodeReason<'_>,
     ) -> Result<DecodeError, crate::allocation::StorageError>;
     /// Destroy a retained diagnostic before refunding its original owned buffers.
     fn release_diagnostic(&self, error: DecodeError)
     -> Result<(), crate::allocation::StorageError>;
     /// Admit and append one declared field name.
     fn take(
-        &self,
-        fields: &mut Vec<&'static str>,
-        name: &'static str,
+        &self, fields: &mut Vec<&'static str>, name: &'static str,
     ) -> Result<(), crate::allocation::StorageError>;
     /// Destroy the original field buffer before refunding its layout.
     fn release(&self, fields: Vec<&'static str>) -> Result<(), crate::allocation::StorageError>;
@@ -161,14 +155,11 @@ pub trait RecordAllocation {
     fn release_text(&self, text: String) -> Result<(), crate::allocation::StorageError>;
     /// Render the original borrowed diagnostic into admitted text.
     fn message(
-        &self,
-        message: &dyn fmt::Display,
+        &self, message: &dyn fmt::Display,
     ) -> Result<String, crate::allocation::StorageError>;
     /// Prepend a pointer token while retaining old and new strings through growth.
     fn pointer(
-        &self,
-        token: &str,
-        pointer: String,
+        &self, token: &str, pointer: String,
     ) -> Result<String, crate::allocation::StorageError>;
 }
 
@@ -191,21 +182,17 @@ impl<'m, 'storage, S: crate::allocation::Admission + ?Sized> RecordMemory<'m, 's
 }
 impl<S: crate::allocation::Admission + ?Sized> RecordAllocation for RecordMemory<'_, '_, S> {
     fn diagnostic(
-        &self,
-        reason: DecodeReason<'_>,
+        &self, reason: DecodeReason<'_>,
     ) -> Result<DecodeError, crate::allocation::StorageError> {
         DecodeError::capture_with_memory(reason, &mut self.memory.borrow_mut())
     }
     fn release_diagnostic(
-        &self,
-        error: DecodeError,
+        &self, error: DecodeError,
     ) -> Result<(), crate::allocation::StorageError> {
         error.release_with_memory(&mut self.memory.borrow_mut())
     }
     fn take(
-        &self,
-        fields: &mut Vec<&'static str>,
-        name: &'static str,
+        &self, fields: &mut Vec<&'static str>, name: &'static str,
     ) -> Result<(), crate::allocation::StorageError> {
         self.memory.borrow_mut().push(fields, name)
     }
@@ -219,15 +206,12 @@ impl<S: crate::allocation::Admission + ?Sized> RecordAllocation for RecordMemory
         self.memory.borrow_mut().release_string(text)
     }
     fn message(
-        &self,
-        message: &dyn fmt::Display,
+        &self, message: &dyn fmt::Display,
     ) -> Result<String, crate::allocation::StorageError> {
         self.memory.borrow_mut().format(message)
     }
     fn pointer(
-        &self,
-        token: &str,
-        pointer: String,
+        &self, token: &str, pointer: String,
     ) -> Result<String, crate::allocation::StorageError> {
         let mut memory = self.memory.borrow_mut();
         let result = memory.scope(|memory| {
@@ -268,8 +252,7 @@ impl DecodeError {
     /// Render the same diagnostic under an original record account.
     #[must_use]
     pub fn custom_native(
-        message: impl fmt::Display,
-        allocation: Option<&dyn RecordAllocation>,
+        message: impl fmt::Display, allocation: Option<&dyn RecordAllocation>,
     ) -> Self {
         Self::from_reason_native(DecodeReason::Message(&message), allocation)
     }
@@ -298,9 +281,7 @@ impl DecodeError {
     /// The same stable record refusal under original native storage.
     #[must_use]
     pub fn invalid_type_native(
-        found: &Value,
-        expected: &str,
-        allocation: Option<&dyn RecordAllocation>,
+        found: &Value, expected: &str, allocation: Option<&dyn RecordAllocation>,
     ) -> Self {
         Self::from_reason_native(DecodeReason::InvalidType { found, expected }, allocation)
     }
@@ -313,9 +294,7 @@ impl DecodeError {
     /// The same stable record refusal under original native storage.
     #[must_use]
     pub fn invalid_value_native(
-        found: &Value,
-        expected: &str,
-        allocation: Option<&dyn RecordAllocation>,
+        found: &Value, expected: &str, allocation: Option<&dyn RecordAllocation>,
     ) -> Self {
         Self::from_reason_native(DecodeReason::InvalidValue { found, expected }, allocation)
     }
@@ -328,9 +307,7 @@ impl DecodeError {
     /// The same stable record refusal under original native storage.
     #[must_use]
     pub fn unknown_variant_native(
-        variant: &str,
-        expected: &[&str],
-        allocation: Option<&dyn RecordAllocation>,
+        variant: &str, expected: &[&str], allocation: Option<&dyn RecordAllocation>,
     ) -> Self {
         Self::from_reason_native(
             DecodeReason::UnknownVariant { variant, expected },
@@ -346,9 +323,7 @@ impl DecodeError {
     /// The same stable record refusal under original native storage.
     #[must_use]
     pub fn unknown_field_native(
-        field: &str,
-        expected: &[&str],
-        allocation: Option<&dyn RecordAllocation>,
+        field: &str, expected: &[&str], allocation: Option<&dyn RecordAllocation>,
     ) -> Self {
         Self::from_reason_native(DecodeReason::UnknownField { field, expected }, allocation)
     }
@@ -554,8 +529,7 @@ pub trait FromJsonNative: Sized {
     ///
     /// Returns the original shape, lexical or physical refusal.
     fn from_json_native(
-        value: &Value,
-        allocation: Option<&dyn RecordAllocation>,
+        value: &Value, allocation: Option<&dyn RecordAllocation>,
     ) -> Result<Self, DecodeError>;
 }
 
@@ -724,9 +698,7 @@ impl<'a> Record<'a> {
     ///
     /// Returns the original wrong-kind or physical refusal.
     pub fn new_native(
-        value: &'a Value,
-        expecting: &str,
-        allocation: Option<&'a dyn RecordAllocation>,
+        value: &'a Value, expecting: &str, allocation: Option<&'a dyn RecordAllocation>,
     ) -> Result<Self, DecodeError> {
         match value {
             Value::Object(object) => Ok(Self {
@@ -746,8 +718,7 @@ impl<'a> Record<'a> {
     ///
     /// Returns missing/duplicate fields, lexical or physical refusal.
     pub fn required_native<T: FromJsonNative>(
-        &mut self,
-        name: &'static str,
+        &mut self, name: &'static str,
     ) -> Result<T, DecodeError> {
         let allocation = self.allocation;
         self.required_with(name, |value| T::from_json_native(value, allocation))
@@ -759,8 +730,7 @@ impl<'a> Record<'a> {
     ///
     /// Returns the original field, lexical or physical refusal.
     pub fn optional_native<T: FromJsonNative>(
-        &mut self,
-        name: &'static str,
+        &mut self, name: &'static str,
     ) -> Result<Option<T>, DecodeError> {
         let allocation = self.allocation;
         self.optional_with(name, |value| T::from_json_native(value, allocation))
@@ -802,9 +772,7 @@ impl<'a> Record<'a> {
     /// Returns `missing field`, `duplicate field`, or `read`'s error located
     /// within the member.
     pub fn required_with<T, E: Within>(
-        &mut self,
-        name: &'static str,
-        read: impl FnOnce(&'a Value) -> Result<T, E>,
+        &mut self, name: &'static str, read: impl FnOnce(&'a Value) -> Result<T, E>,
     ) -> Result<T, E> {
         match self.raw(name)? {
             Some(value) => read(value).map_err(|error| error.within_native(name, self.allocation)),
@@ -827,9 +795,7 @@ impl<'a> Record<'a> {
     ///
     /// Returns `duplicate field` or `read`'s error located within the member.
     pub fn optional_with<T, E: Within>(
-        &mut self,
-        name: &'static str,
-        read: impl FnOnce(&'a Value) -> Result<T, E>,
+        &mut self, name: &'static str, read: impl FnOnce(&'a Value) -> Result<T, E>,
     ) -> Result<Option<T>, E> {
         match self.raw(name)? {
             None | Some(Value::Null) => Ok(None),
@@ -846,8 +812,7 @@ impl<'a> Record<'a> {
     ///
     /// Returns `duplicate field` or the member's own error.
     pub fn defaulted<T: FromJson + Default>(
-        &mut self,
-        name: &'static str,
+        &mut self, name: &'static str,
     ) -> Result<T, DecodeError> {
         match self.raw(name)? {
             None => Ok(T::default()),
@@ -911,8 +876,7 @@ impl<'a> Record<'a> {
 /// Returns `invalid type` for anything but an array, and `read`'s error
 /// otherwise.
 pub fn items_with<T, E: Within>(
-    value: &Value,
-    read: impl FnMut(&Value) -> Result<T, E>,
+    value: &Value, read: impl FnMut(&Value) -> Result<T, E>,
 ) -> Result<Vec<T>, E> {
     let mut resident = crate::allocation::Resident;
     let memory = std::cell::RefCell::new(crate::allocation::Memory::new(&mut resident));
@@ -927,10 +891,8 @@ pub fn items_with<T, E: Within>(
 /// Returns the original shape/element refusal, with its array-index pointer,
 /// or an original physical refusal. Partial elements die on every error.
 pub fn items_with_memory<T, E: Within, S: crate::allocation::Admission + ?Sized>(
-    value: &Value,
-    memory: &std::cell::RefCell<crate::allocation::Memory<'_, S>>,
-    allocation: Option<&dyn RecordAllocation>,
-    mut read: impl FnMut(&Value) -> Result<T, E>,
+    value: &Value, memory: &std::cell::RefCell<crate::allocation::Memory<'_, S>>,
+    allocation: Option<&dyn RecordAllocation>, mut read: impl FnMut(&Value) -> Result<T, E>,
 ) -> Result<Vec<T>, E> {
     let items = value
         .as_array()
@@ -1114,8 +1076,7 @@ macro_rules! json_record {
 
 impl FromJsonNative for String {
     fn from_json_native(
-        value: &Value,
-        allocation: Option<&dyn RecordAllocation>,
+        value: &Value, allocation: Option<&dyn RecordAllocation>,
     ) -> Result<Self, DecodeError> {
         let text = value
             .as_str()
@@ -1129,8 +1090,7 @@ impl FromJsonNative for String {
 
 impl FromJsonNative for bool {
     fn from_json_native(
-        value: &Value,
-        allocation: Option<&dyn RecordAllocation>,
+        value: &Value, allocation: Option<&dyn RecordAllocation>,
     ) -> Result<Self, DecodeError> {
         value
             .as_bool()

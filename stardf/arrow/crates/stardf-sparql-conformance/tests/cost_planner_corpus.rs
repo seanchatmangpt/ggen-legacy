@@ -56,11 +56,8 @@ fn make_engine(cost: bool) -> NativeSparqlEngine {
 /// planners" for a reason that has nothing to do with BGP order — see the
 /// `skipped == expected_failures` identity this function's caller checks.
 fn eval_case(
-    engine: &NativeSparqlEngine,
-    case: &SparqlTestCase,
-    dataset: &Arc<RdfDataset>,
-    query_text: &str,
-    remote: &InProcessServiceResolver,
+    engine: &NativeSparqlEngine, case: &SparqlTestCase, dataset: &Arc<RdfDataset>,
+    query_text: &str, remote: &InProcessServiceResolver,
 ) -> Result<SparqlResult, String> {
     let request = SparqlRequest {
         query: query_text,

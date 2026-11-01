@@ -29,10 +29,7 @@ use crate::profile::Profile;
 /// in range: a piece is only cut when the unit runs past the bound, so
 /// the cut is under the unit's end and under the text's length.
 pub(crate) fn split_spans(
-    text: &str,
-    start: usize,
-    end: usize,
-    profile: &Profile,
+    text: &str, start: usize, end: usize, profile: &Profile,
 ) -> Vec<(usize, usize)> {
     let bytes = text.as_bytes();
     let mut pieces = Vec::new();

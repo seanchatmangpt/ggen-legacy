@@ -39,9 +39,7 @@ impl Ownership {
     }
 
     pub(super) fn body(
-        &mut self,
-        function: &Arc<CustomFunction>,
-        body: &NodeExpr,
+        &mut self, function: &Arc<CustomFunction>, body: &NodeExpr,
     ) -> Result<(), ShapesProductError> {
         self.parent = *self
             .functions
@@ -51,9 +49,7 @@ impl Ownership {
     }
 
     pub(super) fn definitions<'a>(
-        &mut self,
-        index: &ShapeIndex,
-        definitions: impl IntoIterator<Item = &'a Shape>,
+        &mut self, index: &ShapeIndex, definitions: impl IntoIterator<Item = &'a Shape>,
     ) -> Result<(), ShapesProductError> {
         self.parent = *self
             .indexes
@@ -122,8 +118,7 @@ impl ModelWalk<'_> for Ownership {
     }
 
     fn first_declaration(
-        &mut self,
-        _function: &Arc<CustomFunction>,
+        &mut self, _function: &Arc<CustomFunction>,
     ) -> Result<bool, ShapesProductError> {
         Ok(false)
     }

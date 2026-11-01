@@ -44,9 +44,7 @@ impl DcatRdfMappingConfig {
     /// Rejects relative/colliding target-core vocabulary or a zero/non-portable
     /// output record bound.
     pub fn new(
-        dcat: DcatConfig,
-        rdf_type: impl Into<String>,
-        xsd_string: impl Into<String>,
+        dcat: DcatConfig, rdf_type: impl Into<String>, xsd_string: impl Into<String>,
         max_output_records: usize,
     ) -> Result<Self, ProjectionError> {
         let rdf_type = rdf_type.into();
@@ -212,8 +210,7 @@ impl DcatRdfConfig {
     ///
     /// Rejects a base that is not an absolute IRI.
     pub fn with_document_base_iri(
-        mut self,
-        document_base_iri: Option<String>,
+        mut self, document_base_iri: Option<String>,
     ) -> Result<Self, ProjectionError> {
         if let Some(base) = &document_base_iri {
             validate_absolute_iri(base, "DCAT RDF document base IRI")?;
@@ -257,8 +254,7 @@ impl DcatRdfConfig {
 /// Returns typed mapping, query, vocabulary, model, codec, integrity, package, or
 /// resource-limit failures.
 pub fn project_dcat_rdf<D: DatasetView<ReadError = std::convert::Infallible> + Sync>(
-    view: &D,
-    config: &DcatRdfConfig,
+    view: &D, config: &DcatRdfConfig,
 ) -> Result<RdfDescriptionProjection, ProjectionError> {
     match config.source() {
         DcatRdfSource::Mapped(mapping) => {
@@ -290,8 +286,7 @@ pub fn project_dcat_rdf<D: DatasetView<ReadError = std::convert::Infallible> + S
 }
 
 fn emit_mapped_dcat(
-    model: &ResearchObjectModel,
-    config: &DcatRdfMappingConfig,
+    model: &ResearchObjectModel, config: &DcatRdfMappingConfig,
 ) -> Result<Arc<RdfDataset>, ProjectionError> {
     let mut emitter = DcatEmitter {
         builder: RdfDatasetBuilder::new(),
@@ -410,10 +405,7 @@ impl DcatEmitter<'_> {
     }
 
     fn checksum_iri(
-        &self,
-        resource: &ResearchResource,
-        index: usize,
-        checksum: &ResearchChecksum,
+        &self, resource: &ResearchResource, index: usize, checksum: &ResearchChecksum,
     ) -> Result<String, ProjectionError> {
         let key = canonical_json_bounded(
             &(resource.id.as_str(), index, checksum),
@@ -431,9 +423,7 @@ impl DcatEmitter<'_> {
     }
 
     fn emit_checksum(
-        &mut self,
-        id: &str,
-        checksum: &ResearchChecksum,
+        &mut self, id: &str, checksum: &ResearchChecksum,
     ) -> Result<(), ProjectionError> {
         self.push_type(id, DcatRole::ChecksumClass)?;
         self.push_value(id, DcatRole::ChecksumAlgorithm, &checksum.algorithm)?;
@@ -513,10 +503,7 @@ impl DcatEmitter<'_> {
     }
 
     fn push_iri(
-        &mut self,
-        subject: &str,
-        predicate: DcatRole,
-        object: &str,
+        &mut self, subject: &str, predicate: DcatRole, object: &str,
     ) -> Result<(), ProjectionError> {
         let predicate = self.role_iri(predicate).to_owned();
         self.push_iri_predicate(subject, &predicate, object)?;
@@ -525,10 +512,7 @@ impl DcatEmitter<'_> {
     }
 
     fn push_iri_predicate(
-        &mut self,
-        subject: &str,
-        predicate: &str,
-        object: &str,
+        &mut self, subject: &str, predicate: &str, object: &str,
     ) -> Result<(), ProjectionError> {
         push_iri_triple(&mut self.builder, subject, predicate, object)?;
 
@@ -536,10 +520,7 @@ impl DcatEmitter<'_> {
     }
 
     fn push_texts(
-        &mut self,
-        subject: &str,
-        predicate: DcatRole,
-        values: &[ResearchText],
+        &mut self, subject: &str, predicate: DcatRole, values: &[ResearchText],
     ) -> Result<(), ProjectionError> {
         for value in values {
             self.push_text(subject, predicate, value)?;
@@ -549,10 +530,7 @@ impl DcatEmitter<'_> {
     }
 
     fn push_text(
-        &mut self,
-        subject: &str,
-        predicate: DcatRole,
-        value: &ResearchText,
+        &mut self, subject: &str, predicate: DcatRole, value: &ResearchText,
     ) -> Result<(), ProjectionError> {
         self.push_literal(subject, predicate, rdf_literal(value))?;
 
@@ -560,10 +538,7 @@ impl DcatEmitter<'_> {
     }
 
     fn push_values(
-        &mut self,
-        subject: &str,
-        predicate: DcatRole,
-        values: &[ResearchValue],
+        &mut self, subject: &str, predicate: DcatRole, values: &[ResearchValue],
     ) -> Result<(), ProjectionError> {
         for value in values {
             self.push_value(subject, predicate, value)?;
@@ -573,10 +548,7 @@ impl DcatEmitter<'_> {
     }
 
     fn push_value(
-        &mut self,
-        subject: &str,
-        predicate: DcatRole,
-        value: &ResearchValue,
+        &mut self, subject: &str, predicate: DcatRole, value: &ResearchValue,
     ) -> Result<(), ProjectionError> {
         match value {
             ResearchValue::Iri { value } => self.push_iri(subject, predicate, value)?,
@@ -587,10 +559,7 @@ impl DcatEmitter<'_> {
     }
 
     fn push_literal(
-        &mut self,
-        subject: &str,
-        predicate: DcatRole,
-        value: RdfLiteral,
+        &mut self, subject: &str, predicate: DcatRole, value: RdfLiteral,
     ) -> Result<(), ProjectionError> {
         let predicate = self.role_iri(predicate).to_owned();
         let subject = self.builder.intern_iri(subject)?;

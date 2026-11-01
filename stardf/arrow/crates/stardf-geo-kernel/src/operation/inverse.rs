@@ -16,10 +16,7 @@ use crate::numerical::fixed_from_rat;
 use crate::{PreparedEllipsoid, Rat};
 
 pub(super) fn bd09(
-    coordinates: &[FixedInterval],
-    iterations: u32,
-    quantize: bool,
-    math: &mut CoordinateMath,
+    coordinates: &[FixedInterval], iterations: u32, quantize: bool, math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<OperationCoordinates, MathError> {
     let k = FixedInterval::pi(math)?
@@ -144,9 +141,7 @@ pub(super) fn bd09(
 }
 
 pub(super) fn bd09_residual(
-    input: &[FixedInterval],
-    output: &[Rat],
-    math: &mut CoordinateMath,
+    input: &[FixedInterval], output: &[Rat], math: &mut CoordinateMath,
 ) -> Result<(), MathError> {
     let source = [
         fixed_from_rat(&output[0], math)?,
@@ -170,21 +165,14 @@ pub(super) fn bd09_residual(
 }
 
 fn hull(
-    lower: &FixedInterval,
-    upper: &FixedInterval,
-    math: &mut CoordinateMath,
+    lower: &FixedInterval, upper: &FixedInterval, math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     FixedInterval::from_bounds(lower.lower().clone(), upper.upper().clone(), math)
 }
 
 pub(super) fn mercator(
-    coordinates: &[FixedInterval],
-    (radius, e2): (&Rat, &Rat),
-    square_domain: bool,
-    iterations: u32,
-    quantize: bool,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    coordinates: &[FixedInterval], (radius, e2): (&Rat, &Rat), square_domain: bool,
+    iterations: u32, quantize: bool, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<OperationCoordinates, MathError> {
     let radius = fixed_from_rat(radius, math)?;
     let psi = coordinates[1].div(&radius, math)?;
@@ -315,8 +303,7 @@ pub(super) fn mercator(
 /// reflection for negative psi. The negative exponential keeps all temporary
 /// magnitudes bounded even for a very large finite projected ordinate.
 fn spherical_mercator_inverse_point(
-    psi: &FixedInterval,
-    math: &mut CoordinateMath,
+    psi: &FixedInterval, math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     if psi.lower().is_zero() && psi.upper().is_zero() {
         return FixedInterval::from_i64(0, math);
@@ -340,8 +327,7 @@ fn spherical_mercator_inverse_point(
 }
 
 fn spherical_mercator_inverse(
-    psi: &FixedInterval,
-    math: &mut CoordinateMath,
+    psi: &FixedInterval, math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     let lower = FixedInterval::from_bounds(psi.lower().clone(), psi.lower().clone(), math)?;
     let upper = FixedInterval::from_bounds(psi.upper().clone(), psi.upper().clone(), math)?;
@@ -353,12 +339,8 @@ fn spherical_mercator_inverse(
 }
 
 fn mercator_contraction_family(
-    psi: &FixedInterval,
-    eccentricity: &FixedInterval,
-    one_minus_e2: &FixedInterval,
-    iterations: u32,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    psi: &FixedInterval, eccentricity: &FixedInterval, one_minus_e2: &FixedInterval,
+    iterations: u32, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<FixedInterval, MathError> {
     if eccentricity.lower().is_zero() && eccentricity.upper().is_zero() {
         return spherical_mercator_inverse(psi, math);
@@ -385,12 +367,8 @@ fn mercator_contraction_family(
 }
 
 fn mercator_contraction_point(
-    psi: &FixedInterval,
-    eccentricity: &FixedInterval,
-    one_minus_e2: &FixedInterval,
-    iterations: u32,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    psi: &FixedInterval, eccentricity: &FixedInterval, one_minus_e2: &FixedInterval,
+    iterations: u32, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<FixedInterval, MathError> {
     if psi.lower().is_zero() && psi.upper().is_zero() {
         return FixedInterval::from_i64(0, math);
@@ -451,9 +429,7 @@ fn mercator_contraction_point(
 }
 
 fn mercator_contraction_image(
-    latitude: &FixedInterval,
-    psi: &FixedInterval,
-    eccentricity: &FixedInterval,
+    latitude: &FixedInterval, psi: &FixedInterval, eccentricity: &FixedInterval,
     math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     let one = FixedInterval::from_i64(1, math)?;
@@ -469,12 +445,8 @@ fn mercator_contraction_image(
 }
 
 pub(super) fn geocentric(
-    coordinates: &[FixedInterval],
-    ellipsoid: &PreparedEllipsoid,
-    iterations: u32,
-    quantize: bool,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    coordinates: &[FixedInterval], ellipsoid: &PreparedEllipsoid, iterations: u32, quantize: bool,
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<OperationCoordinates, MathError> {
     let family = geocentric_family(coordinates, ellipsoid, iterations, quantize, math, progress)?;
     let latitude = match family.pole {
@@ -514,9 +486,7 @@ struct GeocentricMap<'a> {
 
 impl GeocentricMap<'_> {
     fn image(
-        &self,
-        latitude: &FixedInterval,
-        math: &mut CoordinateMath,
+        &self, latitude: &FixedInterval, math: &mut CoordinateMath,
     ) -> Result<FixedInterval, MathError> {
         let sine = if self.crosses_equator {
             latitude.sin_cos_range(math)?.0
@@ -545,12 +515,8 @@ impl GeocentricMap<'_> {
 }
 
 pub(super) fn geocentric_family(
-    coordinates: &[FixedInterval],
-    ellipsoid: &PreparedEllipsoid,
-    iterations: u32,
-    quantize: bool,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    coordinates: &[FixedInterval], ellipsoid: &PreparedEllipsoid, iterations: u32, quantize: bool,
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<GeocentricFamily, MathError> {
     let x = &coordinates[0];
     let y = &coordinates[1];
@@ -706,11 +672,7 @@ pub(super) fn geocentric_family(
 }
 
 pub(super) fn projected_residual(
-    input: &[FixedInterval],
-    output: &[Rat],
-    radius: &Rat,
-    e2: &Rat,
-    math: &mut CoordinateMath,
+    input: &[FixedInterval], output: &[Rat], radius: &Rat, e2: &Rat, math: &mut CoordinateMath,
 ) -> Result<(), MathError> {
     let coordinates = [
         fixed_from_rat(&output[0], math)?,
@@ -730,9 +692,7 @@ pub(super) fn projected_residual(
 }
 
 pub(super) fn geocentric_residual(
-    input: &[FixedInterval],
-    output: &[Rat],
-    ellipsoid: &PreparedEllipsoid,
+    input: &[FixedInterval], output: &[Rat], ellipsoid: &PreparedEllipsoid,
     math: &mut CoordinateMath,
 ) -> Result<(), MathError> {
     let coordinates: Result<OperationCoordinates, _> = output

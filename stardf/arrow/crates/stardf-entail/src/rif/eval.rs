@@ -141,8 +141,7 @@ impl Terms {
 /// computed from the boundary list by [`ReasoningReport::completeness`] and is not a field
 /// that could disagree with it.
 pub fn materialize_rif<D: DatasetView>(
-    ds: &D,
-    rules: &RuleSet,
+    ds: &D, rules: &RuleSet,
 ) -> Result<(Arc<RdfDataset>, ReasoningReport), EntailError<D::ReadError>> {
     materialize_rif_until(ds, rules, None)
 }
@@ -160,9 +159,7 @@ pub fn materialize_rif<D: DatasetView>(
 /// [`EntailError::Stopped`] if the signal fired, plus every error [`materialize_rif`]
 /// returns.
 pub fn materialize_rif_until<D: DatasetView>(
-    ds: &D,
-    rules: &RuleSet,
-    stop: Option<&Arc<dyn StopSignal>>,
+    ds: &D, rules: &RuleSet, stop: Option<&Arc<dyn StopSignal>>,
 ) -> Result<(Arc<RdfDataset>, ReasoningReport), EntailError<D::ReadError>> {
     materialize_rif_with(ds, rules, &EvalOptions::default(), stop)
 }
@@ -181,10 +178,7 @@ pub fn materialize_rif_until<D: DatasetView>(
 /// [`EntailError::Evaluate`] if the run passes a limit, plus every error
 /// [`materialize_rif_until`] returns.
 pub fn materialize_rif_with<D: DatasetView>(
-    ds: &D,
-    rules: &RuleSet,
-    options: &EvalOptions,
-    stop: Option<&Arc<dyn StopSignal>>,
+    ds: &D, rules: &RuleSet, options: &EvalOptions, stop: Option<&Arc<dyn StopSignal>>,
 ) -> Result<(Arc<RdfDataset>, ReasoningReport), EntailError<D::ReadError>> {
     ds.checked_read(|ds| {
         // Refuse a run that was already stopped before interning source terms, ground facts,

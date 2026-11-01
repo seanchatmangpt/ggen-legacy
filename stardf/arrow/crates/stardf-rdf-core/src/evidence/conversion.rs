@@ -77,8 +77,7 @@ impl<'a> LossCauses<'a> {
     /// # Errors
     /// Names an emitted code that has no explicit caller declaration.
     pub fn declared_cause<'b>(
-        &self,
-        loss: &'b LossEntry,
+        &self, loss: &'b LossEntry,
     ) -> Result<&'a TermValue, LossCauseError<'b>> {
         purrdf_lex::assoc::get(self.mappings, loss.code.as_ref())
             .copied()
@@ -96,13 +95,8 @@ impl<'a> LossCauses<'a> {
     /// # Errors
     /// Names an unmapped code, or preserves original declaration/storage refusal.
     pub fn retain<'b, S: Admission + ?Sized>(
-        &self,
-        loss: &'b LossEntry,
-        concern: &'b TermValue,
-        constraint: Option<&'b TermValue>,
-        vault: Option<&'b TermValue>,
-        watermark: Option<&'b TermValue>,
-        memory: &mut Memory<'_, S>,
+        &self, loss: &'b LossEntry, concern: &'b TermValue, constraint: Option<&'b TermValue>,
+        vault: Option<&'b TermValue>, watermark: Option<&'b TermValue>, memory: &mut Memory<'_, S>,
     ) -> Result<RetainedReason<&'b TermValue>, LossCauseError<'b>>
     where
         'a: 'b,

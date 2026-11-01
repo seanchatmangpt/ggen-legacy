@@ -123,9 +123,7 @@ impl PropertyFunction for IndexedProducer {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -314,9 +312,7 @@ fn searched(left: Index, dataset: &RdfDataset) -> Result<SearchResult, SearchErr
 
 /// [`searched`], fused under `profile`.
 fn searched_under(
-    left: Index,
-    profile: &FusionProfile,
-    dataset: &RdfDataset,
+    left: Index, profile: &FusionProfile, dataset: &RdfDataset,
 ) -> Result<SearchResult, SearchError> {
     let registry = registry(left);
     let statistics = statistics();

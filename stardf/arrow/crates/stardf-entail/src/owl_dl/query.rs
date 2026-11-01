@@ -224,8 +224,7 @@ enum Task {
 /// malformed class-expression graph; [`EntailError::Build`] on tableau step-cap
 /// exhaustion.
 pub fn materialize_dl_reported<D: DatasetView>(
-    ds: &D,
-    query_bgp: &[QTriple],
+    ds: &D, query_bgp: &[QTriple],
 ) -> Result<(Arc<RdfDataset>, ReasoningReport), EntailError<D::ReadError>> {
     materialize_dl_reported_until(ds, query_bgp, None)
 }
@@ -248,9 +247,7 @@ pub fn materialize_dl_reported<D: DatasetView>(
 /// [`EntailError::Stopped`] if the signal fired, plus every error
 /// [`materialize_dl_reported`] returns.
 pub fn materialize_dl_reported_until<D: DatasetView>(
-    ds: &D,
-    query_bgp: &[QTriple],
-    stop: Option<&Arc<dyn StopSignal>>,
+    ds: &D, query_bgp: &[QTriple], stop: Option<&Arc<dyn StopSignal>>,
 ) -> Result<(Arc<RdfDataset>, ReasoningReport), EntailError<D::ReadError>> {
     let mut kb = Kb::from_dataset_until(ds, stop.cloned())?;
     if !kb.is_consistent().map_err(EntailError::with_read_error)? {
@@ -393,8 +390,7 @@ fn resolve_node(interner: &mut Interner, node: &QNode) -> Option<u32> {
 
 /// Index the data's default-graph triples over the (already-populated) interner.
 pub(crate) fn build_data_index<D: DatasetView<ReadError = std::convert::Infallible>>(
-    ds: &D,
-    interner: &mut Interner,
+    ds: &D, interner: &mut Interner,
 ) -> TripleIndex {
     build_data_index_until(ds, interner, || Ok::<(), EntailError>(()))
         .expect("a resident view must resolve its own term identities")
@@ -402,9 +398,7 @@ pub(crate) fn build_data_index<D: DatasetView<ReadError = std::convert::Infallib
 
 /// The same data index, with a fallible boundary before each source row.
 pub(crate) fn build_data_index_until<D: DatasetView, E>(
-    ds: &D,
-    interner: &mut Interner,
-    mut poll: impl FnMut() -> Result<(), E>,
+    ds: &D, interner: &mut Interner, mut poll: impl FnMut() -> Result<(), E>,
 ) -> Result<TripleIndex, E>
 where
     E: From<purrdf_core::TermLookupError<D::ReadError>>,
@@ -431,9 +425,7 @@ where
 /// The set of named (IRI) classes in the data — every IRI that appears in a
 /// class-denoting position — plus `owl:Thing` and `owl:Nothing`, in id order.
 pub(crate) fn collect_named_classes(
-    interner: &Interner,
-    index: &TripleIndex,
-    v: &Vocab,
+    interner: &Interner, index: &TripleIndex, v: &Vocab,
 ) -> BTreeSet<u32> {
     collect_named_classes_until(interner, index, v, || {
         Ok::<(), core::convert::Infallible>(())
@@ -443,10 +435,7 @@ pub(crate) fn collect_named_classes(
 
 /// The same class signature, with a fallible boundary before each indexed row.
 pub(crate) fn collect_named_classes_until<E>(
-    interner: &Interner,
-    index: &TripleIndex,
-    v: &Vocab,
-    mut poll: impl FnMut() -> Result<(), E>,
+    interner: &Interner, index: &TripleIndex, v: &Vocab, mut poll: impl FnMut() -> Result<(), E>,
 ) -> Result<BTreeSet<u32>, E> {
     poll()?;
     let mut out = BTreeSet::new();
@@ -517,9 +506,7 @@ impl RawTask {
 /// expression's scaffold is a different thing entirely: it is syntax for a class, the
 /// reverse mapping reads it as such, and it carries no existential force of its own.
 fn has_non_distinguished_variable(
-    interner: &Interner,
-    q_index: &TripleIndex,
-    raw_tasks: &[RawTask],
+    interner: &Interner, q_index: &TripleIndex, raw_tasks: &[RawTask],
     resolved: &[(Option<u32>, Option<u32>, Option<u32>)],
 ) -> bool {
     let mut blanks: BTreeSet<u32> = BTreeSet::new();
@@ -546,10 +533,7 @@ fn has_non_distinguished_variable(
 /// exactly this set — so the two can never disagree about what "part of a class
 /// expression" means.
 fn collect_scaffold(
-    interner: &Interner,
-    q_index: &TripleIndex,
-    root: u32,
-    out: &mut BTreeSet<u32>,
+    interner: &Interner, q_index: &TripleIndex, root: u32, out: &mut BTreeSet<u32>,
 ) {
     let mut stack = vec![root];
     while let Some(node) = stack.pop() {
@@ -593,9 +577,7 @@ struct QueriedRole {
 /// entails `a q "cat"`, and a literal is a term of the completion graph even though it is
 /// not a realization candidate.
 fn intern_queried_roles(
-    kb: &mut Kb,
-    v: &Vocab,
-    resolved: &[(Option<u32>, Option<u32>, Option<u32>)],
+    kb: &mut Kb, v: &Vocab, resolved: &[(Option<u32>, Option<u32>, Option<u32>)],
 ) -> Vec<QueriedRole> {
     let mut targets: BTreeSet<u32> = kb.individuals.iter().copied().collect();
     targets.extend(kb.abox_roles.iter().map(|&(_, _, object)| object));
@@ -647,10 +629,7 @@ fn intern_queried_roles(
 /// A pair the data already asserts is skipped: the assertion is in the output verbatim, so
 /// the tableau run would buy nothing.
 fn inject_roles(
-    b: &mut RdfDatasetBuilder,
-    kb: &Kb,
-    roles: &[QueriedRole],
-    data_index: &TripleIndex,
+    b: &mut RdfDatasetBuilder, kb: &Kb, roles: &[QueriedRole], data_index: &TripleIndex,
 ) -> Result<(), EntailError> {
     for role in roles {
         let asserted = data_index
@@ -694,10 +673,7 @@ type ExtractedTasks = (
 );
 
 fn extract_tasks(
-    interner: &Interner,
-    ranges: &mut DataRangeTable,
-    q_index: &TripleIndex,
-    v: &Vocab,
+    interner: &Interner, ranges: &mut DataRangeTable, q_index: &TripleIndex, v: &Vocab,
     resolved: &[(Option<u32>, Option<u32>, Option<u32>)],
 ) -> Result<ExtractedTasks, EntailError> {
     let mut ce = CeExtractor::new(q_index, interner, v, ranges);
@@ -758,9 +734,7 @@ fn extract_tasks(
 
 /// Intern each raw task's concepts into the concept table, yielding concept-id tasks.
 fn intern_tasks(
-    table: &mut crate::owl_dl::concept::ConceptTable,
-    v: &Vocab,
-    named_classes: &BTreeSet<u32>,
+    table: &mut crate::owl_dl::concept::ConceptTable, v: &Vocab, named_classes: &BTreeSet<u32>,
     raw: Vec<RawTask>,
 ) -> Vec<Task> {
     raw.into_iter()
@@ -808,10 +782,7 @@ fn intern_tasks(
 /// relation, and outside it the underivable pairs still go to
 /// [`Kb::entails_subclass`].
 fn inject_classification(
-    b: &mut RdfDatasetBuilder,
-    kb: &Kb,
-    named_cid: &BTreeMap<u32, u32>,
-    taxonomy: &Taxonomy,
+    b: &mut RdfDatasetBuilder, kb: &Kb, named_cid: &BTreeMap<u32, u32>, taxonomy: &Taxonomy,
 ) -> Result<(), EntailError> {
     let sub_class = b.intern_iri(RDFS_SUBCLASSOF)?;
     let complete = taxonomy.is_complete();
@@ -831,9 +802,7 @@ fn inject_classification(
 
 /// Inject every entailed `i rdf:type C` for a named class `C`.
 fn inject_realization(
-    b: &mut RdfDatasetBuilder,
-    kb: &Kb,
-    named_cid: &BTreeMap<u32, u32>,
+    b: &mut RdfDatasetBuilder, kb: &Kb, named_cid: &BTreeMap<u32, u32>,
 ) -> Result<(), EntailError> {
     let ty = b.intern_iri(RDF_TYPE)?;
     for &ind in &kb.individuals {
@@ -851,9 +820,7 @@ fn inject_realization(
 /// Inject the `owl:sameAs` equality closure over individuals: reflexive `i sameAs i`,
 /// every equal pair, and every asserted data triple re-stated over equal endpoints.
 fn inject_same_as(
-    b: &mut RdfDatasetBuilder,
-    kb: &Kb,
-    data_index: &TripleIndex,
+    b: &mut RdfDatasetBuilder, kb: &Kb, data_index: &TripleIndex,
 ) -> Result<(), EntailError> {
     let same_as = b.intern_iri(OWL_SAMEAS)?;
     let uf = EqClasses::build(&kb.individuals, &kb.same_as);
@@ -906,12 +873,8 @@ fn inject_same_as(
 
 /// Inject every query-directed class-expression / domain / range task.
 fn inject_tasks(
-    b: &mut RdfDatasetBuilder,
-    kb: &Kb,
-    q_index: &TripleIndex,
-    named_cid: &BTreeMap<u32, u32>,
-    tasks: &[Task],
-    fresh: &mut Fresh,
+    b: &mut RdfDatasetBuilder, kb: &Kb, q_index: &TripleIndex, named_cid: &BTreeMap<u32, u32>,
+    tasks: &[Task], fresh: &mut Fresh,
 ) -> Result<(), EntailError> {
     let ty = b.intern_iri(RDF_TYPE)?;
     let sub_class = b.intern_iri(RDFS_SUBCLASSOF)?;
@@ -977,10 +940,7 @@ fn inject_tasks(
 
 /// The named classes that are a sub- (`want_sub`) or super-class of `concept`.
 fn subclass_matches(
-    kb: &Kb,
-    named_cid: &BTreeMap<u32, u32>,
-    concept: u32,
-    want_sub: bool,
+    kb: &Kb, named_cid: &BTreeMap<u32, u32>, concept: u32, want_sub: bool,
 ) -> Result<Vec<u32>, EntailError> {
     let mut out = Vec::new();
     for (&c_iri, &c_cid) in named_cid {
@@ -1000,10 +960,7 @@ fn subclass_matches(
 /// `X`: every reachable query blank is renamed to a fresh builder blank, IRIs/literals
 /// are copied verbatim, and every defining triple is re-stated. Returns `X`.
 fn reconstruct(
-    b: &mut RdfDatasetBuilder,
-    interner: &Interner,
-    q_index: &TripleIndex,
-    root: u32,
+    b: &mut RdfDatasetBuilder, interner: &Interner, q_index: &TripleIndex, root: u32,
     fresh: &mut Fresh,
 ) -> Result<TermId, EntailError> {
     // The blank scaffold nodes reachable from `root` (only blanks are renamed).

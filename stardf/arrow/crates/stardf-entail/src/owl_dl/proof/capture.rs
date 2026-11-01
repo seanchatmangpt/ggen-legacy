@@ -44,31 +44,21 @@ impl std::fmt::Debug for Capture {
 
 impl Capture {
     pub(super) fn push(
-        &mut self,
-        index: usize,
-        journal: &Journal,
-        schema: Option<super::CheckedSchema<'_>>,
+        &mut self, index: usize, journal: &Journal, schema: Option<super::CheckedSchema<'_>>,
         kb: &crate::owl_dl::Kb,
     ) -> Result<(), super::DlProofError> {
         self.push_leaf(index, false, journal, schema, kb)
     }
 
     pub(super) fn push_merge(
-        &mut self,
-        index: usize,
-        journal: &Journal,
-        kb: &crate::owl_dl::Kb,
+        &mut self, index: usize, journal: &Journal, kb: &crate::owl_dl::Kb,
     ) -> Result<(), super::DlProofError> {
         self.push_leaf(index, true, journal, None, kb)
     }
 
     fn push_leaf(
-        &mut self,
-        index: usize,
-        merge: bool,
-        journal: &Journal,
-        schema: Option<super::CheckedSchema<'_>>,
-        kb: &crate::owl_dl::Kb,
+        &mut self, index: usize, merge: bool, journal: &Journal,
+        schema: Option<super::CheckedSchema<'_>>, kb: &crate::owl_dl::Kb,
     ) -> Result<(), super::DlProofError> {
         let support = journal
             .normalized_slice_with_schema(kb, schema)

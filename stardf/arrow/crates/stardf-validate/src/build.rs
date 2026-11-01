@@ -212,9 +212,7 @@ pub fn build_report_sarif(report: &ValidationReport, options: &SarifOptions) -> 
 /// `(level, artifactUri, startLine, startColumn, ruleId, message)`.
 #[must_use]
 pub fn build_report_sarif_with(
-    report: &ValidationReport,
-    options: &SarifOptions,
-    sources: &SarifSources<'_>,
+    report: &ValidationReport, options: &SarifOptions, sources: &SarifSources<'_>,
 ) -> SarifLog {
     let base_id = source_root_base_id(options);
     // Written from the report's own blank-node labels — each source graph's blank nodes
@@ -364,8 +362,7 @@ pub fn report_to_sarif_string(report: &ValidationReport, options: &SarifOptions)
 /// Serialize [`build_diagnostics_sarif`] to deterministic pretty JSON.
 #[must_use]
 pub fn diagnostics_to_sarif_string(
-    diagnostics: &[RdfDiagnostic],
-    options: &SarifOptions,
+    diagnostics: &[RdfDiagnostic], options: &SarifOptions,
 ) -> String {
     crate::model::to_json_pretty(&build_diagnostics_sarif(diagnostics, options))
 }
@@ -409,9 +406,7 @@ impl SarifReport for ValidationReport {
 // ── internal ────────────────────────────────────────────────────────────────
 
 fn result_to_sarif(
-    result: &ValidationResult,
-    labels: &ReportBlankLabels,
-    sources: &SarifSources<'_>,
+    result: &ValidationResult, labels: &ReportBlankLabels, sources: &SarifSources<'_>,
     base_id: Option<&str>,
 ) -> SarifResult {
     let mut properties = PropertyBag::new();
@@ -521,11 +516,8 @@ fn result_to_sarif(
 /// — the detail's own, or one synthesized from its parts — prefixed `sh:detail`,
 /// so nothing a nested result says is lost.
 fn push_detail_locations(
-    result: &ValidationResult,
-    labels: &ReportBlankLabels,
-    sources: &SarifSources<'_>,
-    base_id: Option<&str>,
-    related: &mut Vec<Location>,
+    result: &ValidationResult, labels: &ReportBlankLabels, sources: &SarifSources<'_>,
+    base_id: Option<&str>, related: &mut Vec<Location>,
 ) {
     let mut pending: Vec<&ValidationResult> = result.details.iter().rev().collect();
     while let Some(detail) = pending.pop() {
@@ -565,9 +557,7 @@ fn push_detail_locations(
 /// a `physicalLocation`. Requires both an artifact URI and a tracked span table;
 /// otherwise `None` (the logical locations carry the result).
 fn focus_physical_location(
-    result: &ValidationResult,
-    labels: &ReportBlankLabels,
-    sources: &SarifSources<'_>,
+    result: &ValidationResult, labels: &ReportBlankLabels, sources: &SarifSources<'_>,
     base_id: Option<&str>,
 ) -> Option<PhysicalLocation> {
     let uri = sources.artifact_uri?;
@@ -640,8 +630,7 @@ fn diagnostic_to_sarif(diagnostic: &RdfDiagnostic, base_id: Option<&str>) -> Sar
 /// `physicalLocation` when a path/line is present, plus a property bag carrying
 /// the GTS index anchors (`gts_quad_index`, etc.) that have no physical span.
 fn diagnostic_location(
-    location: &RdfLocation,
-    base_id: Option<&str>,
+    location: &RdfLocation, base_id: Option<&str>,
 ) -> (Vec<Location>, PropertyBag) {
     let mut properties = PropertyBag::new();
     for (key, value) in [
@@ -797,9 +786,7 @@ fn base_id_for(path: &str, base_id: Option<&str>) -> Option<String> {
 }
 
 fn assemble_run(
-    rules: Vec<ReportingDescriptor>,
-    results: Vec<SarifResult>,
-    options: &SarifOptions,
+    rules: Vec<ReportingDescriptor>, results: Vec<SarifResult>, options: &SarifOptions,
 ) -> Run {
     let mut original_uri_base_ids = BTreeMap::new();
     if let Some(root) = &options.source_root_uri {

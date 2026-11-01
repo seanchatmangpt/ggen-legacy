@@ -107,10 +107,8 @@ pub struct QuerySourceRefusal {
 
 impl QuerySourceRefusal {
     pub(crate) const fn new(
-        profile: crate::profile::ShaclProfile,
-        purpose: Option<crate::profile::QueryPurpose>,
-        source: Term,
-        index: Option<usize>,
+        profile: crate::profile::ShaclProfile, purpose: Option<crate::profile::QueryPurpose>,
+        source: Term, index: Option<usize>,
     ) -> Self {
         Self {
             profile,
@@ -333,10 +331,7 @@ impl ReportSourceContext {
     }
 
     pub(crate) fn record_blank(
-        &mut self,
-        validation_label: String,
-        shapes: bool,
-        label: &str,
+        &mut self, validation_label: String, shapes: bool, label: &str,
         scope: purrdf_core::BlankScope,
     ) {
         let source = if shapes { &self.shapes } else { &self.data };
@@ -353,8 +348,7 @@ impl ReportSourceContext {
     /// A source-shape blank must name the retained shapes acquisition. Public
     /// AST edits cannot turn an unrecorded blank into an apparently minted one.
     pub(crate) fn admit_result_sources(
-        &self,
-        records: &[ResultRecord],
+        &self, records: &[ResultRecord],
     ) -> Result<(), CompleteValidationError> {
         let mut pending = purrdf_lex::walk::WorkList::<_, 8>::new();
         pending.extend(records.iter().map(|record| &record.value));
@@ -626,10 +620,8 @@ pub struct CompleteValidationReport {
 
 impl CompleteValidationReport {
     pub(crate) fn from_records(
-        mut records: Vec<ResultRecord>,
-        shapes: &crate::shapes::Shapes,
-        context: Arc<ReportSourceContext>,
-        profile: crate::profile::ShaclProfile,
+        mut records: Vec<ResultRecord>, shapes: &crate::shapes::Shapes,
+        context: Arc<ReportSourceContext>, profile: crate::profile::ShaclProfile,
     ) -> Self {
         records.sort_by_cached_key(complete_record_sort_key);
         let (results, evidence): (Vec<_>, Vec<_>) = records
@@ -673,8 +665,7 @@ impl CompleteValidationReport {
     }
 
     pub(crate) fn with_recursion(
-        mut self,
-        outcome: &crate::recursion::evidence::ReportOutcome,
+        mut self, outcome: &crate::recursion::evidence::ReportOutcome,
     ) -> Result<Self, ShapesError> {
         self.legacy.conforms &= outcome.conforms();
         self.cycles = outcome.take_cycles()?;
@@ -785,9 +776,7 @@ impl CompleteBlankLabels {
     }
 
     fn evidence(
-        &mut self,
-        context: &ReportSourceContext,
-        evidence: &ResultEvidence,
+        &mut self, context: &ReportSourceContext, evidence: &ResultEvidence,
     ) -> ResultEvidence {
         ResultEvidence {
             source_constraint: evidence
@@ -893,8 +882,7 @@ struct CompleteRecordSortKey {
 }
 
 fn complete_node_sort_key(
-    value: &ValidationResult,
-    evidence: Option<&ResultEvidence>,
+    value: &ValidationResult, evidence: Option<&ResultEvidence>,
 ) -> CompleteNodeSortKey {
     CompleteNodeSortKey {
         value: result_sort_key(value),
@@ -990,8 +978,7 @@ pub(crate) struct ConstraintSite<'a> {
 /// Validate a component declaration against its exact parser slot. Reporting
 /// and execution admission share this one correspondence check.
 pub(crate) fn admit_component_occurrence<'a>(
-    sources: Option<&'a crate::shapes::ConstraintSources>,
-    site: ConstraintSite<'_>,
+    sources: Option<&'a crate::shapes::ConstraintSources>, site: ConstraintSite<'_>,
     constraint: &crate::plan::PlannedConstraint<'_>,
 ) -> Option<&'a crate::shapes::ComponentOccurrence> {
     use crate::plan::PlannedConstraint;
@@ -1055,15 +1042,13 @@ pub(crate) fn admit_component_occurrence<'a>(
 impl<'a> ReportCapture<'a> {
     #[cfg(test)]
     pub(crate) fn new(
-        shapes: &'a crate::shapes::Shapes,
-        profile: crate::profile::ShaclProfile,
+        shapes: &'a crate::shapes::Shapes, profile: crate::profile::ShaclProfile,
     ) -> Self {
         Self::with_sources(shapes, profile, shapes.sparql_sources.get())
     }
 
     pub(crate) const fn with_sources(
-        shapes: &'a crate::shapes::Shapes,
-        profile: crate::profile::ShaclProfile,
+        shapes: &'a crate::shapes::Shapes, profile: crate::profile::ShaclProfile,
         sources: Option<&'a Arc<crate::shapes::ConstraintSources>>,
     ) -> Self {
         Self {
@@ -1085,8 +1070,7 @@ impl<'a> ReportCapture<'a> {
     }
 
     pub(crate) const fn with_recursion(
-        mut self,
-        outcome: Option<&'a crate::recursion::evidence::ReportOutcome>,
+        mut self, outcome: Option<&'a crate::recursion::evidence::ReportOutcome>,
     ) -> Self {
         self.recursion = outcome;
         self
@@ -1105,9 +1089,7 @@ impl<'a> ReportCapture<'a> {
     /// its interned-id tie-break for equal renderings. Keys are cloned only on
     /// failure; healthy Core traversal allocates no focus-key storage.
     pub(crate) fn record_focus_failure(
-        &self,
-        dataset: &impl crate::data_view::ShaclRead,
-        focus: &crate::engine::FocusNode,
+        &self, dataset: &impl crate::data_view::ShaclRead, focus: &crate::engine::FocusNode,
         failure: Option<ReportFailure>,
     ) {
         let mut failures = self.failure.lock().expect("report failure lock");
@@ -1148,9 +1130,7 @@ impl<'a> ReportCapture<'a> {
     /// constraint being evaluated. This is correspondence validation, never a
     /// search for a constraint whose query happens to have equal text.
     pub(crate) fn source_constraint(
-        &self,
-        site: ConstraintSite<'_>,
-        constraint: &crate::plan::PlannedConstraint<'_>,
+        &self, site: ConstraintSite<'_>, constraint: &crate::plan::PlannedConstraint<'_>,
     ) -> Result<&Term, String> {
         let crate::plan::PlannedConstraint::Sparql {
             select,
@@ -1195,9 +1175,7 @@ impl<'a> ReportCapture<'a> {
 
     /// Admit the complete declaration at this actual component parser slot.
     pub(crate) fn component_occurrence(
-        &self,
-        site: ConstraintSite<'_>,
-        constraint: &crate::plan::PlannedConstraint<'_>,
+        &self, site: ConstraintSite<'_>, constraint: &crate::plan::PlannedConstraint<'_>,
     ) -> Result<&'a crate::shapes::ComponentOccurrence, String> {
         admit_component_occurrence(self.sources.map(Arc::as_ref), site, constraint)
             .ok_or_else(|| self.refuse_source(site))
@@ -1205,9 +1183,7 @@ impl<'a> ReportCapture<'a> {
 
     /// Ordered declaration messages of this actual custom-component occurrence.
     pub(crate) fn component_messages<'b>(
-        &'b self,
-        occurrence: &'b crate::shapes::ComponentOccurrence,
-        fallback: &'b [Literal],
+        &'b self, occurrence: &'b crate::shapes::ComponentOccurrence, fallback: &'b [Literal],
     ) -> &'b [Literal] {
         let declared = [
             &occurrence.validator_messages,
@@ -1228,9 +1204,7 @@ impl<'a> ReportCapture<'a> {
     }
 
     pub(crate) fn semantic_failure(
-        &self,
-        focus: &Term,
-        source_constraint: Option<&Term>,
+        &self, focus: &Term, source_constraint: Option<&Term>,
     ) -> String {
         self.refuse(ReportFailure::Semantic(SemanticFailure {
             focus: focus.clone(),
@@ -1783,8 +1757,7 @@ impl ReportBlankLabels {
 /// The one result-field relabelling traversal, shared by legacy role labels and
 /// complete source-context labels.
 fn map_result_terms(
-    result: &ValidationResult,
-    term: &mut impl FnMut(BlankOrigin, &Term) -> Term,
+    result: &ValidationResult, term: &mut impl FnMut(BlankOrigin, &Term) -> Term,
 ) -> ValidationResult {
     let mut out = result.clone();
     out.focus_node = term(BlankOrigin::DataGraph, &result.focus_node);
@@ -1986,8 +1959,7 @@ impl ValidationReport {
     }
 
     fn dataset_as_carried_with_evidence(
-        &self,
-        evidence: Option<&[ResultEvidence]>,
+        &self, evidence: Option<&[ResultEvidence]>,
     ) -> Result<Arc<RdfDataset>, ShapesError> {
         let mut builder = RdfDatasetBuilder::new();
         // Complex-path structure roots already emitted (keyed by root label).
@@ -2279,12 +2251,8 @@ fn collides_with_minted(label: &str, result_count: usize, roots: &FastSet<&str>)
 /// Emit one validation result rooted at the blank node `label`, and — through
 /// `sh:detail` — every result nested under it, each at `{label}d{j}`.
 fn emit_result(
-    builder: &mut RdfDatasetBuilder,
-    label: &str,
-    r: &ValidationResult,
-    evidence: Option<&ResultEvidence>,
-    mint: &str,
-    emitted_paths: &mut FastSet<String>,
+    builder: &mut RdfDatasetBuilder, label: &str, r: &ValidationResult,
+    evidence: Option<&ResultEvidence>, mint: &str, emitted_paths: &mut FastSet<String>,
 ) -> Result<(), ShapesError> {
     let result_subj = RdfTerm::blank_node(label.to_owned());
 
@@ -2412,10 +2380,7 @@ fn emit_result(
 
 /// Push a triple (default graph) into the report dataset builder.
 fn push_triple(
-    builder: &mut RdfDatasetBuilder,
-    subject: RdfTerm,
-    predicate: &str,
-    object: RdfTerm,
+    builder: &mut RdfDatasetBuilder, subject: RdfTerm, predicate: &str, object: RdfTerm,
 ) -> Result<(), ShapesError> {
     builder.push_owned_quad(&RdfQuad::new(subject, predicate, object))?;
     Ok(())
@@ -2429,9 +2394,7 @@ fn push_triple(
 /// nodes are labelled `{label}-{n}` with a per-root counter, so the emission is
 /// deterministic for a given path.
 fn emit_path_structure(
-    builder: &mut RdfDatasetBuilder,
-    label: &str,
-    path: &crate::shapes::Path,
+    builder: &mut RdfDatasetBuilder, label: &str, path: &crate::shapes::Path,
 ) -> Result<(), ShapesError> {
     let mut counter = 0usize;
     emit_path_node(builder, label, path, label, &mut counter)
@@ -2448,10 +2411,7 @@ fn next_path_label(root: &str, counter: &mut usize) -> String {
 /// a composite sub-path becomes a fresh blank node whose structure is emitted
 /// recursively.
 fn path_object(
-    builder: &mut RdfDatasetBuilder,
-    path: &crate::shapes::Path,
-    root: &str,
-    counter: &mut usize,
+    builder: &mut RdfDatasetBuilder, path: &crate::shapes::Path, root: &str, counter: &mut usize,
 ) -> Result<RdfTerm, ShapesError> {
     if let crate::shapes::Path::Predicate(p) = path {
         return Ok(RdfTerm::iri(p.as_str()));
@@ -2463,10 +2423,7 @@ fn path_object(
 
 /// Emit the structure triples for the composite path node `label`.
 fn emit_path_node(
-    builder: &mut RdfDatasetBuilder,
-    label: &str,
-    path: &crate::shapes::Path,
-    root: &str,
+    builder: &mut RdfDatasetBuilder, label: &str, path: &crate::shapes::Path, root: &str,
     counter: &mut usize,
 ) -> Result<(), ShapesError> {
     use crate::shapes::Path;
@@ -2533,10 +2490,7 @@ fn emit_path_node(
 /// through [`try_build_rdf_list`](purrdf_core::collections::try_build_rdf_list). Every sub-path's
 /// structure is emitted first, then the cells, labelled in that order.
 fn emit_path_list(
-    builder: &mut RdfDatasetBuilder,
-    head_label: &str,
-    parts: &[crate::shapes::Path],
-    root: &str,
+    builder: &mut RdfDatasetBuilder, head_label: &str, parts: &[crate::shapes::Path], root: &str,
     counter: &mut usize,
 ) -> Result<(), ShapesError> {
     let members = parts

@@ -214,9 +214,7 @@ pub fn encode(text: &str, set: EncodeSet) -> Cow<'_, str> {
 /// # Errors
 /// Returns a checked layout, admission, or allocation refusal before growth.
 pub fn encode_with_memory<'a, S: crate::allocation::Admission + ?Sized>(
-    text: &'a str,
-    set: EncodeSet,
-    memory: &mut crate::allocation::Memory<'_, S>,
+    text: &'a str, set: EncodeSet, memory: &mut crate::allocation::Memory<'_, S>,
 ) -> Result<Cow<'a, str>, crate::allocation::StorageError> {
     let Some(first) = set(text.as_bytes()) else {
         return Ok(Cow::Borrowed(text));

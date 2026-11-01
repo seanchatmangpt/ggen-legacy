@@ -127,8 +127,7 @@ pub fn tarjan_scc(adjacency: &[Vec<usize>]) -> Vec<Vec<usize>> {
 /// # Errors
 /// Returns malformed dense references or native storage refusal.
 pub fn tarjan_scc_with_memory<S: Admission + ?Sized>(
-    adjacency: &[Vec<usize>],
-    memory: &mut Memory<'_, S>,
+    adjacency: &[Vec<usize>], memory: &mut Memory<'_, S>,
 ) -> Result<Vec<Vec<usize>>, GraphError> {
     validate_adjacency(adjacency)?;
     // Own the result inside the scope: on failure it dies before its grant.
@@ -188,8 +187,7 @@ where
 /// Returns malformed dense references or native storage refusal. The caller
 /// retains the original result grant through destruction of the index array.
 pub fn scc_component_index_with_memory<E, S>(
-    adjacency: &[E],
-    memory: &mut Memory<'_, S>,
+    adjacency: &[E], memory: &mut Memory<'_, S>,
 ) -> Result<Vec<usize>, GraphError>
 where
     for<'e> &'e E: IntoIterator<Item = &'e usize>,
@@ -205,9 +203,7 @@ where
 /// # Errors
 /// Returns the callback's original refusal, malformed edges or native storage failure.
 pub fn scc_component_index_with_control<E, S, X>(
-    adjacency: &[E],
-    memory: &mut Memory<'_, S>,
-    mut tick: impl FnMut() -> Result<(), X>,
+    adjacency: &[E], memory: &mut Memory<'_, S>, mut tick: impl FnMut() -> Result<(), X>,
 ) -> Result<Vec<usize>, X>
 where
     for<'e> &'e E: IntoIterator<Item = &'e usize>,
@@ -260,9 +256,7 @@ where
 /// the slice of the Tarjan stack it occupies (its root first), in the order
 /// the components finish.
 fn tarjan<'g, E, S, X>(
-    adjacency: &'g [E],
-    memory: &mut Memory<'_, S>,
-    tick: &mut impl FnMut() -> Result<(), X>,
+    adjacency: &'g [E], memory: &mut Memory<'_, S>, tick: &mut impl FnMut() -> Result<(), X>,
     mut emit: impl FnMut(&[usize], &mut Memory<'_, S>) -> Result<(), X>,
 ) -> Result<(), X>
 where

@@ -117,8 +117,7 @@ impl Backend {
     }
     /// A key-derivation stream pinned to this backend, including context hashing.
     pub fn derive_key_streaming<const BUFFER: usize>(
-        self,
-        context: &str,
+        self, context: &str,
     ) -> Option<Streaming<BUFFER>> {
         self.streaming().map(|mut stream| {
             stream.mode = Mode::derive(context, Some(self));
@@ -127,12 +126,7 @@ impl Backend {
     }
     #[inline]
     fn compress<const OUTPUT: usize>(
-        self,
-        cv: [u32; 8],
-        words: &[u32; 16],
-        counter: u64,
-        length: u32,
-        flags: u32,
+        self, cv: [u32; 8], words: &[u32; 16], counter: u64, length: u32, flags: u32,
     ) -> [u32; OUTPUT] {
         if self == Self::Portable {
             compress_portable(cv, words, counter, length, flags)
@@ -216,11 +210,7 @@ fn rotate<const N: u32>(value: u32) -> u32 {
 }
 
 pub(crate) fn compress_portable<const OUTPUT: usize>(
-    cv: [u32; 8],
-    words: &[u32; 16],
-    counter: u64,
-    length: u32,
-    flags: u32,
+    cv: [u32; 8], words: &[u32; 16], counter: u64, length: u32, flags: u32,
 ) -> [u32; OUTPUT] {
     const {
         assert!(OUTPUT == 8 || OUTPUT == 16);
@@ -767,9 +757,7 @@ fn mode_xof(data: &[u8], out: &mut [u8], mode: Mode) {
 pub trait Join: Sync {
     /// Execute both closures and return their results in left/right order.
     fn join<A: Send, B: Send>(
-        &self,
-        left: impl FnOnce() -> A + Send,
-        right: impl FnOnce() -> B + Send,
+        &self, left: impl FnOnce() -> A + Send, right: impl FnOnce() -> B + Send,
     ) -> (A, B);
 }
 
@@ -794,11 +782,7 @@ pub fn hash_with_join(data: &[u8], minimum_parallel_bytes: usize, join: &impl Jo
 }
 
 fn joined_output(
-    data: &[u8],
-    counter: u64,
-    backend: Backend,
-    minimum: usize,
-    join: &impl Join,
+    data: &[u8], counter: u64, backend: Backend, minimum: usize, join: &impl Join,
 ) -> Output {
     if data.len() < minimum {
         return tree_output(data, counter, backend, Mode::HASH);
@@ -876,10 +860,7 @@ fn tree_cv(data: &[u8], counter: u64, backend: Backend, mode: Mode) -> [u32; 8] 
 }
 
 fn narrow_output<const CAPACITY: usize>(
-    data: &[u8],
-    counter: u64,
-    backend: Backend,
-    mode: Mode,
+    data: &[u8], counter: u64, backend: Backend, mode: Mode,
 ) -> Output {
     let lanes = match backend {
         Backend::Avx512 if data.len() <= 4096 => 4,

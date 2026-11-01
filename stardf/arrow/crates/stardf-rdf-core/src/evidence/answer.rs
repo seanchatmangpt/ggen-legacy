@@ -147,9 +147,7 @@ impl<S: Admission> AnswerAccumulator<S> {
     /// # Errors
     /// Native refusal aborts the whole accumulator; no partial summary is valid.
     pub fn observe(
-        &mut self,
-        record: &EvidenceRecord,
-        partition: EvidencePartition,
+        &mut self, record: &EvidenceRecord, partition: EvidencePartition,
     ) -> Result<(), AnswerError> {
         if self.aborted {
             return Err(AnswerError::Aborted);
@@ -171,9 +169,7 @@ impl<S: Admission> AnswerAccumulator<S> {
     }
 
     fn observe_row(
-        &mut self,
-        record: &EvidenceRecord,
-        partition: EvidencePartition,
+        &mut self, record: &EvidenceRecord, partition: EvidencePartition,
     ) -> Result<(), StorageError> {
         let count = match partition {
             EvidencePartition::Established => &mut self.established,
@@ -198,9 +194,7 @@ impl<S: Admission> AnswerAccumulator<S> {
     /// # Errors
     /// Native refusal aborts publication exactly as for a row observation.
     pub fn observe_search(
-        &mut self,
-        record: &EvidenceRecord,
-        closure_declared: bool,
+        &mut self, record: &EvidenceRecord, closure_declared: bool,
     ) -> Result<(), AnswerError> {
         if self.aborted {
             return Err(AnswerError::Aborted);
@@ -218,9 +212,7 @@ impl<S: Admission> AnswerAccumulator<S> {
     }
 
     fn observe_reasons(
-        &mut self,
-        record: &EvidenceRecord,
-        partition: Option<EvidencePartition>,
+        &mut self, record: &EvidenceRecord, partition: Option<EvidencePartition>,
     ) -> Result<(), StorageError> {
         if self.request.tier < AnswerTier::Summary {
             return Ok(());
@@ -377,9 +369,7 @@ mod tests {
     }
 
     fn record(
-        information: Information,
-        completeness: SearchCompleteness,
-        reasons: &[ReasonId],
+        information: Information, completeness: SearchCompleteness, reasons: &[ReasonId],
     ) -> EvidenceRecord {
         EvidenceRecord::from_parts(
             &InformationMap::uniform(information),

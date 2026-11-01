@@ -31,9 +31,7 @@ impl LayeredStatistics for SegmentedStackQuery<'_> {
     }
 
     fn physical_statistic(
-        &self,
-        request: Request,
-        pattern: ProbePattern<GlobalTermId>,
+        &self, request: Request, pattern: ProbePattern<GlobalTermId>,
     ) -> Option<PredicateStatistics> {
         self.check_ready().ok()?;
         let layered = self.source_count() > 1;

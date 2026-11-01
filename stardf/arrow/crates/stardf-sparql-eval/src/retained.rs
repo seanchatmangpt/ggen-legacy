@@ -24,8 +24,7 @@ pub(crate) struct TermLayout {
 }
 
 pub(crate) fn term_layout(
-    value: &TermValue,
-    workspace: &crate::WorkspaceCapability,
+    value: &TermValue, workspace: &crate::WorkspaceCapability,
 ) -> Result<TermLayout, EvalError> {
     let mut bytes = 0;
     let mut nodes = 0usize;
@@ -81,8 +80,7 @@ pub(crate) fn term_layout(
 }
 
 pub(crate) fn result_bytes(
-    result: &SparqlResult,
-    workspace: &crate::WorkspaceCapability,
+    result: &SparqlResult, workspace: &crate::WorkspaceCapability,
 ) -> Result<u64, EvalError> {
     let mut bytes = 0;
     match result {
@@ -166,9 +164,7 @@ struct Payload<T> {
 }
 
 fn payload<T, L: RetainedLease + 'static>(
-    value: T,
-    lease: L,
-    workspace: &crate::WorkspaceCapability,
+    value: T, lease: L, workspace: &crate::WorkspaceCapability,
 ) -> Result<Shared<Payload<T>>, EvalError> {
     let bytes = Shared::<Payload<T>>::allocation_layout()
         .size()
@@ -243,8 +239,7 @@ pub struct RetainedSparqlResult {
 
 impl RetainedSparqlResult {
     pub(crate) fn new(
-        result: SparqlResult,
-        lease: impl RetainedLease + 'static,
+        result: SparqlResult, lease: impl RetainedLease + 'static,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         Ok(Self {
@@ -413,8 +408,7 @@ pub struct RetainedQueryExplanation {
 
 impl RetainedQueryExplanation {
     pub(crate) fn new(
-        explanation: QueryExplanation,
-        lease: impl RetainedLease + 'static,
+        explanation: QueryExplanation, lease: impl RetainedLease + 'static,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         Ok(Self {
@@ -454,8 +448,7 @@ pub(crate) struct PreparedDiagnosticCause<E> {
 
 impl<E: purrdf_hash::error::NativeError + 'static> PreparedDiagnosticCause<E> {
     pub(crate) fn new(
-        value: E,
-        mut frame: crate::workspace::LexicalFrame,
+        value: E, mut frame: crate::workspace::LexicalFrame,
     ) -> Result<Self, EvalError> {
         let live = frame.admitted_bytes();
         let value = purrdf_lex::allocation::Memory::resume(&mut frame, live)
@@ -492,8 +485,7 @@ impl RetainedDiagnostic {
     /// Retain the original evaluator failure independently of the rendered
     /// diagnostic. Explicit resident copies keep that original cause grant.
     pub(crate) fn from_evaluation(
-        error: EvalError,
-        workspace: &crate::WorkspaceCapability,
+        error: EvalError, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         Self::from_native(
             error,
@@ -505,9 +497,7 @@ impl RetainedDiagnostic {
     /// Keep a native cause and every buffer already admitted by its original
     /// producer frame. The same home also publishes ordinary query failures.
     pub(crate) fn from_native<E: purrdf_hash::error::NativeError + 'static>(
-        cause: E,
-        code: impl FnOnce(&E) -> &str,
-        cause_frame: crate::workspace::LexicalFrame,
+        cause: E, code: impl FnOnce(&E) -> &str, cause_frame: crate::workspace::LexicalFrame,
     ) -> Result<Self, EvalError> {
         let prepared = PreparedDiagnosticCause::new(cause, cause_frame)?;
         let mut report_frame = crate::workspace::LexicalFrame::new(prepared.frame.workspace());
@@ -552,8 +542,7 @@ impl RetainedDiagnostic {
     /// allocation. The grant must also cover the concrete Shared control layout
     /// before invoking this allocation-first publication.
     pub(crate) fn from_admitted(
-        value: purrdf_core::RdfDiagnostic,
-        allocation: crate::WorkspaceAllocation,
+        value: purrdf_core::RdfDiagnostic, allocation: crate::WorkspaceAllocation,
     ) -> Result<Self, EvalError> {
         let original = DiagnosticPayload {
             value,
@@ -570,8 +559,7 @@ impl RetainedDiagnostic {
     /// The diagnostic text and code are allocated only after their concrete
     /// layouts are admitted; the control header is added before publication.
     pub fn render(
-        code: &str,
-        message: &(impl std::fmt::Display + ?Sized),
+        code: &str, message: &(impl std::fmt::Display + ?Sized),
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let mut frame = crate::workspace::LexicalFrame::new(workspace);

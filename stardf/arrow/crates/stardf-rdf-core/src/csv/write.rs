@@ -185,10 +185,7 @@ impl Quoter {
     /// as a comment row. Returns the field count, or the index of the field
     /// that could not be written.
     fn fields<I, O>(
-        &self,
-        fields: I,
-        comment_prefix: Option<&str>,
-        out: &mut O,
+        &self, fields: I, comment_prefix: Option<&str>, out: &mut O,
     ) -> Result<usize, usize>
     where
         I: IntoIterator,

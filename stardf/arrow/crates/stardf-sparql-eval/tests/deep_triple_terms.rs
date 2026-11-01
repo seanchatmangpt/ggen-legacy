@@ -135,11 +135,7 @@ impl DatasetView for CountingView {
     }
 
     fn quads_for_pattern(
-        &self,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         DatasetView::quads_for_pattern(&*self.inner, s, p, o, g)
     }
@@ -162,21 +158,13 @@ impl DatasetView for CountingView {
     }
 
     fn probe_plan(
-        &self,
-        s_bound: bool,
-        p_bound: bool,
-        o_bound: bool,
-        g: GraphMatch,
+        &self, s_bound: bool, p_bound: bool, o_bound: bool, g: GraphMatch,
     ) -> QuadProbePlan {
         DatasetView::probe_plan(&*self.inner, s_bound, p_bound, o_bound, g)
     }
 
     fn quads_for_pattern_with_plan(
-        &self,
-        plan: &QuadProbePlan,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
+        &self, plan: &QuadProbePlan, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
         g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         DatasetView::quads_for_pattern_with_plan(&*self.inner, plan, s, p, o, g)
@@ -188,8 +176,7 @@ impl DatasetView for CountingView {
 }
 
 fn query_on<D: DatasetView<ReadError = std::convert::Infallible> + Sync>(
-    dataset: &D,
-    query: &str,
+    dataset: &D, query: &str,
 ) -> Result<SparqlResult, RdfDiagnostic> {
     NativeSparqlEngine::new().query_with_options_view(
         dataset,

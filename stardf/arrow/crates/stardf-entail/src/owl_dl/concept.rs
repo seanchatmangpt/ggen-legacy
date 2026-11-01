@@ -386,10 +386,7 @@ impl ConceptTable {
     /// admission; every replacement is nevertheless fallible before allocation.
     /// This is not a certificate for a bounded caller's pre-existing raw table.
     pub(crate) fn try_role_state(
-        &mut self,
-        machine: usize,
-        state: usize,
-        filler: u32,
+        &mut self, machine: usize, state: usize, filler: u32,
     ) -> Result<u32, StorageError> {
         let concept = Concept::RoleState {
             machine,
@@ -473,10 +470,7 @@ impl ConceptTable {
 
     /// One dense publication body, after its caller's original growth policy.
     fn append(
-        &mut self,
-        concept: Concept,
-        decomp: Decomp,
-        hash: u64,
+        &mut self, concept: Concept, decomp: Decomp, hash: u64,
         reserve: impl FnOnce(&mut Self) -> Result<(), StorageError>,
     ) -> Result<u32, StorageError> {
         let id = u32::try_from(self.concepts.len()).map_err(|_| StorageError::SizeOverflow)?;
@@ -581,8 +575,7 @@ impl ConceptTable {
     /// [`Self::finalize`], polling a caller-supplied fallible work-boundary hook before
     /// each concept is normalized.
     pub(crate) fn finalize_until<E>(
-        &mut self,
-        mut poll: impl FnMut() -> Result<(), E>,
+        &mut self, mut poll: impl FnMut() -> Result<(), E>,
     ) -> Result<(), E> {
         let mut i = 0usize;
         while i < self.concepts.len() {

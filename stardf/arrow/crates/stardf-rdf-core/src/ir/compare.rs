@@ -68,8 +68,7 @@ pub fn datasets_isomorphic<
     A: DatasetView<ReadError = core::convert::Infallible>,
     B: DatasetView<ReadError = core::convert::Infallible>,
 >(
-    a: &A,
-    b: &B,
+    a: &A, b: &B,
 ) -> Result<bool, canon::CanonError> {
     // Cheap structural rejections that do not depend on blank labeling — they avoid
     // running the (poison-guarded) canonicalizer on obviously-different inputs. Each
@@ -119,8 +118,7 @@ pub fn dataset_diff<
     A: DatasetView<ReadError = core::convert::Infallible>,
     B: DatasetView<ReadError = core::convert::Infallible>,
 >(
-    a: &A,
-    b: &B,
+    a: &A, b: &B,
 ) -> Result<DatasetDiff, canon::CanonError> {
     Ok(DatasetDiff {
         quad_counts: (a.quads().count(), b.quads().count()),

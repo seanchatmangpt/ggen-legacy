@@ -128,12 +128,9 @@ impl DeltaDatasetView {
         + 4 * (size_of::<(TermId, TermId)>() + size_of::<(TermId, Option<TermId>)>());
 
     pub(super) fn new(
-        base: impl Into<DatasetHandle>,
-        delta: Arc<RdfDataset>,
-        suppressed: FastSet<(RecordKind, QuadIds)>,
-        converted: FastSet<(RecordKind, QuadIds)>,
-        withdrawn_graphs: Arc<FastSet<TermId>>,
-        limits: crate::ViewLimits,
+        base: impl Into<DatasetHandle>, delta: Arc<RdfDataset>,
+        suppressed: FastSet<(RecordKind, QuadIds)>, converted: FastSet<(RecordKind, QuadIds)>,
+        withdrawn_graphs: Arc<FastSet<TermId>>, limits: crate::ViewLimits,
     ) -> Result<Self, crate::RdfDiagnostic> {
         let base = base.into();
         let mut stats = crate::ViewStats::default();
@@ -407,9 +404,7 @@ impl DeltaDatasetView {
     }
 
     pub(crate) fn lookup_blank(
-        &self,
-        label: &str,
-        scope: crate::BlankScope,
+        &self, label: &str, scope: crate::BlankScope,
     ) -> Option<DeltaViewId> {
         self.base
             .term_id_by_blank(label, scope)
@@ -422,10 +417,7 @@ impl DeltaDatasetView {
     }
 
     pub(crate) fn lookup_literal(
-        &self,
-        lexical: &str,
-        datatype: &str,
-        language: Option<&str>,
+        &self, lexical: &str, datatype: &str, language: Option<&str>,
         direction: Option<crate::RdfTextDirection>,
     ) -> Option<DeltaViewId> {
         self.base
@@ -439,10 +431,7 @@ impl DeltaDatasetView {
     }
 
     pub(crate) fn lookup_triple(
-        &self,
-        s: DeltaViewId,
-        p: DeltaViewId,
-        o: DeltaViewId,
+        &self, s: DeltaViewId, p: DeltaViewId, o: DeltaViewId,
     ) -> Option<DeltaViewId> {
         for (layer, ds) in [
             (Layer::Base, self.base.as_ref()),
@@ -476,23 +465,15 @@ impl DeltaDatasetView {
     /// The plan is copied into the cursor, which borrows only this view. Results
     /// and iteration order match [`DatasetView::quads_for_pattern`].
     pub fn quads_for_pattern_with_plan(
-        &self,
-        plan: &QuadProbePlan,
-        s: Option<DeltaViewId>,
-        p: Option<DeltaViewId>,
-        o: Option<DeltaViewId>,
-        g: GraphMatch<DeltaViewId>,
+        &self, plan: &QuadProbePlan, s: Option<DeltaViewId>, p: Option<DeltaViewId>,
+        o: Option<DeltaViewId>, g: GraphMatch<DeltaViewId>,
     ) -> impl Iterator<Item = QuadIds<DeltaViewId>> + '_ + use<'_> {
         self.probe(*plan, s, p, o, g)
     }
 
     fn probe(
-        &self,
-        plan: QuadProbePlan,
-        s: Option<DeltaViewId>,
-        p: Option<DeltaViewId>,
-        o: Option<DeltaViewId>,
-        g: GraphMatch<DeltaViewId>,
+        &self, plan: QuadProbePlan, s: Option<DeltaViewId>, p: Option<DeltaViewId>,
+        o: Option<DeltaViewId>, g: GraphMatch<DeltaViewId>,
     ) -> impl Iterator<Item = QuadIds<DeltaViewId>> + '_ + use<'_> {
         // Each layer contributes its one cursor or none (`optional`), and the
         // demoted statement rows one arm, so the cursor holds no inactive branch
@@ -520,10 +501,7 @@ impl DeltaDatasetView {
     }
 
     fn converted_ordinary(
-        &self,
-        s: Option<DeltaViewId>,
-        p: Option<DeltaViewId>,
-        o: Option<DeltaViewId>,
+        &self, s: Option<DeltaViewId>, p: Option<DeltaViewId>, o: Option<DeltaViewId>,
         g: GraphMatch<DeltaViewId>,
     ) -> impl Iterator<Item = QuadIds<DeltaViewId>> + '_ {
         type Unused = std::iter::Empty<QuadIds>;
@@ -553,9 +531,7 @@ impl DeltaDatasetView {
     }
 
     fn converted_annotations(
-        &self,
-        s: Option<DeltaViewId>,
-        g: GraphMatch<DeltaViewId>,
+        &self, s: Option<DeltaViewId>, g: GraphMatch<DeltaViewId>,
     ) -> impl Iterator<Item = QuadIds<DeltaViewId>> + '_ {
         optional(
             self.has_converted_annotations
@@ -591,12 +567,8 @@ impl DeltaDatasetView {
     }
 
     fn local_pattern(
-        &self,
-        s: Option<DeltaViewId>,
-        p: Option<DeltaViewId>,
-        o: Option<DeltaViewId>,
-        g: GraphMatch<DeltaViewId>,
-        layer: Layer,
+        &self, s: Option<DeltaViewId>, p: Option<DeltaViewId>, o: Option<DeltaViewId>,
+        g: GraphMatch<DeltaViewId>, layer: Layer,
     ) -> Option<Pattern> {
         let map = |id: Option<DeltaViewId>| match id {
             Some(id) => self.local_id(id, layer).map(Some),
@@ -653,8 +625,7 @@ impl DatasetView for DeltaDatasetView {
     }
 
     fn reserve_owned_workspace(
-        &self,
-        _: u64,
+        &self, _: u64,
     ) -> Option<Result<crate::OwnedWorkspaceReservation<Self::ReadError>, Self::ReadError>> {
         Some(Ok(crate::NoopReservation::owned()))
     }
@@ -733,11 +704,7 @@ impl DatasetView for DeltaDatasetView {
     }
 
     fn probe_plan(
-        &self,
-        s_bound: bool,
-        p_bound: bool,
-        o_bound: bool,
-        g: GraphMatch<Self::Id>,
+        &self, s_bound: bool, p_bound: bool, o_bound: bool, g: GraphMatch<Self::Id>,
     ) -> Self::ProbePlan {
         // Native plan selection depends on boundness, not a graph's identity.
         let graph = if matches!(g, GraphMatch::Any) {
@@ -749,10 +716,7 @@ impl DatasetView for DeltaDatasetView {
     }
 
     fn quads_for_pattern(
-        &self,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         let plan = self.probe_plan(s.is_some(), p.is_some(), o.is_some(), g);
@@ -760,21 +724,14 @@ impl DatasetView for DeltaDatasetView {
     }
 
     fn quads_for_pattern_with_plan(
-        &self,
-        plan: &Self::ProbePlan,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
-        g: GraphMatch<Self::Id>,
+        &self, plan: &Self::ProbePlan, s: Option<Self::Id>, p: Option<Self::Id>,
+        o: Option<Self::Id>, g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         Self::quads_for_pattern_with_plan(self, plan, s, p, o, g)
     }
 
     fn cardinality_estimate(
-        &self,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: GraphMatch<Self::Id>,
     ) -> u64 {
         u64::try_from({
@@ -830,8 +787,7 @@ impl DatasetView for DeltaDatasetView {
     /// does; a layer whose dictionary cannot name `g` drops that whole arm via
     /// `local_graph`. The trait default would scan both layers' whole reifier tables.
     fn reifier_quads_in_graph(
-        &self,
-        g: GraphMatch<Self::Id>,
+        &self, g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         // The overlay is a per-row mask, so it composes with the graph seam rather
         // than erasing it: narrow each layer through its OWN `reifier_quads_in_graph`
@@ -879,8 +835,7 @@ impl DatasetView for DeltaDatasetView {
     /// same layer-local narrowing and masks, over the ANNOTATION stream — including the
     /// middle arm for base quads promoted to annotations by a delta-added reifier.
     fn annotation_quads_in_graph(
-        &self,
-        g: GraphMatch<Self::Id>,
+        &self, g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         // See `reifier_quads_in_graph` above: the same layer-local narrowing and the
         // same masks, over the ANNOTATION stream. The middle arm — base quads PROMOTED
@@ -909,8 +864,7 @@ impl DatasetView for DeltaDatasetView {
     }
 
     fn annotations_of_with_graph(
-        &self,
-        reifier: Self::Id,
+        &self, reifier: Self::Id,
     ) -> impl Iterator<Item = (Self::Id, Self::Id, Option<Self::Id>)> + '_ {
         let base = optional(self.local_id(reifier, Layer::Base).map(|subject| {
             self.base
@@ -1080,9 +1034,7 @@ mod tests {
     /// one is a silent drop, because nothing downstream can tell a short answer
     /// from a quiet graph.
     fn assert_changed_quads_covers_the_surface_difference(
-        base: &Arc<RdfDataset>,
-        mutation: &MutableDataset,
-        case: &str,
+        base: &Arc<RdfDataset>, mutation: &MutableDataset, case: &str,
     ) {
         let view = mutation.snapshot_view().unwrap();
         let changed: BTreeSet<String> = view

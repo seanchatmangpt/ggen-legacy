@@ -19,8 +19,7 @@ macro_rules! program_declarations {
         /// # Errors
         /// Returns the full-IR refusal before executing under the extended policy.
         pub fn admit_declarations(
-            mut self,
-            additions: &$crate::admission::NeverDeriveDeclarations,
+            mut self, additions: &$crate::admission::NeverDeriveDeclarations,
         ) -> Result<Self, $crate::admission::AdmissionRefusal> {
             let certificate = match &self.admission {
                 Some(existing) => existing.extend(&self.rules, additions)?,
@@ -156,8 +155,7 @@ impl NeverDeriveDeclarations {
     /// Refuses a reachable protected head, or a head whose predicate cannot be
     /// established statically. A guard is never invoked as a safety proof.
     pub fn admit<const N: usize>(
-        &self,
-        rules: &[DlClause<N>],
+        &self, rules: &[DlClause<N>],
     ) -> Result<NeverDeriveCertificate, AdmissionRefusal> {
         if !self.is_empty() {
             check_heads(rules, self)?;
@@ -269,9 +267,7 @@ impl NeverDeriveCertificate {
     /// # Errors
     /// A changed bundle, protected derivation, or unresolved head is refused.
     pub fn extend<const N: usize>(
-        &self,
-        rules: &[DlClause<N>],
-        additions: &NeverDeriveDeclarations,
+        &self, rules: &[DlClause<N>], additions: &NeverDeriveDeclarations,
     ) -> Result<Self, AdmissionRefusal> {
         if self.program != crate::cache::canonical_rule_hash(rules) {
             return Err(AdmissionRefusal::ProgramChanged);
@@ -283,8 +279,7 @@ impl NeverDeriveCertificate {
 }
 
 fn check_heads<const N: usize>(
-    rules: &[DlClause<N>],
-    declarations: &NeverDeriveDeclarations,
+    rules: &[DlClause<N>], declarations: &NeverDeriveDeclarations,
 ) -> Result<(), AdmissionRefusal> {
     let mut protected = Vec::new();
     let mut unresolved = None;

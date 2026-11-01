@@ -334,9 +334,7 @@ impl CompiledPattern {
     /// neither `\\` nor `\$`. SPARQL's `REPLACE` maps this to an unbound
     /// expression, never a query abort.
     pub fn replace_all<'h>(
-        &self,
-        haystack: &'h str,
-        replacement: &str,
+        &self, haystack: &'h str, replacement: &str,
     ) -> Result<Cow<'h, str>, ReplacementError> {
         // A haystack the prefilter proves holds no match is returned as is,
         // which is what the engine would return, without entering it. The
@@ -537,9 +535,7 @@ fn prepare(pattern: &str, flags: &str) -> Result<PreparedPattern, XsdRegexError>
 /// variants when `xpath_case` is set (see [`case_variants`]); the returned
 /// `case_insensitive` is then `false`, since no engine mode is to be applied.
 fn prepare_with(
-    pattern: &str,
-    flags: &str,
-    xpath_case: bool,
+    pattern: &str, flags: &str, xpath_case: bool,
 ) -> Result<PreparedPattern, XsdRegexError> {
     if pattern.len() > MAX_SOURCE_BYTES {
         return Err(XsdRegexError::TooLarge {

@@ -220,10 +220,7 @@ fn envelope(protected: Vec<u8>, kid: &[u8], signature: Vec<u8>) -> Vec<u8> {
 /// callers must provide fresh cryptographic bytes per signature; Ed25519 is
 /// intrinsically deterministic and does not consume the randomizer.
 pub fn sign_id_hedged(
-    frame_id: &[u8],
-    signing_key: SigningKeyRef<'_>,
-    kid: impl AsRef<[u8]>,
-    randomizer: &[u8; 32],
+    frame_id: &[u8], signing_key: SigningKeyRef<'_>, kid: impl AsRef<[u8]>, randomizer: &[u8; 32],
 ) -> Result<Vec<u8>, Sign1Error> {
     let protected = protected_header(signing_key.algorithm());
     let message = sig_structure(&protected, frame_id);
@@ -240,9 +237,7 @@ pub fn sign_id_hedged(
 
 /// Explicit deterministic fixture entry point; no production entropy fallback.
 pub fn sign_id_deterministic(
-    frame_id: &[u8],
-    signing_key: SigningKeyRef<'_>,
-    kid: impl AsRef<[u8]>,
+    frame_id: &[u8], signing_key: SigningKeyRef<'_>, kid: impl AsRef<[u8]>,
 ) -> Result<Vec<u8>, Sign1Error> {
     sign_id_hedged(frame_id, signing_key, kid, &[0; 32])
 }
@@ -331,8 +326,7 @@ fn header_value(headers: &[(Value, Value)], label: i64) -> Option<&Value> {
 }
 
 fn validate_headers(
-    protected: &[(Value, Value)],
-    unprotected: &[(Value, Value)],
+    protected: &[(Value, Value)], unprotected: &[(Value, Value)],
 ) -> Result<Algorithm, Sign1Error> {
     let protected_labels = header_labels(protected)?;
     let unprotected_labels = header_labels(unprotected)?;
@@ -459,8 +453,7 @@ pub fn verify_sig(sig: &[u8], frame_id: &[u8], public: &VerifyingKey) -> SigStat
 /// algorithm validation precede lookup: malformed/unsupported is invalid;
 /// a supported valid structure with no resolved key is unverified.
 pub fn verify_signatures(
-    signatures: &mut [model::Signature],
-    resolve: impl Fn(&str) -> Option<VerifyingKey>,
+    signatures: &mut [model::Signature], resolve: impl Fn(&str) -> Option<VerifyingKey>,
 ) {
     verify_resolved(signatures, |parsed, frame_id| {
         parsed
@@ -484,8 +477,7 @@ pub fn verify_signatures_with_resolver<'a>(
 }
 
 fn verify_resolved(
-    signatures: &mut [model::Signature],
-    verify: impl Fn(&Sign1, &[u8]) -> Option<SigStatus>,
+    signatures: &mut [model::Signature], verify: impl Fn(&Sign1, &[u8]) -> Option<SigStatus>,
 ) {
     for sig in signatures {
         let Some(cose) = &sig.cose else {

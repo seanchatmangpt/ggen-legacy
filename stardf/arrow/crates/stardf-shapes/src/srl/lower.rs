@@ -59,13 +59,11 @@ where
     fn is_output(fact: &ShapeFact<N>) -> bool;
     /// Whether a physical row belongs to the evaluation output.
     fn is_output_row(
-        store: &RelationStore<TermInterner, N>,
-        row: &[purrdf_datalog::id::TermId; N],
+        store: &RelationStore<TermInterner, N>, row: &[purrdf_datalog::id::TermId; N],
     ) -> bool;
     /// Add the legacy mirror, if this shape needs one.
     fn seed_base(
-        store: &mut RelationStore<TermInterner, N>,
-        terms: [&str; 3],
+        store: &mut RelationStore<TermInterner, N>, terms: [&str; 3],
     ) -> Result<(), StorageError>;
     /// Capture a separate immutable authority, if this shape needs one.
     fn capture_base(
@@ -88,14 +86,12 @@ impl RuleShape<3> for Arity<3> {
         true
     }
     fn is_output_row(
-        _store: &RelationStore<TermInterner, 3>,
-        _row: &[purrdf_datalog::id::TermId; 3],
+        _store: &RelationStore<TermInterner, 3>, _row: &[purrdf_datalog::id::TermId; 3],
     ) -> bool {
         true
     }
     fn seed_base(
-        _store: &mut RelationStore<TermInterner, 3>,
-        _terms: [&str; 3],
+        _store: &mut RelationStore<TermInterner, 3>, _terms: [&str; 3],
     ) -> Result<(), StorageError> {
         Ok(())
     }
@@ -133,14 +129,12 @@ impl RuleShape<4> for Arity<4> {
         fact.graph == RelationStore::DEFAULT_GRAPH
     }
     fn is_output_row(
-        store: &RelationStore<TermInterner, 4>,
-        row: &[purrdf_datalog::id::TermId; 4],
+        store: &RelationStore<TermInterner, 4>, row: &[purrdf_datalog::id::TermId; 4],
     ) -> bool {
         store.term_id(RelationStore::DEFAULT_GRAPH) == Some(row[3])
     }
     fn seed_base(
-        store: &mut RelationStore<TermInterner, 4>,
-        [s, p, o]: [&str; 3],
+        store: &mut RelationStore<TermInterner, 4>, [s, p, o]: [&str; 3],
     ) -> Result<(), StorageError> {
         store.insert(s, p, o, BASE_GRAPH)?;
         Ok(())
@@ -242,8 +236,7 @@ pub(crate) struct Lowered<'r, 'a, const N: usize> {
 /// "NOW() is permitted and is defined to return the same point in time throughout a rule
 /// set evaluation."
 pub(crate) fn lower<'r, 'a, const N: usize>(
-    set: &'r RuleSet<'a>,
-    now: Option<&purrdf_sparql_algebra::Literal>,
+    set: &'r RuleSet<'a>, now: Option<&purrdf_sparql_algebra::Literal>,
 ) -> Lowered<'r, 'a, N>
 where
     Arity<N>: RuleShape<N>,
@@ -399,9 +392,7 @@ where
     /// Lower a body position: a triple term with variables becomes a fresh variable and a
     /// take-apart guard evaluated after the atom.
     fn body_position(
-        &mut self,
-        position: &PatternTerm,
-        pending: &mut PendingTriples,
+        &mut self, position: &PatternTerm, pending: &mut PendingTriples,
     ) -> ClauseTerm {
         match position {
             PatternTerm::Variable(name) => ClauseTerm::var(self.var(name)),
@@ -417,10 +408,7 @@ where
 
     /// Lower a body pattern to an atom in `graph`.
     fn body_atom(
-        &mut self,
-        pattern: &TriplePattern,
-        base: bool,
-        pending: &mut PendingTriples,
+        &mut self, pattern: &TriplePattern, base: bool, pending: &mut PendingTriples,
     ) -> ClauseAtom<N> {
         let [s, p, o] = pattern
             .positions()
@@ -432,9 +420,7 @@ where
     /// Lower an expression to a SPARQL scalar query over canonical variable names, and
     /// the clause variables it reads in the same order.
     fn expression_query(
-        &self,
-        expression: &Expression,
-        filter: bool,
+        &self, expression: &Expression, filter: bool,
     ) -> (String, Vec<String>, Vec<String>) {
         let names = expression_variables(expression);
         let canonical: Vec<String> = (0..names.len()).map(|i| format!("v{i}")).collect();
@@ -623,10 +609,7 @@ where
     /// Emit a take-apart guard for the triple term bound to `name` against `pattern`,
     /// into the body (`negation` `None`) or into a negated conjunction's guard list.
     fn take_apart(
-        &mut self,
-        name: String,
-        pattern: LoweredTriple,
-        bound: &mut Vec<String>,
+        &mut self, name: String, pattern: LoweredTriple, bound: &mut Vec<String>,
         negation: Option<(usize, &mut Vec<Guard>)>,
     ) {
         let mut variables = Vec::new();
@@ -666,11 +649,7 @@ where
 
     /// Lower a negation element's body into a negated conjunction.
     fn negation(
-        &mut self,
-        index: usize,
-        elements: &[Element],
-        base: bool,
-        outer: &[String],
+        &mut self, index: usize, elements: &[Element], base: bool, outer: &[String],
     ) -> Negation<N> {
         let saved = self.scope.replace((index, outer.to_vec()));
         let negation = self.negation_body(index, elements, base, outer);
@@ -680,11 +659,7 @@ where
 
     /// [`Self::negation`], inside the element's scope.
     fn negation_body(
-        &mut self,
-        index: usize,
-        elements: &[Element],
-        base: bool,
-        outer: &[String],
+        &mut self, index: usize, elements: &[Element], base: bool, outer: &[String],
     ) -> Negation<N> {
         let mut atoms: Vec<ClauseAtom<N>> = Vec::new();
         let mut pending = PendingTriples(Vec::new());
@@ -786,9 +761,7 @@ pub(crate) fn pattern_query(expression: Expression) -> String {
 /// Rename `names[i]` to `canonical[i]` throughout `expression`, and replace every `NOW()`
 /// by `now` when given.
 fn rewrite_expression(
-    expression: &mut Expression,
-    names: &[String],
-    canonical: &[String],
+    expression: &mut Expression, names: &[String], canonical: &[String],
     now: Option<&purrdf_sparql_algebra::Literal>,
 ) {
     let rename = |variable: &mut Variable| {

@@ -101,11 +101,8 @@ impl<'a, N: LedgerNodes, S: Admission> AnswerLedger<'a, N, S> {
     /// Returns invalid declarations, identity collisions, missing reasons or
     /// native physical refusal after destroying construction scratch.
     pub fn new<A: Admission, T: core::ops::Deref<Target = TermValue>>(
-        rows: impl IntoIterator<Item = LedgerRow<'a>>,
-        reasons: &'a ReasonTable<A, T>,
-        nodes: &'a N,
-        vocabulary: LedgerVocabulary<'a>,
-        mut admission: S,
+        rows: impl IntoIterator<Item = LedgerRow<'a>>, reasons: &'a ReasonTable<A, T>,
+        nodes: &'a N, vocabulary: LedgerVocabulary<'a>, mut admission: S,
     ) -> Result<Self, LedgerBuildError> {
         reasons.entries()?;
         let mut memory = Memory::new(&mut admission);
@@ -274,9 +271,7 @@ impl<'a, N: LedgerNodes> Iterator for DictionaryStatements<'a, N> {
 type NodeOwner<'a> = (&'a TermValue, Option<LedgerNodeKey>);
 
 fn register_node<'a, S: Admission + ?Sized>(
-    node: &'a TermValue,
-    key: Option<LedgerNodeKey>,
-    owners: &mut Vec<NodeOwner<'a>>,
+    node: &'a TermValue, key: Option<LedgerNodeKey>, owners: &mut Vec<NodeOwner<'a>>,
     memory: &mut Memory<'_, S>,
 ) -> Result<(), LedgerBuildError> {
     // Validated IRI/blank nodes never require nested comparison scratch.
@@ -296,11 +291,8 @@ fn register_node<'a, S: Admission + ?Sized>(
 }
 
 fn ensure<'a, N: LedgerNodes, S: Admission + ?Sized>(
-    key: LedgerNodeKey,
-    dictionary: &mut Vec<(LedgerNodeKey, DictionaryStatements<'a, N>)>,
-    owners: &mut Vec<NodeOwner<'a>>,
-    nodes: &'a N,
-    memory: &mut Memory<'_, S>,
+    key: LedgerNodeKey, dictionary: &mut Vec<(LedgerNodeKey, DictionaryStatements<'a, N>)>,
+    owners: &mut Vec<NodeOwner<'a>>, nodes: &'a N, memory: &mut Memory<'_, S>,
     make: impl FnOnce(&'a TermValue) -> Result<DictionaryStatements<'a, N>, LedgerBuildError>,
 ) -> Result<bool, LedgerBuildError> {
     let Err(position) = dictionary.binary_search_by_key(&key, |entry| entry.0) else {
@@ -325,8 +317,7 @@ mod tests {
     use purrdf_lex::allocation::Resident;
 
     fn declarations<'a>(
-        row: &'a [TermValue; 22],
-        extra: &'a [TermValue; 14],
+        row: &'a [TermValue; 22], extra: &'a [TermValue; 14],
     ) -> LedgerVocabulary<'a> {
         LedgerVocabulary {
             row: vocabulary(row),

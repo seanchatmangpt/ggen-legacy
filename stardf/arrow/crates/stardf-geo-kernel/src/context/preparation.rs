@@ -150,10 +150,7 @@ impl PreparationBudget {
     /// # Errors
     /// Refuses the complete policy limits without changing any receipt.
     pub fn retain_phase(
-        &mut self,
-        work: u64,
-        workspace: u64,
-        complete_peak: u64,
+        &mut self, work: u64, workspace: u64, complete_peak: u64,
     ) -> Result<(), GeoError> {
         if complete_peak > self.policy.limits().max_workspace_bytes {
             return Err(GeoError::MemoryExhausted {
@@ -172,10 +169,7 @@ impl PreparationBudget {
     /// # Errors
     /// Preserves original inconsistent counters or native admission refusal.
     pub fn retain_context_phase(
-        &mut self,
-        context: &MetricContext,
-        workspace: u64,
-        phase: crate::PreparationPhase,
+        &mut self, context: &MetricContext, workspace: u64, phase: crate::PreparationPhase,
         observer: Option<&mut dyn super::MetricWorkObserver>,
     ) -> Result<(), GeoError> {
         let actual_work = context.work_items();
@@ -211,8 +205,7 @@ impl PreparationBudget {
     /// # Errors
     /// Refuses an original-buffer receipt larger than the retained baseline.
     pub fn remaining_with_owned_sources(
-        self,
-        original_buffers: u64,
+        self, original_buffers: u64,
     ) -> Result<ExecutionPolicy, GeoError> {
         let other_sources =
             self.workspace
@@ -251,8 +244,7 @@ impl PreparationBudget {
     /// # Errors
     /// Refuses complete work/scratch exhaustion before calling the body.
     pub fn exact<T>(
-        &mut self,
-        cost: purrdf_xsd::integer::ExactArithmeticCost,
+        &mut self, cost: purrdf_xsd::integer::ExactArithmeticCost,
         evaluate: impl FnOnce() -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         self.exact_observed(cost, |_| evaluate(), None)
@@ -263,8 +255,7 @@ impl PreparationBudget {
     /// # Errors
     /// Adds observer refusal to [`Self::exact`] before evaluating the body.
     pub fn exact_metered<T>(
-        &mut self,
-        cost: purrdf_xsd::integer::ExactArithmeticCost,
+        &mut self, cost: purrdf_xsd::integer::ExactArithmeticCost,
         evaluate: impl FnOnce() -> Result<T, GeoError>,
         observer: &mut dyn super::MetricWorkObserver,
     ) -> Result<T, GeoError> {
@@ -278,9 +269,7 @@ impl PreparationBudget {
     /// # Errors
     /// Preserves source IRI, work, cancellation and physical refusal ordering.
     pub fn crs_metered(
-        &mut self,
-        cost: purrdf_xsd::integer::ExactArithmeticCost,
-        iri: &str,
+        &mut self, cost: purrdf_xsd::integer::ExactArithmeticCost, iri: &str,
         storage: Option<&crate::carrier::CarrierStorage<'_>>,
         observer: &mut dyn super::MetricWorkObserver,
     ) -> Result<crate::Crs, GeoError> {
@@ -295,8 +284,7 @@ impl PreparationBudget {
     }
 
     pub(crate) fn exact_observed<T>(
-        &mut self,
-        cost: purrdf_xsd::integer::ExactArithmeticCost,
+        &mut self, cost: purrdf_xsd::integer::ExactArithmeticCost,
         evaluate: impl FnOnce(&mut super::WorkProgress<'_>) -> Result<T, GeoError>,
         observer: Option<&mut dyn super::MetricWorkObserver>,
     ) -> Result<T, GeoError> {
@@ -322,8 +310,7 @@ impl PreparationBudget {
     /// the physical owner and its complete concrete layout precede allocation.
     /// Returned borrowed-arena numbers must be detached by their actual producer.
     pub(crate) fn exact_values_observed<T>(
-        &mut self,
-        cost: purrdf_xsd::integer::ExactArithmeticCost,
+        &mut self, cost: purrdf_xsd::integer::ExactArithmeticCost,
         evaluate: impl FnOnce(
             &crate::numerical::ExactValues<'_>,
             &mut super::WorkProgress<'_>,
@@ -336,9 +323,7 @@ impl PreparationBudget {
     /// Admit arithmetic destinations separately from nonnumeric encoding work.
     /// A streamed preimage's total byte count is not the width of one integer.
     pub(crate) fn exact_values_with_bits_observed<T>(
-        &mut self,
-        mut cost: purrdf_xsd::integer::ExactArithmeticCost,
-        destination_bits: u64,
+        &mut self, mut cost: purrdf_xsd::integer::ExactArithmeticCost, destination_bits: u64,
         evaluate: impl FnOnce(
             &crate::numerical::ExactValues<'_>,
             &mut super::WorkProgress<'_>,
@@ -397,9 +382,7 @@ impl PreparationBudget {
     /// factories. The actual detached layouts and original lease are quoted
     /// before validation; no raw arena value or unowned limb array escapes.
     pub(crate) fn detached_fields_observed<T: super::retained::NativeDetached>(
-        &mut self,
-        mut cost: purrdf_xsd::integer::ExactArithmeticCost,
-        source: T,
+        &mut self, mut cost: purrdf_xsd::integer::ExactArithmeticCost, source: T,
         validate: impl FnOnce(
             &T,
             &crate::numerical::ExactValues<'_>,
@@ -450,11 +433,8 @@ impl PreparationBudget {
     /// # Errors
     /// Refuses cost overflow and cumulative limits before evaluating operands.
     pub fn exact_rationals<T>(
-        &mut self,
-        operation: purrdf_xsd::integer::ExactOperation,
-        operands: &[&crate::Rat],
-        count: u64,
-        evaluate: impl FnOnce() -> Result<T, GeoError>,
+        &mut self, operation: purrdf_xsd::integer::ExactOperation, operands: &[&crate::Rat],
+        count: u64, evaluate: impl FnOnce() -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         self.exact(
             crate::numerical::rational_cost(operation, operands, count)
@@ -470,9 +450,7 @@ impl PreparationBudget {
     /// # Errors
     /// Refuses the complete source allowance before entering the phase.
     pub fn with_workspace<T>(
-        &mut self,
-        bytes: u64,
-        evaluate: impl FnOnce(&mut Self) -> Result<T, GeoError>,
+        &mut self, bytes: u64, evaluate: impl FnOnce(&mut Self) -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         let mut phase = *self;
         phase.retain(0, bytes)?;
@@ -494,9 +472,7 @@ impl PreparationBudget {
     }
 
     pub(crate) fn replace_workspace(
-        &mut self,
-        previous: u64,
-        replacement: u64,
+        &mut self, previous: u64, replacement: u64,
     ) -> Result<(), GeoError> {
         let baseline = self
             .workspace
@@ -527,8 +503,7 @@ impl PreparationBudget {
     /// before allocating original reference limbs. The completed constructor
     /// receipt remains part of the same invocation's preparation baseline.
     pub fn worker_context(
-        &mut self,
-        reference: &crate::GeographicReference,
+        &mut self, reference: &crate::GeographicReference,
     ) -> Result<MetricContext, GeoError> {
         self.worker_context_observed(reference, None)
     }
@@ -538,16 +513,14 @@ impl PreparationBudget {
     /// # Errors
     /// Adds observer refusal to [`Self::worker_context`], before any copy.
     pub fn worker_context_metered(
-        &mut self,
-        reference: &crate::GeographicReference,
+        &mut self, reference: &crate::GeographicReference,
         observer: &mut dyn super::MetricWorkObserver,
     ) -> Result<MetricContext, GeoError> {
         self.worker_context_observed(reference, Some(observer))
     }
 
     fn worker_context_observed(
-        &mut self,
-        reference: &crate::GeographicReference,
+        &mut self, reference: &crate::GeographicReference,
         mut observer: Option<&mut dyn super::MetricWorkObserver>,
     ) -> Result<MetricContext, GeoError> {
         let cost = crate::numerical::reference_copy_cost(reference)?;
@@ -607,9 +580,7 @@ impl PreparationBudget {
     /// # Errors
     /// Refuses missing source receipts, constructor limits or observer failure.
     pub fn prepare_offset(
-        &mut self,
-        geometry: crate::PreparedGeometry,
-        radius: &crate::Metres,
+        &mut self, geometry: crate::PreparedGeometry, radius: &crate::Metres,
         observer: &mut dyn super::MetricWorkObserver,
     ) -> Result<crate::OffsetRegion, GeoError> {
         let source = geometry.source_receipt();

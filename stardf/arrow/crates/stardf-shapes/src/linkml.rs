@@ -271,10 +271,8 @@ impl LinkmlConfig {
     /// Returns LinkmlError when an identity or prefix is missing, malformed,
     /// relative, or conflicts with the reserved linkml prefix.
     pub fn new(
-        schema_id: impl Into<String>,
-        schema_name: impl Into<String>,
-        description: impl Into<String>,
-        default_prefix: impl Into<String>,
+        schema_id: impl Into<String>, schema_name: impl Into<String>,
+        description: impl Into<String>, default_prefix: impl Into<String>,
         prefixes: BTreeMap<String, String>,
     ) -> Result<Self, LinkmlError> {
         let schema_id = schema_id.into();
@@ -378,8 +376,7 @@ impl LinkmlConfig {
     /// Returns [`LinkmlError`] for an empty/oversized source token, a reserved
     /// JSON-LD carrier, or a CURIE whose prefix is already declared.
     pub fn with_slot_rehomes(
-        mut self,
-        slot_rehomes: BTreeSet<String>,
+        mut self, slot_rehomes: BTreeSet<String>,
     ) -> Result<Self, LinkmlError> {
         for source in &slot_rehomes {
             if source.is_empty() {
@@ -544,8 +541,7 @@ pub fn write_linkml(document: &LinkmlDocument) -> Result<String, LinkmlError> {
 /// is external or dangling, a required-property declaration is inconsistent,
 /// or source names collide after deterministic LinkML normalization.
 pub fn emit_linkml(
-    compiled: &CompiledSchema,
-    config: &LinkmlConfig,
+    compiled: &CompiledSchema, config: &LinkmlConfig,
 ) -> Result<LinkmlPackage, LinkmlError> {
     projection::emit(compiled, config)
 }
@@ -563,8 +559,7 @@ pub fn emit_linkml(
 /// structures, unknown or cyclic references, identity collisions, or a shared
 /// schema-import failure.
 pub fn import_linkml(
-    document: &LinkmlDocument,
-    config: &SchemaImportConfig,
+    document: &LinkmlDocument, config: &SchemaImportConfig,
 ) -> Result<ImportedShapes, LinkmlError> {
     importer::import_document(document, config, None)
 }
@@ -577,8 +572,7 @@ pub fn import_linkml(
 /// Returns [`LinkmlError`] when the package artifacts or reversible element
 /// map drift from the validated document, or when [`import_linkml`] fails.
 pub fn import_linkml_package(
-    package: &LinkmlPackage,
-    config: &SchemaImportConfig,
+    package: &LinkmlPackage, config: &SchemaImportConfig,
 ) -> Result<ImportedShapes, LinkmlError> {
     importer::import_package(package, config)
 }
@@ -662,10 +656,7 @@ fn validate_document(value: &Value) -> Result<(), LinkmlError> {
 }
 
 fn validate_json_value(
-    value: &Value,
-    depth: usize,
-    nodes: &mut usize,
-    path: &str,
+    value: &Value, depth: usize, nodes: &mut usize, path: &str,
 ) -> Result<(), LinkmlError> {
     if depth > MAX_LINKML_YAML_DEPTH {
         return Err(LinkmlError::new(format!(

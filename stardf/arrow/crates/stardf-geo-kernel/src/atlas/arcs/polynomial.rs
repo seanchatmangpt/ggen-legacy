@@ -46,9 +46,7 @@ struct Meter<'a, 'b, 'c> {
 
 impl Meter<'_, '_, '_> {
     fn run<T>(
-        &mut self,
-        operation: ExactOperation,
-        operands: &[&Rat],
+        &mut self, operation: ExactOperation, operands: &[&Rat],
         evaluate: impl FnOnce(
             &crate::numerical::ExactValues<'_>,
         ) -> Result<T, purrdf_xsd::integer::LimbScratchError>,
@@ -106,8 +104,7 @@ impl Meter<'_, '_, '_> {
     }
 
     fn contacts<const N: usize>(
-        &mut self,
-        contacts: [CurveIntersection; N],
+        &mut self, contacts: [CurveIntersection; N],
     ) -> Result<ContactList, GeoError> {
         super::contact_list(contacts, self.context, self.progress)
     }
@@ -126,8 +123,7 @@ impl Poly {
         Self::from_values([constant, slope].into_iter(), meter)
     }
     fn from_values(
-        values: impl ExactSizeIterator<Item = Rat>,
-        meter: &mut Meter<'_, '_, '_>,
+        values: impl ExactSizeIterator<Item = Rat>, meter: &mut Meter<'_, '_, '_>,
     ) -> Result<Self, GeoError> {
         let mut buffer = meter.buffer(values.len())?;
         for value in values {
@@ -223,9 +219,7 @@ impl Poly {
     }
     /// Euclidean division over the rationals: the quotient and the remainder.
     fn divide(
-        &self,
-        divisor: &Self,
-        meter: &mut Meter<'_, '_, '_>,
+        &self, divisor: &Self, meter: &mut Meter<'_, '_, '_>,
     ) -> Result<(Self, Self), GeoError> {
         let degree = divisor
             .degree()
@@ -287,9 +281,7 @@ impl Poly {
 
 /// Sign changes of a Sturm sequence at one exact point; zeros are skipped.
 fn sign_changes(
-    sequence: &[Poly],
-    at: &Rat,
-    meter: &mut Meter<'_, '_, '_>,
+    sequence: &[Poly], at: &Rat, meter: &mut Meter<'_, '_, '_>,
 ) -> Result<usize, GeoError> {
     let mut changes = 0;
     let mut previous = 0;
@@ -306,8 +298,7 @@ fn sign_changes(
 }
 
 fn sturm(
-    squarefree: &Poly,
-    meter: &mut Meter<'_, '_, '_>,
+    squarefree: &Poly, meter: &mut Meter<'_, '_, '_>,
 ) -> Result<RetainedBuilder<Poly>, GeoError> {
     let mut sequence = meter.buffer(2)?;
     sequence.push_reserved(squarefree.clone());
@@ -332,9 +323,7 @@ fn sturm(
 /// The rational with the smallest denominator in a closed interval of
 /// nonnegative rationals with `lower < upper` (continued-fraction descent).
 fn simplest_rational(
-    lower: &Rat,
-    upper: &Rat,
-    meter: &mut Meter<'_, '_, '_>,
+    lower: &Rat, upper: &Rat, meter: &mut Meter<'_, '_, '_>,
 ) -> Result<Rat, GeoError> {
     let mut lower = lower.clone();
     let mut upper = upper.clone();
@@ -380,8 +369,7 @@ fn simplest_rational(
 /// Every root of a nonzero polynomial in `[0,1]` as an exact rational, or
 /// `None` when some root there is irrational.
 fn unit_rational_roots(
-    polynomial: &Poly,
-    meter: &mut Meter<'_, '_, '_>,
+    polynomial: &Poly, meter: &mut Meter<'_, '_, '_>,
 ) -> Result<Option<RetainedBuilder<Rat>>, GeoError> {
     let mut current = polynomial.clone();
     let mut roots = RetainedBuilder::default();
@@ -485,9 +473,7 @@ fn unit_rational_roots(
 
 /// The exact image polynomials `(X(t), Y(t))` of one affine original edge.
 fn image(
-    curve: &OperationImageCurve,
-    polynomial: &Polynomial2d,
-    swapped: bool,
+    curve: &OperationImageCurve, polynomial: &Polynomial2d, swapped: bool,
     meter: &mut Meter<'_, '_, '_>,
 ) -> Result<Option<[Poly; 2]>, GeoError> {
     let (start, end) = curve.source_endpoints();
@@ -520,8 +506,7 @@ fn image(
 
 /// The determinant of an exact rational matrix by Gaussian elimination.
 fn determinant(
-    mut matrix: RetainedBuilder<RetainedBuilder<Rat>>,
-    meter: &mut Meter<'_, '_, '_>,
+    mut matrix: RetainedBuilder<RetainedBuilder<Rat>>, meter: &mut Meter<'_, '_, '_>,
 ) -> Result<Rat, GeoError> {
     let size = matrix.len();
     let mut sign = Rat::one();
@@ -582,9 +567,7 @@ fn resultant(f: &Poly, g: &Poly, meter: &mut Meter<'_, '_, '_>) -> Result<Rat, G
 /// `u` coefficients are the constants of `B` and `D`, so specialization
 /// commutes with the resultant.
 fn eliminate(
-    left: &[Poly; 2],
-    right: &[Poly; 2],
-    meter: &mut Meter<'_, '_, '_>,
+    left: &[Poly; 2], right: &[Poly; 2], meter: &mut Meter<'_, '_, '_>,
 ) -> Result<Poly, GeoError> {
     let (m, n) = (
         right[0].degree().unwrap_or(0),
@@ -635,9 +618,7 @@ fn eliminate(
 /// constant on both and the other is affine and nonconstant in each parameter.
 /// The contact set is the exact intersection of the two coordinate ranges.
 fn shared_line(
-    left: &[Poly; 2],
-    right: &[Poly; 2],
-    meter: &mut Meter<'_, '_, '_>,
+    left: &[Poly; 2], right: &[Poly; 2], meter: &mut Meter<'_, '_, '_>,
 ) -> Result<Option<ContactList>, GeoError> {
     let Some(axis) = (0..2).find(|&axis| {
         left[axis].degree().unwrap_or(0) == 0
@@ -708,9 +689,7 @@ fn shared_line(
 /// Whether every operation after the polynomial is injective on these images:
 /// an inverse Mercator whose longitude stays strictly inside its square.
 fn injective_tail(
-    curve: &OperationImageCurve,
-    images: &[&[Poly; 2]],
-    meter: &mut Meter<'_, '_, '_>,
+    curve: &OperationImageCurve, images: &[&[Poly; 2]], meter: &mut Meter<'_, '_, '_>,
 ) -> Result<bool, GeoError> {
     let operations = curve.chain().operations();
     if operations.len() != 2 {
@@ -745,9 +724,7 @@ fn contact(t: Rat, u: Rat) -> CurveIntersection {
 
 /// The complete exact contact set, or `None` when the certificate does not apply.
 pub(super) fn intersections(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    context: &mut MetricContext,
+    left: &PreparedEdge, right: &PreparedEdge, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<ContactList>, GeoError> {
     context.with_metadata(progress, |context, progress, retained| {

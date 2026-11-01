@@ -269,9 +269,7 @@ impl purrdf_hash::error::StructuredError for ReconstructError {
 /// [`ReconstructError::DigestMismatch`] and
 /// [`ReconstructError::InvalidUtf8`].
 pub fn reconstruct(
-    byte_length: u64,
-    source_digest: &ContentDigest,
-    spans: &[VerbatimSpan<'_>],
+    byte_length: u64, source_digest: &ContentDigest, spans: &[VerbatimSpan<'_>],
 ) -> Result<String, ReconstructError> {
     let bytes = reconstruct_over(
         byte_length,
@@ -293,17 +291,13 @@ pub fn reconstruct(
 /// # Errors
 /// Returns the same typed span, gap, overlap and digest refusals as [`reconstruct`].
 pub fn reconstruct_bytes(
-    byte_length: u64,
-    source_digest: &ContentDigest,
-    spans: &[ByteSpan<'_>],
+    byte_length: u64, source_digest: &ContentDigest, spans: &[ByteSpan<'_>],
 ) -> Result<Vec<u8>, ReconstructError> {
     reconstruct_over(byte_length, source_digest, spans.iter().copied())
 }
 
 fn reconstruct_over<'a>(
-    byte_length: u64,
-    source_digest: &ContentDigest,
-    spans: impl IntoIterator<Item = ByteSpan<'a>>,
+    byte_length: u64, source_digest: &ContentDigest, spans: impl IntoIterator<Item = ByteSpan<'a>>,
 ) -> Result<Vec<u8>, ReconstructError> {
     let mut ordered = Vec::new();
     for span in spans {

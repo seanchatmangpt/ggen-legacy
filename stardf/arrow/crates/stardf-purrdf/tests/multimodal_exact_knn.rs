@@ -215,8 +215,7 @@ fn hnsw_space() -> Arc<HnswSpace> {
 /// Both producers registered, with `basis` written into the declaration each relation
 /// hands out for itself — the only field this function touches.
 fn registry(
-    dataset: &RdfDataset,
-    basis: ExclusionBasis,
+    dataset: &RdfDataset, basis: ExclusionBasis,
 ) -> (
     PropertyFunctionRegistry<'static>,
     Arc<SearchObservations>,
@@ -482,10 +481,7 @@ fn a_text_and_exact_knn_read_stops_early_on_lookups_and_scans_the_space_once() {
 /// Run `?n <pf> ( seed OFFER ?d )` with `?n` declared a parameter and bound to `term`,
 /// returning the `?d` of each row.
 fn bound_candidate(
-    engine: &NativeSparqlEngine,
-    env: &ExtensionEnv<'static>,
-    dataset: &RdfDataset,
-    pf: &str,
+    engine: &NativeSparqlEngine, env: &ExtensionEnv<'static>, dataset: &RdfDataset, pf: &str,
     term: &TermValue,
 ) -> Vec<TermValue> {
     let options = QueryOptions::new().with_env(env);
@@ -517,10 +513,7 @@ fn bound_candidate(
 
 /// The free ranked reading `?n <pf> ( seed OFFER ?d )`, as `(term, distance)` pairs.
 fn ranked_reading(
-    engine: &NativeSparqlEngine,
-    env: &ExtensionEnv<'static>,
-    dataset: &RdfDataset,
-    pf: &str,
+    engine: &NativeSparqlEngine, env: &ExtensionEnv<'static>, dataset: &RdfDataset, pf: &str,
 ) -> BTreeMap<TermValue, TermValue> {
     let options = QueryOptions::new().with_env(env);
     let text = format!(

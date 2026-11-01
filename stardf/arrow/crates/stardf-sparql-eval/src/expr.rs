@@ -75,9 +75,7 @@ use purrdf_xsd::datatype::XSD_STRING;
 /// [`crate::vm`]); this entry is for tests that evaluate one expression directly.
 #[cfg(test)]
 pub(crate) fn eval_expr<D: DatasetView + Sync>(
-    expr: &Expression,
-    row: &[Option<SolutionTerm<D::Id>>],
-    schema: &VarSchema,
+    expr: &Expression, row: &[Option<SolutionTerm<D::Id>>], schema: &VarSchema,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let program = Arc::new(crate::vm::ExprProgram::compile(expr));
@@ -88,9 +86,7 @@ pub(crate) fn eval_expr<D: DatasetView + Sync>(
 /// error/unbound), compiling and linking it for this one call, as [`eval_expr`] does.
 #[cfg(test)]
 pub(crate) fn eval_ebv<D: DatasetView + Sync>(
-    expr: &Expression,
-    row: &[Option<SolutionTerm<D::Id>>],
-    schema: &VarSchema,
+    expr: &Expression, row: &[Option<SolutionTerm<D::Id>>], schema: &VarSchema,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<bool>, EvalError> {
     let program = Arc::new(crate::vm::ExprProgram::compile(expr));
@@ -190,13 +186,10 @@ impl AnnotationRangeConstraint {
     }
 
     pub(crate) fn range<'a>(
-        &'a self,
-        now: &'a XsdValue,
-        workspace: &'a dyn purrdf_core::AnnotationRangeWorkspace,
+        &'a self, now: &'a XsdValue, workspace: &'a dyn purrdf_core::AnnotationRangeWorkspace,
     ) -> purrdf_core::AnnotationValueRange<'a> {
         fn bound<'a>(
-            endpoint: &'a (AnnotationBoundValue, bool),
-            now: &'a XsdValue,
+            endpoint: &'a (AnnotationBoundValue, bool), now: &'a XsdValue,
         ) -> purrdf_core::AnnotationValueBound<'a> {
             purrdf_core::AnnotationValueBound {
                 value: match &endpoint.0 {
@@ -218,12 +211,10 @@ pub(crate) type AnnotationRanges =
     crate::workspace::NativeSharedWorkspace<crate::AdmittedVec<AnnotationRangeConstraint>>;
 
 pub(crate) fn annotation_range_constraint(
-    expression: &Expression,
-    workspace: &crate::WorkspaceCapability,
+    expression: &Expression, workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<AnnotationRanges>, EvalError> {
     fn collect(
-        expression: &Expression,
-        remaining: usize,
+        expression: &Expression, remaining: usize,
         output: &mut crate::AdmittedVec<AnnotationRangeConstraint>,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<bool, EvalError> {
@@ -326,10 +317,7 @@ pub(crate) fn annotation_range_constraint(
 // Out of line by design: see the thin-dispatcher invariant on `eval::eval_node`.
 #[inline(never)]
 pub(crate) fn eval_filter<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    expr: &Expression,
-    inner: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, expr: &Expression, inner: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let range = if matches!(inner, GraphPattern::Bgp { .. }) {
         annotation_range_constraint(expr, &ctx.growth)?
@@ -342,10 +330,7 @@ pub(crate) fn eval_filter<D: DatasetView + Sync>(
 /// Execute a direct FILTER using already admitted range constraints. The ordinary
 /// worklist only takes this path for a nonempty range, whose grammar excludes EXISTS.
 pub(crate) fn eval_filter_range<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    expr: &Expression,
-    inner: &GraphPattern,
-    range: Option<AnnotationRanges>,
+    node: &GraphPattern, expr: &Expression, inner: &GraphPattern, range: Option<AnnotationRanges>,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let lift = Lift::at_admitted(node, &ctx.growth)?.detach();
@@ -358,11 +343,8 @@ pub(crate) fn eval_filter_range<D: DatasetView + Sync>(
 /// The ordinary FILTER continuation after its graph child returns. Its
 /// expression row cursor is entered only after this child has been absorbed.
 pub(crate) fn finish_filter_child<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    expr: &Expression,
-    lift: crate::governor::lift::DetachedLift,
-    child: Evaluated<D::Id>,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, expr: &Expression, lift: crate::governor::lift::DetachedLift,
+    child: Evaluated<D::Id>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     match begin_filter_child(node, expr, lift, child, ctx)? {
         FilterStart::Complete(done) => Ok(done),
@@ -384,11 +366,8 @@ pub(crate) enum FilterStart<'e, I: ViewTermId> {
 /// Enter the existing FILTER computation once. An ordinary graph worklist can
 /// retain the sequential cursor instead of recursively resolving its VM row.
 pub(crate) fn begin_filter_child<'e, D: DatasetView + Sync>(
-    node: &GraphPattern,
-    expr: &'e Expression,
-    lift: crate::governor::lift::DetachedLift,
-    child: Evaluated<D::Id>,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, expr: &'e Expression, lift: crate::governor::lift::DetachedLift,
+    child: Evaluated<D::Id>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<FilterStart<'e, D::Id>, EvalError> {
     begin_filter_child_with_owner(node, expr, FilterLink::Borrowed(expr), lift, child, ctx)
 }
@@ -399,12 +378,8 @@ pub(crate) enum FilterLink<'e> {
 }
 
 pub(crate) fn begin_filter_child_with_owner<'e, D: DatasetView + Sync>(
-    node: &GraphPattern,
-    expr: &Expression,
-    owner: FilterLink<'e>,
-    lift: crate::governor::lift::DetachedLift,
-    child: Evaluated<D::Id>,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, expr: &Expression, owner: FilterLink<'e>,
+    lift: crate::governor::lift::DetachedLift, child: Evaluated<D::Id>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<FilterStart<'e, D::Id>, EvalError> {
     let mut lift = lift.attach(node);
     let Some(seq) = lift.absorb(0, child) else {
@@ -417,10 +392,7 @@ pub(crate) fn begin_filter_child_with_owner<'e, D: DatasetView + Sync>(
 #[allow(clippy::inline_always)]
 #[inline(always)]
 pub(crate) fn eval_filter_with<D: DatasetView + Sync, M: crate::eval::RowDelivery<D>>(
-    node: &GraphPattern,
-    expr: &Expression,
-    inner: &GraphPattern,
-    delivery: M,
+    node: &GraphPattern, expr: &Expression, inner: &GraphPattern, delivery: M,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     if M::ACTIVE {
@@ -448,10 +420,8 @@ pub(crate) fn eval_filter_with<D: DatasetView + Sync, M: crate::eval::RowDeliver
 
 // A variable alias carries the source column's aggregate certificate.
 fn extend_evidence<I: ViewTermId>(
-    row: &RetainedRow<I>,
-    computed: Option<crate::evidence_exec::RowEvidence>,
-    expression: &Expression,
-    target: &Variable,
+    row: &RetainedRow<I>, computed: Option<crate::evidence_exec::RowEvidence>,
+    expression: &Expression, target: &Variable,
 ) -> Result<Option<crate::evidence_exec::RowEvidence>, EvalError> {
     if !row.has_evidence_attachment() && computed.is_none() {
         return Ok(None);
@@ -472,12 +442,8 @@ fn extend_evidence<I: ViewTermId>(
 }
 
 pub(crate) fn filter_evidence<D: DatasetView + Sync>(
-    value: Option<bool>,
-    computed: Option<crate::evidence_exec::RowEvidence>,
-    expression: &Expression,
-    row: &RetainedRow<D::Id>,
-    schema: &VarSchema,
-    ctx: &EvalCtx<'_, D>,
+    value: Option<bool>, computed: Option<crate::evidence_exec::RowEvidence>,
+    expression: &Expression, row: &RetainedRow<D::Id>, schema: &VarSchema, ctx: &EvalCtx<'_, D>,
 ) -> Result<Option<crate::evidence_exec::RowEvidence>, EvalError> {
     let undecided = computed
         .as_ref()
@@ -543,10 +509,7 @@ impl<'e, I: ViewTermId> FilterSequence<'e, I> {
     }
 
     pub(crate) fn prepare_exists<D: DatasetView<Id = I> + Sync>(
-        &self,
-        site: u32,
-        expression: &Expression,
-        ctx: &mut EvalCtx<'_, D>,
+        &self, site: u32, expression: &Expression, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<(ExistsDecision<I>, Option<crate::evidence_exec::RowEvidence>), EvalError> {
         self.active
             .as_ref()
@@ -555,10 +518,8 @@ impl<'e, I: ViewTermId> FilterSequence<'e, I> {
     }
 
     fn new(
-        seq: SolutionSeq<I>,
-        checkpoint: crate::row_checkpoint::RowCheckpoint,
-        linked: crate::vm::Linked<'e, I>,
-        lift: crate::governor::lift::DetachedLift,
+        seq: SolutionSeq<I>, checkpoint: crate::row_checkpoint::RowCheckpoint,
+        linked: crate::vm::Linked<'e, I>, lift: crate::governor::lift::DetachedLift,
         workspace: &crate::WorkspaceCapability,
     ) -> Self {
         Self {
@@ -573,10 +534,8 @@ impl<'e, I: ViewTermId> FilterSequence<'e, I> {
     }
 
     pub(crate) fn resume<D: DatasetView<Id = I> + Sync>(
-        &mut self,
-        value: Option<SolutionTerm<I>>,
-        record: Option<crate::evidence_exec::RowEvidence>,
-        ctx: &EvalCtx<'_, D>,
+        &mut self, value: Option<SolutionTerm<I>>,
+        record: Option<crate::evidence_exec::RowEvidence>, ctx: &EvalCtx<'_, D>,
     ) -> Result<(), EvalError> {
         self.active
             .as_mut()
@@ -585,10 +544,7 @@ impl<'e, I: ViewTermId> FilterSequence<'e, I> {
     }
 
     pub(crate) fn step<D: DatasetView<Id = I> + Sync>(
-        mut self,
-        node: &GraphPattern,
-        expression: &Expression,
-        ctx: &mut EvalCtx<'_, D>,
+        mut self, node: &GraphPattern, expression: &Expression, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<FilterSequenceStep<'e, I>, EvalError> {
         loop {
             let frame = if let Some(frame) = self.active.take() {
@@ -636,10 +592,7 @@ impl<'e, I: ViewTermId> FilterSequence<'e, I> {
     }
 
     pub(crate) fn run_recursive<D: DatasetView<Id = I> + Sync>(
-        mut self,
-        node: &GraphPattern,
-        expression: &Expression,
-        ctx: &mut EvalCtx<'_, D>,
+        mut self, node: &GraphPattern, expression: &Expression, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<Evaluated<I>, EvalError> {
         let mut frame_stack = crate::AdmittedVec::new(&ctx.growth);
         loop {
@@ -674,12 +627,8 @@ impl<'e, I: ViewTermId> FilterSequence<'e, I> {
 #[allow(clippy::inline_always)]
 #[inline(always)]
 fn begin_filter_sequence<'e, D: DatasetView + Sync>(
-    node: &GraphPattern,
-    expr: &Expression,
-    owner: FilterLink<'e>,
-    seq: SolutionSeq<D::Id>,
-    lift: Lift<'_>,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, expr: &Expression, owner: FilterLink<'e>, seq: SolutionSeq<D::Id>,
+    lift: Lift<'_>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<FilterStart<'e, D::Id>, EvalError> {
     let schema = seq.schema.clone();
     // The `row-expression-evaluation` charge point, charged **per row** rather than per
@@ -805,10 +754,7 @@ fn begin_filter_sequence<'e, D: DatasetView + Sync>(
 }
 
 fn eval_filter_sequence<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    expr: &Expression,
-    seq: SolutionSeq<D::Id>,
-    lift: Lift<'_>,
+    node: &GraphPattern, expr: &Expression, seq: SolutionSeq<D::Id>, lift: Lift<'_>,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     match begin_filter_sequence(node, expr, FilterLink::Borrowed(expr), seq, lift, ctx)? {
@@ -830,10 +776,7 @@ fn eval_filter_sequence<D: DatasetView + Sync>(
 // Out of line by design: see the thin-dispatcher invariant on `eval::eval_node`.
 #[inline(never)]
 pub(crate) fn eval_extend<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    inner: &GraphPattern,
-    var: &Variable,
-    expr: &Expression,
+    node: &GraphPattern, inner: &GraphPattern, var: &Variable, expr: &Expression,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let mut lift = Lift::at_admitted(node, &ctx.growth)?;
@@ -852,11 +795,7 @@ pub(crate) fn eval_extend<D: DatasetView + Sync>(
 #[allow(clippy::inline_always)]
 #[inline(always)]
 pub(crate) fn eval_extend_with<D: DatasetView + Sync, M: crate::eval::RowDelivery<D>>(
-    node: &GraphPattern,
-    inner: &GraphPattern,
-    var: &Variable,
-    expr: &Expression,
-    delivery: M,
+    node: &GraphPattern, inner: &GraphPattern, var: &Variable, expr: &Expression, delivery: M,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     if M::ACTIVE {
@@ -885,12 +824,8 @@ pub(crate) fn eval_extend_with<D: DatasetView + Sync, M: crate::eval::RowDeliver
 #[allow(clippy::inline_always)]
 #[inline(always)]
 fn eval_extend_sequence<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    var: &Variable,
-    expr: &Expression,
-    mut seq: SolutionSeq<D::Id>,
-    lift: Lift<'_>,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, var: &Variable, expr: &Expression, mut seq: SolutionSeq<D::Id>,
+    lift: Lift<'_>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     // The `row-expression-evaluation` charge point; see `eval_filter` for why it is per
     // row rather than per sub-expression, why the refused rows are cut before the
@@ -1062,8 +997,7 @@ fn eval_extend_sequence<D: DatasetView + Sync>(
 /// is kept because their walk also reads the per-query constructed buffer, so one door
 /// is cheaper to keep right than two whose difference must be re-derived per writer.
 pub(crate) fn intern<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    value: TermValue,
+    ctx: &mut EvalCtx<'_, D>, value: TermValue,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     ctx.scratch
         .try_intern_checked_admitted(ctx.dataset, value, &ctx.growth)
@@ -1073,8 +1007,7 @@ pub(crate) fn intern<D: DatasetView + Sync>(
 /// string function built — so there is no depth to admit (see [`intern`]).
 #[cfg(test)]
 pub(crate) fn intern_leaf<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    value: TermValue,
+    ctx: &mut EvalCtx<'_, D>, value: TermValue,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     debug_assert!(!matches!(value, TermValue::Triple { .. }));
     ctx.scratch
@@ -1083,8 +1016,7 @@ pub(crate) fn intern_leaf<D: DatasetView + Sync>(
 
 /// Intern an IRI, propagating operational reverse-lookup failures.
 fn iri_term<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    iri: &str,
+    ctx: &mut EvalCtx<'_, D>, iri: &str,
 ) -> Result<SolutionTerm<D::Id>, EvalError> {
     let value = ctx.growth.iri(iri)?;
     Ok(ctx.intern_workspace_term(value)?.expect("IRI term shape"))
@@ -1092,9 +1024,7 @@ fn iri_term<D: DatasetView + Sync>(
 
 /// Render a native lexical producer once under its original grant.
 fn displayed_term<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    value: &(impl core::fmt::Display + ?Sized),
-    datatype: Option<&str>,
+    ctx: &mut EvalCtx<'_, D>, value: &(impl core::fmt::Display + ?Sized), datatype: Option<&str>,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let mut frame = crate::workspace::LexicalFrame::new(&ctx.growth);
     let mut memory = purrdf_lex::allocation::Memory::new(&mut frame);
@@ -1122,8 +1052,7 @@ fn displayed_term<D: DatasetView + Sync>(
 }
 
 fn digest_term<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    bytes: &[u8],
+    ctx: &mut EvalCtx<'_, D>, bytes: &[u8],
 ) -> Result<SolutionTerm<D::Id>, EvalError> {
     let mut output = [0_u8; 128];
     let lexical = purrdf_hash::hex::encode_to_slice(bytes, &mut output)
@@ -1134,9 +1063,7 @@ fn digest_term<D: DatasetView + Sync>(
 /// Intern a typed (no-language) literal. [`typed`] builds the value
 /// with `language: None`, so there is no tag to judge.
 fn typed_term<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    lexical: &str,
-    datatype: &str,
+    ctx: &mut EvalCtx<'_, D>, lexical: &str, datatype: &str,
 ) -> Result<SolutionTerm<D::Id>, EvalError> {
     let bytes = lexical
         .len()
@@ -1158,8 +1085,7 @@ fn typed_term<D: DatasetView + Sync>(
 /// Resident test interpreter adapter; production retains the owned carrier.
 #[cfg(test)]
 pub(crate) fn value_of<D: DatasetView + Sync>(
-    ctx: &EvalCtx<'_, D>,
-    term: SolutionTerm<D::Id>,
+    ctx: &EvalCtx<'_, D>, term: SolutionTerm<D::Id>,
 ) -> Result<TermValue, EvalError> {
     ctx.scratch
         .try_value_of(ctx.dataset, term)
@@ -1181,8 +1107,7 @@ pub(crate) fn value_of<D: DatasetView + Sync>(
 /// deterministic for the context's pinned dataset and dedup-by-value scratch, so
 /// the cached term is the same `SolutionTerm` a fresh intern would produce.
 pub(crate) fn intern_boolean<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    b: bool,
+    ctx: &mut EvalCtx<'_, D>, b: bool,
 ) -> Result<SolutionTerm<D::Id>, EvalError> {
     let slot = usize::from(b);
     if let Some(term) = ctx.cached_bool_terms[slot] {
@@ -1200,16 +1125,14 @@ pub(crate) fn intern_boolean<D: DatasetView + Sync>(
 
 /// Intern an `xsd:string` literal.
 fn string_term<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    lexical: &str,
+    ctx: &mut EvalCtx<'_, D>, lexical: &str,
 ) -> Result<SolutionTerm<D::Id>, EvalError> {
     typed_term(ctx, lexical, XSD_STRING)
 }
 
 /// Intern the `xsd:integer` literal [`TermValue::integer`] spells for `value`.
 pub(crate) fn intern_integer<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    value: impl Into<i128>,
+    ctx: &mut EvalCtx<'_, D>, value: impl Into<i128>,
 ) -> Result<SolutionTerm<D::Id>, EvalError> {
     displayed_term(ctx, &value.into(), Some(purrdf_xsd::datatype::XSD_INTEGER))?
         .ok_or(EvalError::WorkspaceBoundOverflow)
@@ -1255,8 +1178,7 @@ pub(crate) fn constant_ebv(literal: &purrdf_sparql_algebra::Literal) -> Option<b
 
 /// The same constant law over borrowed authored spelling and admitted parsed owners.
 pub(crate) fn constant_ebv_admitted(
-    literal: &purrdf_sparql_algebra::Literal,
-    workspace: &crate::WorkspaceCapability,
+    literal: &purrdf_sparql_algebra::Literal, workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<bool>, EvalError> {
     if literal.language().is_some() {
         return Ok(Some(!literal.value().is_empty()));
@@ -1271,8 +1193,7 @@ pub(crate) fn constant_ebv_admitted(
 
 /// The effective boolean value of a concrete term (`None` = type error).
 pub(crate) fn ebv_term<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    term: SolutionTerm<D::Id>,
+    ctx: &mut EvalCtx<'_, D>, term: SolutionTerm<D::Id>,
 ) -> Result<Option<bool>, EvalError> {
     // A language-tagged literal is a string literal typed `xsd:string`
     // (SPARQL 1.1 §17.2.2), so its EBV is `lexical form` ≠ "" — not a type
@@ -1318,8 +1239,7 @@ pub(crate) fn ebv_term<D: DatasetView + Sync>(
 /// instead of once per row. Computed scratch values are ephemeral and stay on the
 /// direct borrowed-view path.
 fn xsd_of_term<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    term: SolutionTerm<D::Id>,
+    ctx: &mut EvalCtx<'_, D>, term: SolutionTerm<D::Id>,
 ) -> Result<Option<crate::parsed_value::ParsedValue>, EvalError> {
     match term {
         SolutionTerm::Existing(id) => {
@@ -1355,8 +1275,7 @@ fn xsd_of_term<D: DatasetView + Sync>(
 }
 
 fn xsd_integer_of_admitted(
-    value: Option<&TermValue>,
-    workspace: &crate::WorkspaceCapability,
+    value: Option<&TermValue>, workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<i128>, EvalError> {
     let Some(TermValue::Literal {
         lexical_form,
@@ -1386,9 +1305,7 @@ fn xsd_integer_of_admitted(
 }
 
 fn parse_owned_xsd(
-    lexical: &str,
-    iri: &str,
-    workspace: &crate::WorkspaceCapability,
+    lexical: &str, iri: &str, workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<crate::parsed_value::ParsedValue>, EvalError> {
     match XsdDatatype::from_iri(iri) {
         Some(datatype) => {
@@ -1401,8 +1318,7 @@ fn parse_owned_xsd(
 /// Whether a solution term is a literal, checked on the borrowed view (no
 /// materialization).
 fn term_is_literal<D: DatasetView + Sync>(
-    ctx: &EvalCtx<'_, D>,
-    term: SolutionTerm<D::Id>,
+    ctx: &EvalCtx<'_, D>, term: SolutionTerm<D::Id>,
 ) -> Result<bool, EvalError> {
     Ok(match term {
         SolutionTerm::Existing(id) => ctx
@@ -1418,8 +1334,7 @@ fn term_is_literal<D: DatasetView + Sync>(
 /// A well-formed language literal has a known RDF value even though it has no
 /// XSD value. Check borrowed views without materializing the lexical form.
 fn term_has_language_value<D: DatasetView + Sync>(
-    ctx: &EvalCtx<'_, D>,
-    term: SolutionTerm<D::Id>,
+    ctx: &EvalCtx<'_, D>, term: SolutionTerm<D::Id>,
 ) -> Result<bool, EvalError> {
     match term {
         SolutionTerm::Existing(id) => ctx
@@ -1451,8 +1366,7 @@ fn has_language_value(value: &TermValue) -> bool {
 /// Whether a solution term is a triple term, checked on the borrowed view (no
 /// materialization) — mirrors [`term_is_literal`].
 fn term_is_triple<D: DatasetView + Sync>(
-    ctx: &EvalCtx<'_, D>,
-    term: SolutionTerm<D::Id>,
+    ctx: &EvalCtx<'_, D>, term: SolutionTerm<D::Id>,
 ) -> Result<bool, EvalError> {
     Ok(match term {
         SolutionTerm::Existing(id) => ctx
@@ -1471,8 +1385,7 @@ fn term_is_triple<D: DatasetView + Sync>(
 /// [`crate::cdt_fn::is_composite_typed`] for why an ILL-FORMED composite literal
 /// answers `true` here too.
 fn term_is_composite<D: DatasetView + Sync>(
-    ctx: &EvalCtx<'_, D>,
-    term: SolutionTerm<D::Id>,
+    ctx: &EvalCtx<'_, D>, term: SolutionTerm<D::Id>,
 ) -> Result<bool, EvalError> {
     match term {
         SolutionTerm::Existing(id) => ctx
@@ -1502,9 +1415,7 @@ fn term_is_composite<D: DatasetView + Sync>(
 /// value-space element-wise for a `cdt:List`, and by *term* for a `cdt:Map`'s keys
 /// — which neither the XSD value space nor RDF-term equality can express.
 fn is_cdt_pair<D: DatasetView + Sync>(
-    ctx: &EvalCtx<'_, D>,
-    ta: SolutionTerm<D::Id>,
-    tb: SolutionTerm<D::Id>,
+    ctx: &EvalCtx<'_, D>, ta: SolutionTerm<D::Id>, tb: SolutionTerm<D::Id>,
 ) -> Result<bool, EvalError> {
     Ok(term_is_composite(ctx, ta)? || term_is_composite(ctx, tb)?)
 }
@@ -1512,9 +1423,7 @@ fn is_cdt_pair<D: DatasetView + Sync>(
 /// SEP-0009's own `=` / `<` / `<=` / `>` / `>=`, for a pair [`is_cdt_pair`] has
 /// already claimed. `None` is a SPARQL type error.
 fn cdt_compare<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    relation: crate::cdt_fn::CdtRelation,
-    ta: SolutionTerm<D::Id>,
+    ctx: &mut EvalCtx<'_, D>, relation: crate::cdt_fn::CdtRelation, ta: SolutionTerm<D::Id>,
     tb: SolutionTerm<D::Id>,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let av = owned_value_of(ctx, ta)?;
@@ -1528,11 +1437,8 @@ fn cdt_compare<D: DatasetView + Sync>(
 /// the resulting [`Ordering`] with `keep`. `None` (error/unbound operand or
 /// incomparable values) propagates.
 pub(crate) fn compare_terms<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    ta: Option<SolutionTerm<D::Id>>,
-    tb: Option<SolutionTerm<D::Id>>,
-    relation: crate::cdt_fn::CdtRelation,
-    keep: impl Fn(Ordering) -> bool,
+    ctx: &mut EvalCtx<'_, D>, ta: Option<SolutionTerm<D::Id>>, tb: Option<SolutionTerm<D::Id>>,
+    relation: crate::cdt_fn::CdtRelation, keep: impl Fn(Ordering) -> bool,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let (Some(ta), Some(tb)) = (ta, tb) else {
         return Ok(None);
@@ -1611,9 +1517,7 @@ pub(crate) fn compare_terms<D: DatasetView + Sync>(
 /// arm to add; see `crate::basic_profile`'s module docs for where that
 /// distinction is recorded against the Basic-profile survey.
 pub(crate) fn equal_terms<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    ta: Option<SolutionTerm<D::Id>>,
-    tb: Option<SolutionTerm<D::Id>>,
+    ctx: &mut EvalCtx<'_, D>, ta: Option<SolutionTerm<D::Id>>, tb: Option<SolutionTerm<D::Id>>,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let (Some(ta), Some(tb)) = (ta, tb) else {
         return Ok(None);
@@ -1690,9 +1594,7 @@ pub(crate) fn equal_terms<D: DatasetView + Sync>(
 /// first equal candidate, and an error propagates only if no candidate is equal
 /// (SPARQL §17.4.1.9).
 pub(crate) fn in_candidate<D: DatasetView + Sync>(
-    ctx: &EvalCtx<'_, D>,
-    target: SolutionTerm<D::Id>,
-    target_value: &TermValue,
+    ctx: &EvalCtx<'_, D>, target: SolutionTerm<D::Id>, target_value: &TermValue,
     candidate: SolutionTerm<D::Id>,
 ) -> Result<Option<bool>, EvalError> {
     // An identical candidate is equal — unless it is NaN, or a triple term holding
@@ -1763,9 +1665,7 @@ fn rdf_equal(a: &TermValue, b: &TermValue) -> Option<bool> {
 /// extension [`crate::QueryOptions::disjoint_language_strings`] describes applies.
 #[cfg(test)]
 fn rdf_equal_in(
-    a: &TermValue,
-    b: &TermValue,
-    language_strings: LanguageStringEquality,
+    a: &TermValue, b: &TermValue, language_strings: LanguageStringEquality,
 ) -> Option<bool> {
     equal_values(
         a,
@@ -1789,9 +1689,7 @@ fn rdf_equal_in(
 /// # Errors
 /// Returns the original operational or allocation refusal from the comparison.
 pub fn equal_values(
-    a: &TermValue,
-    b: &TermValue,
-    language_strings: LanguageStringEquality,
+    a: &TermValue, b: &TermValue, language_strings: LanguageStringEquality,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<bool>, EvalError> {
     let mut frame = crate::workspace::LexicalFrame::new(workspace);
@@ -1847,9 +1745,7 @@ pub fn equal_values(
 
 /// [`rdf_equal_in`] for a pair of which at most one is a triple term.
 fn leaf_equal_admitted(
-    a: &TermValue,
-    b: &TermValue,
-    language_strings: LanguageStringEquality,
+    a: &TermValue, b: &TermValue, language_strings: LanguageStringEquality,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<bool>, EvalError> {
     // SEP-0009 composite equality, for the value-space paths that reach this
@@ -1902,8 +1798,7 @@ fn is_xsd_nan(x: &XsdValue) -> bool {
 /// once.
 #[inline(never)]
 fn term_is_nan<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    term: SolutionTerm<D::Id>,
+    ctx: &mut EvalCtx<'_, D>, term: SolutionTerm<D::Id>,
 ) -> Result<bool, EvalError> {
     Ok(xsd_of_term(ctx, term)?.as_deref().is_some_and(is_xsd_nan))
 }
@@ -1916,8 +1811,7 @@ fn term_is_nan<D: DatasetView + Sync>(
 /// the term only when it IS a triple term.
 #[inline(never)]
 fn term_holds_nan<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    term: SolutionTerm<D::Id>,
+    ctx: &mut EvalCtx<'_, D>, term: SolutionTerm<D::Id>,
 ) -> Result<bool, EvalError> {
     if term_is_triple(ctx, term)? {
         let value = owned_value_of(ctx, term)?;
@@ -1929,8 +1823,7 @@ fn term_holds_nan<D: DatasetView + Sync>(
 /// [`term_holds_nan`] over a materialized value, walking nested triple terms over a
 /// work list so a deep term costs no machine stack.
 fn value_holds_nan_admitted(
-    value: &TermValue,
-    workspace: &crate::WorkspaceCapability,
+    value: &TermValue, workspace: &crate::WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     let mut frame = crate::workspace::LexicalFrame::new(workspace);
     let mut memory = purrdf_lex::allocation::Memory::new(&mut frame);
@@ -1994,9 +1887,7 @@ pub(crate) fn sparql_value_eq(ax: &XsdValue, bx: &XsdValue) -> Option<bool> {
 }
 
 fn sparql_value_eq_admitted(
-    ax: &XsdValue,
-    bx: &XsdValue,
-    workspace: &crate::WorkspaceCapability,
+    ax: &XsdValue, bx: &XsdValue, workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<bool>, EvalError> {
     if is_numeric_nan_pair(ax, bx) {
         return Ok(Some(false));
@@ -2090,8 +1981,7 @@ enum VarNode<'a> {
 /// list in leaves no trace in it. A pattern node counts one `VarWalked` operation in a
 /// test build, whether or not it contributes anything.
 fn collect_vars_admitted<'a>(
-    roots: impl IntoIterator<Item = VarNode<'a>>,
-    workspace: &crate::WorkspaceCapability,
+    roots: impl IntoIterator<Item = VarNode<'a>>, workspace: &crate::WorkspaceCapability,
 ) -> Result<VarSchema, EvalError> {
     let mut pending = crate::AdmittedVec::new(workspace);
     pending.try_extend(roots)?;
@@ -2321,8 +2211,7 @@ fn collect_vars_admitted<'a>(
 }
 
 pub(crate) fn collect_term_vars_admitted(
-    term: &purrdf_sparql_algebra::TermPattern,
-    out: &mut crate::solution::SchemaBuilder,
+    term: &purrdf_sparql_algebra::TermPattern, out: &mut crate::solution::SchemaBuilder,
     memory: &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
 ) -> Result<(), EvalError> {
     use purrdf_sparql_algebra::walk::MutationError;
@@ -2341,23 +2230,19 @@ pub(crate) fn collect_term_vars_admitted(
 /// Preserve widened EXISTS and nonnarrowing Project membership under actual
 /// native work-list, schema-column, hash-array and immutable-control admission.
 pub(crate) fn pattern_all_vars_admitted(
-    pattern: &GraphPattern,
-    workspace: &crate::WorkspaceCapability,
+    pattern: &GraphPattern, workspace: &crate::WorkspaceCapability,
 ) -> Result<VarSchema, EvalError> {
     pattern_vars_outside_admitted(pattern, None, workspace)
 }
 
 pub(crate) fn pattern_vars_outside_admitted(
-    pattern: &GraphPattern,
-    endpoint: Option<&Variable>,
-    workspace: &crate::WorkspaceCapability,
+    pattern: &GraphPattern, endpoint: Option<&Variable>, workspace: &crate::WorkspaceCapability,
 ) -> Result<VarSchema, EvalError> {
     collect_vars_admitted([VarNode::Pattern(pattern, endpoint)], workspace)
 }
 
 pub(crate) fn expr_vars_admitted(
-    expression: &Expression,
-    workspace: &crate::WorkspaceCapability,
+    expression: &Expression, workspace: &crate::WorkspaceCapability,
 ) -> Result<VarSchema, EvalError> {
     collect_vars_admitted([VarNode::Expression(expression)], workspace)
 }
@@ -2401,9 +2286,7 @@ pub(crate) fn pattern_all_vars(pattern: &GraphPattern, out: &mut DetHashSet<Vari
 /// (see `crate::service_endpoints`). An `EXISTS` body is walked whole, as
 /// [`expr_vars`] walks it: a superset, which only ever reports a mention.
 pub(crate) fn pattern_vars_outside(
-    pattern: &GraphPattern,
-    endpoint: Option<&Variable>,
-    out: &mut DetHashSet<Variable>,
+    pattern: &GraphPattern, endpoint: Option<&Variable>, out: &mut DetHashSet<Variable>,
 ) {
     let vars =
         pattern_vars_outside_admitted(pattern, endpoint, &crate::WorkspaceCapability::resident())
@@ -2565,11 +2448,8 @@ fn exists_apply_first_witness_wrap() -> bool {
 /// `crate::eval::PreparedExists::build`), and only this per-call admission check reads
 /// `outer_schema`.
 fn exists_use_probe(
-    correlated: bool,
-    stateful: bool,
-    normalized: &GraphPattern,
-    analysis: &crate::governor::soundness::NodeAnalysisTable,
-    outer_schema: &VarSchema,
+    correlated: bool, stateful: bool, normalized: &GraphPattern,
+    analysis: &crate::governor::soundness::NodeAnalysisTable, outer_schema: &VarSchema,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     #[cfg(test)]
@@ -2660,9 +2540,7 @@ fn exists_use_probe(
 /// [`exists_deferred_decide`], which substitutes the body it stands for — once, for this row —
 /// rather than by preparing the placeholder: see `crate::deferred_exists`.
 pub(crate) fn exists<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    row: &[Option<SolutionTerm<D::Id>>],
-    schema: &VarSchema,
+    pattern: &GraphPattern, row: &[Option<SolutionTerm<D::Id>>], schema: &VarSchema,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<bool, EvalError> {
     if ctx.may_have_evidence() {
@@ -2675,9 +2553,7 @@ pub(crate) fn exists<D: DatasetView + Sync>(
 /// Return the original witness record with the ordinary existential value.
 /// Both values come from the same execution, including memoized probes.
 pub(crate) fn exists_evidence<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    row: &[Option<SolutionTerm<D::Id>>],
-    schema: &VarSchema,
+    pattern: &GraphPattern, row: &[Option<SolutionTerm<D::Id>>], schema: &VarSchema,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<(bool, crate::evidence_exec::RowEvidence), EvalError> {
     let mut evidence = crate::evidence_exec::RowEvidence::default();
@@ -2686,22 +2562,16 @@ pub(crate) fn exists_evidence<D: DatasetView + Sync>(
 }
 
 fn exists_recorded<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    row: &[Option<SolutionTerm<D::Id>>],
-    schema: &VarSchema,
-    ctx: &mut EvalCtx<'_, D>,
-    mut evidence: Option<&mut crate::evidence_exec::RowEvidence>,
+    pattern: &GraphPattern, row: &[Option<SolutionTerm<D::Id>>], schema: &VarSchema,
+    ctx: &mut EvalCtx<'_, D>, mut evidence: Option<&mut crate::evidence_exec::RowEvidence>,
 ) -> Result<bool, EvalError> {
     exists_recorded_decide(pattern, row, schema, ctx, evidence.as_deref_mut())?
         .run_recursive(row, schema, evidence, ctx)
 }
 
 pub(crate) fn exists_recorded_decide<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    row: &[Option<SolutionTerm<D::Id>>],
-    schema: &VarSchema,
-    ctx: &mut EvalCtx<'_, D>,
-    evidence: Option<&mut crate::evidence_exec::RowEvidence>,
+    pattern: &GraphPattern, row: &[Option<SolutionTerm<D::Id>>], schema: &VarSchema,
+    ctx: &mut EvalCtx<'_, D>, evidence: Option<&mut crate::evidence_exec::RowEvidence>,
 ) -> Result<ExistsDecision<D::Id>, EvalError> {
     // Before the site is prepared: preparing it walks its whole inner pattern, and
     // evaluating it recurses into that pattern. See `crate::stack`.
@@ -2804,11 +2674,8 @@ pub(crate) enum ExistsDecision<I: ViewTermId> {
 
 impl<I: ViewTermId> ExistsDecision<I> {
     pub(crate) fn run_recursive<D: DatasetView<Id = I> + Sync>(
-        self,
-        row: &[Option<SolutionTerm<I>>],
-        schema: &VarSchema,
-        evidence: Option<&mut crate::evidence_exec::RowEvidence>,
-        ctx: &mut EvalCtx<'_, D>,
+        self, row: &[Option<SolutionTerm<I>>], schema: &VarSchema,
+        evidence: Option<&mut crate::evidence_exec::RowEvidence>, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<bool, EvalError> {
         match self {
             Self::Complete(answer) => Ok(answer),
@@ -2854,11 +2721,8 @@ impl<I: ViewTermId> ExistsPending<I> {
     }
 
     pub(crate) fn finish<D: DatasetView<Id = I> + Sync>(
-        mut self,
-        evaluated: Result<Evaluated<I>, EvalError>,
-        row: &[Option<SolutionTerm<I>>],
-        schema: &VarSchema,
-        evidence: Option<&mut crate::evidence_exec::RowEvidence>,
+        mut self, evaluated: Result<Evaluated<I>, EvalError>, row: &[Option<SolutionTerm<I>>],
+        schema: &VarSchema, evidence: Option<&mut crate::evidence_exec::RowEvidence>,
         ctx: &mut EvalCtx<'_, D>,
     ) -> Result<bool, EvalError> {
         self.abort(ctx);
@@ -2890,11 +2754,8 @@ impl<I: ViewTermId> ExistsChild<I> {
     /// graph worklist enters that child. The resident adapter below consumes
     /// this same entry and completion route.
     pub(crate) fn enter<D: DatasetView<Id = I> + Sync>(
-        self,
-        row: &[Option<SolutionTerm<I>>],
-        schema: &VarSchema,
-        evidence: Option<&mut crate::evidence_exec::RowEvidence>,
-        ctx: &mut EvalCtx<'_, D>,
+        self, row: &[Option<SolutionTerm<I>>], schema: &VarSchema,
+        evidence: Option<&mut crate::evidence_exec::RowEvidence>, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<ExistsEntered<I>, EvalError> {
         match self {
             Self::Probe { site, resume } => {
@@ -3045,11 +2906,8 @@ impl<I: ViewTermId> ExistsChild<I> {
     /// Resident callers retain the original RAII unwind behavior while sharing
     /// the child's entry and completion with the movable worklist.
     fn run_recursive<D: DatasetView<Id = I> + Sync>(
-        self,
-        row: &[Option<SolutionTerm<I>>],
-        schema: &VarSchema,
-        mut evidence: Option<&mut crate::evidence_exec::RowEvidence>,
-        ctx: &mut EvalCtx<'_, D>,
+        self, row: &[Option<SolutionTerm<I>>], schema: &VarSchema,
+        mut evidence: Option<&mut crate::evidence_exec::RowEvidence>, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<bool, EvalError> {
         match self.enter(row, schema, evidence.as_deref_mut(), ctx)? {
             ExistsEntered::Complete(answer) => Ok(answer),
@@ -3078,12 +2936,8 @@ impl<I: ViewTermId> ExistsChild<I> {
 
 impl<I: ViewTermId> ExistsProbeResume<I> {
     fn finish<D: DatasetView<Id = I> + Sync>(
-        self,
-        evaluated: Evaluated<I>,
-        row: &[Option<SolutionTerm<I>>],
-        schema: &VarSchema,
-        evidence: Option<&mut crate::evidence_exec::RowEvidence>,
-        ctx: &mut EvalCtx<'_, D>,
+        self, evaluated: Evaluated<I>, row: &[Option<SolutionTerm<I>>], schema: &VarSchema,
+        evidence: Option<&mut crate::evidence_exec::RowEvidence>, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<bool, EvalError> {
         if let Evaluated::Truncated(truncation) = &evaluated {
             ctx.record_barrier(truncation.tripped());
@@ -3120,8 +2974,7 @@ impl<I: ViewTermId> ExistsProbeResume<I> {
 fn answer_probe_entry<D: DatasetView + Sync>(
     row: &[Option<SolutionTerm<D::Id>>],
     entry: &crate::workspace::SharedWorkspace<crate::eval::ExistsInner<D::Id>>,
-    evidence: Option<&mut crate::evidence_exec::RowEvidence>,
-    ctx: &EvalCtx<'_, D>,
+    evidence: Option<&mut crate::evidence_exec::RowEvidence>, ctx: &EvalCtx<'_, D>,
 ) -> Result<bool, EvalError> {
     if let Some(output) = evidence {
         let (found, record) = crate::binop::probe_evidence(row, entry, ctx)?;
@@ -3144,9 +2997,7 @@ impl<I: ViewTermId> ExistsDefinitionResume<I> {
         reason = "completion owns the child until evidence and memo publication finish"
     )]
     fn finish<D: DatasetView<Id = I> + Sync>(
-        self,
-        inner: Evaluated<I>,
-        evidence: Option<&mut crate::evidence_exec::RowEvidence>,
+        self, inner: Evaluated<I>, evidence: Option<&mut crate::evidence_exec::RowEvidence>,
         ctx: &mut EvalCtx<'_, D>,
     ) -> Result<bool, EvalError> {
         if let Evaluated::Truncated(truncation) = &inner {
@@ -3203,11 +3054,8 @@ impl<I: ViewTermId> ExistsDefinitionResume<I> {
 /// Answer an `EXISTS` for the current row from its preparation: the strategy decision,
 /// the memoized probe and the per-row definition, as [`exists`] documents them.
 fn exists_prepared_decide<D: DatasetView + Sync>(
-    site: PreparedSite,
-    row: &[Option<SolutionTerm<D::Id>>],
-    schema: &VarSchema,
-    ctx: &mut EvalCtx<'_, D>,
-    evidence: Option<&mut crate::evidence_exec::RowEvidence>,
+    site: PreparedSite, row: &[Option<SolutionTerm<D::Id>>], schema: &VarSchema,
+    ctx: &mut EvalCtx<'_, D>, evidence: Option<&mut crate::evidence_exec::RowEvidence>,
 ) -> Result<ExistsDecision<D::Id>, EvalError> {
     let PreparedSite {
         key,
@@ -3446,13 +3294,9 @@ fn exists_prepared_decide<D: DatasetView + Sync>(
     reason = "the EXISTS site and its row scope are independent borrowed inputs"
 )]
 fn exists_positive_seeded<D: DatasetView + Sync>(
-    site: usize,
-    normalized: &GraphPattern,
-    free_vars: &VarSchema,
+    site: usize, normalized: &GraphPattern, free_vars: &VarSchema,
     ledger_source: &crate::workspace::SharedWorkspace<SubstitutionSourceMap>,
-    row: &[Option<SolutionTerm<D::Id>>],
-    schema: &VarSchema,
-    ctx: &mut EvalCtx<'_, D>,
+    row: &[Option<SolutionTerm<D::Id>>], schema: &VarSchema, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<bool>, EvalError> {
     let memo_key = if ctx.options.exists_memo && !ctx.in_substituted_exists {
         Some((
@@ -3550,11 +3394,8 @@ fn exists_positive_seeded<D: DatasetView + Sync>(
 /// Finish the test-only forced probe without changing its original admission
 /// sequence or constructing the site-cache owner used by the normal probe.
 fn finish_deferred_probe<D: DatasetView + Sync>(
-    evaluated: Evaluated<D::Id>,
-    row: &[Option<SolutionTerm<D::Id>>],
-    schema: &VarSchema,
-    evidence: Option<&mut crate::evidence_exec::RowEvidence>,
-    ctx: &EvalCtx<'_, D>,
+    evaluated: Evaluated<D::Id>, row: &[Option<SolutionTerm<D::Id>>], schema: &VarSchema,
+    evidence: Option<&mut crate::evidence_exec::RowEvidence>, ctx: &EvalCtx<'_, D>,
 ) -> Result<bool, EvalError> {
     if let Evaluated::Truncated(truncation) = &evaluated {
         ctx.record_barrier(truncation.tripped());
@@ -3588,10 +3429,8 @@ fn finish_deferred_probe<D: DatasetView + Sync>(
 /// original preparation; merged layers suspend one substituted child; disagreeing
 /// layers prepare the same sequential copy as the eager evaluation.
 fn exists_deferred_decide<D: DatasetView + Sync>(
-    slot: &crate::deferred_exists::DeferredExists,
-    row: &[Option<SolutionTerm<D::Id>>],
-    schema: &VarSchema,
-    ctx: &mut EvalCtx<'_, D>,
+    slot: &crate::deferred_exists::DeferredExists, row: &[Option<SolutionTerm<D::Id>>],
+    schema: &VarSchema, ctx: &mut EvalCtx<'_, D>,
     evidence: Option<&mut crate::evidence_exec::RowEvidence>,
 ) -> Result<ExistsDecision<D::Id>, EvalError> {
     let site = &slot.site;
@@ -3650,10 +3489,8 @@ fn exists_deferred_decide<D: DatasetView + Sync>(
 /// time, in full, and answer the copy as [`exists`] answers any `EXISTS` reached inside a
 /// substituted window.
 fn exists_layered_decide<D: DatasetView + Sync>(
-    slot: &crate::deferred_exists::DeferredExists,
-    row: &[Option<SolutionTerm<D::Id>>],
-    schema: &VarSchema,
-    ctx: &mut EvalCtx<'_, D>,
+    slot: &crate::deferred_exists::DeferredExists, row: &[Option<SolutionTerm<D::Id>>],
+    schema: &VarSchema, ctx: &mut EvalCtx<'_, D>,
     evidence: Option<&mut crate::evidence_exec::RowEvidence>,
 ) -> Result<ExistsDecision<D::Id>, EvalError> {
     let crate::eval::PreparedExists::Pattern { normalized, .. } = slot.site.prepared.as_ref()
@@ -3700,8 +3537,7 @@ fn exists_layered_decide<D: DatasetView + Sync>(
 /// `true` so it can withhold the boolean it would otherwise compute; an untripped
 /// charge reports `false` and the caller proceeds.
 fn charge_exists_evidence<D: DatasetView + Sync>(
-    ctx: &EvalCtx<'_, D>,
-    point: crate::governor::ChargePoint,
+    ctx: &EvalCtx<'_, D>, point: crate::governor::ChargePoint,
 ) -> bool {
     if let Err(tripped) = ctx.charge(point) {
         ctx.record_barrier(tripped);
@@ -3723,9 +3559,7 @@ fn charge_exists_evidence<D: DatasetView + Sync>(
 /// [`SolutionTerm`]'s own doc), so this is `O(shared columns)` `Copy`s, never a
 /// per-row `String`/text allocation (AGENTS.md's hot-path rule).
 fn definition_restriction_key<I: ViewTermId>(
-    row: &[Option<SolutionTerm<I>>],
-    schema: &VarSchema,
-    free_vars: &VarSchema,
+    row: &[Option<SolutionTerm<I>>], schema: &VarSchema, free_vars: &VarSchema,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<RetainedRow<I>, EvalError> {
     let width = schema
@@ -3750,8 +3584,7 @@ pub(crate) type CorrelatedMemory<'a> =
     purrdf_lex::allocation::Memory<'a, crate::workspace::LexicalFrame>;
 
 pub(crate) fn correlated_storage_error(
-    memory: &mut CorrelatedMemory<'_>,
-    error: purrdf_lex::allocation::StorageError,
+    memory: &mut CorrelatedMemory<'_>, error: purrdf_lex::allocation::StorageError,
 ) -> EvalError {
     memory
         .admission_mut()
@@ -3759,8 +3592,7 @@ pub(crate) fn correlated_storage_error(
 }
 
 pub(crate) fn correlated_box<T>(
-    value: T,
-    memory: &mut CorrelatedMemory<'_>,
+    value: T, memory: &mut CorrelatedMemory<'_>,
 ) -> Result<Box<T>, EvalError> {
     memory
         .add_bytes(std::alloc::Layout::new::<T>().size())
@@ -3800,8 +3632,7 @@ impl CorrelatedPattern {
     }
 
     pub(crate) fn copy(
-        pattern: &GraphPattern,
-        workspace: &crate::WorkspaceCapability,
+        pattern: &GraphPattern, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         Self::build(workspace, |memory| {
             let copy = pattern
@@ -3938,8 +3769,7 @@ impl SubstitutionRow {
 
     #[cfg(test)]
     fn resident(
-        expr: Vec<(Variable, Expression)>,
-        term: Vec<(Variable, purrdf_sparql_algebra::GroundTerm)>,
+        expr: Vec<(Variable, Expression)>, term: Vec<(Variable, purrdf_sparql_algebra::GroundTerm)>,
     ) -> Self {
         Self {
             contents: Some(
@@ -3957,9 +3787,7 @@ impl SubstitutionRow {
     }
 
     pub(crate) fn filtered(
-        &self,
-        workspace: &crate::WorkspaceCapability,
-        keep: impl Fn(&Variable) -> bool,
+        &self, workspace: &crate::WorkspaceCapability, keep: impl Fn(&Variable) -> bool,
     ) -> Result<Self, EvalError> {
         Self::build(workspace, |expr, term, memory| {
             for (variable, value) in self.expr.iter().filter(|(v, _)| keep(v)) {
@@ -3983,17 +3811,14 @@ impl SubstitutionRow {
     }
 
     fn narrow_to(
-        &self,
-        variables: purrdf_sparql_algebra::ProjectionNames<'_>,
+        &self, variables: purrdf_sparql_algebra::ProjectionNames<'_>,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         self.filtered(workspace, |v| variables.contains(v))
     }
 
     pub(crate) fn application_inputs(
-        &self,
-        inputs: &[(Variable, Variable)],
-        marker: Option<(&Variable, bool)>,
+        &self, inputs: &[(Variable, Variable)], marker: Option<(&Variable, bool)>,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         Self::build(workspace, |expr, term, memory| {
@@ -4039,8 +3864,7 @@ impl SubstitutionRow {
 }
 
 pub(crate) fn correlated_boolean(
-    value: bool,
-    workspace: &crate::WorkspaceCapability,
+    value: bool, workspace: &crate::WorkspaceCapability,
 ) -> Result<purrdf_sparql_algebra::Literal, EvalError> {
     let lexical = workspace.authored_text(if value { "true" } else { "false" })?;
     let datatype =
@@ -4139,8 +3963,7 @@ pub(crate) fn correlated_boolean(
 /// rewrite destroys a refused partial body before releasing its original grant.
 #[cfg(test)]
 pub(crate) fn substitute_pattern(
-    pattern: &GraphPattern,
-    row: &SubstitutionRow,
+    pattern: &GraphPattern, row: &SubstitutionRow,
 ) -> Result<Box<GraphPattern>, EvalError> {
     substitute_pattern_admitted(pattern, row, &crate::WorkspaceCapability::resident())
         .map(CorrelatedPattern::into_resident)
@@ -4192,8 +4015,7 @@ impl<'a> Deferral<'a> {
 
     /// The placeholders this walk left, for the window that evaluates its copy.
     pub(crate) fn into_placeholders(
-        self,
-        workspace: &crate::WorkspaceCapability,
+        self, workspace: &crate::WorkspaceCapability,
     ) -> Result<
         Option<crate::workspace::SharedWorkspace<crate::deferred_exists::DeferredMap>>,
         EvalError,
@@ -4208,8 +4030,7 @@ impl<'a> Deferral<'a> {
     /// carries, when this walk defers it: the enclosing window's own entry for a
     /// placeholder, or the prepared site of a body.
     fn deferred_site(
-        &self,
-        body: &GraphPattern,
+        &self, body: &GraphPattern,
     ) -> Option<(
         &crate::workspace::SharedWorkspace<crate::deferred_exists::ExistsSite>,
         Option<&crate::deferred_exists::SubstitutionEnv>,
@@ -4232,10 +4053,7 @@ impl<'a> Deferral<'a> {
     /// Leave `body` as a placeholder owed `row`, returning the placeholder — or `None` when
     /// this walk substitutes `body` in full.
     fn defer(
-        &mut self,
-        body: &GraphPattern,
-        row: &SubstitutionRow,
-        memory: &mut CorrelatedMemory<'_>,
+        &mut self, body: &GraphPattern, row: &SubstitutionRow, memory: &mut CorrelatedMemory<'_>,
     ) -> Result<Option<Box<GraphPattern>>, EvalError> {
         let Some((site, carried)) = self.deferred_site(body) else {
             return Ok(None);
@@ -4264,10 +4082,7 @@ impl<'a> Deferral<'a> {
     /// `crate::deferred_exists` does not defer. A placeholder of the window this walk
     /// copies from carries its substitution on, with `row` after it.
     fn defer_lateral(
-        &mut self,
-        right: &GraphPattern,
-        row: &SubstitutionRow,
-        memory: &mut CorrelatedMemory<'_>,
+        &mut self, right: &GraphPattern, row: &SubstitutionRow, memory: &mut CorrelatedMemory<'_>,
     ) -> Result<Option<Box<GraphPattern>>, EvalError> {
         let Some(sites) = self.sites else {
             return Ok(None);
@@ -4317,10 +4132,7 @@ impl<'a> Deferral<'a> {
     /// to last: a node's parts are pushed reversed, so they come off the list in the
     /// order the shallow visitor yields them.
     fn expr_vars(
-        &self,
-        expr: &Expression,
-        out: &mut FreeVars,
-        memory: &mut CorrelatedMemory<'_>,
+        &self, expr: &Expression, out: &mut FreeVars, memory: &mut CorrelatedMemory<'_>,
     ) -> Result<(), EvalError> {
         use crate::governor::soundness::{ExpressionPart, visit_expression_parts};
         enum Node<'a> {
@@ -4378,10 +4190,7 @@ impl<'a> Deferral<'a> {
     /// [`Self::expr_vars`] for an `EXISTS` body: the site's variables by reference when
     /// this walk defers the body, and otherwise every variable the body mentions.
     fn expr_vars_of_body(
-        &self,
-        body: &GraphPattern,
-        out: &mut FreeVars,
-        workspace: &crate::WorkspaceCapability,
+        &self, body: &GraphPattern, out: &mut FreeVars, workspace: &crate::WorkspaceCapability,
     ) -> Result<(), EvalError> {
         match self.deferred_site(body) {
             Some((site, _)) => out.sites.push(site.clone())?,
@@ -4529,16 +4338,12 @@ struct SubstitutionTracking<'a> {
 }
 
 pub(crate) fn substitute_pattern_admitted(
-    pattern: &GraphPattern,
-    row: &SubstitutionRow,
-    workspace: &crate::WorkspaceCapability,
+    pattern: &GraphPattern, row: &SubstitutionRow, workspace: &crate::WorkspaceCapability,
 ) -> Result<CorrelatedPattern, EvalError> {
     substitute_pattern_deferring_admitted::<false>(pattern, row, &mut Deferral::eager(), workspace)
 }
 pub(crate) fn substitute_pattern_deferring_admitted<const PRESERVE: bool>(
-    pattern: &GraphPattern,
-    row: &SubstitutionRow,
-    defer: &mut Deferral<'_>,
+    pattern: &GraphPattern, row: &SubstitutionRow, defer: &mut Deferral<'_>,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<CorrelatedPattern, EvalError> {
     CorrelatedPattern::build(workspace, |memory| {
@@ -4547,11 +4352,8 @@ pub(crate) fn substitute_pattern_deferring_admitted<const PRESERVE: bool>(
     })
 }
 pub(crate) fn substitute_pattern_tracked_admitted<const PRESERVE: bool>(
-    pattern: &GraphPattern,
-    row: &SubstitutionRow,
-    tracked: &mut SubstitutionSourceMap,
-    enclosing: Option<&SubstitutionSourceMap>,
-    defer: &mut Deferral<'_>,
+    pattern: &GraphPattern, row: &SubstitutionRow, tracked: &mut SubstitutionSourceMap,
+    enclosing: Option<&SubstitutionSourceMap>, defer: &mut Deferral<'_>,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<CorrelatedPattern, EvalError> {
     CorrelatedPattern::build(workspace, |memory| {
@@ -4583,11 +4385,8 @@ pub(crate) fn substitute_pattern_tracked_admitted<const PRESERVE: bool>(
               32-bit targets such as wasm32, where the same box is still the field's type"
 )]
 fn substitute_pattern_impl<const PRESERVE: bool>(
-    pattern: &GraphPattern,
-    row: &SubstitutionRow,
-    map: &mut Option<&mut SubstitutionTracking<'_>>,
-    defer: &mut Deferral<'_>,
-    memory: &mut CorrelatedMemory<'_>,
+    pattern: &GraphPattern, row: &SubstitutionRow, map: &mut Option<&mut SubstitutionTracking<'_>>,
+    defer: &mut Deferral<'_>, memory: &mut CorrelatedMemory<'_>,
 ) -> Result<Box<GraphPattern>, EvalError> {
     crate::stack::check("correlated substitution")?;
     #[cfg(test)]
@@ -5127,9 +4926,7 @@ fn substitute_pattern_impl<const PRESERVE: bool>(
 /// so every entry is keyed by an address the node actually ends up at rather than one it
 /// only transiently held on the stack before being moved into its `Box`.
 fn boxed_and_mapped(
-    built: GraphPattern,
-    source: &GraphPattern,
-    map: &mut Option<&mut SubstitutionTracking<'_>>,
+    built: GraphPattern, source: &GraphPattern, map: &mut Option<&mut SubstitutionTracking<'_>>,
     memory: &mut CorrelatedMemory<'_>,
 ) -> Result<Box<GraphPattern>, EvalError> {
     boxed_and_mapped_as(built, source, map, true, memory)
@@ -5139,9 +4936,7 @@ fn boxed_and_mapped(
 /// a wrapper joins in — whose own committed rows are never `source`'s true output (see
 /// [`SubstitutionSource`]'s doc) and must therefore not count toward it.
 fn boxed_and_mapped_scaffolding(
-    built: GraphPattern,
-    source: &GraphPattern,
-    map: &mut Option<&mut SubstitutionTracking<'_>>,
+    built: GraphPattern, source: &GraphPattern, map: &mut Option<&mut SubstitutionTracking<'_>>,
     memory: &mut CorrelatedMemory<'_>,
 ) -> Result<Box<GraphPattern>, EvalError> {
     boxed_and_mapped_as(built, source, map, false, memory)
@@ -5165,11 +4960,8 @@ fn boxed_and_mapped_scaffolding(
 ///    this window mints for the same real address, only the first survives as the counting
 ///    one. [`demote_to_scaffolding`] releases a claim it turns out not to need.
 fn boxed_and_mapped_as(
-    built: GraphPattern,
-    source: &GraphPattern,
-    map: &mut Option<&mut SubstitutionTracking<'_>>,
-    counts_rows: bool,
-    memory: &mut CorrelatedMemory<'_>,
+    built: GraphPattern, source: &GraphPattern, map: &mut Option<&mut SubstitutionTracking<'_>>,
+    counts_rows: bool, memory: &mut CorrelatedMemory<'_>,
 ) -> Result<Box<GraphPattern>, EvalError> {
     let boxed = correlated_box(built, memory)?;
     if let Some(tracking) = map.as_deref_mut() {
@@ -5199,9 +4991,7 @@ fn boxed_and_mapped_as(
 /// arm unboxed into a `UNION`'s arm vector — so the entry names the node where the copy
 /// finally holds it. A no-op when `map` is disengaged or the node was never mapped.
 fn remap_moved(
-    map: &mut Option<&mut SubstitutionTracking<'_>>,
-    before: usize,
-    after: usize,
+    map: &mut Option<&mut SubstitutionTracking<'_>>, before: usize, after: usize,
     memory: &mut CorrelatedMemory<'_>,
 ) -> Result<(), EvalError> {
     if let Some(tracking) = map.as_deref_mut()
@@ -5281,12 +5071,9 @@ fn demote_to_scaffolding(map: &mut Option<&mut SubstitutionTracking<'_>>, addres
               32-bit targets such as wasm32, where the same box is still the field's type"
 )]
 fn join_leaf_with_values(
-    leaf: Box<GraphPattern>,
-    leaf_vars: &VarSchema,
-    term_row: &[(Variable, purrdf_sparql_algebra::GroundTerm)],
-    source: &GraphPattern,
-    map: &mut Option<&mut SubstitutionTracking<'_>>,
-    memory: &mut CorrelatedMemory<'_>,
+    leaf: Box<GraphPattern>, leaf_vars: &VarSchema,
+    term_row: &[(Variable, purrdf_sparql_algebra::GroundTerm)], source: &GraphPattern,
+    map: &mut Option<&mut SubstitutionTracking<'_>>, memory: &mut CorrelatedMemory<'_>,
 ) -> Result<Box<GraphPattern>, EvalError> {
     join_selected_values(
         leaf,
@@ -5343,12 +5130,8 @@ fn join_leaf_with_values(
               32-bit targets such as wasm32, where the same box is still the field's type"
 )]
 fn wrap_with_expr_term_only_values(
-    node: Box<GraphPattern>,
-    free: &FreeVars,
-    row: &SubstitutionRow,
-    source: &GraphPattern,
-    map: &mut Option<&mut SubstitutionTracking<'_>>,
-    memory: &mut CorrelatedMemory<'_>,
+    node: Box<GraphPattern>, free: &FreeVars, row: &SubstitutionRow, source: &GraphPattern,
+    map: &mut Option<&mut SubstitutionTracking<'_>>, memory: &mut CorrelatedMemory<'_>,
 ) -> Result<Box<GraphPattern>, EvalError> {
     join_selected_values(
         node,
@@ -5385,10 +5168,8 @@ fn wrap_with_expr_term_only_values(
               targets such as wasm32, where the same box is still the field's type"
 )]
 fn bind_row_into_call(
-    call: &purrdf_sparql_algebra::PropertyFunctionCall,
-    row: &SubstitutionRow,
-    source: &GraphPattern,
-    map: &mut Option<&mut SubstitutionTracking<'_>>,
+    call: &purrdf_sparql_algebra::PropertyFunctionCall, row: &SubstitutionRow,
+    source: &GraphPattern, map: &mut Option<&mut SubstitutionTracking<'_>>,
     memory: &mut CorrelatedMemory<'_>,
 ) -> Result<Box<GraphPattern>, EvalError> {
     let mut bound = call
@@ -5426,9 +5207,7 @@ fn bind_row_into_call(
               targets such as wasm32, where the same box is still the field's type"
 )]
 fn plant_mapped_driver(
-    node: Box<GraphPattern>,
-    seed: GraphPattern,
-    source: &GraphPattern,
+    node: Box<GraphPattern>, seed: GraphPattern, source: &GraphPattern,
     map: &mut Option<&mut SubstitutionTracking<'_>>,
     assemble: impl FnOnce(Box<GraphPattern>, Box<GraphPattern>) -> GraphPattern,
     memory: &mut CorrelatedMemory<'_>,
@@ -5457,11 +5236,8 @@ fn plant_mapped_driver(
 /// THAT `v` is bound, which `row.term` (not `row.expr`) answers for every
 /// term kind.
 fn substitute_expr<const PRESERVE: bool>(
-    expr: &Expression,
-    row: &SubstitutionRow,
-    map: &mut Option<&mut SubstitutionTracking<'_>>,
-    defer: &mut Deferral<'_>,
-    memory: &mut CorrelatedMemory<'_>,
+    expr: &Expression, row: &SubstitutionRow, map: &mut Option<&mut SubstitutionTracking<'_>>,
+    defer: &mut Deferral<'_>, memory: &mut CorrelatedMemory<'_>,
 ) -> Result<Expression, EvalError> {
     crate::stack::check("correlated substitution")?;
     #[cfg(test)]
@@ -5596,9 +5372,7 @@ fn substitute_expr<const PRESERVE: bool>(
 /// text allocation, because `NamedNode`/`Literal` carry their text behind
 /// `Arc<str>`.
 pub(crate) fn outer_bindings_for_substitution<D: DatasetView + Sync>(
-    outer_row: &[Option<SolutionTerm<D::Id>>],
-    outer_schema: &VarSchema,
-    ctx: &EvalCtx<'_, D>,
+    outer_row: &[Option<SolutionTerm<D::Id>>], outer_schema: &VarSchema, ctx: &EvalCtx<'_, D>,
 ) -> Result<SubstitutionRow, EvalError> {
     let workspace = ctx.growth.clone();
     SubstitutionRow::build(&workspace, |expr, term, memory| {
@@ -5676,9 +5450,7 @@ fn ground_term_from_term_value(value: &TermValue) -> Option<purrdf_sparql_algebr
 /// `replace_pattern` is `REPLACE`'s pattern compiled at link time, when its pattern and
 /// flags are constants; any other call ignores it.
 pub(crate) fn apply_function<D: DatasetView + Sync>(
-    function: &Function,
-    vals: &[Option<TermValue>],
-    ctx: &mut EvalCtx<'_, D>,
+    function: &Function, vals: &[Option<TermValue>], ctx: &mut EvalCtx<'_, D>,
     replace_pattern: Option<&crate::xpath_regex::LinkedPattern>,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let temporal = if matches!(
@@ -6226,9 +5998,7 @@ pub(crate) fn apply_function<D: DatasetView + Sync>(
 /// only type the evaluator accepts — so there is no unbound case to handle. Every other
 /// kind is [`apply_custom_host`]'s.
 pub(crate) fn apply_custom<D: DatasetView + Sync>(
-    iri: &str,
-    vals: &[Option<TermValue>],
-    ctx: &mut EvalCtx<'_, D>,
+    iri: &str, vals: &[Option<TermValue>], ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     if let Some((func, body)) = ctx.user_functions.resolve(iri) {
         let result = crate::user_fn::eval_user_function(func, body, iri, vals, ctx)?;
@@ -6251,9 +6021,7 @@ pub(crate) fn apply_custom<D: DatasetView + Sync>(
 /// lexical form that is not valid for the target type is a SPARQL expression error
 /// (`Ok(None)`).
 pub(crate) fn apply_custom_host<D: DatasetView + Sync>(
-    iri: &str,
-    vals: &[Option<TermValue>],
-    ctx: &mut EvalCtx<'_, D>,
+    iri: &str, vals: &[Option<TermValue>], ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     // A caller-injected native (host-Rust closure) function, resolved from the same
     // registry's second table. Checked after the SPARQL-bodied path (so a same-registry
@@ -6316,9 +6084,7 @@ pub(crate) fn apply_custom_host<D: DatasetView + Sync>(
 /// whitespace collapse. Other source/target pairs admitted by the primitive table
 /// use the target's lexical parser; an IRI casts to `xsd:string` directly.
 fn eval_xsd_cast<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    target: XsdDatatype,
-    source: Option<&TermValue>,
+    ctx: &mut EvalCtx<'_, D>, target: XsdDatatype, source: Option<&TermValue>,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let Some(source) = source else {
         return Ok(None);
@@ -6578,9 +6344,7 @@ enum ValueCast<I> {
 /// * A value casts to its own datatype unchanged; every other pair is refused.
 #[inline(never)]
 fn cast_duration_or_binary<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    source: &TermValue,
-    target: XsdDatatype,
+    ctx: &mut EvalCtx<'_, D>, source: &TermValue, target: XsdDatatype,
 ) -> Result<ValueCast<D::Id>, EvalError> {
     use XsdDatatype as T;
     let TermValue::Literal {
@@ -6816,8 +6580,7 @@ fn cast_numeric_value(source: &XsdValue, target: XsdDatatype) -> Option<XsdValue
 /// `None`. Missing `accordingTo`/`sharpens` interning simply yields no
 /// matches (→ false), which is correct.
 fn eval_held_in<D: DatasetView + Sync>(
-    vals: &[Option<TermValue>],
-    ctx: &mut EvalCtx<'_, D>,
+    vals: &[Option<TermValue>], ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     // The predicate table is mandatory configuration — fail loudly BEFORE looking at
     // the arguments, so a misconfigured deployment cannot get a quietly-wrong answer.
@@ -6954,9 +6717,7 @@ impl std::fmt::Debug for OwnedStringArg {
 
 impl OwnedStringArg {
     fn read<D: DatasetView + Sync>(
-        ctx: &EvalCtx<'_, D>,
-        term: SolutionTerm<D::Id>,
-        projection: StringProjection,
+        ctx: &EvalCtx<'_, D>, term: SolutionTerm<D::Id>, projection: StringProjection,
     ) -> Result<Option<Self>, EvalError> {
         // Preserve the original fast paths' type refusal BEFORE any payload copy
         // or nested traversal. STR(blank/triple) and LANG(nonliteral) read no
@@ -7026,8 +6787,7 @@ fn is_string_datatype(datatype: &str) -> bool {
 
 /// Materialize a transient term through the one native fallible fold/clone home.
 pub(crate) fn owned_value_of<D: DatasetView + Sync>(
-    ctx: &EvalCtx<'_, D>,
-    term: SolutionTerm<D::Id>,
+    ctx: &EvalCtx<'_, D>, term: SolutionTerm<D::Id>,
 ) -> Result<crate::WorkspaceTerm, EvalError> {
     ctx.scratch
         .try_owned_value_of(ctx.dataset, term, &ctx.growth, |error| {
@@ -7037,22 +6797,19 @@ pub(crate) fn owned_value_of<D: DatasetView + Sync>(
 
 #[inline(never)]
 pub(crate) fn string_arg_of_term<D: DatasetView + Sync>(
-    ctx: &EvalCtx<'_, D>,
-    term: SolutionTerm<D::Id>,
+    ctx: &EvalCtx<'_, D>, term: SolutionTerm<D::Id>,
 ) -> Result<Option<OwnedStringArg>, EvalError> {
     OwnedStringArg::read(ctx, term, StringProjection::String)
 }
 
 pub(crate) fn str_lexical_term<D: DatasetView + Sync>(
-    ctx: &EvalCtx<'_, D>,
-    term: SolutionTerm<D::Id>,
+    ctx: &EvalCtx<'_, D>, term: SolutionTerm<D::Id>,
 ) -> Result<Option<OwnedStringArg>, EvalError> {
     OwnedStringArg::read(ctx, term, StringProjection::Str)
 }
 
 pub(crate) fn lang_lexical_term<D: DatasetView + Sync>(
-    ctx: &EvalCtx<'_, D>,
-    term: SolutionTerm<D::Id>,
+    ctx: &EvalCtx<'_, D>, term: SolutionTerm<D::Id>,
 ) -> Result<Option<OwnedStringArg>, EvalError> {
     OwnedStringArg::read(ctx, term, StringProjection::Lang)
 }
@@ -7077,8 +6834,7 @@ fn plain_string_arg_ref(vals: &[Option<TermValue>], i: usize) -> Option<&str> {
 
 /// Borrow a string lexical form and both RDF language facets.
 fn string_arg3_ref(
-    vals: &[Option<TermValue>],
-    i: usize,
+    vals: &[Option<TermValue>], i: usize,
 ) -> Option<(&str, Option<&str>, Option<RdfTextDirection>)> {
     match arg(vals, i)? {
         TermValue::Literal {
@@ -7100,9 +6856,7 @@ fn string_arg3_ref(
 /// capacities have been admitted. Duplicate arena values release that copy's
 /// temporary admission immediately.
 fn copy_string_result<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    lexical: &str,
-    language: Option<&str>,
+    ctx: &mut EvalCtx<'_, D>, lexical: &str, language: Option<&str>,
     direction: Option<RdfTextDirection>,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let direction = direction.filter(|_| language.is_some());
@@ -7132,9 +6886,7 @@ fn copy_string_result<D: DatasetView + Sync>(
 /// Apply a pure string transform to a single string argument, preserving its
 /// language tag and base direction.
 fn map_string<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    vals: &[Option<TermValue>],
-    uppercase: bool,
+    ctx: &mut EvalCtx<'_, D>, vals: &[Option<TermValue>], uppercase: bool,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let Some((s, language, direction)) = string_arg3_ref(vals, 0) else {
         return Ok(None);
@@ -7202,8 +6954,7 @@ fn map_string<D: DatasetView + Sync>(
 /// **and** base direction iff *every* argument shares the same `(lang, dir)` pair;
 /// if either facet differs across arguments the result is a plain `xsd:string`.
 fn eval_concat<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    vals: &[Option<TermValue>],
+    ctx: &mut EvalCtx<'_, D>, vals: &[Option<TermValue>],
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let mut length = 0usize;
     let mut common: Option<(Option<&str>, Option<RdfTextDirection>)> = None;
@@ -7286,8 +7037,7 @@ fn eval_concat<D: DatasetView + Sync>(
 /// length; a non-integer start or length is an error. The bounds are computed without
 /// overflow over the integers' whole range.
 fn eval_substr<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    vals: &[Option<TermValue>],
+    ctx: &mut EvalCtx<'_, D>, vals: &[Option<TermValue>],
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let Some((s, lang, dir)) = string_arg3_ref(vals, 0) else {
         return Ok(None);
@@ -7348,9 +7098,7 @@ fn substring(s: &str, start: i128, end: Option<i128>) -> &str {
 /// `CONTAINS`, `STRSTARTS`, `STRENDS`, `STRBEFORE` and `STRAFTER` are an error
 /// (unbound) over an incompatible pair.
 pub(crate) fn args_compatible(
-    arg1_lang: Option<&str>,
-    arg1_dir: Option<RdfTextDirection>,
-    arg2_lang: Option<&str>,
+    arg1_lang: Option<&str>, arg1_dir: Option<RdfTextDirection>, arg2_lang: Option<&str>,
     arg2_dir: Option<RdfTextDirection>,
 ) -> bool {
     match (arg1_lang, arg2_lang) {
@@ -7362,9 +7110,7 @@ pub(crate) fn args_compatible(
 
 /// `STRBEFORE`/`STRAFTER(haystack, needle)`.
 fn eval_str_before_after<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    vals: &[Option<TermValue>],
-    before: bool,
+    ctx: &mut EvalCtx<'_, D>, vals: &[Option<TermValue>], before: bool,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let (Some((h, lang, dir)), Some((n, needle_lang, needle_dir))) =
         (string_arg3_ref(vals, 0), string_arg3_ref(vals, 1))
@@ -7403,8 +7149,7 @@ fn eval_str_before_after<D: DatasetView + Sync>(
 /// `linked` is the pattern the call's constant pattern and flags compiled to at link
 /// time; without one the pattern is compiled (or found) in the per-query cache.
 fn eval_replace<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    vals: &[Option<TermValue>],
+    ctx: &mut EvalCtx<'_, D>, vals: &[Option<TermValue>],
     linked: Option<&crate::xpath_regex::LinkedPattern>,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let Some((s, lang, dir)) = string_arg3_ref(vals, 0) else {
@@ -7443,8 +7188,7 @@ fn eval_replace<D: DatasetView + Sync>(
 /// `xpath_regex::resolve`; this helper never participates in a bounded query.
 #[cfg(test)]
 pub(crate) fn build_regex(
-    pattern: &str,
-    flags: &str,
+    pattern: &str, flags: &str,
 ) -> Option<purrdf_core::xsd_regex::CompiledPattern> {
     purrdf_core::xsd_regex::compile(pattern, flags).ok()
 }
@@ -7483,10 +7227,7 @@ fn well_formed_langtag(lang: &str) -> bool {
 }
 
 fn language_term<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    lexical: &str,
-    language: &str,
-    direction: Option<RdfTextDirection>,
+    ctx: &mut EvalCtx<'_, D>, lexical: &str, language: &str, direction: Option<RdfTextDirection>,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let mut frame = crate::workspace::LexicalFrame::new(&ctx.growth);
     let mut memory = purrdf_lex::allocation::Memory::new(&mut frame);
@@ -7536,8 +7277,7 @@ fn language_term<D: DatasetView + Sync>(
 /// non-`xsd:string` lexical argument and an empty tag both `return Ok(None)`
 /// here, and `build_regex`'s contract above spells the same reasoning out.
 fn eval_str_lang<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    vals: &[Option<TermValue>],
+    ctx: &mut EvalCtx<'_, D>, vals: &[Option<TermValue>],
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     // §17.4.2.5: the lexical-form argument must be a simple/`xsd:string` literal
     // — one that ALREADY carries a language tag (or RDF 1.2 base direction) is a
@@ -7565,8 +7305,7 @@ fn eval_str_lang<D: DatasetView + Sync>(
 /// does not make a non-tag into a tag: `"en us"--ltr` is as unreadable as
 /// `"en us"` on its own.
 fn eval_str_lang_dir<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    vals: &[Option<TermValue>],
+    ctx: &mut EvalCtx<'_, D>, vals: &[Option<TermValue>],
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     // Like `STRLANG`, the lexical form must carry no tag of its own: re-tagging an
     // already tagged string would silently discard its language and direction.
@@ -7628,8 +7367,7 @@ fn eval_str_lang_dir<D: DatasetView + Sync>(
 /// and never datatype lexical validity (`STRDT("x", xsd:integer)` is an
 /// ill-typed literal, which RDF and SPARQL both permit as a term).
 fn eval_str_dt<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    vals: &[Option<TermValue>],
+    ctx: &mut EvalCtx<'_, D>, vals: &[Option<TermValue>],
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     // §17.4.2.4: the lexical-form argument must be a simple/`xsd:string` literal
     // — a language-tagged (or RDF 1.2 direction-tagged) argument is a type error.
@@ -7648,8 +7386,7 @@ fn eval_str_dt<D: DatasetView + Sync>(
 
 /// `TRIPLE(s, p, o)` — RDF 1.2 triple-term constructor.
 fn eval_triple_ctor<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    vals: &[Option<TermValue>],
+    ctx: &mut EvalCtx<'_, D>, vals: &[Option<TermValue>],
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let subject = arg(vals, 0)
         .map(|value| ctx.growth.clone_term(value))
@@ -7674,9 +7411,7 @@ fn eval_triple_ctor<D: DatasetView + Sync>(
 /// literal predicate — all of which yield an unbound result.
 #[cfg(test)]
 pub(crate) fn triple_value(
-    s: Option<TermValue>,
-    p: Option<TermValue>,
-    o: Option<TermValue>,
+    s: Option<TermValue>, p: Option<TermValue>, o: Option<TermValue>,
 ) -> Option<TermValue> {
     let (Some(s), Some(p), Some(o)) = (s, p, o) else {
         return None;
@@ -7697,10 +7432,8 @@ pub(crate) fn triple_value(
 /// payload grant covers the exact moved strings/child boxes and the three new
 /// native boxes while the original operand grants still cover those operands.
 pub(crate) fn triple_value_admitted(
-    s: Option<crate::WorkspaceTerm>,
-    p: Option<crate::WorkspaceTerm>,
-    o: Option<crate::WorkspaceTerm>,
-    workspace: &crate::WorkspaceCapability,
+    s: Option<crate::WorkspaceTerm>, p: Option<crate::WorkspaceTerm>,
+    o: Option<crate::WorkspaceTerm>, workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
     let (Some(s), Some(p), Some(o)) = (s, p, o) else {
         return Ok(None);
@@ -7715,8 +7448,7 @@ pub(crate) fn triple_value_admitted(
 
 /// Extract a component of a triple term (`SUBJECT`/`PREDICATE`/`OBJECT`).
 fn triple_part<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    vals: &[Option<TermValue>],
+    ctx: &mut EvalCtx<'_, D>, vals: &[Option<TermValue>],
     pick: impl for<'a> Fn(&'a TermValue, &'a TermValue, &'a TermValue) -> &'a TermValue,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     match arg(vals, 0) {
@@ -7732,8 +7464,7 @@ fn triple_part<D: DatasetView + Sync>(
 /// typed-literal form of a computed result ([`xsd_workspace_value`]). The datatype IRI
 /// comes from `v.datatype().iri()`.
 pub(crate) fn xsd_to_term<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    v: &XsdValue,
+    ctx: &mut EvalCtx<'_, D>, v: &XsdValue,
 ) -> Result<SolutionTerm<D::Id>, EvalError> {
     let value = xsd_workspace_value(v, &ctx.growth, v.datatype().iri())?;
     ctx.intern_workspace_term(value)?
@@ -7743,8 +7474,7 @@ pub(crate) fn xsd_to_term<D: DatasetView + Sync>(
 /// [`xsd_to_term`] for the value a cast or constructor converted: its XSD 1.1
 /// canonical form, never the form of a computed result.
 fn xsd_cast_to_term<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    v: &XsdValue,
+    ctx: &mut EvalCtx<'_, D>, v: &XsdValue,
 ) -> Result<SolutionTerm<D::Id>, EvalError> {
     let value = render_xsd_workspace_value(v, &ctx.growth, v.datatype().iri(), false)?;
     ctx.intern_workspace_term(value)?
@@ -7757,19 +7487,14 @@ fn xsd_cast_to_term<D: DatasetView + Sync>(
 /// processor, and the SPARQL Query examples spell them so. Borrowed native
 /// inputs and render groups remain owned until the final literal is admitted.
 pub(crate) fn xsd_workspace_value(
-    value: &XsdValue,
-    workspace: &crate::WorkspaceCapability,
-    datatype: &str,
+    value: &XsdValue, workspace: &crate::WorkspaceCapability, datatype: &str,
 ) -> Result<crate::WorkspaceTerm, EvalError> {
     render_xsd_workspace_value(value, workspace, datatype, true)
 }
 
 /// [`xsd_workspace_value`], with a decimal's point required only when `computed`.
 fn render_xsd_workspace_value(
-    value: &XsdValue,
-    workspace: &crate::WorkspaceCapability,
-    datatype: &str,
-    computed: bool,
+    value: &XsdValue, workspace: &crate::WorkspaceCapability, datatype: &str, computed: bool,
 ) -> Result<crate::WorkspaceTerm, EvalError> {
     let mut frame = crate::native_numeric::NumericFrame::new(workspace);
     let prepared = if computed {
@@ -7804,9 +7529,7 @@ fn render_xsd_workspace_value(
 }
 
 fn borrowed_xsd_text_to_term<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    text: &impl core::fmt::Display,
-    datatype: &str,
+    ctx: &mut EvalCtx<'_, D>, text: &impl core::fmt::Display, datatype: &str,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let value = ctx.growth.literal(text, datatype)?;
     ctx.intern_workspace_term(value)
@@ -7814,9 +7537,7 @@ fn borrowed_xsd_text_to_term<D: DatasetView + Sync>(
 
 /// Final lexical output consumes its original producer grant on interning.
 fn numeric_text_to_term<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    text: crate::native_numeric::NumericText,
-    datatype: &str,
+    ctx: &mut EvalCtx<'_, D>, text: crate::native_numeric::NumericText, datatype: &str,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let value = numeric_text_value(text, datatype, &ctx.growth)?;
     ctx.intern_workspace_term(value)
@@ -7825,8 +7546,7 @@ fn numeric_text_to_term<D: DatasetView + Sync>(
 /// The exact writer owns its admitted groups; destination sizing precedes
 /// allocation, and the returned immutable literal keeps its final payload grant.
 fn numeric_text_value(
-    text: crate::native_numeric::NumericText,
-    datatype: &str,
+    text: crate::native_numeric::NumericText, datatype: &str,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<crate::WorkspaceTerm, EvalError> {
     std::alloc::Layout::array::<u8>(text.len()).map_err(|_| EvalError::WorkspaceBoundOverflow)?;
@@ -7856,8 +7576,7 @@ fn numeric_text_value(
 }
 
 fn xpath_value_to_term<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    value: &XsdValue,
+    ctx: &mut EvalCtx<'_, D>, value: &XsdValue,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let capability = ctx.growth.clone();
     let mut frame = crate::native_numeric::NumericFrame::new(&capability);
@@ -7900,9 +7619,7 @@ pub(crate) const fn kleene_and(a: Option<bool>, b: Option<bool>) -> Option<bool>
 /// `None` — SPARQL's expression error, NOT a hard error — for an operand with no
 /// XSD value and for overflow, division by zero or a type mismatch.
 pub(crate) fn arithmetic_step<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    op: ArithmeticOperator,
-    ta: SolutionTerm<D::Id>,
+    ctx: &mut EvalCtx<'_, D>, op: ArithmeticOperator, ta: SolutionTerm<D::Id>,
     tb: SolutionTerm<D::Id>,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let (Some(xa), Some(xb)) = (xsd_of_term(ctx, ta)?, xsd_of_term(ctx, tb)?) else {
@@ -7948,8 +7665,7 @@ pub(crate) fn arithmetic_step<D: DatasetView + Sync>(
 /// operands) is admitted without touching the governor.
 #[inline]
 pub(crate) fn numeric_step_admitted<D: DatasetView + Sync>(
-    ctx: &EvalCtx<'_, D>,
-    cost: purrdf_xsd::exact::Cost,
+    ctx: &EvalCtx<'_, D>, cost: purrdf_xsd::exact::Cost,
 ) -> bool {
     cost == purrdf_xsd::exact::Cost::ZERO || charge_numeric_step(ctx, cost)
 }
@@ -7960,8 +7676,7 @@ pub(crate) fn numeric_step_admitted<D: DatasetView + Sync>(
 #[cold]
 #[inline(never)]
 fn charge_numeric_step<D: DatasetView + Sync>(
-    ctx: &EvalCtx<'_, D>,
-    cost: purrdf_xsd::exact::Cost,
+    ctx: &EvalCtx<'_, D>, cost: purrdf_xsd::exact::Cost,
 ) -> bool {
     match ctx.charge_exact_numeric(cost) {
         Ok(()) => true,
@@ -7977,9 +7692,7 @@ fn charge_numeric_step<D: DatasetView + Sync>(
 /// short coefficient and vast scale becomes is paid for before it is written.
 /// `None` when the governor refused it.
 pub(crate) fn governed_xsd_to_term<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    value: &XsdValue,
-    datatype: &str,
+    ctx: &mut EvalCtx<'_, D>, value: &XsdValue, datatype: &str,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     governed_term(ctx, value, datatype, true)
 }
@@ -7987,18 +7700,13 @@ pub(crate) fn governed_xsd_to_term<D: DatasetView + Sync>(
 /// [`governed_xsd_to_term`] for a value a cast or constructor converted, or an
 /// operator passed through unchanged: its XSD 1.1 canonical form.
 fn governed_cast_to_term<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    value: &XsdValue,
-    datatype: &str,
+    ctx: &mut EvalCtx<'_, D>, value: &XsdValue, datatype: &str,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     governed_term(ctx, value, datatype, false)
 }
 
 fn governed_term<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    value: &XsdValue,
-    datatype: &str,
-    computed: bool,
+    ctx: &mut EvalCtx<'_, D>, value: &XsdValue, datatype: &str, computed: bool,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let price = if computed {
         computed_numeric_render_cost(value)
@@ -8017,8 +7725,7 @@ fn governed_term<D: DatasetView + Sync>(
 /// A unary numeric operator (`+` / `-`) over its evaluated operand: resolve it to an XSD
 /// value, call `op`, and return `None` on any error.
 pub(crate) fn unary_numeric_term<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    operand: Option<SolutionTerm<D::Id>>,
+    ctx: &mut EvalCtx<'_, D>, operand: Option<SolutionTerm<D::Id>>,
     op: purrdf_xsd::numeric::NumericUnaryOperator,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let Some(operand) = operand else {
@@ -8040,8 +7747,7 @@ pub(crate) fn unary_numeric_term<D: DatasetView + Sync>(
 /// Apply a unary numeric function from the `vals` pre-evaluated argument list.
 /// Argument 0 must be a numeric literal; type errors → `Ok(None)`.
 fn unary_numeric_fn<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    vals: &[Option<TermValue>],
+    ctx: &mut EvalCtx<'_, D>, vals: &[Option<TermValue>],
     op: purrdf_xsd::numeric::NumericUnaryOperator,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let Some(TermValue::Literal {
@@ -8059,8 +7765,7 @@ fn unary_numeric_fn<D: DatasetView + Sync>(
 }
 
 fn apply_unary_numeric<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    value: &crate::parsed_value::ParsedValue,
+    ctx: &mut EvalCtx<'_, D>, value: &crate::parsed_value::ParsedValue,
     op: purrdf_xsd::numeric::NumericUnaryOperator,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     if !numeric_step_admitted(ctx, numeric_unary_cost(value)) {
@@ -8111,9 +7816,7 @@ fn mint_bnode<D: DatasetView + Sync>(
 /// either string fails to parse as an IRI/IRI-reference) — a SPARQL expression
 /// error, matching every other malformed-argument built-in in this module.
 fn resolve_against_base(
-    base: Option<&str>,
-    reference: &str,
-    workspace: &crate::WorkspaceCapability,
+    base: Option<&str>, reference: &str, workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
     use purrdf_iri::IriReadError;
     let mut frame = crate::workspace::LexicalFrame::new(workspace);
@@ -8404,11 +8107,7 @@ mod tests {
         fn probe_plan(&self, _s: bool, _p: bool, _o: bool, _g: GraphMatch) {}
 
         fn quads_for_pattern_with_plan(
-            &self,
-            _plan: &(),
-            s: Option<Self::Id>,
-            p: Option<Self::Id>,
-            o: Option<Self::Id>,
+            &self, _plan: &(), s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
             g: GraphMatch,
         ) -> impl Iterator<Item = purrdf_core::QuadIds> + '_ {
             self.inner.quads_for_pattern(s, p, o, g)
@@ -8614,9 +8313,7 @@ mod tests {
 
     /// [`assert_literal_equality_paths`] under the chosen language-string rule.
     fn assert_literal_equality_paths_under(
-        a: &TermValue,
-        b: &TermValue,
-        expected: Option<bool>,
+        a: &TermValue, b: &TermValue, expected: Option<bool>,
         language_strings: LanguageStringEquality,
     ) {
         let extended = language_strings == LanguageStringEquality::Disjoint;
@@ -13870,8 +13567,7 @@ mod tests {
     /// The binary-shaped left-nested tree `op(op(op(a, b), c), d)` of a chain: every
     /// node two operands, exactly the tree the binary operator's grammar builds.
     fn left_nested(
-        operands: Vec<Expression>,
-        node: fn(Chain<Expression>) -> Expression,
+        operands: Vec<Expression>, node: fn(Chain<Expression>) -> Expression,
     ) -> Expression {
         let mut operands = operands.into_iter();
         let first = operands.next().expect("at least one operand");
@@ -14169,9 +13865,7 @@ mod walk_tests {
     }
 
     fn reference_pattern_vars_outside(
-        pattern: &GraphPattern,
-        endpoint: Option<&Variable>,
-        out: &mut DetHashSet<Variable>,
+        pattern: &GraphPattern, endpoint: Option<&Variable>, out: &mut DetHashSet<Variable>,
     ) {
         crate::op_count::bump(crate::op_count::Op::VarWalked);
         match pattern {
@@ -14463,8 +14157,7 @@ mod walk_tests {
     }
 
     fn two(
-        choices: &mut Choices,
-        mut make: impl FnMut(&mut Choices) -> Expression,
+        choices: &mut Choices, mut make: impl FnMut(&mut Choices) -> Expression,
     ) -> Chain<Expression> {
         Chain::try_from(vec![make(choices), make(choices)]).expect("two operands")
     }
@@ -15310,8 +15003,7 @@ mod rdf_equal_tests {
 }
 
 fn ground_term_from_term_value_with_memory(
-    value: &TermValue,
-    memory: &mut CorrelatedMemory<'_>,
+    value: &TermValue, memory: &mut CorrelatedMemory<'_>,
 ) -> Result<Option<purrdf_sparql_algebra::GroundTerm>, EvalError> {
     use purrdf_sparql_algebra::{GroundTerm, GroundTriple, Literal, NamedNode};
     enum Step<'a> {
@@ -15395,11 +15087,8 @@ fn ground_term_from_term_value_with_memory(
 }
 
 fn substitute_expression_list<const PRESERVE: bool>(
-    source: &[Expression],
-    row: &SubstitutionRow,
-    map: &mut Option<&mut SubstitutionTracking<'_>>,
-    defer: &mut Deferral<'_>,
-    memory: &mut CorrelatedMemory<'_>,
+    source: &[Expression], row: &SubstitutionRow, map: &mut Option<&mut SubstitutionTracking<'_>>,
+    defer: &mut Deferral<'_>, memory: &mut CorrelatedMemory<'_>,
 ) -> Result<Vec<Expression>, EvalError> {
     let mut copied = Vec::new();
     memory
@@ -15413,10 +15102,8 @@ fn substitute_expression_list<const PRESERVE: bool>(
     Ok(copied)
 }
 fn substitute_order_list<const PRESERVE: bool>(
-    source: &[purrdf_sparql_algebra::OrderExpression],
-    row: &SubstitutionRow,
-    map: &mut Option<&mut SubstitutionTracking<'_>>,
-    defer: &mut Deferral<'_>,
+    source: &[purrdf_sparql_algebra::OrderExpression], row: &SubstitutionRow,
+    map: &mut Option<&mut SubstitutionTracking<'_>>, defer: &mut Deferral<'_>,
     memory: &mut CorrelatedMemory<'_>,
 ) -> Result<Vec<purrdf_sparql_algebra::OrderExpression>, EvalError> {
     let mut copied = Vec::new();
@@ -15432,10 +15119,8 @@ fn substitute_order_list<const PRESERVE: bool>(
     Ok(copied)
 }
 fn substitute_aggregates<const PRESERVE: bool>(
-    source: &[(Variable, purrdf_sparql_algebra::AggregateExpression)],
-    row: &SubstitutionRow,
-    map: &mut Option<&mut SubstitutionTracking<'_>>,
-    defer: &mut Deferral<'_>,
+    source: &[(Variable, purrdf_sparql_algebra::AggregateExpression)], row: &SubstitutionRow,
+    map: &mut Option<&mut SubstitutionTracking<'_>>, defer: &mut Deferral<'_>,
     memory: &mut CorrelatedMemory<'_>,
 ) -> Result<Vec<(Variable, purrdf_sparql_algebra::AggregateExpression)>, EvalError> {
     let mut copied = Vec::new();
@@ -15458,12 +15143,9 @@ fn substitute_aggregates<const PRESERVE: bool>(
 }
 
 fn join_selected_values(
-    node: Box<GraphPattern>,
-    term_row: &[(Variable, purrdf_sparql_algebra::GroundTerm)],
-    selected: impl Fn(&Variable) -> bool,
-    source: &GraphPattern,
-    map: &mut Option<&mut SubstitutionTracking<'_>>,
-    memory: &mut CorrelatedMemory<'_>,
+    node: Box<GraphPattern>, term_row: &[(Variable, purrdf_sparql_algebra::GroundTerm)],
+    selected: impl Fn(&Variable) -> bool, source: &GraphPattern,
+    map: &mut Option<&mut SubstitutionTracking<'_>>, memory: &mut CorrelatedMemory<'_>,
 ) -> Result<Box<GraphPattern>, EvalError> {
     let count = term_row.iter().filter(|(v, _)| selected(v)).count();
     if count == 0 {
@@ -15526,8 +15208,7 @@ impl AsRef<GraphPattern> for PreparedPattern {
 }
 impl PreparedPattern {
     pub(crate) fn new(
-        pattern: CorrelatedPattern,
-        workspace: &crate::WorkspaceCapability,
+        pattern: CorrelatedPattern, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         crate::workspace::NativeSharedWorkspace::new_admitted(pattern, workspace).map(Self)
     }
@@ -15580,8 +15261,7 @@ struct CorrelatedMapLayer {
 }
 impl CorrelatedMaps {
     pub(crate) fn push(
-        &mut self,
-        map: crate::workspace::SharedWorkspace<SubstitutionSourceMap>,
+        &mut self, map: crate::workspace::SharedWorkspace<SubstitutionSourceMap>,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<(), EvalError> {
         let next = crate::workspace::SharedWorkspace::new_admitted(
@@ -15614,8 +15294,7 @@ impl CorrelatedMaps {
 
 impl crate::eval::PreparedExists {
     pub(crate) fn build_admitted(
-        pattern: &GraphPattern,
-        workspace: &crate::WorkspaceCapability,
+        pattern: &GraphPattern, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         Self::build_with_evidence_admitted(pattern, false, workspace)
     }
@@ -15624,9 +15303,7 @@ impl crate::eval::PreparedExists {
     /// query retains the original body through the same admitted preparation
     /// and evaluation homes, including nested deferred sites.
     pub(crate) fn build_with_evidence_admitted(
-        pattern: &GraphPattern,
-        preserve_evidence: bool,
-        workspace: &crate::WorkspaceCapability,
+        pattern: &GraphPattern, preserve_evidence: bool, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         #[cfg(test)]
         crate::eval::PREPARED_EXISTS_BUILD_COUNT.with(|count| count.set(count.get() + 1));

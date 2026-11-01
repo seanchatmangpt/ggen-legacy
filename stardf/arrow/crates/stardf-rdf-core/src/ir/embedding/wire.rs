@@ -172,8 +172,7 @@ impl FileLayout {
     /// Descriptors may arrive in any order; this function sorts them by
     /// `(kind, instance)` and rejects every noncanonical cardinality or flag.
     pub(super) fn plan(
-        source_exact_digest: ContentDigest,
-        mut descriptors: Vec<SectionDescriptor>,
+        source_exact_digest: ContentDigest, mut descriptors: Vec<SectionDescriptor>,
     ) -> Result<Self, EmbeddingError> {
         descriptors.sort_unstable_by_key(|descriptor| descriptor.key);
         validate_descriptors(&descriptors)?;
@@ -258,9 +257,7 @@ impl FileLayout {
 
     /// Supplies the plain SHA-256 for one planned section.
     pub(super) fn set_section_digest(
-        &mut self,
-        key: SectionKey,
-        digest: [u8; 32],
+        &mut self, key: SectionKey, digest: [u8; 32],
     ) -> Result<(), EmbeddingError> {
         let index = self
             .entries
@@ -355,8 +352,7 @@ pub struct EncodedArtifact {
 
 /// Assembles a canonical PURREMB file from fully encoded section bodies.
 pub(super) fn encode_artifact(
-    source_exact_digest: ContentDigest,
-    mut sections: Vec<SectionPayload>,
+    source_exact_digest: ContentDigest, mut sections: Vec<SectionPayload>,
 ) -> Result<EncodedArtifact, EmbeddingError> {
     sections.sort_unstable_by_key(|section| section.key);
     validate_source_section(source_exact_digest, &sections)?;
@@ -416,8 +412,7 @@ pub(super) fn encode_artifact(
 }
 
 fn validate_source_section(
-    source_exact_digest: ContentDigest,
-    sections: &[SectionPayload],
+    source_exact_digest: ContentDigest, sections: &[SectionPayload],
 ) -> Result<(), EmbeddingError> {
     let index = sections
         .binary_search_by_key(&SectionKey::new(SECTION_SOURCE, 0), |section| section.key)

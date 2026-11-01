@@ -148,10 +148,7 @@ impl EventGraph {
     }
 
     fn quad_iri(
-        &mut self,
-        subject: EventTermId,
-        predicate: &str,
-        object: &str,
+        &mut self, subject: EventTermId, predicate: &str, object: &str,
     ) -> Result<(), OkfError> {
         let predicate = self.iri(predicate)?;
         let object = self.iri(object)?;
@@ -165,11 +162,7 @@ impl EventGraph {
     }
 
     fn quad_literal(
-        &mut self,
-        subject: EventTermId,
-        predicate: &str,
-        lexical: &str,
-        datatype: &str,
+        &mut self, subject: EventTermId, predicate: &str, lexical: &str, datatype: &str,
     ) -> Result<(), OkfError> {
         let predicate = self.iri(predicate)?;
         let object = self.literal(lexical, datatype)?;
@@ -196,9 +189,7 @@ impl EventGraph {
 /// Returns [`OkfError`] for malformed YAML/Markdown, unrecognized keys, unsafe or
 /// dangling paths, profile ambiguity, resource-limit breaches, or a sink error.
 pub fn lift_okf_bundle<S: RdfEventSink + ?Sized>(
-    bundle: &OkfBundle,
-    config: &OkfConfig,
-    sink: &mut S,
+    bundle: &OkfBundle, config: &OkfConfig, sink: &mut S,
 ) -> Result<OkfReadOutcome, OkfError> {
     let (documents, losses, navigation_pages) = parse_documents(bundle, config)?;
     let mut graph = build_event_graph(&documents, config)?;
@@ -215,8 +206,7 @@ pub fn lift_okf_bundle<S: RdfEventSink + ?Sized>(
 }
 
 fn parse_documents(
-    bundle: &OkfBundle,
-    config: &OkfConfig,
+    bundle: &OkfBundle, config: &OkfConfig,
 ) -> Result<(Vec<ParsedDocument>, LossLedger, usize), OkfError> {
     let mut documents = Vec::with_capacity(bundle.len());
     let mut subjects = BTreeMap::<String, String>::new();
@@ -345,8 +335,7 @@ fn parse_frontmatter(path: &str, markdown: &str) -> Result<Option<ParsedFrontmat
 }
 
 fn build_event_graph(
-    documents: &[ParsedDocument],
-    config: &OkfConfig,
+    documents: &[ParsedDocument], config: &OkfConfig,
 ) -> Result<EventGraph, OkfError> {
     let mut graph = EventGraph::default();
     let mut subjects_by_path = BTreeMap::new();
@@ -457,10 +446,7 @@ fn build_event_graph(
 }
 
 fn emit_extension(
-    graph: &mut EventGraph,
-    subject: EventTermId,
-    predicate: &str,
-    value: &Value,
+    graph: &mut EventGraph, subject: EventTermId, predicate: &str, value: &Value,
     json_datatype: &str,
 ) -> Result<(), OkfError> {
     match value {
@@ -480,9 +466,7 @@ fn emit_extension(
 }
 
 fn drive_event_graph<S: RdfEventSink + ?Sized>(
-    graph: &EventGraph,
-    config: &OkfConfig,
-    sink: &mut S,
+    graph: &EventGraph, config: &OkfConfig, sink: &mut S,
 ) -> Result<bool, OkfError> {
     if is_break(
         sink.base(config.document_base_iri())
@@ -545,9 +529,7 @@ fn is_break(flow: ControlFlow<()>) -> bool {
 }
 
 fn required_scalar(
-    fields: &BTreeMap<String, Value>,
-    key: &str,
-    path: &str,
+    fields: &BTreeMap<String, Value>, key: &str, path: &str,
 ) -> Result<String, OkfError> {
     let value = fields
         .get(key)
@@ -565,8 +547,7 @@ fn document_error(path: &str, detail: impl fmt::Display) -> OkfError {
 }
 
 pub(super) fn extract_markdown_links(
-    body: &str,
-    path: &str,
+    body: &str, path: &str,
 ) -> Result<Vec<MarkdownLink>, OkfError> {
     let bytes = body.as_bytes();
     let mut links = Vec::new();
@@ -765,8 +746,7 @@ fn unescape_markdown(value: &str) -> String {
 /// at the root, which would quietly retarget an escaping link at a document inside
 /// the bundle. Here a `..` that climbs above the bundle root is refused.
 pub(super) fn resolve_link_path(
-    source_path: &str,
-    target: &str,
+    source_path: &str, target: &str,
 ) -> Result<Option<String>, OkfError> {
     let target = target.split('#').next().unwrap_or(target);
     if target.is_empty()
@@ -1091,9 +1071,7 @@ mod tests {
 
     impl RdfEventSink for CancellingSink {
         fn term(
-            &mut self,
-            _id: EventTermId,
-            _term: EventTerm<'_>,
+            &mut self, _id: EventTermId, _term: EventTerm<'_>,
         ) -> Result<ControlFlow<()>, EventError> {
             Ok(ControlFlow::Break(()))
         }
@@ -1103,18 +1081,13 @@ mod tests {
         }
 
         fn reifier(
-            &mut self,
-            _reifier: EventTermId,
-            _triple: EventTriple,
+            &mut self, _reifier: EventTermId, _triple: EventTriple,
         ) -> Result<ControlFlow<()>, EventError> {
             Ok(ControlFlow::Continue(()))
         }
 
         fn annotation(
-            &mut self,
-            _reifier: EventTermId,
-            _predicate: EventTermId,
-            _object: EventTermId,
+            &mut self, _reifier: EventTermId, _predicate: EventTermId, _object: EventTermId,
         ) -> Result<ControlFlow<()>, EventError> {
             Ok(ControlFlow::Continue(()))
         }

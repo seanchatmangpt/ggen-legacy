@@ -39,11 +39,8 @@ impl FrozenTerms {
     /// owned term or copying lexical bytes. Batch callers reuse one admitted
     /// pending buffer; local IDs never enter the emitted content.
     pub(super) fn visit_canonical_bytes<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        id: TermId,
-        pending: &mut Vec<TermId>,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
-        mut output: impl FnMut(&[u8]),
+        &self, id: TermId, pending: &mut Vec<TermId>,
+        memory: &mut purrdf_lex::allocation::Memory<'_, S>, mut output: impl FnMut(&[u8]),
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         use super::term::CanonicalNode;
         pending.clear();
@@ -87,8 +84,7 @@ impl FrozenTerms {
     /// This linear representation seal avoids expanding nested triples once for
     /// every ancestor in the dictionary.
     pub(super) fn snapshot_fingerprint<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<[u8; 32], purrdf_lex::allocation::StorageError> {
         const DICTIONARY: purrdf_hash::Domain =
             purrdf_hash::Domain::new(b"purrdf-core/snapshot/dictionary/v1");
@@ -142,9 +138,7 @@ impl FrozenTerms {
     }
 
     fn find_term_hashed(
-        &self,
-        hash: u64,
-        mut matches: impl FnMut(TermId) -> bool,
+        &self, hash: u64, mut matches: impl FnMut(TermId) -> bool,
     ) -> Option<TermId> {
         self.term_index
             .find(hash, |&index| {
@@ -174,10 +168,7 @@ impl FrozenTerms {
 
     #[must_use]
     pub(super) fn term_id_by_literal(
-        &self,
-        lexical_form: &str,
-        datatype: &str,
-        language: Option<&str>,
+        &self, lexical_form: &str, datatype: &str, language: Option<&str>,
         direction: Option<RdfTextDirection>,
     ) -> Option<TermId> {
         // A language tag names the datatype whatever the explicit one says (C0.1),

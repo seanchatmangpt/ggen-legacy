@@ -159,8 +159,7 @@ enum FoldParts {
 
 impl FoldAccumulator {
     pub(crate) fn for_arguments_admitted(
-        arity: usize,
-        workspace: &crate::WorkspaceCapability,
+        arity: usize, workspace: &crate::WorkspaceCapability,
     ) -> Self {
         Self {
             parts: if arity == 1 {
@@ -180,9 +179,7 @@ impl FoldAccumulator {
         }
     }
     fn push_values(
-        &mut self,
-        first: Option<&TermValue>,
-        second: Option<&TermValue>,
+        &mut self, first: Option<&TermValue>, second: Option<&TermValue>,
     ) -> Result<(), EvalError> {
         if self.len() >= MAX_ELEMENTS {
             return Err(crate::cdt_fn::bound_admitted(
@@ -236,8 +233,7 @@ impl FoldAccumulator {
         self.push_values(row.first.as_deref(), row.second.as_deref())
     }
     fn finish_workspace(
-        mut self,
-        workspace: &crate::WorkspaceCapability,
+        mut self, workspace: &crate::WorkspaceCapability,
     ) -> Result<crate::WorkspaceTerm, EvalError> {
         let mut frame = crate::workspace::LexicalFrame::new(workspace);
         let map = matches!(self.parts, FoldParts::Map(_));
@@ -292,9 +288,7 @@ impl AggregateAccumulator for FoldAccumulator {
         self.push_values(args.first(), args.get(1))
     }
     fn step_admitted(
-        &mut self,
-        args: &[TermValue],
-        _workspace: &crate::WorkspaceCapability,
+        &mut self, args: &[TermValue], _workspace: &crate::WorkspaceCapability,
     ) -> Result<(), EvalError> {
         self.push_values(args.first(), args.get(1))
     }
@@ -360,8 +354,7 @@ impl AggregateAccumulator for FoldAccumulator {
             .map(|term| Some(term.into_parts().0))
     }
     fn finish_admitted(
-        self: Box<Self>,
-        workspace: &crate::WorkspaceCapability,
+        self: Box<Self>, workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
         self.finish_workspace(workspace).map(Some)
     }
@@ -383,12 +376,8 @@ impl AggregateAccumulator for FoldAccumulator {
 /// bounds. A refused governor charge is recorded on `ctx.expression_barrier` and
 /// answered as unbound, the doctrine every aggregate in `crate::modifier` follows.
 pub(crate) fn eval_fold<D: DatasetView + Sync>(
-    agg: &AggregateExpression,
-    links: &mut [crate::vm::Linked<'_, D::Id>],
-    idxs: &[usize],
-    rows: &[crate::solution::RetainedRow<D::Id>],
-    schema: &VarSchema,
-    ctx: &mut EvalCtx<'_, D>,
+    agg: &AggregateExpression, links: &mut [crate::vm::Linked<'_, D::Id>], idxs: &[usize],
+    rows: &[crate::solution::RetainedRow<D::Id>], schema: &VarSchema, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let (arguments, keys) = links.split_at_mut(agg.args().len().min(links.len()));
     let (first_arg, mut second_arg) = match arguments {

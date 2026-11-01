@@ -133,9 +133,7 @@ fn provenance_namespace() -> ProvenanceNamespace {
 }
 
 fn text(
-    result: &SparqlResult,
-    format: SparqlResultsFormat,
-    prov: &ResultProvenance,
+    result: &SparqlResult, format: SparqlResultsFormat, prov: &ResultProvenance,
     namespace: Option<&ProvenanceNamespace>,
 ) -> String {
     let outcome = serialize(result, format, prov, namespace).expect("serialization succeeds");

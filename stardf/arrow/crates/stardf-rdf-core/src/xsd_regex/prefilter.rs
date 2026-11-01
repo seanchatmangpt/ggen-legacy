@@ -787,9 +787,7 @@ impl Needle {
     )]
     #[inline(always)]
     pub(super) fn is_match<'r>(
-        &self,
-        engine: impl FnOnce() -> &'r regex::Regex,
-        haystack: &str,
+        &self, engine: impl FnOnce() -> &'r regex::Regex, haystack: &str,
     ) -> bool {
         match self.find(haystack.as_bytes(), 0, &mut 0) {
             Found::Needle => true,
@@ -846,9 +844,7 @@ impl Plan {
     /// exactly `engine().is_match(haystack)`. A literal asks for the engine
     /// only when its search gives way to it.
     pub(super) fn is_match<'r>(
-        &self,
-        engine: impl FnOnce() -> &'r regex::Regex,
-        haystack: &str,
+        &self, engine: impl FnOnce() -> &'r regex::Regex, haystack: &str,
     ) -> bool {
         match self {
             Self::Engine => engine().is_match(haystack),

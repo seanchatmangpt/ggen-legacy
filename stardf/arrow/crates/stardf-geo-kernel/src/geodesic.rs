@@ -76,9 +76,7 @@ impl Eq for PreparedGeodesic {}
 
 impl PreparedGeodesic {
     pub(crate) fn admitted_reference(
-        &self,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &self, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<AdmittedGeodesicReference<'_>, GeoError> {
         let binding =
             crate::numerical::reference_identity(context, progress, Some(&self.reference))?;
@@ -132,10 +130,7 @@ impl PreparedGeodesic {
     /// Refuses a mismatched reference, numerical environment, resource exhaustion
     /// or an unresolved true-distance rounding boundary.
     pub fn distance(
-        &self,
-        a: &LonLat,
-        b: &LonLat,
-        context: &mut MetricContext,
+        &self, a: &LonLat, b: &LonLat, context: &mut MetricContext,
     ) -> Result<MetricEstimate, GeoError> {
         context.begin(1)?;
         self.compute(a, b, context, None, None)
@@ -151,10 +146,7 @@ impl PreparedGeodesic {
     ///
     /// Adds the observer's refusals to the ordinary distance contract.
     pub fn distance_metered(
-        &self,
-        a: &LonLat,
-        b: &LonLat,
-        context: &mut MetricContext,
+        &self, a: &LonLat, b: &LonLat, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<MetricEstimate, GeoError> {
         context.begin(1)?;
@@ -168,10 +160,7 @@ impl PreparedGeodesic {
     ///
     /// Uses the same admission and rounding contract as [`Self::distance`].
     pub fn distance_with_proof(
-        &self,
-        a: &LonLat,
-        b: &LonLat,
-        context: &mut MetricContext,
+        &self, a: &LonLat, b: &LonLat, context: &mut MetricContext,
     ) -> Result<(MetricEstimate, MetricProofReceipt), GeoError> {
         context.begin(1)?;
         let (answer, proof) = self.compute(a, b, context, None, None)?;
@@ -186,10 +175,7 @@ impl PreparedGeodesic {
     /// # Errors
     /// Adds observer refusals to [`Self::distance_with_proof`].
     pub fn distance_with_proof_metered(
-        &self,
-        a: &LonLat,
-        b: &LonLat,
-        context: &mut MetricContext,
+        &self, a: &LonLat, b: &LonLat, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<(MetricEstimate, MetricProofReceipt), GeoError> {
         context.begin(1)?;
@@ -214,9 +200,7 @@ impl PreparedGeodesic {
     ///
     /// Refuses shape, reference, admission and uncertified numerical results.
     pub fn distance_batch(
-        &self,
-        points: &[(LonLat, LonLat)],
-        output: &mut [Option<MetricEstimate>],
+        &self, points: &[(LonLat, LonLat)], output: &mut [Option<MetricEstimate>],
         context: &mut MetricContext,
     ) -> Result<(), GeoError> {
         self.distance_batch_borrowed(points.iter().map(|(a, b)| (a, b)), output, context)
@@ -228,10 +212,8 @@ impl PreparedGeodesic {
     /// Refuses length/reference/environment/resource failures and clears every
     /// result slot on refusal, including an iterator that misreports its length.
     pub fn distance_batch_borrowed<'a>(
-        &self,
-        points: impl ExactSizeIterator<Item = (&'a LonLat, &'a LonLat)>,
-        output: &mut [Option<MetricEstimate>],
-        context: &mut MetricContext,
+        &self, points: impl ExactSizeIterator<Item = (&'a LonLat, &'a LonLat)>,
+        output: &mut [Option<MetricEstimate>], context: &mut MetricContext,
     ) -> Result<(), GeoError> {
         self.distance_batch_observed(points, output, context, None)
     }
@@ -241,20 +223,16 @@ impl PreparedGeodesic {
     /// # Errors
     /// Adds the observer's typed refusal to [`Self::distance_batch_borrowed`].
     pub fn distance_batch_borrowed_metered<'a>(
-        &self,
-        points: impl ExactSizeIterator<Item = (&'a LonLat, &'a LonLat)>,
-        output: &mut [Option<MetricEstimate>],
-        context: &mut MetricContext,
+        &self, points: impl ExactSizeIterator<Item = (&'a LonLat, &'a LonLat)>,
+        output: &mut [Option<MetricEstimate>], context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<(), GeoError> {
         self.distance_batch_observed(points, output, context, Some(observer))
     }
 
     fn distance_batch_observed<'a>(
-        &self,
-        points: impl ExactSizeIterator<Item = (&'a LonLat, &'a LonLat)>,
-        output: &mut [Option<MetricEstimate>],
-        context: &mut MetricContext,
+        &self, points: impl ExactSizeIterator<Item = (&'a LonLat, &'a LonLat)>,
+        output: &mut [Option<MetricEstimate>], context: &mut MetricContext,
         mut observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<(), GeoError> {
         batch(points, output, context, |(a, b), context| {
@@ -274,11 +252,7 @@ impl PreparedGeodesic {
     /// Refuses an unresolved inclusive comparison, reference mismatch or
     /// operational exhaustion. Negative thresholds return false.
     pub fn within_physical(
-        &self,
-        center: &LonLat,
-        point: &LonLat,
-        threshold: &Metres,
-        context: &mut MetricContext,
+        &self, center: &LonLat, point: &LonLat, threshold: &Metres, context: &mut MetricContext,
     ) -> Result<bool, GeoError> {
         self.within_physical_observed(center, point, threshold, context, None, None)
     }
@@ -289,11 +263,7 @@ impl PreparedGeodesic {
     /// # Errors
     /// Adds the observer's typed refusals to [`Self::within_physical`].
     pub fn within_physical_metered(
-        &self,
-        center: &LonLat,
-        point: &LonLat,
-        threshold: &Metres,
-        context: &mut MetricContext,
+        &self, center: &LonLat, point: &LonLat, threshold: &Metres, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<bool, GeoError> {
         self.within_physical_observed(center, point, threshold, context, Some(observer), None)
@@ -301,13 +271,8 @@ impl PreparedGeodesic {
 
     #[allow(clippy::too_many_arguments)] // Exact inputs and optional original-source cache/observer capabilities.
     fn within_physical_observed(
-        &self,
-        center: &LonLat,
-        point: &LonLat,
-        threshold: &Metres,
-        context: &mut MetricContext,
-        observer: Option<&mut dyn MetricWorkObserver>,
-        source: Option<&PreparedGeodesicPoint>,
+        &self, center: &LonLat, point: &LonLat, threshold: &Metres, context: &mut MetricContext,
+        observer: Option<&mut dyn MetricWorkObserver>, source: Option<&PreparedGeodesicPoint>,
     ) -> Result<bool, GeoError> {
         context.begin(1)?;
         if threshold.exact() <= &Rat::zero() {
@@ -358,24 +323,16 @@ impl PreparedGeodesic {
     }
 
     fn compute(
-        &self,
-        a: &LonLat,
-        b: &LonLat,
-        context: &mut MetricContext,
-        physical_threshold: Option<&Rat>,
-        observer: Option<&mut dyn MetricWorkObserver>,
+        &self, a: &LonLat, b: &LonLat, context: &mut MetricContext,
+        physical_threshold: Option<&Rat>, observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<(MetricEstimate, MetricProofReceipt), GeoError> {
         self.compute_point_cached(a, b, context, physical_threshold, observer, None)
     }
 
     #[allow(clippy::too_many_arguments)] // Exact endpoints, comparator, optional preparation and admission.
     fn compute_point_cached(
-        &self,
-        a: &LonLat,
-        b: &LonLat,
-        context: &mut MetricContext,
-        physical_threshold: Option<&Rat>,
-        observer: Option<&mut dyn MetricWorkObserver>,
+        &self, a: &LonLat, b: &LonLat, context: &mut MetricContext,
+        physical_threshold: Option<&Rat>, observer: Option<&mut dyn MetricWorkObserver>,
         source: Option<&PreparedGeodesicPoint>,
     ) -> Result<(MetricEstimate, MetricProofReceipt), GeoError> {
         let metered = observer.is_some();
@@ -404,13 +361,8 @@ impl PreparedGeodesic {
 
     #[allow(clippy::too_many_arguments)] // Original source plus its optional immutable proof preparation.
     fn compute_goal_cached(
-        &self,
-        a: &LonLat,
-        b: &LonLat,
-        context: &mut MetricContext,
-        goal: DistanceGoal<'_>,
-        observer: Option<&mut dyn MetricWorkObserver>,
-        source: Option<&PreparedGeodesicPoint>,
+        &self, a: &LonLat, b: &LonLat, context: &mut MetricContext, goal: DistanceGoal<'_>,
+        observer: Option<&mut dyn MetricWorkObserver>, source: Option<&PreparedGeodesicPoint>,
     ) -> Result<MetricProofReceipt, GeoError> {
         context.charge_work(1)?;
         let mut chunks = ChunkObserver::new(observer);
@@ -686,10 +638,7 @@ impl PreparedGeodesic {
     /// # Errors
     /// Refuses an invalid floating environment or a prepared-reference mismatch.
     pub(crate) fn binary64_enclosure(
-        &self,
-        source: &PreparedGeodesicPoint,
-        point: &LonLat,
-        context: &mut MetricContext,
+        &self, source: &PreparedGeodesicPoint, point: &LonLat, context: &mut MetricContext,
     ) -> Result<Option<(f64, f64)>, GeoError> {
         if source.source().same_location(point) {
             return Ok(Some((0.0, 0.0)));
@@ -1026,8 +975,7 @@ impl<'borrow, 'observer> ChunkObserver<'borrow, 'observer> {
     }
 
     fn array<A: purrdf_core::small::Array>(
-        &mut self,
-        capacity: usize,
+        &mut self, capacity: usize,
     ) -> Result<crate::context::Produced<SmallVec<A>>, SolveError> {
         if capacity <= A::CAPACITY {
             return Ok(crate::context::Produced::inline_array(SmallVec::new()));
@@ -1073,9 +1021,7 @@ impl<'borrow, 'observer> ChunkObserver<'borrow, 'observer> {
     // Native public entries own their original progress. Mathematical borrowed
     // chunks enter through the caller's already admitted reference phase.
     fn reference_identity(
-        &mut self,
-        reference: Option<&GeographicReference>,
-        context: &mut MetricContext,
+        &mut self, reference: Option<&GeographicReference>, context: &mut MetricContext,
     ) -> Result<crate::GeoBindingId, GeoError> {
         let ChunkProgress::Owned(progress) = &mut self.progress else {
             return Err(GeoError::MissingNativeObserver {
@@ -1085,9 +1031,7 @@ impl<'borrow, 'observer> ChunkObserver<'borrow, 'observer> {
         crate::numerical::reference_identity(context, progress, reference)
     }
     fn reference_matches(
-        &mut self,
-        reference: &GeographicReference,
-        context: &mut MetricContext,
+        &mut self, reference: &GeographicReference, context: &mut MetricContext,
     ) -> Result<bool, GeoError> {
         let ChunkProgress::Owned(progress) = &mut self.progress else {
             return Err(GeoError::MissingNativeObserver {
@@ -1097,10 +1041,7 @@ impl<'borrow, 'observer> ChunkObserver<'borrow, 'observer> {
         crate::numerical::reference_matches(reference, context, progress)
     }
     fn prepare_scratch(
-        &mut self,
-        context: &mut MetricContext,
-        source_bits: u64,
-        precision_bits: u32,
+        &mut self, context: &mut MetricContext, source_bits: u64, precision_bits: u32,
     ) -> Result<(), GeoError> {
         match &mut self.progress {
             ChunkProgress::Owned(progress) => context
@@ -1119,9 +1060,7 @@ impl<'borrow, 'observer> ChunkObserver<'borrow, 'observer> {
     }
 
     fn install_arithmetic(
-        &mut self,
-        context: &mut MetricContext,
-        math: &mut CoordinateMath,
+        &mut self, context: &mut MetricContext, math: &mut CoordinateMath,
     ) -> Result<(), MathError> {
         match &mut self.progress {
             ChunkProgress::Owned(progress) => {
@@ -1134,9 +1073,7 @@ impl<'borrow, 'observer> ChunkObserver<'borrow, 'observer> {
     }
 
     fn grow_requested_scratch(
-        &mut self,
-        error: &MathError,
-        context: &mut MetricContext,
+        &mut self, error: &MathError, context: &mut MetricContext,
     ) -> Result<bool, GeoError> {
         let error = geo_math_error(error, context.policy());
         context.grow_requested_integer_scratch(&error, self.progress_mut())
@@ -1237,9 +1174,7 @@ fn initial_inverse_precision(pair: &CanonicalPair) -> u32 {
 /// Signed equator-to-latitude meridian arc using the shared certified integrals.
 #[cfg(test)]
 pub(crate) fn meridian_arc(
-    latitude: &Rat,
-    ellipsoid: &crate::PreparedEllipsoid,
-    math: &mut CoordinateMath,
+    latitude: &Rat, ellipsoid: &crate::PreparedEllipsoid, math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     let mut chunks = ChunkObserver::new(None);
     meridian_arc_with(latitude, ellipsoid, None, &mut chunks, math).map_err(meridian_math_error)
@@ -1248,9 +1183,7 @@ pub(crate) fn meridian_arc(
 /// The same integral using an explicit worker's immutable coefficient cache.
 /// New preparation is observed before allocation and retained by its phase.
 pub(crate) fn meridian_arc_observed(
-    latitude: &Rat,
-    ellipsoid: &crate::PreparedEllipsoid,
-    math: &mut CoordinateMath,
+    latitude: &Rat, ellipsoid: &crate::PreparedEllipsoid, math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<FixedInterval, MathError> {
     let coefficients = prepare_integral_coefficients_observed(ellipsoid, math, progress)?;
@@ -1269,8 +1202,7 @@ pub(crate) fn meridian_arc_observed(
 /// one coefficient cache. Their equations depend only on the ellipsoid and
 /// precision, so all prepared lines in a phase share this detached ownership.
 pub(super) fn prepare_integral_coefficients_observed(
-    ellipsoid: &crate::PreparedEllipsoid,
-    math: &mut CoordinateMath,
+    ellipsoid: &crate::PreparedEllipsoid, math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Retained<IntegralCoefficients>, MathError> {
     let bits = math.limits().precision_bits;
@@ -1342,11 +1274,8 @@ fn meridian_math_error(error: SolveError) -> MathError {
 }
 
 fn meridian_arc_with(
-    latitude: &Rat,
-    ellipsoid: &crate::PreparedEllipsoid,
-    prepared: Option<&IntegralCoefficients>,
-    chunks: &mut ChunkObserver<'_, '_>,
-    math: &mut CoordinateMath,
+    latitude: &Rat, ellipsoid: &crate::PreparedEllipsoid, prepared: Option<&IntegralCoefficients>,
+    chunks: &mut ChunkObserver<'_, '_>, math: &mut CoordinateMath,
 ) -> Result<FixedInterval, SolveError> {
     let order = integral_order(ellipsoid, math.limits().precision_bits);
     let bytes = meridian_workspace_bytes(math.limits().precision_bits, order)?;
@@ -1381,10 +1310,8 @@ fn meridian_arc_with(
 /// Monotone signed meridian image of an unquantized degree enclosure.
 /// Exact dyadic endpoints feed the same original integral as scalar callers.
 pub(crate) fn meridian_arc_interval_observed(
-    latitude_degrees: &FixedInterval,
-    ellipsoid: &crate::PreparedEllipsoid,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    latitude_degrees: &FixedInterval, ellipsoid: &crate::PreparedEllipsoid,
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<FixedInterval, MathError> {
     let bits = latitude_degrees
         .lower()
@@ -1407,8 +1334,7 @@ pub(crate) fn meridian_arc_interval_observed(
 }
 
 fn interval_from_rat<I: CertifiedInterval>(
-    value: &Rat,
-    math: &mut IntervalContext<'_>,
+    value: &Rat, math: &mut IntervalContext<'_>,
 ) -> Result<I, MathError> {
     I::from_ratio(
         value.numerator().as_ref(),
@@ -1421,8 +1347,7 @@ fn interval_from_rat<I: CertifiedInterval>(
 // direct propagation. It owns shape checks, entry validation, all-output refusal
 // and verifies an external ExactSizeIterator cannot publish a truncated batch.
 fn batch<Input, Output: Clone>(
-    mut inputs: impl ExactSizeIterator<Item = Input>,
-    output: &mut [Option<Output>],
+    mut inputs: impl ExactSizeIterator<Item = Input>, output: &mut [Option<Output>],
     context: &mut MetricContext,
     mut compute: impl FnMut(Input, &mut MetricContext) -> Result<Output, GeoError>,
 ) -> Result<(), GeoError> {
@@ -1465,17 +1390,13 @@ fn batch<Input, Output: Clone>(
 
 #[cfg(test)]
 fn point_decisive(
-    distance: &FixedInterval,
-    threshold: Option<&FixedInterval>,
-    math: &mut CoordinateMath,
+    distance: &FixedInterval, threshold: Option<&FixedInterval>, math: &mut CoordinateMath,
 ) -> Result<bool, MathError> {
     point_decisive_with(distance, threshold, &mut IntervalContext::fixed(math))
 }
 
 fn reduced_latitude(
-    latitude: &Rat,
-    c: &FixedInterval,
-    radians_per_degree: &FixedInterval,
+    latitude: &Rat, c: &FixedInterval, radians_per_degree: &FixedInterval,
     math: &mut CoordinateMath,
 ) -> Result<(FixedInterval, FixedInterval), MathError> {
     reduced_latitude_with(
@@ -1488,20 +1409,14 @@ fn reduced_latitude(
 
 impl IntegralCoefficients<FixedInterval> {
     fn new(
-        c: &FixedInterval,
-        order: usize,
-        chunks: &mut ChunkObserver<'_, '_>,
+        c: &FixedInterval, order: usize, chunks: &mut ChunkObserver<'_, '_>,
         math: &mut CoordinateMath,
     ) -> Result<Self, SolveError> {
         Self::new_with(c, order, chunks, &mut IntervalContext::fixed(math))
     }
     fn evaluate(
-        &self,
-        sigma1: &FixedInterval,
-        sigma2: &FixedInterval,
-        q: &FixedInterval,
-        chunks: &mut ChunkObserver<'_, '_>,
-        math: &mut CoordinateMath,
+        &self, sigma1: &FixedInterval, sigma2: &FixedInterval, q: &FixedInterval,
+        chunks: &mut ChunkObserver<'_, '_>, math: &mut CoordinateMath,
     ) -> Result<Integrals, SolveError> {
         self.evaluate_with(sigma1, sigma2, q, chunks, &mut IntervalContext::fixed(math))
     }
@@ -1519,8 +1434,7 @@ struct InverseProblem<'a, I: CertifiedInterval> {
 }
 
 fn solve_distance_with<I: point::PointInterval>(
-    problem: &InverseProblem<'_, I>,
-    chunks: &mut ChunkObserver<'_, '_>,
+    problem: &InverseProblem<'_, I>, chunks: &mut ChunkObserver<'_, '_>,
     math: &mut IntervalContext<'_>,
 ) -> Result<inverse::InverseSolution<I>, SolveError> {
     let latitude_sum = problem.pair.latitude1.add(&problem.pair.latitude2);
@@ -1583,8 +1497,7 @@ fn solve_distance_with<I: point::PointInterval>(
 }
 
 fn solve_source_distance_with<I: point::PointInterval>(
-    problem: &InverseProblem<'_, I>,
-    chunks: &mut ChunkObserver<'_, '_>,
+    problem: &InverseProblem<'_, I>, chunks: &mut ChunkObserver<'_, '_>,
     math: &mut IntervalContext<'_>,
 ) -> Result<inverse::InverseSolution<I>, SolveError> {
     let InverseProblem {
@@ -2067,21 +1980,10 @@ fn solve_source_distance_with<I: point::PointInterval>(
 // complete pi-period auxiliary integral is independent of its starting phase.
 #[allow(clippy::too_many_arguments)] // One exact symmetry reduction of the shared inverse problem.
 fn symmetric_vertex_solution<I: CertifiedInterval>(
-    pair: &CanonicalPair,
-    reference: &GeographicReference,
-    sphere: &SpherePair<I>,
-    longitude: &I,
-    critical_longitude: &I,
-    b: &I,
-    e2: &I,
-    ep2: &I,
-    coefficients: &IntegralCoefficients<I>,
-    iterations: u32,
-    goal: DistanceGoal<'_>,
-    physical: Option<&I>,
-    capture: bool,
-    chunks: &mut ChunkObserver<'_, '_>,
-    math: &mut IntervalContext<'_>,
+    pair: &CanonicalPair, reference: &GeographicReference, sphere: &SpherePair<I>, longitude: &I,
+    critical_longitude: &I, b: &I, e2: &I, ep2: &I, coefficients: &IntegralCoefficients<I>,
+    iterations: u32, goal: DistanceGoal<'_>, physical: Option<&I>, capture: bool,
+    chunks: &mut ChunkObserver<'_, '_>, math: &mut IntervalContext<'_>,
 ) -> Result<Option<inverse::InverseSolution<I>>, SolveError> {
     let zero = I::from_i64(0, math)?;
     let one = I::from_i64(1, math)?;
@@ -2224,8 +2126,7 @@ struct SeededProblem<'a, I: CertifiedInterval> {
 /// does. Any failure returns `None` and the unchanged bracketing iteration
 /// runs; a proposal never substitutes for an enclosure.
 fn seeded_regular<I: point::PointInterval>(
-    problem: &SeededProblem<'_, I>,
-    chunks: &mut ChunkObserver<'_, '_>,
+    problem: &SeededProblem<'_, I>, chunks: &mut ChunkObserver<'_, '_>,
     math: &mut IntervalContext<'_>,
 ) -> Result<Option<inverse::InverseSolution<I>>, SolveError> {
     // Near the antipodal cut the longitude derivative approaches zero and a
@@ -2355,9 +2256,7 @@ fn seeded_regular<I: point::PointInterval>(
 
 /// The binary64 Newton proposal for one regular canonical problem.
 fn seed_proposal<I: point::PointInterval>(
-    problem: &SeededProblem<'_, I>,
-    pi: &I,
-    math: &mut IntervalContext<'_>,
+    problem: &SeededProblem<'_, I>, pi: &I, math: &mut IntervalContext<'_>,
 ) -> Option<seed::Proposal> {
     let sphere = problem.sphere;
     let coefficients = problem.coefficients;
@@ -2425,9 +2324,7 @@ fn proposal_floor(floating: bool) -> f64 {
 }
 
 fn point_decisive_with<I: CertifiedInterval>(
-    distance: &I,
-    threshold: Option<&I>,
-    math: &mut IntervalContext<'_>,
+    distance: &I, threshold: Option<&I>, math: &mut IntervalContext<'_>,
 ) -> Result<bool, MathError> {
     let maximum_width = I::from_ratio(&Int::from_i128(1), &Int::from_i128(2_000_000), math)?;
     if distance.width(math)?.upper() > maximum_width.lower() {
@@ -2441,10 +2338,7 @@ fn point_decisive_with<I: CertifiedInterval>(
 }
 
 fn reduced_latitude_with<I: CertifiedInterval>(
-    latitude: &Rat,
-    c: &I,
-    radians_per_degree: &I,
-    math: &mut IntervalContext<'_>,
+    latitude: &Rat, c: &I, radians_per_degree: &I, math: &mut IntervalContext<'_>,
 ) -> Result<(I, I), MathError> {
     if latitude.is_zero() {
         return Ok((I::from_i64(0, math)?, I::from_i64(1, math)?));
@@ -2485,13 +2379,8 @@ struct Hybrid<I: CertifiedInterval> {
 // explicit at this private mathematical boundary.
 #[allow(clippy::too_many_arguments)]
 fn hybrid<I: CertifiedInterval>(
-    sphere: &SpherePair<I>,
-    alpha: &I,
-    ep2: &I,
-    e2: &I,
-    root_before_vertex: bool,
-    coefficients: &IntegralCoefficients<I>,
-    chunks: &mut ChunkObserver<'_, '_>,
+    sphere: &SpherePair<I>, alpha: &I, ep2: &I, e2: &I, root_before_vertex: bool,
+    coefficients: &IntegralCoefficients<I>, chunks: &mut ChunkObserver<'_, '_>,
     math: &mut IntervalContext<'_>,
 ) -> Result<Hybrid<I>, SolveError> {
     let (sin_alpha, cos_alpha) = alpha.sin_cos(math)?;
@@ -2511,16 +2400,9 @@ fn hybrid<I: CertifiedInterval>(
 
 #[allow(clippy::too_many_arguments)] // Original line formula with either exact cardinal or enclosed trigonometry.
 fn hybrid_with_trig<I: CertifiedInterval>(
-    sphere: &SpherePair<I>,
-    alpha: &I,
-    sin_alpha: &I,
-    cos_alpha: &I,
-    ep2: &I,
-    e2: &I,
-    root_before_vertex: bool,
-    coefficients: &IntegralCoefficients<I>,
-    chunks: &mut ChunkObserver<'_, '_>,
-    math: &mut IntervalContext<'_>,
+    sphere: &SpherePair<I>, alpha: &I, sin_alpha: &I, cos_alpha: &I, ep2: &I, e2: &I,
+    root_before_vertex: bool, coefficients: &IntegralCoefficients<I>,
+    chunks: &mut ChunkObserver<'_, '_>, math: &mut IntervalContext<'_>,
 ) -> Result<Hybrid<I>, SolveError> {
     let sin0 = sin_alpha.mul(&sphere.cos1, math)?;
     let x1 = cos_alpha.mul(&sphere.cos1, math)?;
@@ -2693,8 +2575,7 @@ fn hybrid_with_trig<I: CertifiedInterval>(
 
 /// Restrict an enclosure using a separately proven nonnegative analytic domain.
 fn nonnegative<I: CertifiedInterval>(
-    value: &I,
-    math: &mut IntervalContext<'_>,
+    value: &I, math: &mut IntervalContext<'_>,
 ) -> Result<I, MathError> {
     if value.upper().is_negative() {
         return Err(MathError::PrecisionExhausted);
@@ -2721,10 +2602,7 @@ struct Integrals<I: CertifiedInterval = FixedInterval> {
 
 impl<I: CertifiedInterval> IntegralCoefficients<I> {
     fn new_with(
-        c: &I,
-        order: usize,
-        chunks: &mut ChunkObserver<'_, '_>,
-        math: &mut IntervalContext<'_>,
+        c: &I, order: usize, chunks: &mut ChunkObserver<'_, '_>, math: &mut IntervalContext<'_>,
     ) -> Result<Self, SolveError> {
         let (square_root, reciprocal) = coefficients::generate(c, order, chunks, math)?;
         Ok(Self {
@@ -2736,11 +2614,7 @@ impl<I: CertifiedInterval> IntegralCoefficients<I> {
     }
 
     fn evaluate_with(
-        &self,
-        sigma1: &I,
-        sigma2: &I,
-        q: &I,
-        chunks: &mut ChunkObserver<'_, '_>,
+        &self, sigma1: &I, sigma2: &I, q: &I, chunks: &mut ChunkObserver<'_, '_>,
         math: &mut IntervalContext<'_>,
     ) -> Result<Integrals<I>, SolveError> {
         let delta = sigma2.sub(sigma1, math)?;
@@ -2751,22 +2625,14 @@ impl<I: CertifiedInterval> IntegralCoefficients<I> {
     // inputs to this one sine-power integral recurrence.
     #[allow(clippy::too_many_arguments)]
     fn evaluate_delta_with(
-        &self,
-        sigma1: &I,
-        sigma2: &I,
-        delta: &I,
-        q: &I,
-        chunks: &mut ChunkObserver<'_, '_>,
+        &self, sigma1: &I, sigma2: &I, delta: &I, q: &I, chunks: &mut ChunkObserver<'_, '_>,
         math: &mut IntervalContext<'_>,
     ) -> Result<Integrals<I>, SolveError> {
         self.evaluate_trig_delta_with(sigma1, sigma2, delta, q, None, chunks, math)
     }
 
     fn evaluate_period_with(
-        &self,
-        q: &I,
-        chunks: &mut ChunkObserver<'_, '_>,
-        math: &mut IntervalContext<'_>,
+        &self, q: &I, chunks: &mut ChunkObserver<'_, '_>, math: &mut IntervalContext<'_>,
     ) -> Result<Integrals<I>, SolveError> {
         let pi = I::pi(math)?;
         let half_pi = pi.div(&I::from_i64(2, math)?, math)?;
@@ -2787,14 +2653,8 @@ impl<I: CertifiedInterval> IntegralCoefficients<I> {
 
     #[allow(clippy::too_many_arguments)] // One recurrence with either certified or exact endpoint trigonometry.
     fn evaluate_trig_delta_with(
-        &self,
-        sigma1: &I,
-        sigma2: &I,
-        delta: &I,
-        q: &I,
-        known_trig: Option<(&I, &I, &I, &I)>,
-        chunks: &mut ChunkObserver<'_, '_>,
-        math: &mut IntervalContext<'_>,
+        &self, sigma1: &I, sigma2: &I, delta: &I, q: &I, known_trig: Option<(&I, &I, &I, &I)>,
+        chunks: &mut ChunkObserver<'_, '_>, math: &mut IntervalContext<'_>,
     ) -> Result<Integrals<I>, SolveError> {
         if q.lower().is_zero() && q.upper().is_zero() {
             // Exact auxiliary-sphere integrands at q=0, including the native

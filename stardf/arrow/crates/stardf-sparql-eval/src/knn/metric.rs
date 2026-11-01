@@ -153,13 +153,8 @@ impl Kernel {
     /// `arithmetic` is the checked handle [`Kernel::distance`] takes, for the same reason.
     #[must_use]
     pub fn distance_bounded<A: Scalar, B: Scalar>(
-        self,
-        arithmetic: Resolved<Exact>,
-        query: &[A],
-        query_norm: f64,
-        candidate: &[B],
-        candidate_norm: f64,
-        bound: Bound,
+        self, arithmetic: Resolved<Exact>, query: &[A], query_norm: f64, candidate: &[B],
+        candidate_norm: f64, bound: Bound,
     ) -> Bounded {
         arithmetic.distance_bounded(
             self.measure(),
@@ -203,11 +198,7 @@ impl Kernel {
     /// no entry point that computes an exact distance without that check. Every exact path
     /// returns the same bits, so which one the handle names does not change the answer.
     pub fn distance<A: Scalar, B: Scalar>(
-        self,
-        arithmetic: Resolved<Exact>,
-        query: &[A],
-        query_norm: f64,
-        candidate: &[B],
+        self, arithmetic: Resolved<Exact>, query: &[A], query_norm: f64, candidate: &[B],
         candidate_norm: f64,
     ) -> Result<f64, NonFinite> {
         // Cosine is written exactly as PURREMB v1 states it -- one product, one quotient,
@@ -233,11 +224,7 @@ impl Kernel {
     /// [`Resolved::<Exact>::norm`] on `arithmetic.exact()` ([`Resolved::exact`]), exactly
     /// as [`Kernel::distance`]'s do.
     pub fn distance_reassociated<A: Scalar, B: Scalar>(
-        self,
-        arithmetic: Resolved<Reassociated>,
-        query: &[A],
-        query_norm: f64,
-        candidate: &[B],
+        self, arithmetic: Resolved<Reassociated>, query: &[A], query_norm: f64, candidate: &[B],
         candidate_norm: f64,
     ) -> Result<f64, NonFinite> {
         arithmetic.distance(self.measure(), query, query_norm, candidate, candidate_norm)
@@ -254,13 +241,8 @@ impl Kernel {
     /// [`Kernel::SquaredEuclidean`] actually abandons.
     #[must_use]
     pub fn distance_bounded_reassociated<A: Scalar, B: Scalar>(
-        self,
-        arithmetic: Resolved<Reassociated>,
-        query: &[A],
-        query_norm: f64,
-        candidate: &[B],
-        candidate_norm: f64,
-        bound: Bound,
+        self, arithmetic: Resolved<Reassociated>, query: &[A], query_norm: f64, candidate: &[B],
+        candidate_norm: f64, bound: Bound,
     ) -> Bounded {
         arithmetic.distance_bounded(
             self.measure(),
@@ -364,9 +346,7 @@ pub fn best(k: usize, candidates: impl IntoIterator<Item = Ranked>) -> Vec<Ranke
 /// transfers the heap's allocation unchanged to the sorted result.
 /// Its capacity is bounded by the actual candidate count, even when k is huge.
 pub(crate) fn best_admitted(
-    k: usize,
-    candidates: crate::AdmittedVec<Ranked>,
-    workspace: &crate::WorkspaceCapability,
+    k: usize, candidates: crate::AdmittedVec<Ranked>, workspace: &crate::WorkspaceCapability,
 ) -> Result<crate::AdmittedVec<Ranked>, crate::EvalError> {
     let capacity = k.min(candidates.len());
     if capacity == 0 {
@@ -422,9 +402,7 @@ impl RankHeap for crate::AdmittedHeap<Ranked> {
 /// One ordering/selection body for resident and admitted callers. The native
 /// caller reserves min(k, candidate count), so this body cannot grow its heap.
 fn select_best<H: RankHeap>(
-    k: usize,
-    candidates: impl IntoIterator<Item = Ranked>,
-    mut heap: H,
+    k: usize, candidates: impl IntoIterator<Item = Ranked>, mut heap: H,
 ) -> Result<H, H::Error> {
     for candidate in candidates {
         if heap.len() < k {

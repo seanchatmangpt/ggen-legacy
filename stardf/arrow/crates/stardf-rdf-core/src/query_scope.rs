@@ -87,8 +87,7 @@ impl<'a> LexicalQuery<'a> {
     /// # Errors
     /// Refuses nonliteral needles or malformed field predicates.
     pub fn encode(
-        needle: TermValue,
-        predicate: Option<TermValue>,
+        needle: TermValue, predicate: Option<TermValue>,
     ) -> Result<TermValue, LexicalScopeError> {
         if !matches!(needle, TermValue::Literal { .. }) {
             return Err(LexicalScopeError::InvalidEncoding);

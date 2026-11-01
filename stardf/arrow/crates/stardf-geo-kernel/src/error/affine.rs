@@ -79,10 +79,8 @@ impl purrdf_hash::error::StructuredError for AffineInputError {
 impl AffineInputError {
     pub(crate) fn helmert(
         parameters: &crate::operation::HelmertParameters,
-        point: Option<&crate::operation::OperationPoint>,
-        height: Option<&crate::Rat>,
-        adjusted_scale: Option<&crate::Rat>,
-        reason: HelmertInputReason,
+        point: Option<&crate::operation::OperationPoint>, height: Option<&crate::Rat>,
+        adjusted_scale: Option<&crate::Rat>, reason: HelmertInputReason,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         super::GeoError::diagnostic_inputs(

@@ -54,10 +54,7 @@ impl Witnesses {
     }
 
     fn join(
-        &mut self,
-        first: Option<usize>,
-        second: usize,
-        memory: &mut Memory<'_, Resident>,
+        &mut self, first: Option<usize>, second: usize, memory: &mut Memory<'_, Resident>,
     ) -> Result<usize, StorageError> {
         let Some(first) = first else {
             return Ok(second);
@@ -69,11 +66,7 @@ impl Witnesses {
 
     /// A newly discovered endpoint extends the predecessor actually used by DFS.
     pub(super) fn step(
-        &mut self,
-        pattern: usize,
-        root: usize,
-        step: Step,
-        memory: &mut Memory<'_, Resident>,
+        &mut self, pattern: usize, root: usize, step: Step, memory: &mut Memory<'_, Resident>,
     ) -> Result<(), StorageError> {
         let prefix = (step.from != root).then(|| self.path(pattern, root, step.from));
         let id = self.paths.len();
@@ -85,11 +78,7 @@ impl Witnesses {
 
     /// The cache's own append rule: owner→source, new edge, destination→target.
     pub(super) fn extend(
-        &mut self,
-        pattern: usize,
-        owner: usize,
-        step: Step,
-        target: usize,
+        &mut self, pattern: usize, owner: usize, step: Step, target: usize,
         memory: &mut Memory<'_, Resident>,
     ) -> Result<(), StorageError> {
         let prefix = (owner != step.from).then(|| self.path(pattern, owner, step.from));

@@ -157,8 +157,7 @@ purrdf_lex::variant_from!(UpdateAbort {
 /// `INSERT DATA` is a genuine ingress into the store, and the absoluteness invariant
 /// is enforced where terms ENTER the store, not where we believe they came from.
 fn execution_abort(
-    error: &crate::EvalError,
-    governors: Option<&Arc<GovernorState>>,
+    error: &crate::EvalError, governors: Option<&Arc<GovernorState>>,
 ) -> UpdateAbort {
     if let Some(tripped) = governors.and_then(|state| state.tripped()) {
         return UpdateAbort::Tripped(tripped);
@@ -275,8 +274,7 @@ fn charge_host_fetch(governors: Option<&Arc<GovernorState>>) -> Result<(), Updat
 /// Saturating rather than wrapping: a store large enough to overflow the product is one no
 /// budget could admit anyway, so failing closed at `u64::MAX` is the honest answer.
 fn charge_mutations(
-    governors: Option<&Arc<GovernorState>>,
-    quads: usize,
+    governors: Option<&Arc<GovernorState>>, quads: usize,
 ) -> Result<(), UpdateAbort> {
     let Some(state) = governors else {
         return Ok(());
@@ -434,11 +432,8 @@ pub trait GraphResolver {
 // The in-crate callers are the engine UPDATE seams (`engine::update_with_options` and
 // `NativeSparqlEngine::update_governed`).
 pub(crate) fn eval_update(
-    update: &Update,
-    m: &mut MutableDataset,
-    resolver: Option<&dyn GraphResolver>,
-    cfg: &UpdateEvalConfig<'_>,
-    mut coordinates: Option<&mut crate::QueryCoordinates>,
+    update: &Update, m: &mut MutableDataset, resolver: Option<&dyn GraphResolver>,
+    cfg: &UpdateEvalConfig<'_>, mut coordinates: Option<&mut crate::QueryCoordinates>,
 ) -> Result<(), UpdateAbort> {
     admit_version(AdmittedRequest::Update(update)).map_err(|e| {
         RdfDiagnostic::error(
@@ -518,12 +513,8 @@ struct UpdateReceipt<'a> {
 /// asked. Polling a latching signal is idempotent and costs an ungoverned request nothing
 /// (`governors` is `None`, and the poll returns before touching anything).
 fn apply_operation(
-    op: &GraphUpdateOperation,
-    m: &mut MutableDataset,
-    resolver: Option<&dyn GraphResolver>,
-    cfg: &UpdateEvalConfig<'_>,
-    bnode_counter: &mut u64,
-    supplied_rng: &mut Option<u64>,
+    op: &GraphUpdateOperation, m: &mut MutableDataset, resolver: Option<&dyn GraphResolver>,
+    cfg: &UpdateEvalConfig<'_>, bnode_counter: &mut u64, supplied_rng: &mut Option<u64>,
     receipt: UpdateReceipt<'_>,
 ) -> Result<(), UpdateAbort> {
     check_stop(cfg.governors)?;
@@ -614,11 +605,8 @@ fn apply_operation(
 /// request-wide `bnode_mint_prefix` (same publication-namespace law as
 /// [`delete_insert`] and [`load`]).
 fn insert_data(
-    data: &[QuadPattern],
-    m: &mut MutableDataset,
-    counter: &mut u64,
-    requested_prefix: Option<&str>,
-    governors: Option<&Arc<GovernorState>>,
+    data: &[QuadPattern], m: &mut MutableDataset, counter: &mut u64,
+    requested_prefix: Option<&str>, governors: Option<&Arc<GovernorState>>,
 ) -> Result<(), UpdateAbort> {
     let prefix = template_has_blank_node(data)
         .then(|| mutable_mint_prefix(m, requested_prefix))
@@ -639,9 +627,7 @@ fn insert_data(
 /// `DELETE DATA`: instantiate each quad (variable-free AND blank-free — parser
 /// guaranteed) and remove the result. Snapshot-free, like [`insert_data`].
 fn delete_data(
-    data: &[QuadPattern],
-    m: &mut MutableDataset,
-    counter: &mut u64,
+    data: &[QuadPattern], m: &mut MutableDataset, counter: &mut u64,
     governors: Option<&Arc<GovernorState>>,
 ) -> Result<(), UpdateAbort> {
     let mut blanks: crate::template::TemplateBlanks = crate::template::TemplateBlanks::default();
@@ -669,12 +655,8 @@ struct DeleteInsertSpec<'a> {
 
 /// `DELETE { ... } INSERT { ... } WHERE { ... }` and its shorthands.
 fn delete_insert(
-    spec: DeleteInsertSpec<'_>,
-    m: &mut MutableDataset,
-    cfg: &UpdateEvalConfig<'_>,
-    bnode_counter: &mut u64,
-    supplied_rng: &mut Option<u64>,
-    mut receipt: UpdateReceipt<'_>,
+    spec: DeleteInsertSpec<'_>, m: &mut MutableDataset, cfg: &UpdateEvalConfig<'_>,
+    bnode_counter: &mut u64, supplied_rng: &mut Option<u64>, mut receipt: UpdateReceipt<'_>,
 ) -> Result<(), UpdateAbort> {
     let DeleteInsertSpec {
         delete,
@@ -962,8 +944,7 @@ fn delete_insert(
 /// even when it is the default graph), so the query-wide intermediate-cell ceiling also
 /// bounds a template that expands one WHERE row into an arbitrarily large mutation batch.
 fn observe_staged_mutation(
-    governors: Option<&Arc<GovernorState>>,
-    already_staged: usize,
+    governors: Option<&Arc<GovernorState>>, already_staged: usize,
 ) -> Result<(), UpdateAbort> {
     let Some(state) = governors else {
         return Ok(());
@@ -1000,9 +981,7 @@ fn observe_staged_mutation(
 /// stop signal that was already firing keeps precedence and the evidence names one governor
 /// rather than two.
 fn admit_where<D: purrdf_core::DatasetView + Sync>(
-    pattern: &purrdf_sparql_algebra::GraphPattern,
-    snap: &D,
-    active_dataset: &ActiveDataset<D::Id>,
+    pattern: &purrdf_sparql_algebra::GraphPattern, snap: &D, active_dataset: &ActiveDataset<D::Id>,
     governors: Option<&Arc<GovernorState>>,
     relations: &crate::property_fn::PropertyFunctionRegistry<'_>,
 ) -> Result<(), UpdateAbort> {
@@ -1077,13 +1056,8 @@ fn admit_where<D: purrdf_core::DatasetView + Sync>(
 /// ceiling had in fact stopped it, which is the one outcome a governor exists to make
 /// impossible. Each failure `SILENT` absorbs is recorded on the request's evidence.
 fn load(
-    silent: bool,
-    source: &str,
-    destination: &GraphTarget,
-    m: &mut MutableDataset,
-    resolver: Option<&dyn GraphResolver>,
-    cfg: &UpdateEvalConfig<'_>,
-    counter: &mut u64,
+    silent: bool, source: &str, destination: &GraphTarget, m: &mut MutableDataset,
+    resolver: Option<&dyn GraphResolver>, cfg: &UpdateEvalConfig<'_>, counter: &mut u64,
 ) -> Result<(), UpdateAbort> {
     let governors = cfg.governors;
     let Some(resolver) = resolver else {
@@ -1153,10 +1127,7 @@ fn load(
 /// A `LOAD` of `source` that failed with `diagnostic`: under `SILENT` a success with
 /// nothing loaded, recorded on the request's evidence as `kind`; otherwise the failure.
 fn silence_or_fail(
-    silent: bool,
-    source: &str,
-    kind: purrdf_core::SilencedKind,
-    diagnostic: RdfDiagnostic,
+    silent: bool, source: &str, kind: purrdf_core::SilencedKind, diagnostic: RdfDiagnostic,
     governors: Option<&Arc<GovernorState>>,
 ) -> Result<(), UpdateAbort> {
     if !silent {
@@ -1192,9 +1163,7 @@ fn silence_or_fail(
 /// execute — its cost is the whole store — so it is charged per removed quad like every
 /// other mutation.
 fn clear_target(
-    target: &GraphTarget,
-    m: &mut MutableDataset,
-    governors: Option<&Arc<GovernorState>>,
+    target: &GraphTarget, m: &mut MutableDataset, governors: Option<&Arc<GovernorState>>,
 ) -> Result<(), UpdateAbort> {
     let quads = quads_of_target(target, m);
     charge_mutations(governors, quads.len())?;
@@ -1210,9 +1179,7 @@ fn clear_target(
 /// Admit a named input before any mutation. SILENT suppresses only this semantic
 /// failure; a governor trip remains a typed abort at its existing polling sites.
 fn admit_graph(
-    target: &GraphTarget,
-    m: &MutableDataset,
-    silent: bool,
+    target: &GraphTarget, m: &MutableDataset, silent: bool,
 ) -> Result<bool, UpdateAbort> {
     if m.graph_existence() == GraphExistenceMode::RememberEmpty
         && let GraphTarget::Named(name) = target
@@ -1231,10 +1198,7 @@ fn admit_graph(
 }
 
 fn clear_or_drop(
-    target: &GraphTarget,
-    m: &mut MutableDataset,
-    silent: bool,
-    drop_graph: bool,
+    target: &GraphTarget, m: &mut MutableDataset, silent: bool, drop_graph: bool,
     governors: Option<&Arc<GovernorState>>,
 ) -> Result<(), UpdateAbort> {
     if !admit_graph(target, m, silent)? {
@@ -1250,8 +1214,7 @@ fn clear_or_drop(
 /// An admitted empty transfer or successful LOAD creates its named destination
 /// in remembered mode, through the same idempotent declaration home as row ingress.
 fn remember_destination(
-    destination: Option<&TermValue>,
-    m: &mut MutableDataset,
+    destination: Option<&TermValue>, m: &mut MutableDataset,
 ) -> Result<(), UpdateAbort> {
     if m.graph_existence() == GraphExistenceMode::RememberEmpty
         && let Some(graph) = destination
@@ -1265,9 +1228,7 @@ fn remember_destination(
 /// declared empty has no quad for a removal to take, so an operation that removes
 /// the graph says so directly (see module docs). The default graph always exists.
 fn withdraw_declarations(
-    target: &GraphTarget,
-    m: &mut MutableDataset,
-    governors: Option<&Arc<GovernorState>>,
+    target: &GraphTarget, m: &mut MutableDataset, governors: Option<&Arc<GovernorState>>,
 ) -> Result<(), UpdateAbort> {
     match target {
         GraphTarget::Default => {}
@@ -1284,10 +1245,7 @@ fn withdraw_declarations(
 /// `ADD <source> TO <dest>`: insert source quads re-keyed to dest; dest is NOT
 /// cleared and source is NOT removed.
 fn graph_op_add(
-    source: &GraphTarget,
-    destination: &GraphTarget,
-    m: &mut MutableDataset,
-    silent: bool,
+    source: &GraphTarget, destination: &GraphTarget, m: &mut MutableDataset, silent: bool,
     governors: Option<&Arc<GovernorState>>,
 ) -> Result<(), UpdateAbort> {
     // Retain the implicit-mode self no-op. Remembered ADD admits the input first,
@@ -1311,10 +1269,7 @@ fn graph_op_add(
 
 /// `COPY <source> TO <dest>`: clear dest, then insert source quads re-keyed to dest.
 fn graph_op_copy(
-    source: &GraphTarget,
-    destination: &GraphTarget,
-    m: &mut MutableDataset,
-    silent: bool,
+    source: &GraphTarget, destination: &GraphTarget, m: &mut MutableDataset, silent: bool,
     governors: Option<&Arc<GovernorState>>,
 ) -> Result<(), UpdateAbort> {
     // SPARQL 1.1 Update §3.2.3: COPY where source ≡ destination is a no-op.
@@ -1340,10 +1295,7 @@ fn graph_op_copy(
 /// `MOVE <source> TO <dest>`: clear dest, insert source quads re-keyed to dest, then
 /// remove the source quads.
 fn graph_op_move(
-    source: &GraphTarget,
-    destination: &GraphTarget,
-    m: &mut MutableDataset,
-    silent: bool,
+    source: &GraphTarget, destination: &GraphTarget, m: &mut MutableDataset, silent: bool,
     governors: Option<&Arc<GovernorState>>,
 ) -> Result<(), UpdateAbort> {
     // SPARQL 1.1 Update §3.2.4: MOVE where source ≡ destination is a no-op. This guard is also
@@ -1408,9 +1360,7 @@ fn mutable_mint_prefix(destination: &MutableDataset, requested: Option<&str>) ->
 /// a variable. The graph slot is the explicit `GRAPH g { … }` wrapper, else the
 /// default graph (DATA has no `WITH`). Blanks mint from the shared `counter`.
 fn instantiate_ground_quad(
-    qp: &QuadPattern,
-    blanks: &mut crate::template::TemplateBlanks,
-    counter: &mut u64,
+    qp: &QuadPattern, blanks: &mut crate::template::TemplateBlanks, counter: &mut u64,
     prefix: Option<&str>,
 ) -> Option<QuadValues> {
     let s = instantiate_ground_term(&qp.triple.subject, blanks, counter, prefix)?;
@@ -1464,11 +1414,8 @@ fn resolve_quad(qp: &QuadPattern, schema: &VarSchema) -> QuadOrdinal {
 /// `ordinal` is `qp`'s [`QuadOrdinal`], resolved once per template — see that
 /// type's doc comment.
 fn instantiate_quad_with_default<D: purrdf_core::DatasetView + Sync>(
-    qp: &QuadPattern,
-    ordinal: &QuadOrdinal,
-    row: &Solution<D::Id>,
-    blanks: &mut crate::template::TemplateBlanks,
-    ctx: &mut EvalCtx<'_, D>,
+    qp: &QuadPattern, ordinal: &QuadOrdinal, row: &Solution<D::Id>,
+    blanks: &mut crate::template::TemplateBlanks, ctx: &mut EvalCtx<'_, D>,
     default_graph: Option<&TermValue>,
 ) -> Result<Option<QuadValues>, crate::error::EvalError> {
     let Some(s) = instantiate_term(
@@ -1523,8 +1470,7 @@ fn instantiate_quad_with_default<D: purrdf_core::DatasetView + Sync>(
 
 /// Snapshot exact physical source records before any destination mutation.
 fn records_of_target(
-    target: &GraphTarget,
-    m: &MutableDataset,
+    target: &GraphTarget, m: &MutableDataset,
 ) -> Result<Vec<RecordValues>, RdfDiagnostic> {
     match target {
         GraphTarget::Default => m.records_for_pattern(None, None, None, GraphMatchValue::Default),
@@ -1546,9 +1492,7 @@ fn records_of_target(
 /// Translate one resolved document, sharing its fresh identities across every carrier.
 /// Source graph names are discarded: only identities referenced by S/P/O are minted.
 fn fresh_load_records(
-    records: Vec<RecordValues>,
-    destination: Option<&TermValue>,
-    counter: &mut u64,
+    records: Vec<RecordValues>, destination: Option<&TermValue>, counter: &mut u64,
     prefix: Option<&str>,
 ) -> Result<Vec<RecordValues>, RdfDiagnostic> {
     let mut blanks: DetHashMap<(String, BlankScope), String> = DetHashMap::default();
@@ -1592,8 +1536,7 @@ fn fresh_load_records(
 
 /// Fold nested terms through the existing owner; only genuine blank carriers change.
 fn fresh_load_term(
-    term: TermValue,
-    blanks: &DetHashMap<(String, BlankScope), String>,
+    term: TermValue, blanks: &DetHashMap<(String, BlankScope), String>,
 ) -> Result<TermValue, RdfDiagnostic> {
     use purrdf_core::blank_label::{LabelAlphabet, decode_blank_label, encode_blank_label};
     let missing = || {

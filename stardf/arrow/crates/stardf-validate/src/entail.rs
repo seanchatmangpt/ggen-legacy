@@ -113,8 +113,7 @@ pub fn entail_to_ntriples(request: &EntailRequest<'_>) -> Result<EntailOutcome, 
 /// native pattern refusal as [`XPathValidationError::Pattern`], and a rule query's
 /// operational diagnostic as [`XPathValidationError::Query`]. No dataset is returned.
 pub fn entail_to_ntriples_with_xpath_regex(
-    request: &EntailRequest<'_>,
-    xpath_regex: Option<Profile>,
+    request: &EntailRequest<'_>, xpath_regex: Option<Profile>,
 ) -> Result<EntailOutcome, XPathValidationError> {
     entail_to_ntriples_with_coordinates(request, xpath_regex, CoordinateInputs::default())
 }
@@ -126,9 +125,7 @@ pub fn entail_to_ntriples_with_xpath_regex(
 /// The same parse, import, execution and pattern refusals as
 /// [`entail_to_ntriples_with_xpath_regex`].
 pub fn entail_to_ntriples_with_coordinates(
-    request: &EntailRequest<'_>,
-    xpath_regex: Option<Profile>,
-    coordinates: CoordinateInputs,
+    request: &EntailRequest<'_>, xpath_regex: Option<Profile>, coordinates: CoordinateInputs,
 ) -> Result<EntailOutcome, XPathValidationError> {
     entail_with(request, coordinates, |source, data, options| {
         run_configured_rules(source, data, options, xpath_regex)
@@ -137,8 +134,7 @@ pub fn entail_to_ntriples_with_coordinates(
 
 /// The one entailment body under either law: `run` is the rules dispatch it runs.
 fn entail_with<E: From<ShapesError>>(
-    request: &EntailRequest<'_>,
-    coordinates: CoordinateInputs,
+    request: &EntailRequest<'_>, coordinates: CoordinateInputs,
     run: impl FnOnce(
         RuleSource<'_>,
         &purrdf_core::RdfDataset,
@@ -229,10 +225,7 @@ fn entail_with<E: From<ShapesError>>(
 /// assert!(nt.contains("<http://example.org/adult>"));
 /// ```
 pub fn entail_to_ntriples_string(
-    shapes_ttl: &str,
-    shapes_base: Option<&str>,
-    data_nt: &str,
-    imports: &ShapesImportList<'_>,
+    shapes_ttl: &str, shapes_base: Option<&str>, data_nt: &str, imports: &ShapesImportList<'_>,
 ) -> Result<String, ShapesError> {
     entail_to_ntriples_string_with_shapes_graph(shapes_ttl, shapes_base, None, data_nt, imports)
 }
@@ -251,10 +244,7 @@ pub fn entail_to_ntriples_string(
 /// Everything [`entail_to_ntriples_string`] refuses, and [`ShapesError::Invalid`] for a
 /// `shapes_graph` that names no graph.
 pub fn entail_to_ntriples_string_with_shapes_graph(
-    shapes_ttl: &str,
-    shapes_base: Option<&str>,
-    shapes_graph: Option<&str>,
-    data_nt: &str,
+    shapes_ttl: &str, shapes_base: Option<&str>, shapes_graph: Option<&str>, data_nt: &str,
     imports: &ShapesImportList<'_>,
 ) -> Result<String, ShapesError> {
     entail_to_ntriples(&EntailRequest {

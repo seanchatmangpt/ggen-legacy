@@ -187,8 +187,7 @@ fn focus_terms(reports: [&ValidationReport; 2]) -> BTreeMap<String, Term> {
 /// a row about that reifier lands in the annotation side-table. A case with no
 /// overlay is handed back its parsed base untouched, never a re-frozen copy of it.
 fn fold_overlay_into_base(
-    case: &Case,
-    base: Arc<purrdf_rdf::RdfDataset>,
+    case: &Case, base: Arc<purrdf_rdf::RdfDataset>,
 ) -> Arc<purrdf_rdf::RdfDataset> {
     if case.base_overlay.is_empty() {
         return base;
@@ -1364,9 +1363,7 @@ ex:PersonShape a sh:NodeShape ;
 
 /// Build a one-insert snapshot over `data` and bind `shapes` to it.
 fn bound(
-    shapes: &str,
-    data: &str,
-    row: Row,
+    shapes: &str, data: &str, row: Row,
 ) -> (Arc<purrdf_rdf::ir::DeltaDatasetView>, PreparedValidator) {
     let parsed = Arc::new(
         parse_shapes(&format!("{PREFIXES}{shapes}"), None).expect("fixture shapes must parse"),

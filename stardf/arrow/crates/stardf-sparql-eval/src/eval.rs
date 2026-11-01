@@ -160,8 +160,7 @@ pub struct LossVocabulary {
 impl LossVocabulary {
     /// A vocabulary from the caller's three predicate IRIs.
     pub fn new(
-        projection_loss: impl Into<String>,
-        loss_code: impl Into<String>,
+        projection_loss: impl Into<String>, loss_code: impl Into<String>,
         lost_reifies: impl Into<String>,
     ) -> Self {
         Self {
@@ -199,8 +198,7 @@ impl<I: ViewTermId> Default for TermLookup<I> {
 
 impl<I: ViewTermId> TermLookup<I> {
     fn shared(
-        &self,
-        workspace: &crate::WorkspaceCapability,
+        &self, workspace: &crate::WorkspaceCapability,
     ) -> Result<SharedTermLookup<I>, EvalError> {
         let mut shared = self
             .shared
@@ -225,9 +223,7 @@ impl<I: ViewTermId> TermLookup<I> {
     }
 
     fn lookup(
-        &self,
-        value: &TermValue,
-        workspace: &crate::WorkspaceCapability,
+        &self, value: &TermValue, workspace: &crate::WorkspaceCapability,
         read: impl FnOnce(&TermValue) -> Result<Option<I>, EvalError>,
     ) -> Result<Option<I>, EvalError> {
         let hash = workspace.term_hash(value)?;
@@ -388,8 +384,7 @@ thread_local! {
 /// judged by the body or `LATERAL` operand it stands for; `None` for a body to be walked
 /// as written.
 fn placeholder_unsafe(
-    deferred: &crate::deferred_exists::DeferredMap,
-    body: &GraphPattern,
+    deferred: &crate::deferred_exists::DeferredMap, body: &GraphPattern,
 ) -> Option<bool> {
     deferred
         .get(&(std::ptr::from_ref(body) as usize))
@@ -444,10 +439,7 @@ pub(crate) fn minted_label(prefix: Option<&str>, stem: &str, n: u64) -> String {
         .to_owned()
 }
 pub(crate) fn minted_text(
-    prefix: Option<&str>,
-    stem: &str,
-    n: u64,
-    workspace: &crate::WorkspaceCapability,
+    prefix: Option<&str>, stem: &str, n: u64, workspace: &crate::WorkspaceCapability,
 ) -> Result<purrdf_lex::allocation::SharedText, EvalError> {
     workspace.authored_text(&format_args!("{}{stem}{n}", prefix.unwrap_or("")))
 }
@@ -469,8 +461,7 @@ pub(crate) struct EffectiveBase {
 
 impl EffectiveBase {
     pub(crate) fn copy(
-        value: &str,
-        workspace: &crate::WorkspaceCapability,
+        value: &str, workspace: &crate::WorkspaceCapability,
     ) -> Result<purrdf_core::small::Shared<Self>, EvalError> {
         let layout = purrdf_core::small::Shared::<Self>::allocation_layout();
         let bytes = layout
@@ -1067,8 +1058,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// Admit constructed values before their producer allocates. Arena values
     /// remain live for the context, so their owners do too.
     pub(crate) fn admit_computed(
-        &mut self,
-        bytes: u64,
+        &mut self, bytes: u64,
     ) -> Result<crate::WorkspaceAllocation, EvalError> {
         self.reserve_computed_owner()?;
         self.growth.charge(bytes)
@@ -1136,9 +1126,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// A forward resolution already proves this dataset-local identity. Retain
     /// that proof before Values Insertion turns it into a lexical constant again.
     pub(crate) fn remember_existing_term(
-        &self,
-        value: &TermValue,
-        id: D::Id,
+        &self, value: &TermValue, id: D::Id,
     ) -> Result<(), EvalError> {
         if self.growth.is_bounded() {
             self.term_lookup
@@ -1149,8 +1137,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
 
     /// Transfer an admitted producer value only when interning adds its payload.
     pub(crate) fn intern_workspace_term(
-        &mut self,
-        value: crate::WorkspaceTerm,
+        &mut self, value: crate::WorkspaceTerm,
     ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
         self.reserve_computed_owner()?;
         let before = self.scratch.owned_value_count();
@@ -1182,8 +1169,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// blank, including registry-defined stateful functions. Shared by query,
     /// raw-pattern and UPDATE entry points before they evaluate either sibling.
     pub(crate) fn reserve_concrete_blank_inputs(
-        &mut self,
-        pattern: &GraphPattern,
+        &mut self, pattern: &GraphPattern,
     ) -> Result<(), EvalError> {
         if self.expression_barrier.observed().is_none() && !self.pattern_is_parallel_safe(pattern) {
             register_concrete_blank_inputs(pattern, self)?;
@@ -1210,8 +1196,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
 
     /// Mint through the same collision law while keeping the original lexical owner.
     pub(crate) fn try_mint_blank_text(
-        &mut self,
-        stem: &str,
+        &mut self, stem: &str,
     ) -> Result<Option<purrdf_lex::allocation::SharedText>, EvalError> {
         if self.expression_barrier.observed().is_some() {
             return Ok(None);
@@ -1289,9 +1274,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
 
     /// Preserve the read's pinned clock and original workspace in its filter context.
     pub(crate) fn at_admitted(
-        dataset: &'d D,
-        now_val: purrdf_xsd::XsdValue,
-        rng_seed: u64,
+        dataset: &'d D, now_val: purrdf_xsd::XsdValue, rng_seed: u64,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let barrier = ExpressionBarrier::admitted(workspace)?;
@@ -1303,8 +1286,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// Bounded constructors admit their one-shot expression control before
     /// constructing any context. The ordinary constructor uses the same body.
     pub(crate) fn new_admitted(
-        dataset: &'d D,
-        workspace: &crate::WorkspaceCapability,
+        dataset: &'d D, workspace: &crate::WorkspaceCapability,
         inputs: impl FnOnce() -> Result<(purrdf_xsd::XsdValue, u64), EvalError>,
     ) -> Result<Self, EvalError> {
         let barrier = ExpressionBarrier::admitted(workspace)?;
@@ -1313,9 +1295,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     }
 
     fn at_with_barrier(
-        dataset: &'d D,
-        now_val: purrdf_xsd::XsdValue,
-        rng_seed: u64,
+        dataset: &'d D, now_val: purrdf_xsd::XsdValue, rng_seed: u64,
         expression_barrier: ExpressionBarrier,
     ) -> Self {
         // `static`, not a bare `&Registry::EMPTY` temporary: the returned `Self` must
@@ -1436,8 +1416,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// `deferred` is the copy's own placeholders ([`Self::deferred_exists`]), installed for
     /// the guard's lifetime in place of the enclosing window's and restored on drop.
     pub(crate) fn enter_substituted_exists(
-        &mut self,
-        ledger_map: Option<crate::expr::SubstitutionSourceMap>,
+        &mut self, ledger_map: Option<crate::expr::SubstitutionSourceMap>,
         deferred: Option<crate::workspace::SharedWorkspace<crate::deferred_exists::DeferredMap>>,
     ) -> Result<EvalScopeGuard<'_, 'd, D>, EvalError> {
         let restore = self.begin_substituted_exists(ledger_map, deferred)?;
@@ -1450,8 +1429,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// Install the same scope without retaining an exclusive context borrow.
     /// The owner must restore this token before dropping the substituted tree.
     pub(crate) fn begin_substituted_exists(
-        &mut self,
-        ledger_map: Option<crate::expr::SubstitutionSourceMap>,
+        &mut self, ledger_map: Option<crate::expr::SubstitutionSourceMap>,
         deferred: Option<crate::workspace::SharedWorkspace<crate::deferred_exists::DeferredMap>>,
     ) -> Result<ScopeRestore, EvalError> {
         // All fallible growth precedes installation of this substitution window.
@@ -1474,8 +1452,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// The returned token can be held by a suspended parent and restored after
     /// the child completes, or by the recursive guard on the current path.
     pub(crate) fn begin_correlated_map_scope(
-        &mut self,
-        source: &crate::workspace::SharedWorkspace<crate::expr::SubstitutionSourceMap>,
+        &mut self, source: &crate::workspace::SharedWorkspace<crate::expr::SubstitutionSourceMap>,
     ) -> Result<Option<ScopeRestore>, EvalError> {
         if self.ledger.is_none() || source.is_empty() {
             return Ok(None);
@@ -1486,8 +1463,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     }
 
     pub(crate) fn enter_correlated_map_scope(
-        &mut self,
-        source: &crate::workspace::SharedWorkspace<crate::expr::SubstitutionSourceMap>,
+        &mut self, source: &crate::workspace::SharedWorkspace<crate::expr::SubstitutionSourceMap>,
     ) -> Result<EvalScopeGuard<'_, 'd, D>, EvalError> {
         let restore = self.begin_correlated_map_scope(source)?;
         Ok(EvalScopeGuard { ctx: self, restore })
@@ -1496,8 +1472,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// Scope eligibility numbering without changing source numbering or any
     /// substitution state. The caller keeps the numbered AST alive until drop.
     fn enter_positive_shape(
-        &mut self,
-        shape: crate::plan::PlanHandle,
+        &mut self, shape: crate::plan::PlanHandle,
     ) -> EvalScopeGuard<'_, 'd, D> {
         let restore = self.begin_positive_shape(shape);
         EvalScopeGuard {
@@ -1578,8 +1553,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
 
     /// Share the caller's immutable registration without new execution storage.
     pub(crate) fn with_shared_standpoint_predicates(
-        mut self,
-        predicates: Arc<StandpointPredicates>,
+        mut self, predicates: Arc<StandpointPredicates>,
     ) -> Self {
         self.standpoint_predicates = Some(predicates);
         self
@@ -1605,8 +1579,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// surfaced alongside a SELECT/ASK result. The common empty-buffer case yields an
     /// empty (but valid) dataset.
     pub(crate) fn constructed_dataset(
-        &self,
-        rows: &[Vec<Option<TermValue>>],
+        &self, rows: &[Vec<Option<TermValue>>],
     ) -> Result<purrdf_core::DatasetHandle, EvalError> {
         let selected = self.reachable_constructed(rows)?;
         freeze_constructed(&self.constructed, &selected, &self.growth)
@@ -1614,8 +1587,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
 
     /// Build the same auxiliary graph directly from the retained interned bag.
     pub(crate) fn constructed_dataset_of(
-        &self,
-        seq: &SolutionSeq<D::Id>,
+        &self, seq: &SolutionSeq<D::Id>,
     ) -> Result<purrdf_core::DatasetHandle, EvalError> {
         if self.constructed.is_empty() {
             return freeze_constructed(&self.constructed, &[], &self.growth);
@@ -1638,15 +1610,13 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// Select original constructed cells reachable from surviving bindings.
     /// Work and visited queues borrow payloads; no term copy precedes admission.
     pub(crate) fn reachable_constructed(
-        &self,
-        rows: &[Vec<Option<TermValue>>],
+        &self, rows: &[Vec<Option<TermValue>>],
     ) -> Result<crate::workspace::AdmittedVec<usize>, EvalError> {
         self.reachable_from(rows.iter().flatten().filter_map(Option::as_ref))
     }
 
     pub(crate) fn reachable_from<'a>(
-        &'a self,
-        seed: impl Iterator<Item = &'a TermValue>,
+        &'a self, seed: impl Iterator<Item = &'a TermValue>,
     ) -> Result<crate::workspace::AdmittedVec<usize>, EvalError> {
         let mut worklist = crate::workspace::AdmittedVec::new(&self.growth);
         let mut visited: crate::workspace::AdmittedVec<&TermValue> =
@@ -1694,8 +1664,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// # Errors
     /// Returns original native admission/control refusal.
     pub fn with_evidence_source(
-        mut self,
-        source: &'d dyn crate::evidence_exec::EvidenceSource<D::Id>,
+        mut self, source: &'d dyn crate::evidence_exec::EvidenceSource<D::Id>,
     ) -> Result<Self, EvalError> {
         self.evidence_input = Some(crate::evidence_exec::EvidenceInput::new(
             source,
@@ -1717,8 +1686,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     }
 
     pub(crate) fn with_bounded_order_cache(
-        mut self,
-        cache: &'d crate::plan_cache::BoundedOrderCache,
+        mut self, cache: &'d crate::plan_cache::BoundedOrderCache,
     ) -> Self {
         self.bgp_order_cache = Some(crate::plan_cache::OrderCacheRef::Bounded(cache));
         self
@@ -1747,8 +1715,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     }
 
     pub(crate) fn with_governor_owner(
-        mut self,
-        governors: crate::workspace::SharedWorkspace<GovernorState>,
+        mut self, governors: crate::workspace::SharedWorkspace<GovernorState>,
     ) -> Self {
         if self
             .governors
@@ -1765,8 +1732,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// plan root.
     #[must_use]
     pub(crate) fn with_charge_ledger(
-        mut self,
-        ledger: impl Into<crate::workspace::SharedWorkspace<ChargeLedger>>,
+        mut self, ledger: impl Into<crate::workspace::SharedWorkspace<ChargeLedger>>,
     ) -> Self {
         self.ledger = Some(ledger.into());
         self.ledger_node = crate::plan::NodeId::ROOT;
@@ -1895,8 +1861,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// charges are meant to fall to whatever node is already the ledger cursor — the
     /// nearest enclosing node that DID resolve.
     pub(crate) fn resolve_ledger_ordinal(
-        &self,
-        address: usize,
+        &self, address: usize,
     ) -> Option<(crate::plan::NodeId, bool)> {
         let ledger = self.ledger.as_ref()?;
         if let Some(ordinal) = ledger.ordinal_of(address) {
@@ -2040,8 +2005,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// execution. An ungoverned execution returns a bare result with nowhere to carry the
     /// record, so there it is not kept.
     pub(crate) fn record_silenced(
-        &self,
-        invocation: purrdf_core::SilencedInvocation,
+        &self, invocation: purrdf_core::SilencedInvocation,
     ) -> Result<(), EvalError> {
         if let Some(state) = self.governors.as_ref() {
             state.record_silenced_admitted(invocation, &self.growth)?;
@@ -2149,8 +2113,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// for the `Volatile` one (which only blocks that aggregate's own
     /// ACROSS-groups fork, not the built-in's within-group one).
     pub(crate) fn may_fork_aggregate(
-        &self,
-        agg: &purrdf_sparql_algebra::AggregateExpression,
+        &self, agg: &purrdf_sparql_algebra::AggregateExpression,
     ) -> bool {
         if !agg.args().iter().all(|e| self.may_fork_row_loop(e)) {
             return false;
@@ -2257,8 +2220,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// at the increment avoids attributing another worker's concurrent consumption.
     #[inline]
     pub(crate) fn charge(
-        &self,
-        point: crate::governor::ChargePoint,
+        &self, point: crate::governor::ChargePoint,
     ) -> Result<(), TrippedGovernor> {
         #[cfg(test)]
         crate::vm::charge_trace::record(|| format!("charge {point:?}"));
@@ -2308,9 +2270,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// The governor that stopped this execution, once one has.
     #[inline]
     pub(crate) fn charge_occurrences(
-        &self,
-        point: crate::governor::ChargePoint,
-        occurrences: u64,
+        &self, point: crate::governor::ChargePoint, occurrences: u64,
     ) -> Result<(), TrippedGovernor> {
         #[cfg(test)]
         crate::vm::charge_trace::record(|| format!("charge {point:?} x{occurrences}"));
@@ -2349,9 +2309,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// The governor that stopped this execution, once one has.
     #[inline]
     pub(crate) fn charge_amount(
-        &self,
-        dimension: purrdf_core::ResourceDimension,
-        amount: u64,
+        &self, dimension: purrdf_core::ResourceDimension, amount: u64,
     ) -> Result<(), TrippedGovernor> {
         #[cfg(test)]
         crate::vm::charge_trace::record(|| format!("charge {dimension:?} {amount}"));
@@ -2384,10 +2342,8 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// the stop signal as it is done, so a deadline or a cancellation is observed inside
     /// the worker as it is on the evaluation's own context.
     fn charge_deferred(
-        &self,
-        deferral: &crate::row_checkpoint::WorkerDeferral,
-        point: Option<crate::governor::ChargePoint>,
-        units: u64,
+        &self, deferral: &crate::row_checkpoint::WorkerDeferral,
+        point: Option<crate::governor::ChargePoint>, units: u64,
     ) -> Result<(), TrippedGovernor> {
         self.poll_deferred_work(units)?;
         deferral.charge_fuel(point, units, self.deferral_mark(deferral))
@@ -2417,8 +2373,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// arena is replayed by the loop's commit up to its size now; any other arena's growth
     /// (a function body's) is deferred as the bytes it is.
     fn defer_growth(
-        &self,
-        deferral: &crate::row_checkpoint::WorkerDeferral,
+        &self, deferral: &crate::row_checkpoint::WorkerDeferral,
     ) -> Result<(), TrippedGovernor> {
         if !deferral.scratch_engaged() {
             return Ok(());
@@ -2680,8 +2635,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// fold is commutative and associative ([`RelationWitness::merge`]) — so the order
     /// this walks them in cannot change the result, and no site has to think about it.
     pub(crate) fn absorb_worker_witnesses(
-        &mut self,
-        witnesses: impl IntoIterator<Item = RelationWitness>,
+        &mut self, witnesses: impl IntoIterator<Item = RelationWitness>,
     ) -> Result<(), EvalError> {
         for witness in witnesses {
             self.witness.try_merge(&witness, &self.growth)?;
@@ -2703,8 +2657,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// and allocation refusals propagate as [`EvalError::XPathRegex`].
     #[must_use]
     pub const fn with_xpath_regex(
-        mut self,
-        profile: purrdf_core::xsd_regex::xpath::Profile,
+        mut self, profile: purrdf_core::xsd_regex::xpath::Profile,
         limits: purrdf_core::xsd_regex::xpath::Limits,
     ) -> Self {
         self.xpath_regex = Some(Selection::new(profile, limits));
@@ -2798,8 +2751,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// each block of the loop's items ([`crate::parallel::par_blocks_try_map_init`]), so
     /// the loop copies the evaluation's arena once rather than once per block.
     pub(crate) fn fork_for_worker_over(
-        &self,
-        snapshot: &Arc<ScratchInterner>,
+        &self, snapshot: &Arc<ScratchInterner>,
     ) -> Result<Self, EvalError> {
         self.fork_with_scratch(ScratchInterner::over(snapshot))
     }
@@ -2820,8 +2772,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// A worker of a forked loop: over `snapshot` ([`Self::loop_snapshot`]) when there is
     /// one, a copy of this context's arena otherwise.
     pub(crate) fn fork_for_loop_worker(
-        &self,
-        snapshot: Option<&Arc<ScratchInterner>>,
+        &self, snapshot: Option<&Arc<ScratchInterner>>,
     ) -> Result<Self, EvalError> {
         snapshot.map_or_else(
             || self.fork_for_worker(),
@@ -3015,8 +2966,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// `PurrdfFn` set is an XSD cast or an unsupported-function error.
     #[must_use]
     pub fn with_user_functions(
-        mut self,
-        registry: &'d crate::user_fn::BoundFunctionRegistry,
+        mut self, registry: &'d crate::user_fn::BoundFunctionRegistry,
     ) -> Self {
         self.user_functions = registry;
         self
@@ -3026,8 +2976,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// `None`. The same borrowed owner is inherited by children and workers.
     #[must_use]
     pub fn with_user_function_admission(
-        mut self,
-        admission: Option<&'d Arc<dyn crate::user_fn::UserFunctionAdmission>>,
+        mut self, admission: Option<&'d Arc<dyn crate::user_fn::UserFunctionAdmission>>,
     ) -> Self {
         self.user_function_admission = admission;
         self
@@ -3073,8 +3022,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// fractional digits, half to even.
     #[must_use]
     pub const fn with_division_policy(
-        mut self,
-        division: purrdf_xsd::exact::DivisionPolicy,
+        mut self, division: purrdf_xsd::exact::DivisionPolicy,
     ) -> Self {
         self.division = division;
         self
@@ -3099,8 +3047,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// needs must fit beside everything the query has already minted. A zero cost
     /// (machine-word operands) charges nothing.
     pub(crate) fn charge_exact_numeric(
-        &self,
-        cost: purrdf_xsd::exact::Cost,
+        &self, cost: purrdf_xsd::exact::Cost,
     ) -> Result<(), TrippedGovernor> {
         if cost == purrdf_xsd::exact::Cost::ZERO {
             return Ok(());
@@ -3152,8 +3099,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// query's result can distinguish the two configurations.
     #[must_use]
     pub fn with_property_functions(
-        mut self,
-        registry: &'d crate::property_fn::PropertyFunctionRegistry<'d>,
+        mut self, registry: &'d crate::property_fn::PropertyFunctionRegistry<'d>,
     ) -> Self {
         self.property_functions = registry;
         self
@@ -3384,8 +3330,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     /// (a `SERVICE` body, or layers that disagree) — the second of which is exactly the
     /// case a cached preparation would answer with an earlier row's substitution.
     pub(crate) fn prepared_exists(
-        &mut self,
-        pattern: &GraphPattern,
+        &mut self, pattern: &GraphPattern,
     ) -> Result<crate::workspace::SharedWorkspace<PreparedExists>, EvalError> {
         if self.in_substituted_exists {
             return crate::workspace::SharedWorkspace::new_admitted(
@@ -3484,8 +3429,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     }
 
     pub(crate) fn bind_native_evidence(
-        &self,
-        row: &crate::RowEvidence,
+        &self, row: &crate::RowEvidence,
     ) -> Result<crate::RowEvidence, EvalError> {
         if row.is_virtual() {
             return Ok(row.clone());
@@ -3495,8 +3439,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     }
 
     pub(crate) fn negative_evidence(
-        &self,
-        row: &crate::RowEvidence,
+        &self, row: &crate::RowEvidence,
     ) -> Result<crate::RowEvidence, EvalError> {
         match &self.evidence_input {
             Some(input) => input.negative_evidence(row, self.active_graph, &self.growth),
@@ -3505,8 +3448,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
     }
 
     pub(crate) fn existential_evidence<'r>(
-        &self,
-        witnesses: impl IntoIterator<Item = &'r crate::RowEvidence>,
+        &self, witnesses: impl IntoIterator<Item = &'r crate::RowEvidence>,
         search: &crate::RowEvidence,
     ) -> Result<crate::RowEvidence, EvalError> {
         match &self.evidence_input {
@@ -3534,8 +3476,7 @@ impl<'d, D: DatasetView + Sync> EvalCtx<'d, D> {
 /// evaluated in-engine (the `path` module); an unimplemented builtin is a typed
 /// [`EvalError`], never a partial bag.
 pub(crate) fn eval_evaluated<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     if matches!(
         pattern,
@@ -3554,8 +3495,7 @@ pub(crate) fn eval_evaluated<D: DatasetView + Sync>(
 }
 
 fn eval_numbered_node<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     // The shared boundary has already checked stop and charged node entry.
     // The copied Join's positive scope precedes dictionary and Shapes offers.
@@ -3647,10 +3587,8 @@ enum OrdinaryFilterStep<'a, I: ViewTermId> {
 }
 
 fn step_ordinary_filter<'a, D: DatasetView + Sync>(
-    mut sequence: crate::expr::FilterSequence<'a, D::Id>,
-    node: &GraphPattern,
-    expression: &purrdf_sparql_algebra::Expression,
-    ctx: &mut EvalCtx<'_, D>,
+    mut sequence: crate::expr::FilterSequence<'a, D::Id>, node: &GraphPattern,
+    expression: &purrdf_sparql_algebra::Expression, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<OrdinaryFilterStep<'a, D::Id>, EvalError> {
     loop {
         match sequence.step(node, expression, ctx)? {
@@ -3747,8 +3685,7 @@ impl<'a, D: DatasetView + Sync> OrdinaryRunner<'a, '_, '_, D> {
     }
 
     fn schedule_exists(
-        &mut self,
-        position: OrdinaryPosition<'a>,
+        &mut self, position: OrdinaryPosition<'a>,
         sequence: crate::expr::FilterSequence<'a, D::Id>,
         decision: crate::expr::ExistsChild<D::Id>,
         record: Option<crate::evidence_exec::RowEvidence>,
@@ -3809,10 +3746,7 @@ impl<'a, D: DatasetView + Sync> OrdinaryRunner<'a, '_, '_, D> {
     }
 
     fn schedule_lateral(
-        &mut self,
-        position: OrdinaryPosition<'a>,
-        node: &GraphPattern,
-        right: &GraphPattern,
+        &mut self, position: OrdinaryPosition<'a>, node: &GraphPattern, right: &GraphPattern,
         sequence: crate::binop::LateralSequence<D::Id>,
     ) -> Result<OrdinaryLateralSchedule<'a, D::Id>, EvalError> {
         if !sequence.has_row() {
@@ -3870,9 +3804,7 @@ impl<'a, D: DatasetView + Sync> OrdinaryRunner<'a, '_, '_, D> {
         reason = "the copied position retains its tree owner across each suspended row"
     )]
     fn advance_filter(
-        &mut self,
-        position: OrdinaryPosition<'a>,
-        node: &GraphPattern,
+        &mut self, position: OrdinaryPosition<'a>, node: &GraphPattern,
         expression: &purrdf_sparql_algebra::Expression,
         mut sequence: crate::expr::FilterSequence<'a, D::Id>,
     ) -> Result<OrdinaryAdvance<'a, D::Id>, EvalError> {
@@ -3895,9 +3827,7 @@ impl<'a, D: DatasetView + Sync> OrdinaryRunner<'a, '_, '_, D> {
 }
 
 fn finish_ordinary_active<D: DatasetView + Sync>(
-    active: &mut Option<NodeBoundary>,
-    ctx: &mut EvalCtx<'_, D>,
-    pattern: &GraphPattern,
+    active: &mut Option<NodeBoundary>, ctx: &mut EvalCtx<'_, D>, pattern: &GraphPattern,
     evaluated: Result<Evaluated<D::Id>, EvalError>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let result = active
@@ -3930,8 +3860,7 @@ impl<D: DatasetView + Sync> Drop for OrdinaryRunner<'_, '_, '_, D> {
 }
 
 fn eval_ordinary_chain<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     // A single ordinary graph-child suspension keeps its parent inline.
     // Only an actual nested suspension needs the admitted spill buffer.
@@ -4384,9 +4313,7 @@ impl<I: ViewTermId> PositiveInput<'_, I> {
 }
 
 pub(crate) fn positive_input<I: ViewTermId>(
-    plan: &crate::bgp::PositivePlan,
-    producer: &GraphPattern,
-    rows: SolutionSeq<I>,
+    plan: &crate::bgp::PositivePlan, producer: &GraphPattern, rows: SolutionSeq<I>,
 ) -> Result<PositiveInput<'static, I>, EvalError> {
     if !plan.contains(producer) {
         return Err(EvalError::internal(
@@ -4401,10 +4328,8 @@ pub(crate) fn positive_input<I: ViewTermId>(
 /// Seeded positive execution passes through the same node-entry, stop, charge,
 /// allocation and certificate law as ordinary execution. No AST is substituted.
 pub(crate) fn eval_positive_evaluated<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    input: Option<PositiveInput<'_, D::Id>>,
-    plan: &crate::bgp::PositivePlan,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, input: Option<PositiveInput<'_, D::Id>>,
+    plan: &crate::bgp::PositivePlan, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     if !plan.contains(pattern) {
         return Err(EvalError::internal(
@@ -4429,10 +4354,8 @@ pub(crate) fn eval_positive_evaluated<D: DatasetView + Sync>(
 /// Repeated occurrences of a BGP OPTIONAL leaf keep its immutable compilation,
 /// while each occurrence enters the same fallible node checkpoint and scan.
 pub(crate) fn eval_cached_bgp_evaluated<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    input: PositiveInput<'_, D::Id>,
-    cache: &mut Option<crate::bgp::CompiledBgp<D::Id>>,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, input: PositiveInput<'_, D::Id>,
+    cache: &mut Option<crate::bgp::CompiledBgp<D::Id>>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let GraphPattern::Bgp { patterns } = pattern else {
         return Err(EvalError::internal("a retained BGP must be a BGP leaf"));
@@ -4455,8 +4378,7 @@ impl NodeBoundary {
     /// answer cap in their original order. An explicit worklist also calls
     /// this on unwind, before any copied pattern owner is released.
     fn abort<D: DatasetView + Sync>(
-        &mut self,
-        ctx: &mut EvalCtx<'_, D>,
+        &mut self, ctx: &mut EvalCtx<'_, D>,
     ) -> Option<crate::evidence_exec::RowEvidence> {
         if let Some(restore) = self.restore.take() {
             ctx.leave_node(restore);
@@ -4477,8 +4399,7 @@ impl NodeBoundary {
     }
 
     fn enter<D: DatasetView + Sync>(
-        pattern: &GraphPattern,
-        ctx: &mut EvalCtx<'_, D>,
+        pattern: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<Self, EvalError> {
         if ctx.dataset.storage_live_budget().is_some()
             && ctx.bounded_workspace == WorkspaceAdmission::Unpriced
@@ -4520,9 +4441,7 @@ impl NodeBoundary {
     }
 
     fn start<D: DatasetView + Sync>(
-        &mut self,
-        pattern: &GraphPattern,
-        ctx: &mut EvalCtx<'_, D>,
+        &mut self, pattern: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<Option<Evaluated<D::Id>>, EvalError> {
         if !ctx.governors_are_engaged() && ctx.ledger.is_none() && ctx.cap_pushdown.is_none() {
             return Ok(None);
@@ -4546,9 +4465,7 @@ impl NodeBoundary {
     }
 
     fn finish<D: DatasetView + Sync>(
-        &mut self,
-        pattern: &GraphPattern,
-        ctx: &mut EvalCtx<'_, D>,
+        &mut self, pattern: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
         mut evaluated: Result<Evaluated<D::Id>, EvalError>,
     ) -> Result<Evaluated<D::Id>, EvalError> {
         if self.restore.is_some() {
@@ -4598,8 +4515,7 @@ impl NodeBoundary {
 }
 
 pub(crate) fn eval_evaluated_with<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
     evaluate: impl FnOnce(&mut EvalCtx<'_, D>) -> Result<Evaluated<D::Id>, EvalError>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let boundary = NodeBoundary::enter(pattern, ctx)?;
@@ -4674,8 +4590,7 @@ const fn pattern_construct(pattern: &GraphPattern) -> &'static str {
 /// Once a pushdown IS installed, the early return below leaves the planner's own re-seed
 /// to handle every slice further down, which is why the two never disagree about a node.
 fn install_local_slice_pushdown<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<bool, EvalError> {
     if ctx.cap_pushdown.is_some() {
         return Ok(false);
@@ -4731,8 +4646,7 @@ fn install_local_slice_pushdown<D: DatasetView + Sync>(
 /// [`crate::governor::resolve_precedence`] settles it inside the state, so this order is
 /// an efficiency, not a second precedence rule.
 fn commit_node_output<D: DatasetView + Sync>(
-    evaluated: Evaluated<D::Id>,
-    ctx: &EvalCtx<'_, D>,
+    evaluated: Evaluated<D::Id>, ctx: &EvalCtx<'_, D>,
 ) -> Evaluated<D::Id> {
     // The one null test that makes an ungoverned execution free.
     let Some(state) = ctx.governors.as_ref() else {
@@ -4794,8 +4708,7 @@ fn commit_node_output<D: DatasetView + Sync>(
 /// makes it an operational governor rather than a second slice. Inclusive, like every
 /// other ceiling: a result whose size equals the cap is complete.
 fn commit_answer_rows<D: DatasetView + Sync>(
-    evaluated: Evaluated<D::Id>,
-    ctx: &EvalCtx<'_, D>,
+    evaluated: Evaluated<D::Id>, ctx: &EvalCtx<'_, D>,
 ) -> Evaluated<D::Id> {
     let Some(state) = ctx.governors.as_ref() else {
         return evaluated;
@@ -4863,9 +4776,7 @@ pub(crate) trait RowDelivery<D: DatasetView + Sync> {
     fn reborrow(&mut self) -> Self::Borrowed<'_>;
     fn stopped(&self) -> bool;
     fn deliver(
-        &mut self,
-        rows: &SolutionSeq<D::Id>,
-        ctx: &mut EvalCtx<'_, D>,
+        &mut self, rows: &SolutionSeq<D::Id>, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<(), EvalError>;
 }
 
@@ -4877,9 +4788,7 @@ impl<D: DatasetView + Sync> RowDelivery<D> for () {
         false
     }
     fn deliver(
-        &mut self,
-        _rows: &SolutionSeq<D::Id>,
-        _ctx: &mut EvalCtx<'_, D>,
+        &mut self, _rows: &SolutionSeq<D::Id>, _ctx: &mut EvalCtx<'_, D>,
     ) -> Result<(), EvalError> {
         Ok(())
     }
@@ -4898,9 +4807,7 @@ impl<'s, D: DatasetView + Sync> RowDelivery<D> for &mut RowConsumer<'s, D> {
         self.stopped
     }
     fn deliver(
-        &mut self,
-        rows: &SolutionSeq<D::Id>,
-        ctx: &mut EvalCtx<'_, D>,
+        &mut self, rows: &SolutionSeq<D::Id>, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<(), EvalError> {
         if self.stopped {
             return Ok(());
@@ -4915,9 +4822,7 @@ impl<'s, D: DatasetView + Sync> RowDelivery<D> for &mut RowConsumer<'s, D> {
 }
 
 pub(crate) fn eval_yielding<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    delivery: &mut RowConsumer<'_, D>,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, delivery: &mut RowConsumer<'_, D>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     eval_evaluated_with(pattern, ctx, |ctx| {
         eval_delivered_node(pattern, delivery, ctx)
@@ -4927,8 +4832,7 @@ pub(crate) fn eval_yielding<D: DatasetView + Sync>(
 /// Execute the original answer pattern with its exact verdict as the consumer.
 /// The final modifier-wrapped pattern, rather than an inner scan, owns the stop.
 pub(crate) fn eval_answer_pattern<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     use crate::evidence_exec::{StatusFailure, observe_answer_rows, with_native_answer};
     let Some(request) = ctx.evidence_verdict.take() else {
@@ -4986,9 +4890,7 @@ pub(crate) fn eval_answer_pattern<D: DatasetView + Sync>(
 /// native dispatcher does. Both boundaries instantiate the same match below.
 #[inline(never)]
 fn eval_delivered_node<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    delivery: &mut RowConsumer<'_, D>,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, delivery: &mut RowConsumer<'_, D>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     eval_node_with(pattern, delivery, ctx)
 }
@@ -4998,9 +4900,7 @@ fn eval_delivered_node<D: DatasetView + Sync>(
 /// alignment home; child truncation and expression barriers keep their lifts.
 #[inline(never)]
 pub(crate) fn yield_transform<D: DatasetView + Sync, M: RowDelivery<D>>(
-    node: &GraphPattern,
-    inner: &GraphPattern,
-    mut delivery: M,
+    node: &GraphPattern, inner: &GraphPattern, mut delivery: M,
     mut transform: impl FnMut(
         SolutionSeq<D::Id>,
         &mut EvalCtx<'_, D>,
@@ -5044,9 +4944,7 @@ pub(crate) fn yield_transform<D: DatasetView + Sync, M: RowDelivery<D>>(
 #[allow(clippy::inline_always)]
 #[inline(always)]
 fn eval_node_with<D: DatasetView + Sync, M: RowDelivery<D>>(
-    pattern: &GraphPattern,
-    mut delivery: M,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, mut delivery: M, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     if let Some(evaluated) = precomputed_evaluated(pattern, ctx)? {
         if M::ACTIVE {
@@ -5082,8 +4980,7 @@ fn eval_node_with<D: DatasetView + Sync, M: RowDelivery<D>>(
 
 /// The single node prelude, shared by direct and suspended ordinary dispatch.
 fn precomputed_evaluated<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<Evaluated<D::Id>>, EvalError> {
     if let Some(seq) = ctx
         .expanded_dictionary
@@ -5102,8 +4999,7 @@ fn precomputed_evaluated<D: DatasetView + Sync>(
 /// Literal root dispatch for a physical runtime input. Child nodes still use
 /// the original numbered native funnel; this root is not charged/selected twice.
 pub(crate) fn eval_literal_node<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     dispatch_node(pattern, &mut (), ctx)
 }
@@ -5113,9 +5009,7 @@ pub(crate) fn eval_literal_node<D: DatasetView + Sync>(
 #[allow(clippy::inline_always)]
 #[inline(always)]
 fn dispatch_node<D: DatasetView + Sync, M: RowDelivery<D>>(
-    pattern: &GraphPattern,
-    delivery: &mut M,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, delivery: &mut M, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     match pattern {
         // Leaves: a truncation cannot happen "below" them, so they have no lift.
@@ -5250,9 +5144,7 @@ fn dispatch_node<D: DatasetView + Sync, M: RowDelivery<D>>(
 /// frame, keeping row storage and consumer callbacks out of recursive dispatch.
 #[inline(never)]
 pub(crate) fn deliver_evaluated<D: DatasetView + Sync, M: RowDelivery<D>>(
-    evaluated: &Evaluated<D::Id>,
-    mut delivery: M,
-    ctx: &mut EvalCtx<'_, D>,
+    evaluated: &Evaluated<D::Id>, mut delivery: M, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<(), EvalError> {
     let seq = evaluated.rows();
     if seq.is_empty() {
@@ -5301,8 +5193,7 @@ pub(crate) fn syntactic_schema(pattern: &GraphPattern) -> crate::solution::Share
 }
 
 pub(crate) fn syntactic_schema_admitted(
-    pattern: &GraphPattern,
-    workspace: &crate::WorkspaceCapability,
+    pattern: &GraphPattern, workspace: &crate::WorkspaceCapability,
 ) -> Result<crate::solution::SharedSchema, EvalError> {
     use crate::solution::SchemaBuilder;
     /// One term position still to read for its variables.
@@ -5314,8 +5205,7 @@ pub(crate) fn syntactic_schema_admitted(
     /// Push the variables of the positions on `pending` onto `schema`, in the order the
     /// positions pop: a quoted triple's subject, then its predicate, then its object.
     fn push_positions(
-        pending: &mut crate::AdmittedVec<Position<'_>>,
-        schema: &mut SchemaBuilder,
+        pending: &mut crate::AdmittedVec<Position<'_>>, schema: &mut SchemaBuilder,
     ) -> Result<(), EvalError> {
         while let Some(position) = pending.pop() {
             match position {
@@ -5340,9 +5230,7 @@ pub(crate) fn syntactic_schema_admitted(
     }
 
     fn push_term(
-        term: &TermPattern,
-        schema: &mut SchemaBuilder,
-        workspace: &crate::WorkspaceCapability,
+        term: &TermPattern, schema: &mut SchemaBuilder, workspace: &crate::WorkspaceCapability,
     ) -> Result<(), EvalError> {
         let mut pending = crate::AdmittedVec::new(workspace);
         pending.push(Position::Term(term))?;
@@ -5350,9 +5238,7 @@ pub(crate) fn syntactic_schema_admitted(
     }
 
     fn push_triple(
-        triple: &TriplePattern,
-        schema: &mut SchemaBuilder,
-        workspace: &crate::WorkspaceCapability,
+        triple: &TriplePattern, schema: &mut SchemaBuilder, workspace: &crate::WorkspaceCapability,
     ) -> Result<(), EvalError> {
         let mut pending = crate::AdmittedVec::with_capacity(3, workspace)?;
         pending.push(Position::Term(&triple.object))?;
@@ -5589,8 +5475,7 @@ pub(crate) fn syntactic_schema_admitted(
 ///
 /// Propagates [`EvalError`] from evaluation.
 pub fn eval<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<SolutionSeq<D::Id>, EvalError> {
     crate::dataset_spec::require_pattern_graph_support(
         pattern,
@@ -5723,9 +5608,7 @@ pub(crate) const fn query_pattern(query: &Query) -> &GraphPattern {
 /// whole template — so a row ceiling derived from a triple cap would be an arithmetic
 /// non-sequitur. Their semantic slices are still planned locally.
 fn install_answer_cap_pushdown<D: DatasetView + Sync>(
-    query: &Query,
-    plan: &crate::plan::PlanHandle,
-    ctx: &mut EvalCtx<'_, D>,
+    query: &Query, plan: &crate::plan::PlanHandle, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<(), EvalError> {
     ctx.cap_pushdown = None;
     let cap = match (query, ctx.governors.as_ref()) {
@@ -5859,8 +5742,7 @@ pub(crate) fn admit_version(request: AdmittedRequest<'_>) -> Result<(), EvalErro
 
 /// Shared admission and dataset/base setup for all graph publication forms.
 pub(crate) fn prepare_query_context<D: DatasetView + Sync>(
-    query: &Query,
-    ctx: &mut EvalCtx<'_, D>,
+    query: &Query, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<(), EvalError> {
     prepare_query_context_over(query, None, ctx)
 }
@@ -5869,9 +5751,7 @@ pub(crate) fn prepare_query_context<D: DatasetView + Sync>(
 /// owner holding `query` unchanged across evaluations — when there is one, and afresh
 /// when there is not.
 pub(crate) fn prepare_query_context_over<D: DatasetView + Sync>(
-    query: &Query,
-    kept: Option<&crate::plan::PlanCache>,
-    ctx: &mut EvalCtx<'_, D>,
+    query: &Query, kept: Option<&crate::plan::PlanCache>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<(), EvalError> {
     crate::dataset_spec::require_query_graph_support(query, ctx.dataset, &ctx.growth, |error| {
         ctx.workspace.source_error(error)
@@ -5920,8 +5800,7 @@ pub(crate) fn prepare_query_context_over<D: DatasetView + Sync>(
 }
 
 fn register_concrete_blank_inputs<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<(), EvalError> {
     use purrdf_sparql_algebra::{Flow, GroundTerm, NodeRef, Visit, walk_pre_post_with_memory};
     let workspace = ctx.growth.clone();
@@ -5980,8 +5859,7 @@ fn register_concrete_blank_inputs<D: DatasetView + Sync>(
 /// Reporting [`EvaluatedOutcome::Complete`] beside a latched trip would contradict the
 /// evidence. An empty lower bound leaves the boolean `false` and the question open.
 pub(crate) fn evaluate_query_evaluated<D: DatasetView + Sync>(
-    query: &Query,
-    ctx: &mut EvalCtx<'_, D>,
+    query: &Query, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<EvaluatedOutcome<D::Id>, EvalError> {
     evaluate_query_evaluated_over(query, None, ctx)
 }
@@ -5989,9 +5867,7 @@ pub(crate) fn evaluate_query_evaluated<D: DatasetView + Sync>(
 /// [`evaluate_query_evaluated`], numbering `query` through `kept` when its owner keeps a
 /// plan cache for it (see [`prepare_query_context_over`]).
 pub(crate) fn evaluate_query_evaluated_over<D: DatasetView + Sync>(
-    query: &Query,
-    kept: Option<&crate::plan::PlanCache>,
-    ctx: &mut EvalCtx<'_, D>,
+    query: &Query, kept: Option<&crate::plan::PlanCache>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<EvaluatedOutcome<D::Id>, EvalError> {
     if ctx.dataset.storage_live_budget().is_some()
         && ctx.bounded_workspace == WorkspaceAdmission::Unpriced
@@ -6095,8 +5971,7 @@ pub(crate) fn evaluate_query_evaluated_over<D: DatasetView + Sync>(
 ///
 /// Propagates [`EvalError`] from evaluation.
 pub fn evaluate_query<D: DatasetView + Sync>(
-    query: &Query,
-    ctx: &mut EvalCtx<'_, D>,
+    query: &Query, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Outcome<D::Id>, EvalError> {
     query.validate_hidden_variables()?;
     let source_query = query;
@@ -6137,9 +6012,7 @@ pub fn evaluate_query<D: DatasetView + Sync>(
 /// cache for it (see [`prepare_query_context_over`]). A query whose shared blank labels
 /// are joined here is a new tree, and is numbered afresh.
 pub(crate) fn evaluate_query_over<D: DatasetView + Sync>(
-    query: &Query,
-    kept: Option<&crate::plan::PlanCache>,
-    ctx: &mut EvalCtx<'_, D>,
+    query: &Query, kept: Option<&crate::plan::PlanCache>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Outcome<D::Id>, EvalError> {
     if ctx.dataset.storage_live_budget().is_some()
         && ctx.bounded_workspace == WorkspaceAdmission::Unpriced
@@ -6178,8 +6051,7 @@ pub(crate) fn evaluate_query_over<D: DatasetView + Sync>(
 /// only case for a query with no list constructor in it — yields an empty but
 /// positionally valid dataset rather than an error or an absent graph.
 pub(crate) fn freeze_constructed(
-    cells: &[(TermValue, TermValue, TermValue)],
-    selected: &[usize],
+    cells: &[(TermValue, TermValue, TermValue)], selected: &[usize],
     workspace: &crate::WorkspaceCapability,
 ) -> Result<purrdf_core::DatasetHandle, EvalError> {
     let mut frame = crate::workspace::LexicalFrame::new(workspace);
@@ -6221,8 +6093,7 @@ type MaterializedSolutions = (Vec<String>, Vec<Vec<Option<TermValue>>>);
 /// path, both of which turn an interned solution sequence into owned
 /// term values via the per-query [`ScratchInterner`](crate::scratch::ScratchInterner).
 pub(crate) fn materialize_solutions<D: DatasetView + Sync>(
-    seq: &SolutionSeq<D::Id>,
-    ctx: &EvalCtx<'_, D>,
+    seq: &SolutionSeq<D::Id>, ctx: &EvalCtx<'_, D>,
 ) -> Result<MaterializedSolutions, EvalError> {
     let names = seq.schema.vars();
     let names_bytes = names
@@ -6775,9 +6646,7 @@ mod tests {
     struct RootJoin;
     impl ShapeProvider for RootJoin {
         fn offer(
-            &self,
-            request: ShapeRequest<'_>,
-            _: &crate::WorkspaceCapability,
+            &self, request: ShapeRequest<'_>, _: &crate::WorkspaceCapability,
         ) -> Result<Option<ShapeOffer>, EvalError> {
             let GraphPattern::Join { left, right } = request.pattern else {
                 return Ok(None);
@@ -6896,9 +6765,7 @@ mod tests {
         struct PanicJoin;
         impl ShapeProvider for PanicJoin {
             fn offer(
-                &self,
-                request: ShapeRequest<'_>,
-                _: &crate::WorkspaceCapability,
+                &self, request: ShapeRequest<'_>, _: &crate::WorkspaceCapability,
             ) -> Result<Option<ShapeOffer>, EvalError> {
                 let GraphPattern::Join { left, right } = request.pattern else {
                     return Ok(None);

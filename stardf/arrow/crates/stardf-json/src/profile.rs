@@ -145,10 +145,7 @@ impl Profile {
     /// Bind a caller's nonempty profile name and nonzero version to this codec's
     /// language, vocabulary and resource limits.
     pub fn new(
-        name: impl Into<String>,
-        version: u32,
-        vocabulary: Vocabulary,
-        bounds: Bounds,
+        name: impl Into<String>, version: u32, vocabulary: Vocabulary, bounds: Bounds,
     ) -> Result<Self, JsonError> {
         bounds.validate()?;
         let name = name.into();

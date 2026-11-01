@@ -462,10 +462,7 @@ fn clause_term_of(surface: &str) -> ClauseTerm {
 /// [`ExplainError::BackwardDisagreement`] when the search reaches its fixpoint and finds no
 /// support for a goal the chase derived.
 fn confirm_backward(
-    regime: Regime,
-    program: &[DlClause],
-    seeded: &RelationStore,
-    goal: &Fact,
+    regime: Regime, program: &[DlClause], seeded: &RelationStore, goal: &Fact,
 ) -> Result<BackwardCheck, ExplainError> {
     if matches!(regime, Regime::Rdfs | Regime::OwlRl) {
         return Ok(BackwardCheck::Skipped);
@@ -558,12 +555,8 @@ fn confirm_backward(
 /// # Ok::<(), purrdf_lex::allocation::StorageError>(())
 /// ```
 pub fn explain_conclusion(
-    ds: &RdfDataset,
-    regime: Regime,
-    graph: Option<&TermValue>,
-    subject: &TermValue,
-    predicate: &TermValue,
-    object: &TermValue,
+    ds: &RdfDataset, regime: Regime, graph: Option<&TermValue>, subject: &TermValue,
+    predicate: &TermValue, object: &TermValue,
 ) -> Result<ChaseProof, ExplainError> {
     prepare_explanations(ds, regime, graph, &EvalOptions::default(), None)?
         .session()?
@@ -578,10 +571,7 @@ pub fn explain_conclusion(
 /// # Errors
 /// Preserves native seeding, compilation, evaluation and shared allocation refusals.
 pub fn prepare_explanations(
-    ds: &RdfDataset,
-    regime: Regime,
-    graph: Option<&TermValue>,
-    options: &EvalOptions,
+    ds: &RdfDataset, regime: Regime, graph: Option<&TermValue>, options: &EvalOptions,
     stop: Option<&dyn StopSignal>,
 ) -> Result<PreparedExplanations, ExplainError> {
     let (full_program, attribution) = program_with_attribution(regime);
@@ -709,10 +699,7 @@ impl ExplanationSession<'_> {
     /// # Errors
     /// Preserves the one-shot explanation's missing, existential and checking refusals.
     pub fn explain(
-        &self,
-        subject: &TermValue,
-        predicate: &TermValue,
-        object: &TermValue,
+        &self, subject: &TermValue, predicate: &TermValue, object: &TermValue,
     ) -> Result<ChaseProof, ExplainError> {
         self.explain_counted(subject, predicate, object, &mut ProofIndexWork::default())
     }
@@ -725,10 +712,7 @@ impl ExplanationSession<'_> {
     /// # Errors
     /// Preserves the same original refusals as [`Self::explain`].
     pub fn explain_counted(
-        &self,
-        subject: &TermValue,
-        predicate: &TermValue,
-        object: &TermValue,
+        &self, subject: &TermValue, predicate: &TermValue, object: &TermValue,
         work: &mut ProofIndexWork,
     ) -> Result<ChaseProof, ExplainError> {
         let context = &*self.prepared.context;
@@ -1052,9 +1036,7 @@ pub(crate) struct Shrunk {
 ///
 /// [`EntailError::Build`] if a subset cannot be frozen, and whatever `holds` refuses with.
 pub(crate) fn shrink_to_irreducible<F>(
-    ds: &RdfDataset,
-    budget: &mut u64,
-    holds: &mut F,
+    ds: &RdfDataset, budget: &mut u64, holds: &mut F,
 ) -> Result<Shrunk, EntailError>
 where
     F: FnMut(&RdfDataset) -> Result<bool, EntailError>,

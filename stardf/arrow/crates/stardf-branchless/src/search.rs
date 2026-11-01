@@ -130,6 +130,9 @@ pub fn first_match_byte_u64(word: u64, target: u8) -> Option<usize> {
 // OR-accumulate+tz body per swar::first_byte_position, widened to u64 lanes)
 #[inline]
 #[must_use]
+// The lane ladder is a deliberate 0..7 unrolled shape (verbatim bcinr); the
+// `<< 0` keeps the eight lanes visually uniform.
+#[allow(clippy::identity_op)]
 pub fn first_equal_lane_u64x8(lanes: &[u64], target: u64) -> Option<usize> {
     // Unrolled 8-lane equality: straight-line mask arithmetic, no control
     // flow. Missing lanes (len < 8) read as zero padding — see the padding

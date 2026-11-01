@@ -323,8 +323,7 @@ impl SurfaceIndex<GraphLanguage> {
     /// # Errors
     /// Propagates analysis, allocation and index-size refusals.
     pub fn from_texts<'a>(
-        analyzer: Analyzer,
-        texts: impl IntoIterator<Item = (u32, &'a str)>,
+        analyzer: Analyzer, texts: impl IntoIterator<Item = (u32, &'a str)>,
     ) -> Result<Self, TextError> {
         let rows = texts
             .into_iter()
@@ -344,8 +343,7 @@ impl SurfaceIndex<GraphLanguage> {
     }
 
     pub(crate) fn from_analyses(
-        analyzer: Analyzer,
-        rows: impl IntoIterator<Item = (u32, [u8; 32], Analysis)>,
+        analyzer: Analyzer, rows: impl IntoIterator<Item = (u32, [u8; 32], Analysis)>,
     ) -> Result<Self, TextError> {
         Self::from_rows(
             analyzer,
@@ -358,8 +356,7 @@ impl SurfaceIndex<GraphLanguage> {
 
 impl<P: CorpusProfile> SurfaceIndex<P> {
     pub(crate) fn from_index_analyses(
-        analyzer: Analyzer,
-        order: Table<Shared<Document<P>>>,
+        analyzer: Analyzer, order: Table<Shared<Document<P>>>,
         rows: impl IntoIterator<Item = (u32, [u8; 32], Analysis)>,
     ) -> Result<Self, TextError> {
         let rows = rows
@@ -370,8 +367,7 @@ impl<P: CorpusProfile> SurfaceIndex<P> {
     }
 
     fn from_rows(
-        analyzer: Analyzer,
-        document_order: Option<Table<Shared<Document<P>>>>,
+        analyzer: Analyzer, document_order: Option<Table<Shared<Document<P>>>>,
         rows: impl IntoIterator<Item = (SurfaceDocument<P>, [u8; 32], Analysis)>,
     ) -> Result<Self, TextError> {
         let mut rows: Vec<_> = rows.into_iter().collect();
@@ -590,10 +586,7 @@ impl<P: CorpusProfile> SurfaceIndex<P> {
     }
 
     fn evidence(
-        &self,
-        term: &StoredTerm<P>,
-        ranges: &[Range<usize>],
-        projection: MatchProjection,
+        &self, term: &StoredTerm<P>, ranges: &[Range<usize>], projection: MatchProjection,
     ) -> Vec<SourceMatchEvidence> {
         let analyzer = self.analyzer.fingerprint();
         let mut result = Vec::new();
@@ -662,10 +655,8 @@ impl<P: CorpusProfile> Default for TermBuild<P> {
 }
 
 fn add_projections<P: CorpusProfile>(
-    terms: &mut BTreeMap<Spelling, TermBuild<P>>,
-    pool: &BTreeMap<String, Spelling>,
-    source: &Shared<Source<P>>,
-    projections: Vec<Projection>,
+    terms: &mut BTreeMap<Spelling, TermBuild<P>>, pool: &BTreeMap<String, Spelling>,
+    source: &Shared<Source<P>>, projections: Vec<Projection>,
 ) -> Result<(), TextError> {
     let mut input = projections.into_iter().enumerate();
     loop {

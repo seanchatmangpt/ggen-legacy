@@ -43,10 +43,8 @@ impl std::fmt::Debug for Index<'_> {
 
 impl<'a> Index<'a> {
     pub(crate) fn new<S: Admission + ?Sized>(
-        rows: &'a [(u32, u32, u32)],
-        properties: impl IntoIterator<Item = u32>,
-        stop: Option<&dyn purrdf_datalog::StopSignal>,
-        memory: &mut Memory<'_, S>,
+        rows: &'a [(u32, u32, u32)], properties: impl IntoIterator<Item = u32>,
+        stop: Option<&dyn purrdf_datalog::StopSignal>, memory: &mut Memory<'_, S>,
     ) -> Result<Self, crate::EntailError> {
         memory.try_scope(|memory| {
             poll(stop)?;
@@ -81,11 +79,7 @@ impl<'a> Index<'a> {
     }
 
     pub(crate) fn common(
-        &self,
-        left: u32,
-        right: u32,
-        property: u32,
-        stop: Option<&dyn purrdf_datalog::StopSignal>,
+        &self, left: u32, right: u32, property: u32, stop: Option<&dyn purrdf_datalog::StopSignal>,
     ) -> Result<Option<Common>, crate::EntailError> {
         let mut left = self.values(left, property).iter().copied();
         let mut right = self.values(right, property).iter().copied();
@@ -111,8 +105,7 @@ impl<'a> Index<'a> {
     }
 
     pub(crate) fn release<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         memory.release_vec(self.order)
     }

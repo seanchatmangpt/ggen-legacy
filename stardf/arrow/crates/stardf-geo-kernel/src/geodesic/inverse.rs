@@ -124,8 +124,7 @@ impl InverseResult {
     /// # Errors
     /// Preserves native numerical, checked layout, allocator and caller refusal.
     pub fn certificate_bytes_admitted(
-        &self,
-        admission: &mut crate::carrier::InputAdmission<'_, '_, '_>,
+        &self, admission: &mut crate::carrier::InputAdmission<'_, '_, '_>,
     ) -> Result<Vec<u8>, GeoError> {
         let mut output = crate::metric::CertificateWriter::new(admission);
         output.bytes(INVERSE_CERTIFICATE.as_bytes())?;
@@ -220,9 +219,7 @@ impl InverseProofReceipt {
     }
 
     pub(crate) fn into_shared_owned(
-        self,
-        context: &mut MetricContext,
-        progress: &mut crate::context::WorkProgress<'_>,
+        self, context: &mut MetricContext, progress: &mut crate::context::WorkProgress<'_>,
     ) -> Result<Self, GeoError> {
         let admission = crate::metric::ReceiptOwnership::for_operands(self.operands())?;
         admission.prepare(context, progress, self)
@@ -273,10 +270,7 @@ impl PreparedGeodesic {
     /// # Errors
     /// Refuses uncertified branch comparisons/rounding and operational limits.
     pub fn inverse(
-        &self,
-        a: &LonLat,
-        b: &LonLat,
-        context: &mut MetricContext,
+        &self, a: &LonLat, b: &LonLat, context: &mut MetricContext,
     ) -> Result<InverseResult, GeoError> {
         context.begin(1)?;
         self.compute_inverse(a, b, context, None)
@@ -287,10 +281,7 @@ impl PreparedGeodesic {
     /// # Errors
     /// Uses the same branch, admission and rounding law as [`Self::inverse`].
     pub fn inverse_with_proof(
-        &self,
-        a: &LonLat,
-        b: &LonLat,
-        context: &mut MetricContext,
+        &self, a: &LonLat, b: &LonLat, context: &mut MetricContext,
     ) -> Result<(InverseResult, InverseProofReceipt), GeoError> {
         context.begin(1)?;
         let (answer, proof) = self.compute_inverse(a, b, context, None)?;
@@ -304,10 +295,7 @@ impl PreparedGeodesic {
     /// # Errors
     /// Adds the observer's typed refusals to [`Self::inverse`].
     pub fn inverse_metered(
-        &self,
-        a: &LonLat,
-        b: &LonLat,
-        context: &mut MetricContext,
+        &self, a: &LonLat, b: &LonLat, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<InverseResult, GeoError> {
         context.begin(1)?;
@@ -319,10 +307,7 @@ impl PreparedGeodesic {
     /// # Errors
     /// Adds the observer's refusals to [`Self::inverse_with_proof`].
     pub fn inverse_with_proof_metered(
-        &self,
-        a: &LonLat,
-        b: &LonLat,
-        context: &mut MetricContext,
+        &self, a: &LonLat, b: &LonLat, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<(InverseResult, InverseProofReceipt), GeoError> {
         context.begin(1)?;
@@ -342,9 +327,7 @@ impl PreparedGeodesic {
     /// # Errors
     /// Refuses shape, reference, environment, numerical and operational errors.
     pub fn inverse_batch(
-        &self,
-        inputs: &[(LonLat, LonLat)],
-        output: &mut [Option<InverseResult>],
+        &self, inputs: &[(LonLat, LonLat)], output: &mut [Option<InverseResult>],
         context: &mut MetricContext,
     ) -> Result<(), GeoError> {
         self.inverse_batch_borrowed(inputs.iter().map(|(a, b)| (a, b)), output, context)
@@ -354,11 +337,8 @@ impl PreparedGeodesic {
     /// # Errors
     /// Adds the observer's typed refusals to [`Self::inverse_batch`].
     pub fn inverse_batch_metered(
-        &self,
-        inputs: &[(LonLat, LonLat)],
-        output: &mut [Option<InverseResult>],
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, inputs: &[(LonLat, LonLat)], output: &mut [Option<InverseResult>],
+        context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<(), GeoError> {
         self.inverse_batch_borrowed_metered(
             inputs.iter().map(|(a, b)| (a, b)),
@@ -372,10 +352,8 @@ impl PreparedGeodesic {
     /// # Errors
     /// Uses the same complete admission and refusal law as [`Self::inverse_batch`].
     pub fn inverse_batch_borrowed<'a>(
-        &self,
-        inputs: impl ExactSizeIterator<Item = (&'a LonLat, &'a LonLat)>,
-        output: &mut [Option<InverseResult>],
-        context: &mut MetricContext,
+        &self, inputs: impl ExactSizeIterator<Item = (&'a LonLat, &'a LonLat)>,
+        output: &mut [Option<InverseResult>], context: &mut MetricContext,
     ) -> Result<(), GeoError> {
         self.inverse_batch_observed(inputs, output, context, None)
     }
@@ -385,20 +363,16 @@ impl PreparedGeodesic {
     /// # Errors
     /// Preserves the observer's typed refusal without any partial output.
     pub fn inverse_batch_borrowed_metered<'a>(
-        &self,
-        inputs: impl ExactSizeIterator<Item = (&'a LonLat, &'a LonLat)>,
-        output: &mut [Option<InverseResult>],
-        context: &mut MetricContext,
+        &self, inputs: impl ExactSizeIterator<Item = (&'a LonLat, &'a LonLat)>,
+        output: &mut [Option<InverseResult>], context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<(), GeoError> {
         self.inverse_batch_observed(inputs, output, context, Some(observer))
     }
 
     fn inverse_batch_observed<'a>(
-        &self,
-        inputs: impl ExactSizeIterator<Item = (&'a LonLat, &'a LonLat)>,
-        output: &mut [Option<InverseResult>],
-        context: &mut MetricContext,
+        &self, inputs: impl ExactSizeIterator<Item = (&'a LonLat, &'a LonLat)>,
+        output: &mut [Option<InverseResult>], context: &mut MetricContext,
         mut observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<(), GeoError> {
         super::batch(inputs, output, context, |(a, b), context| {
@@ -411,22 +385,15 @@ impl PreparedGeodesic {
         })
     }
     pub(super) fn compute_inverse(
-        &self,
-        a: &LonLat,
-        b: &LonLat,
-        context: &mut MetricContext,
+        &self, a: &LonLat, b: &LonLat, context: &mut MetricContext,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<(InverseResult, InverseProofReceipt), GeoError> {
         self.compute_inverse_precision(a, b, context, observer, 112)
     }
 
     pub(super) fn compute_inverse_precision(
-        &self,
-        a: &LonLat,
-        b: &LonLat,
-        context: &mut MetricContext,
-        observer: Option<&mut dyn MetricWorkObserver>,
-        minimum_bits: u32,
+        &self, a: &LonLat, b: &LonLat, context: &mut MetricContext,
+        observer: Option<&mut dyn MetricWorkObserver>, minimum_bits: u32,
     ) -> Result<(InverseResult, InverseProofReceipt), GeoError> {
         self.compute_inverse_goal(
             a,
@@ -439,12 +406,8 @@ impl PreparedGeodesic {
     }
 
     pub(super) fn compute_arc_inverse_precision(
-        &self,
-        a: &LonLat,
-        b: &LonLat,
-        context: &mut MetricContext,
-        observer: Option<&mut dyn MetricWorkObserver>,
-        minimum_bits: u32,
+        &self, a: &LonLat, b: &LonLat, context: &mut MetricContext,
+        observer: Option<&mut dyn MetricWorkObserver>, minimum_bits: u32,
     ) -> Result<(InverseResult, InverseProofReceipt), GeoError> {
         if minimum_bits > context.policy().limits().max_precision_bits {
             return Err(GeoError::PrecisionExhausted {
@@ -463,13 +426,8 @@ impl PreparedGeodesic {
 
     #[allow(clippy::too_many_arguments)] // Exact endpoints, worker/observer and separate arithmetic/proof goals.
     fn compute_inverse_goal(
-        &self,
-        a: &LonLat,
-        b: &LonLat,
-        context: &mut MetricContext,
-        observer: Option<&mut dyn MetricWorkObserver>,
-        minimum_bits: u32,
-        goal: DistanceGoal<'_>,
+        &self, a: &LonLat, b: &LonLat, context: &mut MetricContext,
+        observer: Option<&mut dyn MetricWorkObserver>, minimum_bits: u32, goal: DistanceGoal<'_>,
     ) -> Result<(InverseResult, InverseProofReceipt), GeoError> {
         context.charge_work(1)?;
         let mut chunks = ChunkObserver::new(observer);
@@ -630,9 +588,7 @@ pub fn inverse(a: LonLat, b: LonLat) -> Result<InverseResult, GeoError> {
 }
 
 fn exact_proof(
-    solution: &InverseSolution<FixedInterval>,
-    bits: u32,
-    math: &mut CoordinateMath,
+    solution: &InverseSolution<FixedInterval>, bits: u32, math: &mut CoordinateMath,
 ) -> Result<InverseProofReceipt, MathError> {
     let metadata = solution
         .metadata
@@ -696,9 +652,7 @@ fn zero_result(distance: MetricEstimate, work: u64) -> (InverseResult, InversePr
 
 // Scalar metadata quantization uses the shared exact endpoint half-even home.
 fn quantize(
-    value: &FixedInterval,
-    places: u32,
-    math: &mut CoordinateMath,
+    value: &FixedInterval, places: u32, math: &mut CoordinateMath,
 ) -> Result<Rat, MathError> {
     let (lower, upper) = value.round_decimal(places, math)?;
     if lower != upper {
@@ -709,17 +663,9 @@ fn quantize(
 
 #[allow(clippy::too_many_arguments)] // Solver state, declared reference and numerical capabilities.
 pub(super) fn candidate_solution<I: CertifiedInterval>(
-    distance: I,
-    candidate: &Hybrid<I>,
-    pair: &CanonicalPair,
-    reference: &GeographicReference,
-    c: &I,
-    ep2: &I,
-    coefficients: &IntegralCoefficients<I>,
-    capture: bool,
-    goal: DistanceGoal<'_>,
-    chunks: &mut ChunkObserver<'_, '_>,
-    math: &mut IntervalContext<'_>,
+    distance: I, candidate: &Hybrid<I>, pair: &CanonicalPair, reference: &GeographicReference,
+    c: &I, ep2: &I, coefficients: &IntegralCoefficients<I>, capture: bool, goal: DistanceGoal<'_>,
+    chunks: &mut ChunkObserver<'_, '_>, math: &mut IntervalContext<'_>,
 ) -> Result<Option<InverseSolution<I>>, SolveError> {
     if !capture {
         return Ok(Some(InverseSolution {
@@ -754,16 +700,9 @@ pub(super) fn candidate_solution<I: CertifiedInterval>(
 
 #[allow(clippy::too_many_arguments)] // Special exact branch and the shared numerical capabilities.
 pub(super) fn special_solution<I: CertifiedInterval>(
-    distance: I,
-    pair: &CanonicalPair,
-    reference: &GeographicReference,
-    sphere: &SpherePair<I>,
-    c: &I,
-    ep2: &I,
-    coefficients: &IntegralCoefficients<I>,
-    capture: bool,
-    chunks: &mut ChunkObserver<'_, '_>,
-    math: &mut IntervalContext<'_>,
+    distance: I, pair: &CanonicalPair, reference: &GeographicReference, sphere: &SpherePair<I>,
+    c: &I, ep2: &I, coefficients: &IntegralCoefficients<I>, capture: bool,
+    chunks: &mut ChunkObserver<'_, '_>, math: &mut IntervalContext<'_>,
 ) -> Result<InverseSolution<I>, SolveError> {
     if !capture {
         return Ok(InverseSolution {
@@ -849,13 +788,8 @@ pub(super) fn special_solution<I: CertifiedInterval>(
 }
 
 pub(super) fn equatorial_solution<I: CertifiedInterval>(
-    distance: I,
-    longitude: &I,
-    pair: &CanonicalPair,
-    reference: &GeographicReference,
-    c: &I,
-    capture: bool,
-    math: &mut IntervalContext<'_>,
+    distance: I, longitude: &I, pair: &CanonicalPair, reference: &GeographicReference, c: &I,
+    capture: bool, math: &mut IntervalContext<'_>,
 ) -> Result<InverseSolution<I>, SolveError> {
     if !capture {
         return Ok(InverseSolution {
@@ -888,13 +822,8 @@ pub(super) fn equatorial_solution<I: CertifiedInterval>(
 
 #[allow(clippy::too_many_arguments)] // One branch state, exact symmetries and arithmetic capability.
 fn metadata<I: CertifiedInterval>(
-    arc: &AuxiliaryArc<I>,
-    pair: &CanonicalPair,
-    reference: &GeographicReference,
-    c: &I,
-    ep2: &I,
-    coefficients: &IntegralCoefficients<I>,
-    chunks: &mut ChunkObserver<'_, '_>,
+    arc: &AuxiliaryArc<I>, pair: &CanonicalPair, reference: &GeographicReference, c: &I, ep2: &I,
+    coefficients: &IntegralCoefficients<I>, chunks: &mut ChunkObserver<'_, '_>,
     math: &mut IntervalContext<'_>,
 ) -> Result<RawMetadata, SolveError> {
     let alpha2 = I::atan2(&arc.azimuth2_y, &arc.azimuth2_x, math)?.to_fixed(math)?;
@@ -1055,10 +984,7 @@ fn restore_exact_angles(mut first: Rat, mut last: Rat, pair: &CanonicalPair) -> 
 }
 
 fn restore(
-    mut raw: RawMetadata,
-    pair: &CanonicalPair,
-    pi: &FixedInterval,
-    degrees: &FixedInterval,
+    mut raw: RawMetadata, pair: &CanonicalPair, pi: &FixedInterval, degrees: &FixedInterval,
     math: &mut CoordinateMath,
 ) -> Result<RawMetadata, MathError> {
     for angle in [&mut raw.forward, &mut raw.final_azimuth] {

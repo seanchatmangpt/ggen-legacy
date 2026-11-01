@@ -184,8 +184,7 @@ pub(crate) fn dependency_edges<const N: usize>(
 /// The original dependency walk, with each authored edge's producing rule.
 /// Wildcard coupling is graph structure rather than an authored rule and has no index.
 pub(crate) fn dependency_edges_with<T, const N: usize>(
-    rules: &[DlClause<N>],
-    mut edge: impl FnMut(Option<usize>, String, String, bool) -> T,
+    rules: &[DlClause<N>], mut edge: impl FnMut(Option<usize>, String, String, bool) -> T,
 ) -> (BTreeSet<String>, Vec<T>) {
     let graph = DependencyGraph::new_in(rules, &mut Memory::new(&mut Resident))
         .expect("resident dependency construction requires physical storage");
@@ -221,8 +220,7 @@ pub(crate) struct DependencyGraph {
 }
 
 fn predicate_surface_in<A: Admission + ?Sized, const N: usize>(
-    atom: &ClauseAtom<N>,
-    memory: &mut Memory<'_, A>,
+    atom: &ClauseAtom<N>, memory: &mut Memory<'_, A>,
 ) -> Result<String, StorageError> {
     if let Some(surface) = atom.predicate().surface_in(memory)? {
         return Ok(surface);
@@ -235,9 +233,7 @@ fn predicate_surface_in<A: Admission + ?Sized, const N: usize>(
 }
 
 fn retain_predicate<A: Admission + ?Sized, const N: usize>(
-    atom: &ClauseAtom<N>,
-    predicates: &mut OrderedTable<String, ()>,
-    memory: &mut Memory<'_, A>,
+    atom: &ClauseAtom<N>, predicates: &mut OrderedTable<String, ()>, memory: &mut Memory<'_, A>,
 ) -> Result<bool, StorageError> {
     let symbol = predicate_surface_in(atom, memory)?;
     let wildcard = symbol == ANY_PREDICATE;
@@ -250,9 +246,7 @@ fn retain_predicate<A: Admission + ?Sized, const N: usize>(
 }
 
 fn predicate_index<A: Admission + ?Sized, const N: usize>(
-    atom: &ClauseAtom<N>,
-    predicates: &[String],
-    memory: &mut Memory<'_, A>,
+    atom: &ClauseAtom<N>, predicates: &[String], memory: &mut Memory<'_, A>,
 ) -> Result<usize, StorageError> {
     let symbol = predicate_surface_in(atom, memory)?;
     let index = predicates
@@ -264,8 +258,7 @@ fn predicate_index<A: Admission + ?Sized, const N: usize>(
 
 impl DependencyGraph {
     pub(crate) fn new_in<A: Admission + ?Sized, const N: usize>(
-        rules: &[DlClause<N>],
-        memory: &mut Memory<'_, A>,
+        rules: &[DlClause<N>], memory: &mut Memory<'_, A>,
     ) -> Result<Self, StorageError> {
         memory.scope(|memory| {
             let mut names = OrderedTable::default();
@@ -481,8 +474,7 @@ fn atom_has_repeated_variable<const N: usize>(atom: &ClauseAtom<N>) -> bool {
 /// variable counts, so a selective disconnected atom cannot force a cross product while
 /// a connected atom remains. All stored positions participate, including predicate and, for quads, graph.
 fn atom_priority<const N: usize>(
-    atom: &ClauseAtom<N>,
-    bound: &BTreeSet<String>,
+    atom: &ClauseAtom<N>, bound: &BTreeSet<String>,
     estimate: &impl Fn(&ClauseAtom<N>) -> Option<purrdf_core::StatisticCount>,
 ) -> (bool, usize, usize, usize, u64) {
     let connected = atom
@@ -513,10 +505,8 @@ fn atom_priority<const N: usize>(
 /// The priority includes a unique authored coordinate as its last component. Each choice
 /// extends the binding frontier before the next choice; no store history participates.
 fn binding_aware_order<T, P: Ord>(
-    mut remaining: Vec<T>,
-    mut bound: BTreeSet<String>,
-    priority: impl Fn(&T, &BTreeSet<String>) -> P,
-    bind: impl Fn(&T, &mut BTreeSet<String>),
+    mut remaining: Vec<T>, mut bound: BTreeSet<String>,
+    priority: impl Fn(&T, &BTreeSet<String>) -> P, bind: impl Fn(&T, &mut BTreeSet<String>),
 ) -> Vec<T> {
     let mut order = Vec::with_capacity(remaining.len());
     while !remaining.is_empty() {
@@ -561,8 +551,7 @@ fn body_stage<const N: usize>(rule: &DlClause<N>, body_index: usize) -> usize {
 /// then available statistical counts and authored position. After a choice, all
 /// of its variables become bound.
 fn sips_order<const N: usize>(
-    rule: &DlClause<N>,
-    positive: &[usize],
+    rule: &DlClause<N>, positive: &[usize],
     estimate: &impl Fn(&ClauseAtom<N>) -> Option<purrdf_core::StatisticCount>,
 ) -> Vec<usize> {
     binding_aware_order(
@@ -722,9 +711,7 @@ impl<const N: usize> AtomShape<N> {
 /// The plan for one argument position: its slot if it is a variable, its rendered surface
 /// if it is a constant, and whether an earlier atom already bound it.
 fn position_plan(
-    term: &ClauseTerm,
-    bound: &BTreeSet<String>,
-    slots: &BTreeMap<String, usize>,
+    term: &ClauseTerm, bound: &BTreeSet<String>, slots: &BTreeMap<String, usize>,
 ) -> PositionPlan {
     match term {
         ClauseTerm::Var(name) => {
@@ -743,9 +730,7 @@ fn position_plan(
 
 /// The shape of `atom` against the variables bound before it runs.
 fn atom_shape<const N: usize>(
-    atom: &ClauseAtom<N>,
-    bound: &BTreeSet<String>,
-    slots: &BTreeMap<String, usize>,
+    atom: &ClauseAtom<N>, bound: &BTreeSet<String>, slots: &BTreeMap<String, usize>,
 ) -> AtomShape<N> {
     let terms = atom.terms();
     let positions = std::array::from_fn(|position| position_plan(terms[position], bound, slots));
@@ -825,9 +810,7 @@ impl<const N: usize> AtomOperator<N> {
 /// atom's index shape and position plans against exactly the variables bound before it
 /// runs.
 fn lower_operators<const N: usize>(
-    rule: &DlClause<N>,
-    positive: &[usize],
-    execution_order: &[usize],
+    rule: &DlClause<N>, positive: &[usize], execution_order: &[usize],
     slots: &BTreeMap<String, usize>,
 ) -> Vec<AtomOperator<N>> {
     let mut bound = guard_bound_variables(rule);
@@ -946,8 +929,7 @@ impl JoinGroup {
 /// the remaining selectivity preferences, and its earliest authored atom breaks ties.
 /// Selecting a cycle binds all of its variables without changing its internal descent.
 fn sips_group_order<const N: usize>(
-    rule: &DlClause<N>,
-    groups: Vec<JoinGroup>,
+    rule: &DlClause<N>, groups: Vec<JoinGroup>,
     estimate: &impl Fn(&ClauseAtom<N>) -> Option<purrdf_core::StatisticCount>,
 ) -> Vec<JoinGroup> {
     binding_aware_order(
@@ -1108,9 +1090,7 @@ fn bridge_edges(node_count: usize, edges: &[(usize, usize)]) -> BTreeSet<usize> 
 /// the (lexically ordered) variable numbering alone and never on a disjoint-set forest's
 /// internal choice of representative.
 fn certified_cyclic_components<const N: usize>(
-    rule: &DlClause<N>,
-    positive: &[usize],
-    slots: &BTreeMap<String, usize>,
+    rule: &DlClause<N>, positive: &[usize], slots: &BTreeMap<String, usize>,
 ) -> Vec<CyclicPlan> {
     let mut edge_atoms: BTreeMap<(String, String), Vec<PlannedAtom>> = BTreeMap::new();
     let mut first_occurrence: BTreeMap<String, usize> = BTreeMap::new();
@@ -1521,8 +1501,7 @@ impl<const N: usize> Parsed<N> {
     /// # Errors
     /// Returns exact admission or ordinary Datalog fragment refusal.
     pub fn with_declarations(
-        rules: Vec<DlClause<N>>,
-        declarations: &crate::admission::NeverDeriveDeclarations,
+        rules: Vec<DlClause<N>>, declarations: &crate::admission::NeverDeriveDeclarations,
     ) -> Result<Self, crate::seminaive::EvalError> {
         let certificate = declarations
             .admit(&rules)
@@ -1645,16 +1624,14 @@ impl<const N: usize> Stratified<N> {
     /// binding preferences take precedence, and proof sources retain authored order.
     /// Estimates select an order; they are never output or allocation certificates.
     pub fn plan_with_statistics<I: purrdf_core::ViewTermId>(
-        self,
-        statistics: &dyn purrdf_core::SnapshotStatistics<I>,
+        self, statistics: &dyn purrdf_core::SnapshotStatistics<I>,
         probe: impl Fn(&ClauseAtom<N>) -> Option<purrdf_core::ProbePattern<I>>,
     ) -> Planned<N> {
         self.plan_with_estimates(&|atom| statistics.pattern(probe(atom)?))
     }
 
     fn plan_with_estimates(
-        self,
-        estimate: &impl Fn(&ClauseAtom<N>) -> Option<purrdf_core::StatisticCount>,
+        self, estimate: &impl Fn(&ClauseAtom<N>) -> Option<purrdf_core::StatisticCount>,
     ) -> Planned<N> {
         let plans = self
             .rules

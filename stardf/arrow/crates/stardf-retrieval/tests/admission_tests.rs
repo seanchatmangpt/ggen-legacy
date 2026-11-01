@@ -95,9 +95,7 @@ impl PropertyFunction for NoModeProducer {
     }
 
     fn open<'cursor>(
-        &self,
-        _args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, _args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -2178,10 +2176,7 @@ fn renders_nothing() -> Vec<AcceptedTerm> {
 /// IRIs read out of position 0 — is asserted verbatim by the execution tests;
 /// this is the wider relation a producer that receives more than one term needs.
 fn producer_of_arity(
-    rows: u64,
-    prefix: &str,
-    count: usize,
-    object: usize,
+    rows: u64, prefix: &str, count: usize, object: usize,
 ) -> Arc<dyn PropertyFunction> {
     let arity = PfArity::new(1, object);
     let total = arity.total();

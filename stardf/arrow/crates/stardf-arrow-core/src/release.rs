@@ -4,7 +4,7 @@
 //! `ArrowSchema`, `ArrowArrayStream`) carries one `ReleaseSlot`-shaped
 //! release/private pair and binds this one kernel, instead of each binding
 //! restating the CAS-swap discipline (the two-BLAKE3 duplication defect
-//! class). Model: `avec-arrow/src/c_abi.rs:54-98`.
+//! class). Model: `cgap-arrow/src/c_abi.rs:54-98`.
 //!
 //! Ordering law (disarm-then-drop): the atomic swap-to-NULL completes BEFORE
 //! the drop callback runs, so any concurrent observer that reads the slot

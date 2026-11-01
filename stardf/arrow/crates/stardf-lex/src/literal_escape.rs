@@ -253,11 +253,7 @@ fn finder(carrier: Carrier) -> fn(&[u8]) -> Option<usize> {
 /// Append `value[at..]` escaped for `carrier`; `value[run..at]` is a clean run
 /// not yet copied. `at` and `run` are char boundaries.
 fn write_from<W: TextOut + ?Sized>(
-    value: &str,
-    mut run: usize,
-    mut at: usize,
-    carrier: Carrier,
-    out: &mut W,
+    value: &str, mut run: usize, mut at: usize, carrier: Carrier, out: &mut W,
 ) {
     let bytes = value.as_bytes();
     let find = finder(carrier);

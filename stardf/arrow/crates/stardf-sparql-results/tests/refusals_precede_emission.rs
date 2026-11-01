@@ -214,7 +214,7 @@ fn canon_arrow_emits_the_canon_empty_frame_and_refuses_only_a_malformed_term_bef
         ),
     ] {
         let mut sink: Vec<u8> = Vec::new();
-        serialize_into(
+        let _ = serialize_into(
             &shape,
             SparqlResultsFormat::CanonArrow,
             &provenance,
@@ -287,7 +287,7 @@ fn canon_arrow_emits_the_canon_empty_frame_and_refuses_only_a_malformed_term_bef
     };
     let good = solutions(&["s"], vec![vec![Some(well_formed)]]);
     let mut sink: Vec<u8> = Vec::new();
-    serialize_into(
+    let _ = serialize_into(
         &good,
         SparqlResultsFormat::CanonArrow,
         &provenance,

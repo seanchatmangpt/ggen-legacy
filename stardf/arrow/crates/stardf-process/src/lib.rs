@@ -1,6 +1,29 @@
 // SPDX-FileCopyrightText: 2026 Blackcat Informatics Inc. <paudley@blackcatinformatics.ca>
 // SPDX-License-Identifier: MIT OR Apache-2.0 OR MulanPSL-2.0
 
+// LINT-GATE (G03 offline ladder, 2026-10-31, D17): module sources are the
+// consolidation of the surveyed process lineages (POWL/OCEL/HTN-FOND donors
+// per the module table below); the workspace lints table runs clippy
+// all+pedantic+nursery WARN-only upstream and the G03 ladder's
+// `-D warnings` would demand ~110 style-level rewrites of the audited
+// subject. Gating the GROUPS the table adds — pedantic + nursery — not
+// correctness/perf lints, which stay live.
+#![allow(clippy::pedantic)]
+#![allow(clippy::nursery)]
+// all-family leftovers witnessed by the G03 ladder pass (style/complexity —
+// the audited subject stays verbatim):
+#![allow(
+    clippy::collapsible_if,
+    clippy::unnecessary_map_or,
+    clippy::useless_conversion,
+    clippy::type_complexity,
+    clippy::too_many_arguments,
+    clippy::question_mark,
+    clippy::ptr_arg,
+    clippy::let_and_return,
+    clippy::double_ended_iterator_last
+)]
+
 //! Process mining and planning over PurRDF's branchless columnar primitives.
 //!
 //! One engine, four modules, each the consolidation of the surveyed process

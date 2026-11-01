@@ -75,8 +75,7 @@ pub fn decode(reader: Reader<'_>) -> Result<Document, GradeError> {
 /// # Errors
 /// Refuses malformed lists and triples of any other width.
 pub fn inference_triples(
-    reader: Reader<'_>,
-    root: TermId,
+    reader: Reader<'_>, root: TermId,
 ) -> Result<Vec<[TermValue; 3]>, GradeError> {
     reader
         .list(root)?

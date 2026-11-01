@@ -125,9 +125,7 @@ pub(crate) enum NativeLiteralValue {
 
 /// The one composite/XSD dispatch law, with native producer ownership.
 pub(crate) fn resolve_literal_with_memory(
-    lexical: &str,
-    datatype: &str,
-    memory: &mut crate::memory::Memory<'_>,
+    lexical: &str, datatype: &str, memory: &mut crate::memory::Memory<'_>,
 ) -> Result<NativeLiteralValue, crate::memory::StorageError> {
     if let Some(composite) = CdtDatatype::from_iri(datatype) {
         return Ok(
@@ -150,8 +148,7 @@ pub(crate) fn resolve_literal_with_memory(
 
 /// Destroy a natively produced XSD payload before releasing its original layouts.
 pub(crate) fn release_xsd_with_memory(
-    value: XsdValue,
-    memory: &mut crate::memory::Memory<'_>,
+    value: XsdValue, memory: &mut crate::memory::Memory<'_>,
 ) -> Result<(), crate::memory::StorageError> {
     let bytes = value
         .owned_heap_bytes()

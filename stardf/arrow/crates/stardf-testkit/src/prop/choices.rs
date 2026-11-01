@@ -159,9 +159,7 @@ impl Choices {
     /// and target-sized choices keep their distribution while staying
     /// shrinkable.
     fn draw_with(
-        &mut self,
-        max: u64,
-        pick: impl FnOnce(&mut Xoshiro256) -> u64,
+        &mut self, max: u64, pick: impl FnOnce(&mut Xoshiro256) -> u64,
     ) -> Result<u64, Invalid> {
         if self.record.len() >= Self::MAX_DRAWS {
             return Err(Invalid::Overrun);

@@ -34,11 +34,8 @@ impl ProjectionLimits {
     /// when a bound is zero, internally contradictory, or exceeds USTAR's member-size
     /// representation.
     pub fn new(
-        max_artifacts: usize,
-        max_artifact_bytes: usize,
-        max_total_bytes: usize,
-        max_archive_bytes: usize,
-        max_term_depth: usize,
+        max_artifacts: usize, max_artifact_bytes: usize, max_total_bytes: usize,
+        max_archive_bytes: usize, max_term_depth: usize,
     ) -> Result<Self, ProjectionError> {
         if [
             max_artifacts,
@@ -162,8 +159,7 @@ impl ProjectionPackage {
     ///
     /// Returns a typed package or resource-limit error on the first invalid pair.
     pub fn from_artifacts<I, P, B>(
-        limits: ProjectionLimits,
-        artifacts: I,
+        limits: ProjectionLimits, artifacts: I,
     ) -> Result<Self, ProjectionError>
     where
         I: IntoIterator<Item = (P, B)>,
@@ -183,9 +179,7 @@ impl ProjectionPackage {
     ///
     /// Returns a typed package or resource-limit error without changing the package.
     pub fn insert(
-        &mut self,
-        path: impl Into<String>,
-        bytes: impl Into<Vec<u8>>,
+        &mut self, path: impl Into<String>, bytes: impl Into<Vec<u8>>,
     ) -> Result<(), ProjectionError> {
         let path = path.into();
         let bytes = bytes.into();
@@ -201,9 +195,7 @@ impl ProjectionPackage {
     }
 
     fn validate_candidate(
-        &self,
-        path: &str,
-        body_len: usize,
+        &self, path: &str, body_len: usize,
     ) -> Result<(usize, usize), ProjectionError> {
         validate_artifact_path(path)?;
         if self.artifacts.contains_key(path) {

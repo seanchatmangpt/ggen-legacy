@@ -137,9 +137,7 @@ fn term_has_directional_literal(value: &TermValue) -> bool {
 /// scalar excluded by XML 1.0 `Char`, which cannot be represented even as a
 /// numeric character reference.
 pub fn to_xml(
-    result: &SparqlResult,
-    provenance: &ResultProvenance,
-    namespace: Option<&ProvenanceNamespace>,
+    result: &SparqlResult, provenance: &ResultProvenance, namespace: Option<&ProvenanceNamespace>,
 ) -> Result<SerializeOutcome, Error> {
     // Cheap lower-bound pre-size (capacity is unobservable in the output):
     // the fixed skeleton plus a modest per-cell estimate saves the early
@@ -159,9 +157,7 @@ pub(crate) const GRAPH_IS_UNDEFINED_IN_SRX: &str =
     "SPARQL Results XML is undefined for CONSTRUCT graphs; serialize the graph as RDF";
 
 pub(crate) fn write_srx<W: TextOut + ?Sized>(
-    result: &SparqlResult,
-    provenance: &ResultProvenance,
-    namespace: Option<&ProvenanceNamespace>,
+    result: &SparqlResult, provenance: &ResultProvenance, namespace: Option<&ProvenanceNamespace>,
     out: &mut W,
 ) -> Result<(), Error> {
     // Decided BEFORE the declaration and root element are emitted. Eagerly the
@@ -238,9 +234,7 @@ fn write_head<W: TextOut + ?Sized>(variables: &[String], out: &mut W) -> Result<
 
 /// Write the `<results>` block (one `<result>` per row; unbound cells omitted).
 fn write_results<W: TextOut + ?Sized>(
-    variables: &[String],
-    rows: &[Vec<Option<TermValue>>],
-    out: &mut W,
+    variables: &[String], rows: &[Vec<Option<TermValue>>], out: &mut W,
 ) -> Result<(), Error> {
     out.push_str("  <results>\n");
     for row in rows {
@@ -373,9 +367,7 @@ fn write_term<W: TextOut + ?Sized>(value: &TermValue, out: &mut W) -> Result<(),
 /// Write the additive `<{prefix}:provenance>` element (only present fields),
 /// under the caller-supplied [`ProvenanceNamespace`].
 fn write_provenance<W: TextOut + ?Sized>(
-    result: &SparqlResult,
-    provenance: &ResultProvenance,
-    namespace: &ProvenanceNamespace,
+    result: &SparqlResult, provenance: &ResultProvenance, namespace: &ProvenanceNamespace,
     out: &mut W,
 ) -> Result<(), Error> {
     let prefix = namespace.prefix();
@@ -494,9 +486,7 @@ mod tests {
     }
 
     fn xml_text_ns(
-        result: &SparqlResult,
-        prov: &ResultProvenance,
-        namespace: &ProvenanceNamespace,
+        result: &SparqlResult, prov: &ResultProvenance, namespace: &ProvenanceNamespace,
     ) -> String {
         let outcome = to_xml(result, prov, Some(namespace)).expect("serialization succeeds");
         assert!(!outcome.provenance_dropped, "namespace was supplied");

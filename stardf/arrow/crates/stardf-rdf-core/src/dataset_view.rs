@@ -54,9 +54,7 @@ pub(crate) use frozen_term_nesting_bound_method;
 /// The sole typed leaf-conversion body. The storage factory determines physical
 /// ownership; view resolution and lexical/type semantics remain shared.
 fn owned_term_leaf<D: DatasetView + ?Sized, C: ?Sized, E>(
-    view: &D,
-    term: TermRef<'_, D::Id>,
-    ctx: &mut C,
+    view: &D, term: TermRef<'_, D::Id>, ctx: &mut C,
     mut text: impl FnMut(&mut C, &str) -> Result<String, E>,
     lookup_error: impl Fn(TermLookupError<D::ReadError>) -> E,
 ) -> Result<TermValue, E> {
@@ -91,9 +89,7 @@ fn owned_term_leaf<D: DatasetView + ?Sized, C: ?Sized, E>(
 
 /// One original component assembly; each concrete box factory admits before birth.
 fn owned_term_triple<E>(
-    s: TermValue,
-    p: TermValue,
-    o: TermValue,
+    s: TermValue, p: TermValue, o: TermValue,
     mut boxed: impl FnMut(TermValue) -> Result<crate::ir::TermBox, E>,
 ) -> Result<TermValue, E> {
     Ok(TermValue::Triple {
@@ -527,8 +523,7 @@ impl GraphSelector {
     /// Returns unsupported named-graph or reverse-lookup failure from the
     /// backing read session. Support is checked before an absent IRI shortcut.
     pub fn resolve<D: DatasetView + ?Sized>(
-        &self,
-        dataset: &D,
+        &self, dataset: &D,
     ) -> Result<Option<GraphMatch<D::Id>>, D::ReadError> {
         Ok(Some(match self {
             Self::Any => GraphMatch::Any,
@@ -657,8 +652,7 @@ pub trait DatasetView {
     /// # Errors
     /// Returns a typed read/resource failure before the requested allocation.
     fn reserve_workspace(
-        &self,
-        _: u64,
+        &self, _: u64,
     ) -> Result<impl WorkspaceReservation<Error = Self::ReadError> + '_, Self::ReadError> {
         Ok(NoopReservation::<Self::ReadError>::default())
     }
@@ -680,8 +674,7 @@ pub trait DatasetView {
     /// # Errors
     /// A present capability can refuse capacity with the exact operational cause.
     fn reserve_owned_workspace(
-        &self,
-        _: u64,
+        &self, _: u64,
     ) -> Option<Result<OwnedWorkspaceReservation<Self::ReadError>, Self::ReadError>> {
         None
     }
@@ -718,9 +711,7 @@ pub trait DatasetView {
     /// # Errors
     /// Returns the first typed term-read failure.
     fn with_term<T>(
-        &self,
-        id: Self::Id,
-        inspect: impl FnOnce(TermRef<'_, Self::Id>) -> T,
+        &self, id: Self::Id, inspect: impl FnOnce(TermRef<'_, Self::Id>) -> T,
     ) -> Result<T, Self::ReadError> {
         let guard = self.resolve(id)?;
         Ok(inspect(guard.term()))
@@ -786,9 +777,7 @@ pub trait DatasetView {
     /// # Errors
     /// Stops at the first typed term-read failure.
     fn resolve_batch(
-        &self,
-        ids: &[Self::Id],
-        mut visit: impl FnMut(Self::Id, TermRef<'_, Self::Id>),
+        &self, ids: &[Self::Id], mut visit: impl FnMut(Self::Id, TermRef<'_, Self::Id>),
     ) -> Result<(), Self::ReadError> {
         for &id in ids {
             let guard = self.resolve(id)?;
@@ -834,9 +823,7 @@ pub trait DatasetView {
     /// Preserves malformed-id and backing failures through `lookup_error`, and
     /// returns actual allocator refusal separately through `storage_error`.
     fn term_value_with_storage<E>(
-        &self,
-        id: Self::Id,
-        lookup_error: impl Fn(TermLookupError<Self::ReadError>) -> E,
+        &self, id: Self::Id, lookup_error: impl Fn(TermLookupError<Self::ReadError>) -> E,
         storage_error: impl Fn(std::collections::TryReserveError) -> E,
     ) -> Result<TermValue, E> {
         crate::ir::try_fold_term_with_storage(
@@ -875,9 +862,7 @@ pub trait DatasetView {
     /// checked layout/admission/allocator failure through `storage_error`. A failed
     /// copy destroys all partial children before releasing its original delta.
     fn term_value_with_memory<S: purrdf_lex::allocation::Admission + ?Sized, E>(
-        &self,
-        id: Self::Id,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, id: Self::Id, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
         lookup_error: impl Fn(TermLookupError<Self::ReadError>) -> E,
         storage_error: impl Fn(
             purrdf_lex::allocation::StorageError,
@@ -920,10 +905,7 @@ pub trait DatasetView {
     /// with access-pattern indexes override this with an indexed lookup.
     /// Callers resolve term *values* to ids first (`term_id_by_value`).
     fn quads_for_pattern(
-        &self,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         self.quads().filter(move |q| {
@@ -957,9 +939,7 @@ pub trait DatasetView {
     /// # Errors
     /// Stops at the first typed reverse-lookup failure.
     fn lookup_batch(
-        &self,
-        values: &[TermValue],
-        mut visit: impl FnMut(&TermValue, Option<Self::Id>),
+        &self, values: &[TermValue], mut visit: impl FnMut(&TermValue, Option<Self::Id>),
     ) -> Result<(), Self::ReadError> {
         for value in values {
             visit(value, self.term_id_by_value(value)?);
@@ -986,9 +966,7 @@ pub trait DatasetView {
     /// Returns the original source refusal if the certificate's generation or
     /// backing storage is unavailable.
     fn certified_value_order(
-        &self,
-        _left: Self::Id,
-        _right: Self::Id,
+        &self, _left: Self::Id, _right: Self::Id,
     ) -> Result<Option<core::cmp::Ordering>, Self::ReadError> {
         Ok(None)
     }
@@ -1017,11 +995,7 @@ pub trait DatasetView {
     /// [`Self::quads_for_pattern_with_plan`]. An index-free backend returns the unit
     /// plan; [`RdfDataset`] returns its permutation-and-prefix plan.
     fn probe_plan(
-        &self,
-        s_bound: bool,
-        p_bound: bool,
-        o_bound: bool,
-        g: GraphMatch<Self::Id>,
+        &self, s_bound: bool, p_bound: bool, o_bound: bool, g: GraphMatch<Self::Id>,
     ) -> Self::ProbePlan;
 
     /// Certify the order required by exact scan-reusing physical operators.
@@ -1044,10 +1018,7 @@ pub trait DatasetView {
     /// Equal candidates must be identical quads; virtual-stream ordinals are
     /// retained separately by the consumer.
     fn compare_probe_order(
-        &self,
-        _plan: &Self::ProbePlan,
-        _left: QuadIds<Self::Id>,
-        _right: QuadIds<Self::Id>,
+        &self, _plan: &Self::ProbePlan, _left: QuadIds<Self::Id>, _right: QuadIds<Self::Id>,
     ) -> Option<core::cmp::Ordering> {
         None
     }
@@ -1058,22 +1029,15 @@ pub trait DatasetView {
     /// selection; the yielded quads and their order are unchanged. An index-free
     /// backend ignores the (unit) plan and forwards to `quads_for_pattern`.
     fn quads_for_pattern_with_plan(
-        &self,
-        plan: &Self::ProbePlan,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
-        g: GraphMatch<Self::Id>,
+        &self, plan: &Self::ProbePlan, s: Option<Self::Id>, p: Option<Self::Id>,
+        o: Option<Self::Id>, g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_;
 
     /// An upper-bound cardinality estimate for `(s, p, o, g)`, FOR COST RANKING ONLY
     /// (never an exact `COUNT`). The default materializes the pattern and counts it;
     /// a backend with index bounds overrides this with an `O(log n)` estimate.
     fn cardinality_estimate(
-        &self,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: GraphMatch<Self::Id>,
     ) -> u64 {
         self.quads_for_pattern(s, p, o, g).fold(0_u64, |count, _| {
@@ -1090,10 +1054,7 @@ pub trait DatasetView {
     /// # Errors
     /// Preserves the first operational failure of the complete counting drain.
     fn workspace_candidate_bound(
-        &self,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: GraphMatch<Self::Id>,
     ) -> Result<Option<u64>, Self::ReadError> {
         self.checked_read(|view| {
@@ -1184,10 +1145,7 @@ pub trait DatasetView {
     /// # Errors
     /// Returns the provider's original metadata, identity or admission failure.
     fn source_summary(
-        &self,
-        _predicate: Self::Id,
-        _graph: GraphMatch<Self::Id>,
-        _stream: crate::StatisticsStream,
+        &self, _predicate: Self::Id, _graph: GraphMatch<Self::Id>, _stream: crate::StatisticsStream,
     ) -> Result<Option<crate::source::SourceSummary>, Self::ReadError> {
         Ok(None)
     }
@@ -1218,8 +1176,7 @@ pub trait DatasetView {
     /// # Errors
     /// Returns the original typed read failure, including final readiness.
     fn visit_source_changes<B>(
-        &self,
-        _previous: &crate::source::SourceVersion,
+        &self, _previous: &crate::source::SourceVersion,
         _visit: impl FnMut(
             crate::source::SourceSide,
             crate::source::SourceFamily,
@@ -1256,9 +1213,7 @@ pub trait DatasetView {
     /// narrow the target before admitting or visiting unrelated rows.
     /// The result has the same order and multiplicity as that filtered stream.
     fn reifier_quads_for_target(
-        &self,
-        target: Self::Id,
-        graph: GraphMatch<Self::Id>,
+        &self, target: Self::Id, graph: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         self.reifier_quads_in_graph(graph)
             .filter(move |quad| quad.o == target)
@@ -1276,9 +1231,7 @@ pub trait DatasetView {
     /// certificate. `None` reports that the view has no such estimate without
     /// scanning. Operational failures must retain the session's first cause.
     fn statement_cardinality_estimate(
-        &self,
-        pattern: ProbePattern<Self::Id>,
-        components: [Option<Self::Id>; 3],
+        &self, pattern: ProbePattern<Self::Id>, components: [Option<Self::Id>; 3],
     ) -> Option<u64> {
         let _ = (pattern, components);
         None
@@ -1290,9 +1243,7 @@ pub trait DatasetView {
     /// structural unification to the caller. It never performs a second term
     /// walk that could obscure the original consumer's typed read failure.
     fn reifier_quads_for_components(
-        &self,
-        components: [Option<Self::Id>; 3],
-        graph: GraphMatch<Self::Id>,
+        &self, components: [Option<Self::Id>; 3], graph: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         let _ = components;
         self.reifier_quads_in_graph(graph)
@@ -1303,10 +1254,7 @@ pub trait DatasetView {
     /// the key range first. Views certifying probe order must preserve their
     /// original statement-row order for this restricted stream too.
     fn annotation_quads_for_pattern(
-        &self,
-        predicate: Option<Self::Id>,
-        object: Option<Self::Id>,
-        graph: GraphMatch<Self::Id>,
+        &self, predicate: Option<Self::Id>, object: Option<Self::Id>, graph: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         self.annotation_quads_in_graph(graph).filter(move |quad| {
             predicate.is_none_or(|id| quad.p == id) && object.is_none_or(|id| quad.o == id)
@@ -1317,11 +1265,8 @@ pub trait DatasetView {
     /// implementations may skip certified non-overlapping pages before payload
     /// admission; the caller must still evaluate its original FILTER exactly.
     fn annotation_quads_for_range<'a>(
-        &'a self,
-        predicate: Option<Self::Id>,
-        object: Option<Self::Id>,
-        graph: GraphMatch<Self::Id>,
-        range: &'a crate::AnnotationValueRange<'a>,
+        &'a self, predicate: Option<Self::Id>, object: Option<Self::Id>,
+        graph: GraphMatch<Self::Id>, range: &'a crate::AnnotationValueRange<'a>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + 'a {
         let _ = range;
         self.annotation_quads_for_pattern(predicate, object, graph)
@@ -1339,8 +1284,7 @@ pub trait DatasetView {
     /// yields nothing. The default filters the annotation stream; indexed
     /// backends override it with a subject probe.
     fn annotations_of_with_graph(
-        &self,
-        reifier: Self::Id,
+        &self, reifier: Self::Id,
     ) -> impl Iterator<Item = (Self::Id, Self::Id, Option<Self::Id>)> + '_ {
         self.annotation_quads()
             .filter(move |quad| quad.s == reifier)
@@ -1363,8 +1307,7 @@ pub trait DatasetView {
     /// stream, then still apply the per-row graph filter within each admitted unit
     /// (a unit named by the index may also hold rows in OTHER graphs).
     fn reifier_quads_in_graph(
-        &self,
-        g: GraphMatch<Self::Id>,
+        &self, g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         self.reifier_quads().filter(move |q| g.matches(q.g))
     }
@@ -1375,8 +1318,7 @@ pub trait DatasetView {
     /// (default-equivalence, optimization-seam status, and the override discipline);
     /// this is the same seam for the annotation stream.
     fn annotation_quads_in_graph(
-        &self,
-        g: GraphMatch<Self::Id>,
+        &self, g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         self.annotation_quads().filter(move |q| g.matches(q.g))
     }
@@ -1411,10 +1353,7 @@ pub trait DatasetView {
     /// Distinct because an RDF graph is a set: a statement asserted in several
     /// named graphs is one value when `graph` spans them.
     fn objects(
-        &self,
-        subject: Self::Id,
-        predicate: Self::Id,
-        graph: GraphMatch<Self::Id>,
+        &self, subject: Self::Id, predicate: Self::Id, graph: GraphMatch<Self::Id>,
     ) -> Vec<Self::Id> {
         let mut objects: Vec<Self::Id> = self
             .quads_for_pattern(Some(subject), Some(predicate), None, graph)
@@ -1433,9 +1372,7 @@ pub trait DatasetView {
     /// graphs, is one value. It answers SHACL's `sh:targetObjectsOf` and any
     /// other "range of a predicate" question.
     fn objects_of_predicate(
-        &self,
-        predicate: Self::Id,
-        graph: GraphMatch<Self::Id>,
+        &self, predicate: Self::Id, graph: GraphMatch<Self::Id>,
     ) -> Vec<Self::Id> {
         let mut objects: Vec<Self::Id> = self
             .quads_for_pattern(None, Some(predicate), None, graph)
@@ -1453,10 +1390,7 @@ pub trait DatasetView {
     /// statement can use it. A statement asserted in several named graphs is
     /// one object.
     fn sole_object(
-        &self,
-        subject: Self::Id,
-        predicate: Option<Self::Id>,
-        graph: GraphMatch<Self::Id>,
+        &self, subject: Self::Id, predicate: Option<Self::Id>, graph: GraphMatch<Self::Id>,
     ) -> SoleObject<Self::Id> {
         predicate.map_or(SoleObject::None, |predicate| {
             SoleObject::of(
@@ -1489,9 +1423,7 @@ pub trait DatasetView {
     /// [`ListError`] when the collection is malformed; see
     /// [`ListErrorKind`].
     fn rdf_list_strict(
-        &self,
-        head: Self::Id,
-        graph: GraphMatch<Self::Id>,
+        &self, head: Self::Id, graph: GraphMatch<Self::Id>,
     ) -> Result<Vec<Self::Id>, ListError<Self::Id>> {
         let first = self.term_id_if_ready(&TermValue::iri(RDF_FIRST));
         let rest = self.term_id_if_ready(&TermValue::iri(RDF_REST));
@@ -1519,9 +1451,7 @@ pub trait DatasetView {
     /// If the `rdf:first` IRI is not interned in this view at all, no Collection can
     /// exist, so the result is an empty `Vec` (`Ok`), not an error.
     fn rdf_list(
-        &self,
-        head: Self::Id,
-        graph: GraphMatch<Self::Id>,
+        &self, head: Self::Id, graph: GraphMatch<Self::Id>,
     ) -> Result<Vec<Self::Id>, RdfListError> {
         let error = match self.rdf_list_strict(head, graph) {
             Ok(members) => return Ok(members),
@@ -1577,9 +1507,7 @@ pub trait DatasetView {
     /// ([`rdf_container_members`](Self::rdf_container_members)). A head matching
     /// neither yields an empty `Vec`.
     fn members(
-        &self,
-        head: Self::Id,
-        graph: GraphMatch<Self::Id>,
+        &self, head: Self::Id, graph: GraphMatch<Self::Id>,
     ) -> Result<Vec<Self::Id>, RdfListError> {
         // Collection shape wins: an `rdf:first` edge marks a cons cell.
         if let Some(first_p) = self.term_id_if_ready(&TermValue::iri(RDF_FIRST))
@@ -1608,10 +1536,7 @@ pub trait DatasetView {
     /// dangling-rest validation.
     #[doc(hidden)]
     fn is_cons_cell(
-        &self,
-        id: Self::Id,
-        first_p: Self::Id,
-        rest_p: Option<Self::Id>,
+        &self, id: Self::Id, first_p: Self::Id, rest_p: Option<Self::Id>,
         graph: GraphMatch<Self::Id>,
     ) -> bool {
         if self
@@ -1810,8 +1735,7 @@ impl<Error: purrdf_hash::error::StructuredError, Evidence: purrdf_hash::error::S
 /// its own drain boundary over a [`FallibleDatasetView`] can reuse the law rather
 /// than re-deriving it.
 pub fn checkpointed_drain<D, F, T>(
-    view: &D,
-    drain: F,
+    view: &D, drain: F,
 ) -> Result<T, DrainFailure<D::Error, D::Evidence>>
 where
     D: FallibleDatasetView,
@@ -1887,10 +1811,7 @@ pub trait DatasetMut: sealed::Sealed {
     /// `TermId`-based `GraphMatch`) so a delta-only named graph, which has no base
     /// `TermId`, is still expressible — consistent with the value-based `s`/`p`/`o`.
     fn quads_for_pattern(
-        &self,
-        s: Option<&TermValue>,
-        p: Option<&TermValue>,
-        o: Option<&TermValue>,
+        &self, s: Option<&TermValue>, p: Option<&TermValue>, o: Option<&TermValue>,
         g: GraphMatchValue<'_>,
     ) -> Vec<Self::Quad>;
 }
@@ -1921,8 +1842,7 @@ impl DatasetView for RdfDataset {
     }
 
     fn reserve_owned_workspace(
-        &self,
-        _: u64,
+        &self, _: u64,
     ) -> Option<Result<OwnedWorkspaceReservation<Self::ReadError>, Self::ReadError>> {
         Some(Ok(NoopReservation::owned()))
     }
@@ -1936,10 +1856,7 @@ impl DatasetView for RdfDataset {
     }
 
     fn source_summary(
-        &self,
-        predicate: Self::Id,
-        graph: GraphMatch<Self::Id>,
-        stream: crate::StatisticsStream,
+        &self, predicate: Self::Id, graph: GraphMatch<Self::Id>, stream: crate::StatisticsStream,
     ) -> Result<Option<crate::source::SourceSummary>, Self::ReadError> {
         Ok(Some(
             self.predicate_statistics()
@@ -1966,11 +1883,7 @@ impl DatasetView for RdfDataset {
 
     #[inline]
     fn quads_for_pattern(
-        &self,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         // Indexed override (P4b): lazy permutation indexes + a bound-set ->
         // permutation -> partition_point dispatch, byte-identical to the trait's
@@ -1999,11 +1912,7 @@ impl DatasetView for RdfDataset {
 
     #[inline]
     fn probe_plan(
-        &self,
-        s_bound: bool,
-        p_bound: bool,
-        o_bound: bool,
-        g: GraphMatch,
+        &self, s_bound: bool, p_bound: bool, o_bound: bool, g: GraphMatch,
     ) -> QuadProbePlan {
         // Inherent `probe_plan` is a value-independent associated fn (no `&self`).
         Self::probe_plan(s_bound, p_bound, o_bound, g)
@@ -2016,21 +1925,14 @@ impl DatasetView for RdfDataset {
 
     #[inline]
     fn compare_probe_order(
-        &self,
-        plan: &QuadProbePlan,
-        left: QuadIds,
-        right: QuadIds,
+        &self, plan: &QuadProbePlan, left: QuadIds, right: QuadIds,
     ) -> Option<core::cmp::Ordering> {
         Some(self.compare_pattern_probe_rows(plan, left, right))
     }
 
     #[inline]
     fn quads_for_pattern_with_plan(
-        &self,
-        plan: &QuadProbePlan,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
+        &self, plan: &QuadProbePlan, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
         g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         Self::quads_for_pattern_with_plan(self, plan, s, p, o, g)
@@ -2038,11 +1940,7 @@ impl DatasetView for RdfDataset {
 
     #[inline]
     fn cardinality_estimate(
-        &self,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> u64 {
         u64::try_from(Self::cardinality_estimate(self, s, p, o, g))
             .expect("bounded local count fits u64")
@@ -2087,9 +1985,7 @@ impl DatasetView for RdfDataset {
     }
 
     fn reifier_quads_for_target(
-        &self,
-        target: TermId,
-        graph: GraphMatch,
+        &self, target: TermId, graph: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         Self::reifier_quads_for_target(self, target, graph)
     }
@@ -2099,34 +1995,26 @@ impl DatasetView for RdfDataset {
     }
 
     fn statement_cardinality_estimate(
-        &self,
-        pattern: ProbePattern,
-        components: [Option<TermId>; 3],
+        &self, pattern: ProbePattern, components: [Option<TermId>; 3],
     ) -> Option<u64> {
         Self::statement_cardinality_estimate(self, pattern, components)
     }
 
     fn reifier_quads_for_components(
-        &self,
-        components: [Option<TermId>; 3],
-        graph: GraphMatch,
+        &self, components: [Option<TermId>; 3], graph: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         Self::reifier_quads_for_components(self, components, graph)
     }
 
     fn annotation_quads_for_pattern(
-        &self,
-        predicate: Option<TermId>,
-        object: Option<TermId>,
-        graph: GraphMatch,
+        &self, predicate: Option<TermId>, object: Option<TermId>, graph: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         Self::annotation_quads_for_pattern(self, predicate, object, graph)
     }
 
     #[inline]
     fn annotations_of_with_graph(
-        &self,
-        reifier: TermId,
+        &self, reifier: TermId,
     ) -> impl Iterator<Item = (TermId, TermId, Option<TermId>)> + '_ {
         Self::annotations_of_with_graph(self, reifier)
     }
@@ -2156,11 +2044,8 @@ impl<T: DatasetView> DatasetView for Arc<T> {
     }
 
     fn annotation_quads_for_range<'a>(
-        &'a self,
-        predicate: Option<Self::Id>,
-        object: Option<Self::Id>,
-        graph: GraphMatch<Self::Id>,
-        range: &'a crate::AnnotationValueRange<'a>,
+        &'a self, predicate: Option<Self::Id>, object: Option<Self::Id>,
+        graph: GraphMatch<Self::Id>, range: &'a crate::AnnotationValueRange<'a>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + 'a {
         (**self).annotation_quads_for_range(predicate, object, graph, range)
     }
@@ -2174,8 +2059,7 @@ impl<T: DatasetView> DatasetView for Arc<T> {
 
     #[inline]
     fn reserve_workspace(
-        &self,
-        bytes: u64,
+        &self, bytes: u64,
     ) -> Result<impl WorkspaceReservation<Error = Self::ReadError> + '_, Self::ReadError> {
         (**self).reserve_workspace(bytes)
     }
@@ -2183,8 +2067,7 @@ impl<T: DatasetView> DatasetView for Arc<T> {
         (**self).max_owned_term_bytes()
     }
     fn reserve_owned_workspace(
-        &self,
-        bytes: u64,
+        &self, bytes: u64,
     ) -> Option<Result<OwnedWorkspaceReservation<Self::ReadError>, Self::ReadError>> {
         (**self).reserve_owned_workspace(bytes)
     }
@@ -2222,10 +2105,7 @@ impl<T: DatasetView> DatasetView for Arc<T> {
 
     #[inline]
     fn quads_for_pattern(
-        &self,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         (**self).quads_for_pattern(s, p, o, g)
@@ -2243,9 +2123,7 @@ impl<T: DatasetView> DatasetView for Arc<T> {
 
     #[inline]
     fn certified_value_order(
-        &self,
-        left: Self::Id,
-        right: Self::Id,
+        &self, left: Self::Id, right: Self::Id,
     ) -> Result<Option<core::cmp::Ordering>, Self::ReadError> {
         (**self).certified_value_order(left, right)
     }
@@ -2267,11 +2145,7 @@ impl<T: DatasetView> DatasetView for Arc<T> {
 
     #[inline]
     fn probe_plan(
-        &self,
-        s_bound: bool,
-        p_bound: bool,
-        o_bound: bool,
-        g: GraphMatch<Self::Id>,
+        &self, s_bound: bool, p_bound: bool, o_bound: bool, g: GraphMatch<Self::Id>,
     ) -> Self::ProbePlan {
         (**self).probe_plan(s_bound, p_bound, o_bound, g)
     }
@@ -2283,42 +2157,29 @@ impl<T: DatasetView> DatasetView for Arc<T> {
 
     #[inline]
     fn compare_probe_order(
-        &self,
-        plan: &Self::ProbePlan,
-        left: QuadIds<Self::Id>,
-        right: QuadIds<Self::Id>,
+        &self, plan: &Self::ProbePlan, left: QuadIds<Self::Id>, right: QuadIds<Self::Id>,
     ) -> Option<core::cmp::Ordering> {
         (**self).compare_probe_order(plan, left, right)
     }
 
     #[inline]
     fn quads_for_pattern_with_plan(
-        &self,
-        plan: &Self::ProbePlan,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
-        g: GraphMatch<Self::Id>,
+        &self, plan: &Self::ProbePlan, s: Option<Self::Id>, p: Option<Self::Id>,
+        o: Option<Self::Id>, g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         (**self).quads_for_pattern_with_plan(plan, s, p, o, g)
     }
 
     #[inline]
     fn cardinality_estimate(
-        &self,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: GraphMatch<Self::Id>,
     ) -> u64 {
         (**self).cardinality_estimate(s, p, o, g)
     }
 
     fn workspace_candidate_bound(
-        &self,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: GraphMatch<Self::Id>,
     ) -> Result<Option<u64>, Self::ReadError> {
         (**self).workspace_candidate_bound(s, p, o, g)
@@ -2344,10 +2205,7 @@ impl<T: DatasetView> DatasetView for Arc<T> {
     }
 
     fn source_summary(
-        &self,
-        predicate: Self::Id,
-        graph: GraphMatch<Self::Id>,
-        stream: crate::StatisticsStream,
+        &self, predicate: Self::Id, graph: GraphMatch<Self::Id>, stream: crate::StatisticsStream,
     ) -> Result<Option<crate::source::SourceSummary>, Self::ReadError> {
         (**self).source_summary(predicate, graph, stream)
     }
@@ -2361,8 +2219,7 @@ impl<T: DatasetView> DatasetView for Arc<T> {
     }
 
     fn visit_source_changes<B>(
-        &self,
-        previous: &crate::source::SourceVersion,
+        &self, previous: &crate::source::SourceVersion,
         visit: impl FnMut(
             crate::source::SourceSide,
             crate::source::SourceFamily,
@@ -2388,9 +2245,7 @@ impl<T: DatasetView> DatasetView for Arc<T> {
     }
 
     fn reifier_quads_for_target(
-        &self,
-        target: Self::Id,
-        graph: GraphMatch<Self::Id>,
+        &self, target: Self::Id, graph: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         (**self).reifier_quads_for_target(target, graph)
     }
@@ -2400,34 +2255,26 @@ impl<T: DatasetView> DatasetView for Arc<T> {
     }
 
     fn statement_cardinality_estimate(
-        &self,
-        pattern: ProbePattern<Self::Id>,
-        components: [Option<Self::Id>; 3],
+        &self, pattern: ProbePattern<Self::Id>, components: [Option<Self::Id>; 3],
     ) -> Option<u64> {
         (**self).statement_cardinality_estimate(pattern, components)
     }
 
     fn reifier_quads_for_components(
-        &self,
-        components: [Option<Self::Id>; 3],
-        graph: GraphMatch<Self::Id>,
+        &self, components: [Option<Self::Id>; 3], graph: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         (**self).reifier_quads_for_components(components, graph)
     }
 
     fn annotation_quads_for_pattern(
-        &self,
-        predicate: Option<Self::Id>,
-        object: Option<Self::Id>,
-        graph: GraphMatch<Self::Id>,
+        &self, predicate: Option<Self::Id>, object: Option<Self::Id>, graph: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         (**self).annotation_quads_for_pattern(predicate, object, graph)
     }
 
     #[inline]
     fn annotations_of_with_graph(
-        &self,
-        reifier: Self::Id,
+        &self, reifier: Self::Id,
     ) -> impl Iterator<Item = (Self::Id, Self::Id, Option<Self::Id>)> + '_ {
         (**self).annotations_of_with_graph(reifier)
     }
@@ -2438,8 +2285,7 @@ impl<T: DatasetView> DatasetView for Arc<T> {
     /// pages it would skip unwrapped.
     #[inline]
     fn reifier_quads_in_graph(
-        &self,
-        g: GraphMatch<Self::Id>,
+        &self, g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         (**self).reifier_quads_in_graph(g)
     }
@@ -2448,8 +2294,7 @@ impl<T: DatasetView> DatasetView for Arc<T> {
     /// same unconditional forward, over the ANNOTATION stream.
     #[inline]
     fn annotation_quads_in_graph(
-        &self,
-        g: GraphMatch<Self::Id>,
+        &self, g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         (**self).annotation_quads_in_graph(g)
     }
@@ -2672,9 +2517,7 @@ mod tests {
         }
 
         fn source_summary(
-            &self,
-            _predicate: Self::Id,
-            _graph: GraphMatch<Self::Id>,
+            &self, _predicate: Self::Id, _graph: GraphMatch<Self::Id>,
             _stream: crate::StatisticsStream,
         ) -> Result<Option<crate::source::SourceSummary>, Self::ReadError> {
             if self.status.load(Ordering::Relaxed) == 3 {
@@ -2705,11 +2548,7 @@ mod tests {
         fn probe_plan(&self, _s: bool, _p: bool, _o: bool, _g: GraphMatch) {}
 
         fn quads_for_pattern_with_plan(
-            &self,
-            _plan: &(),
-            s: Option<TermId>,
-            p: Option<TermId>,
-            o: Option<TermId>,
+            &self, _plan: &(), s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
             g: GraphMatch,
         ) -> impl Iterator<Item = QuadIds> + '_ {
             self.quads_for_pattern(s, p, o, g)

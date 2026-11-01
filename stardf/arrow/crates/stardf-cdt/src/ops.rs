@@ -196,9 +196,7 @@ pub fn total_term_cmp(a: &CdtTerm, b: &CdtTerm) -> Ordering {
 /// # Errors
 /// Checked layout, admission or allocator refusal, separate from comparability.
 pub fn try_total_term_cmp(
-    a: &CdtTerm,
-    b: &CdtTerm,
-    storage: &mut impl Storage,
+    a: &CdtTerm, b: &CdtTerm, storage: &mut impl Storage,
 ) -> Result<Ordering, StorageError> {
     let mut memory = Memory::new(storage);
     let mut jobs = Vec::new();
@@ -219,9 +217,7 @@ pub fn total_value_cmp(a: &CdtValue, b: &CdtValue) -> Ordering {
 /// # Errors
 /// Checked layout, admission or allocator refusal, separate from comparability.
 pub fn try_total_value_cmp(
-    a: &CdtValue,
-    b: &CdtValue,
-    storage: &mut impl Storage,
+    a: &CdtValue, b: &CdtValue, storage: &mut impl Storage,
 ) -> Result<Ordering, StorageError> {
     let mut memory = Memory::new(storage);
     let mut jobs = Vec::new();
@@ -274,10 +270,7 @@ fn run_cmp(mut jobs: Vec<CmpJob<'_>>, memory: &mut Memory<'_>) -> Result<Orderin
 /// Push the jobs comparing two composites, in reverse evaluation order (the
 /// worklist pops LIFO, so the length tie-break goes on first and is consulted last).
 fn push_value_cmp<'a>(
-    jobs: &mut Vec<CmpJob<'a>>,
-    a: &'a CdtValue,
-    b: &'a CdtValue,
-    memory: &mut Memory<'_>,
+    jobs: &mut Vec<CmpJob<'a>>, a: &'a CdtValue, b: &'a CdtValue, memory: &mut Memory<'_>,
 ) -> Result<(), StorageError> {
     match (a.contents(), b.contents()) {
         (CdtContents::List(_), CdtContents::Map(_)) => {
@@ -383,10 +376,7 @@ impl Denotation {
 /// Numeric scratch is admitted from the native operation certificate before the
 /// original kernel runs; it dies inside the kernel before this scope releases it.
 fn xsd_relation(
-    a: &XsdValue,
-    b: &XsdValue,
-    equal: bool,
-    memory: &mut Memory<'_>,
+    a: &XsdValue, b: &XsdValue, equal: bool, memory: &mut Memory<'_>,
 ) -> Result<Option<bool>, StorageError> {
     memory.scope(|memory| {
         let baseline = memory.admitted_bytes();
@@ -545,9 +535,7 @@ enum LeafEq {
 ///   `false`, not an error, when asked for the plain string `'b'`.
 /// * two XSD values — `purrdf_xsd::value_eq`, which is definite in both directions.
 fn literal_equal(
-    a: &CdtLiteral,
-    b: &CdtLiteral,
-    memory: &mut Memory<'_>,
+    a: &CdtLiteral, b: &CdtLiteral, memory: &mut Memory<'_>,
 ) -> Result<LeafEq, StorageError> {
     if a == b {
         return Ok(LeafEq::Answer(Ok(true)));
@@ -581,8 +569,7 @@ fn literal_equal(
 /// denotes one, and otherwise has the leaf answer for a composite against a
 /// non-composite.
 fn composite_against_literal(
-    literal: &CdtLiteral,
-    memory: &mut Memory<'_>,
+    literal: &CdtLiteral, memory: &mut Memory<'_>,
 ) -> Result<Result<Option<CdtValue>, CdtTypeError>, StorageError> {
     let denotation = denotation(literal, memory)?;
     let answer = match denotation {
@@ -660,9 +647,7 @@ fn leaf_equal(a: &CdtTerm, b: &CdtTerm, memory: &mut Memory<'_>) -> Result<LeafE
 /// `map-less-than-null-01.rq` the `null` case: both require the whole comparison to be
 /// unbound.
 fn leaf_less_than(
-    a: &CdtTerm,
-    b: &CdtTerm,
-    memory: &mut Memory<'_>,
+    a: &CdtTerm, b: &CdtTerm, memory: &mut Memory<'_>,
 ) -> Result<Result<bool, CdtTypeError>, StorageError> {
     let unordered =
         || CdtTypeError::undefined("SPARQL `<` is not defined for this pair of elements");
@@ -704,9 +689,7 @@ impl<'a> Side<'a> {
     /// This side with the composite its literal denotes standing in for the literal,
     /// or this side as it is when it was a composite already.
     fn resolved(
-        self,
-        parsed: Option<CdtValue>,
-        memory: &mut Memory<'_>,
+        self, parsed: Option<CdtValue>, memory: &mut Memory<'_>,
     ) -> Result<Self, StorageError> {
         match parsed {
             Some(value) => {
@@ -877,24 +860,18 @@ pub fn term_equal(a: &CdtTerm, b: &CdtTerm) -> Result<bool, CdtTypeError> {
 /// # Errors
 /// Physical refusal is separate from a semantic type error.
 pub fn try_term_equal(
-    a: &CdtTerm,
-    b: &CdtTerm,
-    storage: &mut impl Storage,
+    a: &CdtTerm, b: &CdtTerm, storage: &mut impl Storage,
 ) -> Result<Result<bool, CdtTypeError>, StorageError> {
     let mut memory = Memory::new(storage);
     term_equal_with_memory(a, b, &mut memory)
 }
 fn term_equal_with_memory(
-    a: &CdtTerm,
-    b: &CdtTerm,
-    memory: &mut Memory<'_>,
+    a: &CdtTerm, b: &CdtTerm, memory: &mut Memory<'_>,
 ) -> Result<Result<bool, CdtTypeError>, StorageError> {
     memory.scope(|memory| term_equal_kernel(a, b, memory))
 }
 fn term_equal_kernel(
-    a: &CdtTerm,
-    b: &CdtTerm,
-    memory: &mut Memory<'_>,
+    a: &CdtTerm, b: &CdtTerm, memory: &mut Memory<'_>,
 ) -> Result<Result<bool, CdtTypeError>, StorageError> {
     let mut work = Vec::new();
     memory.push(&mut work, (Side::Borrowed(a), Side::Borrowed(b)))?;
@@ -916,9 +893,7 @@ fn term_equal_kernel(
 /// nested composites is compared by [`term_equal`]'s rule, because at that depth the
 /// question is again one of value equality; no corpus test reaches that case.
 pub(crate) fn membership_equal_with_memory(
-    item: &CdtTerm,
-    term: &CdtTerm,
-    memory: &mut Memory<'_>,
+    item: &CdtTerm, term: &CdtTerm, memory: &mut Memory<'_>,
 ) -> Result<Result<bool, CdtTypeError>, StorageError> {
     if let (CdtTerm::Blank(p), CdtTerm::Blank(q)) = (item, term) {
         return Ok(Ok(p == q));
@@ -934,8 +909,7 @@ pub(crate) fn membership_equal_with_memory(
 /// the walk: an owned composite hands its elements over to the pairs, so ownership
 /// travels down the list and no walk ever re-enters this function.
 fn equal_worklist(
-    mut work: Vec<(Side<'_>, Side<'_>)>,
-    memory: &mut Memory<'_>,
+    mut work: Vec<(Side<'_>, Side<'_>)>, memory: &mut Memory<'_>,
 ) -> Result<Result<bool, CdtTypeError>, StorageError> {
     let result = (|| {
         let mut withheld = None;
@@ -1023,9 +997,7 @@ pub fn list_equal(a: &[CdtTerm], b: &[CdtTerm]) -> Result<bool, CdtTypeError> {
     list_equal_with_memory(a, b, &mut memory).expect("resident list equality storage")
 }
 fn list_equal_with_memory(
-    a: &[CdtTerm],
-    b: &[CdtTerm],
-    memory: &mut Memory<'_>,
+    a: &[CdtTerm], b: &[CdtTerm], memory: &mut Memory<'_>,
 ) -> Result<Result<bool, CdtTypeError>, StorageError> {
     if a.len() != b.len() {
         return Ok(Ok(false));
@@ -1049,9 +1021,7 @@ pub fn map_equal(a: &[CdtEntry], b: &[CdtEntry]) -> Result<bool, CdtTypeError> {
     map_equal_with_memory(a, b, &mut memory).expect("resident map equality storage")
 }
 fn map_equal_with_memory(
-    a: &[CdtEntry],
-    b: &[CdtEntry],
-    memory: &mut Memory<'_>,
+    a: &[CdtEntry], b: &[CdtEntry], memory: &mut Memory<'_>,
 ) -> Result<Result<bool, CdtTypeError>, StorageError> {
     if a.len() != b.len() || a.iter().zip(b).any(|(p, q)| p.key != q.key) {
         return Ok(Ok(false));
@@ -1091,9 +1061,7 @@ pub fn term_less_than(a: &CdtTerm, b: &CdtTerm) -> Result<bool, CdtTypeError> {
 /// # Errors
 /// Physical refusal is separate from a semantic type error.
 pub fn try_term_less_than(
-    a: &CdtTerm,
-    b: &CdtTerm,
-    storage: &mut impl Storage,
+    a: &CdtTerm, b: &CdtTerm, storage: &mut impl Storage,
 ) -> Result<Result<bool, CdtTypeError>, StorageError> {
     let mut memory = Memory::new(storage);
     sequence_less_than(
@@ -1241,10 +1209,7 @@ impl Owner<'_> {
     /// The composite at `index` as the walk reaches it: the syntactic one this side
     /// holds, or the one parsed out of the literal at that position.
     fn reached(
-        &mut self,
-        index: usize,
-        reach: Reach,
-        memory: &mut Memory<'_>,
+        &mut self, index: usize, reach: Reach, memory: &mut Memory<'_>,
     ) -> Result<Self, StorageError> {
         match reach {
             Reach::Syntactic => self.descend(index, memory),
@@ -1315,16 +1280,12 @@ struct Frame<'a> {
 /// `||`, under which `error || true` is `true`, would give the wrong answer.
 /// `list-greater-equal-28.rq` says the same for `>=`.
 fn sequence_less_than(
-    left: Owner<'_>,
-    right: Owner<'_>,
-    memory: &mut Memory<'_>,
+    left: Owner<'_>, right: Owner<'_>, memory: &mut Memory<'_>,
 ) -> Result<Result<Verdict, CdtTypeError>, StorageError> {
     memory.scope(|memory| sequence_less_than_kernel(left, right, memory))
 }
 fn sequence_less_than_kernel(
-    left: Owner<'_>,
-    right: Owner<'_>,
-    memory: &mut Memory<'_>,
+    left: Owner<'_>, right: Owner<'_>, memory: &mut Memory<'_>,
 ) -> Result<Result<Verdict, CdtTypeError>, StorageError> {
     let mut stack = Vec::new();
     memory.push(

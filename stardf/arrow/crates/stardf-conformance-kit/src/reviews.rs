@@ -107,10 +107,7 @@ pub fn decode(bytes: &[u8]) -> Result<Index, DecodeError> {
 /// Refuses missing/duplicate cases, unaccepted reviews, changed/missing bytes,
 /// circular provenance or an incomplete/differently associated artifact set.
 pub fn admit(
-    catalog: &Catalog,
-    inventories: &[Inventory],
-    index: &Index,
-    payloads: &[Payload<'_>],
+    catalog: &Catalog, inventories: &[Inventory], index: &Index, payloads: &[Payload<'_>],
 ) -> Result<(), GradeError> {
     let registry_path = catalog
         .review_index

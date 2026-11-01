@@ -68,9 +68,7 @@ impl NodeFacts<'_> {
 /// memoized somewhere that outlives the node, and threading it explicitly
 /// keeps that lifetime visible instead of hiding it in a global.
 pub(crate) fn check_node_constraint(
-    nc: &NodeConstraint,
-    facts: &NodeFacts<'_>,
-    patterns: &mut PatternCache,
+    nc: &NodeConstraint, facts: &NodeFacts<'_>, patterns: &mut PatternCache,
     exact: Option<&[Option<XsdValue>; 4]>,
 ) -> Result<(), CheckError> {
     if let Some(kind) = nc.node_kind {
@@ -163,9 +161,7 @@ fn check_datatype(datatype: &str, facts: &NodeFacts<'_>) -> Result<(), String> {
 // ── string facets ───────────────────────────────────────────────────────────
 
 fn check_string_facets(
-    nc: &NodeConstraint,
-    facts: &NodeFacts<'_>,
-    patterns: &mut PatternCache,
+    nc: &NodeConstraint, facts: &NodeFacts<'_>, patterns: &mut PatternCache,
 ) -> Result<(), CheckError> {
     let needs_lexical = nc.length.is_some()
         || nc.minlength.is_some()
@@ -262,9 +258,7 @@ fn facet_value(bound: NumericLiteral) -> XsdValue {
 /// bounds as written, from an [`crate::ExactSchema`] — or, without it, against the
 /// AST's `i64`/`f64` values.
 fn check_numeric_facets(
-    nc: &NodeConstraint,
-    facts: &NodeFacts<'_>,
-    exact: Option<&[Option<XsdValue>; 4]>,
+    nc: &NodeConstraint, facts: &NodeFacts<'_>, exact: Option<&[Option<XsdValue>; 4]>,
 ) -> Result<(), String> {
     use core::cmp::Ordering;
     let comparisons: [(&str, Option<NumericLiteral>, &[Ordering]); 4] = [
@@ -446,9 +440,7 @@ mod tests {
     use super::*;
 
     fn literal_facts<'a>(
-        lexical: &'a str,
-        datatype: &'a str,
-        language: Option<&'a str>,
+        lexical: &'a str, datatype: &'a str, language: Option<&'a str>,
     ) -> NodeFacts<'a> {
         NodeFacts {
             kind: FactKind::Literal,

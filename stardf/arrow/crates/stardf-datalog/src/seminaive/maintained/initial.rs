@@ -80,10 +80,7 @@ where
     Arity<N>: StoreShape<N>,
 {
     pub(super) fn resume_initial(
-        &mut self,
-        options: EvalOptions,
-        limit: u128,
-        stop: Option<&dyn StopSignal>,
+        &mut self, options: EvalOptions, limit: u128, stop: Option<&dyn StopSignal>,
     ) -> Result<ResumeProgress<D::Error>, MaintenanceError<D::Error>> {
         if self.initial_work > limit {
             return Err(MaintenanceError::WorkLimit {

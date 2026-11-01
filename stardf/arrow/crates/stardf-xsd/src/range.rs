@@ -350,8 +350,7 @@ pub fn cardinality(range: &DataRange) -> Cardinality {
 /// # Errors
 /// Returns the original admission or physical allocation refusal, never `Undecided`.
 pub fn try_cardinality(
-    range: &DataRange,
-    storage: &mut dyn Storage,
+    range: &DataRange, storage: &mut dyn Storage,
 ) -> Result<Cardinality, StorageError> {
     let mut memory = Memory::new(storage);
     memory.scope(0, |memory| {
@@ -439,18 +438,14 @@ pub fn containment(sub: &DataRange, sup: &DataRange) -> Satisfiability {
 /// # Errors
 /// Returns a typed refusal rather than weakening containment into an unknown result.
 pub fn try_containment(
-    sub: &DataRange,
-    sup: &DataRange,
-    storage: &mut dyn Storage,
+    sub: &DataRange, sup: &DataRange, storage: &mut dyn Storage,
 ) -> Result<Satisfiability, StorageError> {
     let mut memory = Memory::new(storage);
     memory.scope(0, |memory| containment_with(sub, sup, memory))
 }
 
 fn containment_with(
-    sub: &DataRange,
-    sup: &DataRange,
-    memory: &mut Memory<'_>,
+    sub: &DataRange, sup: &DataRange, memory: &mut Memory<'_>,
 ) -> Result<Satisfiability, StorageError> {
     memory.scope(0, |memory| {
         let sub = extent_with(sub, memory)?;
@@ -532,17 +527,13 @@ pub fn same_value(a: &XsdValue, b: &XsdValue) -> bool {
 /// # Errors
 /// Returns the caller's work/storage refusal or a native allocation failure.
 pub fn try_same_value(
-    a: &XsdValue,
-    b: &XsdValue,
-    storage: &mut dyn Storage,
+    a: &XsdValue, b: &XsdValue, storage: &mut dyn Storage,
 ) -> Result<bool, StorageError> {
     same_value_with(a, b, &mut Memory::new(storage))
 }
 
 fn same_value_with(
-    left: &XsdValue,
-    right: &XsdValue,
-    memory: &mut Memory<'_>,
+    left: &XsdValue, right: &XsdValue, memory: &mut Memory<'_>,
 ) -> Result<bool, StorageError> {
     memory.step()?;
     if space_of_value(left) != space_of_value(right) {
@@ -615,9 +606,7 @@ fn same_float(x: f64, y: f64) -> bool {
 /// unequal bases cannot denote the same instant; equal bases compare borrowed
 /// seconds through the range operation's existing native admission owner.
 fn same_temporal_seconds(
-    a: (Option<i64>, i128, &Decimal),
-    b: (Option<i64>, i128, &Decimal),
-    memory: &mut Memory<'_>,
+    a: (Option<i64>, i128, &Decimal), b: (Option<i64>, i128, &Decimal), memory: &mut Memory<'_>,
 ) -> Result<bool, StorageError> {
     let (a_timezone, a_base, a_second) = a;
     let (b_timezone, b_base, b_second) = b;
@@ -1178,8 +1167,7 @@ impl IntervalSet {
         })
     }
     fn canonical_with(
-        mut intervals: Vec<Interval>,
-        memory: &mut Memory<'_>,
+        mut intervals: Vec<Interval>, memory: &mut Memory<'_>,
     ) -> Result<Self, StorageError> {
         memory.scope(intervals.owned_bytes(), |memory| {
             let mut first_error = None;
@@ -1383,9 +1371,7 @@ impl IntervalSet {
 }
 
 fn gap_with(
-    first: &Interval,
-    second: &Interval,
-    memory: &mut Memory<'_>,
+    first: &Interval, second: &Interval, memory: &mut Memory<'_>,
 ) -> Result<bool, StorageError> {
     let (left, left_excluded) = match &first.hi {
         Hi::Unbounded => return Ok(false),
@@ -1443,9 +1429,7 @@ trait Algebra: Clone + CloneOwned {
     fn empty_with(&self, memory: &mut Memory<'_>) -> Result<bool, StorageError>;
     fn count_with(&self, memory: &mut Memory<'_>) -> Result<Cardinality, StorageError>;
     fn holds_with(
-        &self,
-        value: &Self::Value,
-        memory: &mut Memory<'_>,
+        &self, value: &Self::Value, memory: &mut Memory<'_>,
     ) -> Result<bool, StorageError>;
 }
 
@@ -1539,8 +1523,7 @@ impl DecimalSet {
         })
     }
     fn window_with(
-        interval: &Interval,
-        memory: &mut Memory<'_>,
+        interval: &Interval, memory: &mut Memory<'_>,
     ) -> Result<Option<IntWindow>, StorageError> {
         memory.scope(0, |memory| {
             let lo = match &interval.lo {
@@ -1741,9 +1724,7 @@ impl FloatSet {
         })
     }
     fn interval_with(
-        width: FloatWidth,
-        interval: Interval,
-        memory: &mut Memory<'_>,
+        width: FloatWidth, interval: Interval, memory: &mut Memory<'_>,
     ) -> Result<Self, StorageError> {
         let intervals = memory.one(interval)?;
         Ok(Self {
@@ -1753,9 +1734,7 @@ impl FloatSet {
         })
     }
     fn admits_with(
-        &self,
-        interval: &Interval,
-        memory: &mut Memory<'_>,
+        &self, interval: &Interval, memory: &mut Memory<'_>,
     ) -> Result<bool, StorageError> {
         let candidate = match &interval.lo {
             Lo::Unbounded => f64::NEG_INFINITY,
@@ -2030,9 +2009,7 @@ impl LengthSet {
         })
     }
     fn singleton_with(
-        kind: LengthKind,
-        value: XsdValue,
-        memory: &mut Memory<'_>,
+        kind: LengthKind, value: XsdValue, memory: &mut Memory<'_>,
     ) -> Result<Self, StorageError> {
         Ok(Self {
             kind,
@@ -2042,9 +2019,7 @@ impl LengthSet {
         })
     }
     fn interval_with(
-        kind: LengthKind,
-        interval: Interval,
-        memory: &mut Memory<'_>,
+        kind: LengthKind, interval: Interval, memory: &mut Memory<'_>,
     ) -> Result<Self, StorageError> {
         let intervals = memory.one(interval)?;
         Ok(Self {
@@ -2055,9 +2030,7 @@ impl LengthSet {
         })
     }
     fn membership_with(
-        &self,
-        value: &XsdValue,
-        memory: &mut Memory<'_>,
+        &self, value: &XsdValue, memory: &mut Memory<'_>,
     ) -> Result<bool, StorageError> {
         let Some(length) = Self::length_of(value) else {
             return Ok(false);
@@ -2322,9 +2295,7 @@ impl ListedValue for u32 {
 }
 
 fn holds_same_with<T: ListedValue>(
-    values: &[T],
-    value: &T,
-    memory: &mut Memory<'_>,
+    values: &[T], value: &T, memory: &mut Memory<'_>,
 ) -> Result<bool, StorageError> {
     for held in values {
         if held.same_with(value, memory)? {
@@ -2372,9 +2343,7 @@ impl<T: CloneOwned> CloneOwned for ListedSet<T> {
 
 impl<T: ListedValue> ListedSet<T> {
     fn listed_with(
-        size: Option<u64>,
-        values: Vec<T>,
-        memory: &mut Memory<'_>,
+        size: Option<u64>, values: Vec<T>, memory: &mut Memory<'_>,
     ) -> Result<Self, StorageError> {
         memory.scope(values.owned_bytes(), |memory| {
             let mut deduped = Vec::new();
@@ -2497,10 +2466,7 @@ enum ValueSelection {
 }
 
 fn select_values<T: ListedValue>(
-    left: &[T],
-    right: &[T],
-    selection: ValueSelection,
-    memory: &mut Memory<'_>,
+    left: &[T], right: &[T], selection: ValueSelection, memory: &mut Memory<'_>,
 ) -> Result<Vec<T>, StorageError> {
     let mut out = Vec::new();
     memory.reserve(&mut out, left.len())?;
@@ -2526,9 +2492,7 @@ fn select_values<T: ListedValue>(
 }
 
 fn length_admitted_with(
-    lengths: &IntervalSet,
-    value: &XsdValue,
-    memory: &mut Memory<'_>,
+    lengths: &IntervalSet, value: &XsdValue, memory: &mut Memory<'_>,
 ) -> Result<bool, StorageError> {
     match LengthSet::length_of(value) {
         Some(length) => lengths.holds_with(&Point::Len(length), memory),
@@ -2681,8 +2645,7 @@ impl OwnedBytes for Extent {
 }
 
 fn zip_spaces_with<A: Algebra, const N: usize>(
-    left: &[SpaceSet<A>; N],
-    right: &[SpaceSet<A>; N],
+    left: &[SpaceSet<A>; N], right: &[SpaceSet<A>; N],
     mut operation: impl FnMut(
         &SpaceSet<A>,
         &SpaceSet<A>,
@@ -2823,9 +2786,7 @@ impl Extent {
         }))
     }
     fn contains_with(
-        &self,
-        value: &XsdValue,
-        memory: &mut Memory<'_>,
+        &self, value: &XsdValue, memory: &mut Memory<'_>,
     ) -> Result<Known, StorageError> {
         match space_of_value(value) {
             Space::Decimal => self.decimal.holds_with(value, memory),
@@ -3022,9 +2983,7 @@ fn value_with(value: &XsdValue, memory: &mut Memory<'_>) -> Result<Extent, Stora
 }
 
 fn float_point_with(
-    width: FloatWidth,
-    value: &XsdValue,
-    memory: &mut Memory<'_>,
+    width: FloatWidth, value: &XsdValue, memory: &mut Memory<'_>,
 ) -> Result<SpaceSet<FloatSet>, StorageError> {
     let value = match value {
         XsdValue::Float(value) => f64::from(*value),
@@ -3049,9 +3008,7 @@ fn float_point_with(
 }
 
 fn restriction_with(
-    base: XsdDatatype,
-    facets: &[Facet],
-    memory: &mut Memory<'_>,
+    base: XsdDatatype, facets: &[Facet], memory: &mut Memory<'_>,
 ) -> Result<Extent, StorageError> {
     let mut extent = Extent::empty();
     match space_of_datatype(base) {
@@ -3083,9 +3040,7 @@ fn restriction_with(
 }
 
 fn decimal_restriction_with(
-    base: XsdDatatype,
-    facets: &[Facet],
-    memory: &mut Memory<'_>,
+    base: XsdDatatype, facets: &[Facet], memory: &mut Memory<'_>,
 ) -> Result<SpaceSet<DecimalSet>, StorageError> {
     memory.scope(0, |memory| {
         let mut set = DecimalSet::datatype_with(base, memory)?;
@@ -3108,9 +3063,7 @@ fn decimal_restriction_with(
 }
 
 fn float_restriction_with(
-    width: FloatWidth,
-    facets: &[Facet],
-    memory: &mut Memory<'_>,
+    width: FloatWidth, facets: &[Facet], memory: &mut Memory<'_>,
 ) -> Result<SpaceSet<FloatSet>, StorageError> {
     memory.scope(0, |memory| {
         let mut set = FloatSet::full_with(width, memory)?;
@@ -3138,9 +3091,7 @@ fn float_restriction_with(
 }
 
 fn length_restriction_with(
-    kind: LengthKind,
-    facets: &[Facet],
-    memory: &mut Memory<'_>,
+    kind: LengthKind, facets: &[Facet], memory: &mut Memory<'_>,
 ) -> Result<SpaceSet<LengthSet>, StorageError> {
     memory.scope(0, |memory| {
         let mut set = LengthSet::full_with(kind, memory)?;
@@ -3255,10 +3206,7 @@ enum TemporalBounds {
 }
 
 fn temporal_restriction_with(
-    base: XsdDatatype,
-    space: TemporalSpace,
-    facets: &[Facet],
-    memory: &mut Memory<'_>,
+    base: XsdDatatype, space: TemporalSpace, facets: &[Facet], memory: &mut Memory<'_>,
 ) -> Result<SpaceSet<ListedSet<XsdValue>>, StorageError> {
     Ok(match temporal_bounds_with(space, facets, memory)? {
         TemporalBounds::Contradiction => SpaceSet::Exact(ListedSet::empty(space.size())),
@@ -3275,9 +3223,7 @@ fn temporal_restriction_with(
 }
 
 fn temporal_bounds_with(
-    space: TemporalSpace,
-    facets: &[Facet],
-    memory: &mut Memory<'_>,
+    space: TemporalSpace, facets: &[Facet], memory: &mut Memory<'_>,
 ) -> Result<TemporalBounds, StorageError> {
     // The original bound list contains only borrowed source facets. Scan those
     // facets directly; no copied value or metadata vector is needed.

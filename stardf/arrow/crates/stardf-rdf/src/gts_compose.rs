@@ -149,10 +149,7 @@ fn bnode_key_hash(scope: Option<&str>, blank_scope: BlankScope, label: &str) -> 
 /// Hash-consed lookup of a blank-node intern key. Allocates nothing — in
 /// particular it never renders the qualified label the wire value is built from.
 fn lookup_bnode_key(
-    keys: &[BnodeKey],
-    index: &HashTable<u32>,
-    scope: Option<&str>,
-    blank_scope: BlankScope,
+    keys: &[BnodeKey], index: &HashTable<u32>, scope: Option<&str>, blank_scope: BlankScope,
     label: &str,
 ) -> Option<usize> {
     index
@@ -292,10 +289,7 @@ impl SnapshotBuilder {
     /// [`GtsIngestError::BlankWireCollision`] when this NEW intern key encodes
     /// onto a wire value an EXISTING, different key already minted.
     fn intern_bnode(
-        &mut self,
-        label: &str,
-        blank_scope: BlankScope,
-        scope: Option<&str>,
+        &mut self, label: &str, blank_scope: BlankScope, scope: Option<&str>,
     ) -> Result<usize, GtsIngestError> {
         if let Some(id) = lookup_bnode_key(
             &self.bnode_keys,
@@ -362,11 +356,7 @@ impl SnapshotBuilder {
     }
 
     fn intern_literal(
-        &mut self,
-        lex: &str,
-        datatype: Option<&str>,
-        lang: Option<&str>,
-        direction: Option<&str>,
+        &mut self, lex: &str, datatype: Option<&str>, lang: Option<&str>, direction: Option<&str>,
     ) -> usize {
         // Ensure the datatype IRI is interned (IRIs sort before literals, so the
         // datatype id always precedes the literal — §7.5, preserved here).
@@ -424,9 +414,7 @@ impl SnapshotBuilder {
     /// refusals [`GtsIngestError`] enumerates applies — rendered through its
     /// `Display`, because this signature is frozen for the Python producer.
     pub fn add_dataset_scoped(
-        &mut self,
-        dataset: &crate::RdfDataset,
-        default_graph_name: Option<&str>,
+        &mut self, dataset: &crate::RdfDataset, default_graph_name: Option<&str>,
         scope: Option<&str>,
     ) -> Result<(), String> {
         // ONE PATH: the frozen carrier is itself a `DatasetView`/`FallibleDatasetView`,
@@ -447,8 +435,7 @@ impl SnapshotBuilder {
     /// # Errors
     /// [`GtsIngestError`], which is also what poisons the builder.
     pub fn add_view<D: FallibleDatasetView>(
-        &mut self,
-        view: &D,
+        &mut self, view: &D,
     ) -> Result<IngestReport, GtsIngestError> {
         self.add_view_scoped(view, None, None)
     }
@@ -466,10 +453,7 @@ impl SnapshotBuilder {
     /// # Errors
     /// [`GtsIngestError`], which is also what poisons the builder.
     pub fn add_view_scoped<D: FallibleDatasetView>(
-        &mut self,
-        view: &D,
-        default_graph_name: Option<&str>,
-        scope: Option<&str>,
+        &mut self, view: &D, default_graph_name: Option<&str>, scope: Option<&str>,
     ) -> Result<IngestReport, GtsIngestError> {
         self.ingest_view(view, default_graph_name, scope)
     }
@@ -497,10 +481,7 @@ impl SnapshotBuilder {
     /// exactly this body, so a refusal, a checkpoint and the poison flag mean the
     /// same thing on both.
     fn ingest_view<D: FallibleDatasetView>(
-        &mut self,
-        view: &D,
-        default_graph_name: Option<&str>,
-        scope: Option<&str>,
+        &mut self, view: &D, default_graph_name: Option<&str>, scope: Option<&str>,
     ) -> Result<IngestReport, GtsIngestError> {
         if let Some(poison) = &self.poison {
             // Naming the EARLIER failure, not this call: the only honest thing a
@@ -565,10 +546,7 @@ impl SnapshotBuilder {
     /// The row-consuming body of [`Self::ingest_view`], separated only so that
     /// EVERY early return through it is caught by one poison assignment.
     fn ingest_view_rows<D: FallibleDatasetView>(
-        &mut self,
-        view: &D,
-        default_graph_name: Option<&str>,
-        scope: Option<&str>,
+        &mut self, view: &D, default_graph_name: Option<&str>, scope: Option<&str>,
     ) -> Result<IngestReport, GtsIngestError> {
         // NO CAPABILITY GATE. The `DatasetView` snapshot-ingestion obligation —
         // a claimed capability must be answerable through its accessor — is a
@@ -681,10 +659,7 @@ impl SnapshotBuilder {
     /// [`GtsIngestError::BlankWireCollision`] — exactly the refusals
     /// [`Self::intern_view_term`]/[`Self::intern_view_iri`] can raise.
     fn consume_rows<D: DatasetView>(
-        &mut self,
-        view: &D,
-        default_graph_name: Option<&str>,
-        scope: Option<&str>,
+        &mut self, view: &D, default_graph_name: Option<&str>, scope: Option<&str>,
     ) -> Result<(usize, std::collections::BTreeSet<D::Id>), GtsIngestError> {
         let mut rows_consumed = 0_usize;
         let mut occupied_graphs: std::collections::BTreeSet<D::Id> =
@@ -772,11 +747,7 @@ impl SnapshotBuilder {
     /// qualification, so two composite sources that both spell `_:b0` stay two
     /// terms (C0.2) and a caller scope separates whole sources on top of that.
     fn intern_view_term<D: DatasetView>(
-        &mut self,
-        view: &D,
-        id: D::Id,
-        scope: Option<&str>,
-        position: &'static str,
+        &mut self, view: &D, id: D::Id, scope: Option<&str>, position: &'static str,
     ) -> Result<usize, GtsIngestError> {
         let guard = view.resolve(id).map_err(GtsIngestError::source_read)?;
         match guard.term() {
@@ -824,10 +795,7 @@ impl SnapshotBuilder {
 
     /// Intern a view term that MUST be an IRI (a predicate slot).
     fn intern_view_iri<D: DatasetView>(
-        &mut self,
-        view: &D,
-        id: D::Id,
-        position: &'static str,
+        &mut self, view: &D, id: D::Id, position: &'static str,
     ) -> Result<usize, GtsIngestError> {
         let guard = view.resolve(id).map_err(GtsIngestError::source_read)?;
         match guard.term() {
@@ -1105,9 +1073,7 @@ fn render_term<D: DatasetView>(view: &D, id: D::Id) -> Result<String, GtsIngestE
 
 /// [`render_term`] with the remaining recursion budget carried explicitly.
 fn render_term_within<D: DatasetView>(
-    view: &D,
-    id: D::Id,
-    depth: usize,
+    view: &D, id: D::Id, depth: usize,
 ) -> Result<String, GtsIngestError> {
     let Some(next) = depth.checked_sub(1) else {
         return Ok("…".to_owned());
@@ -1425,15 +1391,9 @@ impl MediumPlan {
 /// Emit the snapshot bundle bytes from an accumulated builder (`_Builder.to_gts`).
 #[allow(clippy::too_many_arguments)]
 pub fn emit_gts(
-    builder: &SnapshotBuilder,
-    profile: &str,
-    transform: Option<Vec<String>>,
-    doc_blobs: Vec<BlobRow>,
-    report_blobs: Vec<BlobRow>,
-    signer_secret: Option<[u8; 32]>,
-    signer_kid: Option<String>,
-    public_key_armor: Option<String>,
-    rsyncable_threshold: usize,
+    builder: &SnapshotBuilder, profile: &str, transform: Option<Vec<String>>,
+    doc_blobs: Vec<BlobRow>, report_blobs: Vec<BlobRow>, signer_secret: Option<[u8; 32]>,
+    signer_kid: Option<String>, public_key_armor: Option<String>, rsyncable_threshold: usize,
     plan: &MediumPlan,
 ) -> Result<Vec<u8>, String> {
     // TERMINAL POISON. A mid-ingestion failure leaves a partially interned

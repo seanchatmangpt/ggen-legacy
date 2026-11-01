@@ -149,10 +149,7 @@ const TRIPLES_FORMAT_VERSION: u8 = 1;
 /// component — `s`, `p`, `o`, and `g` alike — since the dictionary no longer
 /// splits predicates into a separate id space.
 fn resolve_unified<D: DatasetView>(
-    view: &D,
-    dict: &PackDict,
-    cache: &mut FastMap<D::Id, PackTermId>,
-    id: D::Id,
+    view: &D, dict: &PackDict, cache: &mut FastMap<D::Id, PackTermId>, id: D::Id,
 ) -> Result<PackTermId, TermLookupError<D::ReadError>> {
     if let Some(&u) = cache.get(&id) {
         return Ok(u);
@@ -333,8 +330,7 @@ impl Triples {
     /// contract violation, not a data-dependent error.
     #[must_use]
     pub fn encode<D: DatasetView<ReadError = std::convert::Infallible>>(
-        dict: &PackDict,
-        view: &D,
+        dict: &PackDict, view: &D,
     ) -> Self {
         Self::try_encode(dict, view).expect("a validated resident view resolves its own terms")
     }
@@ -344,8 +340,7 @@ impl Triples {
     /// # Errors
     /// Returns the source's typed read refusal or an invalid source term.
     pub fn try_encode<D: DatasetView>(
-        dict: &PackDict,
-        view: &D,
+        dict: &PackDict, view: &D,
     ) -> Result<Self, TermLookupError<D::ReadError>> {
         view.checked_read(|view| {
             let mut cache: FastMap<D::Id, PackTermId> = FastMap::default();
@@ -476,8 +471,7 @@ struct PartitionRef<'a> {
 /// `local_lookup`'s binary search (and the ascending-order guarantees the FoQ
 /// indexes rely on) depend on.
 fn assert_strictly_ascending(
-    map: IntVectorRef<'_>,
-    what: &'static str,
+    map: IntVectorRef<'_>, what: &'static str,
 ) -> Result<(), PackTriplesError> {
     let mut prev: Option<u64> = None;
     for i in 0..map.len() {
@@ -495,9 +489,7 @@ fn assert_strictly_ascending(
 /// Verify every value in `vec` is `< bound` — validates that `Sp`/`So` entries
 /// address a real local predicate/object id.
 fn assert_in_range(
-    vec: IntVectorRef<'_>,
-    bound: usize,
-    what: &'static str,
+    vec: IntVectorRef<'_>, bound: usize, what: &'static str,
 ) -> Result<(), PackTriplesError> {
     for i in 0..vec.len() {
         if vec.get(i) as usize >= bound {
@@ -525,10 +517,7 @@ fn sum_int_vector(vec: IntVectorRef<'_>) -> Option<u64> {
 /// time so a later query never has to propagate a decode error through the
 /// infallible `pattern`/`all_quads` iterators.
 fn validate_delta_index(
-    data: &[u8],
-    offsets: IntVectorRef<'_>,
-    counts: IntVectorRef<'_>,
-    position_bound: u64,
+    data: &[u8], offsets: IntVectorRef<'_>, counts: IntVectorRef<'_>, position_bound: u64,
 ) -> Result<(), PackTriplesError> {
     let n = offsets.len();
     let mut prev_offset = 0u64;
@@ -763,10 +752,7 @@ fn local_lookup(map: IntVectorRef<'_>, unified: PackTermId) -> Option<u64> {
 
 /// Binary-search `vec[start..end)` (ascending within that range) for `target`.
 fn binary_search_range(
-    vec: IntVectorRef<'_>,
-    start: usize,
-    end: usize,
-    target: u64,
+    vec: IntVectorRef<'_>, start: usize, end: usize, target: u64,
 ) -> Option<usize> {
     let mut lo = start;
     let mut hi = end;
@@ -820,10 +806,7 @@ fn subject_triple_count(part: &PartitionRef<'_>, local_s: u64) -> usize {
 /// validated at [`PartitionRef::from_bytes`] time (so every `.expect` here is a
 /// broken-invariant bug, not a data-dependent error).
 fn foq_list<'a>(
-    data: &'a [u8],
-    offsets: IntVectorRef<'_>,
-    counts: IntVectorRef<'_>,
-    local_id: u64,
+    data: &'a [u8], offsets: IntVectorRef<'_>, counts: IntVectorRef<'_>, local_id: u64,
 ) -> impl Iterator<Item = u64> + 'a {
     let count = counts.get(local_id as usize) as usize;
     let offset = offsets.get(local_id as usize) as usize;
@@ -833,10 +816,7 @@ fn foq_list<'a>(
 
 /// [`foq_list`], collected.
 fn foq_positions(
-    data: &[u8],
-    offsets: IntVectorRef<'_>,
-    counts: IntVectorRef<'_>,
-    local_id: u64,
+    data: &[u8], offsets: IntVectorRef<'_>, counts: IntVectorRef<'_>, local_id: u64,
 ) -> Vec<u64> {
     foq_list(data, offsets, counts, local_id).collect()
 }
@@ -847,10 +827,7 @@ fn foq_positions(
 /// (no partial match is possible). Dispatches to the access path documented in
 /// the [module docs](self) table, based on which axes are bound.
 fn partition_rows<'a>(
-    part: &PartitionRef<'a>,
-    s: Option<PackTermId>,
-    p: Option<PackTermId>,
-    o: Option<PackTermId>,
+    part: &PartitionRef<'a>, s: Option<PackTermId>, p: Option<PackTermId>, o: Option<PackTermId>,
 ) -> Box<dyn Iterator<Item = (u64, u64, u64)> + 'a> {
     let local_s = match s {
         Some(u) => match local_lookup(part.local_s, u) {
@@ -983,10 +960,7 @@ fn partition_rows<'a>(
 /// rows [`partition_rows`] would yield for the same pattern — see
 /// [`TriplesRef::cardinality_upper_bound`].
 fn partition_upper_bound(
-    part: &PartitionRef<'_>,
-    s: Option<PackTermId>,
-    p: Option<PackTermId>,
-    o: Option<PackTermId>,
+    part: &PartitionRef<'_>, s: Option<PackTermId>, p: Option<PackTermId>, o: Option<PackTermId>,
 ) -> usize {
     let local_s = s.map(|u| local_lookup(part.local_s, u));
     let local_p = p.map(|u| local_lookup(part.local_p, u));
@@ -1146,10 +1120,7 @@ impl<'a> TriplesRef<'a> {
     /// partition it does not need to touch — see the [module docs](self) for
     /// the access path chosen per pattern shape.
     pub fn pattern(
-        &self,
-        s: Option<PackTermId>,
-        p: Option<PackTermId>,
-        o: Option<PackTermId>,
+        &self, s: Option<PackTermId>, p: Option<PackTermId>, o: Option<PackTermId>,
         g: GraphMatch<PackTermId>,
     ) -> impl Iterator<Item = (PackTermId, PackTermId, PackTermId, Option<PackTermId>)> + '_ {
         self.selected_partitions(g)
@@ -1197,10 +1168,7 @@ impl<'a> TriplesRef<'a> {
     /// ranking only (`cardinality_estimate`), never an exact `COUNT`.
     #[must_use]
     pub fn cardinality_upper_bound(
-        &self,
-        s: Option<PackTermId>,
-        p: Option<PackTermId>,
-        o: Option<PackTermId>,
+        &self, s: Option<PackTermId>, p: Option<PackTermId>, o: Option<PackTermId>,
         g: GraphMatch<PackTermId>,
     ) -> usize {
         self.selected_partitions(g)

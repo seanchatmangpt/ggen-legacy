@@ -33,8 +33,7 @@ pub(crate) struct WindowSpec {
 }
 
 pub(crate) fn offer(
-    pattern: &GraphPattern,
-    workspace: &WorkspaceCapability,
+    pattern: &GraphPattern, workspace: &WorkspaceCapability,
 ) -> Result<Option<ShapeOffer>, EvalError> {
     let GraphPattern::Filter { inner, expr } = pattern else {
         return Ok(None);
@@ -91,8 +90,7 @@ pub(crate) fn offer(
 }
 
 pub(crate) fn pure_ordinal_predicate(
-    expression: &Expression,
-    workspace: &WorkspaceCapability,
+    expression: &Expression, workspace: &WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     let mut pending = AdmittedVec::new(workspace);
     pending.push(expression)?;
@@ -138,8 +136,7 @@ pub(crate) fn pure_ordinal_predicate(
 }
 
 fn indexed_barrier_predicate(
-    expression: &Expression,
-    workspace: &WorkspaceCapability,
+    expression: &Expression, workspace: &WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     let mut pending = AdmittedVec::new(workspace);
     pending.push(expression)?;
@@ -164,8 +161,7 @@ fn indexed_barrier_predicate(
 }
 
 fn find_window(
-    expression: &Expression,
-    workspace: &WorkspaceCapability,
+    expression: &Expression, workspace: &WorkspaceCapability,
 ) -> Result<Option<WindowSpec>, EvalError> {
     let mut frame = crate::workspace::LexicalFrame::new(workspace);
     let mut memory = purrdf_lex::allocation::Memory::new(&mut frame);
@@ -230,8 +226,7 @@ fn find_window(
 }
 
 fn constant(
-    expression: &Expression,
-    workspace: &WorkspaceCapability,
+    expression: &Expression, workspace: &WorkspaceCapability,
 ) -> Result<Option<ParsedValue>, EvalError> {
     let (literal, negative) = match expression {
         Expression::Literal(literal) => (literal, false),
@@ -258,8 +253,7 @@ fn constant(
 }
 
 pub(crate) fn parsed(
-    value: &TermValue,
-    workspace: &WorkspaceCapability,
+    value: &TermValue, workspace: &WorkspaceCapability,
 ) -> Result<Option<ParsedValue>, EvalError> {
     let TermValue::Literal {
         lexical_form,
@@ -278,9 +272,7 @@ pub(crate) fn parsed(
 }
 
 pub(crate) fn compare(
-    a: &XsdValue,
-    b: &XsdValue,
-    workspace: &WorkspaceCapability,
+    a: &XsdValue, b: &XsdValue, workspace: &WorkspaceCapability,
 ) -> Result<Ordering, EvalError> {
     let mut frame = NumericFrame::new(workspace);
     let comparison =
@@ -291,9 +283,7 @@ pub(crate) fn compare(
 }
 
 fn operation(
-    a: &XsdValue,
-    b: &XsdValue,
-    operator: purrdf_xsd::numeric::NumericBinaryOperator,
+    a: &XsdValue, b: &XsdValue, operator: purrdf_xsd::numeric::NumericBinaryOperator,
     workspace: &WorkspaceCapability,
 ) -> Result<ParsedValue, EvalError> {
     let mut frame = NumericFrame::new(workspace);
@@ -327,10 +317,7 @@ pub(crate) struct Range {
 }
 impl WindowSpec {
     pub(crate) fn range(
-        &self,
-        other: &XsdValue,
-        new_left: bool,
-        workspace: &WorkspaceCapability,
+        &self, other: &XsdValue, new_left: bool, workspace: &WorkspaceCapability,
     ) -> Result<Range, EvalError> {
         use purrdf_xsd::numeric::NumericBinaryOperator::{Add, Subtract};
         let lower = (self.absolute || !new_left)
@@ -348,9 +335,7 @@ impl WindowSpec {
 }
 
 pub(crate) fn execute<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    spec: &WindowSpec,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, spec: &WindowSpec, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let GraphPattern::Filter { inner, expr } = node else {
         return Err(EvalError::WorkspaceBoundOverflow);

@@ -66,9 +66,7 @@ impl PropertyFunction for Ranked {
     }
 
     fn open<'cursor>(
-        &self,
-        _args: &PfArgs<'_>,
-        ceiling: Option<u64>,
+        &self, _args: &PfArgs<'_>, ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -209,8 +207,7 @@ fn governed_offering(query: &str) -> Offering {
 /// Open `query` on demand against an environment whose relation moves as `moves_after`
 /// says.
 fn open(
-    query: &str,
-    moves_after: Option<u64>,
+    query: &str, moves_after: Option<u64>,
 ) -> (
     Result<purrdf_sparql_eval::CallCursor<'static>, String>,
     Arc<AtomicU64>,

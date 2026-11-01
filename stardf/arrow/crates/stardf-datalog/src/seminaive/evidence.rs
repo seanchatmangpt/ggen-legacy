@@ -34,28 +34,19 @@ where
 {
     fn source(&mut self, row: crate::id::RowId) -> Result<EvidenceId, EvalError<D::Error>>;
     fn combine(
-        &mut self,
-        left: EvidenceId,
-        right: EvidenceId,
-        mode: EvidenceCombination,
+        &mut self, left: EvidenceId, right: EvidenceId, mode: EvidenceCombination,
     ) -> Result<EvidenceId, EvalError<D::Error>>;
     fn negative(
-        &mut self,
-        witnesses: Option<EvidenceId>,
+        &mut self, witnesses: Option<EvidenceId>,
     ) -> Result<(EvidenceId, bool), EvalError<D::Error>>;
     fn conjunction(
-        &mut self,
-        sources: &[SourceRow<D::Id, N>],
+        &mut self, sources: &[SourceRow<D::Id, N>],
     ) -> Result<EvidenceId, EvalError<D::Error>>;
     fn product(
-        &mut self,
-        factors: &[Witnesses<'_, D::Id, N>],
+        &mut self, factors: &[Witnesses<'_, D::Id, N>],
     ) -> Result<EvidenceId, EvalError<D::Error>>;
     fn emit(
-        &mut self,
-        key: &HeadKey<'_, D::Id, N>,
-        witness: EvidenceId,
-        uses_absence: bool,
+        &mut self, key: &HeadKey<'_, D::Id, N>, witness: EvidenceId, uses_absence: bool,
     ) -> Result<(), EvalError<D::Error>>;
     fn commit(&mut self, store: &RelationStore<D, N>) -> Result<bool, EvalError<D::Error>>;
 }
@@ -83,8 +74,7 @@ where
     }
 
     fn negative_native(
-        &mut self,
-        witnesses: Option<EvidenceId>,
+        &mut self, witnesses: Option<EvidenceId>,
     ) -> Result<(EvidenceId, bool), EvidenceWorkspaceError> {
         use purrdf_core::evidence::Information;
         let scope = self.scope;
@@ -131,10 +121,7 @@ where
     }
 
     fn emit_native(
-        &mut self,
-        key: &HeadKey<'_, I, N>,
-        mut witness: EvidenceId,
-        uses_absence: bool,
+        &mut self, key: &HeadKey<'_, I, N>, mut witness: EvidenceId, uses_absence: bool,
     ) -> Result<(), EvidenceWorkspaceError> {
         if uses_absence
             && !self
@@ -190,8 +177,7 @@ where
     }
 
     fn product_native(
-        &mut self,
-        factors: &[Witnesses<'_, I, N>],
+        &mut self, factors: &[Witnesses<'_, I, N>],
     ) -> Result<EvidenceId, EvidenceWorkspaceError> {
         let mut groups = Vec::new();
         for factor in factors {
@@ -243,8 +229,7 @@ where
     }
 
     fn commit_native<D: TermDictionary<Id = I>>(
-        &mut self,
-        store: &RelationStore<D, N>,
+        &mut self, store: &RelationStore<D, N>,
     ) -> Result<bool, EvalError<D::Error>> {
         store.interner().check_read().map_err(EvalError::Source)?;
         let original_rows = self.rows.row_count();
@@ -292,8 +277,7 @@ where
 
 /// Resolve newly interned head constants without copying their retained text.
 fn stored_row<D: TermDictionary, const N: usize>(
-    key: &HeadKey<'_, D::Id, N>,
-    store: &RelationStore<D, N>,
+    key: &HeadKey<'_, D::Id, N>, store: &RelationStore<D, N>,
 ) -> Result<Option<crate::id::RowId>, D::Error>
 where
     Arity<N>: StoreShape<N>,
@@ -333,10 +317,7 @@ where
     }
 
     fn combine(
-        &mut self,
-        left: EvidenceId,
-        right: EvidenceId,
-        mode: EvidenceCombination,
+        &mut self, left: EvidenceId, right: EvidenceId, mode: EvidenceCombination,
     ) -> Result<EvidenceId, EvalError<D::Error>> {
         self.rows
             .workspace_mut()
@@ -345,14 +326,12 @@ where
     }
 
     fn negative(
-        &mut self,
-        witnesses: Option<EvidenceId>,
+        &mut self, witnesses: Option<EvidenceId>,
     ) -> Result<(EvidenceId, bool), EvalError<D::Error>> {
         self.negative_native(witnesses).map_err(EvalError::Evidence)
     }
     fn conjunction(
-        &mut self,
-        sources: &[SourceRow<D::Id, N>],
+        &mut self, sources: &[SourceRow<D::Id, N>],
     ) -> Result<EvidenceId, EvalError<D::Error>> {
         self.rows
             .conjunction(sources.iter().map(|source| source.row))
@@ -360,17 +339,13 @@ where
     }
 
     fn product(
-        &mut self,
-        factors: &[Witnesses<'_, D::Id, N>],
+        &mut self, factors: &[Witnesses<'_, D::Id, N>],
     ) -> Result<EvidenceId, EvalError<D::Error>> {
         self.product_native(factors).map_err(EvalError::Evidence)
     }
 
     fn emit(
-        &mut self,
-        key: &HeadKey<'_, D::Id, N>,
-        witness: EvidenceId,
-        uses_absence: bool,
+        &mut self, key: &HeadKey<'_, D::Id, N>, witness: EvidenceId, uses_absence: bool,
     ) -> Result<(), EvalError<D::Error>> {
         self.emit_native(key, witness, uses_absence)
             .map_err(EvalError::Evidence)

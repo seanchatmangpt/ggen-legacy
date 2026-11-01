@@ -133,12 +133,7 @@ struct Law<A: Arithmetic> {
 }
 
 fn batch<A: Arithmetic, Q: Scalar, T: Scalar>(
-    group: &mut BenchmarkGroup<'_>,
-    law: Law<A>,
-    pair: &str,
-    dims: usize,
-    query: &[Q],
-    rows: &[T],
+    group: &mut BenchmarkGroup<'_>, law: Law<A>, pair: &str, dims: usize, query: &[Q], rows: &[T],
 ) {
     let view = RowsRef::new(rows, ROWS, dims, &[]).expect("the matrix is rectangular");
     let mut out = vec![Ok(0.0); ROWS];
@@ -156,11 +151,7 @@ fn batch<A: Arithmetic, Q: Scalar, T: Scalar>(
 }
 
 fn indexed<A: Arithmetic, Q: Scalar, T: Scalar>(
-    group: &mut BenchmarkGroup<'_>,
-    law: Law<A>,
-    pair: &str,
-    fixture: &Fixture,
-    query: &[Q],
+    group: &mut BenchmarkGroup<'_>, law: Law<A>, pair: &str, fixture: &Fixture, query: &[Q],
     rows: &[T],
 ) {
     let dims = fixture.dims;
@@ -186,12 +177,7 @@ fn indexed<A: Arithmetic, Q: Scalar, T: Scalar>(
 }
 
 fn pair_dot<A: Arithmetic, Q: Scalar, T: Scalar>(
-    group: &mut BenchmarkGroup<'_>,
-    law: Law<A>,
-    pair: &str,
-    dims: usize,
-    query: &[Q],
-    row: &[T],
+    group: &mut BenchmarkGroup<'_>, law: Law<A>, pair: &str, dims: usize, query: &[Q], row: &[T],
 ) {
     group.throughput(Throughput::Elements(dims as u64));
     let id = format!("{}/dot/{pair}/d{dims}", law.label);
@@ -209,12 +195,7 @@ fn pair_dot<A: Arithmetic, Q: Scalar, T: Scalar>(
 }
 
 fn bounded<A: Arithmetic, Q: Scalar, T: Scalar>(
-    group: &mut BenchmarkGroup<'_>,
-    law: Law<A>,
-    pair: &str,
-    dims: usize,
-    query: &[Q],
-    row: &[T],
+    group: &mut BenchmarkGroup<'_>, law: Law<A>, pair: &str, dims: usize, query: &[Q], row: &[T],
 ) {
     // The half bound is taken from the exact distance so both arithmetics abandon at the
     // same threshold; it is met near the midpoint of the fold under either one.

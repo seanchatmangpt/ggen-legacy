@@ -409,9 +409,7 @@ impl ElementRule {
 /// variables Vi-1." A negation element body holds "a sequence of triple pattern elements
 /// and filter elements" only.
 fn check_sequence(
-    elements: &[Element],
-    initial: &[String],
-    inside_negation: bool,
+    elements: &[Element], initial: &[String], inside_negation: bool,
 ) -> Result<Vec<String>, String> {
     let mut bound: Vec<String> = initial.to_vec();
     for element in elements {

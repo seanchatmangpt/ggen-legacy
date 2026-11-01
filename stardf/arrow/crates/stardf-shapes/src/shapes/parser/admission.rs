@@ -64,10 +64,7 @@ impl fmt::Display for QueryRefusal {
 
 /// Both laws call the existing pre-binding walker; only its declared policy varies.
 pub(crate) fn audit_query(
-    profile: ShaclProfile,
-    purpose: QueryPurpose,
-    query: &Query,
-    parameters: &[&str],
+    profile: ShaclProfile, purpose: QueryPurpose, query: &Query, parameters: &[&str],
     compatibility: impl FnOnce() -> Result<(), String>,
 ) -> Result<(), QueryRefusal> {
     if profile == ShaclProfile::LEGACY {
@@ -101,9 +98,7 @@ impl Parser<'_> {
     /// Parse and audit one recognized `sh:sparql` constraint. The owning shape
     /// supplies its prefixes; an unattached typed constraint uses its own node.
     pub(crate) fn sparql_constraint_query(
-        &self,
-        owner: &Term,
-        constraint: &Term,
+        &self, owner: &Term, constraint: &Term,
     ) -> Result<String, String> {
         let raw_select = self
             .first_object_of(constraint, sh::SELECT)
@@ -261,8 +256,7 @@ mod tests {
     /// admitted occurrence context. These native fixtures contain no regex;
     /// full dated XPath request admission is tested at its composed boundary.
     fn in_query_scope<R>(
-        profile: ShaclProfile,
-        body: &str,
+        profile: ShaclProfile, body: &str,
         run: impl FnOnce(Shapes) -> Result<R, crate::report::CompleteValidationError>,
     ) -> Result<R, crate::report::CompleteValidationError> {
         let shapes = parse(profile, body).map_err(|failure| {
@@ -283,8 +277,7 @@ mod tests {
     }
 
     fn validate(
-        profile: ShaclProfile,
-        body: &str,
+        profile: ShaclProfile, body: &str,
     ) -> Result<crate::report::CompleteValidationReport, crate::report::CompleteValidationError>
     {
         in_query_scope(profile, body, |shapes| {
@@ -296,9 +289,7 @@ mod tests {
     }
 
     fn execution_refusal(
-        profile: ShaclProfile,
-        body: &str,
-        purpose: QueryPurpose,
+        profile: ShaclProfile, body: &str, purpose: QueryPurpose,
     ) -> AdmissionRefusal {
         let error = validate(profile, body).unwrap_err();
         let crate::report::CompleteValidationError::Admission(refusal) = error else {
@@ -310,8 +301,7 @@ mod tests {
     }
 
     fn infer(
-        profile: ShaclProfile,
-        body: &str,
+        profile: ShaclProfile, body: &str,
     ) -> Result<crate::srl::Inference, crate::report::CompleteValidationError> {
         in_query_scope(profile, body, |shapes| {
             let data = purrdf_rdf::RdfDatasetBuilder::new().freeze().unwrap();
@@ -783,9 +773,7 @@ mod tests {
     /// [`validate`] with the shapes graph exposed under `shapes_graph`, so a law that
     /// pre-binds the shape context has a `$shapesGraph` value to bind.
     fn validate_named(
-        profile: ShaclProfile,
-        body: &str,
-        shapes_graph: &str,
+        profile: ShaclProfile, body: &str, shapes_graph: &str,
     ) -> Result<crate::report::CompleteValidationReport, crate::report::CompleteValidationError>
     {
         in_query_scope(profile, body, |shapes| {

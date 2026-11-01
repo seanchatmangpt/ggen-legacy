@@ -29,8 +29,7 @@ impl OwnedText {
     /// # Errors
     /// Returns the original failure from the caller-to-native text factory.
     pub fn try_clone_with<E>(
-        &self,
-        admit: impl FnOnce(&str) -> Result<SharedText, E>,
+        &self, admit: impl FnOnce(&str) -> Result<SharedText, E>,
     ) -> Result<Self, E> {
         match &self.0 {
             TextStorage::Native(value) => Ok(Self(TextStorage::Native(value.clone()))),

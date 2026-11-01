@@ -65,8 +65,7 @@ impl<K: Ord> AdmittedOrderedSet<K> {
     /// # Errors
     /// Returns the original layout, admission or allocator refusal.
     pub fn from_iter_admitted(
-        values: impl IntoIterator<Item = K>,
-        workspace: &WorkspaceCapability,
+        values: impl IntoIterator<Item = K>, workspace: &WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let mut set = Self::new(workspace);
         for value in values {
@@ -271,8 +270,7 @@ impl<K: Ord, V> AdmittedOrderedMap<K, V> {
 
     /// Seek both borrowed bounds, then visit only the matching key interval.
     pub fn range<Q: ?Sized + Ord, R: std::ops::RangeBounds<Q>>(
-        &self,
-        bounds: R,
+        &self, bounds: R,
     ) -> OrderedRange<'_, K, V>
     where
         K: Borrow<Q>,

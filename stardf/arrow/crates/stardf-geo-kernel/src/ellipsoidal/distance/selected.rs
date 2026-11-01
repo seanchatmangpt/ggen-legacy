@@ -24,9 +24,7 @@ pub(super) struct PointSample {
 
 impl PointSample {
     pub(super) fn retained(
-        values: (LonLat, Rat),
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        values: (LonLat, Rat), context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<Self, GeoError> {
         let mut storage = 0;
         let (point, error) =
@@ -67,9 +65,7 @@ impl<'a> SelectedDomain<'a> {
     }
 
     pub(super) fn length(
-        self,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        self, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<Rat, GeoError> {
         if self.singleton {
             return Ok(Rat::zero());
@@ -102,12 +98,8 @@ impl<'a> SelectedDomain<'a> {
     }
 
     pub(super) fn point(
-        self,
-        parameter: &Rat,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
-        physical: bool,
-        bits: u32,
+        self, parameter: &Rat, context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
+        physical: bool, bits: u32,
     ) -> Result<PointSample, GeoError> {
         let mut progress = WorkProgress::new(Some(observer));
         progress.context_poll(context)?;

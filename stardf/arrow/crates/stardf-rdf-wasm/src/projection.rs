@@ -177,37 +177,37 @@ mod tests {
       }
     }"#;
     const RESEARCH_SOURCE: &str =
-        include_str!("../../rdf/tests/fixtures/research-objects/carrier/shared.ttl");
-    const CSVW_TERMS_CONFIG: &str = include_str!("../../rdf/tests/fixtures/csvw-terms.json");
-    const OKF_TERMS_CONFIG: &str = include_str!("../../rdf/tests/fixtures/okf-terms.json");
-    const OKF_TERMS_SOURCE: &str = include_str!("../../rdf/tests/fixtures/okf-terms.trig");
+        include_str!("../../stardf-rdf/tests/fixtures/research-objects/carrier/shared.ttl");
+    const CSVW_TERMS_CONFIG: &str = include_str!("../../stardf-rdf/tests/fixtures/csvw-terms.json");
+    const OKF_TERMS_CONFIG: &str = include_str!("../../stardf-rdf/tests/fixtures/okf-terms.json");
+    const OKF_TERMS_SOURCE: &str = include_str!("../../stardf-rdf/tests/fixtures/okf-terms.trig");
     const DCAT_RDF_CONFIG: &str =
-        include_str!("../../rdf/tests/fixtures/dataset-description/dcat-rdf.json");
+        include_str!("../../stardf-rdf/tests/fixtures/dataset-description/dcat-rdf.json");
     const VOID_CONFIG: &str =
-        include_str!("../../rdf/tests/fixtures/dataset-description/void.json");
+        include_str!("../../stardf-rdf/tests/fixtures/dataset-description/void.json");
     const VOID_SOURCE: &str =
-        include_str!("../../rdf/tests/fixtures/dataset-description/void-source.trig");
+        include_str!("../../stardf-rdf/tests/fixtures/dataset-description/void-source.trig");
     const RESEARCH_CONFIGS: &[(&str, &str)] = &[
         (
             "croissant-1.1",
-            include_str!("../../rdf/tests/fixtures/research-objects/carrier/croissant-1.1.json"),
+            include_str!("../../stardf-rdf/tests/fixtures/research-objects/carrier/croissant-1.1.json"),
         ),
         (
             "ro-crate-1.3",
-            include_str!("../../rdf/tests/fixtures/research-objects/carrier/ro-crate-1.3.json"),
+            include_str!("../../stardf-rdf/tests/fixtures/research-objects/carrier/ro-crate-1.3.json"),
         ),
         (
             "datacite-4.6",
-            include_str!("../../rdf/tests/fixtures/research-objects/carrier/datacite-4.6.json"),
+            include_str!("../../stardf-rdf/tests/fixtures/research-objects/carrier/datacite-4.6.json"),
         ),
         (
             "dcat-3",
-            include_str!("../../rdf/tests/fixtures/research-objects/carrier/dcat-3.json"),
+            include_str!("../../stardf-rdf/tests/fixtures/research-objects/carrier/dcat-3.json"),
         ),
         (
             "frictionless-data-package-1",
             include_str!(
-                "../../rdf/tests/fixtures/research-objects/carrier/frictionless-data-package-1.json"
+                "../../stardf-rdf/tests/fixtures/research-objects/carrier/frictionless-data-package-1.json"
             ),
         ),
     ];

@@ -111,9 +111,7 @@ impl PropertyFunction for Spy {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,

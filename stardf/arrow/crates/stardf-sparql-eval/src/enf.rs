@@ -282,8 +282,7 @@ pub(crate) enum Enf {
 /// function's doc for why the two must never diverge.
 #[cfg(test)]
 fn left_join_erasable(
-    right: &GraphPattern,
-    expression: Option<&purrdf_sparql_algebra::Expression>,
+    right: &GraphPattern, expression: Option<&purrdf_sparql_algebra::Expression>,
 ) -> bool {
     left_join_erasable_admitted(right, expression, &crate::WorkspaceCapability::resident())
         .expect("resident ENF gate failed")
@@ -324,8 +323,7 @@ pub(crate) fn normalize(pattern: &GraphPattern) -> Enf {
 /// A copy of `pattern`, made by the algebra's `Clone`; a test build counts the pattern
 /// nodes it builds (`crate::op_count::count_copied`).
 fn copied_with_memory(
-    pattern: &GraphPattern,
-    memory: &mut crate::expr::CorrelatedMemory<'_>,
+    pattern: &GraphPattern, memory: &mut crate::expr::CorrelatedMemory<'_>,
 ) -> Result<GraphPattern, crate::EvalError> {
     #[cfg(test)]
     crate::op_count::count_copied(purrdf_sparql_algebra::NodeRef::Pattern(pattern));
@@ -382,8 +380,7 @@ fn copied_with_memory(
 /// a regression.
 #[cfg(test)]
 pub(crate) fn ledger_source_map(
-    original: &GraphPattern,
-    normalized: &GraphPattern,
+    original: &GraphPattern, normalized: &GraphPattern,
 ) -> SubstitutionSourceMap {
     ledger_source_map_admitted(
         original,
@@ -407,9 +404,7 @@ pub(crate) fn ledger_source_map(
 /// arbitrate — every node here really is the one true output of the real node it
 /// corresponds to.
 fn map_spine_admitted(
-    original: &GraphPattern,
-    normalized: &GraphPattern,
-    map: &mut SubstitutionSourceMap,
+    original: &GraphPattern, normalized: &GraphPattern, map: &mut SubstitutionSourceMap,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<(), crate::EvalError> {
     let mut original = original;
@@ -1190,9 +1185,7 @@ mod iterative_walk_tests {
 
     /// [`ledger_source_map_admitted`]'s spine walk, written as the recursion it replaces.
     fn map_spine_ref(
-        original: &GraphPattern,
-        normalized: &GraphPattern,
-        map: &mut SubstitutionSourceMap,
+        original: &GraphPattern, normalized: &GraphPattern, map: &mut SubstitutionSourceMap,
     ) {
         match original {
             GraphPattern::LeftJoin {
@@ -1225,9 +1218,7 @@ mod iterative_walk_tests {
     /// The clone pairing of [`map_spine_ref`]'s terminal arm, written as the recursion
     /// it replaces.
     fn map_clone_1to1_ref(
-        original: &GraphPattern,
-        normalized: &GraphPattern,
-        map: &mut SubstitutionSourceMap,
+        original: &GraphPattern, normalized: &GraphPattern, map: &mut SubstitutionSourceMap,
     ) {
         map.insert(
             std::ptr::from_ref(normalized) as usize,
@@ -1539,8 +1530,7 @@ mod iterative_walk_tests {
 }
 
 pub(crate) fn normalize_with_memory(
-    pattern: &GraphPattern,
-    memory: &mut crate::expr::CorrelatedMemory<'_>,
+    pattern: &GraphPattern, memory: &mut crate::expr::CorrelatedMemory<'_>,
 ) -> Result<Enf, crate::EvalError> {
     /// One step of the walk.
     enum Step<'a> {
@@ -1706,8 +1696,7 @@ pub(crate) fn normalize_with_memory(
 }
 
 fn left_join_erasable_admitted(
-    right: &GraphPattern,
-    expression: Option<&purrdf_sparql_algebra::Expression>,
+    right: &GraphPattern, expression: Option<&purrdf_sparql_algebra::Expression>,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<bool, crate::EvalError> {
     let right_clean = !soundness::pattern_can_hard_error_admitted(right, workspace)?;
@@ -1718,8 +1707,7 @@ fn left_join_erasable_admitted(
     Ok(right_clean && condition_clean)
 }
 fn order_by_erasable_admitted(
-    expression: &[OrderExpression],
-    workspace: &crate::WorkspaceCapability,
+    expression: &[OrderExpression], workspace: &crate::WorkspaceCapability,
 ) -> Result<bool, crate::EvalError> {
     for order in expression {
         if soundness::expr_can_hard_error_admitted(order.expression(), workspace)? {
@@ -1730,18 +1718,14 @@ fn order_by_erasable_admitted(
 }
 
 pub(crate) fn ledger_source_map_admitted(
-    original: &GraphPattern,
-    normalized: &GraphPattern,
-    workspace: &crate::WorkspaceCapability,
+    original: &GraphPattern, normalized: &GraphPattern, workspace: &crate::WorkspaceCapability,
 ) -> Result<SubstitutionSourceMap, crate::EvalError> {
     let mut map = SubstitutionSourceMap::default();
     map_spine_admitted(original, normalized, &mut map, workspace)?;
     Ok(map)
 }
 pub(crate) fn map_clone_admitted(
-    original: &GraphPattern,
-    copy: &GraphPattern,
-    map: &mut SubstitutionSourceMap,
+    original: &GraphPattern, copy: &GraphPattern, map: &mut SubstitutionSourceMap,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<(), crate::EvalError> {
     let mut pending = crate::AdmittedVec::new(workspace);

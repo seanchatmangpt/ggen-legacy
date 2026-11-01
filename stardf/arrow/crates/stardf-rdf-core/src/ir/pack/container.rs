@@ -598,12 +598,8 @@ fn encode_view<D: DatasetView>(view: &D) -> Result<Vec<u8>, PackError<D::ReadErr
 /// layout decisions live, so the [module docs](self) table and this function
 /// are the only two places that need to agree.
 fn assemble(
-    n_terms: u64,
-    capabilities: RdfStoreCapabilities,
-    rdfc_digest: [u8; 32],
-    dict_bytes: &[u8],
-    triples_bytes: &[u8],
-    side_bytes: &[u8],
+    n_terms: u64, capabilities: RdfStoreCapabilities, rdfc_digest: [u8; 32], dict_bytes: &[u8],
+    triples_bytes: &[u8], side_bytes: &[u8],
 ) -> Vec<u8> {
     let sections: [(u32, &[u8]); SECTION_COUNT] = [
         (SECTION_DICT, dict_bytes),

@@ -232,9 +232,7 @@ impl PagedStack {
     /// # Errors
     /// Refuses pending head changes, source drift, or invalid removal row values.
     pub fn append(
-        &mut self,
-        dataset: Arc<PagedDataset>,
-        removals: Vec<QuadValues>,
+        &mut self, dataset: Arc<PagedDataset>, removals: Vec<QuadValues>,
     ) -> Result<(), PagedStackError> {
         Self::check_sources(&self.layers)?;
         if !self.head.is_empty() || !self.removals.is_empty() || !self.graphs.is_empty() {
@@ -275,9 +273,7 @@ impl PagedStack {
     /// # Errors
     /// Invalid values or source/resource faults prevent a membership answer.
     pub fn contains_with_limits(
-        &self,
-        row: &QuadValues,
-        limits: PagedQueryLimits,
+        &self, row: &QuadValues, limits: PagedQueryLimits,
     ) -> Result<bool, PagedStackError> {
         Self::check_sources(&self.layers)?;
         let row = normalize_row(row)?;
@@ -406,8 +402,7 @@ impl PagedStack {
     /// Refuses an unavailable position with both counts, or an original
     /// selected-source/metadata construction failure.
     pub fn snapshot_at(
-        &self,
-        generation_count: usize,
+        &self, generation_count: usize,
     ) -> Result<PagedStackSnapshot, PagedStackSnapshotError> {
         let available = self.sealed_delta_count();
         if generation_count > available {
@@ -421,9 +416,7 @@ impl PagedStack {
     }
 
     fn snapshot_with_head(
-        &self,
-        sealed_count: usize,
-        include_head: bool,
+        &self, sealed_count: usize, include_head: bool,
     ) -> Result<PagedStackSnapshot, PagedStackError> {
         let layers = &self.layers[..sealed_count];
         Self::check_sources(layers)?;
@@ -642,9 +635,7 @@ impl PagedStack {
     /// # Errors
     /// A failed source, limit, or encoder returns no partial artifact.
     pub fn compact(
-        &self,
-        limits: PagedQueryLimits,
-        page_rows: NonZeroUsize,
+        &self, limits: PagedQueryLimits, page_rows: NonZeroUsize,
     ) -> Result<PagedDataset, CanonicalPagedError<PagedQueryError>> {
         let snapshot = self
             .snapshot()
@@ -812,9 +803,7 @@ impl PagedStackSnapshot {
     /// # Errors
     /// Source or resource errors refuse the complete fold.
     pub fn compact(
-        &self,
-        limits: PagedQueryLimits,
-        page_rows: NonZeroUsize,
+        &self, limits: PagedQueryLimits, page_rows: NonZeroUsize,
     ) -> Result<PagedDataset, CanonicalPagedError<PagedQueryError>> {
         canonical_paged_seal(&self.query_view(limits), page_rows)
     }
@@ -853,10 +842,7 @@ impl PagedStackQueryView<'_> {
     }
 
     fn declarations(
-        &self,
-        subject: GlobalTermId,
-        graph: Option<GlobalTermId>,
-        prefix: usize,
+        &self, subject: GlobalTermId, graph: Option<GlobalTermId>, prefix: usize,
     ) -> bool {
         let end = self
             .snapshot
@@ -876,23 +862,15 @@ impl PagedStackQueryView<'_> {
     }
 
     fn logical_rows(
-        &self,
-        kind: StatementKind,
-        s: Option<GlobalTermId>,
-        p: Option<GlobalTermId>,
-        o: Option<GlobalTermId>,
-        g: GraphMatch<GlobalTermId>,
+        &self, kind: StatementKind, s: Option<GlobalTermId>, p: Option<GlobalTermId>,
+        o: Option<GlobalTermId>, g: GraphMatch<GlobalTermId>,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + '_ {
         self.logical_rows_range(kind, s, p, o, g, None)
     }
 
     fn logical_rows_range<'a>(
-        &'a self,
-        kind: StatementKind,
-        s: Option<GlobalTermId>,
-        p: Option<GlobalTermId>,
-        o: Option<GlobalTermId>,
-        g: GraphMatch<GlobalTermId>,
+        &'a self, kind: StatementKind, s: Option<GlobalTermId>, p: Option<GlobalTermId>,
+        o: Option<GlobalTermId>, g: GraphMatch<GlobalTermId>,
         values: Option<&'a crate::AnnotationValueRange<'a>>,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + 'a {
         let mut seen = FastSet::default();
@@ -928,9 +906,7 @@ impl PagedStackQueryView<'_> {
     }
 
     fn reifiers(
-        &self,
-        s: Option<GlobalTermId>,
-        g: GraphMatch<GlobalTermId>,
+        &self, s: Option<GlobalTermId>, g: GraphMatch<GlobalTermId>,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + '_ {
         let mut seen = FastSet::default();
         self.physical
@@ -1019,30 +995,20 @@ impl DatasetView for PagedStackQueryView<'_> {
         self.quads_for_pattern(None, None, None, GraphMatch::Any)
     }
     fn quads_for_pattern(
-        &self,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         self.logical_rows(StatementKind::Ordinary, s, p, o, g)
     }
     fn probe_plan(&self, _: bool, _: bool, _: bool, _: GraphMatch<Self::Id>) {}
     fn quads_for_pattern_with_plan(
-        &self,
-        (): &(),
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, (): &(), s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         self.quads_for_pattern(s, p, o, g)
     }
     fn cardinality_estimate(
-        &self,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: GraphMatch<Self::Id>,
     ) -> u64 {
         self.physical
@@ -1059,8 +1025,7 @@ impl DatasetView for PagedStackQueryView<'_> {
         self.reifiers(Some(reifier), GraphMatch::Any)
     }
     fn reifier_quads_in_graph(
-        &self,
-        g: GraphMatch<Self::Id>,
+        &self, g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         self.reifiers(None, g)
     }
@@ -1068,18 +1033,14 @@ impl DatasetView for PagedStackQueryView<'_> {
         self.annotation_quads_in_graph(GraphMatch::Any)
     }
     fn annotation_quads_in_graph(
-        &self,
-        g: GraphMatch<Self::Id>,
+        &self, g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         self.logical_rows(StatementKind::Annotation, None, None, None, g)
     }
 
     fn annotation_quads_for_range<'a>(
-        &'a self,
-        predicate: Option<Self::Id>,
-        object: Option<Self::Id>,
-        graph: GraphMatch<Self::Id>,
-        range: &'a crate::AnnotationValueRange<'a>,
+        &'a self, predicate: Option<Self::Id>, object: Option<Self::Id>,
+        graph: GraphMatch<Self::Id>, range: &'a crate::AnnotationValueRange<'a>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + 'a {
         self.logical_rows_range(
             StatementKind::Annotation,
@@ -1091,8 +1052,7 @@ impl DatasetView for PagedStackQueryView<'_> {
         )
     }
     fn annotations_of_with_graph(
-        &self,
-        reifier: Self::Id,
+        &self, reifier: Self::Id,
     ) -> impl Iterator<Item = (Self::Id, Self::Id, Option<Self::Id>)> + '_ {
         self.logical_rows(
             StatementKind::Annotation,
@@ -1136,8 +1096,7 @@ impl crate::statistics::layered::LayeredStatistics for PagedStackQueryView<'_> {
     }
 
     fn physical_statistic(
-        &self,
-        request: crate::statistics::layered::Request,
+        &self, request: crate::statistics::layered::Request,
         pattern: crate::ProbePattern<GlobalTermId>,
     ) -> Option<crate::PredicateStatistics> {
         let layered = self.snapshot.sources.len() + usize::from(self.snapshot.head_bytes != 0) > 1
@@ -1240,8 +1199,7 @@ enum CanonicalRecord {
 
 impl CanonicalRecord {
     fn replay(
-        self,
-        builder: &mut RdfDatasetBuilder,
+        self, builder: &mut RdfDatasetBuilder,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         match self {
             Self::Graph(graph) => {
@@ -1285,8 +1243,7 @@ impl CanonicalRecord {
 /// Source checkpoints and term reads, native validation, capacity, and carrier
 /// encoding failures return no partially built dataset.
 pub fn canonical_paged_seal<D: FallibleDatasetView>(
-    view: &D,
-    page_rows: NonZeroUsize,
+    view: &D, page_rows: NonZeroUsize,
 ) -> Result<PagedDataset, CanonicalPagedError<D::Error>> {
     checkpoint(view)?;
     let mut records = BTreeSet::new();

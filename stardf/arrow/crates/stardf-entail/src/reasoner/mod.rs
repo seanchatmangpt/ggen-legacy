@@ -301,8 +301,7 @@ impl Reasoner {
     /// # Errors
     /// The same source/ontology failures as [`Self::new`].
     pub fn with_preparation_budget<D: DatasetView>(
-        ds: &D,
-        budget: SchemaPreparationBudget,
+        ds: &D, budget: SchemaPreparationBudget,
     ) -> Result<Self, EntailError<D::ReadError>> {
         Self::build_with_preparation(ds, None, budget, None)
     }
@@ -311,8 +310,7 @@ impl Reasoner {
     /// # Errors
     /// The source/ontology and canonicalization failures of [`Self::with_proofs`].
     pub fn with_proofs_and_preparation_budget<D: DatasetView>(
-        ds: &D,
-        budget: SchemaPreparationBudget,
+        ds: &D, budget: SchemaPreparationBudget,
     ) -> Result<Self, EntailError<D::ReadError>> {
         Self::recorded(ds, budget, None)
     }
@@ -328,16 +326,14 @@ impl Reasoner {
     /// [`EntailError::Stopped`] if preparation is cancelled. A later stopped
     /// search reports its actual undecided result and stop receipt.
     pub fn with_proofs_and_stop<D: DatasetView>(
-        ds: &D,
-        budget: SchemaPreparationBudget,
+        ds: &D, budget: SchemaPreparationBudget,
         stop: std::sync::Arc<dyn purrdf_datalog::StopSignal>,
     ) -> Result<Self, EntailError<D::ReadError>> {
         Self::recorded(ds, budget, Some(stop))
     }
 
     fn recorded<D: DatasetView>(
-        ds: &D,
-        budget: SchemaPreparationBudget,
+        ds: &D, budget: SchemaPreparationBudget,
         stop: Option<std::sync::Arc<dyn purrdf_datalog::StopSignal>>,
     ) -> Result<Self, EntailError<D::ReadError>> {
         let input = match stop.as_deref() {
@@ -355,8 +351,7 @@ impl Reasoner {
     /// # Errors
     /// Source/ontology failures or [`EntailError::Stopped`] during construction.
     pub fn with_stop<D: DatasetView>(
-        ds: &D,
-        stop: std::sync::Arc<dyn purrdf_datalog::StopSignal>,
+        ds: &D, stop: std::sync::Arc<dyn purrdf_datalog::StopSignal>,
     ) -> Result<Self, EntailError<D::ReadError>> {
         Self::build_with_preparation(ds, None, SchemaPreparationBudget::default(), Some(stop))
     }
@@ -380,8 +375,7 @@ impl Reasoner {
     /// # Errors
     /// A latched stop or an incomplete native key-membership decision.
     pub fn retry_schema_preparation(
-        &mut self,
-        budget: SchemaPreparationBudget,
+        &mut self, budget: SchemaPreparationBudget,
     ) -> Result<(), EntailError> {
         self.kb.schema_budget = budget;
         self.kb.schema.stats.obstruction = None;
@@ -410,16 +404,13 @@ impl Reasoner {
 
     /// The shared body of the two constructors: `input` present is recording on.
     fn build<D: DatasetView>(
-        ds: &D,
-        input: Option<[u8; 32]>,
+        ds: &D, input: Option<[u8; 32]>,
     ) -> Result<Self, EntailError<D::ReadError>> {
         Self::build_with_preparation(ds, input, SchemaPreparationBudget::default(), None)
     }
 
     fn build_with_preparation<D: DatasetView>(
-        ds: &D,
-        input: Option<[u8; 32]>,
-        preparation: SchemaPreparationBudget,
+        ds: &D, input: Option<[u8; 32]>, preparation: SchemaPreparationBudget,
         stop: Option<std::sync::Arc<dyn purrdf_datalog::StopSignal>>,
     ) -> Result<Self, EntailError<D::ReadError>> {
         let mut kb = Kb::from_dataset_recording(ds, stop, preparation, input)?;
@@ -759,10 +750,7 @@ impl Reasoner {
     /// (individual, class) pair. [`Session::proof`] calls it only when the session is
     /// recording, so a non-recording service never builds an answer binding it would drop.
     fn seal<T>(
-        &self,
-        session: Session<'_>,
-        answer: T,
-        bind: impl FnOnce() -> (Question, Vec<Claim>),
+        &self, session: Session<'_>, answer: T, bind: impl FnOnce() -> (Question, Vec<Claim>),
     ) -> Certified<T> {
         let certificate = session.certificate(&self.boundaries);
         let proof = session.proof(&certificate, bind);
@@ -781,8 +769,7 @@ impl Reasoner {
     /// [`EntailError::Unsatisfiable`] if the ontology has no model at all — every class is
     /// then vacuously unsatisfiable and the answer would say nothing.
     pub fn class_satisfiability(
-        &mut self,
-        class: &TermValue,
+        &mut self, class: &TermValue,
     ) -> Result<Certified<Verdict>, EntailError> {
         let concept = self.concept_of(class)?;
         let (mut session, usable) = self.open()?;
@@ -886,8 +873,7 @@ impl Reasoner {
     /// [`EntailError::Unsatisfiable`] if the ontology has no model — every individual would
     /// then be an instance of every class.
     pub fn instances(
-        &mut self,
-        class: &TermValue,
+        &mut self, class: &TermValue,
     ) -> Result<Certified<Vec<TermValue>>, EntailError> {
         let concept = self.concept_of(class)?;
         let (mut session, usable) = self.open()?;

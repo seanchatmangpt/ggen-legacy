@@ -46,9 +46,7 @@ fn values(values: &[(&str, &str)]) -> Arc<RdfDataset> {
 }
 
 fn run(
-    dataset: &RdfDataset,
-    query: &str,
-    options: QueryOptions<'_, '_>,
+    dataset: &RdfDataset, query: &str, options: QueryOptions<'_, '_>,
 ) -> Result<SparqlResult, purrdf_core::RdfDiagnostic> {
     let query = format!("PREFIX xsd: <{XSD}>\nPREFIX ex: <{EX}>\n{query}");
     NativeSparqlEngine::new().query_with_options_view(

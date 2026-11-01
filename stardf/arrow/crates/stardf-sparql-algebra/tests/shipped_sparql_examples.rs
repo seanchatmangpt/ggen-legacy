@@ -630,10 +630,7 @@ fn markdown_candidates(file: &Path, text: &str) -> Vec<Candidate> {
 /// that is exactly what a real shell does with it. `(?s)` lets the span cross
 /// the line breaks a wrapped multi-line invocation uses.
 fn extract_shell_single_quoted(
-    file: &Path,
-    block_start: usize,
-    body: &str,
-    out: &mut Vec<Candidate>,
+    file: &Path, block_start: usize, body: &str, out: &mut Vec<Candidate>,
 ) {
     static SINGLE_QUOTED: LazyLock<Regex> =
         LazyLock::new(|| Regex::new(r"(?s)'([^']*)'").expect("valid regex"));

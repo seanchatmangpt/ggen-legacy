@@ -857,8 +857,7 @@ fn selected_execution_preserves_prepared_product_bytes_and_restore_provenance() 
 /// A copy-on-write change inserting `ex:n ex:p value` over a base holding only
 /// `ex:other ex:q "x"`, and `shapes` prepared under no selection.
 fn change_fixture(
-    shapes: &str,
-    value: &str,
+    shapes: &str, value: &str,
 ) -> (PreparedShapes, Arc<purrdf_rdf::ir::DeltaDatasetView>) {
     use purrdf_rdf::{DatasetMut, QuadValues, TermValue};
     let base = turtle::data(PREFIXES, r#"ex:other ex:q "x" ."#);
@@ -880,9 +879,7 @@ fn change_fixture(
 /// Run the selected change door, ungoverned and governed with zero fuel, and
 /// require the two to agree on scope and report.
 fn selected_change(
-    preparation: &PreparedShapes,
-    delta: &Arc<purrdf_rdf::ir::DeltaDatasetView>,
-    profile: Profile,
+    preparation: &PreparedShapes, delta: &Arc<purrdf_rdf::ir::DeltaDatasetView>, profile: Profile,
     limits: Limits,
 ) -> Result<(purrdf_shapes::engine::ChangeScope, bool), XPathValidationError> {
     let bound = preparation
@@ -1064,9 +1061,7 @@ fn rule_set(pattern: &str) -> purrdf_shapes::srl::RuleSetDocument {
 }
 
 fn selected_rules(
-    source: purrdf_shapes::RuleSource<'_>,
-    data: &purrdf_rdf::RdfDataset,
-    profile: Profile,
+    source: purrdf_shapes::RuleSource<'_>, data: &purrdf_rdf::RdfDataset, profile: Profile,
 ) -> Result<purrdf_shapes::Inference, XPathValidationError> {
     purrdf_shapes::xpath::run_rules(
         source,
@@ -1079,8 +1074,7 @@ fn selected_rules(
 }
 
 fn compatibility_rules(
-    source: purrdf_shapes::RuleSource<'_>,
-    data: &purrdf_rdf::RdfDataset,
+    source: purrdf_shapes::RuleSource<'_>, data: &purrdf_rdf::RdfDataset,
 ) -> purrdf_shapes::Inference {
     purrdf_shapes::run_rules(
         source,
@@ -1191,9 +1185,7 @@ fn a_rules_resource_refusal_aborts_and_the_neighbour_runs() {
 /// The node expression `_:e` of `body`, evaluated at the focus node `focus` under the
 /// selected law, or the compatibility law for `None`.
 fn node_expression(
-    body: &str,
-    focus: &str,
-    profile: Option<Profile>,
+    body: &str, focus: &str, profile: Option<Profile>,
 ) -> Result<Vec<String>, XPathValidationError> {
     let document = purrdf_shapes::text_ingest::parse_turtle_document(
         &format!(

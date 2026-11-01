@@ -226,9 +226,7 @@ fn write_mul(a: &[u64], b: &[u64], out: &mut [u64]) {
 /// binary64/fixed products use bounded stack storage; longer products use the
 /// same explicit allocator and never grow a scratch destination.
 fn with_product<T>(
-    a: &[u64],
-    b: &[u64],
-    storage: &impl Allocate,
+    a: &[u64], b: &[u64], storage: &impl Allocate,
     evaluate: impl FnOnce(&[u64]) -> Result<T, LimbScratchError>,
 ) -> Result<T, LimbScratchError> {
     let length = a
@@ -263,10 +261,7 @@ fn mag_to_u64(a: &[u64]) -> Option<u64> {
 
 /// Computes `a * multiplier + addend` for a single-limb multiplier and addend.
 fn mag_mul_small_add(
-    a: &[u64],
-    multiplier: u64,
-    addend: u64,
-    storage: &impl Allocate,
+    a: &[u64], multiplier: u64, addend: u64, storage: &impl Allocate,
 ) -> Result<Mag, LimbScratchError> {
     let mut out: Mag = storage.destination(
         a.len()
@@ -290,9 +285,7 @@ fn mag_mul_small_add(
 
 /// Divides a magnitude by a single non-zero limb, returning quotient and remainder.
 fn mag_divmod_small(
-    a: &[u64],
-    divisor: u64,
-    storage: &impl Allocate,
+    a: &[u64], divisor: u64, storage: &impl Allocate,
 ) -> Result<(Mag, u64), LimbScratchError> {
     let mut quotient = storage.copy(a)?;
     let remainder = mag_divmod_small_in_place(&mut quotient, divisor);
@@ -451,9 +444,7 @@ fn divide_normalized(u: &mut [u64], v: &[u64], quotient: &mut [u64]) {
 /// Other operands use normalized limb division. The three-limb common path
 /// uses stack scratch, preserving allocation-free inline integer arithmetic.
 fn mag_div_rem(
-    a: &[u64],
-    b: &[u64],
-    storage: &impl Allocate,
+    a: &[u64], b: &[u64], storage: &impl Allocate,
 ) -> Result<(Mag, Mag), LimbScratchError> {
     debug_assert!(!b.is_empty(), "division by zero");
     if mag_cmp(a, b) == Ordering::Less {
@@ -653,8 +644,7 @@ impl<I: Iterator<Item = u8>> DecimalGroupReader<I> {
 /// Accumulates a run of ASCII digit bytes into a magnitude. Ordinary values
 /// retain the original two-destination Horner path.
 fn mag_from_digit_bytes(
-    digits: impl Iterator<Item = u8>,
-    storage: &impl Allocate,
+    digits: impl Iterator<Item = u8>, storage: &impl Allocate,
 ) -> Result<Option<Mag>, LimbScratchError> {
     let mut reader = DecimalGroupReader {
         digits,
@@ -686,8 +676,7 @@ fn mag_from_digit_bytes(
 
 fn decimal_tree_insert(
     slots: &mut [Option<BigInt>; usize::BITS as usize],
-    powers: &mut [Option<BigInt>; usize::BITS as usize],
-    mut block: BigInt,
+    powers: &mut [Option<BigInt>; usize::BITS as usize], mut block: BigInt,
     storage: &impl Allocate,
 ) -> Result<(), LimbScratchError> {
     for (rank, slot) in slots.iter_mut().enumerate().skip(DECIMAL_TREE_START_RANK) {
@@ -705,9 +694,7 @@ fn decimal_tree_insert(
 
 /// The larger frame is entered only after the first 256 complete groups.
 fn mag_from_large_digit_groups(
-    mut reader: DecimalGroupReader<impl Iterator<Item = u8>>,
-    first_groups: Mag,
-    next_group: u64,
+    mut reader: DecimalGroupReader<impl Iterator<Item = u8>>, first_groups: Mag, next_group: u64,
     storage: &impl Allocate,
 ) -> Result<Option<Mag>, LimbScratchError> {
     let mut slots: [Option<BigInt>; usize::BITS as usize] = core::array::from_fn(|_| None);
@@ -771,9 +758,7 @@ fn mag_from_large_digit_groups(
 
 /// Cache B^(2^rank), B=10^19, for the balanced decimal group reader.
 fn decimal_group_power<'a>(
-    powers: &'a mut [Option<BigInt>; usize::BITS as usize],
-    rank: usize,
-    storage: &impl Allocate,
+    powers: &'a mut [Option<BigInt>; usize::BITS as usize], rank: usize, storage: &impl Allocate,
 ) -> Result<&'a BigInt, LimbScratchError> {
     for at in 1..=rank {
         if powers[at].is_none() {
@@ -786,9 +771,7 @@ fn decimal_group_power<'a>(
 
 /// The one mutable quotient-to-group leaf used by both rendering paths.
 fn append_decimal_group_leaf(
-    magnitude: &[u64],
-    groups: &mut Mag,
-    storage: &impl Allocate,
+    magnitude: &[u64], groups: &mut Mag, storage: &impl Allocate,
 ) -> Result<(), LimbScratchError> {
     let mut quotient = storage.copy(magnitude)?;
     if quotient.len() == 1 && quotient[0] < CHUNK_BASE {
@@ -805,12 +788,8 @@ fn append_decimal_group_leaf(
 /// Split by cached B^(2^rank), B=10^19, and emit low groups before high ones.
 /// Low subtrees are padded to their specified width; the root is not padded.
 fn append_decimal_group_tree(
-    magnitude: &[u64],
-    width: usize,
-    padded: bool,
-    groups: &mut Mag,
-    powers: &[Option<BigInt>; usize::BITS as usize],
-    storage: &impl Allocate,
+    magnitude: &[u64], width: usize, padded: bool, groups: &mut Mag,
+    powers: &[Option<BigInt>; usize::BITS as usize], storage: &impl Allocate,
 ) -> Result<(), LimbScratchError> {
     let start = groups.len();
     if !magnitude.is_empty() {
@@ -860,10 +839,7 @@ fn append_decimal_group_tree(
 /// shared with decimal parsing; every native owner uses the supplied allocator.
 #[inline(never)]
 fn append_large_decimal_groups(
-    magnitude: &[u64],
-    width: usize,
-    groups: &mut Mag,
-    storage: &impl Allocate,
+    magnitude: &[u64], width: usize, groups: &mut Mag, storage: &impl Allocate,
 ) -> Result<(), LimbScratchError> {
     let mut powers: [Option<BigInt>; usize::BITS as usize] = core::array::from_fn(|_| None);
     powers[0] = Some(BigInt::from_u64(CHUNK_BASE));
@@ -1145,18 +1121,13 @@ impl BigInt {
     }
 
     pub(crate) fn add_using(
-        &self,
-        other: &Self,
-        storage: &impl Allocate,
+        &self, other: &Self, storage: &impl Allocate,
     ) -> Result<Self, LimbScratchError> {
         self.combine_using(other, other.negative, storage)
     }
 
     fn combine_using(
-        &self,
-        other: &Self,
-        other_negative: bool,
-        storage: &impl Allocate,
+        &self, other: &Self, other_negative: bool, storage: &impl Allocate,
     ) -> Result<Self, LimbScratchError> {
         if self.negative == other_negative {
             Ok(Self::from_parts(
@@ -1193,9 +1164,7 @@ impl BigInt {
     }
 
     pub(crate) fn sub_using(
-        &self,
-        other: &Self,
-        storage: &impl Allocate,
+        &self, other: &Self, storage: &impl Allocate,
     ) -> Result<Self, LimbScratchError> {
         self.combine_using(other, !other.negative, storage)
     }
@@ -1215,9 +1184,7 @@ impl BigInt {
     }
 
     pub(crate) fn mul_using(
-        &self,
-        other: &Self,
-        storage: &impl Allocate,
+        &self, other: &Self, storage: &impl Allocate,
     ) -> Result<Self, LimbScratchError> {
         Ok(Self::from_parts(
             self.negative != other.negative,
@@ -1248,17 +1215,13 @@ impl BigInt {
     /// # Errors
     /// Refuses exhausted destination count or limb capacity without allocating.
     pub fn div_rem_in(
-        &self,
-        other: &Self,
-        scratch: &LimbScratch,
+        &self, other: &Self, scratch: &LimbScratch,
     ) -> Result<Option<(Self, Self)>, LimbScratchError> {
         self.div_rem_using(other, scratch)
     }
 
     pub(crate) fn div_rem_using(
-        &self,
-        other: &Self,
-        storage: &impl Allocate,
+        &self, other: &Self, storage: &impl Allocate,
     ) -> Result<Option<(Self, Self)>, LimbScratchError> {
         if other.is_zero() {
             return Ok(None);
@@ -1288,9 +1251,7 @@ impl BigInt {
     }
 
     pub(crate) fn gcd_using(
-        &self,
-        other: &Self,
-        storage: &impl Allocate,
+        &self, other: &Self, storage: &impl Allocate,
     ) -> Result<Self, LimbScratchError> {
         Ok(Self::from_parts(
             false,
@@ -1330,36 +1291,25 @@ impl BigInt {
     }
 
     pub(crate) fn mul_pow5_using(
-        &self,
-        exp: u32,
-        storage: &impl Allocate,
+        &self, exp: u32, storage: &impl Allocate,
     ) -> Result<Self, LimbScratchError> {
         self.mul_power_using(5, exp, 27, storage)
     }
 
     fn mul_power_using(
-        &self,
-        base: u64,
-        exp: u32,
-        chunk: u32,
-        storage: &impl Allocate,
+        &self, base: u64, exp: u32, chunk: u32, storage: &impl Allocate,
     ) -> Result<Self, LimbScratchError> {
         self.mul_power_wide_using(base, u64::from(exp), chunk, storage)
     }
 
     pub(crate) fn pow10_wide_using(
-        exp: u64,
-        storage: &impl Allocate,
+        exp: u64, storage: &impl Allocate,
     ) -> Result<Self, LimbScratchError> {
         Self::one().mul_power_wide_using(10, exp, DECIMAL_CHUNK as u32, storage)
     }
 
     fn mul_power_wide_using(
-        &self,
-        base: u64,
-        exp: u64,
-        chunk: u32,
-        storage: &impl Allocate,
+        &self, base: u64, exp: u64, chunk: u32, storage: &impl Allocate,
     ) -> Result<Self, LimbScratchError> {
         let mut magnitude = storage.copy(&self.magnitude)?;
         let mut remaining = exp;
@@ -1375,9 +1325,7 @@ impl BigInt {
     /// Remove at most `limit` exact factors of five. Full 27-factor chunks
     /// precede at most 26 single-factor divisions. Sign is preserved.
     pub(crate) fn strip_fives_using(
-        &self,
-        limit: u32,
-        storage: &impl Allocate,
+        &self, limit: u32, storage: &impl Allocate,
     ) -> Result<(Self, u32), LimbScratchError> {
         let (value, removed) = self.strip_fives_wide_using(u64::from(limit), storage)?;
         Ok((value, removed as u32))
@@ -1386,9 +1334,7 @@ impl BigInt {
     /// The identical prime-removal body with a full integer-width counter.
     /// Returned counts are bounded by both `limit` and the input bit length.
     pub(crate) fn strip_fives_wide_using(
-        &self,
-        limit: u64,
-        storage: &impl Allocate,
+        &self, limit: u64, storage: &impl Allocate,
     ) -> Result<(Self, u64), LimbScratchError> {
         if self.is_zero() {
             return Ok((Self::zero(), 0));
@@ -1467,9 +1413,7 @@ impl BigInt {
     }
 
     pub(crate) fn shl_using(
-        &self,
-        bits: u32,
-        storage: &impl Allocate,
+        &self, bits: u32, storage: &impl Allocate,
     ) -> Result<Self, LimbScratchError> {
         Ok(Self::from_parts(
             self.negative,
@@ -1497,18 +1441,14 @@ impl BigInt {
     }
 
     pub(crate) fn shr_using(
-        &self,
-        bits: u32,
-        storage: &impl Allocate,
+        &self, bits: u32, storage: &impl Allocate,
     ) -> Result<Self, LimbScratchError> {
         self.shr_wide_using(u64::from(bits), storage)
     }
 
     /// The same magnitude shift at the integer home's full bit-count width.
     pub(crate) fn shr_wide_using(
-        &self,
-        bits: u64,
-        storage: &impl Allocate,
+        &self, bits: u64, storage: &impl Allocate,
     ) -> Result<Self, LimbScratchError> {
         Ok(Self::from_parts(
             self.negative,
@@ -1546,10 +1486,7 @@ impl BigInt {
     /// # Errors
     /// Refuses scratch exhaustion; a zero divisor returns `Ok(None)`.
     pub fn mul_div_rem_in(
-        &self,
-        factor: &Self,
-        divisor: &Self,
-        scratch: &LimbScratch,
+        &self, factor: &Self, divisor: &Self, scratch: &LimbScratch,
     ) -> Result<Option<(Self, Self)>, LimbScratchError> {
         self.mul_div_rem_using(factor, divisor, scratch)
     }
@@ -1561,10 +1498,7 @@ impl BigInt {
             .expect("unbounded integer storage")
     }
     pub(crate) fn mul_div_rem_using(
-        &self,
-        factor: &Self,
-        divisor: &Self,
-        storage: &impl Allocate,
+        &self, factor: &Self, divisor: &Self, storage: &impl Allocate,
     ) -> Result<Option<(Self, Self)>, LimbScratchError> {
         if divisor.is_zero() {
             return Ok(None);
@@ -1583,9 +1517,7 @@ impl BigInt {
     /// # Errors
     /// Refuses scratch exhaustion; a negative product returns `Ok(None)`.
     pub fn sqrt_product_floor_in(
-        &self,
-        factor: &Self,
-        scratch: &LimbScratch,
+        &self, factor: &Self, scratch: &LimbScratch,
     ) -> Result<Option<Self>, LimbScratchError> {
         self.sqrt_product_using(factor, scratch)
     }
@@ -1596,9 +1528,7 @@ impl BigInt {
             .expect("unbounded integer storage")
     }
     fn sqrt_product_using(
-        &self,
-        factor: &Self,
-        storage: &impl Allocate,
+        &self, factor: &Self, storage: &impl Allocate,
     ) -> Result<Option<Self>, LimbScratchError> {
         if self.is_zero() || factor.is_zero() {
             return Ok(Some(Self::zero()));
@@ -1618,11 +1548,7 @@ impl BigInt {
     /// # Errors
     /// Refuses scratch limb/destination exhaustion without allocating a fallback.
     pub fn compare_products_in(
-        a: &Self,
-        b: &Self,
-        c: &Self,
-        d: &Self,
-        scratch: &LimbScratch,
+        a: &Self, b: &Self, c: &Self, d: &Self, scratch: &LimbScratch,
     ) -> Result<Ordering, LimbScratchError> {
         Self::compare_products_using(a, b, c, d, scratch)
     }
@@ -1632,11 +1558,7 @@ impl BigInt {
         Self::compare_products_using(a, b, c, d, &Unbounded).expect("unbounded integer storage")
     }
     pub(crate) fn compare_products_using(
-        a: &Self,
-        b: &Self,
-        c: &Self,
-        d: &Self,
-        storage: &impl Allocate,
+        a: &Self, b: &Self, c: &Self, d: &Self, storage: &impl Allocate,
     ) -> Result<Ordering, LimbScratchError> {
         let first_negative = !a.is_zero() && !b.is_zero() && a.negative != b.negative;
         let second_negative = !c.is_zero() && !d.is_zero() && c.negative != d.negative;
@@ -1681,16 +1603,13 @@ impl BigInt {
     /// # Errors
     /// Returns checked layout or allocator refusal without an infallible fallback.
     pub fn try_from_decimal_bytes(
-        digits: impl Iterator<Item = u8>,
-        negative: bool,
+        digits: impl Iterator<Item = u8>, negative: bool,
     ) -> Result<Option<Self>, LimbScratchError> {
         Self::from_decimal_bytes_using(digits, negative, &scratch::Fallible)
     }
 
     pub(crate) fn from_decimal_bytes_using(
-        digits: impl Iterator<Item = u8>,
-        negative: bool,
-        storage: &impl Allocate,
+        digits: impl Iterator<Item = u8>, negative: bool, storage: &impl Allocate,
     ) -> Result<Option<Self>, LimbScratchError> {
         mag_from_digit_bytes(digits, storage)
             .map(|magnitude| magnitude.map(|magnitude| Self::from_parts(negative, magnitude)))
@@ -1765,8 +1684,7 @@ impl BigInt {
     /// # Errors
     /// Preserves original physical layout, allocator or admission refusal.
     pub(crate) fn detached_buffer_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         if matches!(self.magnitude, Mag::Owned(_)) {
             return Ok(self.clone());
@@ -1789,8 +1707,7 @@ impl BigInt {
     /// # Errors
     /// Preserves original physical layout, allocator or admission refusal.
     pub fn detached_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         if self.detached_required_bytes()? != 0 {
             memory.add_bytes(
@@ -1811,8 +1728,7 @@ impl BigInt {
     /// # Errors
     /// Reports fallible shared-control allocation refusal without copying limbs.
     pub fn publish_detached(
-        &mut self,
-        original: &purrdf_lex::allocation::SharedOwned<()>,
+        &mut self, original: &purrdf_lex::allocation::SharedOwned<()>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         if !matches!(self.magnitude, Mag::Heap(_)) {
             return Ok(());
@@ -1911,8 +1827,7 @@ impl BigInt {
     )]
     #[inline(always)]
     pub fn decimal_render_layout(
-        &self,
-        scale: u32,
+        &self, scale: u32,
     ) -> Result<crate::exact::cost::NumericRenderLayout, LimbScratchError> {
         crate::exact::cost::numeric_render_layout(
             self.bit_len(),
@@ -1937,8 +1852,7 @@ impl BigInt {
     /// # Errors
     /// Refuses missing destinations or capacity without allocating a fallback.
     pub fn prepare_decimal_digits_in(
-        &self,
-        scratch: &LimbScratch,
+        &self, scratch: &LimbScratch,
     ) -> Result<PreparedDecimalDigits, LimbScratchError> {
         self.prepare_decimal_digits_using(scratch)
     }
@@ -1949,8 +1863,7 @@ impl BigInt {
     )]
     #[inline(always)]
     pub(crate) fn prepare_decimal_digits_using(
-        &self,
-        storage: &impl Allocate,
+        &self, storage: &impl Allocate,
     ) -> Result<PreparedDecimalDigits, LimbScratchError> {
         let layout = self.decimal_render_layout(0)?;
         let mut groups = storage.destination(layout.group_capacity(), 0)?;
@@ -2057,9 +1970,7 @@ impl BigInt {
     }
 
     pub(crate) fn mul_pow10_using(
-        &self,
-        exp: u32,
-        storage: &impl Allocate,
+        &self, exp: u32, storage: &impl Allocate,
     ) -> Result<Self, LimbScratchError> {
         self.mul_using(&Self::pow10_using(exp, storage)?, storage)
     }
@@ -2119,9 +2030,7 @@ impl fmt::Display for BigInt {
 /// overflow. Resource admission is the caller's responsibility, as for [`BigInt`].
 #[must_use]
 pub fn sqrt_ratio_floor(
-    numerator: &BigInt,
-    denominator: &BigInt,
-    fractional_bits: u32,
+    numerator: &BigInt, denominator: &BigInt, fractional_bits: u32,
 ) -> Option<BigInt> {
     sqrt_ratio_floor_using(numerator, denominator, fractional_bits, &Unbounded)
         .expect("unbounded integer storage")
@@ -2133,19 +2042,13 @@ pub fn sqrt_ratio_floor(
 /// Refuses exhausted destination count or limb capacity without heap fallback.
 /// Invalid signed inputs or shift overflow return `Ok(None)` before allocation.
 pub fn sqrt_ratio_floor_in(
-    numerator: &BigInt,
-    denominator: &BigInt,
-    fractional_bits: u32,
-    scratch: &LimbScratch,
+    numerator: &BigInt, denominator: &BigInt, fractional_bits: u32, scratch: &LimbScratch,
 ) -> Result<Option<BigInt>, LimbScratchError> {
     sqrt_ratio_floor_using(numerator, denominator, fractional_bits, scratch)
 }
 
 fn sqrt_ratio_floor_using(
-    numerator: &BigInt,
-    denominator: &BigInt,
-    fractional_bits: u32,
-    storage: &impl Allocate,
+    numerator: &BigInt, denominator: &BigInt, fractional_bits: u32, storage: &impl Allocate,
 ) -> Result<Option<BigInt>, LimbScratchError> {
     if numerator.is_negative() || denominator <= &BigInt::zero() {
         return Ok(None);

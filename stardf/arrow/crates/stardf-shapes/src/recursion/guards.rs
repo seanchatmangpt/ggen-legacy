@@ -16,9 +16,7 @@ use crate::shapes::{ClosedMode, Constraint, ModelOwner, NodeKindValue, Path, Sha
 /// it does not, the xone's result itself cannot affect conformance. Thus the
 /// proof holds for every severity policy without caching a request's answers.
 pub(crate) fn xone_positive(
-    source: &Shape,
-    operands: &[Shape],
-    owner: Option<&ModelOwner>,
+    source: &Shape, operands: &[Shape], owner: Option<&ModelOwner>,
 ) -> bool {
     if operands.len() < 2 || !clean(source, &source.severity) {
         return false;
@@ -51,9 +49,7 @@ fn clean(shape: &Shape, severity: &Severity) -> bool {
 }
 
 fn original<'a>(
-    shape: &'a Shape,
-    owner: Option<&'a ModelOwner>,
-    severity: &Severity,
+    shape: &'a Shape, owner: Option<&'a ModelOwner>, severity: &Severity,
 ) -> Option<(&'a Shape, Option<&'a ModelOwner>)> {
     if !clean(shape, severity) {
         return None;
@@ -105,11 +101,8 @@ fn excludes(shape: &Shape, owner: Option<&ModelOwner>, predicate: &str) -> bool 
 }
 
 fn required_excluded(
-    required: &Shape,
-    required_owner: Option<&ModelOwner>,
-    closed: &Shape,
-    closed_owner: Option<&ModelOwner>,
-    severity: &Severity,
+    required: &Shape, required_owner: Option<&ModelOwner>, closed: &Shape,
+    closed_owner: Option<&ModelOwner>, severity: &Severity,
 ) -> bool {
     // A conforming nonempty SHACL list necessarily has both outgoing edges.
     if required

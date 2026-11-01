@@ -675,7 +675,7 @@ pub fn horizontal_and_u32(slice: &[u32]) -> u32 {
     for &v in slice {
         acc &= v;
     }
-    acc & ((slice.len() != 0) as u32).wrapping_neg()
+    acc & (!slice.is_empty() as u32).wrapping_neg()
 }
 
 /// Bitwise XOR of every element of `slice`; `0` for the empty slice.

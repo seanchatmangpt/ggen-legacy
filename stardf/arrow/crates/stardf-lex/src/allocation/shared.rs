@@ -114,8 +114,7 @@ impl<T, U> SharedView<T, U> {
     /// Select an optional descendant without cloning the owner on a miss.
     #[must_use]
     pub fn try_project<V>(
-        &self,
-        select: impl for<'a> FnOnce(&'a U) -> Option<&'a V>,
+        &self, select: impl for<'a> FnOnce(&'a U) -> Option<&'a V>,
     ) -> Option<SharedView<T, V>> {
         let value = NonNull::from(select(self)?);
         Some(SharedView {
@@ -227,8 +226,7 @@ impl<T> Shared<T> {
     /// The allocator returns null, or fresh global-allocator storage for exactly
     /// the supplied nonzero layout. It must not return an alias or other storage.
     unsafe fn try_new_with_allocator(
-        factory: impl FnOnce() -> T,
-        allocate: impl FnOnce(Layout) -> *mut u8,
+        factory: impl FnOnce() -> T, allocate: impl FnOnce(Layout) -> *mut u8,
     ) -> Result<Self, SharedAllocError> {
         let layout = Self::allocation_layout();
         let pointer = NonNull::new(allocate(layout).cast::<Header<T>>()).ok_or(SharedAllocError)?;
@@ -357,8 +355,7 @@ impl<V: Send + Sync + 'static> SharedOwned<V> {
     /// # Errors
     /// Returns actual allocator refusal before constructing the shared payload.
     pub fn try_from_admitted<O: Send + Sync + 'static>(
-        value: V,
-        owner: O,
+        value: V, owner: O,
     ) -> Result<Self, SharedAllocError> {
         Self::try_from_admitted_with(|| (value, owner))
     }
@@ -404,10 +401,7 @@ impl SharedOwned<()> {
     /// Preserves checked layout, original admission and physical refusal. On
     /// failure the original account remains in `storage` for payload cleanup.
     pub fn retain_current<S: super::Admission + Send + Sync + 'static>(
-        storage: &mut S,
-        replacement: S,
-        admitted: usize,
-        control: Layout,
+        storage: &mut S, replacement: S, admitted: usize, control: Layout,
     ) -> Result<(Self, usize), super::StorageError> {
         let total = admitted
             .checked_add(control.size())
@@ -520,8 +514,7 @@ impl SharedText {
     /// # Errors
     /// Returns actual allocator refusal, destroying text before its owner.
     pub fn try_from_admitted<O: Send + Sync + 'static>(
-        text: String,
-        owner: O,
+        text: String, owner: O,
     ) -> Result<Self, SharedAllocError> {
         SharedOwned::try_from_admitted(text, owner).map(|value| Self(TextStorage::Owned(value)))
     }

@@ -496,9 +496,7 @@ impl<'a> Unit<'a> {
     /// not two.
     #[must_use]
     pub const fn text_chunk_target(
-        &self,
-        document_id: TargetId,
-        chunking_id: ChunkingContractId,
+        &self, document_id: TargetId, chunking_id: ChunkingContractId,
     ) -> TextChunkTarget {
         TextChunkTarget {
             document_id,
@@ -536,10 +534,7 @@ impl<'a> Unit<'a> {
 /// [`MarkdownError::TamperedUnit`], naming the unit's span and carrying
 /// the kernel's own finding.
 pub fn verify_unit(
-    bytes: &[u8],
-    unit: &Unit<'_>,
-    document_id: TargetId,
-    chunking_id: ChunkingContractId,
+    bytes: &[u8], unit: &Unit<'_>, document_id: TargetId, chunking_id: ChunkingContractId,
 ) -> Result<(), MarkdownError> {
     unit.text_chunk_target(document_id, chunking_id)
         .verify_document(bytes)
@@ -1018,10 +1013,7 @@ impl<'a> Document<'a> {
     /// profile a document carries is always one the crate has answered
     /// for.
     pub(crate) fn assemble(
-        id: &'a str,
-        source: &'a str,
-        reading: &Reading,
-        profile: &Profile,
+        id: &'a str, source: &'a str, reading: &Reading, profile: &Profile,
     ) -> Self {
         let sections = assemble_sections(reading, source.len());
         let units = assemble_units(source, reading, profile);

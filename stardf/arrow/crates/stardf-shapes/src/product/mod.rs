@@ -407,10 +407,8 @@ impl<'a> HostBindings<'a> {
     /// [`PreparedShapes::to_product`](crate::engine::PreparedShapes::to_product).
     #[must_use]
     pub const fn new(
-        functions: &'a UserFunctionRegistry,
-        aggregates: &'a AggregateRegistry,
-        property_functions: &'a PropertyFunctionRegistry<'a>,
-        implementation_identity: &'a [u8],
+        functions: &'a UserFunctionRegistry, aggregates: &'a AggregateRegistry,
+        property_functions: &'a PropertyFunctionRegistry<'a>, implementation_identity: &'a [u8],
         parser_options: &'a ParserOptions,
     ) -> Self {
         Self {
@@ -433,10 +431,8 @@ impl<'a> HostBindings<'a> {
     /// step says so here, rather than naming an empty value.
     #[must_use]
     pub const fn without_declarations(
-        functions: &'a UserFunctionRegistry,
-        aggregates: &'a AggregateRegistry,
-        property_functions: &'a PropertyFunctionRegistry<'a>,
-        implementation_identity: &'a [u8],
+        functions: &'a UserFunctionRegistry, aggregates: &'a AggregateRegistry,
+        property_functions: &'a PropertyFunctionRegistry<'a>, implementation_identity: &'a [u8],
     ) -> Self {
         Self::new(
             functions,
@@ -881,9 +877,7 @@ impl PreparedShapes {
     /// [`ProductDimension::UnsupportedCapability`] when `host` injects implementations
     /// it supplies no identity for.
     pub fn to_product_for_host(
-        &self,
-        profile: &ShapesProfile,
-        host: &HostBindings<'_>,
+        &self, profile: &ShapesProfile, host: &HostBindings<'_>,
     ) -> Result<Vec<u8>, ShapesProductError> {
         self.to_product_bound(profile, host)
     }
@@ -909,9 +903,7 @@ impl PreparedShapes {
     /// [`ProductDimension::UnsupportedCapability`] when `implementation_identity` is
     /// empty, plus every dimension [`to_product`](Self::to_product) refuses on.
     pub fn to_product_with_implementation_identity(
-        &self,
-        profile: &ShapesProfile,
-        implementation_identity: &[u8],
+        &self, profile: &ShapesProfile, implementation_identity: &[u8],
     ) -> Result<Vec<u8>, ShapesProductError> {
         if implementation_identity.is_empty() {
             return Err(ShapesProductError::new(
@@ -944,9 +936,7 @@ impl PreparedShapes {
     /// can set wrong — the second entry point adds a value to the binding, not a
     /// shape to the container.
     fn to_product_bound(
-        &self,
-        profile: &ShapesProfile,
-        host: &HostBindings<'_>,
+        &self, profile: &ShapesProfile, host: &HostBindings<'_>,
     ) -> Result<Vec<u8>, ShapesProductError> {
         let implementation_identity = host.implementation_identity();
         if profile.id() != identity::PROFILE_ID {
@@ -1186,9 +1176,7 @@ impl<'a> ShapesProductView<'a> {
     /// executing environment is not the one it was prepared against; any structural
     /// dimension when a section refuses.
     pub fn admit(
-        self,
-        profile: &ShapesProfile,
-        host: &HostBindings<'_>,
+        self, profile: &ShapesProfile, host: &HostBindings<'_>,
     ) -> Result<PreparedShapes, ShapesProductError> {
         self.admit_bound(
             profile,
@@ -1238,10 +1226,7 @@ impl<'a> ShapesProductView<'a> {
     /// which is precisely the disagreement an expectation miss reports. Otherwise
     /// every dimension [`admit`](Self::admit) refuses on.
     pub fn admit_expecting(
-        self,
-        profile: &ShapesProfile,
-        host: &HostBindings<'_>,
-        expected_identity: &[u8; 32],
+        self, profile: &ShapesProfile, host: &HostBindings<'_>, expected_identity: &[u8; 32],
     ) -> Result<PreparedShapes, ShapesProductError> {
         self.admit_bound(
             profile,
@@ -1258,9 +1243,7 @@ impl<'a> ShapesProductView<'a> {
     /// # Errors
     /// Returns typed product, profile or dated declaration refusals before execution.
     pub fn admit_with_options(
-        self,
-        profile: &ShapesProfile,
-        host: &HostBindings<'_>,
+        self, profile: &ShapesProfile, host: &HostBindings<'_>,
         options: &crate::engine::ValidationOptions,
     ) -> Result<PreparedShapes, crate::report::CompleteValidationError> {
         self.admit_bound(profile, host, None, options)
@@ -1270,10 +1253,7 @@ impl<'a> ShapesProductView<'a> {
     /// # Errors
     /// Returns the same refusals as [`Self::admit_with_options`], or a wrong artifact.
     pub fn admit_expecting_with_options(
-        self,
-        profile: &ShapesProfile,
-        host: &HostBindings<'_>,
-        expected_identity: &[u8; 32],
+        self, profile: &ShapesProfile, host: &HostBindings<'_>, expected_identity: &[u8; 32],
         options: &crate::engine::ValidationOptions,
     ) -> Result<PreparedShapes, crate::report::CompleteValidationError> {
         self.admit_bound(profile, host, Some(expected_identity), options)
@@ -1287,11 +1267,8 @@ impl<'a> ShapesProductView<'a> {
     /// places: a second transcription of an ordered sequence of checks is how the
     /// bound and unbound restores come to disagree about what one of them means.
     fn admit_bound(
-        self,
-        profile: &ShapesProfile,
-        host: &HostBindings<'_>,
-        expected_identity: Option<&[u8; 32]>,
-        options: &crate::engine::ValidationOptions,
+        self, profile: &ShapesProfile, host: &HostBindings<'_>,
+        expected_identity: Option<&[u8; 32]>, options: &crate::engine::ValidationOptions,
     ) -> Result<PreparedShapes, crate::report::CompleteValidationError> {
         options
             .shacl_profile
@@ -1448,9 +1425,7 @@ impl<'a> ShapesProductView<'a> {
     /// parse as a shapes graph under the recorded inputs; any structural dimension
     /// when a section refuses.
     pub fn rebuild(
-        self,
-        profile: &ShapesProfile,
-        host: &HostBindings<'_>,
+        self, profile: &ShapesProfile, host: &HostBindings<'_>,
     ) -> Result<PreparedShapes, ShapesProductError> {
         self.rebuild_bound(
             profile,
@@ -1486,10 +1461,7 @@ impl<'a> ShapesProductView<'a> {
     /// [`ProductDimension::ShapesGraph`] when the product's binding is not the one
     /// required. Otherwise every dimension [`rebuild`](Self::rebuild) refuses on.
     pub fn rebuild_expecting(
-        self,
-        profile: &ShapesProfile,
-        host: &HostBindings<'_>,
-        expected_identity: &[u8; 32],
+        self, profile: &ShapesProfile, host: &HostBindings<'_>, expected_identity: &[u8; 32],
     ) -> Result<PreparedShapes, ShapesProductError> {
         self.rebuild_bound(
             profile,
@@ -1506,9 +1478,7 @@ impl<'a> ShapesProductView<'a> {
     /// # Errors
     /// Returns typed product, profile or dated declaration refusals before execution.
     pub fn rebuild_with_options(
-        self,
-        profile: &ShapesProfile,
-        host: &HostBindings<'_>,
+        self, profile: &ShapesProfile, host: &HostBindings<'_>,
         options: &crate::engine::ValidationOptions,
     ) -> Result<PreparedShapes, crate::report::CompleteValidationError> {
         self.rebuild_bound(profile, host, None, options)
@@ -1518,10 +1488,7 @@ impl<'a> ShapesProductView<'a> {
     /// # Errors
     /// Returns the same refusals as [`Self::rebuild_with_options`], or a wrong artifact.
     pub fn rebuild_expecting_with_options(
-        self,
-        profile: &ShapesProfile,
-        host: &HostBindings<'_>,
-        expected_identity: &[u8; 32],
+        self, profile: &ShapesProfile, host: &HostBindings<'_>, expected_identity: &[u8; 32],
         options: &crate::engine::ValidationOptions,
     ) -> Result<PreparedShapes, crate::report::CompleteValidationError> {
         self.rebuild_bound(profile, host, Some(expected_identity), options)
@@ -1531,11 +1498,8 @@ impl<'a> ShapesProductView<'a> {
     /// the same arrangement [`admit_bound`](Self::admit_bound) makes for the
     /// admission path.
     fn rebuild_bound(
-        self,
-        profile: &ShapesProfile,
-        host: &HostBindings<'_>,
-        expected_identity: Option<&[u8; 32]>,
-        options: &crate::engine::ValidationOptions,
+        self, profile: &ShapesProfile, host: &HostBindings<'_>,
+        expected_identity: Option<&[u8; 32]>, options: &crate::engine::ValidationOptions,
     ) -> Result<PreparedShapes, crate::report::CompleteValidationError> {
         options
             .shacl_profile

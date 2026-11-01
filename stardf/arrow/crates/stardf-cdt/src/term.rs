@@ -93,9 +93,7 @@ impl CdtLiteral {
     /// term type this crate's second lexical superset exists to carry.
     #[must_use]
     pub fn dir_lang(
-        lexical: impl Into<String>,
-        language: impl Into<String>,
-        direction: TextDirection,
+        lexical: impl Into<String>, language: impl Into<String>, direction: TextDirection,
     ) -> Self {
         Self {
             lexical: lexical.into(),
@@ -325,10 +323,7 @@ fn resident_error(error: ReadError) -> CdtError {
 
 impl CdtLiteral {
     fn fields_with_memory(
-        lexical: &str,
-        datatype: &str,
-        language: Option<&str>,
-        direction: Option<TextDirection>,
+        lexical: &str, datatype: &str, language: Option<&str>, direction: Option<TextDirection>,
         memory: &mut Memory<'_>,
     ) -> Result<Self, StorageError> {
         Ok(Self {
@@ -353,8 +348,7 @@ impl CdtLiteral {
     /// # Errors
     /// Returns checked physical layout, allocator or original admission refusal.
     pub fn plain_admitted(
-        lexical: &str,
-        storage: &mut dyn Storage,
+        lexical: &str, storage: &mut dyn Storage,
     ) -> Result<(Self, usize), StorageError> {
         Self::typed_admitted(lexical, crate::datatype::XSD_STRING, storage)
     }
@@ -363,9 +357,7 @@ impl CdtLiteral {
     /// # Errors
     /// Returns checked physical layout, allocator or original admission refusal.
     pub fn typed_admitted(
-        lexical: &str,
-        datatype: &str,
-        storage: &mut dyn Storage,
+        lexical: &str, datatype: &str, storage: &mut dyn Storage,
     ) -> Result<(Self, usize), StorageError> {
         let mut memory = Memory::new(storage);
         let value = memory
@@ -377,9 +369,7 @@ impl CdtLiteral {
     /// # Errors
     /// Returns checked physical layout, allocator or original admission refusal.
     pub fn lang_admitted(
-        lexical: &str,
-        language: &str,
-        storage: &mut dyn Storage,
+        lexical: &str, language: &str, storage: &mut dyn Storage,
     ) -> Result<(Self, usize), StorageError> {
         let mut memory = Memory::new(storage);
         let value = memory.scope(|memory| {
@@ -392,10 +382,7 @@ impl CdtLiteral {
     /// # Errors
     /// Returns checked physical layout, allocator or original admission refusal.
     pub fn dir_lang_admitted(
-        lexical: &str,
-        language: &str,
-        direction: TextDirection,
-        storage: &mut dyn Storage,
+        lexical: &str, language: &str, direction: TextDirection, storage: &mut dyn Storage,
     ) -> Result<(Self, usize), StorageError> {
         let mut memory = Memory::new(storage);
         let value = memory.scope(|memory| {
@@ -438,16 +425,14 @@ impl CdtKey {
     /// # Errors
     /// Returns checked physical layout, allocator or original admission refusal.
     pub fn to_term_admitted(
-        &self,
-        storage: &mut dyn Storage,
+        &self, storage: &mut dyn Storage,
     ) -> Result<(CdtTerm, usize), StorageError> {
         let mut memory = Memory::new(storage);
         let value = memory.scope(|memory| self.to_term_with_memory(memory))?;
         Ok((value, memory.admitted_bytes()))
     }
     pub(crate) fn to_term_with_memory(
-        &self,
-        memory: &mut Memory<'_>,
+        &self, memory: &mut Memory<'_>,
     ) -> Result<CdtTerm, StorageError> {
         Ok(match self {
             Self::Iri(iri) => CdtTerm::Iri(memory.string(iri)?),
@@ -459,16 +444,14 @@ impl CdtKey {
     /// # Errors
     /// Returns checked physical layout, allocator or original admission refusal.
     pub fn from_term_admitted(
-        term: &CdtTerm,
-        storage: &mut dyn Storage,
+        term: &CdtTerm, storage: &mut dyn Storage,
     ) -> Result<(Option<Self>, usize), StorageError> {
         let mut memory = Memory::new(storage);
         let value = memory.scope(|memory| Self::from_term_with_memory(term, memory))?;
         Ok((value, memory.admitted_bytes()))
     }
     pub(crate) fn from_term_with_memory(
-        term: &CdtTerm,
-        memory: &mut Memory<'_>,
+        term: &CdtTerm, memory: &mut Memory<'_>,
     ) -> Result<Option<Self>, StorageError> {
         Ok(match term {
             CdtTerm::Iri(iri) => Some(Self::Iri(memory.string(iri)?)),
@@ -532,16 +515,14 @@ impl CdtTerm {
     /// # Errors
     /// Keeps existing canonical/element bounds separate from physical failures.
     pub fn composite_admitted(
-        value: CdtValue,
-        storage: &mut dyn Storage,
+        value: CdtValue, storage: &mut dyn Storage,
     ) -> Result<(Self, usize), ReadError> {
         let mut memory = Memory::new(storage);
         let term = memory.scope(|memory| Self::composite_with_memory(value, memory))??;
         Ok((term, memory.admitted_bytes()))
     }
     pub(crate) fn composite_with_memory(
-        value: CdtValue,
-        memory: &mut Memory<'_>,
+        value: CdtValue, memory: &mut Memory<'_>,
     ) -> Result<Result<Self, CdtError>, StorageError> {
         let extent = value.extent();
         if let Err(error) = crate::limits::check_extent(&crate::limits::Extent {
@@ -559,10 +540,7 @@ impl CdtTerm {
     /// # Errors
     /// Keeps existing canonical/element bounds separate from physical failures.
     pub fn triple_admitted(
-        subject: Self,
-        predicate: Self,
-        object: Self,
-        storage: &mut dyn Storage,
+        subject: Self, predicate: Self, object: Self, storage: &mut dyn Storage,
     ) -> Result<(Self, usize), ReadError> {
         let mut memory = Memory::new(storage);
         let term = memory
@@ -570,10 +548,7 @@ impl CdtTerm {
         Ok((term, memory.admitted_bytes()))
     }
     pub(crate) fn triple_with_memory(
-        subject: Self,
-        predicate: Self,
-        object: Self,
-        memory: &mut Memory<'_>,
+        subject: Self, predicate: Self, object: Self, memory: &mut Memory<'_>,
     ) -> Result<Result<Self, CdtError>, StorageError> {
         let triple = CdtTripleTerm {
             subject,

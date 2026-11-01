@@ -59,11 +59,8 @@ impl BoundaryIntegral {
 }
 
 fn add_band(
-    bands: &mut Vec<LongitudeBand>,
-    outer: &FixedInterval,
-    boundary: Option<&FixedInterval>,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    bands: &mut Vec<LongitudeBand>, outer: &FixedInterval, boundary: Option<&FixedInterval>,
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<(), MathError> {
     let bytes = size_of::<LongitudeBand>()
         .saturating_mul(2)
@@ -79,20 +76,14 @@ fn add_band(
 }
 
 fn symmetric_error(
-    value: &FixedInterval,
-    error: &FixedInterval,
-    math: &mut CoordinateMath,
+    value: &FixedInterval, error: &FixedInterval, math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     value.add(&error.neg(math)?.hull(error, math)?, math)
 }
 
 fn endpoint_tail(
-    line: &ChartLine,
-    potential: &mut AreaPotential,
-    parameter: &FixedInterval,
-    iterations: u32,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    line: &ChartLine, potential: &mut AreaPotential, parameter: &FixedInterval, iterations: u32,
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<FixedInterval, MathError> {
     let (normal, _) = line.normal(parameter, iterations, math, progress)?;
     if normal[2].lower() >= &Int::zero() {
@@ -119,15 +110,9 @@ fn endpoint_tail(
     reason = "one complete original line partition has explicit proof and admission inputs"
 )]
 fn integrate_fragment(
-    fragment: &Fragment<'_>,
-    line: &ChartLine,
-    potential: &mut AreaPotential,
-    core_budget: &FixedInterval,
-    band_budget: &FixedInterval,
-    limits: (u32, u32),
-    bands: &mut Vec<LongitudeBand>,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    fragment: &Fragment<'_>, line: &ChartLine, potential: &mut AreaPotential,
+    core_budget: &FixedInterval, band_budget: &FixedInterval, limits: (u32, u32),
+    bands: &mut Vec<LongitudeBand>, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<FixedInterval, MathError> {
     let (iterations, depth_limit) = limits;
     if let ChartLine::Geodesic(line) = line
@@ -353,10 +338,7 @@ fn integrate_fragment(
 }
 
 fn boundary_integral(
-    fragments: &[Fragment<'_>],
-    bits: u32,
-    budget: &Rat,
-    context: &mut MetricContext,
+    fragments: &[Fragment<'_>], bits: u32, budget: &Rat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<BoundaryIntegral, GeoError> {
     let reference = crate::numerical::reference_clone(context, progress)?;
@@ -443,9 +425,7 @@ struct CutInterval {
 }
 
 fn cut_intervals(
-    integral: &BoundaryIntegral,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    integral: &BoundaryIntegral, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(Vec<CutInterval>, u64), GeoError> {
     let policy = context.policy();
     let mut intervals = Vec::new();
@@ -597,9 +577,7 @@ fn cut_intervals(
 }
 
 fn equator_measure(
-    intervals: &[CutInterval],
-    small_width: &Rat,
-    context: &mut MetricContext,
+    intervals: &[CutInterval], small_width: &Rat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
     locate: &mut impl FnMut(&LonLat, &mut MetricContext, &mut WorkProgress<'_>) -> Result<Set, GeoError>,
 ) -> Result<((Rat, Rat), u64), GeoError> {
@@ -772,9 +750,7 @@ fn equator_measure(
 /// of a heuristic quadrature. Truncation, endpoint tails, tangencies, continuous
 /// longitude images and the whole cut measure refine together until decisive.
 pub(super) fn area(
-    fragments: &[Fragment<'_>],
-    initial_budget: &Rat,
-    context: &mut MetricContext,
+    fragments: &[Fragment<'_>], initial_budget: &Rat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
     mut locate: impl FnMut(&LonLat, &mut MetricContext, &mut WorkProgress<'_>) -> Result<Set, GeoError>,
 ) -> Result<RingArea, GeoError> {

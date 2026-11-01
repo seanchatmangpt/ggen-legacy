@@ -146,8 +146,7 @@ impl<'a> Memory<'a> {
         )
     }
     pub(super) fn array<T, const N: usize>(
-        &mut self,
-        mut item: impl FnMut(usize, &mut Self) -> Result<T, StorageError>,
+        &mut self, mut item: impl FnMut(usize, &mut Self) -> Result<T, StorageError>,
     ) -> Result<[T; N], StorageError> {
         let mut values: [Option<T>; N] = std::array::from_fn(|_| None);
         for (index, slot) in values.iter_mut().enumerate() {
@@ -158,15 +157,11 @@ impl<'a> Memory<'a> {
     /// In-place unstable heapsort permits a typed comparator refusal without a
     /// partially ordered comparator, another buffer, or a recursive stack.
     pub(super) fn sort<T>(
-        &mut self,
-        values: &mut [T],
+        &mut self, values: &mut [T],
         mut compare: impl FnMut(&T, &T, &mut Self) -> Result<Ordering, StorageError>,
     ) -> Result<(), StorageError> {
         fn sift<'storage, T>(
-            values: &mut [T],
-            mut root: usize,
-            end: usize,
-            memory: &mut Memory<'storage>,
+            values: &mut [T], mut root: usize, end: usize, memory: &mut Memory<'storage>,
             compare: &mut impl FnMut(&T, &T, &mut Memory<'storage>) -> Result<Ordering, StorageError>,
         ) -> Result<(), StorageError> {
             loop {
@@ -204,9 +199,7 @@ impl<'a> Memory<'a> {
         Ok(())
     }
     pub(super) fn scope<T: OwnedBytes>(
-        &mut self,
-        consumed: usize,
-        body: impl FnOnce(&mut Self) -> Result<T, StorageError>,
+        &mut self, consumed: usize, body: impl FnOnce(&mut Self) -> Result<T, StorageError>,
     ) -> Result<T, StorageError> {
         let baseline = self
             .live
@@ -237,8 +230,7 @@ impl<'a> Memory<'a> {
         Ok(values)
     }
     pub(super) fn clone_values<T: CloneOwned>(
-        &mut self,
-        input: &[T],
+        &mut self, input: &[T],
     ) -> Result<Vec<T>, StorageError> {
         let mut values = Vec::new();
         self.reserve(&mut values, input.len())?;
@@ -249,9 +241,7 @@ impl<'a> Memory<'a> {
         Ok(values)
     }
     fn numeric<T: OwnedBytes>(
-        &mut self,
-        cost: Cost,
-        body: impl FnOnce(&Native<'_, '_>) -> Result<T, LimbScratchError>,
+        &mut self, cost: Cost, body: impl FnOnce(&Native<'_, '_>) -> Result<T, LimbScratchError>,
     ) -> Result<T, StorageError> {
         self.storage.work(cost.work())?;
         self.scope(0, |memory| {
@@ -264,38 +254,29 @@ impl<'a> Memory<'a> {
         })
     }
     pub(super) fn integer_add(
-        &mut self,
-        left: &exact::Integer,
-        right: &exact::Integer,
+        &mut self, left: &exact::Integer, right: &exact::Integer,
     ) -> Result<exact::Integer, StorageError> {
         self.numeric(left.add_cost(right), |native| left.add_using(right, native))
     }
     pub(super) fn integer_sub(
-        &mut self,
-        left: &exact::Integer,
-        right: &exact::Integer,
+        &mut self, left: &exact::Integer, right: &exact::Integer,
     ) -> Result<exact::Integer, StorageError> {
         self.numeric(left.add_cost(right), |native| left.sub_using(right, native))
     }
     pub(super) fn decimal_cmp(
-        &mut self,
-        left: &exact::Decimal,
-        right: &exact::Decimal,
+        &mut self, left: &exact::Decimal, right: &exact::Decimal,
     ) -> Result<Ordering, StorageError> {
         self.numeric(left.cmp_cost(right), |native| left.cmp_using(right, native))
     }
     pub(super) fn round(
-        &mut self,
-        value: &exact::Decimal,
-        rounding: exact::Rounding,
+        &mut self, value: &exact::Decimal, rounding: exact::Rounding,
     ) -> Result<exact::Integer, StorageError> {
         self.numeric(value.round_cost(0), |native| {
             value.round_to_integer_using(rounding, native)
         })
     }
     pub(super) fn decimal_of(
-        &mut self,
-        value: &XsdValue,
+        &mut self, value: &XsdValue,
     ) -> Result<Option<exact::Decimal>, StorageError> {
         match value {
             XsdValue::Integer { value, .. } => {

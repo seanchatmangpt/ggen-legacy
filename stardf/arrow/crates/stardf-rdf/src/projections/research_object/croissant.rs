@@ -274,8 +274,7 @@ purrdf_lex::json_record!(impl ToJson for CroissantConfig {
 /// Returns a typed configuration, RDF interpretation, resource-limit, or JSON
 /// encoding failure. Every representational loss is returned in the outcome.
 pub fn project_croissant<D: DatasetView>(
-    view: &D,
-    config: &CroissantConfig,
+    view: &D, config: &CroissantConfig,
 ) -> Result<ResearchObjectPackageProjection, ProjectionError> {
     let projection = project_research_object(view, CROISSANT_PROFILE, config.common())?;
     let mut ledger = projection.loss_ledger;
@@ -299,8 +298,7 @@ pub fn project_croissant<D: DatasetView>(
 /// unsafe identities, malformed known members, dangling references, or caller
 /// resource-limit excesses. Ledgered unsupported constructs remain observable.
 pub fn read_croissant(
-    package: &ProjectionPackage,
-    config: &CroissantConfig,
+    package: &ProjectionPackage, config: &CroissantConfig,
 ) -> Result<ResearchObjectReadOutcome, ProjectionError> {
     let bytes = require_artifact(package, CROISSANT_ARTIFACT, config.common())?;
     let value = parse_strict_json(
@@ -324,9 +322,7 @@ pub fn read_croissant(
 }
 
 fn encode_document(
-    model: &ResearchObjectModel,
-    config: &CroissantConfig,
-    ledger: &mut LossLedger,
+    model: &ResearchObjectModel, config: &CroissantConfig, ledger: &mut LossLedger,
 ) -> Result<Value, ProjectionError> {
     let terms = config.vocabulary();
     let mut root = Object::new();
@@ -475,8 +471,7 @@ fn encode_document(
 }
 
 fn encode_entities(
-    ids: &[String],
-    mut encode: impl FnMut(&str) -> Result<Value, ProjectionError>,
+    ids: &[String], mut encode: impl FnMut(&str) -> Result<Value, ProjectionError>,
 ) -> Result<Vec<Value>, ProjectionError> {
     ids.iter().map(|id| encode(id)).collect()
 }
@@ -493,9 +488,7 @@ fn encode_agent(agent: &ResearchAgent, config: &CroissantConfig) -> Value {
 }
 
 fn encode_resource(
-    resource: &ResearchResource,
-    config: &CroissantConfig,
-    ledger: &mut LossLedger,
+    resource: &ResearchResource, config: &CroissantConfig, ledger: &mut LossLedger,
 ) -> Result<Value, ProjectionError> {
     let terms = config.vocabulary();
     let mut object = typed_object(&resource.id, terms.term(CroissantRole::FileObjectClass));
@@ -556,9 +549,7 @@ fn encode_resource(
 }
 
 fn encode_activity(
-    activity: &ResearchActivity,
-    agents: &BTreeMap<&str, &ResearchAgent>,
-    config: &CroissantConfig,
+    activity: &ResearchActivity, agents: &BTreeMap<&str, &ResearchAgent>, config: &CroissantConfig,
 ) -> Value {
     let terms = config.vocabulary();
     let mut object = typed_object(&activity.id, terms.term(CroissantRole::ActivityClass));
@@ -684,10 +675,7 @@ struct Decoder<'a> {
 }
 
 fn decode_document(
-    value: Value,
-    config: &CroissantConfig,
-    contract: &LossLedger,
-    ledger: &mut LossLedger,
+    value: Value, config: &CroissantConfig, contract: &LossLedger, ledger: &mut LossLedger,
 ) -> Result<ResearchObjectModel, ProjectionError> {
     let mut decoder = Decoder {
         config,
@@ -718,9 +706,7 @@ impl ProfileReader for Decoder<'_> {
     }
 
     fn parse_reference_value(
-        &mut self,
-        value: &Value,
-        pointer: &str,
+        &mut self, value: &Value, pointer: &str,
     ) -> Result<Option<ResearchValue>, ProjectionError> {
         self.parse_reference(value, pointer)
             .and_then(|value| ResearchValue::iri(value).map(Some))
@@ -832,10 +818,7 @@ impl Decoder<'_> {
     }
 
     fn take_agents(
-        &mut self,
-        object: &mut Object,
-        role: CroissantRole,
-        parent: &str,
+        &mut self, object: &mut Object, role: CroissantRole, parent: &str,
     ) -> Result<Vec<String>, ProjectionError> {
         let term = self.config.vocabulary().term(role).to_owned();
         let mut ids = Vec::new();
@@ -860,9 +843,7 @@ impl Decoder<'_> {
     }
 
     fn decode_agent(
-        &mut self,
-        value: Value,
-        pointer: &str,
+        &mut self, value: Value, pointer: &str,
     ) -> Result<Option<ResearchAgent>, ProjectionError> {
         let Owned::Object(mut object) = into_owned(value) else {
             self.unsupported(pointer);
@@ -880,9 +861,7 @@ impl Decoder<'_> {
     }
 
     fn take_resources(
-        &mut self,
-        object: &mut Object,
-        parent: &str,
+        &mut self, object: &mut Object, parent: &str,
     ) -> Result<Vec<ResearchResource>, ProjectionError> {
         let term = self
             .config
@@ -913,9 +892,7 @@ impl Decoder<'_> {
     }
 
     fn decode_resource(
-        &mut self,
-        value: Value,
-        pointer: &str,
+        &mut self, value: Value, pointer: &str,
     ) -> Result<Option<ResearchResource>, ProjectionError> {
         let Owned::Object(mut object) = into_owned(value) else {
             self.unsupported(pointer);
@@ -960,9 +937,7 @@ impl Decoder<'_> {
     }
 
     fn take_activities(
-        &mut self,
-        object: &mut Object,
-        parent: &str,
+        &mut self, object: &mut Object, parent: &str,
     ) -> Result<Vec<ResearchActivity>, ProjectionError> {
         let term = self
             .config
@@ -993,9 +968,7 @@ impl Decoder<'_> {
     }
 
     fn decode_activity(
-        &mut self,
-        value: Value,
-        pointer: &str,
+        &mut self, value: Value, pointer: &str,
     ) -> Result<Option<ResearchActivity>, ProjectionError> {
         let Owned::Object(mut object) = into_owned(value) else {
             self.unsupported(pointer);
@@ -1028,9 +1001,7 @@ impl Decoder<'_> {
     }
 
     fn take_record_sets(
-        &mut self,
-        object: &mut Object,
-        parent: &str,
+        &mut self, object: &mut Object, parent: &str,
     ) -> Result<Vec<ResearchRecordSet>, ProjectionError> {
         let term = self
             .config
@@ -1061,9 +1032,7 @@ impl Decoder<'_> {
     }
 
     fn take_activity_agents(
-        &mut self,
-        object: &mut Object,
-        parent: &str,
+        &mut self, object: &mut Object, parent: &str,
     ) -> Result<Vec<String>, ProjectionError> {
         let term = self
             .config
@@ -1098,9 +1067,7 @@ impl Decoder<'_> {
     }
 
     fn decode_record_set(
-        &mut self,
-        value: Value,
-        pointer: &str,
+        &mut self, value: Value, pointer: &str,
     ) -> Result<Option<ResearchRecordSet>, ProjectionError> {
         let Owned::Object(mut object) = into_owned(value) else {
             self.unsupported(pointer);
@@ -1127,9 +1094,7 @@ impl Decoder<'_> {
     }
 
     fn take_fields(
-        &mut self,
-        object: &mut Object,
-        parent: &str,
+        &mut self, object: &mut Object, parent: &str,
     ) -> Result<Vec<ResearchField>, ProjectionError> {
         let term = self
             .config
@@ -1160,9 +1125,7 @@ impl Decoder<'_> {
     }
 
     fn decode_field(
-        &mut self,
-        value: Value,
-        pointer: &str,
+        &mut self, value: Value, pointer: &str,
     ) -> Result<Option<ResearchField>, ProjectionError> {
         let Owned::Object(mut object) = into_owned(value) else {
             self.unsupported(pointer);
@@ -1185,10 +1148,7 @@ impl Decoder<'_> {
     }
 
     fn take_references(
-        &mut self,
-        object: &mut Object,
-        role: CroissantRole,
-        parent: &str,
+        &mut self, object: &mut Object, role: CroissantRole, parent: &str,
     ) -> Result<Vec<String>, ProjectionError> {
         let term = self.config.vocabulary().term(role).to_owned();
         let mut references = Vec::new();
@@ -1233,9 +1193,7 @@ impl Decoder<'_> {
     }
 
     fn take_paths(
-        &mut self,
-        object: &mut Object,
-        parent: &str,
+        &mut self, object: &mut Object, parent: &str,
     ) -> Result<Vec<String>, ProjectionError> {
         let term = self
             .config
@@ -1275,9 +1233,7 @@ impl Decoder<'_> {
     }
 
     fn take_sha256(
-        &mut self,
-        object: &mut Object,
-        parent: &str,
+        &mut self, object: &mut Object, parent: &str,
     ) -> Result<Vec<ResearchChecksum>, ProjectionError> {
         let values = self.take_texts(object, CroissantRole::Sha256, parent)?;
         let xsd_string = self
@@ -1298,10 +1254,7 @@ impl Decoder<'_> {
     }
 
     fn required_entity_id(
-        &mut self,
-        object: &mut Object,
-        parent: &str,
-        allow_relative: bool,
+        &mut self, object: &mut Object, parent: &str, allow_relative: bool,
     ) -> Result<String, ProjectionError> {
         let pointer = json_pointer(parent, "@id");
         let Some(Owned::String(id)) = object.remove("@id").map(into_owned) else {
@@ -1314,10 +1267,7 @@ impl Decoder<'_> {
     }
 
     fn resolve_native_id(
-        &mut self,
-        id: &str,
-        pointer: &str,
-        allow_relative: bool,
+        &mut self, id: &str, pointer: &str, allow_relative: bool,
     ) -> Result<String, ProjectionError> {
         if validate_absolute_iri(id, "Croissant entity identity").is_ok() {
             return Ok(id.to_owned());
@@ -1334,10 +1284,7 @@ impl Decoder<'_> {
     }
 
     fn require_type(
-        &mut self,
-        object: &mut Object,
-        parent: &str,
-        expected: &str,
+        &mut self, object: &mut Object, parent: &str, expected: &str,
     ) -> Result<(), ProjectionError> {
         let Some(value) = object.remove("@type") else {
             return Err(ProjectionError::integrity(format!(
@@ -1349,10 +1296,7 @@ impl Decoder<'_> {
     }
 
     fn optional_type(
-        &mut self,
-        object: &mut Object,
-        parent: &str,
-        expected: &str,
+        &mut self, object: &mut Object, parent: &str, expected: &str,
     ) -> Result<(), ProjectionError> {
         let Some(value) = object.remove("@type") else {
             return Ok(());
@@ -1361,10 +1305,7 @@ impl Decoder<'_> {
     }
 
     fn validate_type(
-        &mut self,
-        value: Value,
-        parent: &str,
-        expected: &str,
+        &mut self, value: Value, parent: &str, expected: &str,
     ) -> Result<(), ProjectionError> {
         let values = match into_owned(value) {
             Owned::String(value) => vec![value],

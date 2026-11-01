@@ -250,9 +250,7 @@ impl ModuleExtraction {
 /// # Ok::<(), purrdf_lex::allocation::StorageError>(())
 /// ```
 pub fn extract_module(
-    ds: &RdfDataset,
-    signature: &[TermValue],
-    method: ModuleMethod,
+    ds: &RdfDataset, signature: &[TermValue], method: ModuleMethod,
 ) -> Result<ModuleExtraction, EntailError> {
     extract(ds, signature, method, false)
 }
@@ -295,19 +293,14 @@ pub fn extract_module(
 /// # Ok::<(), purrdf_lex::allocation::StorageError>(())
 /// ```
 pub fn extract_module_with_proofs(
-    ds: &RdfDataset,
-    signature: &[TermValue],
-    method: ModuleMethod,
+    ds: &RdfDataset, signature: &[TermValue], method: ModuleMethod,
 ) -> Result<ModuleExtraction, EntailError> {
     extract(ds, signature, method, true)
 }
 
 /// The shared body of the two entry points; `proofs` is whether to record a proof term.
 fn extract(
-    ds: &RdfDataset,
-    signature: &[TermValue],
-    method: ModuleMethod,
-    proofs: bool,
+    ds: &RdfDataset, signature: &[TermValue], method: ModuleMethod, proofs: bool,
 ) -> Result<ModuleExtraction, EntailError> {
     let mut interner = Interner::default();
     let v = Vocab::intern(&mut interner);
@@ -628,12 +621,7 @@ impl Extraction {
 
     /// Classify one named-subject triple under `notion`.
     fn classify(
-        &self,
-        context: &Context<'_>,
-        notion: Notion,
-        subject: u32,
-        predicate: u32,
-        object: u32,
+        &self, context: &Context<'_>, notion: Notion, subject: u32, predicate: u32, object: u32,
     ) -> Decision {
         let v = context.vocab;
         let in_sigma = |id: u32| self.sigma.contains(&id);

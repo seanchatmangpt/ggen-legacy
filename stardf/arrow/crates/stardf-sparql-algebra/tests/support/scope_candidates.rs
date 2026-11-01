@@ -298,10 +298,7 @@ pub fn fixture() -> Evidence {
 /// multiplicity and witness-junction dimensions. Source-site labels are assigned
 /// before any transformation and retained by all copies of a repeated arm.
 pub fn generated_fixture(
-    branches: u32,
-    width: u32,
-    junctions: u32,
-    duplicate_arms: u32,
+    branches: u32, width: u32, junctions: u32, duplicate_arms: u32,
 ) -> Evidence {
     assert!(branches >= 2 && width > 0 && junctions > 0);
     let mut alternatives = Vec::new();
@@ -421,12 +418,7 @@ fn site(triple: &TriplePattern) -> Result<u32, Diagnostic> {
 }
 
 fn atom(
-    term: &TermPattern,
-    site: u32,
-    object: bool,
-    region: u32,
-    blank_scope: u32,
-    template: bool,
+    term: &TermPattern, site: u32, object: bool, region: u32, blank_scope: u32, template: bool,
     declarations: &BTreeMap<Identity, Binder>,
 ) -> Option<Atom> {
     let identity = match term {
@@ -455,11 +447,7 @@ fn atom(
 }
 
 fn triple_summary(
-    triple: &TriplePattern,
-    region: u32,
-    blank_scope: u32,
-    template: bool,
-    evidence: &Evidence,
+    triple: &TriplePattern, region: u32, blank_scope: u32, template: bool, evidence: &Evidence,
 ) -> Summary {
     let mut out = Summary::default();
     if matches!(triple.subject, TermPattern::Triple(_))
@@ -894,9 +882,7 @@ impl Contract {
 
     /// Check actual output with an explicit one-to-one identity correspondence.
     pub fn check(
-        &self,
-        evidence: &Evidence,
-        correspondence: &BTreeMap<Identity, Identity>,
+        &self, evidence: &Evidence, correspondence: &BTreeMap<Identity, Identity>,
     ) -> Result<(), Diagnostic> {
         existing(evidence)?;
         let mut after = summary(evidence);
@@ -1158,11 +1144,7 @@ pub struct Case {
 }
 
 fn case(
-    name: &'static str,
-    before: &Evidence,
-    after: Evidence,
-    legal: bool,
-    claim: &'static str,
+    name: &'static str, before: &Evidence, after: Evidence, legal: bool, claim: &'static str,
 ) -> Case {
     Case {
         name,

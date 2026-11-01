@@ -58,9 +58,7 @@ impl MetricSourceDomain {
     /// # Errors
     /// Refuses invalid extents and limits before exact comparisons.
     pub fn new_in_budget(
-        lower: [Rat; 2],
-        upper: [Rat; 2],
-        budget: &mut crate::PreparationBudget,
+        lower: [Rat; 2], upper: [Rat; 2], budget: &mut crate::PreparationBudget,
     ) -> Result<Self, GeoError> {
         Self::new_in_budget_observed(lower, upper, budget, None)
     }
@@ -71,18 +69,14 @@ impl MetricSourceDomain {
     /// # Errors
     /// Preserves invalid extents, cancellation, work and physical refusal.
     pub fn new_in_budget_metered(
-        lower: [Rat; 2],
-        upper: [Rat; 2],
-        budget: &mut crate::PreparationBudget,
+        lower: [Rat; 2], upper: [Rat; 2], budget: &mut crate::PreparationBudget,
         observer: &mut dyn crate::MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::new_in_budget_observed(lower, upper, budget, Some(observer))
     }
 
     fn new_in_budget_observed(
-        lower: [Rat; 2],
-        upper: [Rat; 2],
-        budget: &mut crate::PreparationBudget,
+        lower: [Rat; 2], upper: [Rat; 2], budget: &mut crate::PreparationBudget,
         observer: Option<&mut dyn crate::MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         let operands = [&lower[0], &lower[1], &upper[0], &upper[1]];
@@ -130,9 +124,7 @@ impl MetricSourceDomain {
     }
 
     fn contains_pair_with(
-        &self,
-        point: [&Rat; 2],
-        values: &crate::numerical::ExactValues<'_>,
+        &self, point: [&Rat; 2], values: &crate::numerical::ExactValues<'_>,
     ) -> Result<bool, purrdf_xsd::integer::LimbScratchError> {
         for axis in 0..2 {
             if !values.compare(&self.lower[axis], point[axis])?.is_le()
@@ -144,10 +136,7 @@ impl MetricSourceDomain {
         Ok(true)
     }
     fn contains_math(
-        &self,
-        point: [&Rat; 2],
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, point: [&Rat; 2], math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<bool, MathError> {
         crate::numerical::math_exact_rationals(
             Op::RationalCompare,
@@ -201,20 +190,14 @@ crate::context::retained::native_detached_fields!(Polynomial2dInverse {
 });
 impl Polynomial2dInverse {
     pub(super) fn parameters(
-        &self,
-        fields: &mut (impl ParameterSink + ?Sized),
+        &self, fields: &mut (impl ParameterSink + ?Sized),
     ) -> Result<(), GeoError> {
         self.polynomial.parameters(fields)?;
         self.source_domain.parameters(fields)
     }
     pub(super) fn evaluate(
-        &self,
-        point: &OperationPoint,
-        coordinates: &[FixedInterval],
-        exact: bool,
-        limits: OperationSolverLimits,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, point: &OperationPoint, coordinates: &[FixedInterval], exact: bool,
+        limits: OperationSolverLimits, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<OperationCoordinates, MathError> {
         let target = [coordinates[0].clone(), coordinates[1].clone()];
         if self.polynomial.degree() <= 1
@@ -324,10 +307,7 @@ impl Polynomial2dInverse {
         }
     }
     pub(super) fn certify(
-        &self,
-        target: &[FixedInterval],
-        output: &[Rat],
-        math: &mut CoordinateMath,
+        &self, target: &[FixedInterval], output: &[Rat], math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<(), MathError> {
         let inside = self
@@ -366,9 +346,7 @@ crate::context::retained::native_detached_fields!(BilinearGridInverse {
 });
 impl BilinearGridInverse {
     pub(super) fn validate_with(
-        &self,
-        values: &crate::numerical::ExactValues<'_>,
-        progress: &mut WorkProgress<'_>,
+        &self, values: &crate::numerical::ExactValues<'_>, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         let (columns, rows) = self.grid.dimensions();
         let (_, upper) = self
@@ -405,20 +383,14 @@ impl BilinearGridInverse {
         Ok(())
     }
     pub(super) fn parameters(
-        &self,
-        fields: &mut (impl ParameterSink + ?Sized),
+        &self, fields: &mut (impl ParameterSink + ?Sized),
     ) -> Result<(), GeoError> {
         self.grid.parameters(fields)?;
         self.source_domain.parameters(fields)
     }
     pub(super) fn evaluate(
-        &self,
-        point: &OperationPoint,
-        coordinates: &[FixedInterval],
-        exact: bool,
-        limits: OperationSolverLimits,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, point: &OperationPoint, coordinates: &[FixedInterval], exact: bool,
+        limits: OperationSolverLimits, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<OperationCoordinates, MathError> {
         let target = [coordinates[0].clone(), coordinates[1].clone()];
         let target_exact = exact_target(point, &target, exact, math, progress)?;
@@ -608,10 +580,7 @@ impl BilinearGridInverse {
         }
     }
     pub(super) fn certify(
-        &self,
-        target: &[FixedInterval],
-        output: &[Rat],
-        math: &mut CoordinateMath,
+        &self, target: &[FixedInterval], output: &[Rat], math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<(), MathError> {
         let point = OperationPoint {
@@ -647,10 +616,7 @@ fn isolation_limits(limits: OperationSolverLimits) -> RootIsolationLimits {
     }
 }
 fn exact_target(
-    point: &OperationPoint,
-    target: &RootBox2,
-    exact: bool,
-    math: &mut CoordinateMath,
+    point: &OperationPoint, target: &RootBox2, exact: bool, math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<[Rat; 2]>, MathError> {
     if exact {
@@ -677,8 +643,7 @@ fn exact_target(
     }
 }
 fn admit_rationals<'a>(
-    values: impl Iterator<Item = &'a Rat>,
-    math: &mut CoordinateMath,
+    values: impl Iterator<Item = &'a Rat>, math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<(), MathError> {
     for value in values {
@@ -687,11 +652,7 @@ fn admit_rationals<'a>(
     Ok(())
 }
 fn binary(
-    operation: Op,
-    a: &Rat,
-    b: &Rat,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    operation: Op, a: &Rat, b: &Rat, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     evaluate: impl FnOnce(
         &crate::numerical::ExactValues<'_>,
         &Rat,
@@ -703,9 +664,7 @@ fn binary(
     })
 }
 fn positive_quotient(
-    values: &crate::numerical::ExactValues<'_>,
-    a: &Rat,
-    b: &Rat,
+    values: &crate::numerical::ExactValues<'_>, a: &Rat, b: &Rat,
 ) -> Result<Rat, purrdf_xsd::integer::LimbScratchError> {
     Ok(values
         .divide(a, b)?
@@ -718,11 +677,8 @@ type AffineModel2 = ([[Rat; 2]; 2], [Rat; 2]);
     reason = "ExactValues binds an arena lifetime per callback; its method item cannot represent the required higher-ranked native callback"
 )]
 fn grid_affine(
-    corners: &[&super::GridNode; 4],
-    origin: &[Rat; 2],
-    spacing: &[Rat; 2],
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    corners: &[&super::GridNode; 4], origin: &[Rat; 2], spacing: &[Rat; 2],
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<Option<AffineModel2>, MathError> {
     let mut matrix = [[Rat::one(), Rat::zero()], [Rat::zero(), Rat::one()]];
     let mut constant = [Rat::zero(), Rat::zero()];
@@ -834,10 +790,7 @@ fn grid_affine(
     Ok(Some((matrix, constant)))
 }
 fn solve_affine(
-    matrix: &[[Rat; 2]; 2],
-    constant: &[Rat; 2],
-    target: &[Rat; 2],
-    math: &mut CoordinateMath,
+    matrix: &[[Rat; 2]; 2], constant: &[Rat; 2], target: &[Rat; 2], math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<[Rat; 2]>, MathError> {
     let left = exact_op(
@@ -910,9 +863,7 @@ fn solve_affine(
 }
 
 fn image_with_height(
-    root: &[Rat; 2],
-    coordinates: &[FixedInterval],
-    math: &mut CoordinateMath,
+    root: &[Rat; 2], coordinates: &[FixedInterval], math: &mut CoordinateMath,
 ) -> Result<OperationCoordinates, MathError> {
     let mut image: OperationCoordinates = purrdf_core::smallvec![
         fixed_from_rat(&root[0], math)?,
@@ -924,8 +875,7 @@ fn image_with_height(
     Ok(image)
 }
 fn finish_roots(
-    mut roots: impl ExactSizeIterator<Item = RootBox2>,
-    coordinates: &[FixedInterval],
+    mut roots: impl ExactSizeIterator<Item = RootBox2>, coordinates: &[FixedInterval],
 ) -> Result<OperationCoordinates, MathError> {
     if roots.len() > 1 {
         return Err(MathError::AmbiguousRoots { roots: roots.len() });
@@ -940,10 +890,7 @@ fn finish_roots(
     Ok(image)
 }
 fn contains_exact_root(
-    roots: &[[Rat; 2]],
-    root: &[Rat; 2],
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    roots: &[[Rat; 2]], root: &[Rat; 2], math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, MathError> {
     for prior in roots {
         if crate::numerical::math_exact_rationals(
@@ -963,11 +910,8 @@ fn contains_exact_root(
     Ok(false)
 }
 fn retain_interval(
-    root: RootBox2,
-    roots: &mut RetainedBuilder<RootBox2>,
-    reserved: &mut usize,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    root: RootBox2, roots: &mut RetainedBuilder<RootBox2>, reserved: &mut usize,
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<(), MathError> {
     for previous in roots.iter() {
         if (0..2).all(|axis| {
@@ -1001,9 +945,7 @@ struct ModelSystem<'a, 'progress, 'observer> {
 impl RootSystem2 for ModelSystem<'_, '_, '_> {
     crate::numerical::native_root_storage!(cell);
     fn image(
-        &mut self,
-        domain: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, domain: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<RootBox2, MathError> {
         let mut progress = self.progress.borrow_mut();
         let image = match self.model {
@@ -1018,9 +960,7 @@ impl RootSystem2 for ModelSystem<'_, '_, '_> {
         ])
     }
     fn jacobian(
-        &mut self,
-        domain: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, domain: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<RootJacobian2, MathError> {
         let mut progress = self.progress.borrow_mut();
         match self.model {
@@ -1033,9 +973,7 @@ impl RootSystem2 for ModelSystem<'_, '_, '_> {
         }
     }
     fn complete(
-        &mut self,
-        enclosure: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, enclosure: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<bool, MathError> {
         for (axis, coordinate) in enclosure.iter().enumerate() {
             let (lower, upper) = exact_bounds_in(coordinate, math)?;
@@ -1084,10 +1022,7 @@ impl RootSystem2 for ModelSystem<'_, '_, '_> {
 }
 
 fn certify(
-    inside: bool,
-    target: &[FixedInterval],
-    output: &[Rat],
-    math: &mut CoordinateMath,
+    inside: bool, target: &[FixedInterval], output: &[Rat], math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
     mut forward: impl FnMut(
         &[FixedInterval],

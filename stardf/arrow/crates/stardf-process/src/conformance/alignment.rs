@@ -75,10 +75,7 @@ pub struct AlignmentResult {
 /// [`ProcessError::AlignmentBudgetExceeded`] past `max_iterations`, or
 /// [`ProcessError::NoAlignment`] when the open set drains.
 pub fn align(
-    net: &PetriNet,
-    activities: &[&str],
-    costs: &AlignmentCosts,
-    max_iterations: u64,
+    net: &PetriNet, activities: &[&str], costs: &AlignmentCosts, max_iterations: u64,
 ) -> Result<AlignmentResult, ProcessError> {
     let initial: Vec<u32> = net.initial().to_vec();
     let mut open: BinaryHeap<Reverse<(u64, u64, usize, Vec<u32>, Vec<Move>)>> = BinaryHeap::new();

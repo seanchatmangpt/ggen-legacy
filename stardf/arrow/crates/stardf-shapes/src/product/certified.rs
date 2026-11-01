@@ -115,10 +115,7 @@ impl CertifiedParts {
     /// [`ProductDimension::ClassCatalog`] when the carried analysis is not the one
     /// the identity pins, or the installation refusals [`install`] reports.
     pub(super) fn from_admitted(
-        declared: &Identity,
-        mut shapes: Shapes,
-        host: &HostBindings<'_>,
-        classes: ClassCatalog,
+        declared: &Identity, mut shapes: Shapes, host: &HostBindings<'_>, classes: ClassCatalog,
         model: &[u8],
     ) -> Result<Self, CompleteValidationError> {
         install(&mut shapes, host)?;
@@ -177,9 +174,7 @@ impl CertifiedParts {
     ///
     /// The installation refusals [`install`] reports.
     pub(super) fn from_rebuilt(
-        declared: &Identity,
-        mut shapes: Shapes,
-        host: &HostBindings<'_>,
+        declared: &Identity, mut shapes: Shapes, host: &HostBindings<'_>,
     ) -> Result<Self, CompleteValidationError> {
         install(&mut shapes, host)?;
         Ok(Self {
@@ -259,15 +254,13 @@ fn install(shapes: &mut Shapes, host: &HostBindings<'_>) -> Result<(), CompleteV
 /// declaration walk over `shapes` refuses, or when the carried shapes dataset no
 /// longer re-parses as the shapes graph it claims to be.
 pub(super) fn assemble_functions(
-    shapes: &Shapes,
-    host: &HostBindings<'_>,
+    shapes: &Shapes, host: &HostBindings<'_>,
 ) -> Result<UserFunctionRegistry, ShapesProductError> {
     assemble_functions_request(shapes, host).map_err(CompleteValidationError::into_product)
 }
 
 fn assemble_functions_request(
-    shapes: &Shapes,
-    host: &HostBindings<'_>,
+    shapes: &Shapes, host: &HostBindings<'_>,
 ) -> Result<UserFunctionRegistry, CompleteValidationError> {
     let mut registry = host.functions().clone();
     let native_list = crate::shapes::register_declared_sparql_functions(
@@ -333,8 +326,7 @@ fn assemble_functions_request(
 /// [`ProductDimension::UnsupportedCapability`] when the populations differ;
 /// [`ProductDimension::FunctionRegistry`] when a registry cannot be fingerprinted.
 pub(super) fn verify_declared_functions(
-    parsed: &UserFunctionRegistry,
-    assembled: &UserFunctionRegistry,
+    parsed: &UserFunctionRegistry, assembled: &UserFunctionRegistry,
 ) -> Result<(), ShapesProductError> {
     let want = declared_fingerprint(parsed)?;
     let got = declared_fingerprint(assembled)?;

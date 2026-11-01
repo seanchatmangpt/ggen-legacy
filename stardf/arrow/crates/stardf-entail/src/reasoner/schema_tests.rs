@@ -50,12 +50,7 @@ impl Fixture {
         individual
     }
     pub(crate) fn bounds(
-        &mut self,
-        class: TermId,
-        role: TermId,
-        filler: TermId,
-        count: u32,
-        minimum: bool,
+        &mut self, class: TermId, role: TermId, filler: TermId, count: u32, minimum: bool,
         data: bool,
     ) {
         let restriction = self.blank();
@@ -127,9 +122,7 @@ pub(crate) fn term(local: &str) -> TermValue {
 }
 
 pub(crate) fn shared_schema(
-    restrictions: usize,
-    instances: usize,
-    contradictory: bool,
+    restrictions: usize, instances: usize, contradictory: bool,
 ) -> Arc<RdfDataset> {
     let mut fixture = Fixture::default();
     let class = fixture.name("A");

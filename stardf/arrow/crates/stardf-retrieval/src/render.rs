@@ -240,8 +240,7 @@ pub(crate) fn candidate_lexical(value: &TermValue) -> Result<String, RenderError
 /// Both the nested traversal spill and every destination growth are admitted
 /// before allocation; publication retains that same buffer and admission.
 pub(crate) fn candidate_lexical_admitted(
-    value: &TermValue,
-    workspace: &WorkspaceCapability,
+    value: &TermValue, workspace: &WorkspaceCapability,
 ) -> Result<purrdf_lex::allocation::SharedText, EvalError> {
     workspace.authored_text_with(|memory| {
         let mut out = String::new();
@@ -373,11 +372,8 @@ fn write_leaf(out: &mut (impl TextOut + ?Sized), value: &TermValue) -> Result<()
 /// [`term_syntax::write_literal`]'s canonical spelling, after refusing what no
 /// SPARQL constant can carry.
 fn write_literal(
-    lexical_form: &str,
-    datatype: &str,
-    language: Option<&str>,
-    direction: Option<RdfTextDirection>,
-    out: &mut (impl TextOut + ?Sized),
+    lexical_form: &str, datatype: &str, language: Option<&str>,
+    direction: Option<RdfTextDirection>, out: &mut (impl TextOut + ?Sized),
 ) -> Result<(), RenderError> {
     if let Some(problem) = literal_problem(lexical_form, language, direction) {
         return Err(match problem {
@@ -417,9 +413,7 @@ impl core::fmt::Display for LiteralProblem<'_> {
 }
 
 fn literal_problem<'a>(
-    lexical_form: &'a str,
-    language: Option<&'a str>,
-    direction: Option<RdfTextDirection>,
+    lexical_form: &'a str, language: Option<&'a str>, direction: Option<RdfTextDirection>,
 ) -> Option<LiteralProblem<'a>> {
     if language.is_none() && direction.is_some() {
         Some(LiteralProblem::Direction(lexical_form))
@@ -475,8 +469,7 @@ pub(crate) fn decode_term(text: &str) -> Result<TermValue, String> {
 
 /// Decode with admission preceding every lexical, traversal and box allocation.
 pub(crate) fn decode_term_admitted(
-    text: &str,
-    workspace: &WorkspaceCapability,
+    text: &str, workspace: &WorkspaceCapability,
 ) -> Result<purrdf_sparql_eval::WorkspaceTerm, EvalError> {
     workspace.authored_term_with(|memory| {
         let mut cursor = Cursor::new(text, memory, workspace);
@@ -1156,8 +1149,7 @@ mod tests {
     ];
 
     fn resolution(
-        separation: crate::MonotoneDepth,
-        rows_materialised: Option<u64>,
+        separation: crate::MonotoneDepth, rows_materialised: Option<u64>,
     ) -> crate::StratumResolution {
         crate::StratumResolution {
             rank_law: crate::RankLaw::Ordinal,
@@ -1234,9 +1226,7 @@ mod term_walk_tests {
     }
 
     fn reference_write(
-        value: &TermValue,
-        out: &mut String,
-        blanks: bool,
+        value: &TermValue, out: &mut String, blanks: bool,
     ) -> Result<(), RenderError> {
         match value {
             TermValue::Triple { s, p, o } => {

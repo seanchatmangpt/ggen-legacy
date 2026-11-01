@@ -192,11 +192,7 @@ fn next_count(min: Count, count: u64) -> u64 {
 
 /// [`decide`] for every stored form of a count.
 fn decide_count(
-    min: Count,
-    max: Option<Count>,
-    span: u64,
-    count: u64,
-    stalled: bool,
+    min: Count, max: Option<Count>, span: u64, count: u64, stalled: bool,
 ) -> (bool, bool) {
     if min != Count::AboveU64 {
         return decide(min, max, count, stalled);
@@ -288,9 +284,7 @@ pub(super) fn node_properties(node: &Node, child: impl Fn(usize) -> (bool, bool)
 }
 
 pub(super) fn analyze(
-    nodes: &[Node],
-    root: usize,
-    budget: &mut Budget<'_>,
+    nodes: &[Node], root: usize, budget: &mut Budget<'_>,
 ) -> Result<Links, Error> {
     let count = nodes.len();
     super::Refusal::u32_representation(Resource::ProgramNodes, count as u128)?;
@@ -495,10 +489,7 @@ const SLOT_CELLS: u128 = 2;
 /// Grow `vec` to hold `needed` elements, admitting the whole prospective live
 /// storage before the allocation. Capacity is retained, so it stays admitted.
 pub(super) fn reserve<T>(
-    ctx: &mut Ctx<'_>,
-    vec: &mut Vec<T>,
-    needed: usize,
-    cells: u128,
+    ctx: &mut Ctx<'_>, vec: &mut Vec<T>, needed: usize, cells: u128,
 ) -> Result<(), Error> {
     if needed <= vec.capacity() {
         return Ok(());
@@ -1199,12 +1190,7 @@ impl<'a> Pike<'a> {
     /// count: the highest that can is found by doubling and halving its
     /// distance from the minimum, probing each iteration without parking.
     fn posts(
-        &mut self,
-        repeat: usize,
-        count: u64,
-        level: u32,
-        position: usize,
-        list: &mut Vec<u64>,
+        &mut self, repeat: usize, count: u64, level: u32, position: usize, list: &mut Vec<u64>,
     ) -> Result<(), Error> {
         let Node::Repeat { min, .. } = self.ctx.program.nodes[repeat] else {
             unreachable!("only a repetition iterates");
@@ -1286,12 +1272,7 @@ impl<'a> Pike<'a> {
     /// Whether the iteration of `repeat` that begins here with the stored
     /// `count` parks a thread that can complete a match.
     fn probe_iteration(
-        &mut self,
-        repeat: usize,
-        count: u64,
-        level: u32,
-        position: usize,
-        list: &mut Vec<u64>,
+        &mut self, repeat: usize, count: u64, level: u32, position: usize, list: &mut Vec<u64>,
     ) -> Result<bool, Error> {
         let cell = self.ctx.program.links.nodes[repeat].counters as usize;
         let (old, saved_level) = (self.scratch[cell], self.level);
@@ -1318,12 +1299,7 @@ impl<'a> Pike<'a> {
     }
 
     fn probe_run(
-        &mut self,
-        repeat: usize,
-        count: u64,
-        level: u32,
-        position: usize,
-        list: &mut Vec<u64>,
+        &mut self, repeat: usize, count: u64, level: u32, position: usize, list: &mut Vec<u64>,
     ) -> Result<(), Error> {
         self.prepare_probe()?;
         self.advance()?;
@@ -1432,11 +1408,7 @@ impl<'a> Pike<'a> {
     /// Advance every parked thread over `ch`, in priority order, into the
     /// list for the position `next`.
     fn step(
-        &mut self,
-        ch: char,
-        next: usize,
-        from: &[u64],
-        into: &mut Vec<u64>,
+        &mut self, ch: char, next: usize, from: &[u64], into: &mut Vec<u64>,
     ) -> Result<(), Error> {
         let program = self.ctx.program;
         for record in from.chunks_exact(self.stride) {
@@ -1501,10 +1473,7 @@ impl<'a> Pike<'a> {
     /// Run every admissible start from `position` on, as one pass over the
     /// input, until the best match is final or no thread is left.
     fn search(
-        &mut self,
-        mut position: usize,
-        current: &mut Vec<u64>,
-        next: &mut Vec<u64>,
+        &mut self, mut position: usize, current: &mut Vec<u64>, next: &mut Vec<u64>,
     ) -> Result<(), Error> {
         self.advance()?;
         let input = self.ctx.input;
@@ -1557,10 +1526,7 @@ impl<'a> Pike<'a> {
 
     /// Walk the one start `position` until its match is complete.
     fn anchored(
-        &mut self,
-        mut position: usize,
-        current: &mut Vec<u64>,
-        next: &mut Vec<u64>,
+        &mut self, mut position: usize, current: &mut Vec<u64>, next: &mut Vec<u64>,
     ) -> Result<(), Error> {
         self.advance()?;
         self.inject(position, current)?;
@@ -1711,12 +1677,7 @@ impl<'a> Pike<'a> {
     /// state `target`, or completes the match, setting the capture cells of
     /// `start..start + len` to `after`.
     fn replay(
-        &mut self,
-        current: &mut Vec<u64>,
-        target: u32,
-        start: u32,
-        len: u32,
-        after: usize,
+        &mut self, current: &mut Vec<u64>, target: u32, start: u32, len: u32, after: usize,
     ) -> Result<(), Error> {
         let (start, len) = (start as usize, len as usize);
         // The step that found the move covers its own cells; only capture
@@ -1745,11 +1706,7 @@ impl<'a> Pike<'a> {
     /// Remember the step just taken from the thread in `previous`: the
     /// control state it parked in `parked`, or the match it completed.
     fn learn(
-        &mut self,
-        key: [u64; 3],
-        previous: &[u64],
-        parked: &[u64],
-        after: usize,
+        &mut self, key: [u64; 3], previous: &[u64], parked: &[u64], after: usize,
     ) -> Result<Option<u32>, Error> {
         let captures = 1 + self.counters;
         let cleared = self.moves.cleared;

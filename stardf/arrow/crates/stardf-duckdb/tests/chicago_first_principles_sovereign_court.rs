@@ -372,7 +372,7 @@ fn test_section_4_canonical_arrow_ipc_and_mermaid_derivation_receipt() {
 
     let header_bytes = header.to_bytes();
     assert_eq!(header_bytes.len(), 128);
-    assert_eq!(core::mem::align_of::<ArrowEgressHeader>(), 64);
+    assert_eq!(align_of::<ArrowEgressHeader>(), 64);
 
     let mut full_egress_stream = Vec::new();
     full_egress_stream.extend_from_slice(&header_bytes);

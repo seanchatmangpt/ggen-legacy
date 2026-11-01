@@ -308,6 +308,12 @@ pub struct FixedTopK8 {
 
 const _: () = assert!(size_of::<FixedTopK8>() == 32);
 
+impl Default for FixedTopK8 {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl FixedTopK8 {
     /// An empty queue: all lanes at the `u32::MAX` sentinel.
     // from bcinr patterns/bitonic_pq.rs:37-41 (1e92b213)
@@ -352,7 +358,11 @@ impl FixedTopK8 {
         let mask = 0u32.wrapping_sub((val != u32::MAX) as u32);
         self.data[0] = u32::MAX;
         self.data = bitonic_sort_8u32(self.data);
-        if mask == 0 { None } else { Some(val) }
+        if mask == 0 {
+            None
+        } else {
+            Some(val)
+        }
     }
 
     /// Number of live (non-sentinel) lanes: branchless fold

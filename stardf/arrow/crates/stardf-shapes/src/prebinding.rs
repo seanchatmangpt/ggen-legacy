@@ -184,9 +184,7 @@ pub(crate) fn check_construct(query: &Query, prebound: &[&str]) -> Result<(), St
 
 /// Build the actual purpose's potential bindings, then apply one dated policy.
 pub(crate) fn admit<'a>(
-    profile: ShaclProfile,
-    purpose: QueryPurpose,
-    query: &Query,
+    profile: ShaclProfile, purpose: QueryPurpose, query: &Query,
     parameters: impl ExactSizeIterator<Item = &'a str>,
 ) -> Result<(), AdmissionRefusal> {
     if !purpose.accepts(query) {
@@ -333,9 +331,7 @@ impl Violation {
 /// its BODY — nested `Project`s inside the body are subqueries. Shared by
 /// [`check_select`] and [`check_construct`].
 fn check_query_body(
-    pattern: &GraphPattern,
-    prebound: &[&str],
-    rules: Rules,
+    pattern: &GraphPattern, prebound: &[&str], rules: Rules,
 ) -> Result<(), Violation> {
     let mut node = pattern;
     loop {
@@ -442,10 +438,7 @@ fn check(root: Pending<'_>, prebound: &[&str], rules: Rules) -> Result<(), Viola
 /// A pattern node's own restrictions; its operands are queued, in written order, on
 /// `pending`.
 fn check_pattern_node<'a>(
-    pattern: &'a GraphPattern,
-    prebound: &[&str],
-    rules: Rules,
-    pending: &mut Vec<Pending<'a>>,
+    pattern: &'a GraphPattern, prebound: &[&str], rules: Rules, pending: &mut Vec<Pending<'a>>,
 ) -> Result<(), Violation> {
     match pattern {
         GraphPattern::Apply { .. } => {

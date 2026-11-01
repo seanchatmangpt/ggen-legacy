@@ -691,10 +691,7 @@ impl<'t> SrlParser<'t> {
     /// PropertyListNotEmptyPattern ::= ( VerbPath | Var ) ObjectListPattern ( ';' ( (
     /// VerbPath | Var ) ObjectListPattern )? )*`.
     fn property_list_not_empty(
-        &mut self,
-        ctx: Place,
-        subject: &PatternTerm,
-        out: &mut Vec<TriplePattern>,
+        &mut self, ctx: Place, subject: &PatternTerm, out: &mut Vec<TriplePattern>,
     ) -> Parse<()> {
         loop {
             let verb = self.verb(ctx)?;
@@ -807,11 +804,7 @@ impl<'t> SrlParser<'t> {
 
     /// `[30] ObjectListData ::= ObjectData ( ',' ObjectData )*` (and [52], [67]).
     fn object_list(
-        &mut self,
-        ctx: Place,
-        subject: &PatternTerm,
-        verb: &Verb,
-        out: &mut Vec<TriplePattern>,
+        &mut self, ctx: Place, subject: &PatternTerm, verb: &Verb, out: &mut Vec<TriplePattern>,
     ) -> Parse<()> {
         self.object(ctx, subject, verb, out)?;
         while self.eat(&Token::Comma) {
@@ -824,11 +817,7 @@ impl<'t> SrlParser<'t> {
     /// `[53] ObjectTemplate ::= GraphNodeTemplate AnnotationTemplate`,
     /// `[68] ObjectPattern ::= GraphNodePattern AnnotationPattern`.
     fn object(
-        &mut self,
-        ctx: Place,
-        subject: &PatternTerm,
-        verb: &Verb,
-        out: &mut Vec<TriplePattern>,
+        &mut self, ctx: Place, subject: &PatternTerm, verb: &Verb, out: &mut Vec<TriplePattern>,
     ) -> Parse<()> {
         let object = self.graph_node(ctx, out)?;
         let triple = match verb {
@@ -848,10 +837,7 @@ impl<'t> SrlParser<'t> {
 
     /// Expand `subject path object` into triple patterns.
     fn expand_path(
-        &mut self,
-        subject: PatternTerm,
-        path: &SrlPath,
-        object: PatternTerm,
+        &mut self, subject: PatternTerm, path: &SrlPath, object: PatternTerm,
         out: &mut Vec<TriplePattern>,
     ) {
         match path {
@@ -886,10 +872,7 @@ impl<'t> SrlParser<'t> {
     /// `r` fresh when not written; an annotation block holds triples about the reifier
     /// written just before it, or about a fresh reifier when none is.
     fn annotation(
-        &mut self,
-        ctx: Place,
-        triple: Option<&TriplePattern>,
-        out: &mut Vec<TriplePattern>,
+        &mut self, ctx: Place, triple: Option<&TriplePattern>, out: &mut Vec<TriplePattern>,
     ) -> Parse<()> {
         let mut reifier: Option<PatternTerm> = None;
         loop {
@@ -1026,9 +1009,7 @@ impl<'t> SrlParser<'t> {
     }
 
     fn reified_component(
-        &mut self,
-        ctx: Place,
-        out: &mut Vec<TriplePattern>,
+        &mut self, ctx: Place, out: &mut Vec<TriplePattern>,
     ) -> Parse<PatternTerm> {
         if self.at_reified_open() {
             return self.reified_triple(ctx, out);

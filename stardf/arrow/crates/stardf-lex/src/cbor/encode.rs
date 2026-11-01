@@ -151,8 +151,7 @@ fn canonical_key(key: &Value) -> io::Result<Vec<u8>> {
 /// The writer's error, or the refusal of a reserved simple value
 /// (24..=31) appearing as a key.
 fn sorted_entries<'v>(
-    entries: &'v [(Value, Value)],
-    excluded: &[&str],
+    entries: &'v [(Value, Value)], excluded: &[&str],
 ) -> io::Result<Vec<(Vec<u8>, &'v Value)>> {
     let mut keyed: Vec<(Vec<u8>, &Value)> = entries
         .iter()
@@ -362,9 +361,7 @@ pub fn canonical_into(value: &Value, out: &mut Vec<u8>) {
 /// The writer's error, or the refusal of a reserved simple value (24..=31)
 /// appearing as a key.
 pub fn write_canonical_map<W: Write + ?Sized>(
-    entries: &[(Value, Value)],
-    excluded: &[&str],
-    out: &mut W,
+    entries: &[(Value, Value)], excluded: &[&str], out: &mut W,
 ) -> io::Result<()> {
     let sorted = sorted_entries(entries, excluded)?;
     head::write_head(out, MAP, sorted.len() as u64)?;
@@ -394,6 +391,8 @@ pub fn encoded_len(value: &Value) -> usize {
 }
 
 #[cfg(test)]
+// Unused in this tree (the upstream testkit consumer is not carried); kept.
+#[allow(dead_code)]
 pub(super) fn bottom_up(value: &Value) -> Vec<u8> {
     canonical_bottom_up(value).expect("a test value is encodable")
 }

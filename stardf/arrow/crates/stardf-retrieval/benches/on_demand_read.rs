@@ -142,9 +142,7 @@ impl PropertyFunction for Producer {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -317,9 +315,7 @@ fn statistics(rows: u64) -> Cardinalities {
 
 /// The read `search` takes: every stratum on demand.
 fn on_demand(
-    registry: &PropertyFunctionRegistry<'static>,
-    statistics: &Cardinalities,
-    dataset: &RdfDataset,
+    registry: &PropertyFunctionRegistry<'static>, statistics: &Cardinalities, dataset: &RdfDataset,
 ) -> usize {
     let profile = profile();
     let env = AdmissionEnvironment {
@@ -342,9 +338,7 @@ fn on_demand(
 
 /// The same answer, read materialised: `execute` at the planned depths, then `fuse`.
 fn materialised(
-    registry: &PropertyFunctionRegistry<'static>,
-    statistics: &Cardinalities,
-    dataset: &RdfDataset,
+    registry: &PropertyFunctionRegistry<'static>, statistics: &Cardinalities, dataset: &RdfDataset,
 ) -> usize {
     let profile = profile();
     let env = AdmissionEnvironment {
@@ -492,11 +486,7 @@ fn embedding_space(rows: usize) -> EmbeddingSpace {
 /// Open one ranked invocation of `relation` from the seed at `k`, and pull `pulled`
 /// rows off it, skipping the first `skip`.
 fn pull_at(
-    relation: &EmbeddingKnnRelation,
-    seed: &TermValue,
-    k: usize,
-    skip: usize,
-    pulled: usize,
+    relation: &EmbeddingKnnRelation, seed: &TermValue, k: usize, skip: usize, pulled: usize,
 ) -> usize {
     let count = TermValue::typed_literal(k.to_string(), "http://www.w3.org/2001/XMLSchema#integer");
     let subject = [None];

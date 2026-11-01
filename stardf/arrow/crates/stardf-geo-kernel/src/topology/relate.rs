@@ -172,19 +172,13 @@ pub fn relate(a: &Geometry, b: &Geometry) -> IntersectionMatrix {
 /// Returns the first caller refusal, cancellation, physical allocation failure,
 /// checked layout overflow, or exhausted explicitly selected execution policy.
 pub fn relate_metered(
-    a: &Geometry,
-    b: &Geometry,
-    context: &mut MetricContext,
-    observer: &mut dyn MetricWorkObserver,
+    a: &Geometry, b: &Geometry, context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
 ) -> Result<IntersectionMatrix, GeoError> {
     relate_admitted(a, b, context, &mut WorkProgress::integer(Some(observer)))
 }
 
 pub(crate) fn relate_admitted(
-    a: &Geometry,
-    b: &Geometry,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    a: &Geometry, b: &Geometry, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<IntersectionMatrix, GeoError> {
     context.with_metadata(progress, |context, progress, retained| {
         relate_inner(
@@ -248,8 +242,7 @@ impl RelateWork for AdmittedWork<'_, '_> {
         mean_admitted(a, b, self.context, self.progress)
     }
     fn leaves<'a>(
-        &mut self,
-        root: &'a Geometry,
+        &mut self, root: &'a Geometry,
     ) -> Result<RetainedBuilder<&'a Geometry>, GeoError> {
         let mut values = RetainedBuilder::default();
         let context = &mut *self.context;
@@ -276,9 +269,7 @@ impl RelateWork for AdmittedWork<'_, '_> {
 }
 
 fn relate_inner<W: RelateWork>(
-    a: &Geometry,
-    b: &Geometry,
-    work: &mut W,
+    a: &Geometry, b: &Geometry, work: &mut W,
 ) -> Result<IntersectionMatrix, GeoError> {
     let mut matrix = IntersectionMatrix::new();
     matrix.set(Set::Exterior, Set::Exterior, Dim::Two);
@@ -379,12 +370,8 @@ fn relate_inner<W: RelateWork>(
 }
 
 fn classify_events<W: RelateWork>(
-    a: &Geometry,
-    b: &Geometry,
-    events: &[Coord],
-    matrix: &mut IntersectionMatrix,
-    point_targets: Option<PointTargets>,
-    work: &mut W,
+    a: &Geometry, b: &Geometry, events: &[Coord], matrix: &mut IntersectionMatrix,
+    point_targets: Option<PointTargets>, work: &mut W,
 ) -> Result<(), GeoError> {
     for point in events {
         if point_targets.is_some_and(|targets| targets.settled(matrix)) {
@@ -404,11 +391,7 @@ fn classify_events<W: RelateWork>(
 /// its vertices and isolated points remain seeds. Zero-dimensional events still
 /// use both actual locations and cannot include the singleton in its exterior.
 fn locate_positive<W: RelateWork>(
-    sample: &Coord,
-    a: &Geometry,
-    b: &Geometry,
-    point_targets: Option<PointTargets>,
-    work: &mut W,
+    sample: &Coord, a: &Geometry, b: &Geometry, point_targets: Option<PointTargets>, work: &mut W,
 ) -> Result<(Set, Set), GeoError> {
     match point_targets {
         Some(targets) if targets.transpose => Ok((work.locate(sample, a)?, Set::Exterior)),
@@ -422,8 +405,7 @@ fn locate_positive<W: RelateWork>(
 /// endpoint remains a noding seed. Reversed and coincident supports therefore
 /// introduce no new event or fragment witness.
 fn unique_edge_supports<'a, W: RelateWork>(
-    edges: &mut W::Array<(&'a Coord, &'a Coord)>,
-    work: &mut W,
+    edges: &mut W::Array<(&'a Coord, &'a Coord)>, work: &mut W,
 ) -> Result<(), GeoError> {
     for edge in edges.iter_mut() {
         if work.compare_coordinate(edge.0, edge.1)?.is_gt() {
@@ -506,9 +488,7 @@ fn area_present(leaves: &[&Geometry]) -> bool {
 /// Borrow source coordinates: every predicate still projects to XY at its
 /// original arithmetic home, so Z/M limbs need not be copied into edge records.
 fn collect_edges<'a, W: RelateWork>(
-    geometry: &'a Geometry,
-    out: &mut W::Array<(&'a Coord, &'a Coord)>,
-    work: &mut W,
+    geometry: &'a Geometry, out: &mut W::Array<(&'a Coord, &'a Coord)>, work: &mut W,
 ) -> Result<(), GeoError> {
     match geometry.body() {
         GeometryBody::LineString(coords) => push_chain(coords, out, work)?,
@@ -531,9 +511,7 @@ fn collect_edges<'a, W: RelateWork>(
 }
 
 fn push_chain<'a, W: RelateWork>(
-    coords: &'a CoordSeq,
-    out: &mut W::Array<(&'a Coord, &'a Coord)>,
-    work: &mut W,
+    coords: &'a CoordSeq, out: &mut W::Array<(&'a Coord, &'a Coord)>, work: &mut W,
 ) -> Result<(), GeoError> {
     for pair in coords.windows(2) {
         work.push(out, (&pair[0], &pair[1]))?;
@@ -565,12 +543,8 @@ impl AreaTargets {
 }
 
 fn scan_for_areas<W: RelateWork>(
-    geometries: (&Geometry, &Geometry),
-    events: &[Coord],
-    edges: &[(&Coord, &Coord)],
-    matrix: &mut IntersectionMatrix,
-    targets: AreaTargets,
-    point_targets: Option<PointTargets>,
+    geometries: (&Geometry, &Geometry), events: &[Coord], edges: &[(&Coord, &Coord)],
+    matrix: &mut IntersectionMatrix, targets: AreaTargets, point_targets: Option<PointTargets>,
     work: &mut W,
 ) -> Result<(), GeoError> {
     let (a, b) = geometries;
@@ -629,8 +603,7 @@ fn sort_rationals<W: RelateWork>(values: &mut W::Array<Rat>, work: &mut W) -> Re
 }
 
 fn band_boundaries<W: RelateWork>(
-    events: &[Coord],
-    work: &mut W,
+    events: &[Coord], work: &mut W,
 ) -> Result<Option<W::Array<Rat>>, GeoError> {
     let mut ordinates = W::Array::default();
     for point in events {
@@ -651,9 +624,7 @@ fn band_boundaries<W: RelateWork>(
 }
 
 fn sorted_crossings<W: RelateWork>(
-    edges: &[(&Coord, &Coord)],
-    height: &Rat,
-    work: &mut W,
+    edges: &[(&Coord, &Coord)], height: &Rat, work: &mut W,
 ) -> Result<W::Array<Rat>, GeoError> {
     let mut crossings = W::Array::default();
     for &(from, to) in edges {

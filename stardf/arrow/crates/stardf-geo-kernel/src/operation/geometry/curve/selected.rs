@@ -20,11 +20,8 @@ pub(super) use range::selected_range;
 /// origin. Even monomial parity proves equality at every original parameter;
 /// the unchanged height, epoch and suffix preserve that pointwise equality.
 pub(super) fn reflected_source_towards(
-    image: &OperationImageCurve,
-    other: &OperationImageCurve,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    image: &OperationImageCurve, other: &OperationImageCurve, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<Option<OperationImageCurve>, GeoError> {
     let operation = &image.chain.operations()[0];
     let OperationModel::Polynomial2d(polynomial) = operation.model() else {
@@ -148,9 +145,7 @@ pub(super) fn reflected_source_towards(
 }
 
 fn even_reflection(
-    polynomial: &Polynomial2d,
-    flipped: [bool; 2],
-    zero: [bool; 2],
+    polynomial: &Polynomial2d, flipped: [bool; 2], zero: [bool; 2],
     admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<bool, GeoError> {
     for term in polynomial.terms() {
@@ -173,12 +168,8 @@ fn even_reflection(
 }
 
 pub(super) fn restricted(
-    image: &OperationImageCurve,
-    lower: &Rat,
-    upper: &Rat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    image: &OperationImageCurve, lower: &Rat, upper: &Rat, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<OperationImageCurve, GeoError> {
     let mut temporary = 0;
     let result = (|| {
@@ -220,11 +211,8 @@ pub(super) fn restricted(
 }
 
 pub(super) fn joined_source(
-    image: &OperationImageCurve,
-    other: &OperationImageCurve,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    image: &OperationImageCurve, other: &OperationImageCurve, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<Option<OperationImageCurve>, GeoError> {
     if !image.same_mapping_admitted(other, context, progress)? {
         return Ok(None);
@@ -310,13 +298,8 @@ pub(super) fn joined_source(
 }
 
 pub(in super::super::super) fn prepare_image(
-    image: &OperationImageCurve,
-    start: Coord,
-    end: Coord,
-    chain: OperationChain,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    image: &OperationImageCurve, start: Coord, end: Coord, chain: OperationChain,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<OperationImageCurve, GeoError> {
     let reference_cost = crate::numerical::reference_copy_cost(context.reference())?;
     progress.preflight_exact(context, reference_cost, reference_cost.workspace_bytes)?;
@@ -351,9 +334,7 @@ pub(in super::super::super) fn prepare_image(
 /// merely at sampled endpoints. A constant actual height and the unchanged
 /// suffix chain preserve that equality, even for bent or pole-crossing images.
 pub(super) fn reflected_half(
-    image: &OperationImageCurve,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    image: &OperationImageCurve, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     retained: &mut u64,
 ) -> Result<Option<OperationImageCurve>, GeoError> {
     let mut source_bytes = 0;
@@ -370,9 +351,7 @@ pub(super) fn reflected_half(
 }
 
 fn reflected_half_inner(
-    image: &OperationImageCurve,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    image: &OperationImageCurve, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     retained: &mut u64,
 ) -> Result<Option<OperationImageCurve>, GeoError> {
     context.charge_work(1)?;

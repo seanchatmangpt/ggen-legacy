@@ -67,8 +67,7 @@ const EXTRA_FREE: &str = "bbff";
 /// Both declare the one shared domain, so neither stratum's absence of a candidate
 /// is settled by a declaration: only a lookup can settle it early.
 fn registry(
-    point: &str,
-    exclusion: ExclusionBasis,
+    point: &str, exclusion: ExclusionBasis,
 ) -> (PropertyFunctionRegistry<'static>, Arc<Mutex<Vec<String>>>) {
     let asked = Arc::new(Mutex::new(Vec::new()));
     let shared = DomainTag::parse(&ex("domain/shared")).expect("fixture domain tags are IRIs");

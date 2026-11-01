@@ -129,8 +129,7 @@ pub trait HttpTransport {
     /// Certified peak live bytes for an opaque host exchange, including body
     /// and dynamic error storage. Native `post_admitted` overrides need no bound.
     fn workspace_certificate(
-        &self,
-        _request: HttpRequest<'_>,
+        &self, _request: HttpRequest<'_>,
     ) -> Option<crate::remote::ServiceWorkspaceCertificate> {
         None
     }
@@ -138,9 +137,7 @@ pub trait HttpTransport {
     /// # Errors
     /// Refuses an unpriced opaque exchange before calling it.
     fn post_admitted(
-        &self,
-        request: HttpRequest<'_>,
-        workspace: crate::WorkspaceCapability,
+        &self, request: HttpRequest<'_>, workspace: crate::WorkspaceCapability,
     ) -> Result<AdmittedHttpBody, crate::remote::ServiceResolutionError> {
         use crate::remote::{AdmittedRemoteError, ServiceResolutionError};
         let grant = if workspace.is_bounded() {
@@ -233,9 +230,7 @@ impl AdmittedHttpBody {
 
 impl<T: HttpTransport> HttpRemoteQuerySource<T> {
     fn resolve_native(
-        &self,
-        request: ServiceRequest<'_>,
-        workspace: &crate::WorkspaceCapability,
+        &self, request: ServiceRequest<'_>, workspace: &crate::WorkspaceCapability,
     ) -> Result<crate::remote::AdmittedResolvedBindings, crate::remote::ServiceResolutionError>
     {
         use crate::remote::{
@@ -486,9 +481,7 @@ where
     /// all. That ordering is the entire difference between a policy and an audit log.
     );
     fn resolve_admitted(
-        &self,
-        request: ServiceRequest<'_>,
-        workspace: crate::WorkspaceCapability,
+        &self, request: ServiceRequest<'_>, workspace: crate::WorkspaceCapability,
     ) -> Result<crate::remote::AdmittedResolvedBindings, crate::remote::ServiceResolutionError>
     {
         self.resolve_native(request, &workspace)

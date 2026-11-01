@@ -206,10 +206,7 @@ impl Parser<'_> {
     /// statement `(shape, predicate, object)`, reifier by reifier. Empty when the
     /// statement is not asserted, has no reifier, or its reifiers carry nothing.
     pub(crate) fn reifier_rows(
-        &self,
-        shape: &Term,
-        predicate: &str,
-        object: &Term,
+        &self, shape: &Term, predicate: &str, object: &Term,
     ) -> Vec<Vec<(NamedNode, Term)>> {
         if self.annotation_index.is_empty() {
             return Vec::new();
@@ -273,10 +270,7 @@ impl Parser<'_> {
     /// `sh:severity` not an IRI, `sh:message` not a string literal), or two
     /// reifiers — or two values on one — that disagree.
     pub(crate) fn statement_annotation(
-        &self,
-        shape: &Term,
-        predicate: &str,
-        object: &Term,
+        &self, shape: &Term, predicate: &str, object: &Term,
     ) -> Result<StatementAnnotation, String> {
         let mut out = StatementAnnotation::default();
         let mut deactivated: Option<bool> = None;
@@ -414,9 +408,7 @@ impl Parser<'_> {
     /// As [`Self::statement_annotation`], and when two statements of T state
     /// different severities or different message sets.
     pub(crate) fn constraint_annotation(
-        &mut self,
-        shape: &Term,
-        triples: &[(&str, &Term)],
+        &mut self, shape: &Term, triples: &[(&str, &Term)],
     ) -> Result<Annotated, String> {
         if self.annotation_index.is_empty() {
             return Ok(Annotated::Plain);
@@ -501,10 +493,7 @@ impl Parser<'_> {
     ///
     /// As [`Self::statement_annotation`].
     pub(crate) fn apply_to_nothing(
-        &mut self,
-        shape: &Term,
-        predicate: &str,
-        object: &Term,
+        &mut self, shape: &Term, predicate: &str, object: &Term,
     ) -> Result<(), String> {
         if self.annotation_index.is_empty() {
             return Ok(());

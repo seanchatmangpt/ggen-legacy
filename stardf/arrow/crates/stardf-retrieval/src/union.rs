@@ -358,8 +358,7 @@ impl std::error::Error for UnionFailure<'_> {
     reason = "a native refusal must retain its partial evidence without allocating an error box after admission has stopped"
 )]
 pub async fn union<'d>(
-    mut execution: CandidateExecutionResult<'d>,
-    depths: &CandidateDepths,
+    mut execution: CandidateExecutionResult<'d>, depths: &CandidateDepths,
 ) -> Result<CandidateUnion, UnionFailure<'d>> {
     let workspace = execution.streams.workspace().clone();
     let arenas = (|| {
@@ -636,8 +635,7 @@ pub async fn union<'d>(
     reason = "settlement retains the same task-local native invocation owners"
 )]
 async fn settle_admission_failure(
-    mut execution: CandidateExecutionResult<'_>,
-    error: purrdf_sparql_eval::EvalError,
+    mut execution: CandidateExecutionResult<'_>, error: purrdf_sparql_eval::EvalError,
 ) -> UnionFailure<'_> {
     for read in execution.streams.iter_mut() {
         read.admission_failure_settlement = Some(read.stream.settle().await);
@@ -654,8 +652,7 @@ async fn settle_admission_failure(
     reason = "depth verification retains existing identifiers and native first refusal; failure cannot allocate a replacement owner"
 )]
 fn check_execution(
-    execution: &CandidateExecutionResult<'_>,
-    depths: &CandidateDepths,
+    execution: &CandidateExecutionResult<'_>, depths: &CandidateDepths,
 ) -> Result<(), UnionError> {
     for stratum in execution.depths.0.keys().chain(depths.0.keys()) {
         if execution.depths.get(stratum) != depths.get(stratum) {
@@ -719,9 +716,7 @@ fn check_execution(
     reason = "native invocation settlement shares Rc read state"
 )]
 async fn settle_reads(
-    reads: &mut [ReadStratum<'_>],
-    result: &mut CandidateUnion,
-    primary: &mut Option<UnionError>,
+    reads: &mut [ReadStratum<'_>], result: &mut CandidateUnion, primary: &mut Option<UnionError>,
 ) {
     for read in reads {
         let producer = result
@@ -837,8 +832,7 @@ impl CandidateUnion {
 }
 
 fn write_status(
-    writer: &mut Writer<impl crate::canonical::CanonicalSink>,
-    status: Option<&ProducerStatus>,
+    writer: &mut Writer<impl crate::canonical::CanonicalSink>, status: Option<&ProducerStatus>,
 ) {
     match status {
         None => writer.u8(0),
@@ -872,8 +866,7 @@ fn write_status(
 }
 
 fn write_contract(
-    writer: &mut Writer<impl crate::canonical::CanonicalSink>,
-    contract: Option<&StreamContract>,
+    writer: &mut Writer<impl crate::canonical::CanonicalSink>, contract: Option<&StreamContract>,
 ) {
     let Some(contract) = contract else {
         writer.u8(0);
@@ -910,10 +903,8 @@ fn write_contract(
 }
 
 fn write_attestation(
-    writer: &mut Writer<crate::canonical::AdmittedBytes>,
-    stratum: &Iri,
-    attestation: Option<&PfAttestation>,
-    workspace: &purrdf_sparql_eval::WorkspaceCapability,
+    writer: &mut Writer<crate::canonical::AdmittedBytes>, stratum: &Iri,
+    attestation: Option<&PfAttestation>, workspace: &purrdf_sparql_eval::WorkspaceCapability,
 ) -> Result<(), purrdf_sparql_eval::EvalError> {
     match attestation {
         None => writer.u8(0),

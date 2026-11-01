@@ -489,11 +489,7 @@ impl<'a> Tableau<'a> {
     /// every variable is bound before it is used: a concept or `denotes` atom filters a bound
     /// variable, and a role atom binds the next one.
     fn match_guard(
-        &self,
-        st: &State,
-        clause: &GuardedClause,
-        at: usize,
-        frame: &mut Vec<usize>,
+        &self, st: &State, clause: &GuardedClause, at: usize, frame: &mut Vec<usize>,
         out: &mut Vec<(usize, u32)>,
     ) {
         let Some(&atom) = clause.body.get(at) else {
@@ -776,12 +772,7 @@ impl<'a> Tableau<'a> {
     /// ([`Graph::blockable_predecessor_neighbours`]) — and it has not already been discharged by
     /// an earlier guess ([`Tableau::nn_satisfied`]). Each alternative guesses a bound `m ∈ 1..=n`.
     fn nn_branches(
-        &self,
-        st: &State,
-        x: usize,
-        nmax: u32,
-        role: Role,
-        filler: u32,
+        &self, st: &State, x: usize, nmax: u32, role: Role, filler: u32,
     ) -> Option<Vec<Branch>> {
         // Horrocks & Sattler Figure 2, condition (1): `x` is a NOMINAL node — a NAMED or
         // generated nominal, NOT merely a structurally-unblocked root (an anonymous `fresh_types`

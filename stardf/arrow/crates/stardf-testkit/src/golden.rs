@@ -190,9 +190,7 @@ pub fn check(path: &Path, actual: &str, mode: Mode) -> Result<(), GoldenError> {
 /// reports both lengths and the first offset that differs rather than the
 /// bytes themselves.
 pub fn check_bytes(
-    path: &Path,
-    actual: &[u8],
-    regenerate_env_var: &'static str,
+    path: &Path, actual: &[u8], regenerate_env_var: &'static str,
 ) -> Result<(), GoldenError> {
     let mode = Mode::from_env_var(regenerate_env_var);
     match read_or_regenerate(path, actual, mode, regenerate_env_var)? {
@@ -206,10 +204,7 @@ pub fn check_bytes(
 /// Under [`Mode::Regenerate`], write `actual` to `path` and return `None`;
 /// under [`Mode::Compare`], return the golden's bytes.
 fn read_or_regenerate(
-    path: &Path,
-    actual: &[u8],
-    mode: Mode,
-    env_var: &'static str,
+    path: &Path, actual: &[u8], mode: Mode, env_var: &'static str,
 ) -> Result<Option<Vec<u8>>, GoldenError> {
     match mode {
         Mode::Regenerate => {

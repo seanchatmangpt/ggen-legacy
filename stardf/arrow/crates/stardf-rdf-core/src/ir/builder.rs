@@ -123,10 +123,7 @@ impl LocalCapacity {
     }
 
     pub(super) fn required(
-        self,
-        space: CapacitySpace,
-        len: usize,
-        additional: usize,
+        self, space: CapacitySpace, len: usize, additional: usize,
     ) -> Result<usize, StorageError> {
         let requested = len as u128 + additional as u128;
         purrdf_lex::allocation::CapacityError::check(space, requested, self.limit(space))?;
@@ -147,10 +144,7 @@ impl LocalCapacity {
 /// `vec` and `table` are distinct `&mut` params — callers pass disjoint struct fields,
 /// so the find-then-push-then-insert sequence has no overlapping borrow.
 fn store_once<T: Hash + Eq>(
-    vec: &mut Vec<T>,
-    table: &mut HashTable<u32>,
-    value: T,
-    capacity: LocalCapacity,
+    vec: &mut Vec<T>, table: &mut HashTable<u32>, value: T, capacity: LocalCapacity,
     space: CapacitySpace,
 ) -> Result<u32, StorageError> {
     let mut resident = Resident;
@@ -165,12 +159,8 @@ fn store_once<T: Hash + Eq>(
     store_once_with_memory(vec, table, value, capacity, space, &mut memory)
 }
 fn store_once_with_memory<T: Hash + Eq, S: Admission + ?Sized>(
-    vec: &mut Vec<T>,
-    table: &mut HashTable<u32>,
-    value: T,
-    capacity: LocalCapacity,
-    space: CapacitySpace,
-    memory: &mut Memory<'_, S>,
+    vec: &mut Vec<T>, table: &mut HashTable<u32>, value: T, capacity: LocalCapacity,
+    space: CapacitySpace, memory: &mut Memory<'_, S>,
 ) -> Result<u32, StorageError> {
     store_once_with_dependency(vec, table, value, capacity, space, memory, |_| Ok(()))
 }
@@ -186,12 +176,8 @@ fn remove_index_suffix<T: Hash>(values: &[T], table: &mut HashTable<u32>, from: 
 // Admit the row before constructing an implicit dependency, and publish the row
 // only after that dependency succeeds. A duplicate needs neither operation.
 fn store_once_with_dependency<T: Hash + Eq, S: Admission + ?Sized>(
-    vec: &mut Vec<T>,
-    table: &mut HashTable<u32>,
-    value: T,
-    capacity: LocalCapacity,
-    space: CapacitySpace,
-    memory: &mut Memory<'_, S>,
+    vec: &mut Vec<T>, table: &mut HashTable<u32>, value: T, capacity: LocalCapacity,
+    space: CapacitySpace, memory: &mut Memory<'_, S>,
     dependency: impl FnOnce(&mut Memory<'_, S>) -> Result<(), StorageError>,
 ) -> Result<u32, StorageError> {
     let hash = hash_of(&value);
@@ -218,10 +204,7 @@ fn store_once_with_dependency<T: Hash + Eq, S: Admission + ?Sized>(
 /// and its index grow together, the index rehashing through the values it points
 /// into, so a bulk load that states its size rehashes neither mid-way.
 fn reserve_store_once<T: Hash>(
-    vec: &mut Vec<T>,
-    table: &mut HashTable<u32>,
-    additional: usize,
-    capacity: LocalCapacity,
+    vec: &mut Vec<T>, table: &mut HashTable<u32>, additional: usize, capacity: LocalCapacity,
     space: CapacitySpace,
 ) -> Result<(), StorageError> {
     let required = capacity.hint(space, vec.len(), additional);
@@ -356,9 +339,7 @@ struct Interner {
 
 impl Interner {
     fn ensure_reifies<S: Admission + ?Sized>(
-        &mut self,
-        predicate: &mut Option<TermId>,
-        memory: &mut Memory<'_, S>,
+        &mut self, predicate: &mut Option<TermId>, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         if predicate.is_none() {
             *predicate = Some(
@@ -370,9 +351,7 @@ impl Interner {
 
     /// Transfer the original lexical allocations and reverse index unchanged.
     fn freeze_with_memory<S: Admission + ?Sized>(
-        self,
-        derivation_predicate: Option<String>,
-        memory: &mut Memory<'_, S>,
+        self, derivation_predicate: Option<String>, memory: &mut Memory<'_, S>,
     ) -> Result<super::frozen_terms::FrozenTerms, StorageError> {
         // Configuration does not intern a missing predicate at freeze.
         let derivation_predicate_iri = derivation_predicate
@@ -412,9 +391,7 @@ impl Interner {
 
     /// Append a string to the arena, returning its range.
     fn push_str_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        s: &str,
-        memory: &mut Memory<'_, S>,
+        &mut self, s: &str, memory: &mut Memory<'_, S>,
     ) -> Result<StrRange, StorageError> {
         push_arena_str_with_memory(&mut self.arena, s, memory)
     }
@@ -459,9 +436,7 @@ impl Interner {
         self.intern_with_memory(lookup, &mut memory)
     }
     fn intern_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        lookup: TermLookup<'_>,
-        memory: &mut Memory<'_, S>,
+        &mut self, lookup: TermLookup<'_>, memory: &mut Memory<'_, S>,
     ) -> Result<TermId, StorageError> {
         let hash = hash_lookup_value(&lookup);
         if let Some(id) = self.lookup_hashed(hash, &lookup) {
@@ -740,8 +715,7 @@ impl ValidatedRdfDatasetBuilder {
     /// # Errors
     /// Returns physical storage refusal before the corresponding allocation.
     pub fn freeze_with_memory<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<RdfDataset, StorageError> {
         self.inner.materialize_with_memory(memory)
     }
@@ -818,16 +792,14 @@ impl From<NativeBuildError> for RdfDiagnostic {
 
 impl RdfDatasetBuilder {
     fn transaction_with_memory<T, S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
         body: impl FnOnce(&mut Self, &mut Memory<'_, S>) -> Result<T, StorageError>,
     ) -> Result<T, StorageError> {
         self.transaction_try_with_memory(memory, body, |_| Ok(0))
     }
 
     fn transaction_try_with_memory<T, E: From<StorageError>, S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
         body: impl FnOnce(&mut Self, &mut Memory<'_, S>) -> Result<T, E>,
         error_bytes: impl FnOnce(&E) -> Result<usize, StorageError>,
     ) -> Result<T, E> {
@@ -929,8 +901,7 @@ impl RdfDatasetBuilder {
     /// Returns the original row capacity or physical storage refusal. Duplicate
     /// rows remain legal even at capacity because only actual misses mint IDs.
     pub fn extend_quads(
-        &mut self,
-        rows: impl IntoIterator<Item = QuadIds>,
+        &mut self, rows: impl IntoIterator<Item = QuadIds>,
     ) -> Result<(), StorageError> {
         for row in rows {
             self.push_quad(row.s, row.p, row.o, row.g)?;
@@ -943,9 +914,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns physical layout, admission or allocator refusal.
     pub fn intern_value_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        value: &super::term::TermValue,
-        memory: &mut Memory<'_, S>,
+        &mut self, value: &super::term::TermValue, memory: &mut Memory<'_, S>,
     ) -> Result<TermId, StorageError> {
         crate::term_fixture::intern_value_with_memory(self, value, memory)
     }
@@ -955,9 +924,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns physical storage refusal before any unadmitted allocation.
     pub fn intern_iri_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        iri: &str,
-        memory: &mut Memory<'_, S>,
+        &mut self, iri: &str, memory: &mut Memory<'_, S>,
     ) -> Result<TermId, StorageError> {
         self.interner
             .intern_with_memory(TermLookup::Iri(iri), memory)
@@ -968,10 +935,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns physical storage refusal before buffer growth.
     pub fn intern_blank_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        label: &str,
-        scope: BlankScope,
-        memory: &mut Memory<'_, S>,
+        &mut self, label: &str, scope: BlankScope, memory: &mut Memory<'_, S>,
     ) -> Result<TermId, StorageError> {
         let position = self.reserve_scope_with_memory(scope, memory)?;
         let id = self
@@ -988,11 +952,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns physical storage refusal before buffer growth.
     pub fn intern_triple_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        s: TermId,
-        p: TermId,
-        o: TermId,
-        memory: &mut Memory<'_, S>,
+        &mut self, s: TermId, p: TermId, o: TermId, memory: &mut Memory<'_, S>,
     ) -> Result<TermId, StorageError> {
         self.interner
             .intern_with_memory(TermLookup::Triple { s, p, o }, memory)
@@ -1003,12 +963,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns physical storage refusal before buffer growth.
     pub fn push_quad_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        s: TermId,
-        p: TermId,
-        o: TermId,
-        g: Option<TermId>,
-        memory: &mut Memory<'_, S>,
+        &mut self, s: TermId, p: TermId, o: TermId, g: Option<TermId>, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         store_once_with_memory(
             &mut self.quads,
@@ -1026,10 +981,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns physical storage refusal before buffer growth.
     pub fn push_reifier_in_graph_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        reifier: TermId,
-        triple: TermId,
-        graph: Option<TermId>,
+        &mut self, reifier: TermId, triple: TermId, graph: Option<TermId>,
         memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         let interner = &mut self.interner;
@@ -1051,11 +1003,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns physical storage refusal before buffer growth.
     pub fn push_annotation_in_graph_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        reifier: TermId,
-        predicate: TermId,
-        object: TermId,
-        graph: Option<TermId>,
+        &mut self, reifier: TermId, predicate: TermId, object: TermId, graph: Option<TermId>,
         memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         store_once_with_memory(
@@ -1075,12 +1023,8 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns physical storage refusal before buffer growth.
     pub fn intern_literal_parts_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        lexical: &str,
-        datatype: Option<&str>,
-        language: Option<&str>,
-        direction: Option<RdfTextDirection>,
-        memory: &mut Memory<'_, S>,
+        &mut self, lexical: &str, datatype: Option<&str>, language: Option<&str>,
+        direction: Option<RdfTextDirection>, memory: &mut Memory<'_, S>,
     ) -> Result<TermId, StorageError> {
         self.transaction_with_memory(memory, |builder, memory| {
             builder.intern_literal_parts_admitted(lexical, datatype, language, direction, memory)
@@ -1088,12 +1032,8 @@ impl RdfDatasetBuilder {
     }
 
     fn intern_literal_parts_admitted<S: Admission + ?Sized>(
-        &mut self,
-        lexical: &str,
-        datatype: Option<&str>,
-        language: Option<&str>,
-        direction: Option<RdfTextDirection>,
-        memory: &mut Memory<'_, S>,
+        &mut self, lexical: &str, datatype: Option<&str>, language: Option<&str>,
+        direction: Option<RdfTextDirection>, memory: &mut Memory<'_, S>,
     ) -> Result<TermId, StorageError> {
         let datatype_iri = match (language, datatype) {
             (Some(_), _) => RdfLiteral::language_datatype_iri(direction),
@@ -1198,8 +1138,7 @@ impl RdfDatasetBuilder {
     /// changes mid-build.
     #[must_use]
     pub fn with_content_addressing(
-        scheme: ContentIdScheme,
-        derivation_predicate: Option<String>,
+        scheme: ContentIdScheme, derivation_predicate: Option<String>,
     ) -> Self {
         let mut builder = Self::new();
         builder.interner.content_scheme = Some(scheme);
@@ -1229,10 +1168,7 @@ impl RdfDatasetBuilder {
     /// the frozen dataset's entire lifetime, so guessing here costs memory forever
     /// while guessing wrong on the tables costs one extra growth.
     pub(crate) fn reserve_for_replay(
-        &mut self,
-        terms: usize,
-        term_bytes: usize,
-        quads: usize,
+        &mut self, terms: usize, term_bytes: usize, quads: usize,
     ) -> Result<(), StorageError> {
         let required_terms = self.interner.capacity.hint(
             CapacitySpace::LocalTerms,
@@ -1294,9 +1230,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns the original layout, admission or allocator refusal before growth.
     pub fn declare_named_graph_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        g: TermId,
-        memory: &mut Memory<'_, S>,
+        &mut self, g: TermId, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         // Freeze already deduplicates declarations. At a growth boundary an
         // existing declaration needs no new slot, so duplicates remain legal
@@ -1322,9 +1256,7 @@ impl RdfDatasetBuilder {
     // Reserve only storage. Callers publish a missing scope after the operation
     // that needs it succeeds, so a refused blank term cannot consume a scope.
     fn reserve_scope_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        scope: BlankScope,
-        memory: &mut Memory<'_, S>,
+        &mut self, scope: BlankScope, memory: &mut Memory<'_, S>,
     ) -> Result<Option<usize>, StorageError> {
         if scope == BlankScope::DEFAULT {
             return Ok(None);
@@ -1402,9 +1334,7 @@ impl RdfDatasetBuilder {
     /// they store the IR's `(label, scope)` pair structurally, so their labels
     /// were never encoded and must stay opaque.
     pub fn intern_text_blank(
-        &mut self,
-        token: &str,
-        alphabet: LabelAlphabet,
+        &mut self, token: &str, alphabet: LabelAlphabet,
     ) -> Result<TermId, StorageError> {
         let (label, scope) = crate::blank_label::decode_blank_label(token, alphabet);
         self.intern_blank(&label, scope)
@@ -1488,10 +1418,7 @@ impl RdfDatasetBuilder {
     /// Crate-internal: the owned form is the published ingress, and a second public
     /// spelling of the same operation would be surface with no caller.
     pub(crate) fn intern_literal_parts(
-        &mut self,
-        lexical: &str,
-        datatype: Option<&str>,
-        language: Option<&str>,
+        &mut self, lexical: &str, datatype: Option<&str>, language: Option<&str>,
         direction: Option<RdfTextDirection>,
     ) -> Result<TermId, StorageError> {
         let mut resident = Resident;
@@ -1525,9 +1452,7 @@ impl RdfDatasetBuilder {
     /// undefined, so there is no safe way to admit it. Never fails for any other
     /// datatype.
     pub fn intern_literal_bound(
-        &mut self,
-        lit: RdfLiteral,
-        binding: crate::cdt_blank::BlankBinding,
+        &mut self, lit: RdfLiteral, binding: crate::cdt_blank::BlankBinding,
     ) -> Result<TermId, crate::cdt_blank::CdtBlankError> {
         let mut resident = Resident;
         let bytes = self.native_buffer_bytes()?;
@@ -1545,9 +1470,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Preserves malformed CDT and storage causes, with prior builder state intact.
     pub fn intern_literal_bound_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        lit: &RdfLiteral,
-        binding: crate::cdt_blank::BlankBinding,
+        &mut self, lit: &RdfLiteral, binding: crate::cdt_blank::BlankBinding,
         memory: &mut Memory<'_, S>,
     ) -> Result<TermId, crate::cdt_blank::CdtBlankError> {
         self.transaction_try_with_memory(
@@ -1558,9 +1481,7 @@ impl RdfDatasetBuilder {
     }
 
     fn intern_literal_bound_admitted<S: Admission + ?Sized>(
-        &mut self,
-        lit: &RdfLiteral,
-        binding: crate::cdt_blank::BlankBinding,
+        &mut self, lit: &RdfLiteral, binding: crate::cdt_blank::BlankBinding,
         memory: &mut Memory<'_, S>,
     ) -> Result<TermId, crate::cdt_blank::CdtBlankError> {
         // The C0.1 datatype the literal will actually carry: a language tag wins
@@ -1590,10 +1511,7 @@ impl RdfDatasetBuilder {
     /// resolved `(s, p, o)` ids (C0.3); dedup is by that triple. Acyclicity is a
     /// freeze-time concern ([`super::validate`]), not enforced here.
     pub fn intern_triple(
-        &mut self,
-        s: TermId,
-        p: TermId,
-        o: TermId,
+        &mut self, s: TermId, p: TermId, o: TermId,
     ) -> Result<TermId, StorageError> {
         self.interner.intern(TermLookup::Triple { s, p, o })
     }
@@ -1668,9 +1586,7 @@ impl RdfDatasetBuilder {
     /// the triple itself once all three have ids — so a term nested to any depth
     /// interns in the order a recursive descent would intern it, on constant stack.
     pub fn intern_owned_term_scoped(
-        &mut self,
-        term: &RdfTerm,
-        scope: BlankScope,
+        &mut self, term: &RdfTerm, scope: BlankScope,
     ) -> Result<TermId, StorageError> {
         let mut resident = Resident;
         let mut memory = Memory::resume(&mut resident, self.interner_buffer_bytes()?);
@@ -1683,10 +1599,7 @@ impl RdfDatasetBuilder {
     /// Returns the original logical capacity or physical refusal. A failed walk
     /// preserves every prior identity and removes only this call's new terms.
     pub fn intern_owned_term_scoped_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        term: &RdfTerm,
-        scope: BlankScope,
-        memory: &mut Memory<'_, S>,
+        &mut self, term: &RdfTerm, scope: BlankScope, memory: &mut Memory<'_, S>,
     ) -> Result<TermId, StorageError> {
         self.transaction_with_memory(memory, |builder, memory| {
             builder.intern_owned_term_admitted(term, scope, memory)
@@ -1694,10 +1607,7 @@ impl RdfDatasetBuilder {
     }
 
     fn intern_owned_term_admitted<S: Admission + ?Sized>(
-        &mut self,
-        term: &RdfTerm,
-        scope: BlankScope,
-        memory: &mut Memory<'_, S>,
+        &mut self, term: &RdfTerm, scope: BlankScope, memory: &mut Memory<'_, S>,
     ) -> Result<TermId, StorageError> {
         self.intern_owned_term_walk(term, scope, memory, |builder, literal, memory| {
             let lexical = crate::cdt_blank::bind_cdt_blank_labels_unchecked_with_memory(
@@ -1721,10 +1631,7 @@ impl RdfDatasetBuilder {
     }
 
     fn intern_owned_term_walk<E: From<StorageError>, S: Admission + ?Sized>(
-        &mut self,
-        term: &RdfTerm,
-        scope: BlankScope,
-        memory: &mut Memory<'_, S>,
+        &mut self, term: &RdfTerm, scope: BlankScope, memory: &mut Memory<'_, S>,
         mut literal: impl FnMut(&mut Self, &RdfLiteral, &mut Memory<'_, S>) -> Result<TermId, E>,
     ) -> Result<TermId, E> {
         use purrdf_lex::walk::WorkList;
@@ -1802,9 +1709,7 @@ impl RdfDatasetBuilder {
     /// predicate, object, then the triple — and the first refused composite literal
     /// restores the builder's prior logical state without publishing a prefix.
     pub fn intern_owned_term_bound(
-        &mut self,
-        term: &RdfTerm,
-        scope: BlankScope,
+        &mut self, term: &RdfTerm, scope: BlankScope,
     ) -> Result<TermId, crate::cdt_blank::CdtBlankError> {
         let mut resident = Resident;
         let bytes = self.native_buffer_bytes()?;
@@ -1820,10 +1725,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns the first malformed CDT or storage cause with prior IDs unchanged.
     pub fn intern_owned_term_bound_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        term: &RdfTerm,
-        scope: BlankScope,
-        memory: &mut Memory<'_, S>,
+        &mut self, term: &RdfTerm, scope: BlankScope, memory: &mut Memory<'_, S>,
     ) -> Result<TermId, crate::cdt_blank::CdtBlankError> {
         self.transaction_try_with_memory(
             memory,
@@ -1859,9 +1761,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns the original logical capacity or physical storage refusal.
     pub fn push_owned_quad_scoped(
-        &mut self,
-        quad: &RdfQuad,
-        scope: BlankScope,
+        &mut self, quad: &RdfQuad, scope: BlankScope,
     ) -> Result<(), StorageError> {
         let mut resident = Resident;
         let mut memory = Memory::resume(&mut resident, self.native_buffer_bytes()?);
@@ -1873,10 +1773,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns the first capacity or physical refusal without publishing a prefix.
     pub fn push_owned_quad_scoped_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        quad: &RdfQuad,
-        scope: BlankScope,
-        memory: &mut Memory<'_, S>,
+        &mut self, quad: &RdfQuad, scope: BlankScope, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         self.transaction_with_memory(memory, |builder, memory| {
             builder.push_owned_quad_admitted(quad, scope, memory)
@@ -1884,10 +1781,7 @@ impl RdfDatasetBuilder {
     }
 
     fn push_owned_quad_admitted<S: Admission + ?Sized>(
-        &mut self,
-        quad: &RdfQuad,
-        scope: BlankScope,
-        memory: &mut Memory<'_, S>,
+        &mut self, quad: &RdfQuad, scope: BlankScope, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         let s = self.intern_owned_term_admitted(&quad.subject, scope, memory)?;
         let p = self.intern_iri_with_memory(&quad.predicate, memory)?;
@@ -1938,9 +1832,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns the original logical capacity or physical storage refusal.
     pub fn push_owned_reifier_scoped(
-        &mut self,
-        reifier: &RdfReifier,
-        scope: BlankScope,
+        &mut self, reifier: &RdfReifier, scope: BlankScope,
     ) -> Result<(), StorageError> {
         let mut resident = Resident;
         let mut memory = Memory::resume(&mut resident, self.native_buffer_bytes()?);
@@ -1952,10 +1844,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns the first storage refusal without retaining newly imported children.
     pub fn push_owned_reifier_scoped_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        reifier: &RdfReifier,
-        scope: BlankScope,
-        memory: &mut Memory<'_, S>,
+        &mut self, reifier: &RdfReifier, scope: BlankScope, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         self.transaction_with_memory(memory, |builder, memory| {
             let s =
@@ -1978,8 +1867,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns the original logical capacity or physical storage refusal.
     pub fn push_owned_annotation(
-        &mut self,
-        annotation: &RdfAnnotation,
+        &mut self, annotation: &RdfAnnotation,
     ) -> Result<(), StorageError> {
         self.push_owned_annotation_scoped(annotation, BlankScope::DEFAULT)?;
         Ok(())
@@ -1997,9 +1885,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns the original logical capacity or physical storage refusal.
     pub fn push_owned_annotation_scoped(
-        &mut self,
-        annotation: &RdfAnnotation,
-        scope: BlankScope,
+        &mut self, annotation: &RdfAnnotation, scope: BlankScope,
     ) -> Result<(), StorageError> {
         let mut resident = Resident;
         let mut memory = Memory::resume(&mut resident, self.native_buffer_bytes()?);
@@ -2011,10 +1897,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns the first storage refusal without retaining newly imported children.
     pub fn push_owned_annotation_scoped_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        annotation: &RdfAnnotation,
-        scope: BlankScope,
-        memory: &mut Memory<'_, S>,
+        &mut self, annotation: &RdfAnnotation, scope: BlankScope, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         self.transaction_with_memory(memory, |builder, memory| {
             let reifier_id =
@@ -2064,9 +1947,7 @@ impl RdfDatasetBuilder {
     /// prior identities, rows, locations and the next blank scope; retained grown
     /// capacity remains charged to its original owner.
     pub fn push_dataset_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        other: &RdfDataset,
-        memory: &mut Memory<'_, S>,
+        &mut self, other: &RdfDataset, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         self.transaction_with_memory(memory, |builder, memory| {
             builder.merge_dataset_with_memory(other, memory)
@@ -2074,9 +1955,7 @@ impl RdfDatasetBuilder {
     }
 
     fn import_binding_scope<S: Admission + ?Sized>(
-        &mut self,
-        binding: &mut ImportBinding,
-        memory: &mut Memory<'_, S>,
+        &mut self, binding: &mut ImportBinding, memory: &mut Memory<'_, S>,
     ) -> Result<Option<BlankScope>, StorageError> {
         let ImportBinding::Fresh(cached) = binding else {
             return Ok(None);
@@ -2108,9 +1987,7 @@ impl RdfDatasetBuilder {
     }
 
     fn merge_dataset_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        other: &RdfDataset,
-        memory: &mut Memory<'_, S>,
+        &mut self, other: &RdfDataset, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         let remap = self.merge_dataset_mapping_with_memory(other, memory)?;
         memory.release_vec(remap)
@@ -2122,9 +1999,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Preserves native storage refusal and rolls back logical publication.
     pub fn push_dataset_with_mapping_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        other: &RdfDataset,
-        memory: &mut Memory<'_, S>,
+        &mut self, other: &RdfDataset, memory: &mut Memory<'_, S>,
     ) -> Result<Vec<Option<TermId>>, StorageError> {
         self.transaction_with_memory(memory, |builder, memory| {
             builder.merge_dataset_mapping_with_memory(other, memory)
@@ -2137,10 +2012,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns original admission, layout or allocator refusal.
     pub fn import_native_term_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        source: &RdfDataset,
-        term: TermId,
-        memory: &mut Memory<'_, S>,
+        &mut self, source: &RdfDataset, term: TermId, memory: &mut Memory<'_, S>,
     ) -> Result<TermId, StorageError> {
         self.transaction_with_memory(memory, |builder, memory| {
             let mut remap = Vec::new();
@@ -2158,9 +2030,7 @@ impl RdfDatasetBuilder {
     }
 
     fn merge_dataset_mapping_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        other: &RdfDataset,
-        memory: &mut Memory<'_, S>,
+        &mut self, other: &RdfDataset, memory: &mut Memory<'_, S>,
     ) -> Result<Vec<Option<TermId>>, StorageError> {
         let mut binding = ImportBinding::Fresh(None);
         let mut remap = Vec::new();
@@ -2235,8 +2105,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Refuses the original destination capacity with its previous state intact.
     pub fn append_validated(
-        &mut self,
-        source: ValidatedRdfDatasetBuilder,
+        &mut self, source: ValidatedRdfDatasetBuilder,
     ) -> Result<usize, StorageError> {
         let mut resident = Resident;
         let bytes = self.native_buffer_bytes()?;
@@ -2257,9 +2126,7 @@ impl RdfDatasetBuilder {
     /// Returns storage refusal with prior logical state and IDs unchanged. Grown
     /// capacity can remain allocated and admitted after a late refusal.
     pub fn append_validated_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        source: &ValidatedRdfDatasetBuilder,
-        memory: &mut Memory<'_, S>,
+        &mut self, source: &ValidatedRdfDatasetBuilder, memory: &mut Memory<'_, S>,
     ) -> Result<usize, StorageError> {
         self.transaction_with_memory(memory, |builder, memory| {
             let before = builder.interner.arena.len();
@@ -2274,9 +2141,7 @@ impl RdfDatasetBuilder {
     }
 
     fn append_builder_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        source: &Self,
-        memory: &mut Memory<'_, S>,
+        &mut self, source: &Self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         let mut remap = Vec::new();
         for _ in 0..source.term_count() {
@@ -2350,12 +2215,8 @@ impl RdfDatasetBuilder {
     /// `remap` as soon as its own id exists, so a component shared by several terms
     /// is imported once and found in the memo on every later visit.
     fn import_term_with_memory<'s, S: Admission + ?Sized>(
-        &mut self,
-        resolve: &impl Fn(TermId) -> TermRef<'s>,
-        id: TermId,
-        remap: &mut [Option<TermId>],
-        binding: &mut ImportBinding,
-        memory: &mut Memory<'_, S>,
+        &mut self, resolve: &impl Fn(TermId) -> TermRef<'s>, id: TermId,
+        remap: &mut [Option<TermId>], binding: &mut ImportBinding, memory: &mut Memory<'_, S>,
     ) -> Result<TermId, StorageError> {
         enum Step<'s> {
             /// Import this source term, unless `remap` already holds it.
@@ -2603,11 +2464,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns the original logical capacity or physical storage refusal.
     pub fn push_quad(
-        &mut self,
-        s: TermId,
-        p: TermId,
-        o: TermId,
-        g: Option<TermId>,
+        &mut self, s: TermId, p: TermId, o: TermId, g: Option<TermId>,
     ) -> Result<(), StorageError> {
         let _ = self.push_quad_with_handle(s, p, o, g)?;
         Ok(())
@@ -2619,8 +2476,7 @@ impl RdfDatasetBuilder {
     /// Refuses malformed terms, positions or a noncanonical reifier record before
     /// adding any record to this builder.
     pub fn push_record(
-        &mut self,
-        record: &super::mutable::RecordValues,
+        &mut self, record: &super::mutable::RecordValues,
     ) -> Result<(), NativeBuildError> {
         super::validate::validate_record(record)?;
         self.push_record_unchecked(record)?;
@@ -2628,8 +2484,7 @@ impl RdfDatasetBuilder {
     }
 
     pub(crate) fn push_record_unchecked(
-        &mut self,
-        record: &super::mutable::RecordValues,
+        &mut self, record: &super::mutable::RecordValues,
     ) -> Result<(), StorageError> {
         use super::mutable::RecordKind;
         use crate::backend::TermFactory as _;
@@ -2656,11 +2511,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Refuses a full resident row table before publishing the new row.
     pub fn push_quad_with_handle(
-        &mut self,
-        s: TermId,
-        p: TermId,
-        o: TermId,
-        g: Option<TermId>,
+        &mut self, s: TermId, p: TermId, o: TermId, g: Option<TermId>,
     ) -> Result<QuadHandle, StorageError> {
         let row = QuadRow { s, p, o, g };
         store_once(
@@ -2696,10 +2547,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns the original logical capacity or physical storage refusal.
     pub fn push_reifier_in_graph(
-        &mut self,
-        reifier: TermId,
-        triple: TermId,
-        g: Option<TermId>,
+        &mut self, reifier: TermId, triple: TermId, g: Option<TermId>,
     ) -> Result<(), StorageError> {
         let mut resident = Resident;
         let bytes = self.native_buffer_bytes()?;
@@ -2751,10 +2599,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns the original logical capacity or physical storage refusal.
     pub fn push_annotation(
-        &mut self,
-        reifier: TermId,
-        p: TermId,
-        o: TermId,
+        &mut self, reifier: TermId, p: TermId, o: TermId,
     ) -> Result<(), StorageError> {
         self.push_annotation_in_graph(reifier, p, o, None)?;
         Ok(())
@@ -2766,11 +2611,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns the original logical capacity or physical storage refusal.
     pub fn push_annotation_in_graph(
-        &mut self,
-        reifier: TermId,
-        p: TermId,
-        o: TermId,
-        g: Option<TermId>,
+        &mut self, reifier: TermId, p: TermId, o: TermId, g: Option<TermId>,
     ) -> Result<(), StorageError> {
         let annotation = (reifier, p, o, g);
         store_once(
@@ -2819,8 +2660,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns physical refusal or the same RDF diagnostic as resident freeze.
     pub fn freeze_with_memory<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<RdfDataset, NativeBuildError> {
         let buffers = self.native_buffer_bytes()?;
         if let Err(error) = super::validate::validate_with_memory(&self, memory) {
@@ -2908,8 +2748,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns layout overflow or the original admission's release failure.
     pub fn discard_with_memory<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         let bytes = self.native_buffer_bytes()?;
         drop(self);
@@ -2938,8 +2777,7 @@ impl RdfDatasetBuilder {
     /// # Errors
     /// Returns storage refusal or the original admitted RDF diagnostic.
     pub fn validate_with_memory<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<ValidatedRdfDatasetBuilder, NativeBuildError> {
         let buffers = self.native_buffer_bytes()?;
         if let Err(error) = super::validate::validate_with_memory(&self, memory) {
@@ -2978,8 +2816,7 @@ impl RdfDatasetBuilder {
         self.materialize_with_memory(&mut memory)
     }
     fn materialize_with_memory<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<RdfDataset, StorageError> {
         let discarded_indexes = [
             &self.quad_index,
@@ -3164,10 +3001,7 @@ fn owned_binding(scope: BlankScope) -> crate::cdt_blank::BlankBinding {
 
 /// Compute the dataset's capability flags ONCE at freeze, from the frozen tables.
 fn compute_capabilities<R, A>(
-    terms: &[InternedTerm],
-    named_graphs: bool,
-    reifiers: &[R],
-    annotations: &[A],
+    terms: &[InternedTerm], named_graphs: bool, reifiers: &[R], annotations: &[A],
     source_locations: bool,
 ) -> RdfStoreCapabilities {
     RdfStoreCapabilities {

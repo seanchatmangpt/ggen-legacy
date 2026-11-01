@@ -32,9 +32,7 @@ impl ResearchText {
     /// The datatype must be absolute, language must be non-empty when present,
     /// and a direction cannot occur without a language.
     pub fn new(
-        value: impl Into<String>,
-        datatype: impl Into<String>,
-        language: Option<String>,
+        value: impl Into<String>, datatype: impl Into<String>, language: Option<String>,
         direction: Option<ProjectionDirection>,
     ) -> Result<Self, ProjectionError> {
         let datatype = datatype.into();
@@ -63,8 +61,7 @@ impl ResearchText {
     ///
     /// Returns a configuration error when `xsd_string` is not absolute.
     pub fn plain(
-        value: impl Into<String>,
-        xsd_string: impl Into<String>,
+        value: impl Into<String>, xsd_string: impl Into<String>,
     ) -> Result<Self, ProjectionError> {
         Self::new(value, xsd_string, None, None)
     }
@@ -507,9 +504,7 @@ fn sort_dedup<T: Ord>(values: &mut Vec<T>) {
 }
 
 fn reject_duplicate_ids<T>(
-    values: &[T],
-    id: impl Fn(&T) -> &String,
-    description: &str,
+    values: &[T], id: impl Fn(&T) -> &String, description: &str,
 ) -> Result<(), ProjectionError> {
     reject_duplicate_keys(values, id, || {
         format!("research-object model contains duplicate {description} identity")
@@ -521,9 +516,7 @@ fn ids<T>(values: &[T], id: impl Fn(&T) -> &String) -> BTreeSet<String> {
 }
 
 fn require_subset(
-    values: &[String],
-    allowed: &BTreeSet<String>,
-    description: &str,
+    values: &[String], allowed: &BTreeSet<String>, description: &str,
 ) -> Result<(), ProjectionError> {
     if let Some(value) = values.iter().find(|value| !allowed.contains(*value)) {
         return Err(ProjectionError::integrity(format!(

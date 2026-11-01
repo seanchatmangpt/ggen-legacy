@@ -71,10 +71,7 @@ impl TransformOutputGrid {
         ]))
     }
     pub(super) fn validate(
-        self,
-        unit: CoordinateUnit,
-        height: bool,
-        context: &mut MetricContext,
+        self, unit: CoordinateUnit, height: bool, context: &mut MetricContext,
         progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         let grid = self.normalized(unit, height);

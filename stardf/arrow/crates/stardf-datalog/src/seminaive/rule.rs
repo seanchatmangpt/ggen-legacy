@@ -75,9 +75,7 @@ where
 {
     /// Consume frozen round advice once, before any task warms a native access path.
     pub(super) fn new<D: TermDictionary<Id = I>>(
-        entry: RuleEntry<'r, N>,
-        snapshot: RoundSnapshot<'_, D, N>,
-        strategy: JoinStrategy,
+        entry: RuleEntry<'r, N>, snapshot: RoundSnapshot<'_, D, N>, strategy: JoinStrategy,
         full_counts: &[Option<usize>],
     ) -> Result<Self, EvalError<D::Error>> {
         snapshot
@@ -147,11 +145,8 @@ where
 
     /// Resume the same filter probe or head ordinal before considering later input.
     pub(super) fn advance<D: TermDictionary<Id = I>>(
-        &mut self,
-        entry: RuleEntry<'r, N>,
-        snapshot: RoundSnapshot<'_, D, N>,
-        guards: &dyn GuardEvaluator<D, N>,
-        governor: &mut StepGovernor<'_>,
+        &mut self, entry: RuleEntry<'r, N>, snapshot: RoundSnapshot<'_, D, N>,
+        guards: &dyn GuardEvaluator<D, N>, governor: &mut StepGovernor<'_>,
         evidence: &mut Option<&mut dyn RuleEvidence<D, N>>,
     ) -> Result<(), EvalError<D::Error>> {
         snapshot

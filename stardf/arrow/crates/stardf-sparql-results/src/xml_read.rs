@@ -23,7 +23,7 @@
 use purrdf_core::TermBox;
 use purrdf_core::blank_label::{LabelAlphabet, decode_blank_label};
 use purrdf_core::terminals;
-use purrdf_core::{BlankScope, RdfTextDirection, TermValue};
+use purrdf_core::{RdfTextDirection, TermValue};
 use purrdf_lex::xml::{Document, Node, XML_NAMESPACE};
 
 use crate::SparqlResultsFormat;
@@ -167,8 +167,7 @@ pub fn from_xml_boolean(bytes: &[u8]) -> Result<bool, Error> {
 /// Returns [`Error::XmlSyntax`] or [`Error::Utf8`] on malformed XML, or
 /// [`Error::Format`] on a non-`<sparql>` root.
 pub fn provenance_from_xml(
-    bytes: &[u8],
-    namespace: &ProvenanceNamespace,
+    bytes: &[u8], namespace: &ProvenanceNamespace,
 ) -> Result<ResultProvenance, Error> {
     let document = parse(bytes)?;
     let root = sparql_root(&document)?;
@@ -237,8 +236,7 @@ fn is_srx(node: Node<'_, '_>, local: &str) -> bool {
 
 /// The direct child SRX elements `local`.
 fn children_named<'d, 'a>(
-    node: Node<'d, 'a>,
-    local: &'static str,
+    node: Node<'d, 'a>, local: &'static str,
 ) -> impl Iterator<Item = Node<'d, 'a>> {
     node.element_children()
         .filter(move |child| is_srx(*child, local))
@@ -246,9 +244,7 @@ fn children_named<'d, 'a>(
 
 /// The direct child elements `local` in the namespace `namespace`.
 fn children_in<'d, 'a, 'q>(
-    node: Node<'d, 'a>,
-    namespace: &'q str,
-    local: &'q str,
+    node: Node<'d, 'a>, namespace: &'q str, local: &'q str,
 ) -> impl Iterator<Item = Node<'d, 'a>> + use<'d, 'a, 'q> {
     node.element_children()
         .filter(move |child| child.has_tag_name((namespace, local)))
@@ -464,6 +460,7 @@ mod tests {
     }
     use super::*;
     use crate::xml::to_xml;
+    use purrdf_core::BlankScope;
     use purrdf_core::SparqlResult;
     use purrdf_core::TermBox;
     use purrdf_core::vocab::rdf::{

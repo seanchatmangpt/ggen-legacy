@@ -136,8 +136,7 @@ pub fn complete_profile(
 /// The message of an id no law has, led by its `unsupported-profile` status label, or of
 /// an `xpath_regex` that names a law other than the one the selected dated law requires.
 pub fn requested_shacl_profile(
-    id: Option<&str>,
-    xpath_regex: Option<purrdf_core::xsd_regex::xpath::Profile>,
+    id: Option<&str>, xpath_regex: Option<purrdf_core::xsd_regex::xpath::Profile>,
 ) -> Result<Option<ShaclProfile>, String> {
     let Some(id) = id else {
         return Ok(None);
@@ -154,9 +153,7 @@ pub fn requested_shacl_profile(
 /// # Errors
 /// Returns the engine's actual profile, source, semantic or operational refusal.
 pub fn validate_complete_sources(
-    data: Arc<RdfDataset>,
-    shapes: Arc<purrdf_shapes::shapes::Shapes>,
-    options: &ValidationOptions,
+    data: Arc<RdfDataset>, shapes: Arc<purrdf_shapes::shapes::Shapes>, options: &ValidationOptions,
 ) -> Result<CompleteValidationReport, CompleteValidationError> {
     PreparedShapes::new(shapes)
         .with_validation_options(options.clone())
@@ -169,10 +166,7 @@ pub fn validate_complete_sources(
 /// # Errors
 /// Refusals remain typed and no partial report is returned.
 pub fn validate_complete_documents(
-    shapes_ttl: &str,
-    shapes_base: Option<&str>,
-    data_nt: &str,
-    options: &ValidationOptions,
+    shapes_ttl: &str, shapes_base: Option<&str>, data_nt: &str, options: &ValidationOptions,
     imports: &ShapesImportList<'_>,
 ) -> Result<CompleteValidationReport, CompleteValidationError> {
     options
@@ -203,11 +197,8 @@ pub fn validate_complete_documents(
 /// # Errors
 /// Returns actual product dimensions, admission or execution refusals.
 pub fn validate_complete_product(
-    product: &[u8],
-    data_nt: &str,
-    options: &ValidationOptions,
-    expected_identity: Option<&[u8; 32]>,
-    rebuild: bool,
+    product: &[u8], data_nt: &str, options: &ValidationOptions,
+    expected_identity: Option<&[u8; 32]>, rebuild: bool,
 ) -> Result<CompleteValidationReport, CompleteValidationError> {
     let prepared = crate::product::restore_shapes_product_with_options(
         product,
@@ -296,8 +287,7 @@ pub fn complete_report_to_json(
 /// # Errors
 /// Returns an actual complete-graph codec refusal.
 pub fn complete_report_to_sarif_string(
-    report: &CompleteValidationReport,
-    options: &SarifOptions,
+    report: &CompleteValidationReport, options: &SarifOptions,
 ) -> Result<String, purrdf_core::RdfDiagnostic> {
     let mut log = crate::build_report_sarif(report.legacy(), options);
     log.runs[0]

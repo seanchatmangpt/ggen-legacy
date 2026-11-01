@@ -39,8 +39,7 @@ impl OfflineJsonLdContext {
     /// keyword-like compact term, a non-absolute expansion, or ambiguous IRI
     /// aliases.
     pub fn new(
-        mut value: Value,
-        definitions: BTreeMap<String, String>,
+        mut value: Value, definitions: BTreeMap<String, String>,
     ) -> Result<Self, ProjectionError> {
         sorted_last_wins(&mut value);
         validate_context_value(&value)?;
@@ -193,9 +192,7 @@ pub struct ResearchObjectReadOutcome {
 /// Profile writers build documents member by member; ordering here makes the
 /// bytes a function of the document's content rather than of build order.
 pub(super) fn canonical_json(
-    value: &Value,
-    limits: ProjectionLimits,
-    description: &str,
+    value: &Value, limits: ProjectionLimits, description: &str,
 ) -> Result<Vec<u8>, ProjectionError> {
     let mut sorted = value.clone();
     sorted.sort_keys();
@@ -211,10 +208,7 @@ pub(super) fn canonical_json(
 }
 
 pub(super) fn parse_strict_json(
-    bytes: &[u8],
-    config: &ResearchObjectConfig,
-    description: &str,
-    path: &str,
+    bytes: &[u8], config: &ResearchObjectConfig, description: &str, path: &str,
 ) -> Result<Value, ProjectionError> {
     if bytes.len() > config.limits().max_artifact_bytes() {
         return Err(ProjectionError::limit(format!(
@@ -237,9 +231,7 @@ pub(super) fn parse_strict_json(
 }
 
 pub(super) fn require_artifact<'a>(
-    package: &'a ProjectionPackage,
-    path: &str,
-    config: &ResearchObjectConfig,
+    package: &'a ProjectionPackage, path: &str, config: &ResearchObjectConfig,
 ) -> Result<&'a [u8], ProjectionError> {
     validate_package_bounds(package, config.limits())?;
     if package.len() != 1 {
@@ -253,8 +245,7 @@ pub(super) fn require_artifact<'a>(
 }
 
 fn validate_package_bounds(
-    package: &ProjectionPackage,
-    limits: ProjectionLimits,
+    package: &ProjectionPackage, limits: ProjectionLimits,
 ) -> Result<(), ProjectionError> {
     if package.len() > limits.max_artifacts()
         || package.total_bytes() > limits.max_total_bytes()
@@ -279,11 +270,7 @@ fn validate_package_bounds(
 
 /// Record the contract entry `code` in the artifact at `path`, on `subject`.
 pub(super) fn record_loss(
-    ledger: &mut LossLedger,
-    contract: &LossLedger,
-    code: &'static str,
-    path: &str,
-    subject: &str,
+    ledger: &mut LossLedger, contract: &LossLedger, code: &'static str, path: &str, subject: &str,
 ) {
     record_contract_loss(
         ledger,

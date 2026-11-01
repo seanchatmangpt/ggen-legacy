@@ -165,9 +165,7 @@ impl BlankBinding {
     /// # Errors
     /// Returns physical refusal without changing label identity or spelling.
     pub fn rebind_with_memory<'a, S: Admission + ?Sized>(
-        self,
-        token: &'a str,
-        memory: &mut Memory<'_, S>,
+        self, token: &'a str, memory: &mut Memory<'_, S>,
     ) -> Result<Cow<'a, str>, StorageError> {
         let (label, scope) = match self {
             Self::Decoded(alphabet) => decode_blank_label_with_memory(token, alphabet, memory)?,
@@ -308,9 +306,7 @@ impl From<CdtBlankError> for crate::RdfDiagnostic {
 /// lexical-length limits; the caller must refuse the whole document.
 /// [`CdtBlankError::ScannerDisagreement`] never occurs on a well-formed input.
 pub fn bind_cdt_blank_labels<'a>(
-    lexical: &'a str,
-    datatype: &str,
-    binding: BlankBinding,
+    lexical: &'a str, datatype: &str, binding: BlankBinding,
 ) -> Result<Cow<'a, str>, CdtBlankError> {
     bind_cdt_blank_labels_with_memory(lexical, datatype, binding, &mut Memory::new(&mut Resident))
 }
@@ -321,10 +317,7 @@ pub fn bind_cdt_blank_labels<'a>(
 /// # Errors
 /// Preserves malformed CDT diagnostics separately from physical storage refusal.
 pub fn bind_cdt_blank_labels_with_memory<'a, S: Admission + ?Sized>(
-    lexical: &'a str,
-    datatype: &str,
-    binding: BlankBinding,
-    memory: &mut Memory<'_, S>,
+    lexical: &'a str, datatype: &str, binding: BlankBinding, memory: &mut Memory<'_, S>,
 ) -> Result<Cow<'a, str>, CdtBlankError> {
     if !is_cdt_datatype(datatype) {
         return Ok(Cow::Borrowed(lexical));
@@ -383,9 +376,7 @@ pub fn bind_cdt_blank_labels_with_memory<'a, S: Admission + ?Sized>(
 /// which validates.
 #[must_use]
 pub fn bind_cdt_blank_labels_unchecked<'a>(
-    lexical: &'a str,
-    datatype: &str,
-    binding: BlankBinding,
+    lexical: &'a str, datatype: &str, binding: BlankBinding,
 ) -> Cow<'a, str> {
     rewrite_cdt_blank_terms(
         lexical,
@@ -406,10 +397,7 @@ pub fn bind_cdt_blank_labels_unchecked<'a>(
 /// # Errors
 /// Returns physical refusal; it is never converted to a malformed-text no-op.
 pub fn bind_cdt_blank_labels_unchecked_with_memory<'a, S: Admission + ?Sized>(
-    lexical: &'a str,
-    datatype: &str,
-    binding: BlankBinding,
-    memory: &mut Memory<'_, S>,
+    lexical: &'a str, datatype: &str, binding: BlankBinding, memory: &mut Memory<'_, S>,
 ) -> Result<Cow<'a, str>, StorageError> {
     bind_cdt_blank_labels_lazy_with_memory(lexical, datatype, &mut |_| Ok(binding), memory)
 }
@@ -417,8 +405,7 @@ pub fn bind_cdt_blank_labels_unchecked_with_memory<'a, S: Admission + ?Sized>(
 /// Obtain an independent document binding only when the original scanner visits
 /// an actual blank token, including blanks in embedded composite literals.
 pub(crate) fn bind_cdt_blank_labels_lazy_with_memory<'a, S: Admission + ?Sized>(
-    lexical: &'a str,
-    datatype: &str,
+    lexical: &'a str, datatype: &str,
     binding: &mut impl FnMut(&mut Memory<'_, S>) -> Result<BlankBinding, StorageError>,
     memory: &mut Memory<'_, S>,
 ) -> Result<Cow<'a, str>, StorageError> {
@@ -432,8 +419,7 @@ pub(crate) fn bind_cdt_blank_labels_lazy_with_memory<'a, S: Admission + ?Sized>(
 }
 
 fn bind_spans<'a, S: Admission + ?Sized>(
-    lexical: &'a str,
-    spans: &[TokenSpan],
+    lexical: &'a str, spans: &[TokenSpan],
     binding: &mut impl FnMut(&mut Memory<'_, S>) -> Result<BlankBinding, StorageError>,
     memory: &mut Memory<'_, S>,
 ) -> Result<Cow<'a, str>, StorageError> {
@@ -456,8 +442,7 @@ fn bind_spans<'a, S: Admission + ?Sized>(
 }
 
 fn release_spans<S: Admission + ?Sized>(
-    spans: Vec<TokenSpan>,
-    memory: &mut Memory<'_, S>,
+    spans: Vec<TokenSpan>, memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     let bytes = span_payload_bytes(&spans)?;
     memory.release_vec(spans)?;
@@ -482,9 +467,7 @@ fn release_spans<S: Admission + ?Sized>(
 /// non-composite datatype.
 #[must_use]
 pub fn rewrite_cdt_terms<'a>(
-    lexical: &'a str,
-    datatype: &str,
-    on_blank: &mut dyn FnMut(&str) -> Option<String>,
+    lexical: &'a str, datatype: &str, on_blank: &mut dyn FnMut(&str) -> Option<String>,
     on_iri: &mut dyn FnMut(&str, bool) -> Option<String>,
 ) -> Cow<'a, str> {
     rewrite_cdt_terms_with_memory(
@@ -514,8 +497,7 @@ pub fn rewrite_cdt_terms<'a>(
 /// # Errors
 /// Returns physical layout, admission or allocator refusal before growth.
 pub fn rewrite_cdt_terms_with_memory<'a, S: Admission + ?Sized>(
-    lexical: &'a str,
-    datatype: &str,
+    lexical: &'a str, datatype: &str,
     on_blank: &mut impl FnMut(&str, &mut Memory<'_, S>) -> Result<Option<String>, StorageError>,
     on_iri: &mut impl FnMut(&str, bool, &mut Memory<'_, S>) -> Result<Option<String>, StorageError>,
     memory: &mut Memory<'_, S>,
@@ -552,9 +534,7 @@ pub fn rewrite_cdt_terms_with_memory<'a, S: Admission + ?Sized>(
 /// a no-op for a non-composite datatype.
 #[must_use]
 pub fn rewrite_cdt_blank_terms<'a>(
-    lexical: &'a str,
-    datatype: &str,
-    rewrite: &mut dyn FnMut(&str) -> Option<String>,
+    lexical: &'a str, datatype: &str, rewrite: &mut dyn FnMut(&str) -> Option<String>,
 ) -> Cow<'a, str> {
     rewrite_cdt_terms(lexical, datatype, rewrite, &mut |_, _| None)
 }
@@ -563,8 +543,7 @@ pub fn rewrite_cdt_blank_terms<'a>(
 /// # Errors
 /// Returns physical refusal; every returned owned byte retains caller `memory`.
 pub fn rewrite_cdt_blank_terms_with_memory<'a, S: Admission + ?Sized>(
-    lexical: &'a str,
-    datatype: &str,
+    lexical: &'a str, datatype: &str,
     rewrite: &mut impl FnMut(&str, &mut Memory<'_, S>) -> Result<Option<String>, StorageError>,
     memory: &mut Memory<'_, S>,
 ) -> Result<Cow<'a, str>, StorageError> {
@@ -596,9 +575,7 @@ pub fn cdt_embedded_blanks(lexical: &str, datatype: &str) -> Vec<(String, BlankS
 /// # Errors
 /// Returns physical layout, admission or allocator refusal.
 pub fn cdt_embedded_blanks_with_memory<S: Admission + ?Sized>(
-    lexical: &str,
-    datatype: &str,
-    memory: &mut Memory<'_, S>,
+    lexical: &str, datatype: &str, memory: &mut Memory<'_, S>,
 ) -> Result<Vec<(String, BlankScope)>, StorageError> {
     if !is_cdt_datatype(datatype) {
         return Ok(Vec::new());
@@ -623,9 +600,7 @@ pub fn cdt_embedded_blanks_with_memory<S: Admission + ?Sized>(
 /// Parse `lexical` as a value of the composite `datatype`, mapping every
 /// refusal — grammar and resource limit alike — onto [`CdtBlankError`].
 fn parse_composite<S: Admission + ?Sized>(
-    lexical: &str,
-    datatype: &str,
-    memory: &mut Memory<'_, S>,
+    lexical: &str, datatype: &str, memory: &mut Memory<'_, S>,
 ) -> Result<(CdtValue, usize), CdtBlankError> {
     let iri = if datatype == CDT_LIST {
         CDT_LIST
@@ -699,8 +674,7 @@ struct TokenSpan {
 }
 
 fn splice_with_memory<'a, S: Admission + ?Sized>(
-    lexical: &'a str,
-    spans: &[TokenSpan],
+    lexical: &'a str, spans: &[TokenSpan],
     rewrite: &mut impl FnMut(&TokenKind, &mut Memory<'_, S>) -> Result<Option<String>, StorageError>,
     memory: &mut Memory<'_, S>,
 ) -> Result<Cow<'a, str>, StorageError> {
@@ -731,9 +705,7 @@ fn splice_with_memory<'a, S: Admission + ?Sized>(
 /// Cross-check the byte scanner against the SEP-0009 grammar: both must report
 /// the same blank-node labels.
 fn check_scan_agrees<S: Admission + ?Sized>(
-    spans: &[TokenSpan],
-    value: &CdtValue,
-    memory: &mut Memory<'_, S>,
+    spans: &[TokenSpan], value: &CdtValue, memory: &mut Memory<'_, S>,
 ) -> Result<(), CdtBlankError> {
     let parsed = grammar_blank_labels(value, memory)?;
     let mut scanned = Vec::new();
@@ -778,8 +750,7 @@ fn check_scan_agrees<S: Admission + ?Sized>(
 /// nodes are in the same scope, so admitting it would leave that scope undefined
 /// just the same.
 fn grammar_blank_labels<S: Admission + ?Sized>(
-    root: &CdtValue,
-    memory: &mut Memory<'_, S>,
+    root: &CdtValue, memory: &mut Memory<'_, S>,
 ) -> Result<Vec<String>, CdtBlankError> {
     let mut out = Vec::new();
     // Composite-typed literals found embedded as strings, still to be parsed.
@@ -806,9 +777,7 @@ fn grammar_blank_labels<S: Admission + ?Sized>(
 /// the terms it owns — so the walk terminates on any value, whatever its depth and
 /// however it was built.
 fn walk_value<S: Admission + ?Sized>(
-    value: &CdtValue,
-    out: &mut Vec<String>,
-    embedded: &mut Vec<(String, String)>,
+    value: &CdtValue, out: &mut Vec<String>, embedded: &mut Vec<(String, String)>,
     memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     let mut stack = purrdf_lex::walk::WorkList::<&CdtTerm, 16>::new();
@@ -840,8 +809,7 @@ fn walk_value<S: Admission + ?Sized>(
 /// never a blank node (`CdtKey` makes that unrepresentable), so only values are
 /// visited.
 fn push_children<'a, S: Admission + ?Sized>(
-    stack: &mut purrdf_lex::walk::WorkList<&'a CdtTerm, 16>,
-    value: &'a CdtValue,
+    stack: &mut purrdf_lex::walk::WorkList<&'a CdtTerm, 16>, value: &'a CdtValue,
     memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     match value.contents() {
@@ -899,8 +867,7 @@ impl Region {
 /// unescaped-then-re-escaped, so a nested literal's escape spellings survive a
 /// rewrite of its labels byte for byte.
 fn scan_tokens_with_memory<S: Admission + ?Sized>(
-    lexical: &str,
-    memory: &mut Memory<'_, S>,
+    lexical: &str, memory: &mut Memory<'_, S>,
 ) -> Result<Vec<TokenSpan>, StorageError> {
     let mut spans = Vec::new();
     let mut queue = Vec::new();
@@ -956,8 +923,7 @@ fn span_payload_bytes(spans: &[TokenSpan]) -> Result<usize, StorageError> {
 }
 
 fn release_region<S: Admission + ?Sized>(
-    region: Region,
-    memory: &mut Memory<'_, S>,
+    region: Region, memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     memory.release_string(region.text)?;
     memory.release_vec(region.map)
@@ -966,9 +932,7 @@ fn release_region<S: Admission + ?Sized>(
 /// Scan one region, appending token spans and queueing the unescaped content of
 /// every composite-typed literal it embeds.
 fn scan_region<S: Admission + ?Sized>(
-    region: &Region,
-    spans: &mut Vec<TokenSpan>,
-    queue: &mut Vec<Region>,
+    region: &Region, spans: &mut Vec<TokenSpan>, queue: &mut Vec<Region>,
     memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     let bytes = region.text.as_bytes();
@@ -1060,13 +1024,8 @@ fn scan_label_body(text: &str, start: usize) -> usize {
 /// Record one `IRIREF` token: `open` is the `<`, `close` the `>`, `end` one past
 /// the `>`.
 fn push_iri_span<S: Admission + ?Sized>(
-    region: &Region,
-    open: usize,
-    close: usize,
-    end: usize,
-    iri_only: bool,
-    spans: &mut Vec<TokenSpan>,
-    memory: &mut Memory<'_, S>,
+    region: &Region, open: usize, close: usize, end: usize, iri_only: bool,
+    spans: &mut Vec<TokenSpan>, memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     let iri = match expand_uchars_with_memory(&region.text[open + 1..close], memory)? {
         Cow::Borrowed(text) => memory.string(text)?,
@@ -1086,10 +1045,7 @@ fn push_iri_span<S: Admission + ?Sized>(
 /// a `^^` datatype marks it as an embedded composite literal. Returns the offset
 /// just past the literal (including any datatype or language tag).
 fn scan_string<S: Admission + ?Sized>(
-    region: &Region,
-    start: usize,
-    spans: &mut Vec<TokenSpan>,
-    queue: &mut Vec<Region>,
+    region: &Region, start: usize, spans: &mut Vec<TokenSpan>, queue: &mut Vec<Region>,
     memory: &mut Memory<'_, S>,
 ) -> Result<usize, StorageError> {
     let bytes = region.text.as_bytes();
@@ -1157,10 +1113,7 @@ fn scan_string<S: Admission + ?Sized>(
 /// Build the scan region for an embedded composite literal: its content
 /// unescaped, plus the root offset of every resulting byte.
 fn unescaped_region<S: Admission + ?Sized>(
-    region: &Region,
-    content_start: usize,
-    content_end: usize,
-    memory: &mut Memory<'_, S>,
+    region: &Region, content_start: usize, content_end: usize, memory: &mut Memory<'_, S>,
 ) -> Result<Region, StorageError> {
     let raw = &region.text[content_start..content_end];
     let mut text = String::new();

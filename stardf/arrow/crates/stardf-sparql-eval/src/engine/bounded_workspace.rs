@@ -133,8 +133,7 @@ impl<R, E> std::ops::Deref for ExecutionWorkspace<R, E> {
 /// Start the actual execution phase without creating another bounded account.
 /// The source can refuse even an unbounded zero-byte permit before any data read.
 pub(super) fn reserve_execution<D: DatasetView>(
-    view: &D,
-    owner: QueryWorkspace<D::ReadError>,
+    view: &D, owner: QueryWorkspace<D::ReadError>,
 ) -> AdmissionResult<
     D,
     ExecutionWorkspace<impl WorkspaceReservation<Error = D::ReadError> + '_, D::ReadError>,
@@ -157,10 +156,7 @@ pub(super) fn reserve_execution<D: DatasetView>(
 /// subsequent execution allocation is covered by the grown reservation.
 /// Resident views retain their zero-sized reservation and ordinary fast path.
 pub(super) fn reserve<'a, D: DatasetView>(
-    view: &'a D,
-    query: &Query,
-    has_substitutions: bool,
-    options: super::QueryOptions<'_, '_>,
+    view: &'a D, query: &Query, has_substitutions: bool, options: super::QueryOptions<'_, '_>,
 ) -> Result<
     ExecutionWorkspace<impl WorkspaceReservation<Error = D::ReadError> + 'a, D::ReadError>,
     RdfDiagnostic,
@@ -171,10 +167,7 @@ pub(super) fn reserve<'a, D: DatasetView>(
 
 /// The shared admission path before an operational caller publishes its receipt.
 pub(super) fn reserve_with_error<'a, D: DatasetView>(
-    view: &'a D,
-    _query: &Query,
-    _has_substitutions: bool,
-    _options: super::QueryOptions<'_, '_>,
+    view: &'a D, _query: &Query, _has_substitutions: bool, _options: super::QueryOptions<'_, '_>,
 ) -> AdmissionResult<
     D,
     ExecutionWorkspace<impl WorkspaceReservation<Error = D::ReadError> + 'a, D::ReadError>,

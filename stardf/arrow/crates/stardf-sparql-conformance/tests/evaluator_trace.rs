@@ -134,8 +134,7 @@ impl Prepared<'_> {
 
     /// One governed evaluation, on a fresh engine so no run shares a plan with another.
     fn governed(
-        &self,
-        governors: &QueryGovernors,
+        &self, governors: &QueryGovernors,
     ) -> Result<GovernedOutcome, purrdf_core::RdfDiagnostic> {
         query_eval_engine().query_governed(&self.dataset, self.request(), self.options(), governors)
     }
@@ -322,10 +321,7 @@ fn sweep_points(total: u64) -> Vec<u64> {
 /// Append one sweep point to the current run of identical observations, flushing the run
 /// when the observation changes.
 fn fold_point(
-    run: &mut Option<(u64, u64, usize, String)>,
-    fuel: u64,
-    observed: String,
-    out: &mut String,
+    run: &mut Option<(u64, u64, usize, String)>, fuel: u64, observed: String, out: &mut String,
 ) {
     match run {
         Some((_, last, count, previous)) if *previous == observed => {

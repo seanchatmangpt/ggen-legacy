@@ -282,9 +282,7 @@ impl Inflater {
     }
 
     pub(crate) fn feed_sink<S: Sink>(
-        &mut self,
-        input: &[u8],
-        sink: &mut S,
+        &mut self, input: &[u8], sink: &mut S,
     ) -> Result<Progress, Error> {
         let before = sink.written();
         let (consumed, status) = self.run(input, sink)?;

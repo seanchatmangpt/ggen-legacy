@@ -27,9 +27,7 @@ pub(super) enum Step {
 impl Step {
     /// Resolve an authored atom coordinate once when preparing this sequence.
     pub(super) fn authored_atom<const N: usize>(
-        plan: &RulePlan<N>,
-        positive: usize,
-        access: atom::Access,
+        plan: &RulePlan<N>, positive: usize, access: atom::Access,
     ) -> Self {
         Self::Atom {
             operator: plan
@@ -54,9 +52,7 @@ pub(super) struct Selection {
 /// Prepare the same physical groups for whole bodies, guard segments and factors.
 /// The boolean records the extra seed source a certified cycle captures again.
 pub(super) fn selected_steps<const N: usize>(
-    plan: &RulePlan<N>,
-    selection: Selection,
-    includes: impl Fn(&AtomOperator<N>) -> bool,
+    plan: &RulePlan<N>, selection: Selection, includes: impl Fn(&AtomOperator<N>) -> bool,
 ) -> (Vec<Step>, bool) {
     let mut steps = Vec::new();
     let seed_in_cycle = selection.cyclic
@@ -169,9 +165,7 @@ where
     }
 
     pub(super) fn advance<D: TermDictionary<Id = I>>(
-        &mut self,
-        plan: &RulePlan<N>,
-        snapshot: JoinSnapshot<'_, D, N>,
+        &mut self, plan: &RulePlan<N>, snapshot: JoinSnapshot<'_, D, N>,
         governor: &mut StepGovernor<'_>,
     ) -> Result<(), D::Error> {
         snapshot.rel.interner().check_read()?;
@@ -284,9 +278,7 @@ where
     Arity<N>: StoreShape<N>,
 {
     pub(super) fn new<D: TermDictionary<Id = I>>(
-        plan: &RulePlan<N>,
-        snapshot: JoinSnapshot<'_, D, N>,
-        strategy: JoinStrategy,
+        plan: &RulePlan<N>, snapshot: JoinSnapshot<'_, D, N>, strategy: JoinStrategy,
         full_counts: Option<&[Option<usize>]>,
     ) -> Result<Self, D::Error> {
         snapshot.rel.interner().check_read()?;
@@ -342,9 +334,7 @@ where
     }
 
     pub(super) fn advance<D: TermDictionary<Id = I>>(
-        &mut self,
-        plan: &RulePlan<N>,
-        snapshot: JoinSnapshot<'_, D, N>,
+        &mut self, plan: &RulePlan<N>, snapshot: JoinSnapshot<'_, D, N>,
         governor: &mut StepGovernor<'_>,
     ) -> Result<(), D::Error> {
         snapshot.rel.interner().check_read()?;
@@ -409,10 +399,7 @@ where
     }
 
     fn prepare<D: TermDictionary<Id = I>>(
-        &self,
-        plan: &RulePlan<N>,
-        snapshot: JoinSnapshot<'_, D, N>,
-        anchor: usize,
+        &self, plan: &RulePlan<N>, snapshot: JoinSnapshot<'_, D, N>, anchor: usize,
     ) -> Result<Anchor<I, N>, D::Error> {
         let mut steps = Vec::new();
         let (reordered, seed_in_cycle) = match self.mode {
@@ -538,9 +525,7 @@ mod tests {
     }
 
     fn check_cuts<const N: usize>(
-        plan: &RulePlan<N>,
-        snapshot: JoinSnapshot<'_, HostDictionary, N>,
-        strategy: JoinStrategy,
+        plan: &RulePlan<N>, snapshot: JoinSnapshot<'_, HostDictionary, N>, strategy: JoinStrategy,
     ) -> Vec<SlotSolution<u64, N>>
     where
         Arity<N>: StoreShape<N>,

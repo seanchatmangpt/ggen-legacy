@@ -33,13 +33,9 @@ use purrdf_xsd::math::{CoordinateMath, FixedInterval, MathError};
 use std::borrow::Cow;
 
 pub(super) fn complete_body(
-    offset: &OffsetRegion,
-    (profile, target): (&crate::GeoProfile, &crate::Crs),
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    total: &mut u64,
-    retained: &mut MaterializationStorage,
-    global_output: &mut bool,
+    offset: &OffsetRegion, (profile, target): (&crate::GeoProfile, &crate::Crs),
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>, total: &mut u64,
+    retained: &mut MaterializationStorage, global_output: &mut bool,
 ) -> Result<GeometryBody, GeoError> {
     if offset.radius.exact().numerator().is_negative() {
         return Ok(GeometryBody::GeometryCollection(Vec::new()));
@@ -67,15 +63,10 @@ pub(super) fn complete_body(
     reason = "the selected support owner and its original retained allowance span the complete materialization phase"
 )]
 fn complete_selected_body(
-    offset: &OffsetRegion,
-    (profile, target): (&crate::GeoProfile, &crate::Crs),
-    boundary: &crate::atlas::boundary::RegionBoundary,
-    source_storage: &mut u64,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    total: &mut u64,
-    retained: &mut MaterializationStorage,
-    global_output: &mut bool,
+    offset: &OffsetRegion, (profile, target): (&crate::GeoProfile, &crate::Crs),
+    boundary: &crate::atlas::boundary::RegionBoundary, source_storage: &mut u64,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>, total: &mut u64,
+    retained: &mut MaterializationStorage, global_output: &mut bool,
 ) -> Result<GeometryBody, GeoError> {
     if offset.radius.exact().is_zero() {
         return exact_closure(
@@ -286,10 +277,8 @@ fn complete_selected_body(
 
 fn append_centers(
     generated: (RetainedBuilder<[Rat; 2]>, u64),
-    centers: &mut RetainedBuilder<Cow<'_, crate::LonLat>>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut MaterializationStorage,
+    centers: &mut RetainedBuilder<Cow<'_, crate::LonLat>>, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut MaterializationStorage,
 ) -> Result<(), GeoError> {
     let (generated, bytes) = generated;
     retained.adopt_admitted_output(bytes, context)?;
@@ -328,13 +317,9 @@ fn append_centers(
 /// Zero is the exact source closure, rather than a positive polygon envelope.
 /// An irrational native curve image has no exact coordinate-linear WKT carrier.
 fn exact_closure(
-    offset: &OffsetRegion,
-    boundary: &crate::atlas::boundary::RegionBoundary,
-    source_storage: &mut u64,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    total: &mut u64,
-    retained: &mut MaterializationStorage,
+    offset: &OffsetRegion, boundary: &crate::atlas::boundary::RegionBoundary,
+    source_storage: &mut u64, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
+    total: &mut u64, retained: &mut MaterializationStorage,
 ) -> Result<GeometryBody, GeoError> {
     if !offset.source.symbolic_points().is_empty() {
         return Err(GeoError::PrecisionExhausted {
@@ -448,10 +433,8 @@ fn exact_closure(
 }
 
 fn exact_linear_domain(
-    edge: &crate::PreparedEdge,
-    parameters: [&crate::atlas::arcs::arrangement::SourceParameter; 2],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    edge: &crate::PreparedEdge, parameters: [&crate::atlas::arcs::arrangement::SourceParameter; 2],
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     context.charge_work(1)?;
     progress.context_poll(context)?;
@@ -469,11 +452,8 @@ fn exact_linear_domain(
 }
 
 fn selected_point(
-    edge: &crate::PreparedEdge,
-    parameter: &crate::atlas::arcs::arrangement::SourceParameter,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    source_storage: &mut u64,
+    edge: &crate::PreparedEdge, parameter: &crate::atlas::arcs::arrangement::SourceParameter,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>, source_storage: &mut u64,
 ) -> Result<crate::LonLat, GeoError> {
     if !exact_linear_domain(edge, [parameter; 2], context, progress)? {
         return Err(GeoError::PrecisionExhausted {
@@ -508,9 +488,7 @@ fn selected_point(
 }
 
 fn validate_curve(
-    curve: &PreparedCurve,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    curve: &PreparedCurve, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     let policy = context.policy();
     crate::atlas::arcs::with_lines(
@@ -533,10 +511,7 @@ fn validate_curve(
 }
 
 fn cover_curve(
-    curve: &PreparedCurve,
-    source_radius: &Rat,
-    maximum: u64,
-    context: &mut MetricContext,
+    curve: &PreparedCurve, source_radius: &Rat, maximum: u64, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<(RetainedBuilder<[Rat; 2]>, u64), GeoError> {
     cover_edges(
@@ -550,12 +525,8 @@ fn cover_curve(
 }
 
 fn cover_edges(
-    edges: &[crate::PreparedEdge],
-    parameters: Option<[&Rat; 2]>,
-    source_radius: &Rat,
-    maximum: u64,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    edges: &[crate::PreparedEdge], parameters: Option<[&Rat; 2]>, source_radius: &Rat,
+    maximum: u64, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(RetainedBuilder<[Rat; 2]>, u64), GeoError> {
     let reference = crate::numerical::reference_clone(context, progress)?;
     let policy = context.policy();
@@ -713,11 +684,8 @@ struct Positions<'a> {
 }
 impl Positions<'_> {
     fn append(
-        &mut self,
-        line: &crate::atlas::arcs::ChartLine,
-        parameter: &FixedInterval,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &mut self, line: &crate::atlas::arcs::ChartLine, parameter: &FixedInterval,
+        math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<(), MathError> {
         if self.output.len() as u64 >= self.maximum {
             return Err(MathError::Domain(
@@ -761,9 +729,7 @@ impl Positions<'_> {
     }
 }
 fn quantize(
-    value: &FixedInterval,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    value: &FixedInterval, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<Rat, MathError> {
     let (lower, upper) = value.round_decimal(15, math)?;
     math.admit_exact_cost(
@@ -780,9 +746,7 @@ fn quantize(
     math_quantized_decimal(&lower, 15, math, progress)
 }
 pub(super) fn swap_area_axes(
-    area: Geometry,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    area: Geometry, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Geometry, GeoError> {
     let (dim, body) = area.into_parts();
     let GeometryBody::MultiPolygon(mut polygons) = body else {

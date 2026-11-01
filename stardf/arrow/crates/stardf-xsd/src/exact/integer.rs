@@ -74,8 +74,7 @@ impl Integer {
     /// # Errors
     /// Returns the original admission or allocation refusal before publication.
     pub fn copy_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         match &self.0 {
             Repr::Small(value) => Ok(Self::from_i128(*value)),
@@ -90,8 +89,7 @@ impl Integer {
     /// # Errors
     /// Returns the original admission or allocation refusal before publication.
     pub fn detached_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         match &self.0 {
             Repr::Small(value) => Ok(Self::from_i128(*value)),
@@ -104,8 +102,7 @@ impl Integer {
     /// # Errors
     /// Returns a shared-control allocation refusal without changing the value.
     pub fn publish_detached(
-        &mut self,
-        original: &purrdf_lex::allocation::SharedOwned<()>,
+        &mut self, original: &purrdf_lex::allocation::SharedOwned<()>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         match &mut self.0 {
             Repr::Small(_) => Ok(()),
@@ -136,8 +133,7 @@ impl Integer {
     }
 
     pub(crate) fn copy_using(
-        &self,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<Self, crate::bigint::LimbScratchError> {
         match &self.0 {
             Repr::Small(value) => Ok(Self::from_i128(*value)),
@@ -160,8 +156,7 @@ impl Integer {
     }
 
     pub(crate) fn abs_using(
-        &self,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<Self, crate::bigint::LimbScratchError> {
         if self.is_negative() {
             self.neg_using(storage)
@@ -171,8 +166,7 @@ impl Integer {
     }
 
     pub(crate) fn neg_using(
-        &self,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<Self, crate::bigint::LimbScratchError> {
         if let Some(value) = self.as_i128()
             && let Some(value) = value.checked_neg()
@@ -184,9 +178,7 @@ impl Integer {
     }
 
     pub(crate) fn add_using(
-        &self,
-        rhs: &Self,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, rhs: &Self, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<Self, crate::bigint::LimbScratchError> {
         if let (Some(a), Some(b)) = (self.as_i128(), rhs.as_i128())
             && let Some(value) = a.checked_add(b)
@@ -198,9 +190,7 @@ impl Integer {
     }
 
     pub(crate) fn sub_using(
-        &self,
-        rhs: &Self,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, rhs: &Self, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<Self, crate::bigint::LimbScratchError> {
         if let (Some(a), Some(b)) = (self.as_i128(), rhs.as_i128())
             && let Some(value) = a.checked_sub(b)
@@ -212,9 +202,7 @@ impl Integer {
     }
 
     pub(crate) fn mul_using(
-        &self,
-        rhs: &Self,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, rhs: &Self, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<Self, crate::bigint::LimbScratchError> {
         if let (Some(a), Some(b)) = (self.as_i128(), rhs.as_i128())
             && let Some(value) = a.checked_mul(b)
@@ -257,9 +245,7 @@ impl Integer {
     /// # Errors
     /// Refuses physical address-space arithmetic overflow before allocation.
     pub fn operation_layout(
-        &self,
-        rhs: &Self,
-        op: cost::IntegerOperation,
+        &self, rhs: &Self, op: cost::IntegerOperation,
     ) -> Result<cost::NumericOperationLayout, crate::bigint::LimbScratchError> {
         if let (Some(a), Some(b)) = (self.as_i128(), rhs.as_i128()) {
             let inline = match op {
@@ -327,8 +313,7 @@ impl Integer {
     }
 
     pub(crate) fn prepare_decimal_digits_using(
-        &self,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<crate::bigint::PreparedDecimalDigits, crate::bigint::LimbScratchError> {
         match &self.0 {
             Repr::Small(value) => {
@@ -342,8 +327,7 @@ impl Integer {
     /// # Errors
     /// Returns physical address-space overflow without allocation.
     pub fn render_layout(
-        &self,
-        scale: u32,
+        &self, scale: u32,
     ) -> Result<cost::NumericRenderLayout, crate::bigint::LimbScratchError> {
         self.with_bigint(|value| value.decimal_render_layout(scale))
     }
@@ -421,8 +405,7 @@ impl Integer {
     /// # Errors
     /// Preserves division-by-zero separately from admission and allocation refusal.
     pub fn try_div_rem_admitted(
-        &self,
-        divisor: &Self,
+        &self, divisor: &Self,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
         ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -445,9 +428,7 @@ impl Integer {
     }
 
     pub(crate) fn div_rem_using(
-        &self,
-        divisor: &Self,
-        storage: &impl crate::bigint::scratch::Allocate,
+        &self, divisor: &Self, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<(Self, Self), super::ExactOperationError> {
         if divisor.is_zero() {
             return Err(ExactError::DivisionByZero.into());
@@ -553,8 +534,7 @@ impl Integer {
     }
 
     fn from_f64_truncated_using(
-        value: f64,
-        storage: &impl crate::bigint::scratch::Allocate,
+        value: f64, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<Self, super::ExactOperationError> {
         let (negative, significand, exponent) =
             decompose_f64(value).ok_or(ExactError::NotFinite)?;
@@ -744,8 +724,7 @@ impl Integer {
     /// # Errors
     /// Returns physical admission/allocation refusal, distinct from NaN.
     pub fn try_cmp_f64_admitted(
-        &self,
-        value: f64,
+        &self, value: f64,
         admit: &mut impl FnMut(
             cost::NumericOperationLayout,
         ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -839,8 +818,7 @@ impl TryFrom<&Integer> for i64 {
 
 impl Integer {
     fn parse_with_storage(
-        lexical: &str,
-        storage: &impl crate::bigint::scratch::Allocate,
+        lexical: &str, storage: &impl crate::bigint::scratch::Allocate,
     ) -> Result<Self, super::ExactParseError> {
         if !crate::numeric::is_integer_lexical(lexical) {
             return Err(super::ExactParseError::InvalidLexical {

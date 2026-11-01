@@ -198,8 +198,7 @@ pub(crate) fn admit_query(query: &Query) -> Result<(), EvalError> {
 
 /// The same query depth law with native before-growth physical admission.
 pub(crate) fn admit_query_with_memory(
-    query: &Query,
-    memory: &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
+    query: &Query, memory: &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
 ) -> Result<(), EvalError> {
     match query {
         Query::Construct {

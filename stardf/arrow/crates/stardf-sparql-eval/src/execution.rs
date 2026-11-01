@@ -366,8 +366,7 @@ impl PreparedExecution {
     }
 
     pub(crate) fn new_admitted(
-        prepared: crate::SharedWorkspace<PreparedQuery>,
-        parameters: &[&str],
+        prepared: crate::SharedWorkspace<PreparedQuery>, parameters: &[&str],
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, crate::EvalError> {
         let names = crate::AdmittedVec::try_from_iter_admitted(
@@ -612,9 +611,7 @@ impl PreparedExecution {
     /// # Errors
     /// Returns a typed refusal if the slot is not a declared parameter.
     pub fn bind_admitted(
-        &mut self,
-        slot: usize,
-        value: crate::SharedWorkspace<crate::WorkspaceTerm>,
+        &mut self, slot: usize, value: crate::SharedWorkspace<crate::WorkspaceTerm>,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<(), crate::EvalError> {
         let Some(cell) = self.values.get_mut(slot) else {
@@ -683,10 +680,7 @@ impl PreparedExecution {
     /// at bind time; it is the same judgement on the same components, made as soon as
     /// there is something to judge.
     pub fn bind_id<D: DatasetView<ReadError = std::convert::Infallible>>(
-        &mut self,
-        slot: usize,
-        dataset: &D,
-        id: D::Id,
+        &mut self, slot: usize, dataset: &D, id: D::Id,
     ) -> Result<(), RdfDiagnostic> {
         // The slot is checked BEFORE the id is resolved, so a caller who got the slot
         // wrong reads the same diagnostic here as at the value door rather than a
@@ -704,11 +698,7 @@ impl PreparedExecution {
     /// # Errors
     /// Returns the original lexical or physical refusal without a resident copy.
     pub fn bind_id_admitted<D: DatasetView<ReadError = std::convert::Infallible>>(
-        &mut self,
-        slot: usize,
-        dataset: &D,
-        id: D::Id,
-        workspace: &crate::WorkspaceCapability,
+        &mut self, slot: usize, dataset: &D, id: D::Id, workspace: &crate::WorkspaceCapability,
     ) -> Result<(), crate::EvalError> {
         self.bind_read_id_admitted(
             slot,
@@ -724,10 +714,7 @@ impl PreparedExecution {
     /// # Errors
     /// Preserves the original direct read refusal or native evaluation cause.
     pub fn bind_read_id_admitted<D: DatasetView>(
-        &mut self,
-        slot: usize,
-        dataset: &D,
-        id: D::Id,
+        &mut self, slot: usize, dataset: &D, id: D::Id,
         operation: &crate::ReadOperation<D::ReadError>,
     ) -> Result<(), crate::EvalError> {
         let capability = &operation.capability();
@@ -762,10 +749,7 @@ impl PreparedExecution {
     /// Returns the original typed storage refusal, a retained lexical diagnostic,
     /// or a checked physical allocation failure with the final storage evidence.
     pub fn bind_id_fallible<D>(
-        &mut self,
-        slot: usize,
-        dataset: &D,
-        id: D::Id,
+        &mut self, slot: usize, dataset: &D, id: D::Id,
     ) -> crate::FallibleScopedResult<(), D::Error, D::Evidence>
     where
         D: purrdf_core::FallibleDatasetView + Sync,
@@ -935,8 +919,7 @@ impl PreparedExecution {
     }
 
     pub(crate) fn substituted_admitted(
-        &mut self,
-        capability: &crate::WorkspaceCapability,
+        &mut self, capability: &crate::WorkspaceCapability,
     ) -> Result<Substituted<'_>, crate::engine::EvaluationFailure> {
         if !capability.is_bounded() {
             return self.substituted().map_err(Into::into);

@@ -116,9 +116,7 @@ fn upstream_csvw_validation_manifest() {
 }
 
 fn record_case_result(
-    id: &str,
-    result: Result<(), String>,
-    failures: &mut Vec<String>,
+    id: &str, result: Result<(), String>, failures: &mut Vec<String>,
     observed_xfails: &mut BTreeSet<&'static str>,
 ) {
     let expected = XFAIL.iter().find(|(suffix, _)| id.ends_with(suffix));

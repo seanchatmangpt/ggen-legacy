@@ -359,10 +359,7 @@ fn statement(subject: &str, predicate: &str, object: TermValue) -> VizInputState
 }
 
 fn annotation(
-    reifier: &str,
-    predicate: &str,
-    object: TermValue,
-    graph: &str,
+    reifier: &str, predicate: &str, object: TermValue, graph: &str,
 ) -> VizInputAnnotation {
     VizInputAnnotation {
         reifier: iri(reifier),

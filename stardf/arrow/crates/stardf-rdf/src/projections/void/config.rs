@@ -96,8 +96,7 @@ impl VoidSourceRoles {
     ///
     /// Rejects relative or colliding predicate IRIs.
     pub fn new(
-        rdf_type: impl Into<String>,
-        header_version: impl Into<String>,
+        rdf_type: impl Into<String>, header_version: impl Into<String>,
         header_abstract: impl Into<String>,
     ) -> Result<Self, ProjectionError> {
         let rdf_type = rdf_type.into();
@@ -303,8 +302,7 @@ impl VoidDatasetPrefix {
     ///
     /// Rejects relative dataset or prefix IRIs.
     pub fn new(
-        dataset_iri: impl Into<String>,
-        iri_prefix: impl Into<String>,
+        dataset_iri: impl Into<String>, iri_prefix: impl Into<String>,
     ) -> Result<Self, ProjectionError> {
         Ok(Self {
             dataset_iri: absolute_iri(dataset_iri, "VoID prefix dataset IRI")?,
@@ -347,8 +345,7 @@ impl VoidExternalLinkMapping {
     ///
     /// Rejects a relative source or target predicate IRI.
     pub fn new(
-        source_predicate: impl Into<String>,
-        target_predicate: impl Into<String>,
+        source_predicate: impl Into<String>, target_predicate: impl Into<String>,
     ) -> Result<Self, ProjectionError> {
         Ok(Self {
             source_predicate: absolute_iri(
@@ -427,8 +424,7 @@ impl VoidStaticValue {
     ///
     /// Rejects a relative or malformed datatype IRI.
     pub fn typed_literal(
-        lexical: impl Into<String>,
-        datatype: impl Into<String>,
+        lexical: impl Into<String>, datatype: impl Into<String>,
     ) -> Result<Self, ProjectionError> {
         let datatype = datatype.into();
         validate_absolute_iri(&datatype, "VoID static literal datatype")?;
@@ -461,8 +457,7 @@ impl VoidStaticValue {
     /// Rejects any language tag the grammar does not accept, the empty tag
     /// included.
     pub fn language_literal(
-        lexical: impl Into<String>,
-        language: impl Into<String>,
+        lexical: impl Into<String>, language: impl Into<String>,
         direction: Option<ProjectionDirection>,
     ) -> Result<Self, ProjectionError> {
         let language = language.into();
@@ -543,8 +538,7 @@ impl VoidStaticStatement {
     ///
     /// Rejects a relative or malformed predicate IRI.
     pub fn new(
-        predicate: impl Into<String>,
-        object: VoidStaticValue,
+        predicate: impl Into<String>, object: VoidStaticValue,
     ) -> Result<Self, ProjectionError> {
         let predicate = predicate.into();
         validate_absolute_iri(&predicate, "VoID static statement predicate")?;
@@ -600,14 +594,9 @@ impl VoidExecutionLimits {
         reason = "every independent VoID compute and configuration budget is mandatory"
     )]
     pub fn new(
-        max_input_records: usize,
-        max_output_records: usize,
-        max_partitions: usize,
-        max_linksets: usize,
-        max_partition_memberships: usize,
-        max_dataset_prefixes: usize,
-        max_external_link_mappings: usize,
-        max_static_statements: usize,
+        max_input_records: usize, max_output_records: usize, max_partitions: usize,
+        max_linksets: usize, max_partition_memberships: usize, max_dataset_prefixes: usize,
+        max_external_link_mappings: usize, max_static_statements: usize,
     ) -> Result<Self, ProjectionError> {
         for (value, label) in [
             (max_input_records, "VoID max_input_records"),
@@ -733,22 +722,14 @@ impl VoidConfig {
         reason = "VoID source, target, identity, graph, registry, and budget policies are independent"
     )]
     pub fn new(
-        format: NativeRdfFormat,
-        dataset_iri: impl Into<String>,
-        generated_resource_base_iri: impl Into<String>,
-        header_subject_iri: impl Into<String>,
-        source_roles: VoidSourceRoles,
-        header_graph: VoidGraphSelector,
-        alignment_graph: VoidGraphSelector,
-        metadata_graph: VoidGraphSelector,
-        data_graphs: Vec<VoidGraphSelector>,
-        vocabulary: VoidVocabulary,
-        local_datasets: Vec<VoidDatasetPrefix>,
-        external_datasets: Vec<VoidDatasetPrefix>,
-        external_links: Vec<VoidExternalLinkMapping>,
-        static_statements: Vec<VoidStaticStatement>,
-        limits: ProjectionLimits,
-        execution_limits: VoidExecutionLimits,
+        format: NativeRdfFormat, dataset_iri: impl Into<String>,
+        generated_resource_base_iri: impl Into<String>, header_subject_iri: impl Into<String>,
+        source_roles: VoidSourceRoles, header_graph: VoidGraphSelector,
+        alignment_graph: VoidGraphSelector, metadata_graph: VoidGraphSelector,
+        data_graphs: Vec<VoidGraphSelector>, vocabulary: VoidVocabulary,
+        local_datasets: Vec<VoidDatasetPrefix>, external_datasets: Vec<VoidDatasetPrefix>,
+        external_links: Vec<VoidExternalLinkMapping>, static_statements: Vec<VoidStaticStatement>,
+        limits: ProjectionLimits, execution_limits: VoidExecutionLimits,
     ) -> Result<Self, ProjectionError> {
         let dataset_iri = dataset_iri.into();
         let generated_resource_base_iri = generated_resource_base_iri.into();
@@ -929,8 +910,7 @@ impl VoidConfig {
     ///
     /// Rejects a base that is not an absolute IRI.
     pub fn with_document_base_iri(
-        mut self,
-        document_base_iri: Option<String>,
+        mut self, document_base_iri: Option<String>,
     ) -> Result<Self, ProjectionError> {
         if let Some(base) = &document_base_iri {
             validate_absolute_iri(base, "VoID document base IRI")?;

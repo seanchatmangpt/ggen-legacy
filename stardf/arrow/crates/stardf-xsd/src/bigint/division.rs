@@ -40,9 +40,7 @@ pub(super) fn use_block_division(numerator: usize, divisor: usize) -> bool {
 
 /// Normalize both operands once; process high-to-low divisor-sized blocks.
 pub(super) fn divide_blocks(
-    a: &[u64],
-    b: &[u64],
-    storage: &impl Allocate,
+    a: &[u64], b: &[u64], storage: &impl Allocate,
 ) -> Result<(Mag, Mag), LimbScratchError> {
     let limbs = u64::try_from(b.len()).map_err(|_| LimbScratchError::SizeOverflow)?;
     let n = normalized_divisor_limbs(limbs).ok_or(LimbScratchError::SizeOverflow)?;
@@ -100,10 +98,7 @@ pub(super) fn divide_blocks(
 
 /// Divide at most 2n normalized limbs by n normalized limbs; q fits n limbs.
 fn div_2n_1n(
-    a: &[u64],
-    b: &[u64],
-    n: usize,
-    storage: &impl Allocate,
+    a: &[u64], b: &[u64], n: usize, storage: &impl Allocate,
 ) -> Result<(Mag, Mag), LimbScratchError> {
     if mag_cmp(a, b) == Ordering::Less {
         return Ok((Mag::new(), storage.copy(a)?));
@@ -142,10 +137,7 @@ fn div_2n_1n(
 
 /// Divide at most 3h limbs by 2h normalized limbs; q fits h limbs.
 fn div_3n_2n(
-    a: &[u64],
-    b: &[u64],
-    n: usize,
-    storage: &impl Allocate,
+    a: &[u64], b: &[u64], n: usize, storage: &impl Allocate,
 ) -> Result<(Mag, Mag), LimbScratchError> {
     if mag_cmp(a, b) == Ordering::Less {
         return Ok((Mag::new(), storage.copy(a)?));

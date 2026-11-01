@@ -183,9 +183,7 @@ impl DropVisit {
     }
 
     fn child_edge<T: purrdf_lex::walk::Dismantle>(
-        &mut self,
-        child: &mut Child<T>,
-        wrap: fn(Box<T>) -> DropOwner,
+        &mut self, child: &mut Child<T>, wrap: fn(Box<T>) -> DropOwner,
     ) -> bool {
         if matches!(self.mode, DropMode::Child) {
             let Some(node) = child.take() else {
@@ -204,10 +202,7 @@ impl DropVisit {
     }
 
     fn list<T>(
-        &mut self,
-        nodes: &mut Vec<T>,
-        slot: &mut Option<DropOwner>,
-        wrap: fn(Vec<T>) -> DropKind,
+        &mut self, nodes: &mut Vec<T>, slot: &mut Option<DropOwner>, wrap: fn(Vec<T>) -> DropKind,
     ) -> bool {
         if matches!(self.mode, DropMode::Child) {
             if nodes.is_empty() {
@@ -227,9 +222,7 @@ impl DropVisit {
 /// Remove completed inline entries from the end, preserving the original array
 /// while a child is active. Only the current last entry can hold a continuation.
 fn visit_vec<T>(
-    nodes: &mut Vec<T>,
-    visit: &mut DropVisit,
-    selector: impl Fn(&mut T, &mut DropVisit) -> bool,
+    nodes: &mut Vec<T>, visit: &mut DropVisit, selector: impl Fn(&mut T, &mut DropVisit) -> bool,
 ) -> bool {
     while let Some(node) = nodes.last_mut() {
         if selector(node, visit) {
@@ -505,8 +498,7 @@ impl Kids<'_> {
 /// Copy a known slice after admitting its exact destination array. The callback
 /// copies intrinsic leaves shallowly or admits each independently owned payload.
 pub(crate) fn clone_vec_with_memory<T, U, S: Admission + ?Sized>(
-    source: &[T],
-    memory: &mut Memory<'_, S>,
+    source: &[T], memory: &mut Memory<'_, S>,
     mut copy: impl FnMut(&T, &mut Memory<'_, S>) -> Result<U, StorageError>,
 ) -> Result<Vec<U>, StorageError> {
     let mut copies = Vec::new();
@@ -520,8 +512,7 @@ pub(crate) fn clone_vec_with_memory<T, U, S: Admission + ?Sized>(
 /// Copy an array whose individual values carry only inline or immutable shared
 /// fields; owned strings, vectors and children use their actual producer instead.
 pub(crate) fn clone_shallow_vec_with_memory<T: Clone, S: Admission + ?Sized>(
-    source: &[T],
-    memory: &mut Memory<'_, S>,
+    source: &[T], memory: &mut Memory<'_, S>,
 ) -> Result<Vec<T>, StorageError> {
     clone_vec_with_memory(source, memory, |value, _| Ok(value.clone()))
 }
@@ -529,8 +520,7 @@ pub(crate) fn clone_shallow_vec_with_memory<T: Clone, S: Admission + ?Sized>(
 /// The resident entry calls the same fallible physical clone as bounded callers.
 /// It supplies no external grant; ordinary callers own the returned tree.
 pub(crate) fn clone_tree<const MAP_EXISTS: bool>(
-    root: NodeRef<'_>,
-    mut map_exists: impl FnMut(&GraphPattern) -> GraphPattern,
+    root: NodeRef<'_>, mut map_exists: impl FnMut(&GraphPattern) -> GraphPattern,
 ) -> Owned {
     let mut resident = Resident;
     let mut memory = Memory::new(&mut resident);
@@ -669,9 +659,7 @@ pub(crate) fn shallow_ground(term: &GroundTerm) -> GroundTerm {
 /// The copy's shallow fields and finished children, in the order that
 /// NodeRef::for_each_child names them. Each destination is admitted before use.
 fn assemble<S: Admission + ?Sized>(
-    node: NodeRef<'_>,
-    kids: &mut Kids<'_>,
-    memory: &mut Memory<'_, S>,
+    node: NodeRef<'_>, kids: &mut Kids<'_>, memory: &mut Memory<'_, S>,
 ) -> Result<Owned, StorageError> {
     Ok(match node {
         NodeRef::Pattern(pattern) => Owned::Pattern(assemble_pattern(pattern, kids, memory)?),
@@ -720,8 +708,7 @@ impl AggregateExpression {
     /// # Errors
     /// Returns physical admission or allocator refusal before allocating.
     pub fn clone_scalarvals_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> Result<Vec<(String, crate::ast::Literal)>, StorageError> {
         clone_vec_with_memory(self.scalarvals(), memory, |(key, value), memory| {
             Ok((memory.string(key)?, value.clone()))
@@ -734,8 +721,7 @@ impl crate::algebra::ApplicationPolicy {
     /// # Errors
     /// Returns checked physical storage refusal before allocation.
     pub fn clone_box_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> Result<Box<Self>, StorageError> {
         clone_policy(self, memory)
     }
@@ -746,16 +732,14 @@ impl Function {
     /// # Errors
     /// Returns checked physical storage refusal.
     pub fn clone_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         clone_function(self, memory)
     }
 }
 
 fn clone_policy<S: Admission + ?Sized>(
-    policy: &crate::algebra::ApplicationPolicy,
-    memory: &mut Memory<'_, S>,
+    policy: &crate::algebra::ApplicationPolicy, memory: &mut Memory<'_, S>,
 ) -> Result<Box<crate::algebra::ApplicationPolicy>, StorageError> {
     let group_domain = policy
         .group_domain
@@ -786,9 +770,7 @@ fn clone_policy<S: Admission + ?Sized>(
 }
 
 fn assemble_pattern<S: Admission + ?Sized>(
-    pattern: &GraphPattern,
-    kids: &mut Kids<'_>,
-    memory: &mut Memory<'_, S>,
+    pattern: &GraphPattern, kids: &mut Kids<'_>, memory: &mut Memory<'_, S>,
 ) -> Result<GraphPattern, StorageError> {
     use GraphPattern as G;
     Ok(match pattern {
@@ -905,8 +887,7 @@ fn assemble_pattern<S: Admission + ?Sized>(
 }
 
 fn clone_function<S: Admission + ?Sized>(
-    function: &Function,
-    memory: &mut Memory<'_, S>,
+    function: &Function, memory: &mut Memory<'_, S>,
 ) -> Result<Function, StorageError> {
     use crate::algebra::Function as F;
     Ok(match function {
@@ -985,9 +966,7 @@ fn clone_function<S: Admission + ?Sized>(
 }
 
 fn assemble_expr<S: Admission + ?Sized>(
-    expr: &Expression,
-    kids: &mut Kids<'_>,
-    memory: &mut Memory<'_, S>,
+    expr: &Expression, kids: &mut Kids<'_>, memory: &mut Memory<'_, S>,
 ) -> Result<Expression, StorageError> {
     use Expression as E;
     macro_rules! binary {
@@ -1039,9 +1018,7 @@ fn assemble_expr<S: Admission + ?Sized>(
 }
 
 fn assemble_path<S: Admission + ?Sized>(
-    path: &PropertyPathExpression,
-    kids: &mut Kids<'_>,
-    memory: &mut Memory<'_, S>,
+    path: &PropertyPathExpression, kids: &mut Kids<'_>, memory: &mut Memory<'_, S>,
 ) -> Result<PropertyPathExpression, StorageError> {
     use PropertyPathExpression as P;
     Ok(match path {
@@ -1127,8 +1104,7 @@ impl Expression {
     /// # Errors
     /// Returns the first replacement or concrete native storage refusal.
     pub fn map_exists_bodies_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
         map: impl FnMut(&GraphPattern, &mut Memory<'_, S>) -> Result<GraphPattern, StorageError>,
     ) -> Result<Self, StorageError> {
         match clone_tree_with_memory::<true, _>(NodeRef::Expr(self), map, memory)? {
@@ -1143,8 +1119,7 @@ impl PropertyFunctionCall {
     /// # Errors
     /// Returns physical layout, allocator or admission refusal.
     pub fn clone_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         Ok(Self {
             iri: memory.string(&self.iri)?,
@@ -1163,10 +1138,7 @@ impl AggregateExpression {
     /// # Errors
     /// Returns physical layout, allocator or admission refusal.
     pub fn rebuild_with_memory<S: Admission + ?Sized>(
-        &self,
-        args: Vec<Expression>,
-        order_by: Vec<OrderExpression>,
-        memory: &mut Memory<'_, S>,
+        &self, args: Vec<Expression>, order_by: Vec<OrderExpression>, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         assert_eq!(
             args.len(),

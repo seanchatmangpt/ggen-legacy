@@ -44,8 +44,7 @@ pub fn dataset_from_quad_sources(sources: &[&[RdfQuad]]) -> Result<Arc<RdfDatase
 /// interned after the quads, in source scope 0, so a source without empty graphs
 /// freezes exactly as [`dataset_from_quads`] freezes it.
 pub(crate) fn dataset_from_quads_declaring(
-    quads: &[RdfQuad],
-    declared_graphs: &[RdfTerm],
+    quads: &[RdfQuad], declared_graphs: &[RdfTerm],
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
     freeze_quad_sources(&[quads], declared_graphs)
 }
@@ -63,8 +62,7 @@ fn source_scope(index: usize) -> Result<BlankScope, purrdf_lex::allocation::Stor
 }
 
 fn freeze_quad_sources(
-    sources: &[&[RdfQuad]],
-    declared_graphs: &[RdfTerm],
+    sources: &[&[RdfQuad]], declared_graphs: &[RdfTerm],
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
     let total: usize = sources.iter().map(|source| source.len()).sum();
     let mut builder = RdfDatasetBuilder::new();
@@ -199,15 +197,13 @@ pub fn flat_dataset_from_quad_sources(
 /// Returns the original typed diagnostic if the quads fail dataset validation or a declared
 /// graph is neither an IRI nor a blank node.
 pub fn flat_dataset_from_quads_declaring(
-    quads: &[RdfQuad],
-    declared_graphs: &[RdfTerm],
+    quads: &[RdfQuad], declared_graphs: &[RdfTerm],
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
     freeze_flat_sources(&[quads], declared_graphs)
 }
 
 fn freeze_flat_sources(
-    sources: &[&[RdfQuad]],
-    declared_graphs: &[RdfTerm],
+    sources: &[&[RdfQuad]], declared_graphs: &[RdfTerm],
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
     let mut builder = RdfDatasetBuilder::new();
     for (index, quads) in sources.iter().enumerate() {
@@ -278,8 +274,7 @@ pub fn canonical_flat_nquads(dataset: &RdfDataset) -> Result<String, crate::Cano
 /// Returns the original canonicalization refusal, including reserved vocabulary
 /// and search-budget exhaustion.
 pub fn canonical_flat_nquads_with(
-    dataset: &RdfDataset,
-    hash: crate::CanonHash,
+    dataset: &RdfDataset, hash: crate::CanonHash,
 ) -> Result<String, crate::CanonError> {
     match purrdf_core::try_canonicalize_flat_view(dataset, hash) {
         Ok(canonicalized) => Ok(canonicalized.nquads),

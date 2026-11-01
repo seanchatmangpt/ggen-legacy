@@ -113,10 +113,7 @@ fn run(engine: &NativeSparqlEngine, ds: &Arc<RdfDataset>, query: &str) -> usize 
 }
 
 fn governed(
-    engine: &NativeSparqlEngine,
-    ds: &Arc<RdfDataset>,
-    query: &str,
-    governors: &QueryGovernors,
+    engine: &NativeSparqlEngine, ds: &Arc<RdfDataset>, query: &str, governors: &QueryGovernors,
 ) -> bool {
     matches!(
         engine.query_governed(ds, request(query), QueryOptions::EMPTY, governors),

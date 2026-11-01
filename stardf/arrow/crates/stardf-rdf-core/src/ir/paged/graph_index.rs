@@ -103,8 +103,7 @@ pub(crate) struct GraphPageIndex {
 /// `named`'s values were built by scanning pages in ascending order) into one
 /// stream's CSR arrays, in `named`'s ascending key order.
 fn build_csr(
-    named: &BTreeMap<GlobalTermId, GraphPostings>,
-    select: impl Fn(&GraphPostings) -> &[PageId],
+    named: &BTreeMap<GlobalTermId, GraphPostings>, select: impl Fn(&GraphPostings) -> &[PageId],
 ) -> StreamCsr {
     let mut offsets: Vec<usize> = Vec::with_capacity(named.len() + 1);
     let mut postings: Vec<PageId> = Vec::new();

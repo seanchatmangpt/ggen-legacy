@@ -8,7 +8,7 @@
 //! dense `u32` buffer (one allocation per column, owned by the child).
 //!
 //! Release safety (house discipline, model
-//! `avec-arrow/src/c_abi.rs:54-98` + `c_abi_nested.rs:63-91`): every release
+//! `cgap-arrow/src/c_abi.rs:54-98` + `c_abi_nested.rs:63-91`): every release
 //! callback is atomically swapped to NULL before private data drops, so a
 //! double release is a typed no-op, never a double free; the parent release
 //! cascades each child exactly once (children released before the slab they
@@ -21,13 +21,16 @@ use alloc::vec::Vec;
 use core::ffi::{c_char, c_void};
 use core::sync::atomic::{AtomicPtr, Ordering};
 
-use avec_arrow::layout::{Quad64, BOTTOM_TERM_ID};
+// LANE 09 decouple (2026-10-31): was `use cgap_arrow::layout::...` — the
+// git dep is gone from the published manifest; the spec-fixed local mirror
+// (crate::layout, const-asserted offsets) is the single source.
+use crate::layout::{Quad64, BOTTOM_TERM_ID};
 
 /// Maximum quads per batch slab.
 pub const BATCH_CAP: usize = 64;
 
 /// struct ArrowSchema (C Data Interface spec), mirrored from
-/// `avec-arrow/src/c_abi.rs:25-35`.
+/// `cgap-arrow/src/c_abi.rs:25-35`.
 #[repr(C)]
 pub struct ArrowSchema {
     /// Format string (e.g. `"u32"`, `"+s"`).
@@ -51,7 +54,7 @@ pub struct ArrowSchema {
 }
 
 /// struct ArrowArray (C Data Interface spec), mirrored from
-/// `avec-arrow/src/c_abi.rs:39-50`.
+/// `cgap-arrow/src/c_abi.rs:39-50`.
 #[repr(C)]
 pub struct ArrowArray {
     /// Logical row count (including offset).
@@ -188,7 +191,7 @@ struct OwnedBatchSchema {
 
 /// Ownership note (not a type used at runtime): the child schema shells are
 /// freed by `release_batch_schema`'s cascade, exactly like the child array
-/// shells on the array side — batch.rs diverges from avec-arrow's schema-side
+/// shells on the array side — batch.rs diverges from cgap-arrow's schema-side
 /// convention (`c_abi_nested.rs`: child release frees its own shell) by
 /// keeping child schema `private_data` NULL and letting the parent cascade
 /// free the shells. Self-consistent pair: `release_child_schema` disarms
@@ -495,7 +498,7 @@ mod tests {
             p_id: seed.wrapping_mul(40503) | 1,
             o_id: !seed,
             g_id: if seed % 3 == 0 {
-                avec_arrow::layout::BOTTOM_TERM_ID
+                crate::layout::BOTTOM_TERM_ID
             } else {
                 seed | 0x8000_0000
             },

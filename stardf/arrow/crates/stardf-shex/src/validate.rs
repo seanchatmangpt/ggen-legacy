@@ -279,9 +279,7 @@ impl core::fmt::Debug for ValidationOptions<'_> {
 /// ```
 #[must_use]
 pub fn validate(
-    schema: &Schema,
-    data: &RdfDataset,
-    map: &[(TermValue, ShapeSelector)],
+    schema: &Schema, data: &RdfDataset, map: &[(TermValue, ShapeSelector)],
 ) -> ResultShapeMap {
     validate_with(schema, data, map, &ValidationOptions::default())
 }
@@ -289,9 +287,7 @@ pub fn validate(
 /// [`validate`] with explicit [`ValidationOptions`].
 #[must_use]
 pub fn validate_with(
-    schema: &Schema,
-    data: &RdfDataset,
-    map: &[(TermValue, ShapeSelector)],
+    schema: &Schema, data: &RdfDataset, map: &[(TermValue, ShapeSelector)],
     options: &ValidationOptions<'_>,
 ) -> ResultShapeMap {
     validate_with_bounds(schema, data, map, options, None)
@@ -305,11 +301,8 @@ pub(crate) type ExactBoundsMap = FastMap<usize, [Option<purrdf_xsd::XsdValue>; 4
 /// [`validate_with`], comparing numeric facets against `bounds` where a node
 /// constraint has an entry, and against its `i64`/`f64` AST values otherwise.
 pub(crate) fn validate_with_bounds(
-    schema: &Schema,
-    data: &RdfDataset,
-    map: &[(TermValue, ShapeSelector)],
-    options: &ValidationOptions<'_>,
-    bounds: Option<&ExactBoundsMap>,
+    schema: &Schema, data: &RdfDataset, map: &[(TermValue, ShapeSelector)],
+    options: &ValidationOptions<'_>, bounds: Option<&ExactBoundsMap>,
 ) -> ResultShapeMap {
     validate_using(
         schema,
@@ -373,12 +366,8 @@ impl<'a> XPathValidator<'a> {
     /// # Errors
     /// Returns the actual typed native XPath resource or allocation cause.
     pub fn validate(
-        &mut self,
-        data: &RdfDataset,
-        map: &[(TermValue, ShapeSelector)],
-        options: &ValidationOptions<'_>,
-        profile: xpath::Profile,
-        limits: xpath::Limits,
+        &mut self, data: &RdfDataset, map: &[(TermValue, ShapeSelector)],
+        options: &ValidationOptions<'_>, profile: xpath::Profile, limits: xpath::Limits,
     ) -> Result<ResultShapeMap, xpath::Error> {
         self.patterns.select(profile, limits);
         validate_using(
@@ -400,22 +389,15 @@ impl<'a> XPathValidator<'a> {
 /// # Errors
 /// A typed operational refusal; pattern-language errors remain findings.
 pub fn validate_with_xpath(
-    schema: &Schema,
-    data: &RdfDataset,
-    map: &[(TermValue, ShapeSelector)],
-    options: &ValidationOptions<'_>,
-    profile: xpath::Profile,
-    limits: xpath::Limits,
+    schema: &Schema, data: &RdfDataset, map: &[(TermValue, ShapeSelector)],
+    options: &ValidationOptions<'_>, profile: xpath::Profile, limits: xpath::Limits,
 ) -> Result<ResultShapeMap, xpath::Error> {
     XPathValidator::new(schema).validate(data, map, options, profile, limits)
 }
 
 fn validate_using(
-    schema: &Schema,
-    data: &RdfDataset,
-    map: &[(TermValue, ShapeSelector)],
-    options: &ValidationOptions<'_>,
-    patterns: &mut pattern::PatternCache,
+    schema: &Schema, data: &RdfDataset, map: &[(TermValue, ShapeSelector)],
+    options: &ValidationOptions<'_>, patterns: &mut pattern::PatternCache,
     bounds: Option<&ExactBoundsMap>,
 ) -> Result<ResultShapeMap, xpath::Error> {
     // Resolve whole-declaration EXTERNALs up front so the resolved
@@ -533,8 +515,7 @@ struct PreparedShape<'a> {
 }
 
 fn prepare_shape<'a>(
-    shape: &'a Shape,
-    te_map: &FastMap<&'a str, &'a TripleExpr>,
+    shape: &'a Shape, te_map: &FastMap<&'a str, &'a TripleExpr>,
 ) -> Result<PreparedShape<'a>, String> {
     let compiled = match &shape.expression {
         Some(expr) => matcher::compile(expr, te_map)?,
@@ -585,11 +566,8 @@ fn collect_shapes<'a>(expr: ExprRef<'a>, shapes: &mut Vec<&'a Shape>) {
 
 impl<'a> Engine<'a> {
     fn new(
-        schema: &'a Schema,
-        data: &'a RdfDataset,
-        externals: &'a [(String, ShapeExpr)],
-        sem_acts: &'a SemActRegistry<'a>,
-        patterns: pattern::PatternCache,
+        schema: &'a Schema, data: &'a RdfDataset, externals: &'a [(String, ShapeExpr)],
+        sem_acts: &'a SemActRegistry<'a>, patterns: pattern::PatternCache,
         bounds: Option<&'a ExactBoundsMap>,
     ) -> Self {
         let mut shape_map: FastMap<&'a str, &'a ShapeExpr> = schema
@@ -641,9 +619,7 @@ impl<'a> Engine<'a> {
     }
 
     fn check_association(
-        &mut self,
-        value: &TermValue,
-        selector: &ShapeSelector,
+        &mut self, value: &TermValue, selector: &ShapeSelector,
     ) -> Result<(), CheckError> {
         let focus = match self.data.term_id_by_value(value) {
             Some(id) => Focus::Id(id),
@@ -905,11 +881,7 @@ impl<'a> Engine<'a> {
     /// expression's group actions, then the shape's own actions. A failing
     /// action fails the match. A no-op when no extension is registered.
     fn fire_sem_acts(
-        &self,
-        focus: Focus<'_>,
-        shape: &Shape,
-        compiled: &Compiled<'_>,
-        counts: &[(u64, u64)],
+        &self, focus: Focus<'_>, shape: &Shape, compiled: &Compiled<'_>, counts: &[(u64, u64)],
         matched_values: &[Vec<TermId>],
     ) -> Result<(), String> {
         if self.sem_acts.is_empty() {
@@ -970,9 +942,7 @@ impl<'a> Engine<'a> {
 /// A best-effort failure message when the triple expression cannot consume
 /// the neighbourhood: per-slot counts against declared cardinalities.
 fn cardinality_reason(
-    compiled: &Compiled<'_>,
-    arcs: &[(bool, &str, TermId)],
-    value_failures: &[String],
+    compiled: &Compiled<'_>, arcs: &[(bool, &str, TermId)], value_failures: &[String],
 ) -> String {
     let mut parts = Vec::new();
     for slot in &compiled.slots {

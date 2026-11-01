@@ -41,8 +41,7 @@ pub fn from_tar<R: Read>(reader: R, options: &FromTarOptions) -> Result<Vec<u8>,
 /// payloads are not retained in memory. Compressed tar streams fall back to the
 /// buffered path because the decompressed member bytes are not seekable.
 pub fn from_seekable_tar<R: Read + Seek>(
-    reader: &mut R,
-    options: &FromTarOptions,
+    reader: &mut R, options: &FromTarOptions,
 ) -> Result<Vec<u8>, TarError> {
     let mut out = Vec::new();
     from_seekable_tar_to_writer(reader, &mut out, options)?;
@@ -51,9 +50,7 @@ pub fn from_seekable_tar<R: Read + Seek>(
 
 /// Seekable counterpart to [`from_tar_to_writer`].
 pub fn from_seekable_tar_to_writer<R: Read + Seek, W: Write>(
-    reader: &mut R,
-    writer: W,
-    options: &FromTarOptions,
+    reader: &mut R, writer: W, options: &FromTarOptions,
 ) -> Result<(), TarError> {
     reader
         .seek(SeekFrom::Start(0))
@@ -94,9 +91,7 @@ pub fn from_seekable_tar_to_writer<R: Read + Seek, W: Write>(
 
 /// Read a tar stream and author files-profile-v2 GTS bytes to `writer`.
 pub fn from_tar_to_writer<R: Read, W: Write>(
-    mut reader: R,
-    writer: W,
-    options: &FromTarOptions,
+    mut reader: R, writer: W, options: &FromTarOptions,
 ) -> Result<(), TarError> {
     let mut input = Vec::new();
     reader
@@ -106,9 +101,7 @@ pub fn from_tar_to_writer<R: Read, W: Write>(
 }
 
 fn write_tar_data_as_gts<W: Write>(
-    data: &[u8],
-    writer: W,
-    options: &FromTarOptions,
+    data: &[u8], writer: W, options: &FromTarOptions,
 ) -> Result<(), TarError> {
     let tar = decompress_input(data, options.source_name.as_deref())?;
     let raw_entries = read_uncompressed_tar(tar.as_ref())?;
@@ -145,15 +138,13 @@ pub fn from_tar_bytes(data: &[u8], options: &FromTarOptions) -> Result<Vec<u8>, 
 /// transport authority ([`crate::transport`]), re-labelling its error as a
 /// [`TarError`]. There is no second detection or decoding rule here.
 fn decompress_input<'a>(
-    data: &'a [u8],
-    source_name: Option<&str>,
+    data: &'a [u8], source_name: Option<&str>,
 ) -> Result<Cow<'a, [u8]>, TarError> {
     decode_detected(data, source_name).map_err(TarError::Transport)
 }
 
 fn file_entry_from_tar(
-    entry: &RawTarEntry<'_>,
-    options: &FromTarOptions,
+    entry: &RawTarEntry<'_>, options: &FromTarOptions,
 ) -> Result<FileEntry, TarError> {
     if entry.path.is_empty() {
         return Err(TarError::EmptyPath);
@@ -217,9 +208,7 @@ fn file_entry_from_tar(
 }
 
 fn file_entry_from_seek_tar(
-    entry: &SeekTarEntry,
-    digest: Option<String>,
-    options: &FromTarOptions,
+    entry: &SeekTarEntry, digest: Option<String>, options: &FromTarOptions,
 ) -> Result<FileEntry, TarError> {
     if entry.path.is_empty() {
         return Err(TarError::EmptyPath);

@@ -28,11 +28,8 @@ where
 {
     /// Enter a rule only at its original scheduling point, including source reads.
     fn advance<'s, D: TermDictionary<Id = I>>(
-        &mut self,
-        snapshot: RoundSnapshot<'_, D, N>,
-        strategy: JoinStrategy,
-        guards: &dyn GuardEvaluator<D, N>,
-        mut governor: StepGovernor<'s>,
+        &mut self, snapshot: RoundSnapshot<'_, D, N>, strategy: JoinStrategy,
+        guards: &dyn GuardEvaluator<D, N>, mut governor: StepGovernor<'s>,
         evidence: &mut Option<&mut dyn RuleEvidence<D, N>>,
     ) -> Result<StepGovernor<'s>, EvalError<D::Error>> {
         if self.frame.is_none() {
@@ -73,8 +70,7 @@ where
     Arity<N>: StoreShape<N>,
 {
     pub(super) fn new<D: TermDictionary<Id = I>>(
-        entries: &[RuleEntry<'r, N>],
-        snapshot: RoundSnapshot<'_, D, N>,
+        entries: &[RuleEntry<'r, N>], snapshot: RoundSnapshot<'_, D, N>,
     ) -> Result<Self, EvalError<D::Error>> {
         let rules = entries
             .iter()
@@ -125,12 +121,8 @@ where
 
     /// Resume original frames; a new page supplies credits, never new rule advice.
     pub(super) fn advance<D: TermDictionary<Id = I>>(
-        &mut self,
-        snapshot: RoundSnapshot<'_, D, N>,
-        execution: RoundExecution,
-        strategy: JoinStrategy,
-        allowance: u64,
-        control: RoundControl<'_, D, N>,
+        &mut self, snapshot: RoundSnapshot<'_, D, N>, execution: RoundExecution,
+        strategy: JoinStrategy, allowance: u64, control: RoundControl<'_, D, N>,
         evidence: &mut Option<&mut dyn RuleEvidence<D, N>>,
     ) -> Result<(), EvalError<D::Error>> {
         snapshot
@@ -206,9 +198,7 @@ where
 
     /// Only a completed prefix is reduced before entering later serial callbacks.
     fn merge_ready<D: TermDictionary<Id = I>>(
-        rules: &mut [Rule<'r, I, N>],
-        merged: &mut usize,
-        buffer: &mut RoundBuffer<'r, I, N>,
+        rules: &mut [Rule<'r, I, N>], merged: &mut usize, buffer: &mut RoundBuffer<'r, I, N>,
         rel: &RelationStore<D, N>,
     ) -> Result<(), EvalError<D::Error>> {
         while let Some(rule) = rules.get_mut(*merged) {
@@ -226,8 +216,7 @@ where
 
     /// Ordinary hard-refusal callers consume pending buffers in the original order.
     pub(super) fn into_buffer<D: TermDictionary<Id = I>>(
-        mut self,
-        rel: &RelationStore<D, N>,
+        mut self, rel: &RelationStore<D, N>,
     ) -> Result<RoundBuffer<'r, I, N>, EvalError<D::Error>> {
         for rule in &mut self.rules[self.merged..] {
             if let Some(frame) = rule.frame.take() {

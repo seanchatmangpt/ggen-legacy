@@ -90,8 +90,7 @@ impl Pat {
     /// list — a triple term first, then its subject with everything below it, then its
     /// predicate, then its object. The first `Break` ends the visit and is returned.
     pub(crate) fn visit<'p, B>(
-        &'p self,
-        mut visit: impl FnMut(&'p Self) -> ControlFlow<B>,
+        &'p self, mut visit: impl FnMut(&'p Self) -> ControlFlow<B>,
     ) -> ControlFlow<B> {
         visit_nested(self, |pat| {
             visit(pat)?;
@@ -111,8 +110,7 @@ impl Pat {
     ///
     /// The first error `leaf` or `triple` returns.
     pub(crate) fn try_fold<T, E>(
-        &self,
-        mut leaf: impl FnMut(&Self) -> Result<T, E>,
+        &self, mut leaf: impl FnMut(&Self) -> Result<T, E>,
         mut triple: impl FnMut(T, T, T) -> Result<T, E>,
     ) -> Result<T, E> {
         try_fold_nested(

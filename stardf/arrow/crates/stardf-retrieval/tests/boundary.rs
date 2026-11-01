@@ -98,10 +98,7 @@ fn bundle_of(units: Vec<StratumUnit>, compiled: &CompiledRetrieval) -> CompiledR
 
 /// A single catch-all producer under its own stratum.
 fn single_registry(
-    stratum_iri: &str,
-    producer_iri: &str,
-    rows: u64,
-    count: usize,
+    stratum_iri: &str, producer_iri: &str, rows: u64, count: usize,
 ) -> PropertyFunctionRegistry<'static> {
     let mut registry = PropertyFunctionRegistry::new();
     registry.register_ranked(
@@ -139,8 +136,7 @@ fn single_profile(stratum_iri: &str) -> FusionProfile {
 /// path: this is exactly what a caller does when it stops at `compile` (or
 /// starts at `execute`).
 fn run_query(
-    sparql: &str,
-    registry: &PropertyFunctionRegistry<'static>,
+    sparql: &str, registry: &PropertyFunctionRegistry<'static>,
 ) -> Vec<Vec<Option<TermValue>>> {
     let dataset = RdfDatasetBuilder::new()
         .freeze()
@@ -1207,8 +1203,7 @@ impl RankedStream for LazyStream {
 /// The contribution maximum is three, one per stratum, because every candidate
 /// is eventually seen by all three.
 fn frontier_fixture(
-    total: u64,
-    pulls: &Arc<AtomicUsize>,
+    total: u64, pulls: &Arc<AtomicUsize>,
 ) -> (FusionProfile, Vec<(Iri, LazyStream)>) {
     let weights: BTreeMap<Iri, Score> = FRONTIER_STRATA
         .iter()
@@ -1633,9 +1628,7 @@ async fn execute_shape<
     'd,
     D: purrdf_core::DatasetView<ReadError = std::convert::Infallible> + Sync,
 >(
-    compiled: &CompiledRetrieval,
-    registry: &PropertyFunctionRegistry<'static>,
-    dataset: &'d D,
+    compiled: &CompiledRetrieval, registry: &PropertyFunctionRegistry<'static>, dataset: &'d D,
 ) -> Result<ExecutionResult<'d>, ExecutionError> {
     execute(compiled, registry, dataset).await
 }
@@ -1643,9 +1636,7 @@ async fn execute_shape<
 /// `fuse`'s shape, re-declared and delegated to; see [`execute_shape`].
 #[allow(clippy::future_not_send)]
 async fn fuse_shape<S, T>(
-    streams: Vec<(Iri, S)>,
-    profile: &FusionProfile,
-    top_k: TopK,
+    streams: Vec<(Iri, S)>, profile: &FusionProfile, top_k: TopK,
 ) -> Result<FusionResult<T>, FusionError>
 where
     S: RankedStream<Item = T>,
@@ -1657,12 +1648,8 @@ where
 /// `search`'s shape, re-declared and delegated to; see [`execute_shape`].
 #[allow(clippy::future_not_send)]
 async fn search_shape<S, D>(
-    request: &RetrievalRequest,
-    registry: &PropertyFunctionRegistry<'static>,
-    statistics: &S,
-    dataset: &D,
-    env: &AdmissionEnvironment<'_>,
-    profile: &FusionProfile,
+    request: &RetrievalRequest, registry: &PropertyFunctionRegistry<'static>, statistics: &S,
+    dataset: &D, env: &AdmissionEnvironment<'_>, profile: &FusionProfile,
 ) -> Result<SearchResult, SearchError>
 where
     S: Statistics,
@@ -1925,8 +1912,7 @@ fn the_exported_bridge_carries_an_executed_stream_into_fusion() {
 // outlives every caller — an elided lifetime here would have to pick one of the
 // two input references and would be describing the wrong thing.
 fn executed_stream(
-    suffix: &str,
-    profile: &FusionProfile,
+    suffix: &str, profile: &FusionProfile,
 ) -> (PlanId, Iri, RankedStreamAdapter<'static>) {
     let stratum_iri = ex(&format!("stratum/{suffix}"));
     let registry = single_registry(&stratum_iri, &ex(&format!("pf/{suffix}")), 10, 3);
@@ -2053,11 +2039,7 @@ fn a_stream_that_names_another_plan_is_refused_rather_than_fused() {
 /// exactly what the section below measures; a fixture that fixed both could only ever
 /// assert the answer.
 fn registry_declaring(
-    stratum_iri: &str,
-    producer_iri: &str,
-    rows: u64,
-    count: usize,
-    domains: CandidateDomains,
+    stratum_iri: &str, producer_iri: &str, rows: u64, count: usize, domains: CandidateDomains,
     duplicates: DuplicatePolicy,
 ) -> PropertyFunctionRegistry<'static> {
     let mut declaration = ranked(stratum_iri, vec![TermPattern::of_kind(TermKind::Any)], true);
@@ -2079,10 +2061,7 @@ fn registry_declaring(
 /// streams carries an entailed block rather than an undeclared one, which is the shape
 /// a restricted producer's stream really has.
 fn registry_within_one_block(
-    stratum_iri: &str,
-    producer_iri: &str,
-    rows: u64,
-    count: usize,
+    stratum_iri: &str, producer_iri: &str, rows: u64, count: usize,
 ) -> PropertyFunctionRegistry<'static> {
     registry_declaring(
         stratum_iri,
@@ -2101,9 +2080,7 @@ fn registry_within_one_block(
 /// its stratum, and the bridged stream tagged with that bound.
 // `'static` for the reason [`executed_stream`] is.
 fn executed_stream_bounded(
-    suffix: &str,
-    profile: &FusionProfile,
-    top_k: TopK,
+    suffix: &str, profile: &FusionProfile, top_k: TopK,
 ) -> (u32, TopK, Iri, RankedStreamAdapter<'static>) {
     let stratum_iri = ex(&format!("stratum/{suffix}"));
     let registry = registry_within_one_block(&stratum_iri, &ex(&format!("pf/{suffix}")), 10, 3);

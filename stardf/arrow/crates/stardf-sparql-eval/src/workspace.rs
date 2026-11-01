@@ -68,8 +68,7 @@ impl<T, U> ProjectedNative<T, U> {
     }
 
     pub(crate) fn try_project<V>(
-        &self,
-        select: impl for<'a> FnOnce(&'a U) -> Option<&'a V>,
+        &self, select: impl for<'a> FnOnce(&'a U) -> Option<&'a V>,
     ) -> Option<ProjectedNative<T, V>> {
         self.0.try_project(select).map(ProjectedNative)
     }
@@ -90,8 +89,7 @@ impl<T> std::ops::Deref for NativeSharedWorkspace<T> {
 
 impl<T> NativeSharedWorkspace<T> {
     pub(crate) fn into_projected<U>(
-        self,
-        select: impl for<'a> FnOnce(&'a T) -> &'a U,
+        self, select: impl for<'a> FnOnce(&'a T) -> &'a U,
     ) -> ProjectedNative<T, U> {
         ProjectedNative(self.0.into_view(|payload| select(&payload.value)))
     }
@@ -101,8 +99,7 @@ impl<T> NativeSharedWorkspace<T> {
     }
 
     pub(crate) fn new_admitted(
-        value: T,
-        workspace: &WorkspaceCapability,
+        value: T, workspace: &WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let bytes = fallible_shared_layout::<SharedWorkspacePayload<T>>()?;
         let allocation = workspace.charge(bytes)?;
@@ -242,8 +239,7 @@ pub(crate) struct WorkspaceDebug<'a> {
 }
 impl<'a> WorkspaceDebug<'a> {
     pub(crate) const fn new(
-        value: &'a purrdf_core::TermValue,
-        workspace: &'a WorkspaceCapability,
+        value: &'a purrdf_core::TermValue, workspace: &'a WorkspaceCapability,
     ) -> Self {
         Self {
             value,
@@ -301,9 +297,7 @@ impl std::ops::Deref for ConstructedCells {
 }
 impl ConstructedCells {
     fn reserve(
-        &mut self,
-        required: usize,
-        workspace: &WorkspaceCapability,
+        &mut self, required: usize, workspace: &WorkspaceCapability,
     ) -> Result<(), EvalError> {
         if required > self.values.capacity() || required > self.grants.capacity() {
             let current = self.values.capacity().max(self.grants.capacity());
@@ -317,8 +311,7 @@ impl ConstructedCells {
         Ok(())
     }
     pub(crate) fn push_admitted(
-        &mut self,
-        cell: (WorkspaceTerm, WorkspaceTerm, WorkspaceTerm),
+        &mut self, cell: (WorkspaceTerm, WorkspaceTerm, WorkspaceTerm),
         workspace: &WorkspaceCapability,
     ) -> Result<(), EvalError> {
         let required = self
@@ -339,9 +332,7 @@ impl ConstructedCells {
         self.grants.truncate(len);
     }
     pub(crate) fn append_admitted(
-        &mut self,
-        other: &mut Self,
-        workspace: &WorkspaceCapability,
+        &mut self, other: &mut Self, workspace: &WorkspaceCapability,
     ) -> Result<(), EvalError> {
         let required = self
             .values
@@ -381,9 +372,7 @@ impl LexicalFrame {
     /// layout total `live_bytes` of the still-live query payload. Native callers
     /// resume Memory with that same total; they never reset a live AST to zero.
     pub(crate) fn from_allocation(
-        workspace: &WorkspaceCapability,
-        allocation: WorkspaceAllocation,
-        live_bytes: usize,
+        workspace: &WorkspaceCapability, allocation: WorkspaceAllocation, live_bytes: usize,
     ) -> Self {
         Self {
             workspace: workspace.clone(),
@@ -433,9 +422,7 @@ impl LexicalFrame {
     }
 
     pub(crate) fn storage_error(
-        &mut self,
-        error: purrdf_lex::allocation::StorageError,
-        construct: &'static str,
+        &mut self, error: purrdf_lex::allocation::StorageError, construct: &'static str,
     ) -> EvalError {
         if let purrdf_lex::allocation::StorageError::Capacity(error) = error {
             self.take_failure();
@@ -448,8 +435,7 @@ impl LexicalFrame {
     /// Preserve a native diagnostic's original payload admission at publication.
     /// Refusal leaves its text and original grant enclosed by the caller.
     pub(crate) fn finish_diagnostic(
-        &mut self,
-        diagnostic: &mut Option<purrdf_core::RdfDiagnostic>,
+        &mut self, diagnostic: &mut Option<purrdf_core::RdfDiagnostic>,
     ) -> Result<crate::RetainedDiagnostic, EvalError> {
         if let Some(error) = self.take_failure() {
             return Err(error);
@@ -473,8 +459,7 @@ impl LexicalFrame {
     /// Trusted native publications move their buffers without allocating.
     /// Every refusal is selected before the factory materializes the value.
     pub(crate) fn finish_term(
-        &mut self,
-        factory: impl FnOnce() -> purrdf_core::TermValue,
+        &mut self, factory: impl FnOnce() -> purrdf_core::TermValue,
     ) -> Result<WorkspaceTerm, EvalError> {
         if let Some(error) = self.take_failure() {
             return Err(error);
@@ -494,8 +479,7 @@ impl LexicalFrame {
     /// Construction scratch must already be destroyed, leaving exactly this
     /// buffer in the frame. Refusal leaves the enclosing text and grant intact.
     pub(crate) fn finish_text(
-        &mut self,
-        text: &mut Option<String>,
+        &mut self, text: &mut Option<String>,
     ) -> Result<purrdf_lex::allocation::SharedText, EvalError> {
         use crate::error::{NativeDiagnostic, NativeDiagnosticKind};
         if let Some(error) = self.take_failure() {
@@ -544,8 +528,7 @@ impl LexicalFrame {
     /// Transfer the native surviving layout's original grant with its payload.
     /// No raw public buffer or mutable admitted owner is exposed.
     pub(crate) fn finish_dataset(
-        &mut self,
-        dataset: &mut Option<purrdf_core::RdfDataset>,
+        &mut self, dataset: &mut Option<purrdf_core::RdfDataset>,
     ) -> Result<purrdf_core::DatasetHandle, EvalError> {
         if let Some(error) = self.take_failure() {
             return Err(error);
@@ -587,8 +570,7 @@ impl purrdf_lex::allocation::Admission for LexicalFrame {
 
 impl purrdf_sparql_algebra::parser::ParserAdmission for LexicalFrame {
     fn text(
-        &mut self,
-        text: &dyn core::fmt::Display,
+        &mut self, text: &dyn core::fmt::Display,
     ) -> Result<purrdf_lex::allocation::SharedText, purrdf_lex::allocation::StorageError> {
         if self.failure.is_some() {
             return Err(purrdf_lex::allocation::StorageError::AdmissionFailed);
@@ -630,8 +612,7 @@ impl<T> std::ops::Deref for AdmittedRecords<T> {
 
 impl<T> AdmittedRecords<T> {
     pub(crate) fn with_capacity(
-        capacity: usize,
-        workspace: &WorkspaceCapability,
+        capacity: usize, workspace: &WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         Ok(Self {
             values: AdmittedVec::with_capacity(capacity, workspace)?,
@@ -659,9 +640,7 @@ impl<T> AdmittedRecords<T> {
     }
 
     pub(crate) fn push(
-        &mut self,
-        value: T,
-        allocation: WorkspaceAllocation,
+        &mut self, value: T, allocation: WorkspaceAllocation,
     ) -> Result<(), EvalError> {
         // The tuple drops its payload before its original grant on either refusal.
         let record = (value, allocation);
@@ -739,8 +718,7 @@ impl<T> AdmittedVec<T> {
     /// # Errors
     /// Returns the original layout, allocation or admission refusal.
     pub fn from_iter_admitted(
-        values: impl IntoIterator<Item = T>,
-        workspace: &WorkspaceCapability,
+        values: impl IntoIterator<Item = T>, workspace: &WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         Self::try_from_iter_admitted(values.into_iter().map(Ok), workspace)
     }
@@ -749,8 +727,7 @@ impl<T> AdmittedVec<T> {
     /// # Errors
     /// Returns the first payload, layout, admission or allocator refusal.
     pub fn try_from_iter_admitted<E: From<EvalError>>(
-        values: impl IntoIterator<Item = Result<T, E>>,
-        workspace: &WorkspaceCapability,
+        values: impl IntoIterator<Item = Result<T, E>>, workspace: &WorkspaceCapability,
     ) -> Result<Self, E> {
         let values = values.into_iter();
         let mut output = Self::with_capacity(values.size_hint().0, workspace)?;
@@ -768,8 +745,7 @@ impl<T> AdmittedVec<T> {
     /// # Errors
     /// Returns layout overflow, admission refusal or allocator failure.
     pub fn with_capacity(
-        capacity: usize,
-        workspace: &WorkspaceCapability,
+        capacity: usize, workspace: &WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let layout = std::alloc::Layout::array::<T>(capacity)
             .map_err(|_| EvalError::WorkspaceBoundOverflow)?;
@@ -806,9 +782,7 @@ impl<T> AdmittedVec<T> {
     /// Transfer a buffer and its existing admission together after an in-place
     /// representation change. Callers must retain the original allocation grant.
     pub(crate) fn from_parts(
-        values: Vec<T>,
-        allocation: Option<WorkspaceAllocation>,
-        workspace: &WorkspaceCapability,
+        values: Vec<T>, allocation: Option<WorkspaceAllocation>, workspace: &WorkspaceCapability,
     ) -> Self {
         Self {
             values,
@@ -880,8 +854,7 @@ impl<T> AdmittedVec<T> {
     }
 
     pub(crate) fn try_extend(
-        &mut self,
-        values: impl IntoIterator<Item = T>,
+        &mut self, values: impl IntoIterator<Item = T>,
     ) -> Result<(), EvalError> {
         for value in values {
             self.push(value)?;
@@ -979,8 +952,7 @@ impl<K: Eq + std::hash::Hash, V> AdmittedMap<K, V> {
     /// Copy table metadata through the same admitted insert home. The callback
     /// carries each original payload owner or admits its actual independent copy.
     pub(crate) fn clone_entries_admitted(
-        &self,
-        workspace: &WorkspaceCapability,
+        &self, workspace: &WorkspaceCapability,
         mut copy: impl FnMut(&K, &V) -> Result<(K, V), EvalError>,
     ) -> Result<Self, EvalError> {
         let mut output = Self::default();
@@ -1076,10 +1048,7 @@ impl<K: Eq + std::hash::Hash, V> AdmittedMap<K, V> {
     /// # Errors
     /// Returns layout overflow, admission refusal or allocator failure.
     pub fn insert_admitted(
-        &mut self,
-        key: K,
-        value: V,
-        workspace: &WorkspaceCapability,
+        &mut self, key: K, value: V, workspace: &WorkspaceCapability,
     ) -> Result<Option<V>, EvalError> {
         let hash = purrdf_hash::fixed::hash_one(&key);
         if let Some(entry) = self.entries.find_mut(hash, |entry| entry.0 == key) {
@@ -1150,8 +1119,7 @@ impl<T: Ord> AdmittedHeap<T> {
     /// # Errors
     /// Returns layout overflow, admission refusal or allocator failure.
     pub fn with_capacity(
-        capacity: usize,
-        workspace: &WorkspaceCapability,
+        capacity: usize, workspace: &WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let (values, allocation) =
             AdmittedVec::<T>::with_capacity(capacity, workspace)?.into_parts();
@@ -1385,8 +1353,7 @@ impl WorkspaceCapability {
     /// # Errors
     /// Returns the original native layout, admission or allocator refusal.
     pub fn copy_integer(
-        &self,
-        value: &purrdf_xsd::exact::Integer,
+        &self, value: &purrdf_xsd::exact::Integer,
     ) -> Result<WorkspaceInteger, EvalError> {
         let mut frame = LexicalFrame::new(self);
         let result = value.copy_with_memory(&mut purrdf_lex::allocation::Memory::new(&mut frame));
@@ -1434,8 +1401,7 @@ impl WorkspaceCapability {
     /// # Errors
     /// Returns the original native layout, admission or allocator refusal.
     pub fn clone_iri(
-        &self,
-        value: &purrdf_core::Iri,
+        &self, value: &purrdf_core::Iri,
     ) -> Result<SharedWorkspace<WorkspaceIri>, EvalError> {
         let mut frame = LexicalFrame::new(self);
         let result = value.clone_with_memory(&mut purrdf_lex::allocation::Memory::new(&mut frame));
@@ -1495,8 +1461,7 @@ impl WorkspaceTerm {
         }
     }
     pub(crate) const fn with_layout(
-        value: purrdf_core::TermValue,
-        allocation: WorkspaceAllocation,
+        value: purrdf_core::TermValue, allocation: WorkspaceAllocation,
         layout: crate::retained::TermLayout,
     ) -> Self {
         Self {
@@ -1507,8 +1472,7 @@ impl WorkspaceTerm {
     }
 
     pub(crate) fn layout(
-        &self,
-        workspace: &WorkspaceCapability,
+        &self, workspace: &WorkspaceCapability,
     ) -> Result<crate::retained::TermLayout, EvalError> {
         self.layout
             .map_or_else(|| crate::retained::term_layout(&self.value, workspace), Ok)
@@ -1520,8 +1484,7 @@ impl WorkspaceTerm {
     /// The enclosing value stays admitted through every fallible step; only its
     /// now-unused per-value control is released when this carrier is destroyed.
     pub(crate) fn retain_for_publication(
-        mut self,
-        workspace: &WorkspaceCapability,
+        mut self, workspace: &WorkspaceCapability,
     ) -> Result<purrdf_core::TermValue, EvalError> {
         let bytes = self.layout(workspace)?.bytes;
         self.allocation.transfer_to_publication(bytes)?;
@@ -1542,10 +1505,7 @@ impl WorkspaceTerm {
     /// Assemble already admitted components without duplicating their payloads.
     /// All native boxes are acquired before the original component owners drop.
     pub(crate) fn triple(
-        s: Self,
-        p: Self,
-        o: Self,
-        workspace: &WorkspaceCapability,
+        s: Self, p: Self, o: Self, workspace: &WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let mut bytes = 0u64;
         let mut nodes = 1usize;
@@ -1669,9 +1629,7 @@ impl WorkspaceCapability {
     /// The enclosing native frame retains any original admission failure.
     #[must_use]
     pub fn storage_error(
-        &self,
-        error: purrdf_lex::allocation::StorageError,
-        construct: &'static str,
+        &self, error: purrdf_lex::allocation::StorageError, construct: &'static str,
     ) -> EvalError {
         match error {
             purrdf_lex::allocation::StorageError::Capacity(error) => EvalError::Capacity(error),
@@ -1713,8 +1671,7 @@ impl WorkspaceCapability {
 
     /// Publish native-authored algebra text with its original immutable owner.
     pub fn authored_text(
-        &self,
-        value: &(impl std::fmt::Display + ?Sized),
+        &self, value: &(impl std::fmt::Display + ?Sized),
     ) -> Result<purrdf_lex::allocation::SharedText, EvalError> {
         let length = display_len(value)?;
         let control =
@@ -1761,18 +1718,14 @@ impl WorkspaceCapability {
     /// # Errors
     /// Returns checked layout, before-copy admission or allocator refusal.
     pub fn blank(
-        &self,
-        label: &str,
-        scope: purrdf_core::BlankScope,
+        &self, label: &str, scope: purrdf_core::BlankScope,
     ) -> Result<WorkspaceTerm, EvalError> {
         self.lexical_term(label, "blank spelling", |label| {
             purrdf_core::TermValue::Blank { label, scope }
         })
     }
     fn lexical_term(
-        &self,
-        text: &str,
-        construct: &'static str,
+        &self, text: &str, construct: &'static str,
         make: impl FnOnce(String) -> purrdf_core::TermValue,
     ) -> Result<WorkspaceTerm, EvalError> {
         let bytes = u64::try_from(text.len()).map_err(|_| EvalError::WorkspaceBoundOverflow)?;
@@ -1797,9 +1750,7 @@ impl WorkspaceCapability {
     /// # Errors
     /// Returns typed checked-layout, admission, allocation or formatting failure.
     pub fn literal(
-        &self,
-        lexical: impl core::fmt::Display,
-        datatype: &str,
+        &self, lexical: impl core::fmt::Display, datatype: &str,
     ) -> Result<WorkspaceTerm, EvalError> {
         let length = display_len(&lexical)?;
         let bytes = length
@@ -1825,9 +1776,7 @@ impl WorkspaceCapability {
     /// # Errors
     /// Returns physical overflow, admission refusal or native allocator refusal.
     pub fn terms_equal(
-        &self,
-        left: &purrdf_core::TermValue,
-        right: &purrdf_core::TermValue,
+        &self, left: &purrdf_core::TermValue, right: &purrdf_core::TermValue,
     ) -> Result<bool, EvalError> {
         self.terms_cmp_inner(left, right, true)
             .map(|order| order == std::cmp::Ordering::Equal)
@@ -1838,18 +1787,13 @@ impl WorkspaceCapability {
     /// # Errors
     /// Returns physical overflow, admission refusal or native allocator refusal.
     pub fn terms_cmp(
-        &self,
-        left: &purrdf_core::TermValue,
-        right: &purrdf_core::TermValue,
+        &self, left: &purrdf_core::TermValue, right: &purrdf_core::TermValue,
     ) -> Result<std::cmp::Ordering, EvalError> {
         self.terms_cmp_inner(left, right, false)
     }
 
     fn terms_cmp_inner(
-        &self,
-        left: &purrdf_core::TermValue,
-        right: &purrdf_core::TermValue,
-        equality: bool,
+        &self, left: &purrdf_core::TermValue, right: &purrdf_core::TermValue, equality: bool,
     ) -> Result<std::cmp::Ordering, EvalError> {
         let left_nodes = crate::retained::term_layout(left, self)?.nodes;
         let right_nodes = crate::retained::term_layout(right, self)?.nodes;
@@ -1878,10 +1822,7 @@ impl WorkspaceCapability {
     /// # Errors
     /// Returns layout overflow, admission refusal or allocator failure before growth.
     pub fn reserve_vec<T>(
-        &self,
-        values: &mut Vec<T>,
-        allocation: &mut Option<WorkspaceAllocation>,
-        required: usize,
+        &self, values: &mut Vec<T>, allocation: &mut Option<WorkspaceAllocation>, required: usize,
     ) -> Result<(), EvalError> {
         if required <= values.capacity() {
             return Ok(());
@@ -1903,10 +1844,7 @@ impl WorkspaceCapability {
     /// # Errors
     /// Returns layout overflow, admission refusal or allocator failure before growth.
     pub fn reserve_vec_for_append<T>(
-        &self,
-        values: &mut Vec<T>,
-        allocation: &mut Option<WorkspaceAllocation>,
-        additional: usize,
+        &self, values: &mut Vec<T>, allocation: &mut Option<WorkspaceAllocation>, additional: usize,
     ) -> Result<(), EvalError> {
         let capacity = append_capacity::<T>(values.len(), values.capacity(), additional)?;
         self.reserve_vec(values, allocation, capacity)
@@ -1917,10 +1855,7 @@ impl WorkspaceCapability {
     /// # Errors
     /// Returns layout overflow, admission refusal or allocator failure before growth.
     pub fn reserve_string_for_append(
-        &self,
-        value: &mut String,
-        allocation: &mut Option<WorkspaceAllocation>,
-        additional: usize,
+        &self, value: &mut String, allocation: &mut Option<WorkspaceAllocation>, additional: usize,
     ) -> Result<(), EvalError> {
         let capacity = append_capacity::<u8>(value.len(), value.capacity(), additional)?;
         self.reserve_string(value, allocation, capacity)
@@ -1931,10 +1866,7 @@ impl WorkspaceCapability {
     /// # Errors
     /// Returns admission refusal or allocator failure before any buffer growth.
     pub fn reserve_string(
-        &self,
-        value: &mut String,
-        allocation: &mut Option<WorkspaceAllocation>,
-        required: usize,
+        &self, value: &mut String, allocation: &mut Option<WorkspaceAllocation>, required: usize,
     ) -> Result<(), EvalError> {
         if required <= value.capacity() {
             return Ok(());
@@ -2000,9 +1932,7 @@ impl WorkspaceCapability {
 /// Admit and allocate one native concrete control. The private recipient moves
 /// both outputs directly into an ordered owner: Box before its original grant.
 pub(crate) fn box_native<T>(
-    value: T,
-    workspace: &WorkspaceCapability,
-    construct: &'static str,
+    value: T, workspace: &WorkspaceCapability, construct: &'static str,
 ) -> Result<(Box<T>, WorkspaceAllocation), EvalError> {
     let allocation = workspace.charge(
         u64::try_from(std::alloc::Layout::new::<T>().size())
@@ -2153,8 +2083,7 @@ impl<E> QueryWorkspace<E> {
     }
 
     pub(crate) fn owned(
-        reservation: OwnedWorkspaceReservation<E>,
-        bytes: u64,
+        reservation: OwnedWorkspaceReservation<E>, bytes: u64,
     ) -> Result<Self, EvalError>
     where
         E: Clone + std::error::Error + Send + Sync + 'static,
@@ -2474,9 +2403,7 @@ pub(crate) fn display_len(value: &(impl core::fmt::Display + ?Sized)) -> Result<
 }
 
 pub(crate) fn format_exact(
-    value: &(impl core::fmt::Display + ?Sized),
-    length: usize,
-    construct: &'static str,
+    value: &(impl core::fmt::Display + ?Sized), length: usize, construct: &'static str,
 ) -> Result<String, EvalError> {
     use core::fmt::Write;
     let mut text = String::new();
@@ -2515,9 +2442,7 @@ pub(crate) fn format_exact(
 }
 
 pub(crate) fn render(
-    workspace: &WorkspaceCapability,
-    value: &EvalError,
-    construct: &'static str,
+    workspace: &WorkspaceCapability, value: &EvalError, construct: &'static str,
 ) -> Result<(String, WorkspaceAllocation), EvalError> {
     let length = display_len(value)?;
     let admission =
@@ -3757,8 +3682,7 @@ pub(crate) mod owned_row_regressions {
             }
         }
         fn term_id_by_value(
-            &self,
-            value: &purrdf_core::TermValue,
+            &self, value: &purrdf_core::TermValue,
         ) -> Result<Option<TermId>, Refusal> {
             Ok(self.inner.term_id_by_value(value))
         }
@@ -3766,20 +3690,12 @@ pub(crate) mod owned_row_regressions {
             purrdf_core::DatasetView::capabilities(self.inner)
         }
         fn probe_plan(
-            &self,
-            s: bool,
-            p: bool,
-            o: bool,
-            g: purrdf_core::GraphMatch,
+            &self, s: bool, p: bool, o: bool, g: purrdf_core::GraphMatch,
         ) -> Self::ProbePlan {
             purrdf_core::DatasetView::probe_plan(self.inner, s, p, o, g)
         }
         fn quads_for_pattern_with_plan(
-            &self,
-            plan: &Self::ProbePlan,
-            s: Option<TermId>,
-            p: Option<TermId>,
-            o: Option<TermId>,
+            &self, plan: &Self::ProbePlan, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
             g: purrdf_core::GraphMatch,
         ) -> impl Iterator<Item = purrdf_core::QuadIds> + '_ {
             purrdf_core::DatasetView::quads_for_pattern_with_plan(self.inner, plan, s, p, o, g)
@@ -3804,8 +3720,7 @@ pub(crate) mod owned_row_regressions {
         struct Closed;
         impl crate::EvidenceSource<TermId> for Closed {
             fn claim(
-                &self,
-                _: &purrdf_core::QuadIds,
+                &self, _: &purrdf_core::QuadIds,
             ) -> Result<Option<&purrdf_core::evidence::EvidenceRecord>, EvalError> {
                 Ok(None)
             }
@@ -3817,8 +3732,7 @@ pub(crate) mod owned_row_regressions {
                 })
             }
             fn reason(
-                &self,
-                _: purrdf_core::evidence::ReasonId,
+                &self, _: purrdf_core::evidence::ReasonId,
             ) -> Result<Option<purrdf_core::evidence::ReasonDescription<'_>>, EvalError>
             {
                 Ok(None)
@@ -4957,8 +4871,7 @@ pub(crate) mod owned_row_regressions {
                 Ok(None)
             }
             fn service_level_with_workspace(
-                &self,
-                workspace: &crate::WorkspaceCapability,
+                &self, workspace: &crate::WorkspaceCapability,
             ) -> Result<ServiceLevel, EvalError> {
                 ServiceLevel::incomplete_admitted("shard three is rebuilding", workspace)
             }
@@ -5107,9 +5020,7 @@ pub(crate) mod owned_row_regressions {
                 panic!("bounded production must use the native transport body")
             }
             fn post_admitted(
-                &self,
-                _: HttpRequest<'_>,
-                workspace: super::WorkspaceCapability,
+                &self, _: HttpRequest<'_>, workspace: super::WorkspaceCapability,
             ) -> Result<AdmittedHttpBody, crate::remote::ServiceResolutionError> {
                 AdmittedHttpBody::try_build(&workspace, |memory| {
                     memory.collect(br#"{"head":{"vars":["x"]},"results":{"bindings":[{"x":{"type":"literal","value":"same"}},{"x":{"type":"literal","value":"same"}}]}}"#.iter().copied()).map_err(Into::into)
@@ -5273,8 +5184,7 @@ pub(crate) mod owned_row_regressions {
                 Ok(purrdf_core::TermRef::Iri("http://example.org/original"))
             }
             fn term_id_by_value(
-                &self,
-                _: &purrdf_core::TermValue,
+                &self, _: &purrdf_core::TermValue,
             ) -> Result<Option<TermId>, Self::ReadError> {
                 Ok(None)
             }
@@ -5289,19 +5199,13 @@ pub(crate) mod owned_row_regressions {
             }
             fn probe_plan(&self, _: bool, _: bool, _: bool, _: purrdf_core::GraphMatch) {}
             fn quads_for_pattern_with_plan(
-                &self,
-                (): &(),
-                _: Option<TermId>,
-                _: Option<TermId>,
-                _: Option<TermId>,
+                &self, (): &(), _: Option<TermId>, _: Option<TermId>, _: Option<TermId>,
                 _: purrdf_core::GraphMatch,
             ) -> impl Iterator<Item = purrdf_core::QuadIds> + '_ {
                 std::iter::empty()
             }
             fn term_value_with_memory<S: purrdf_lex::allocation::Admission + ?Sized, E>(
-                &self,
-                _: TermId,
-                memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+                &self, _: TermId, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
                 _: impl Fn(purrdf_core::TermLookupError<Self::ReadError>) -> E,
                 storage_error: impl Fn(
                     purrdf_lex::allocation::StorageError,
@@ -5399,17 +5303,14 @@ pub(crate) mod owned_row_regressions {
         struct Forward<'a>(&'a purrdf_core::RdfDataset);
         impl ServiceResolver for Forward<'_> {
             fn resolve(
-                &self,
-                request: ServiceRequest<'_>,
+                &self, request: ServiceRequest<'_>,
             ) -> Result<ResolvedBindings, RemoteError> {
                 crate::remote::resident_resolution(
                     self.resolve_admitted(request, crate::WorkspaceCapability::resident()),
                 )
             }
             fn resolve_admitted(
-                &self,
-                request: ServiceRequest<'_>,
-                workspace: crate::WorkspaceCapability,
+                &self, request: ServiceRequest<'_>, workspace: crate::WorkspaceCapability,
             ) -> Result<AdmittedResolvedBindings, ServiceResolutionError> {
                 if let Some(trip) = request.stop_trip() {
                     return Err(crate::remote::invocation_error(trip, &workspace)?);

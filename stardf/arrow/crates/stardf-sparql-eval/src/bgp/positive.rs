@@ -35,9 +35,7 @@ purrdf_hash::debug_non_exhaustive!(PositivePlan { drivers });
 /// Reuse the authoritative scope censuses without retaining a full variable set
 /// for every prefix of a wide join. Compound nodes retain only scalar forecasts.
 fn scope_summary(
-    node: &GraphPattern,
-    estimate: PlanEstimate,
-    workspace: &WorkspaceCapability,
+    node: &GraphPattern, estimate: PlanEstimate, workspace: &WorkspaceCapability,
 ) -> Result<Summary, EvalError> {
     Ok(Summary {
         schema: crate::eval::syntactic_schema_admitted(node, workspace)?
@@ -67,9 +65,7 @@ impl PositivePlan {
     /// any seed or forecast. The small traversal stack stays inline on ordinary
     /// prepared-query shapes, so checking an ineligible operand allocates nothing.
     pub(crate) fn seed_eligible_admitted(
-        root: &GraphPattern,
-        schema: &VarSchema,
-        workspace: &WorkspaceCapability,
+        root: &GraphPattern, schema: &VarSchema, workspace: &WorkspaceCapability,
     ) -> Result<bool, EvalError> {
         if schema.is_empty() {
             return Ok(false);
@@ -83,17 +79,14 @@ impl PositivePlan {
     /// Whether the subtree can receive physical bindings without crossing a
     /// logical expression or solution-modifier boundary.
     pub(crate) fn pure_eligible_admitted(
-        root: &GraphPattern,
-        workspace: &WorkspaceCapability,
+        root: &GraphPattern, workspace: &WorkspaceCapability,
     ) -> Result<bool, EvalError> {
         Ok(Self::region_facts(root, None, workspace)?.is_some())
     }
 
     /// The single positive-shape census: UNION presence and borrowed shared slots.
     fn region_facts(
-        root: &GraphPattern,
-        schema: Option<&VarSchema>,
-        workspace: &WorkspaceCapability,
+        root: &GraphPattern, schema: Option<&VarSchema>, workspace: &WorkspaceCapability,
     ) -> Result<Option<(bool, bool)>, EvalError> {
         let mut shared = false;
         let mut has_union = false;
@@ -159,9 +152,7 @@ impl PositivePlan {
     /// a UNION use their existing evaluation law.
     #[cfg(test)]
     pub(crate) fn build<D: DatasetView>(
-        dataset: &D,
-        active_dataset: &ActiveDataset<D::Id>,
-        active_graph: GraphMatch<D::Id>,
+        dataset: &D, active_dataset: &ActiveDataset<D::Id>, active_graph: GraphMatch<D::Id>,
         root: &GraphPattern,
     ) -> Result<Option<Self>, EvalError> {
         Self::build_admitted(
@@ -174,11 +165,8 @@ impl PositivePlan {
     }
 
     pub(crate) fn build_admitted<D: DatasetView>(
-        dataset: &D,
-        active_dataset: &ActiveDataset<D::Id>,
-        active_graph: GraphMatch<D::Id>,
-        root: &GraphPattern,
-        workspace: &QueryWorkspace<D::ReadError>,
+        dataset: &D, active_dataset: &ActiveDataset<D::Id>, active_graph: GraphMatch<D::Id>,
+        root: &GraphPattern, workspace: &QueryWorkspace<D::ReadError>,
     ) -> Result<Option<Self>, EvalError> {
         Self::build_with_seed(dataset, active_dataset, active_graph, root, None, workspace)
     }
@@ -187,11 +175,8 @@ impl PositivePlan {
     /// This does not substitute expressions or cross a scope/modifier boundary.
     #[cfg(test)]
     pub(crate) fn build_seeded<D: DatasetView>(
-        dataset: &D,
-        active_dataset: &ActiveDataset<D::Id>,
-        active_graph: GraphMatch<D::Id>,
-        root: &GraphPattern,
-        seed: &SeedEstimate,
+        dataset: &D, active_dataset: &ActiveDataset<D::Id>, active_graph: GraphMatch<D::Id>,
+        root: &GraphPattern, seed: &SeedEstimate,
     ) -> Result<Option<Self>, EvalError> {
         Self::build_seeded_admitted(
             dataset,
@@ -204,12 +189,8 @@ impl PositivePlan {
     }
 
     pub(crate) fn build_seeded_admitted<D: DatasetView>(
-        dataset: &D,
-        active_dataset: &ActiveDataset<D::Id>,
-        active_graph: GraphMatch<D::Id>,
-        root: &GraphPattern,
-        seed: &SeedEstimate,
-        workspace: &QueryWorkspace<D::ReadError>,
+        dataset: &D, active_dataset: &ActiveDataset<D::Id>, active_graph: GraphMatch<D::Id>,
+        root: &GraphPattern, seed: &SeedEstimate, workspace: &QueryWorkspace<D::ReadError>,
     ) -> Result<Option<Self>, EvalError> {
         if !Self::seed_eligible_admitted(root, &seed.schema, &workspace.capability())? {
             return Ok(None);
@@ -225,12 +206,8 @@ impl PositivePlan {
     }
 
     fn build_with_seed<D: DatasetView>(
-        dataset: &D,
-        active_dataset: &ActiveDataset<D::Id>,
-        active_graph: GraphMatch<D::Id>,
-        root: &GraphPattern,
-        seed: Option<&SeedEstimate>,
-        account: &QueryWorkspace<D::ReadError>,
+        dataset: &D, active_dataset: &ActiveDataset<D::Id>, active_graph: GraphMatch<D::Id>,
+        root: &GraphPattern, seed: Option<&SeedEstimate>, account: &QueryWorkspace<D::ReadError>,
     ) -> Result<Option<Self>, EvalError> {
         let workspace = account.capability();
         let Some((has_union, _)) = Self::region_facts(root, None, &workspace)? else {
@@ -586,10 +563,7 @@ impl PositivePlan {
     }
 
     fn extend_seed(
-        &self,
-        node: &GraphPattern,
-        input: &SeedEstimate,
-        rows: u64,
+        &self, node: &GraphPattern, input: &SeedEstimate, rows: u64,
         workspace: &WorkspaceCapability,
     ) -> Result<SeedEstimate, EvalError> {
         let summary = scope_summary(
@@ -611,12 +585,8 @@ impl PositivePlan {
     /// execution reads. Each BGP is priced once, with the bindings it receives.
     #[cfg(test)]
     pub(crate) fn survey<D: DatasetView>(
-        &self,
-        dataset: &D,
-        active_dataset: &ActiveDataset<D::Id>,
-        active_graph: GraphMatch<D::Id>,
-        root: &GraphPattern,
-        survey: &mut PlanSurvey,
+        &self, dataset: &D, active_dataset: &ActiveDataset<D::Id>, active_graph: GraphMatch<D::Id>,
+        root: &GraphPattern, survey: &mut PlanSurvey,
     ) -> Result<(), EvalError> {
         self.survey_admitted(
             dataset,
@@ -629,13 +599,8 @@ impl PositivePlan {
     }
 
     pub(crate) fn survey_admitted<D: DatasetView>(
-        &self,
-        dataset: &D,
-        active_dataset: &ActiveDataset<D::Id>,
-        active_graph: GraphMatch<D::Id>,
-        root: &GraphPattern,
-        survey: &mut PlanSurvey,
-        account: &QueryWorkspace<D::ReadError>,
+        &self, dataset: &D, active_dataset: &ActiveDataset<D::Id>, active_graph: GraphMatch<D::Id>,
+        root: &GraphPattern, survey: &mut PlanSurvey, account: &QueryWorkspace<D::ReadError>,
     ) -> Result<(), EvalError> {
         self.survey_seeded_admitted(
             dataset,
@@ -649,12 +614,8 @@ impl PositivePlan {
 
     /// Forecast the exact seeded schedule that execution will consume.
     pub(crate) fn survey_seeded_admitted<D: DatasetView>(
-        &self,
-        dataset: &D,
-        active_dataset: &ActiveDataset<D::Id>,
-        active_graph: GraphMatch<D::Id>,
-        seeded: (&GraphPattern, Option<&SeedEstimate>),
-        survey: &mut PlanSurvey,
+        &self, dataset: &D, active_dataset: &ActiveDataset<D::Id>, active_graph: GraphMatch<D::Id>,
+        seeded: (&GraphPattern, Option<&SeedEstimate>), survey: &mut PlanSurvey,
         account: &QueryWorkspace<D::ReadError>,
     ) -> Result<(), EvalError> {
         let (root, input) = seeded;

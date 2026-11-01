@@ -428,8 +428,7 @@ pub enum Flow {
 /// so it needs no more machine stack for a taller tree. Returns `false` when the
 /// visitor stopped it.
 pub fn walk_pre_post<'a>(
-    root: NodeRef<'a>,
-    mut visit: impl FnMut(Visit, NodeRef<'a>) -> Flow,
+    root: NodeRef<'a>, mut visit: impl FnMut(Visit, NodeRef<'a>) -> Flow,
 ) -> bool {
     try_walk_pre_post(
         root,
@@ -466,8 +465,7 @@ enum WalkStep<'a> {
 
 /// One traversal law; the caller supplies only physical storage and visitor effects.
 fn pre_post<'a, C, E>(
-    root: NodeRef<'a>,
-    context: &mut C,
+    root: NodeRef<'a>, context: &mut C,
     mut visit: impl FnMut(Visit, NodeRef<'a>, &mut C) -> Result<Flow, E>,
     mut grow: impl FnMut(&mut WorkList<WalkStep<'a>, 32>, usize, &mut C) -> Result<(), E>,
     mut release: impl FnMut(WorkList<WalkStep<'a>, 32>, &mut C) -> Result<(), E>,
@@ -532,8 +530,7 @@ fn pre_post<'a, C, E>(
 /// # Errors
 /// Preserves visitor, storage, and depth failures as their typed variants.
 pub fn try_walk_pre_post<'a, E: std::fmt::Debug, A>(
-    root: NodeRef<'a>,
-    mut visit: impl FnMut(Visit, NodeRef<'a>) -> Result<Flow, E>,
+    root: NodeRef<'a>, mut visit: impl FnMut(Visit, NodeRef<'a>) -> Result<Flow, E>,
     mut admit: impl FnMut(usize) -> Result<A, E>,
 ) -> Result<bool, WalkError<E>> {
     let mut admission = None;
@@ -597,8 +594,7 @@ where
 
 /// Compute one value per node, children in declaration order.
 pub fn fold_post_order<'a, R>(
-    root: NodeRef<'a>,
-    mut combine: impl FnMut(NodeRef<'a>, &mut dyn Iterator<Item = R>) -> R,
+    root: NodeRef<'a>, mut combine: impl FnMut(NodeRef<'a>, &mut dyn Iterator<Item = R>) -> R,
 ) -> R {
     let mut resident = purrdf_lex::allocation::Resident;
     fold_post_order_with_memory(
@@ -677,8 +673,7 @@ where
 /// sees each expression before the walk reads what it holds, so an expression it
 /// replaces is walked as replaced.
 pub fn for_each_expression_mut<'e>(
-    roots: impl IntoIterator<Item = &'e mut Expression>,
-    mut visit: impl FnMut(&mut Expression),
+    roots: impl IntoIterator<Item = &'e mut Expression>, mut visit: impl FnMut(&mut Expression),
 ) {
     let mut storage = purrdf_lex::allocation::Resident;
     let mut memory = purrdf_lex::allocation::Memory::new(&mut storage);
@@ -731,8 +726,7 @@ where
 
 /// Push the rewritten expression operands in reverse source order.
 fn push_operands_mut_with_memory<'e, S: purrdf_lex::allocation::Admission + ?Sized>(
-    expr: &'e mut Expression,
-    pending: &mut WorkList<&'e mut Expression, 16>,
+    expr: &'e mut Expression, pending: &mut WorkList<&'e mut Expression, 16>,
     memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<(), purrdf_lex::allocation::StorageError> {
     match expr {

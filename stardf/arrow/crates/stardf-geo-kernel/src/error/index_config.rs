@@ -78,8 +78,7 @@ impl IndexSerializationError {
     }
 
     pub(crate) fn capture<S: purrdf_lex::allocation::Admission + ?Sized>(
-        property: &TermValue,
-        object: &TermValue,
+        property: &TermValue, object: &TermValue,
         memory: &mut purrdf_lex::allocation::Memory<'_, S>,
         mut before: impl FnMut(&TermValue) -> Result<(), super::GeoError>,
     ) -> Result<super::GeoError, super::GeoError> {
@@ -158,8 +157,7 @@ impl purrdf_hash::error::StructuredError for IndexBindingError {
 
 impl IndexBindingError {
     pub(crate) fn configuration(
-        expected: &GeoIndexConfig,
-        actual: &GeoIndexConfig,
+        expected: &GeoIndexConfig, actual: &GeoIndexConfig,
     ) -> super::GeoError {
         let mut progress = crate::context::WorkProgress::integer(None);
         crate::context::Retained::produce(

@@ -60,8 +60,7 @@ impl HanCharacterIndex {
     /// # Errors
     /// Propagates source access, analysis and indexing bounds.
     pub fn from_dataset<D: DatasetView>(
-        dataset: &D,
-        config: &TextIndexConfig,
+        dataset: &D, config: &TextIndexConfig,
     ) -> Result<Self, TextError>
     where
         D::ReadError: purrdf_hash::error::StructuredError,
@@ -74,9 +73,7 @@ impl HanCharacterIndex {
     /// # Errors
     /// Propagates source access, analysis, field routing and indexing bounds.
     pub fn from_dataset_with_ranking<D: DatasetView>(
-        dataset: &D,
-        config: &TextIndexConfig,
-        ranking: RankingProfile,
+        dataset: &D, config: &TextIndexConfig, ranking: RankingProfile,
     ) -> Result<Self, TextError>
     where
         D::ReadError: purrdf_hash::error::StructuredError,
@@ -136,8 +133,7 @@ fn runs(text: &str, mut sink: impl FnMut(&[Unit])) {
 }
 
 fn runs_owned(
-    text: &str,
-    workspace: &WorkspaceCapability,
+    text: &str, workspace: &WorkspaceCapability,
     mut sink: impl FnMut(&[Unit]) -> Result<(), TextError>,
 ) -> Result<(), TextError> {
     let mut run = AdmittedVec::new(workspace);
@@ -167,9 +163,7 @@ fn runs_owned(
 }
 
 pub(crate) fn query_terms_owned(
-    analyzer: &Analyzer,
-    input: &str,
-    workspace: &WorkspaceCapability,
+    analyzer: &Analyzer, input: &str, workspace: &WorkspaceCapability,
 ) -> Result<AdmittedVec<QueryString>, TextError> {
     let analysis = analyzer.analysis_form_owned(input, workspace)?;
     let mut out = AdmittedVec::new(workspace);

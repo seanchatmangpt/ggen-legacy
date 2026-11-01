@@ -166,15 +166,13 @@ impl CanonicalMetadataInput {
     /// Encodes metadata and validates every matrix, projection, binding, and
     /// index cross-reference against precommitted matrices.
     pub fn encode_for_matrices(
-        self,
-        matrices: &[MatrixCommitment],
+        self, matrices: &[MatrixCommitment],
     ) -> Result<CanonicalMetadataSections, EmbeddingError> {
         self.encode_inner(Some(matrices))
     }
 
     fn encode_inner(
-        self,
-        matrices: Option<&[MatrixCommitment]>,
+        self, matrices: Option<&[MatrixCommitment]>,
     ) -> Result<CanonicalMetadataSections, EmbeddingError> {
         let EncodedContracts {
             bytes: contracts,
@@ -817,9 +815,7 @@ pub struct ExternalBinding {
 impl ExternalBinding {
     /// Derives a binding from exact external bytes.
     pub fn from_bytes(
-        scope: ExternalScope,
-        artifact_bytes: &[u8],
-        contract: &ExternalBindingContract,
+        scope: ExternalScope, artifact_bytes: &[u8], contract: &ExternalBindingContract,
     ) -> Result<Self, EmbeddingError> {
         let artifact_length = u64_len(artifact_bytes.len(), "external artifact length")?;
         Self::from_digest(
@@ -832,9 +828,7 @@ impl ExternalBinding {
 
     /// Derives a binding from a trusted exact digest and byte length.
     pub fn from_digest(
-        scope: ExternalScope,
-        artifact_sha256: ContentDigest,
-        artifact_length: u64,
+        scope: ExternalScope, artifact_sha256: ContentDigest, artifact_length: u64,
         contract: &ExternalBindingContract,
     ) -> Result<Self, EmbeddingError> {
         Self::from_parts(scope, artifact_sha256, artifact_length, None, contract)
@@ -843,9 +837,7 @@ impl ExternalBinding {
     /// Independently verifies exact `.purrpck` v1 bytes and mints a binding
     /// carrying `CERTIFIED_RDF_PRESENT`.
     pub fn from_purrpck(
-        scope: ExternalScope,
-        artifact_bytes: &[u8],
-        contract: &ExternalBindingContract,
+        scope: ExternalScope, artifact_bytes: &[u8], contract: &ExternalBindingContract,
     ) -> Result<Self, EmbeddingError> {
         let certified = verify_pack(artifact_bytes).map_err(EmbeddingError::external_pack)?;
         Self::from_parts(
@@ -858,11 +850,8 @@ impl ExternalBinding {
     }
 
     fn from_parts(
-        scope: ExternalScope,
-        artifact_sha256: ContentDigest,
-        artifact_length: u64,
-        certified_rdf_digest: Option<RdfcDigest>,
-        contract: &ExternalBindingContract,
+        scope: ExternalScope, artifact_sha256: ContentDigest, artifact_length: u64,
+        certified_rdf_digest: Option<RdfcDigest>, contract: &ExternalBindingContract,
     ) -> Result<Self, EmbeddingError> {
         let canonical_contract = contract.canonical_bytes()?;
         let contract_digest = derive_external_contract_digest(&canonical_contract);
@@ -1333,10 +1322,8 @@ pub struct DerivedIndex {
 impl DerivedIndex {
     /// Derives an index identity and guard from typed coordinates and storage.
     pub fn new(
-        coordinates: IndexCoordinates,
-        storage: IndexPayloadStorage,
-        determinism: IndexBuildDeterminism,
-        guard: &IndexGuardContract,
+        coordinates: IndexCoordinates, storage: IndexPayloadStorage,
+        determinism: IndexBuildDeterminism, guard: &IndexGuardContract,
     ) -> Result<Self, EmbeddingError> {
         if coordinates.prefix_dimension == 0 {
             return Err(EmbeddingError::UnavailablePrefix(0));
@@ -1555,8 +1542,7 @@ fn encode_index_guards_canonical(
 }
 
 fn validate_source_target(
-    source: CertifiedPurrpckSource,
-    targets: &[EmbeddingTarget],
+    source: CertifiedPurrpckSource, targets: &[EmbeddingTarget],
 ) -> Result<(), EmbeddingError> {
     let target = find_target(targets, source.dataset_target_id())?;
     if target.kind != TargetKind::RdfDataset {
@@ -1576,8 +1562,7 @@ fn validate_source_target(
 }
 
 fn validate_target_set_references(
-    sets: &[TargetSet],
-    targets: &[EmbeddingTarget],
+    sets: &[TargetSet], targets: &[EmbeddingTarget],
 ) -> Result<(), EmbeddingError> {
     for set in sets {
         for target in &set.targets {
@@ -1588,8 +1573,7 @@ fn validate_target_set_references(
 }
 
 fn validate_relation_references(
-    relations: &[TargetRelation],
-    targets: &[EmbeddingTarget],
+    relations: &[TargetRelation], targets: &[EmbeddingTarget],
 ) -> Result<(), EmbeddingError> {
     for relation in relations {
         let subject = find_target(targets, relation.subject)?.kind;
@@ -1646,8 +1630,7 @@ fn validate_relation_references(
 type BuiltinEdge = (TargetId, RelationKind, TargetId);
 
 fn validate_relation_completeness(
-    relations: &[TargetRelation],
-    targets: &[EmbeddingTarget],
+    relations: &[TargetRelation], targets: &[EmbeddingTarget],
 ) -> Result<(), EmbeddingError> {
     let edges = relations
         .iter()
@@ -1768,9 +1751,7 @@ fn validate_relation_completeness(
 }
 
 fn validate_triple_term_relations(
-    edges: &[BuiltinEdge],
-    targets: &[EmbeddingTarget],
-    target: &EmbeddingTarget,
+    edges: &[BuiltinEdge], targets: &[EmbeddingTarget], target: &EmbeddingTarget,
 ) -> Result<(), EmbeddingError> {
     let kinds = [
         RelationKind::TripleTermSubject,
@@ -1812,16 +1793,13 @@ fn validate_triple_term_relations(
 }
 
 fn retained_required_target_id(
-    target: &EmbeddingTarget,
-    tag: u16,
-    context: &'static str,
+    target: &EmbeddingTarget, tag: u16, context: &'static str,
 ) -> Result<TargetId, EmbeddingError> {
     retained_target_id(target, tag)?.ok_or(EmbeddingError::Missing(context))
 }
 
 fn retained_target_id(
-    target: &EmbeddingTarget,
-    tag: u16,
+    target: &EmbeddingTarget, tag: u16,
 ) -> Result<Option<TargetId>, EmbeddingError> {
     let Some(value) = retained_field(target, tag, TlvWireType::Digest32)? else {
         return Ok(None);
@@ -1843,9 +1821,7 @@ fn retained_u32(target: &EmbeddingTarget, tag: u16) -> Result<Option<u32>, Embed
 }
 
 fn retained_field(
-    target: &EmbeddingTarget,
-    tag: u16,
-    wire_type: TlvWireType,
+    target: &EmbeddingTarget, tag: u16, wire_type: TlvWireType,
 ) -> Result<Option<&[u8]>, EmbeddingError> {
     let Some(identity) = target.canonical_identity.as_deref() else {
         return Ok(None);
@@ -1862,10 +1838,7 @@ fn retained_field(
 }
 
 fn validate_term_position(
-    targets: &[EmbeddingTarget],
-    id: TargetId,
-    allowed_forms: &[u32],
-    context: &'static str,
+    targets: &[EmbeddingTarget], id: TargetId, allowed_forms: &[u32], context: &'static str,
 ) -> Result<(), EmbeddingError> {
     let term = find_target(targets, id)?;
     if term.kind != TargetKind::RdfTerm {
@@ -1880,9 +1853,7 @@ fn validate_term_position(
 }
 
 fn require_composite_graph(
-    targets: &[EmbeddingTarget],
-    composite: TargetId,
-    expected_graph: TargetId,
+    targets: &[EmbeddingTarget], composite: TargetId, expected_graph: TargetId,
     context: &'static str,
 ) -> Result<(), EmbeddingError> {
     let target = find_target(targets, composite)?;
@@ -1901,10 +1872,7 @@ fn require_composite_graph(
 /// typed [`RelationKind`] and a borrowed view's raw wire code — so the three edge
 /// checks are generic over the kind and both validators run these bodies.
 pub(super) fn require_edge<K: Ord + Copy>(
-    edges: &[(TargetId, K, TargetId)],
-    subject: TargetId,
-    kind: K,
-    object: TargetId,
+    edges: &[(TargetId, K, TargetId)], subject: TargetId, kind: K, object: TargetId,
 ) -> Result<(), EmbeddingError> {
     if edges.binary_search(&(subject, kind, object)).is_err() {
         return Err(EmbeddingError::MissingReference(
@@ -1916,10 +1884,7 @@ pub(super) fn require_edge<K: Ord + Copy>(
 
 /// Refuse unless `target` has exactly `expected` relations of `kind` in `edges`.
 pub(super) fn require_edge_count<K: Ord + Copy>(
-    edges: &[(TargetId, K, TargetId)],
-    target: TargetId,
-    kind: K,
-    expected: usize,
+    edges: &[(TargetId, K, TargetId)], target: TargetId, kind: K, expected: usize,
 ) -> Result<(), EmbeddingError> {
     if edge_count(edges, target, kind) != expected {
         return Err(EmbeddingError::Malformed(
@@ -1931,9 +1896,7 @@ pub(super) fn require_edge_count<K: Ord + Copy>(
 
 /// How many relations of `kind` leave `target` in the sorted table `edges`.
 pub(super) fn edge_count<K: Ord + Copy>(
-    edges: &[(TargetId, K, TargetId)],
-    target: TargetId,
-    kind: K,
+    edges: &[(TargetId, K, TargetId)], target: TargetId, kind: K,
 ) -> usize {
     let start = edges.partition_point(|edge| (edge.0, edge.1) < (target, kind));
     let end = edges.partition_point(|edge| (edge.0, edge.1) <= (target, kind));
@@ -1941,9 +1904,7 @@ pub(super) fn edge_count<K: Ord + Copy>(
 }
 
 fn validate_token_span_references(
-    spans: &[TokenSpan],
-    families: &[EmbeddingFamily],
-    targets: &[EmbeddingTarget],
+    spans: &[TokenSpan], families: &[EmbeddingFamily], targets: &[EmbeddingTarget],
 ) -> Result<(), EmbeddingError> {
     for span in spans {
         let family = find_family(families, span.family_id)?;
@@ -1973,8 +1934,7 @@ struct TypedCatalog<'a> {
 }
 
 fn validate_matrix_and_index_references(
-    source: CertifiedPurrpckSource,
-    catalog: TypedCatalog<'_>,
+    source: CertifiedPurrpckSource, catalog: TypedCatalog<'_>,
     matrices: Option<&[MatrixCommitment]>,
 ) -> Result<(), EmbeddingError> {
     let needs_matrices = !catalog.indexes.is_empty()
@@ -2023,9 +1983,7 @@ fn validate_matrix_and_index_references(
 }
 
 fn validate_matrix_catalog(
-    families: &[EmbeddingFamily],
-    target_sets: &[TargetSet],
-    matrices: &[MatrixCommitment],
+    families: &[EmbeddingFamily], target_sets: &[TargetSet], matrices: &[MatrixCommitment],
 ) -> Result<(), EmbeddingError> {
     let mut ids = matrices
         .iter()
@@ -2074,11 +2032,8 @@ fn validate_matrix_catalog(
 }
 
 fn validate_matrix_subject_contracts(
-    families: &[EmbeddingFamily],
-    targets: &[EmbeddingTarget],
-    target_sets: &[TargetSet],
-    spans: &[TokenSpan],
-    matrices: &[MatrixCommitment],
+    families: &[EmbeddingFamily], targets: &[EmbeddingTarget], target_sets: &[TargetSet],
+    spans: &[TokenSpan], matrices: &[MatrixCommitment],
 ) -> Result<(), EmbeddingError> {
     for matrix in matrices {
         let family = find_family(families, matrix.family_id)?;
@@ -2116,8 +2071,7 @@ fn validate_matrix_subject_contracts(
 }
 
 fn family_stage_applied(
-    family: &EmbeddingFamily,
-    contract_tag: u16,
+    family: &EmbeddingFamily, contract_tag: u16,
 ) -> Result<bool, EmbeddingError> {
     let stage = canonical_tlv(&family.canonical_contract)?
         .find(|entry| entry.tag == contract_tag)
@@ -2152,12 +2106,8 @@ fn family_stage_applied(
 }
 
 fn validate_external_scope(
-    scope: ExternalScope,
-    source: CertifiedPurrpckSource,
-    families: &[EmbeddingFamily],
-    targets: &[EmbeddingTarget],
-    target_sets: &[TargetSet],
-    matrices: &[MatrixCommitment],
+    scope: ExternalScope, source: CertifiedPurrpckSource, families: &[EmbeddingFamily],
+    targets: &[EmbeddingTarget], target_sets: &[TargetSet], matrices: &[MatrixCommitment],
     indexes: &[DerivedIndex],
 ) -> Result<(), EmbeddingError> {
     match scope {
@@ -2178,12 +2128,8 @@ fn validate_external_scope(
 }
 
 fn validate_index_references(
-    source: CertifiedPurrpckSource,
-    families: &[EmbeddingFamily],
-    target_sets: &[TargetSet],
-    matrices: &[MatrixCommitment],
-    bindings: &[ExternalBinding],
-    index: &DerivedIndex,
+    source: CertifiedPurrpckSource, families: &[EmbeddingFamily], target_sets: &[TargetSet],
+    matrices: &[MatrixCommitment], bindings: &[ExternalBinding], index: &DerivedIndex,
 ) -> Result<(), EmbeddingError> {
     if index.coordinates.source_exact_digest != source.source_exact_digest() {
         return Err(EmbeddingError::DigestMismatch {
@@ -2237,9 +2183,7 @@ fn validate_index_references(
 }
 
 fn scope_matches_index_metadata(
-    scope: ExternalScope,
-    source: CertifiedPurrpckSource,
-    index: &DerivedIndex,
+    scope: ExternalScope, source: CertifiedPurrpckSource, index: &DerivedIndex,
 ) -> bool {
     match scope {
         ExternalScope::Source(digest) => digest == source.source_exact_digest(),
@@ -2255,10 +2199,7 @@ fn scope_matches_index_metadata(
 /// table of the metadata is stored sorted by its id, so each lookup is this one
 /// search, and an absent id is the dangling reference `what` names.
 fn find_sorted<'a, T, K: Ord + Copy>(
-    items: &'a [T],
-    id: K,
-    key: impl FnMut(&T) -> K,
-    what: &'static str,
+    items: &'a [T], id: K, key: impl FnMut(&T) -> K, what: &'static str,
 ) -> Result<&'a T, EmbeddingError> {
     items
         .binary_search_by_key(&id, key)
@@ -2267,22 +2208,19 @@ fn find_sorted<'a, T, K: Ord + Copy>(
 }
 
 fn find_target(
-    targets: &[EmbeddingTarget],
-    id: TargetId,
+    targets: &[EmbeddingTarget], id: TargetId,
 ) -> Result<&EmbeddingTarget, EmbeddingError> {
     find_sorted(targets, id, |target| target.id, "target")
 }
 
 fn find_family(
-    families: &[EmbeddingFamily],
-    id: FamilyId,
+    families: &[EmbeddingFamily], id: FamilyId,
 ) -> Result<&EmbeddingFamily, EmbeddingError> {
     find_sorted(families, id, |family| family.id, "embedding family")
 }
 
 fn find_space(
-    families: &[EmbeddingFamily],
-    id: VectorSpaceId,
+    families: &[EmbeddingFamily], id: VectorSpaceId,
 ) -> Result<&super::contract::EffectiveSpace, EmbeddingError> {
     families
         .iter()
@@ -2296,8 +2234,7 @@ fn find_target_set(sets: &[TargetSet], id: TargetSetId) -> Result<&TargetSet, Em
 }
 
 fn find_matrix(
-    matrices: &[MatrixCommitment],
-    id: MatrixId,
+    matrices: &[MatrixCommitment], id: MatrixId,
 ) -> Result<&MatrixCommitment, EmbeddingError> {
     matrices
         .iter()
@@ -2306,8 +2243,7 @@ fn find_matrix(
 }
 
 fn find_projection(
-    matrices: &[MatrixCommitment],
-    id: ProjectionId,
+    matrices: &[MatrixCommitment], id: ProjectionId,
 ) -> Result<&ProjectionCommitment, EmbeddingError> {
     matrices
         .iter()
@@ -2317,8 +2253,7 @@ fn find_projection(
 }
 
 fn find_binding(
-    bindings: &[ExternalBinding],
-    id: ExternalBindingId,
+    bindings: &[ExternalBinding], id: ExternalBindingId,
 ) -> Result<&ExternalBinding, EmbeddingError> {
     find_sorted(bindings, id, |binding| binding.id, "external binding")
 }
@@ -2367,9 +2302,7 @@ fn encode_artifact_identity(identity: &ArtifactIdentity) -> Result<Vec<u8>, Embe
 }
 
 fn push_optional_nonempty_bytes(
-    output: &mut Vec<u8>,
-    tag: u16,
-    value: Option<&[u8]>,
+    output: &mut Vec<u8>, tag: u16, value: Option<&[u8]>,
 ) -> Result<(), EmbeddingError> {
     if let Some(value) = value {
         if value.is_empty() {
@@ -2381,9 +2314,7 @@ fn push_optional_nonempty_bytes(
 }
 
 fn deduplicate_by_key<T, K, F>(
-    values: Vec<T>,
-    mut key: F,
-    context: &'static str,
+    values: Vec<T>, mut key: F, context: &'static str,
 ) -> Result<Vec<T>, EmbeddingError>
 where
     T: PartialEq,
@@ -2406,9 +2337,7 @@ where
 }
 
 fn append_pool_block(
-    pool: &mut Vec<u8>,
-    pool_offset: u64,
-    bytes: &[u8],
+    pool: &mut Vec<u8>, pool_offset: u64, bytes: &[u8],
 ) -> Result<(u64, u64), EmbeddingError> {
     if bytes.is_empty() {
         return Err(EmbeddingError::Missing("metadata pool block"));
@@ -2461,9 +2390,7 @@ fn zero_vec(length: u64, context: &'static str) -> Result<Vec<u8>, EmbeddingErro
 }
 
 fn record_offset(
-    index: usize,
-    record_length: u64,
-    context: &'static str,
+    index: usize, record_length: u64, context: &'static str,
 ) -> Result<usize, EmbeddingError> {
     let index = u64_len(index, context)?;
     usize::try_from(checked_mul(index, record_length, context)?)
@@ -2471,10 +2398,7 @@ fn record_offset(
 }
 
 fn absolute_record_offset(
-    table_offset: u64,
-    index: usize,
-    record_length: u64,
-    context: &'static str,
+    table_offset: u64, index: usize, record_length: u64, context: &'static str,
 ) -> Result<usize, EmbeddingError> {
     let relative = checked_mul(u64_len(index, context)?, record_length, context)?;
     usize::try_from(checked_add(table_offset, relative, context)?)

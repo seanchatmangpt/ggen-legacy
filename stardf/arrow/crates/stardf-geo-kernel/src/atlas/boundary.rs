@@ -22,9 +22,7 @@ impl RegionBoundary {
 }
 
 pub(crate) fn region_boundary(
-    region: &PreparedRegion,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    region: &PreparedRegion, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<RegionBoundary, GeoError> {
     let binding = crate::numerical::reference_identity(context, progress, None)?;
     region.check_binding_admitted(binding, context, progress)?;
@@ -260,9 +258,7 @@ pub(crate) fn region_boundary(
 /// Strictly interior holes avoid both identified chart seams and poles. Their
 /// pairwise closed disjointness prevents lower-dimensional selected remnants.
 fn regular_rectangle_polygon(
-    rings: &crate::Rings,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    rings: &crate::Rings, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let Some((outer, holes)) = rings.split_first() else {
         context.charge_work(1)?;
@@ -317,10 +313,7 @@ fn regular_rectangle_polygon(
 }
 
 fn point_order(
-    a: &LonLat,
-    b: &LonLat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    a: &LonLat, b: &LonLat, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<core::cmp::Ordering, GeoError> {
     crate::numerical::ExactAdmission::new(context, progress).expression_result(
         purrdf_xsd::integer::ExactOperation::RationalCompare,
@@ -338,9 +331,7 @@ fn point_order(
 }
 
 fn edge_order(
-    edge: (&Coord, &Coord),
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    edge: (&Coord, &Coord), context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<core::cmp::Ordering, GeoError> {
     crate::numerical::ExactAdmission::new(context, progress).expression_result(
         purrdf_xsd::integer::ExactOperation::RationalCompare,
@@ -351,9 +342,7 @@ fn edge_order(
 }
 
 fn edge_pair_order(
-    a: (&Coord, &Coord),
-    b: (&Coord, &Coord),
-    context: &mut MetricContext,
+    a: (&Coord, &Coord), b: (&Coord, &Coord), context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<core::cmp::Ordering, GeoError> {
     crate::numerical::ExactAdmission::new(context, progress).expression_result(
@@ -382,9 +371,7 @@ fn edge_pair_order(
 
 /// The original physical-coordinate conversion shared by topology and metrics.
 pub(crate) fn physical_point(
-    point: &Coord,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    point: &Coord, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<LonLat, GeoError> {
     crate::numerical::ExactAdmission::new(context, progress).expression_result(
         purrdf_xsd::integer::ExactOperation::RationalCompare,
@@ -395,10 +382,7 @@ pub(crate) fn physical_point(
 }
 
 fn boundary_order(
-    a: &[LonLat; 2],
-    b: &[LonLat; 2],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    a: &[LonLat; 2], b: &[LonLat; 2], context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<core::cmp::Ordering, GeoError> {
     let first = point_order(&a[0], &b[0], context, progress)?;
     if first.is_eq() {
@@ -412,10 +396,8 @@ fn boundary_order(
 /// Their closed image union is exactly the joined original-coordinate segment,
 /// including branch junction points. The atlas's area labels are unaffected.
 fn coalesce_boundary(
-    edges: RetainedBuilder<[LonLat; 2]>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    edges: RetainedBuilder<[LonLat; 2]>, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<RetainedBuilder<[LonLat; 2]>, GeoError> {
     let previous_bytes = u64::try_from(edges.admitted_bytes())
         .map_err(|_| GeoError::Storage(purrdf_lex::allocation::StorageError::SizeOverflow))?;
@@ -482,11 +464,8 @@ fn coalesce_boundary(
 /// Complete written noding on the identified cut. Ordinary interior edge
 /// crossings share the exact planar noder; only the endpoint aliases are added.
 pub(crate) fn identified_events<'source>(
-    edges: &[(&Coord, &Coord)],
-    seeds: impl IntoIterator<Item = &'source Coord>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    edges: &[(&Coord, &Coord)], seeds: impl IntoIterator<Item = &'source Coord>,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<RetainedBuilder<Coord>, GeoError> {
     let mut original = RetainedBuilder::default();
     for point in seeds {

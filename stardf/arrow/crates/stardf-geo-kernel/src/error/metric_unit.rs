@@ -48,11 +48,8 @@ impl purrdf_hash::error::StructuredError for MetricUnitError {
 }
 impl MetricUnitError {
     pub(crate) fn capture(
-        reason: MetricUnitReason,
-        value: &crate::Rat,
-        factor: &crate::Rat,
-        divisor: Option<&crate::Rat>,
-        dimension: crate::metric::MetricDimension,
+        reason: MetricUnitReason, value: &crate::Rat, factor: &crate::Rat,
+        divisor: Option<&crate::Rat>, dimension: crate::metric::MetricDimension,
         direction: crate::metric::MetricUnitDirection,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {

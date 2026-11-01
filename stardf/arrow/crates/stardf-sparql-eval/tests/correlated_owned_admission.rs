@@ -283,9 +283,7 @@ fn http_native_decode_and_blank_ingest_preserve_duplicates_and_physical_refusal_
             panic!("bounded route cannot enter the opaque resident producer")
         }
         fn post_admitted(
-            &self,
-            _: HttpRequest<'_>,
-            workspace: WorkspaceCapability,
+            &self, _: HttpRequest<'_>, workspace: WorkspaceCapability,
         ) -> Result<AdmittedHttpBody, ServiceResolutionError> {
             AdmittedHttpBody::try_build(&workspace, |memory| {
                 if self.refuse {

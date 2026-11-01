@@ -1,6 +1,20 @@
 // SPDX-FileCopyrightText: 2026 Blackcat Informatics® Inc. <paudley@blackcatinformatics.ca>
 // SPDX-License-Identifier: MIT OR Apache-2.0 OR MulanPSL-2.0
 
+// LINT-GATE (G03 offline ladder, 2026-10-31, D17): the module sources below
+// are vendored byte-verbatim (purrdf rev 0da05783 / the GTS-SPEC Draft v0.3
+// engine), and the workspace lints table runs clippy all+pedantic+nursery
+// WARN-only upstream. The G03 ladder's `-D warnings` would otherwise demand
+// ~435 style-level rewrites of the audited subject. Gating the GROUPS the
+// table adds — pedantic + nursery — not correctness/perf lints, which stay
+// live. Un-gate per-module only by rewriting the subject, never by widening
+// this allow.
+#![allow(clippy::pedantic)]
+#![allow(clippy::nursery)]
+// all-family leftovers witnessed by the G03 ladder pass (style — the audited
+// subject stays verbatim):
+#![allow(clippy::needless_borrow)]
+
 //! GTS (Graph Transport Substrate) format engine — `docs/GTS-SPEC.md` Draft v0.3.
 //!
 //! A GTS file is a CBOR Sequence of one or more segments (#3.1), each an

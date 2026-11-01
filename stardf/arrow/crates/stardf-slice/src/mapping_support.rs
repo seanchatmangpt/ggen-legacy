@@ -469,9 +469,7 @@ pub(crate) fn subjects_of_type(store: &Dataset, type_iri: &str) -> Result<Vec<St
 }
 
 pub(crate) fn object_literal(
-    store: &Dataset,
-    subject: &str,
-    pred: &str,
+    store: &Dataset, subject: &str, pred: &str,
 ) -> Result<Option<String>, SliceError> {
     store.object_literal(subject, pred)
 }

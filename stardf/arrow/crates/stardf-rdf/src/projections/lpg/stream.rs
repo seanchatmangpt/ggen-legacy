@@ -178,9 +178,7 @@ impl<'a, O: LpgProgressObserver> MappingProgress<'a, O> {
     /// Count one more built record of the kind `count` selects, reporting the
     /// first and every stride-th.
     fn built(
-        &mut self,
-        count: impl FnOnce(&mut LpgProjectionReport) -> &mut usize,
-        what: &str,
+        &mut self, count: impl FnOnce(&mut LpgProjectionReport) -> &mut usize, what: &str,
     ) -> Result<(), ProjectionError> {
         let count = count(&mut self.report);
         *count = checked_increment(*count, what)?;
@@ -238,10 +236,7 @@ where
     O: LpgProgressObserver,
 {
     pub(super) fn new(
-        sink: &'a mut S,
-        observer: &'a mut O,
-        limits: ProjectionLimits,
-        report: LpgProjectionReport,
+        sink: &'a mut S, observer: &'a mut O, limits: ProjectionLimits, report: LpgProjectionReport,
     ) -> Result<Self, ProjectionError> {
         sink.begin_package()?;
         let mut session = Self {

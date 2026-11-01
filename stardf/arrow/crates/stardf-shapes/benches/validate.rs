@@ -1383,9 +1383,7 @@ fn validate_violating_ids(prepared: &PreparedValidator, focus_ids: &[FocusId]) -
 }
 
 fn print_contrast_probe(
-    fixture: &ContrastFixture,
-    conformance: &str,
-    focus_ids: &[FocusId],
+    fixture: &ContrastFixture, conformance: &str, focus_ids: &[FocusId],
     run: fn(&PreparedValidator, &[FocusId]) -> usize,
 ) {
     run(&fixture.prepared, focus_ids);
@@ -1491,9 +1489,7 @@ fn print_membership_preparation_probe(fixture: &MembershipFixture) -> PreparedVa
 }
 
 fn print_membership_realtime_probe(
-    fixture: &MembershipFixture,
-    prepared: &PreparedValidator,
-    focus_ids: &[FocusId],
+    fixture: &MembershipFixture, prepared: &PreparedValidator, focus_ids: &[FocusId],
 ) {
     validate_prepared_ids(prepared, focus_ids);
     let window = WholeProcessWindow::open();
@@ -1556,10 +1552,7 @@ fn bench_subclass_membership(c: &mut Bench) {
 }
 
 fn membership_pattern_count<D>(
-    view: &D,
-    subject: Option<TermId>,
-    predicate: Option<TermId>,
-    object: Option<TermId>,
+    view: &D, subject: Option<TermId>, predicate: Option<TermId>, object: Option<TermId>,
 ) -> usize
 where
     D: DatasetView<Id = TermId> + Sync,
@@ -1569,12 +1562,8 @@ where
 }
 
 fn print_membership_pattern_probe<D>(
-    fixture: &MembershipFixture,
-    view: &D,
-    pattern: &str,
-    subject: Option<TermId>,
-    object: Option<TermId>,
-    expected_rows: usize,
+    fixture: &MembershipFixture, view: &D, pattern: &str, subject: Option<TermId>,
+    object: Option<TermId>, expected_rows: usize,
 ) where
     D: DatasetView<Id = TermId> + Sync,
 {
@@ -1967,8 +1956,7 @@ impl SlotEmissionMode {
 }
 
 fn linkml_emit_fixture(
-    slots: usize,
-    mode: SlotEmissionMode,
+    slots: usize, mode: SlotEmissionMode,
 ) -> (CompiledSchema, LinkmlConfig, usize, usize) {
     assert!(slots > 0, "benchmark fixture requires slots");
     let mut properties = Map::new();

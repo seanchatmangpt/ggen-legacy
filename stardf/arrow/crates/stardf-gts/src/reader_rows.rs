@@ -110,20 +110,13 @@ pub(crate) fn decode_annotation_row(row: &Value, graph: &Graph) -> RowDecode<Ann
 }
 
 pub(crate) fn check_quad_positions(
-    graph: &Graph,
-    s: usize,
-    p: usize,
-    o: usize,
-    graph_slot: Option<usize>,
+    graph: &Graph, s: usize, p: usize, o: usize, graph_slot: Option<usize>,
 ) -> Result<(), Box<RowError>> {
     check_statement_positions(graph, (s, p, o), graph_slot, "quad")
 }
 
 fn check_statement_positions(
-    graph: &Graph,
-    (s, p, o): Triple3,
-    graph_slot: Option<usize>,
-    context: &'static str,
+    graph: &Graph, (s, p, o): Triple3, graph_slot: Option<usize>, context: &'static str,
 ) -> Result<(), Box<RowError>> {
     let n = graph.terms.len();
     if !(s < n && p < n && o < n && graph_slot.is_none_or(|gv| gv < n)) {

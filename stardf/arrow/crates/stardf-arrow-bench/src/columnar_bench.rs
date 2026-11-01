@@ -32,7 +32,7 @@
 //!
 //! Design (zero-alloc promise made testable by construction):
 //! - `encode_into` / `decode_into` write into CALLER-PREALLOCATED buffers,
-//!   promise: zero allocations inside the timed loop (hard gate, avec CTQ-5
+//!   promise: zero allocations inside the timed loop (hard gate, cgap CTQ-5
 //!   pattern) — a codec that silently grows a Vec fails the gate, not the
 //!   baseline.
 //! - Round-trip correctness is exact-checked on the real 1M-quad slab

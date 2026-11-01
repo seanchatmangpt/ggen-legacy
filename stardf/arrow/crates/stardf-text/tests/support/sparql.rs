@@ -52,9 +52,7 @@ pub fn solutions(result: &SparqlResult) -> Vec<Vec<String>> {
 
 /// Evaluate `query` against `dataset` with `relations` in scope, rendered.
 pub fn answer(
-    dataset: &RdfDataset,
-    relations: &PropertyFunctionRegistry<'_>,
-    query: &str,
+    dataset: &RdfDataset, relations: &PropertyFunctionRegistry<'_>, query: &str,
 ) -> Vec<Vec<String>> {
     let result = NativeSparqlEngine::new()
         .query_with_options_view(

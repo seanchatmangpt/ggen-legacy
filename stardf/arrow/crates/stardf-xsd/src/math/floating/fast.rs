@@ -70,8 +70,7 @@ impl CoordinateMath {
     /// Returns the original storage with arithmetic, admission, or physical
     /// allocator failure. A refused publication does not detach that storage.
     pub fn prepare_binary64_with_storage<S: Admission + Send + Sync + 'static>(
-        &mut self,
-        mut storage: S,
+        &mut self, mut storage: S,
     ) -> Result<PreparedBinary64, (MathError, S)> {
         if let Err(error) = self.charge(1, self.limits.precision_bits as usize) {
             return Err((error, storage));
@@ -223,9 +222,7 @@ impl FloatInterval {
     /// # Errors
     /// Refuses zero denominator, range overflow or exhausted numerical admission.
     pub fn from_ratio(
-        numerator: &Int,
-        denominator: &Int,
-        math: &mut CoordinateMath,
+        numerator: &Int, denominator: &Int, math: &mut CoordinateMath,
     ) -> Result<Self, MathError> {
         use crate::ieee::ratio::{self, Rounding};
         math.charge(
@@ -249,10 +246,7 @@ impl FloatInterval {
     /// # Errors
     /// Refuses exhausted numerical admission.
     pub fn round_decimal(
-        self,
-        places: u32,
-        math: &mut CoordinateMath,
-        _chunk: &CheckedBinary64,
+        self, places: u32, math: &mut CoordinateMath, _chunk: &CheckedBinary64,
     ) -> Result<(Int, Int), MathError> {
         Ok((
             round_endpoint(self.lower, places, math)?,
@@ -267,9 +261,7 @@ impl FloatInterval {
     /// # Errors
     /// Refuses an unresolved fixed fallback or exhausted numerical admission.
     pub fn sin_cos(
-        self,
-        math: &mut CoordinateMath,
-        chunk: &CheckedBinary64,
+        self, math: &mut CoordinateMath, chunk: &CheckedBinary64,
     ) -> Result<(Self, Self), MathError> {
         math.request_binary64(64)?;
         math.ensure_binary64()?;
@@ -294,9 +286,7 @@ impl FloatInterval {
     /// # Errors
     /// Refuses an unresolved fixed fallback or exhausted numerical admission.
     pub fn atan(
-        self,
-        math: &mut CoordinateMath,
-        chunk: &CheckedBinary64,
+        self, math: &mut CoordinateMath, chunk: &CheckedBinary64,
     ) -> Result<Self, MathError> {
         math.request_binary64(128)?;
         math.ensure_binary64()?;
@@ -320,10 +310,7 @@ impl FloatInterval {
     /// # Errors
     /// Refuses the origin, unresolved branch cuts or exhausted admission.
     pub fn atan2(
-        y: Self,
-        x: Self,
-        math: &mut CoordinateMath,
-        chunk: &CheckedBinary64,
+        y: Self, x: Self, math: &mut CoordinateMath, chunk: &CheckedBinary64,
     ) -> Result<Self, MathError> {
         math.request_binary64(128)?;
         math.ensure_binary64()?;
@@ -349,9 +336,7 @@ impl FloatInterval {
     /// # Errors
     /// Refuses nonpositive inputs, unresolved boundaries or exhausted admission.
     pub fn log(
-        self,
-        math: &mut CoordinateMath,
-        chunk: &CheckedBinary64,
+        self, math: &mut CoordinateMath, chunk: &CheckedBinary64,
     ) -> Result<Self, MathError> {
         math.request_binary64(160)?;
         math.ensure_binary64()?;
@@ -375,9 +360,7 @@ impl FloatInterval {
     /// # Errors
     /// Refuses finite range overflow, unresolved reduction or exhausted admission.
     pub fn exp(
-        self,
-        math: &mut CoordinateMath,
-        chunk: &CheckedBinary64,
+        self, math: &mut CoordinateMath, chunk: &CheckedBinary64,
     ) -> Result<Self, MathError> {
         math.request_binary64(128)?;
         math.ensure_binary64()?;
@@ -397,8 +380,7 @@ impl FloatInterval {
 }
 
 fn fixed_input(
-    value: FloatInterval,
-    math: &mut CoordinateMath,
+    value: FloatInterval, math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     let lower = FixedInterval::from_binary64(value.lower, math)?;
     let upper = FixedInterval::from_binary64(value.upper, math)?;
@@ -454,9 +436,7 @@ fn point(value: f64) -> FloatInterval {
 }
 
 fn fast_sin_cos(
-    value: FloatInterval,
-    coefficients: &Coefficients,
-    chunk: &CheckedBinary64,
+    value: FloatInterval, coefficients: &Coefficients, chunk: &CheckedBinary64,
 ) -> Result<(FloatInterval, FloatInterval), MathError> {
     if value.lower < -1_000_000.0 || value.upper > 1_000_000.0 {
         return Err(MathError::PrecisionExhausted);
@@ -492,9 +472,7 @@ fn clamp_unit(value: FloatInterval) -> Result<FloatInterval, MathError> {
 }
 
 fn fast_atan(
-    value: FloatInterval,
-    coefficients: &Coefficients,
-    chunk: &CheckedBinary64,
+    value: FloatInterval, coefficients: &Coefficients, chunk: &CheckedBinary64,
 ) -> Result<FloatInterval, MathError> {
     if value.lower == value.upper {
         return atan_point(value.lower, coefficients, chunk);
@@ -524,9 +502,7 @@ fn fast_atan(
 }
 
 fn atan_point(
-    value: f64,
-    coefficients: &Coefficients,
-    chunk: &CheckedBinary64,
+    value: f64, coefficients: &Coefficients, chunk: &CheckedBinary64,
 ) -> Result<FloatInterval, MathError> {
     if value == 0.0 {
         return Ok(point(0.0));
@@ -559,10 +535,7 @@ fn atan_point(
 }
 
 fn fast_atan2(
-    y: FloatInterval,
-    x: FloatInterval,
-    coefficients: &Coefficients,
-    chunk: &CheckedBinary64,
+    y: FloatInterval, x: FloatInterval, coefficients: &Coefficients, chunk: &CheckedBinary64,
 ) -> Result<FloatInterval, MathError> {
     // Choose the nonsingular axis chart when the y component dominates. This
     // avoids overflowing y/x at finite points adjacent to the y axis.
@@ -616,9 +589,7 @@ fn fast_atan2(
 }
 
 fn fast_log(
-    value: FloatInterval,
-    coefficients: &Coefficients,
-    chunk: &CheckedBinary64,
+    value: FloatInterval, coefficients: &Coefficients, chunk: &CheckedBinary64,
 ) -> Result<FloatInterval, MathError> {
     if value.lower <= 0.0 {
         return Err(if value.upper <= 0.0 {
@@ -633,9 +604,7 @@ fn fast_log(
 }
 
 fn log_point(
-    value: f64,
-    coefficients: &Coefficients,
-    chunk: &CheckedBinary64,
+    value: f64, coefficients: &Coefficients, chunk: &CheckedBinary64,
 ) -> Result<FloatInterval, MathError> {
     let dyadic = Binary64Dyadic::decode(value).ok_or(MathError::Binary64Range)?;
     let significand_bits = 64 - dyadic.significand().leading_zeros();
@@ -660,9 +629,7 @@ fn log_point(
 }
 
 fn fast_exp(
-    value: FloatInterval,
-    coefficients: &Coefficients,
-    chunk: &CheckedBinary64,
+    value: FloatInterval, coefficients: &Coefficients, chunk: &CheckedBinary64,
 ) -> Result<FloatInterval, MathError> {
     if value.lower < -740.0 || value.upper > 709.0 {
         return Err(MathError::PrecisionExhausted);
@@ -673,9 +640,7 @@ fn fast_exp(
 }
 
 fn exp_point(
-    value: f64,
-    coefficients: &Coefficients,
-    chunk: &CheckedBinary64,
+    value: f64, coefficients: &Coefficients, chunk: &CheckedBinary64,
 ) -> Result<FloatInterval, MathError> {
     let ops = chunk.ops();
     let logarithm = ops.mul(ops.add(coefficients.ln2.lower, coefficients.ln2.upper), 0.5);

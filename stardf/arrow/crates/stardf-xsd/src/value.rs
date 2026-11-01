@@ -415,9 +415,7 @@ pub enum ParsedNumeric {
 /// Physical allocation/layout refusal is returned independently of lexical
 /// classification and cannot be silently converted into an unbound answer.
 pub fn try_parse_numeric(
-    lexical: &str,
-    datatype: XsdDatatype,
-    xsd10: bool,
+    lexical: &str, datatype: XsdDatatype, xsd10: bool,
 ) -> Result<ParsedNumeric, crate::bigint::LimbScratchError> {
     use crate::numeric::NumericReadError;
     let Some(layout) = exact::cost::numeric_parse_layout(lexical, datatype, xsd10)? else {
@@ -499,9 +497,7 @@ pub enum ParsedValue {
 /// # Errors
 /// Returns layout, admission or allocator refusal separately from lexical invalidity.
 pub fn try_parse_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-    lexical: &str,
-    datatype: XsdDatatype,
-    xsd10: bool,
+    lexical: &str, datatype: XsdDatatype, xsd10: bool,
     memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<ParsedValue, purrdf_lex::allocation::StorageError> {
     use XsdDatatype as D;

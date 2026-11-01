@@ -387,9 +387,7 @@ fn kernel_of(metric: &DistanceMetric) -> Result<Kernel> {
 /// one. Every arithmetic has a compilation for every target, so the thread's float
 /// environment is the only thing that refuses the arithmetic itself.
 pub fn build<A: IndexArithmetic>(
-    matrix: VectorMatrix,
-    metric: &DistanceMetric,
-    params: Params,
+    matrix: VectorMatrix, metric: &DistanceMetric, params: Params,
 ) -> Result<HnswIndex<A>> {
     builder::build_with_batch(matrix, kernel_of(metric)?, params, None)
 }
@@ -530,8 +528,7 @@ impl<A: IndexArithmetic> HnswIndex<A> {
     /// norm-dividing kernel, a non-finite distance, or a float environment the arithmetic
     /// refuses.
     pub(crate) fn verify_bytes_against(
-        matrix: &VectorMatrix,
-        bytes: &[u8],
+        matrix: &VectorMatrix, bytes: &[u8],
     ) -> Result<Option<Params>> {
         // The thread's environment is checked before the payload is read, so a refused
         // environment is never reported as a payload that failed to decode.
@@ -567,11 +564,7 @@ impl<A: IndexArithmetic> HnswIndex<A> {
 
     /// Assemble an index from its parts, holding the walks this crate compiled for `A`.
     pub(crate) fn new(
-        matrix: VectorMatrix,
-        kernel: Kernel,
-        params: Params,
-        graph: Graph,
-        norms: Vec<f64>,
+        matrix: VectorMatrix, kernel: Kernel, params: Params, graph: Graph, norms: Vec<f64>,
         arithmetic: Selected<A>,
     ) -> Self {
         Self {
@@ -690,10 +683,7 @@ impl<A: Arithmetic> HnswIndex<A> {
     /// As for [Self::search_rows_work], plus typed workspace admission or allocator
     /// failure before constructing any required native buffer.
     pub fn search_rows_work_admitted(
-        &self,
-        query_row: usize,
-        k: usize,
-        workspace: &WorkspaceCapability,
+        &self, query_row: usize, k: usize, workspace: &WorkspaceCapability,
     ) -> Result<(AdmittedVec<Ranked>, u64)> {
         let arithmetic = self.resolve_here()?;
         let cache = DistanceCache::admitted(workspace);
@@ -755,9 +745,7 @@ impl<A: Arithmetic> HnswIndex<A> {
     /// Validate a query vector's shape once and bind it to this index's kernel, the
     /// arithmetic resolved for this thread, and the memo.
     fn bind_vector<'a>(
-        &'a self,
-        query: &'a [f64],
-        cache: &'a DistanceCache,
+        &'a self, query: &'a [f64], cache: &'a DistanceCache,
     ) -> Result<Query<'a, A>> {
         let arithmetic = self.resolve_here()?;
         if query.len() != self.matrix.dims() {
@@ -810,11 +798,7 @@ impl<A: Arithmetic> HnswIndex<A> {
 
     /// One search against caller-supplied scratch, from a stored row.
     fn search_with(
-        &self,
-        arithmetic: Resolved<A>,
-        query_row: usize,
-        k: usize,
-        cache: &DistanceCache,
+        &self, arithmetic: Resolved<A>, query_row: usize, k: usize, cache: &DistanceCache,
         visited: &mut Visited,
     ) -> Result<AdmittedVec<Ranked>> {
         let rows = self.matrix.rows();
@@ -841,10 +825,7 @@ impl<A: Arithmetic> HnswIndex<A> {
     /// the vector being ranked against is one it holds. Reached only through
     /// [`Compiled`], so the copy that runs is the one this crate compiled.
     fn traverse(
-        &self,
-        query: &Query<'_, A>,
-        k: usize,
-        visited: &mut Visited,
+        &self, query: &Query<'_, A>, k: usize, visited: &mut Visited,
     ) -> Result<AdmittedVec<Ranked>> {
         if k == 0 {
             return Ok(AdmittedVec::new(query.workspace()));

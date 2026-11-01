@@ -17,8 +17,7 @@ use purrdf_xsd::math::{CoordinateMath, FixedInterval, MathError};
 type F = FixedInterval;
 
 pub(crate) fn authalic_radius_squared(
-    reference: &GeographicReference,
-    math: &mut CoordinateMath,
+    reference: &GeographicReference, math: &mut CoordinateMath,
 ) -> Result<F, MathError> {
     let a = fixed_from_rat(reference.ellipsoid().semimajor(), math)?;
     let c = fixed_from_rat(reference.ellipsoid().semiminor(), math)?.div(&a, math)?;
@@ -40,19 +39,9 @@ pub(crate) fn authalic_radius_squared(
 
 #[allow(clippy::too_many_arguments)] // One auxiliary arc and its exact ellipsoid parameters.
 pub(crate) fn quadrilateral(
-    alpha1: &F,
-    alpha2: &F,
-    sigma1: &F,
-    sigma2: &F,
-    sin0: &F,
-    cos0_squared: &F,
-    q: &F,
-    c: &F,
-    ep2: &F,
-    reference: &GeographicReference,
-    prepared: Option<&PreparedArea>,
-    chunks: &mut ChunkObserver<'_, '_>,
-    math: &mut CoordinateMath,
+    alpha1: &F, alpha2: &F, sigma1: &F, sigma2: &F, sin0: &F, cos0_squared: &F, q: &F, c: &F,
+    ep2: &F, reference: &GeographicReference, prepared: Option<&PreparedArea>,
+    chunks: &mut ChunkObserver<'_, '_>, math: &mut CoordinateMath,
 ) -> Result<F, SolveError> {
     if cos0_squared.is_exact_zero() {
         // The equatorial line has phi=0 and Q(0)=0 along its complete lift.
@@ -109,15 +98,13 @@ impl PreparedArea {
     }
 
     pub(crate) fn retained(
-        self,
-        chunks: &mut ChunkObserver<'_, '_>,
+        self, chunks: &mut ChunkObserver<'_, '_>,
     ) -> Result<crate::context::Retained<Self>, SolveError> {
         chunks.retained(|_| Ok(self), |_, _| Ok(()))
     }
 
     pub(crate) fn detached(
-        &self,
-        chunks: &mut ChunkObserver<'_, '_>,
+        &self, chunks: &mut ChunkObserver<'_, '_>,
     ) -> Result<crate::context::Retained<Self>, SolveError> {
         let coefficients = super::super::coefficients::detached_array(&self.coefficients, chunks)?;
         chunks.retained(
@@ -159,9 +146,7 @@ impl PreparedArea {
 }
 
 pub(crate) fn prepare(
-    ep2: &F,
-    chunks: &mut ChunkObserver<'_, '_>,
-    math: &mut CoordinateMath,
+    ep2: &F, chunks: &mut ChunkObserver<'_, '_>, math: &mut CoordinateMath,
 ) -> Result<Option<PreparedArea>, SolveError> {
     let small = F::power_of_two(-6, math)?;
     if ep2.upper() >= small.lower() {
@@ -189,13 +174,8 @@ pub(crate) fn prepare(
 
 #[allow(clippy::too_many_arguments)] // One arc panel and an optional equivalent prepared proof table.
 fn i4(
-    sigma1: &F,
-    sigma2: &F,
-    q: &F,
-    ep2: &F,
-    prepared: Option<&PreparedArea>,
-    chunks: &mut ChunkObserver<'_, '_>,
-    math: &mut CoordinateMath,
+    sigma1: &F, sigma2: &F, q: &F, ep2: &F, prepared: Option<&PreparedArea>,
+    chunks: &mut ChunkObserver<'_, '_>, math: &mut CoordinateMath,
 ) -> Result<F, SolveError> {
     let delta = sigma2.sub(sigma1, math)?.abs(math)?;
     if let Some(prepared) = prepared.filter(|value| value.bits == math.limits().precision_bits) {
@@ -247,10 +227,7 @@ fn i4(
 }
 
 fn series_plan(
-    ep2: &F,
-    delta: &F,
-    chunks: &mut ChunkObserver<'_, '_>,
-    math: &mut CoordinateMath,
+    ep2: &F, delta: &F, chunks: &mut ChunkObserver<'_, '_>, math: &mut CoordinateMath,
 ) -> Result<(bool, F, usize, F), SolveError> {
     let one = F::from_i64(1, math)?;
     let two = F::from_i64(2, math)?;
@@ -323,14 +300,8 @@ fn area_target(math: &mut CoordinateMath) -> Result<F, MathError> {
 
 #[allow(clippy::too_many_arguments)] // One certified series panel and its admitted coefficient table.
 fn evaluate_series(
-    sigma1: &F,
-    sigma2: &F,
-    q: &F,
-    center: &F,
-    coefficients: &[F],
-    tail: &F,
-    chunks: &mut ChunkObserver<'_, '_>,
-    math: &mut CoordinateMath,
+    sigma1: &F, sigma2: &F, q: &F, center: &F, coefficients: &[F], tail: &F,
+    chunks: &mut ChunkObserver<'_, '_>, math: &mut CoordinateMath,
 ) -> Result<F, SolveError> {
     let one = F::from_i64(1, math)?;
     let two = F::from_i64(2, math)?;
@@ -373,11 +344,7 @@ fn evaluate_series(
 /// Generate the t-equation and divided-difference coefficients in one body.
 /// Native 112-bit tables fit inline; longer tables are admitted by the caller.
 fn generate_series(
-    native: bool,
-    center: &F,
-    ep2: &F,
-    n: usize,
-    chunks: &mut ChunkObserver<'_, '_>,
+    native: bool, center: &F, ep2: &F, n: usize, chunks: &mut ChunkObserver<'_, '_>,
     math: &mut CoordinateMath,
 ) -> Result<crate::context::Produced<SmallVec<[F; 17]>>, SolveError> {
     let one = F::from_i64(1, math)?;

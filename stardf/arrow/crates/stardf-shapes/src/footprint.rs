@@ -430,11 +430,7 @@ impl FootprintWalk {
     /// Record one read: predicate `predicate`, anchored at `root` extended by
     /// `prefix`, with the anchored node at `endpoint` of the matched triple.
     fn emit(
-        &mut self,
-        root: Root,
-        prefix: &[Path],
-        predicate: Option<NamedNode>,
-        endpoint: Endpoint,
+        &mut self, root: Root, prefix: &[Path], predicate: Option<NamedNode>, endpoint: Endpoint,
     ) {
         let base = match root {
             Root::Node => self.chain.clone(),

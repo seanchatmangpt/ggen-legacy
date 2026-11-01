@@ -120,10 +120,7 @@ pub struct ProjectionVars {
 
 impl ProjectionVars {
     fn same_prefix(
-        left: Option<&Shared<Node>>,
-        right: Option<&Shared<Node>>,
-        span: usize,
-        keep: usize,
+        left: Option<&Shared<Node>>, right: Option<&Shared<Node>>, span: usize, keep: usize,
     ) -> bool {
         if keep == 0 {
             return true;
@@ -168,9 +165,7 @@ impl ProjectionVars {
     /// Parser-built snapshots share unchanged trie subtrees, so thousands of
     /// enclosing stars compare only the copied search paths.
     pub(crate) fn is_appended_to<'a>(
-        &self,
-        prefix: &Self,
-        appended: impl IntoIterator<Item = &'a Variable>,
+        &self, prefix: &Self, appended: impl IntoIterator<Item = &'a Variable>,
     ) -> bool {
         let mut index = prefix.len;
         for variable in appended {
@@ -265,8 +260,7 @@ impl ProjectionVars {
     }
 
     fn allocate<S: Admission + ?Sized>(
-        node: Node,
-        memory: &mut Memory<'_, S>,
+        node: Node, memory: &mut Memory<'_, S>,
     ) -> Result<Shared<Node>, StorageError> {
         memory.add_bytes(Shared::<Node>::allocation_layout().size())?;
         let shared = Shared::try_new(node).map_err(|_| StorageError::AllocationFailed)?;
@@ -274,10 +268,7 @@ impl ProjectionVars {
     }
 
     fn insert<S: Admission + ?Sized>(
-        root: Option<&Shared<Node>>,
-        span: usize,
-        index: usize,
-        variable: &Variable,
+        root: Option<&Shared<Node>>, span: usize, index: usize, variable: &Variable,
         memory: &mut Memory<'_, S>,
     ) -> Result<Shared<Node>, StorageError> {
         if span == 1 {
@@ -316,9 +307,7 @@ impl ProjectionVars {
     /// # Errors
     /// Returns typed size or allocation refusal before publishing a new root.
     pub(crate) fn push_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        variable: &Variable,
-        memory: &mut Memory<'_, S>,
+        &mut self, variable: &Variable, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         let next_len = self.len.checked_add(1).ok_or(StorageError::SizeOverflow)?;
         let before = memory.admitted_bytes();
@@ -373,10 +362,7 @@ impl ProjectionVars {
     /// one algebra. A root retained alone still owns all of its ancestors;
     /// path-copy nodes dropped before publication are no longer charged.
     pub(crate) fn reachable_bytes<S: Admission + ?Sized>(
-        &self,
-        seen: &mut OrderedTable<usize, ()>,
-        memory: &mut Memory<'_, S>,
-        raw: bool,
+        &self, seen: &mut OrderedTable<usize, ()>, memory: &mut Memory<'_, S>, raw: bool,
     ) -> Result<usize, StorageError> {
         let mut work = Vec::new();
         if let Some(root) = &self.root {

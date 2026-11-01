@@ -84,9 +84,7 @@ pub(crate) struct GovernedRowIngest {
 impl GovernedRowIngest {
     /// Prepare the ingest of a `width`-column bag, charging `charge_point` per row.
     pub(crate) fn new<D: DatasetView + Sync>(
-        ctx: &EvalCtx<'_, D>,
-        width: usize,
-        charge_point: Option<ChargePoint>,
+        ctx: &EvalCtx<'_, D>, width: usize, charge_point: Option<ChargePoint>,
     ) -> Self {
         Self {
             width,
@@ -111,9 +109,7 @@ impl GovernedRowIngest {
     /// an exactly-full bag is complete and only the *next* qualifying row is a
     /// truncation.
     pub(crate) fn admit<D: DatasetView + Sync>(
-        &self,
-        ctx: &EvalCtx<'_, D>,
-        accepted: usize,
+        &self, ctx: &EvalCtx<'_, D>, accepted: usize,
     ) -> IngestVerdict {
         if self.cell_ceiling.is_some_and(|cap| accepted >= cap) {
             // The attempted peak, recorded exactly — and the ingest ends here whatever
@@ -146,8 +142,7 @@ impl GovernedRowIngest {
     /// sequence, immediately after [`Self::admit`] returned
     /// [`IngestVerdict::Admitted`].
     pub(crate) fn intern_row<D: DatasetView + Sync>(
-        &self,
-        ctx: &mut EvalCtx<'_, D>,
+        &self, ctx: &mut EvalCtx<'_, D>,
         cells: impl IntoIterator<Item = Option<crate::WorkspaceTerm>>,
     ) -> Result<crate::solution::RetainedRow<D::Id>, crate::EvalError> {
         let growth = ctx.growth.clone();

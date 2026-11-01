@@ -33,9 +33,7 @@ use purrdf_events::MAX_TERM_NESTING_DEPTH;
 /// header (e.g. `"purrdf"`). The resulting writer can be further configured
 /// (signing, indexes) or emitted directly with [`Writer::to_bytes`].
 pub fn to_writer(
-    dataset: &RdfDataset,
-    lookaside: &RdfLookaside,
-    profile: &str,
+    dataset: &RdfDataset, lookaside: &RdfLookaside, profile: &str,
 ) -> Result<Writer, RdfDiagnostic> {
     let mut graph = Graph::default();
 
@@ -107,9 +105,7 @@ pub fn to_writer(
 /// Convert a frozen [`RdfDataset`] directly into canonical GTS bytes. See
 /// [`to_writer`] for the `lookaside` envelope contract.
 pub fn to_gts(
-    dataset: &RdfDataset,
-    lookaside: &RdfLookaside,
-    profile: &str,
+    dataset: &RdfDataset, lookaside: &RdfLookaside, profile: &str,
 ) -> Result<Vec<u8>, RdfDiagnostic> {
     to_writer(dataset, lookaside, profile).map(Writer::into_bytes)
 }
@@ -137,8 +133,7 @@ impl InternState {
 /// `graph.reifiers` row, and a quoted-triple TERM carries its own components
 /// (`Term::triple`) rather than borrowing some reifier's binding.
 fn bind_explicit_reifier(
-    state: &mut InternState,
-    reifier: &RdfReifier,
+    state: &mut InternState, reifier: &RdfReifier,
 ) -> Result<(), RdfDiagnostic> {
     let rid = intern_term(state, &reifier.reifier)?;
     if !is_iri_or_bnode(&state.terms[rid]) {
@@ -175,9 +170,7 @@ fn intern_term(state: &mut InternState, term: &RdfTerm) -> Result<usize, RdfDiag
 }
 
 fn intern_term_depth(
-    state: &mut InternState,
-    term: &RdfTerm,
-    depth: usize,
+    state: &mut InternState, term: &RdfTerm, depth: usize,
 ) -> Result<usize, RdfDiagnostic> {
     if depth > MAX_TERM_NESTING_DEPTH {
         return Err(RdfDiagnostic::error(
@@ -228,9 +221,7 @@ fn intern_term_depth(
 }
 
 fn intern_literal(
-    state: &mut InternState,
-    literal: &RdfLiteral,
-    depth: usize,
+    state: &mut InternState, literal: &RdfLiteral, depth: usize,
 ) -> Result<usize, RdfDiagnostic> {
     let datatype = if let Some(dt) = &literal.datatype {
         Some(intern_term_depth(
@@ -265,9 +256,7 @@ fn intern_literal(
 }
 
 fn intern_triple_term(
-    state: &mut InternState,
-    triple: &crate::RdfTriple,
-    depth: usize,
+    state: &mut InternState, triple: &crate::RdfTriple, depth: usize,
 ) -> Result<usize, RdfDiagnostic> {
     let s = intern_term_depth(state, &triple.subject, depth + 1)?;
     let p = intern_iri(state, &triple.predicate)?;
@@ -311,9 +300,7 @@ fn is_iri_or_bnode_term(term: &RdfTerm) -> bool {
 }
 
 fn apply_lookaside(
-    state: &InternState,
-    graph: &mut Graph,
-    lookaside: RdfLookaside,
+    state: &InternState, graph: &mut Graph, lookaside: RdfLookaside,
 ) -> Result<(), RdfDiagnostic> {
     for entry in lookaside.metadata {
         let key = entry.key;
@@ -438,9 +425,7 @@ mod tests {
     /// Freeze owned rows (quads + RDF 1.2 statement layer) into the frozen IR the
     /// writer consumes. Order is irrelevant: `freeze` dedups and sorts.
     fn freeze_rows(
-        quads: &[RdfQuad],
-        reifiers: &[RdfReifier],
-        annotations: &[RdfAnnotation],
+        quads: &[RdfQuad], reifiers: &[RdfReifier], annotations: &[RdfAnnotation],
     ) -> Arc<RdfDataset> {
         let mut b = RdfDatasetBuilder::new();
         for q in quads {

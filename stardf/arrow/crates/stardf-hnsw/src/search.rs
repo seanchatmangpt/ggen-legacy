@@ -220,12 +220,8 @@ impl<'a, A: Arithmetic> Query<'a, A> {
     /// `vector` must have the matrix's dimension; the caller validates that once rather than
     /// per candidate.
     pub(crate) fn from_vector(
-        matrix: &'a VectorMatrix,
-        kernel: Kernel,
-        arithmetic: Resolved<A>,
-        norms: &'a [f64],
-        cache: &'a DistanceCache,
-        vector: &'a [f64],
+        matrix: &'a VectorMatrix, kernel: Kernel, arithmetic: Resolved<A>, norms: &'a [f64],
+        cache: &'a DistanceCache, vector: &'a [f64],
     ) -> Self {
         let norm = if kernel.needs_norms() {
             // The norm is the exact fold whatever arithmetic ranks the candidates.
@@ -249,12 +245,8 @@ impl<'a, A: Arithmetic> Query<'a, A> {
     /// The stored-row case of [`Query::from_vector`], reusing the norm the index computed at
     /// construction rather than recomputing it.
     pub(crate) fn new(
-        matrix: &'a VectorMatrix,
-        kernel: Kernel,
-        arithmetic: Resolved<A>,
-        norms: &'a [f64],
-        cache: &'a DistanceCache,
-        query_row: usize,
+        matrix: &'a VectorMatrix, kernel: Kernel, arithmetic: Resolved<A>, norms: &'a [f64],
+        cache: &'a DistanceCache, query_row: usize,
     ) -> Self {
         Self {
             matrix,
@@ -318,10 +310,7 @@ impl<'a, A: Arithmetic> Query<'a, A> {
     /// [`HnswError::NonFiniteDistance`] naming the first row, in `rows` order, whose
     /// distance left the finite range.
     pub(crate) fn of_many(
-        &self,
-        rows: &[usize],
-        scratch: &mut Scratch,
-        out: &mut Vec<f64>,
+        &self, rows: &[usize], scratch: &mut Scratch, out: &mut Vec<f64>,
         out_allocation: &mut Option<WorkspaceAllocation>,
     ) -> Result<()> {
         let workspace = self.workspace();
@@ -420,11 +409,7 @@ pub(crate) fn norm_of(norms: &[f64], row: usize) -> f64 {
 /// neighbour improves, which is the `ef = 1` special case of the beam. `from_layer` must
 /// not be below `to_layer`; if it is, the entry is returned unchanged.
 pub(crate) fn greedy_descend<A: Arithmetic>(
-    graph: &Graph,
-    query: &Query<'_, A>,
-    entry: usize,
-    from_layer: u32,
-    to_layer: u32,
+    graph: &Graph, query: &Query<'_, A>, entry: usize, from_layer: u32, to_layer: u32,
 ) -> Result<(usize, f64)> {
     let mut current = entry;
     let mut current_distance = query.of(current)?;
@@ -481,11 +466,7 @@ pub(crate) fn greedy_descend<A: Arithmetic>(
 /// [`Ranked`] (`(distance, row)`), so its first `n` entries are the `n` nearest of the
 /// explored set for every `n`.
 pub(crate) fn search_layer<A: Arithmetic>(
-    graph: &Graph,
-    query: &Query<'_, A>,
-    visited: &mut Visited,
-    entry_points: &[usize],
-    layer: u32,
+    graph: &Graph, query: &Query<'_, A>, visited: &mut Visited, entry_points: &[usize], layer: u32,
     ef: usize,
 ) -> Result<Vec<Ranked>> {
     crate::resident_ranked(search_layer_admitted(
@@ -500,11 +481,7 @@ pub(crate) fn search_layer<A: Arithmetic>(
 
 /// The same two-heap traversal retaining actual buffer admission through sorting.
 pub(crate) fn search_layer_admitted<A: Arithmetic>(
-    graph: &Graph,
-    query: &Query<'_, A>,
-    visited: &mut Visited,
-    entry_points: &[usize],
-    layer: u32,
+    graph: &Graph, query: &Query<'_, A>, visited: &mut Visited, entry_points: &[usize], layer: u32,
     ef: usize,
 ) -> Result<AdmittedVec<Ranked>> {
     visited.begin();

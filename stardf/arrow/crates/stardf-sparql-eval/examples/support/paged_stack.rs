@@ -10,8 +10,7 @@ use purrdf_core::{
 use std::sync::Arc;
 
 pub(crate) fn eager(
-    rows: impl IntoIterator<Item = QuadValues>,
-    graphs: &[TermValue],
+    rows: impl IntoIterator<Item = QuadValues>, graphs: &[TermValue],
 ) -> Arc<RdfDataset> {
     let mut builder = RdfDatasetBuilder::new();
     for row in rows {

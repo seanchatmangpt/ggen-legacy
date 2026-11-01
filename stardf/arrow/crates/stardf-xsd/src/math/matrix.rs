@@ -57,9 +57,7 @@ pub fn invert_matrix3(matrix: &Matrix3, math: &mut CoordinateMath) -> Result<Mat
 /// # Errors
 /// Refuses mismatched precision or exhausted numerical admission.
 pub fn matrix_vector3(
-    matrix: &Matrix3,
-    vector: &[FixedInterval; 3],
-    math: &mut CoordinateMath,
+    matrix: &Matrix3, vector: &[FixedInterval; 3], math: &mut CoordinateMath,
 ) -> Result<[FixedInterval; 3], MathError> {
     let row = |row: usize, math: &mut CoordinateMath| {
         matrix[3 * row]

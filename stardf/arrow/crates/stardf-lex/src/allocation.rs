@@ -299,8 +299,7 @@ impl<A: Admission + ?Sized> Admission for &mut A {
 /// # Errors
 /// Propagates the reservation policy's original failure before copying any bytes.
 pub fn string_with_reserve<E>(
-    input: &str,
-    reserve: impl FnOnce(&mut String, usize) -> Result<(), E>,
+    input: &str, reserve: impl FnOnce(&mut String, usize) -> Result<(), E>,
 ) -> Result<String, E> {
     let mut text = String::new();
     reserve(&mut text, input.len())?;
@@ -415,8 +414,7 @@ impl<'a, S: Admission + ?Sized> Memory<'a, S> {
     /// Returns the body's first physical failure. Refund failure after that
     /// failure cannot replace it; successful child payload keeps its original grant.
     pub fn scope<T>(
-        &mut self,
-        body: impl FnOnce(&mut Self) -> Result<T, StorageError>,
+        &mut self, body: impl FnOnce(&mut Self) -> Result<T, StorageError>,
     ) -> Result<T, StorageError> {
         self.try_scope(body)
     }
@@ -429,8 +427,7 @@ impl<'a, S: Admission + ?Sized> Memory<'a, S> {
     /// Any returned error payload retains its own original owner independently
     /// of the released child buffers, just as a successful retained payload does.
     pub fn try_scope<T, E>(
-        &mut self,
-        body: impl FnOnce(&mut Self) -> Result<T, E>,
+        &mut self, body: impl FnOnce(&mut Self) -> Result<T, E>,
     ) -> Result<T, E> {
         let baseline = self.live;
         match body(self) {
@@ -468,9 +465,7 @@ impl<'a, S: Admission + ?Sized> Memory<'a, S> {
     /// # Errors
     /// Returns checked layout, allocator or original admission refusal.
     pub fn append<T>(
-        &mut self,
-        destination: &mut Vec<T>,
-        source: Vec<T>,
+        &mut self, destination: &mut Vec<T>, source: Vec<T>,
     ) -> Result<(), StorageError> {
         if destination.is_empty() {
             let previous = std::mem::replace(destination, source);
@@ -620,9 +615,7 @@ impl<'a, S: Admission + ?Sized> Memory<'a, S> {
     /// # Errors
     /// Returns checked layout, admission, allocator or refund refusal.
     pub fn push_heap<T: Ord>(
-        &mut self,
-        heap: &mut std::collections::BinaryHeap<T>,
-        value: T,
+        &mut self, heap: &mut std::collections::BinaryHeap<T>, value: T,
     ) -> Result<(), StorageError> {
         if let Some((_, previous)) = heap_insertion_layout(heap)? {
             let required = heap
@@ -648,8 +641,7 @@ impl<'a, S: Admission + ?Sized> Memory<'a, S> {
     /// # Errors
     /// Returns checked layout, unbalanced accounting or refund refusal.
     pub fn release_heap<T: Ord>(
-        &mut self,
-        heap: std::collections::BinaryHeap<T>,
+        &mut self, heap: std::collections::BinaryHeap<T>,
     ) -> Result<(), StorageError> {
         self.release_vec(heap.into_vec())
     }
@@ -677,9 +669,7 @@ impl<'a, S: Admission + ?Sized> Memory<'a, S> {
     /// # Errors
     /// Returns checked index layout, allocator or original admission refusal.
     pub fn sort_by<T>(
-        &mut self,
-        values: &mut [T],
-        mut compare: impl FnMut(&T, &T) -> core::cmp::Ordering,
+        &mut self, values: &mut [T], mut compare: impl FnMut(&T, &T) -> core::cmp::Ordering,
     ) -> Result<(), StorageError> {
         if values.len() < 2 {
             return Ok(());
@@ -711,8 +701,7 @@ impl<'a, S: Admission + ?Sized> Memory<'a, S> {
     /// # Errors
     /// Returns checked layout, admission or physical allocation refusal.
     pub fn collect<T>(
-        &mut self,
-        values: impl IntoIterator<Item = T>,
+        &mut self, values: impl IntoIterator<Item = T>,
     ) -> Result<Vec<T>, StorageError> {
         self.try_map(values, |value, _| Ok(value))
     }
@@ -725,8 +714,7 @@ impl<'a, S: Admission + ?Sized> Memory<'a, S> {
     /// # Errors
     /// Returns the first element error, layout, admission or allocator refusal.
     pub fn try_map<T, U, E: From<StorageError>>(
-        &mut self,
-        values: impl IntoIterator<Item = T>,
+        &mut self, values: impl IntoIterator<Item = T>,
         mut make: impl FnMut(T, &mut Self) -> Result<U, E>,
     ) -> Result<Vec<U>, E> {
         self.try_scope(|memory| {
@@ -746,9 +734,7 @@ impl<'a, S: Admission + ?Sized> Memory<'a, S> {
     /// # Errors
     /// Returns checked layout, admission or physical allocation refusal.
     pub fn extend<T>(
-        &mut self,
-        output: &mut Vec<T>,
-        values: impl IntoIterator<Item = T>,
+        &mut self, output: &mut Vec<T>, values: impl IntoIterator<Item = T>,
     ) -> Result<(), StorageError> {
         for value in values {
             self.push(output, value)?;
@@ -778,9 +764,7 @@ impl<'a, S: Admission + ?Sized> Memory<'a, S> {
     /// # Errors
     /// Returns the operation's original error, otherwise its actual refund failure.
     pub fn release_vec_after<T, R>(
-        &mut self,
-        values: Vec<T>,
-        result: Result<R, StorageError>,
+        &mut self, values: Vec<T>, result: Result<R, StorageError>,
     ) -> Result<R, StorageError> {
         let refund = self.release_vec(values);
         result.and_then(|value| refund.map(|()| value))
@@ -802,9 +786,7 @@ impl<'a, S: Admission + ?Sized> Memory<'a, S> {
     /// # Errors
     /// Returns checked layout overflow, admission refusal or allocator refusal.
     pub fn reserve_string(
-        &mut self,
-        text: &mut String,
-        required: usize,
+        &mut self, text: &mut String, required: usize,
     ) -> Result<(), StorageError> {
         if required <= text.capacity() {
             return Ok(());
@@ -860,9 +842,7 @@ impl<'a, S: Admission + ?Sized> Memory<'a, S> {
     /// # Errors
     /// Returns checked layout overflow, admission refusal or allocator refusal.
     pub fn append_text(
-        &mut self,
-        text: &mut String,
-        emit: impl FnOnce(&mut dyn crate::text_out::TextOut),
+        &mut self, text: &mut String, emit: impl FnOnce(&mut dyn crate::text_out::TextOut),
     ) -> Result<(), StorageError> {
         let mut sink = FormatSink {
             memory: self,

@@ -30,8 +30,7 @@ fn resolver_map(docs: &[(&str, &str)]) -> FastMap<String, String> {
 /// Adapt an in-memory lookup to the `ImportResolver` contract: a miss is a
 /// concrete cause, not a silent `None`.
 fn missing_or(
-    found: Option<purrdf_shex::Schema>,
-    iri: &str,
+    found: Option<purrdf_shex::Schema>, iri: &str,
 ) -> Result<purrdf_shex::Schema, ShexError> {
     found.ok_or_else(|| ShexError::shexj(format!("no test document {iri}")))
 }

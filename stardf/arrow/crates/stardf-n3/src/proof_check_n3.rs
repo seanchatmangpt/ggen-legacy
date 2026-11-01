@@ -223,9 +223,7 @@ impl WitnessRegistry {
     }
 
     fn register(
-        &mut self,
-        application: &Application,
-        source_blanks: &BTreeSet<crate::ast::Name>,
+        &mut self, application: &Application, source_blanks: &BTreeSet<crate::ast::Name>,
     ) -> std::result::Result<WitnessUndo, String> {
         let mut undo = WitnessUndo::default();
         let result = (|| {
@@ -306,10 +304,7 @@ pub fn check_proof(source: &str, proof: &str, label: &str) -> Result<Report> {
 /// As `check_proof`, but under an explicit policy — `CheckPolicy::legacy()`
 /// restores the pre-hardening behavior (P01 flip control).
 pub fn check_proof_with_policy(
-    source: &str,
-    proof: &str,
-    label: &str,
-    policy: CheckPolicy,
+    source: &str, proof: &str, label: &str, policy: CheckPolicy,
 ) -> Result<Report> {
     let document = crate::parser::parse_n3_with_source(source, None, Some(label))?;
     check_proof_document_with_policy(&document, proof, policy)
@@ -324,9 +319,7 @@ pub fn check_proof_document(source: &crate::ast::Document, proof: &str) -> Resul
 /// As `check_proof_document`, but under an explicit policy (P01 flip
 /// control).
 pub fn check_proof_document_with_policy(
-    document: &crate::ast::Document,
-    proof: &str,
-    policy: CheckPolicy,
+    document: &crate::ast::Document, proof: &str, policy: CheckPolicy,
 ) -> Result<Report> {
     let checker = N3Proof::read_document_with_policy(document, proof, policy)?;
     Ok(check(&checker))
@@ -340,9 +333,7 @@ impl N3Proof {
 
     /// As `read_document`, but under an explicit policy (P01 flip control).
     pub fn read_document_with_policy(
-        document: &crate::ast::Document,
-        proof: &str,
-        policy: CheckPolicy,
+        document: &crate::ast::Document, proof: &str, policy: CheckPolicy,
     ) -> Result<Self> {
         // `reason` numbers the rules it was given, having dropped the query
         // rules; a checker must number them the same way (§5.1).
@@ -631,10 +622,7 @@ impl N3Proof {
     /// Join recorded assertions and replay pure built-ins, without deriving
     /// new facts or assuming missing current-graph/external observations.
     fn match_conditions(
-        &self,
-        premises: &[Triple],
-        bindings: Bindings,
-        remaining: &mut usize,
+        &self, premises: &[Triple], bindings: Bindings, remaining: &mut usize,
     ) -> std::result::Result<Option<Vec<Resolution>>, String> {
         let mut supports = None;
         let mut pending = vec![(0usize, bindings, Vec::new())];
@@ -1353,8 +1341,7 @@ pub(crate) fn match_term(pattern: &Term, target: &Term, bindings: &mut Bindings)
                 }
             }
             fn recorded_graph(
-                graph: &crate::ast::Graph,
-                captured: &BTreeSet<crate::ast::Name>,
+                graph: &crate::ast::Graph, captured: &BTreeSet<crate::ast::Name>,
             ) -> crate::ast::Graph {
                 let mut out = graph.map_triples(|t| {
                     Triple::new(

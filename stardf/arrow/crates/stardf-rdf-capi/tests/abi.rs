@@ -308,14 +308,14 @@ fn projection_archive_and_ledger_round_trip_through_owned_c_handles() {
 
 #[test]
 fn attached_ro_crate_payload_round_trips_through_owned_c_handles() {
-    let source = include_str!("../../rdf/tests/fixtures/research-objects/carrier/shared.ttl")
+    let source = include_str!("../../stardf-rdf/tests/fixtures/research-objects/carrier/shared.ttl")
         .replace("files/train.csv", "data/train.csv")
         .replace(
             "\"42\"^^<https://example.org/rdf/role-50>",
             "\"3\"^^<https://example.org/rdf/role-50>",
         );
     let config =
-        include_str!("../../rdf/tests/fixtures/research-objects/carrier/ro-crate-1.3.json")
+        include_str!("../../stardf-rdf/tests/fixtures/research-objects/carrier/ro-crate-1.3.json")
             .replace("\"metadata-only\"", "\"attached\"");
     let parsed = purrdf_rs::ProjectionConfig::from_json(config.as_bytes()).expect("config");
     let assets = purrdf_rs::ProjectionPackage::from_artifacts(
@@ -388,28 +388,28 @@ fn attached_ro_crate_payload_round_trips_through_owned_c_handles() {
 #[test]
 fn every_research_object_profile_executes_through_the_c_abi() {
     const SOURCE: &str =
-        include_str!("../../rdf/tests/fixtures/research-objects/carrier/shared.ttl");
+        include_str!("../../stardf-rdf/tests/fixtures/research-objects/carrier/shared.ttl");
     const CONFIGS: &[(&str, &str)] = &[
         (
             "croissant-1.1",
-            include_str!("../../rdf/tests/fixtures/research-objects/carrier/croissant-1.1.json"),
+            include_str!("../../stardf-rdf/tests/fixtures/research-objects/carrier/croissant-1.1.json"),
         ),
         (
             "ro-crate-1.3",
-            include_str!("../../rdf/tests/fixtures/research-objects/carrier/ro-crate-1.3.json"),
+            include_str!("../../stardf-rdf/tests/fixtures/research-objects/carrier/ro-crate-1.3.json"),
         ),
         (
             "datacite-4.6",
-            include_str!("../../rdf/tests/fixtures/research-objects/carrier/datacite-4.6.json"),
+            include_str!("../../stardf-rdf/tests/fixtures/research-objects/carrier/datacite-4.6.json"),
         ),
         (
             "dcat-3",
-            include_str!("../../rdf/tests/fixtures/research-objects/carrier/dcat-3.json"),
+            include_str!("../../stardf-rdf/tests/fixtures/research-objects/carrier/dcat-3.json"),
         ),
         (
             "frictionless-data-package-1",
             include_str!(
-                "../../rdf/tests/fixtures/research-objects/carrier/frictionless-data-package-1.json"
+                "../../stardf-rdf/tests/fixtures/research-objects/carrier/frictionless-data-package-1.json"
             ),
         ),
     ];
@@ -471,8 +471,8 @@ fn every_research_object_profile_executes_through_the_c_abi() {
 #[test]
 fn dcat_rdf_executes_deterministically_and_remains_write_only_through_the_c_abi() {
     const SOURCE: &str =
-        include_str!("../../rdf/tests/fixtures/research-objects/carrier/shared.ttl");
-    const CONFIG: &str = include_str!("../../rdf/tests/fixtures/dataset-description/dcat-rdf.json");
+        include_str!("../../stardf-rdf/tests/fixtures/research-objects/carrier/shared.ttl");
+    const CONFIG: &str = include_str!("../../stardf-rdf/tests/fixtures/dataset-description/dcat-rdf.json");
     unsafe {
         let dataset = parse("text/turtle", SOURCE);
         let profile = CString::new("dcat-rdf").expect("profile C string");
@@ -527,8 +527,8 @@ fn dcat_rdf_executes_deterministically_and_remains_write_only_through_the_c_abi(
 #[test]
 fn void_executes_deterministically_and_remains_write_only_through_the_c_abi() {
     const SOURCE: &str =
-        include_str!("../../rdf/tests/fixtures/dataset-description/void-source.trig");
-    const CONFIG: &str = include_str!("../../rdf/tests/fixtures/dataset-description/void.json");
+        include_str!("../../stardf-rdf/tests/fixtures/dataset-description/void-source.trig");
+    const CONFIG: &str = include_str!("../../stardf-rdf/tests/fixtures/dataset-description/void.json");
     unsafe {
         let dataset = parse("application/trig", SOURCE);
         let profile = CString::new("void").expect("profile C string");

@@ -67,12 +67,8 @@ impl purrdf_hash::error::StructuredError for PolynomialInputError {
 }
 impl PolynomialInputError {
     pub(crate) fn normalization(
-        degree: u16,
-        origin: [crate::Rat; 2],
-        scale: [crate::Rat; 2],
-        axis: usize,
-        term_count: usize,
-        progress: &mut crate::context::WorkProgress<'_>,
+        degree: u16, origin: [crate::Rat; 2], scale: [crate::Rat; 2], axis: usize,
+        term_count: usize, progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         let [origin, scale] =
             match crate::context::retained::produce_persistent_numeric([origin, scale], progress) {
@@ -94,10 +90,7 @@ impl PolynomialInputError {
 
     /// Retain only the actually rejected terms inside the original sort factory.
     pub(crate) fn monomial_with_memory(
-        degree: u16,
-        index: usize,
-        term_count: usize,
-        first: &crate::operation::PolynomialTerm,
+        degree: u16, index: usize, term_count: usize, first: &crate::operation::PolynomialTerm,
         second: Option<&crate::operation::PolynomialTerm>,
         memory: &mut Memory<'_, dyn Admission + '_>,
     ) -> Result<super::GeoError, StorageError> {

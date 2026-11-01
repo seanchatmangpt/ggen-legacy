@@ -435,8 +435,7 @@ pub struct Claim {
 /// under that base, or mints one outside it, naming the anchor and the
 /// verse range of the row that wrote it.
 pub fn analyze<'a>(
-    doc: &SourceDocument<'a>,
-    profile: &Profile,
+    doc: &SourceDocument<'a>, profile: &Profile,
 ) -> Result<Document<'a>, MarkdownError> {
     let canon = profile::validate_profile(profile)?;
     if doc.id.is_empty() {
@@ -493,8 +492,7 @@ pub fn analyze<'a>(
 /// Exactly [`analyze`]'s, in exactly that order: the projection adds
 /// none.
 pub fn slice_markdown(
-    doc: &SourceDocument<'_>,
-    profile: &Profile,
+    doc: &SourceDocument<'_>, profile: &Profile,
 ) -> Result<Vec<Claim>, MarkdownError> {
     let document = analyze(doc, profile)?;
     Ok(render(&document))

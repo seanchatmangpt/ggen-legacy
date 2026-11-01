@@ -127,10 +127,7 @@ use crate::{
 /// Propagates a parse failure of `bytes`, an unknown media type on either end, and a
 /// serialize failure of the resulting dataset.
 pub fn transcode_under_document_base(
-    bytes: &[u8],
-    from_media_type: &str,
-    to: NativeRdfFormat,
-    base_iri: Option<&str>,
+    bytes: &[u8], from_media_type: &str, to: NativeRdfFormat, base_iri: Option<&str>,
 ) -> Result<SerializeOutcome, RdfDiagnostic> {
     let outcome = parse_dataset_with(bytes, from_media_type, base_iri, &ParseOptions::default())?;
     serialize_dataset_to_format(&*outcome.dataset, to, outcome.document_base_iri())
@@ -143,9 +140,7 @@ pub struct GtsCodecBackend;
 
 impl RdfParserBackend for GtsCodecBackend {
     fn parse_into<S: RdfEventSink + ?Sized>(
-        &self,
-        request: RdfParseRequest<'_>,
-        sink: &mut S,
+        &self, request: RdfParseRequest<'_>, sink: &mut S,
     ) -> Result<(), RdfDiagnostic> {
         // Parse to a frozen dataset, then replay it into the caller's sink through the
         // in-repo frozen-IR source (which declares-before-reference and finishes the
@@ -175,10 +170,7 @@ impl RdfSerializer for GtsCodecBackend {
     /// formats apply it is the format registry's `emits_base` decision, taken once in
     /// `build_ser_graph`, not a per-backend one.
     fn serialize<W: Write>(
-        &self,
-        dataset: &RdfDataset,
-        request: RdfSerializeRequest<'_>,
-        output: W,
+        &self, dataset: &RdfDataset, request: RdfSerializeRequest<'_>, output: W,
     ) -> Result<(), RdfDiagnostic> {
         serialize::serialize_into(
             dataset,

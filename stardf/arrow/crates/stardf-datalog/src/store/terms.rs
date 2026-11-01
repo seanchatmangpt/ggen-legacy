@@ -279,8 +279,7 @@ impl InternOwner for ReclaimingInterner {
 }
 
 pub(super) fn intern_transaction<O: InternOwner, T, const N: usize>(
-    owner: &mut O,
-    terms: [DictionaryTerm<'_, TermId>; N],
+    owner: &mut O, terms: [DictionaryTerm<'_, TermId>; N],
     validate: impl FnOnce(&O, [TermId; N]) -> Result<T, DictionaryError<O::Error>>,
 ) -> Result<T, DictionaryError<O::Error>> {
     let checkpoint = owner.core().surfaces.next();
@@ -321,15 +320,12 @@ impl TermDictionary for ReclaimingInterner {
             .ok_or(TermExpired { id })
     }
     fn compare_terms(
-        &self,
-        a: DictionaryTerm<'_, TermId>,
-        b: DictionaryTerm<'_, TermId>,
+        &self, a: DictionaryTerm<'_, TermId>, b: DictionaryTerm<'_, TermId>,
     ) -> Result<core::cmp::Ordering, TermExpired> {
         crate::dictionary::compare_lexical_terms(self, a, b)
     }
     fn with_interned<T, const N: usize>(
-        &mut self,
-        terms: [DictionaryTerm<'_, TermId>; N],
+        &mut self, terms: [DictionaryTerm<'_, TermId>; N],
         validate: impl FnOnce(&Self, [TermId; N]) -> Result<T, DictionaryError<TermExpired>>,
     ) -> Result<T, DictionaryError<TermExpired>> {
         intern_transaction(self, terms, validate)

@@ -339,9 +339,7 @@ impl RunProof {
     /// Pair a run's assumptions, answer and trace. Crate-private: the only producer is the
     /// instrumented session.
     pub(crate) const fn new(
-        assumptions: RunAssumptions,
-        answer: ProofAnswer,
-        proof: Option<DlProof>,
+        assumptions: RunAssumptions, answer: ProofAnswer, proof: Option<DlProof>,
     ) -> Self {
         Self {
             assumptions,
@@ -802,12 +800,8 @@ pub struct ServiceProof {
 impl ServiceProof {
     /// Assemble a service proof. Crate-private: the only producer is the instrumented session.
     pub(crate) fn new(
-        input: [u8; 32],
-        question: Question,
-        runs: Vec<RunProof>,
-        claims: Vec<Claim>,
-        receipt: Option<StopReceipt>,
-        truncated: bool,
+        input: [u8; 32], question: Question, runs: Vec<RunProof>, claims: Vec<Claim>,
+        receipt: Option<StopReceipt>, truncated: bool,
     ) -> Self {
         Self {
             input,
@@ -885,9 +879,7 @@ impl ServiceProof {
     /// canonicalization; otherwise [`DlProofError::InputMismatch`] or
     /// [`DlProofError::WrongQuestion`].
     pub fn binds<D: DatasetView>(
-        &self,
-        ontology: &D,
-        question: &Question,
+        &self, ontology: &D, question: &Question,
     ) -> Result<(), DlProofError<D::ReadError>> {
         let expected = crate::owl_dl::proof::try_ontology_identity(ontology)
             .map_err(DlProofError::Canonicalization)?;
@@ -997,9 +989,7 @@ impl ServiceProof {
     ///
     /// [`DlProofError::AnswerNotCovered`] for a different subject, verdict or claim count.
     pub fn covers_verdict(
-        &self,
-        subject: &ClaimSubject,
-        verdict: Verdict,
+        &self, subject: &ClaimSubject, verdict: Verdict,
     ) -> Result<(), DlProofError> {
         if let [claim] = self.claims.as_slice()
             && claim.subject() == subject
@@ -1044,10 +1034,7 @@ impl ServiceProof {
     ///
     /// Any [`DlProofError`] — every one of them is a rejection of an invalid proof.
     pub fn verify<D: DatasetView>(
-        &self,
-        ontology: &D,
-        question: &Question,
-        certificate: Option<&DlCertificate>,
+        &self, ontology: &D, question: &Question, certificate: Option<&DlCertificate>,
         ctx: &DlProofContext<'_>,
     ) -> Result<ServiceReplay, DlProofError<D::ReadError>> {
         self.binds(ontology, question)?;
@@ -1072,20 +1059,14 @@ impl ServiceProof {
     /// Any [`DlProofError`], including a different prepared input, question or
     /// calculus, invalid claims, receipts or replay, and caller cancellation.
     pub fn verify_prepared(
-        &self,
-        question: &Question,
-        certificate: Option<&DlCertificate>,
-        ctx: &DlProofContext<'_>,
+        &self, question: &Question, certificate: Option<&DlCertificate>, ctx: &DlProofContext<'_>,
     ) -> Result<ServiceReplay, DlProofError> {
         self.verify_prepared_inner(question, certificate, ctx, None)
     }
 
     /// One native verification loop, with requested causal capture in that same replay.
     fn verify_prepared_inner(
-        &self,
-        question: &Question,
-        certificate: Option<&DlCertificate>,
-        ctx: &DlProofContext<'_>,
+        &self, question: &Question, certificate: Option<&DlCertificate>, ctx: &DlProofContext<'_>,
         mut causal: Option<&mut causal::Captures>,
     ) -> Result<ServiceReplay, DlProofError> {
         self.binds_identity(ctx.input(), question)?;
@@ -1268,9 +1249,7 @@ impl ServiceProof {
     /// decide; the partial-trace sizes it states are the ones that run's trace actually
     /// carries; and its cause is not a budget that was not reached.
     fn check_receipt(
-        &self,
-        certificate: Option<&DlCertificate>,
-        checks: &mut CheckReport,
+        &self, certificate: Option<&DlCertificate>, checks: &mut CheckReport,
     ) -> Result<(), DlProofError> {
         let mismatch = |detail: String| DlProofError::ReceiptMismatch { detail };
         let undecided = self
@@ -1815,9 +1794,7 @@ pub fn verdict_claims(subject: &ClaimSubject, answer: Verdict) -> Vec<ClaimSubje
 /// Crate-private: a receipt is derived from what a session measured, never assembled from
 /// parts by a caller, which is what keeps its counters and the certificate's from disagreeing.
 pub(crate) fn receipt_of(
-    point: StopPoint,
-    certificate: &DlCertificate,
-    runs: &[RunProof],
+    point: StopPoint, certificate: &DlCertificate, runs: &[RunProof],
 ) -> StopReceipt {
     let trace = runs.get(point.run).and_then(RunProof::proof);
     StopReceipt {
@@ -3860,9 +3837,7 @@ mod tests {
     /// One reasoner for all six because asking about a class INTERNS it: a mode comparison
     /// that opened a fresh reasoner per service would compare two different knowledge bases.
     fn every_service(
-        ontology: &RdfDataset,
-        proofs: bool,
-        step_cap: u64,
+        ontology: &RdfDataset, proofs: bool, step_cap: u64,
     ) -> Vec<(String, DlCertificate)> {
         let reasoner = if proofs {
             Reasoner::with_proofs(ontology)

@@ -102,9 +102,7 @@ macro_rules! coordinate_application {
             /// # Errors
             /// Refuses domain/metadata gaps, unresolved output and resource exhaustion.
             pub fn apply(
-                &self,
-                point: &OperationPoint,
-                context: &mut MetricContext,
+                &self, point: &OperationPoint, context: &mut MetricContext,
             ) -> Result<TransformResult, GeoError> {
                 self.apply_with_grid(point, TransformOutputGrid::DEFAULT, context)
             }
@@ -112,9 +110,7 @@ macro_rules! coordinate_application {
             /// # Errors
             /// Propagates every refusal without publishing partial coordinates.
             pub fn apply_metered(
-                &self,
-                point: &OperationPoint,
-                context: &mut MetricContext,
+                &self, point: &OperationPoint, context: &mut MetricContext,
                 observer: &mut dyn MetricWorkObserver,
             ) -> Result<TransformResult, GeoError> {
                 self.apply_with_grid_metered(point, TransformOutputGrid::DEFAULT, context, observer)
@@ -123,9 +119,7 @@ macro_rules! coordinate_application {
             /// # Errors
             /// Refuses any grid outside precision or the one-micrometre quantization certificate.
             pub fn apply_with_grid(
-                &self,
-                point: &OperationPoint,
-                grid: TransformOutputGrid,
+                &self, point: &OperationPoint, grid: TransformOutputGrid,
                 context: &mut MetricContext,
             ) -> Result<TransformResult, GeoError> {
                 apply_entry(point, context, None, |point, context, progress| {
@@ -136,11 +130,8 @@ macro_rules! coordinate_application {
             /// # Errors
             /// Carries the complete scalar refusal contract and observer errors.
             pub fn apply_with_grid_metered(
-                &self,
-                point: &OperationPoint,
-                grid: TransformOutputGrid,
-                context: &mut MetricContext,
-                observer: &mut dyn MetricWorkObserver,
+                &self, point: &OperationPoint, grid: TransformOutputGrid,
+                context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
             ) -> Result<TransformResult, GeoError> {
                 apply_entry(
                     point,
@@ -153,9 +144,7 @@ macro_rules! coordinate_application {
             /// # Errors
             /// Every refusal clears all slots, including earlier completed results.
             pub fn apply_batch(
-                &self,
-                points: &[OperationPoint],
-                output: &mut [Option<TransformResult>],
+                &self, points: &[OperationPoint], output: &mut [Option<TransformResult>],
                 context: &mut MetricContext,
             ) -> Result<(), GeoError> {
                 self.apply_batch_with_grid(points, output, TransformOutputGrid::DEFAULT, context)
@@ -164,11 +153,8 @@ macro_rules! coordinate_application {
             /// # Errors
             /// Every refusal clears all slots, including earlier completed results.
             pub fn apply_batch_metered(
-                &self,
-                points: &[OperationPoint],
-                output: &mut [Option<TransformResult>],
-                context: &mut MetricContext,
-                observer: &mut dyn MetricWorkObserver,
+                &self, points: &[OperationPoint], output: &mut [Option<TransformResult>],
+                context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
             ) -> Result<(), GeoError> {
                 self.apply_batch_with_grid_metered(
                     points,
@@ -182,11 +168,8 @@ macro_rules! coordinate_application {
             /// # Errors
             /// Refuses the complete batch and clears every output slot on failure.
             pub fn apply_batch_with_grid(
-                &self,
-                points: &[OperationPoint],
-                output: &mut [Option<TransformResult>],
-                grid: TransformOutputGrid,
-                context: &mut MetricContext,
+                &self, points: &[OperationPoint], output: &mut [Option<TransformResult>],
+                grid: TransformOutputGrid, context: &mut MetricContext,
             ) -> Result<(), GeoError> {
                 apply_batch_entry(points, output, context, None, |point, context, progress| {
                     self.apply_inner(point, grid, context, progress)
@@ -196,11 +179,8 @@ macro_rules! coordinate_application {
             /// # Errors
             /// Carries the scalar grid certificate and complete batch refusal contract.
             pub fn apply_batch_with_grid_metered(
-                &self,
-                points: &[OperationPoint],
-                output: &mut [Option<TransformResult>],
-                grid: TransformOutputGrid,
-                context: &mut MetricContext,
+                &self, points: &[OperationPoint], output: &mut [Option<TransformResult>],
+                grid: TransformOutputGrid, context: &mut MetricContext,
                 observer: &mut dyn MetricWorkObserver,
             ) -> Result<(), GeoError> {
                 apply_batch_entry(
@@ -218,8 +198,7 @@ coordinate_application!(CoordinateOperation);
 coordinate_application!(OperationChain);
 
 fn apply_entry(
-    point: &OperationPoint,
-    context: &mut MetricContext,
+    point: &OperationPoint, context: &mut MetricContext,
     observer: Option<&mut dyn MetricWorkObserver>,
     apply: impl FnOnce(
         &OperationPoint,
@@ -234,9 +213,7 @@ fn apply_entry(
 }
 
 fn with_application_source<T>(
-    point: &OperationPoint,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    point: &OperationPoint, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     apply: impl FnOnce(
         &OperationPoint,
         &mut MetricContext,
@@ -289,9 +266,7 @@ fn point_retained_bytes(point: &OperationPoint) -> Result<u64, GeoError> {
 }
 
 fn apply_batch_entry(
-    points: &[OperationPoint],
-    output: &mut [Option<TransformResult>],
-    context: &mut MetricContext,
+    points: &[OperationPoint], output: &mut [Option<TransformResult>], context: &mut MetricContext,
     observer: Option<&mut dyn MetricWorkObserver>,
     mut apply: impl FnMut(
         &OperationPoint,
@@ -431,11 +406,7 @@ impl Applicability {
     /// # Errors
     /// Refuses invalid extents and exact arithmetic limits before comparison.
     pub fn new_in_budget(
-        west: Rat,
-        east: Rat,
-        south: Rat,
-        north: Rat,
-        budget: &mut crate::PreparationBudget,
+        west: Rat, east: Rat, south: Rat, north: Rat, budget: &mut crate::PreparationBudget,
     ) -> Result<Self, GeoError> {
         Self::new_in_budget_observed(west, east, south, north, budget, None)
     }
@@ -446,22 +417,14 @@ impl Applicability {
     /// # Errors
     /// Preserves invalid extents, cancellation, work and physical refusal.
     pub fn new_in_budget_metered(
-        west: Rat,
-        east: Rat,
-        south: Rat,
-        north: Rat,
-        budget: &mut crate::PreparationBudget,
+        west: Rat, east: Rat, south: Rat, north: Rat, budget: &mut crate::PreparationBudget,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::new_in_budget_observed(west, east, south, north, budget, Some(observer))
     }
 
     fn new_in_budget_observed(
-        west: Rat,
-        east: Rat,
-        south: Rat,
-        north: Rat,
-        budget: &mut crate::PreparationBudget,
+        west: Rat, east: Rat, south: Rat, north: Rat, budget: &mut crate::PreparationBudget,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         let operands = [&west, &east, &south, &north];
@@ -495,12 +458,8 @@ impl Applicability {
     }
 
     pub(super) fn validate_fields(
-        west: &Rat,
-        east: &Rat,
-        south: &Rat,
-        north: &Rat,
-        values: &crate::numerical::ExactValues<'_>,
-        progress: &mut WorkProgress<'_>,
+        west: &Rat, east: &Rat, south: &Rat, north: &Rat,
+        values: &crate::numerical::ExactValues<'_>, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         let axis = if !values
             .compare(west, east)
@@ -708,9 +667,7 @@ struct OperationCompilation {
 
 impl OperationCompilation {
     fn finish(
-        self,
-        source: OperationReference,
-        target: OperationReference,
+        self, source: OperationReference, target: OperationReference,
         model: crate::PreparedValue<OperationModel>,
     ) -> CoordinateOperation {
         CoordinateOperation {
@@ -731,9 +688,7 @@ impl CoordinateOperation {
     /// # Errors
     /// Refuses inconsistent units, singular parameters and invalid declarations.
     pub fn compile(
-        source: OperationReference,
-        target: OperationReference,
-        model: OperationModel,
+        source: OperationReference, target: OperationReference, model: OperationModel,
     ) -> Result<Self, GeoError> {
         Self::compile_in_budget(
             source,
@@ -749,9 +704,7 @@ impl CoordinateOperation {
     /// # Errors
     /// Carries the model declaration refusals and complete work/storage limits.
     pub fn compile_in_budget(
-        source: OperationReference,
-        target: OperationReference,
-        model: OperationModel,
+        source: OperationReference, target: OperationReference, model: OperationModel,
         budget: &mut crate::PreparationBudget,
     ) -> Result<Self, GeoError> {
         Self::compile_in_budget_observed(source, target, model, budget, None)
@@ -763,21 +716,15 @@ impl CoordinateOperation {
     /// # Errors
     /// Preserves declaration failures, cancellation and original allocation refusal.
     pub fn compile_in_budget_metered(
-        source: OperationReference,
-        target: OperationReference,
-        model: OperationModel,
-        budget: &mut crate::PreparationBudget,
-        observer: &mut dyn MetricWorkObserver,
+        source: OperationReference, target: OperationReference, model: OperationModel,
+        budget: &mut crate::PreparationBudget, observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::compile_in_budget_observed(source, target, model, budget, Some(observer))
     }
 
     fn compile_in_budget_observed(
-        source: OperationReference,
-        target: OperationReference,
-        model: OperationModel,
-        budget: &mut crate::PreparationBudget,
-        observer: Option<&mut dyn MetricWorkObserver>,
+        source: OperationReference, target: OperationReference, model: OperationModel,
+        budget: &mut crate::PreparationBudget, observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         let (mut cost, destination_bits) = model.admit_compile(budget)?;
         let owner = observer.as_ref().map_or_else(
@@ -806,11 +753,8 @@ impl CoordinateOperation {
     }
 
     fn compile_admitted(
-        source: OperationReference,
-        target: OperationReference,
-        model: OperationModel,
-        values: &crate::numerical::ExactValues<'_>,
-        progress: &mut WorkProgress<'_>,
+        source: OperationReference, target: OperationReference, model: OperationModel,
+        values: &crate::numerical::ExactValues<'_>, progress: &mut WorkProgress<'_>,
     ) -> Result<Self, GeoError> {
         let compilation = Self::compile_binding(source, target, &model, values, progress)?;
         let retained_model = crate::PreparedValue::produce(
@@ -823,11 +767,8 @@ impl CoordinateOperation {
     }
 
     fn compile_binding(
-        source: OperationReference,
-        target: OperationReference,
-        model: &OperationModel,
-        values: &crate::numerical::ExactValues<'_>,
-        progress: &mut WorkProgress<'_>,
+        source: OperationReference, target: OperationReference, model: &OperationModel,
+        values: &crate::numerical::ExactValues<'_>, progress: &mut WorkProgress<'_>,
     ) -> Result<OperationCompilation, GeoError> {
         model.validate_with(values, progress)?;
         let (input, output) = model.units();
@@ -937,8 +878,7 @@ impl CoordinateOperation {
     /// # Errors
     /// Refuses unsupported inverse domains and exact work/storage exhaustion.
     pub fn inverse_in_budget(
-        &self,
-        budget: &mut crate::PreparationBudget,
+        &self, budget: &mut crate::PreparationBudget,
     ) -> Result<Self, GeoError> {
         self.inverse_in_budget_observed(budget, None)
     }
@@ -950,17 +890,13 @@ impl CoordinateOperation {
     /// # Errors
     /// Preserves inverse-domain, native work, cancellation and physical refusal.
     pub fn inverse_in_budget_metered(
-        &self,
-        budget: &mut crate::PreparationBudget,
-        observer: &mut dyn MetricWorkObserver,
+        &self, budget: &mut crate::PreparationBudget, observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         self.inverse_in_budget_observed(budget, Some(observer))
     }
 
     fn inverse_in_budget_observed(
-        &self,
-        budget: &mut crate::PreparationBudget,
-        observer: Option<&mut dyn MetricWorkObserver>,
+        &self, budget: &mut crate::PreparationBudget, observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         use purrdf_xsd::integer::{ExactArithmeticCost, ExactOperation};
         let (mut cost, mut destination_bits) = self.model.admit_compile(budget)?;
@@ -1065,8 +1001,7 @@ impl CoordinateOperation {
     }
 
     fn inverse_model_with_memory(
-        &self,
-        values: &crate::numerical::ExactValues<'_>,
+        &self, values: &crate::numerical::ExactValues<'_>,
         memory: &mut purrdf_lex::allocation::Memory<'_, dyn purrdf_lex::allocation::Admission + '_>,
     ) -> Result<OperationModel, GeoError> {
         let model = match self.model() {
@@ -1175,10 +1110,7 @@ impl CoordinateOperation {
     }
 
     fn apply_inner(
-        &self,
-        point: &OperationPoint,
-        grid: TransformOutputGrid,
-        context: &mut MetricContext,
+        &self, point: &OperationPoint, grid: TransformOutputGrid, context: &mut MetricContext,
         progress: &mut WorkProgress<'_>,
     ) -> Result<TransformResult, GeoError> {
         let input = prepare_source_point(
@@ -1268,8 +1200,7 @@ impl TransformResult {
     /// # Errors
     /// Preserves native numerical, checked layout, allocator and caller refusal.
     pub fn certificate_bytes_admitted(
-        &self,
-        admission: &mut crate::carrier::InputAdmission<'_, '_, '_>,
+        &self, admission: &mut crate::carrier::InputAdmission<'_, '_, '_>,
     ) -> Result<Vec<u8>, GeoError> {
         let mut output = crate::metric::CertificateWriter::new(admission);
         output.bytes(TRANSFORM_CERTIFICATE.as_bytes())?;
@@ -1341,8 +1272,7 @@ impl OperationChain {
     /// # Errors
     /// Refuses declaration gaps and work/storage exhaustion before allocating.
     pub fn compile_in_budget(
-        operations: Vec<CoordinateOperation>,
-        budget: &mut crate::PreparationBudget,
+        operations: Vec<CoordinateOperation>, budget: &mut crate::PreparationBudget,
     ) -> Result<Self, GeoError> {
         Self::compile_in_budget_observed(operations, budget, None)
     }
@@ -1353,16 +1283,14 @@ impl OperationChain {
     /// # Errors
     /// Adds the observer's original refusal to [`Self::compile_in_budget`].
     pub fn compile_in_budget_metered(
-        operations: Vec<CoordinateOperation>,
-        budget: &mut crate::PreparationBudget,
+        operations: Vec<CoordinateOperation>, budget: &mut crate::PreparationBudget,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::compile_in_budget_observed(operations, budget, Some(observer))
     }
 
     fn compile_in_budget_observed(
-        operations: Vec<CoordinateOperation>,
-        budget: &mut crate::PreparationBudget,
+        operations: Vec<CoordinateOperation>, budget: &mut crate::PreparationBudget,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         let count = u64::try_from(operations.len())
@@ -1408,8 +1336,7 @@ impl OperationChain {
     }
 
     fn compile_admitted(
-        operations: Vec<CoordinateOperation>,
-        progress: &mut WorkProgress<'_>,
+        operations: Vec<CoordinateOperation>, progress: &mut WorkProgress<'_>,
     ) -> Result<Self, GeoError> {
         if operations.is_empty() {
             return Err(crate::BindingConfigError::EmptyOperationChain {
@@ -1507,10 +1434,7 @@ impl OperationChain {
     /// Apply the one scalar engine to a borrowed original carrier coordinate.
     /// Source cloning and metadata are admitted before entering the child phase.
     pub(super) fn apply_source_coordinate_admitted(
-        &self,
-        coordinate: &crate::Coord,
-        epoch: Option<&Rat>,
-        context: &mut MetricContext,
+        &self, coordinate: &crate::Coord, epoch: Option<&Rat>, context: &mut MetricContext,
         progress: &mut WorkProgress<'_>,
     ) -> Result<TransformResult, GeoError> {
         let mut point = self.prepare_source_coordinate(coordinate, epoch, context, progress)?;
@@ -1544,10 +1468,7 @@ impl OperationChain {
     /// Admit a borrowed carrier endpoint's original source and all required
     /// chain metadata before cloning coordinates or adjusting epoch parameters.
     pub(super) fn prepare_source_coordinate(
-        &self,
-        coordinate: &crate::Coord,
-        epoch: Option<&Rat>,
-        context: &mut MetricContext,
+        &self, coordinate: &crate::Coord, epoch: Option<&Rat>, context: &mut MetricContext,
         progress: &mut WorkProgress<'_>,
     ) -> Result<OperationPoint, GeoError> {
         for operation in &self.operations {
@@ -1576,10 +1497,7 @@ impl OperationChain {
     }
 
     pub(super) fn prepare_source_coordinate_math(
-        &self,
-        coordinate: &crate::Coord,
-        epoch: Option<&Rat>,
-        math: &mut CoordinateMath,
+        &self, coordinate: &crate::Coord, epoch: Option<&Rat>, math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<OperationPoint, MathError> {
         for operation in &self.operations {
@@ -1641,10 +1559,7 @@ impl OperationChain {
     }
 
     pub(super) fn validate_metadata_admitted(
-        &self,
-        input: &OperationPoint,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &self, input: &OperationPoint, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         for operation in &self.operations {
             operation
@@ -1668,10 +1583,7 @@ impl OperationChain {
         Ok(())
     }
     fn apply_inner(
-        &self,
-        point: &OperationPoint,
-        grid: TransformOutputGrid,
-        context: &mut MetricContext,
+        &self, point: &OperationPoint, grid: TransformOutputGrid, context: &mut MetricContext,
         progress: &mut WorkProgress<'_>,
     ) -> Result<TransformResult, GeoError> {
         for operation in &self.operations {
@@ -1812,9 +1724,7 @@ struct TransformEnclosure {
 }
 
 fn complete_transform(
-    specification: TransformTarget<'_>,
-    epoch: Option<&Rat>,
-    context: &mut MetricContext,
+    specification: TransformTarget<'_>, epoch: Option<&Rat>, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
     mut evaluate: impl FnMut(
         &mut CoordinateMath,
@@ -1901,11 +1811,8 @@ fn complete_transform(
 }
 
 fn quantize_transform_enclosure(
-    output: &TransformEnclosure,
-    target: TransformTarget<'_>,
-    epoch: Option<&Rat>,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    output: &TransformEnclosure, target: TransformTarget<'_>, epoch: Option<&Rat>,
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     certify: &mut impl FnMut(
         &[FixedInterval],
         &[Rat],
@@ -1994,9 +1901,7 @@ type EpochFields = Option<crate::PreparedValue<[String; 2]>>;
 /// Original normalized epoch numerator/denominator, admitted before decimal
 /// rendering. The receipt is actual retained vector/string capacity.
 pub(super) fn epoch_fields_admitted(
-    epoch: Option<&Rat>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    epoch: Option<&Rat>, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(EpochFields, u64), GeoError> {
     let Some(value) = epoch else {
         return Ok((None, 0));
@@ -2006,9 +1911,7 @@ pub(super) fn epoch_fields_admitted(
 
 /// The one admitted normalized numerator/denominator decimal encoder.
 pub(crate) fn rational_fields_admitted(
-    value: &Rat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    value: &Rat, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(crate::PreparedValue<[String; 2]>, u64), GeoError> {
     let digits = crate::numerical::ExactAdmission::new(context, progress).expression(
         purrdf_xsd::integer::ExactOperation::DecimalRender,
@@ -2055,13 +1958,8 @@ pub(crate) fn rational_fields_admitted(
 
 /// Prepare and validate a borrowed original source before cloning its limbs.
 pub(super) fn prepare_source_point(
-    model: &OperationModel,
-    source: [&Rat; 2],
-    height: Option<&Rat>,
-    epoch: Option<&Rat>,
-    swapped_axes: bool,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    model: &OperationModel, source: [&Rat; 2], height: Option<&Rat>, epoch: Option<&Rat>,
+    swapped_axes: bool, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<OperationPoint, GeoError> {
     model.validate_presence(height, epoch, progress)?;
     let normalized = if swapped_axes {
@@ -2078,10 +1976,7 @@ pub(super) fn prepare_source_point(
 }
 
 fn source_preparation_cost(
-    model: &OperationModel,
-    source: [&Rat; 2],
-    height: Option<&Rat>,
-    epoch: Option<&Rat>,
+    model: &OperationModel, source: [&Rat; 2], height: Option<&Rat>, epoch: Option<&Rat>,
 ) -> Option<purrdf_xsd::integer::ExactArithmeticCost> {
     let operands = [Some(source[0]), Some(source[1]), height, epoch];
     let bits = operands.into_iter().flatten().fold(1, |bits, value| {
@@ -2098,10 +1993,7 @@ fn source_preparation_cost(
 }
 
 fn make_source_point(
-    model: &OperationModel,
-    source: [&Rat; 2],
-    height: Option<&Rat>,
-    epoch: Option<&Rat>,
+    model: &OperationModel, source: [&Rat; 2], height: Option<&Rat>, epoch: Option<&Rat>,
     progress: &mut WorkProgress<'_>,
 ) -> Result<OperationPoint, GeoError> {
     let point = OperationPoint {
@@ -2122,8 +2014,7 @@ pub(super) fn decimal(text: &str, math: &mut CoordinateMath) -> Result<FixedInte
 }
 
 pub(super) fn radians(
-    degrees: &FixedInterval,
-    math: &mut CoordinateMath,
+    degrees: &FixedInterval, math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     let pi = FixedInterval::pi(math)?;
     let denominator = FixedInterval::from_i64(180, math)?;
@@ -2131,8 +2022,7 @@ pub(super) fn radians(
 }
 
 pub(super) fn degrees(
-    radians: &FixedInterval,
-    math: &mut CoordinateMath,
+    radians: &FixedInterval, math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     let factor = FixedInterval::from_i64(180, math)?;
     let pi = FixedInterval::pi(math)?;
@@ -2145,8 +2035,7 @@ const BAIDU_MERCATOR_AXES: [&str; 2] = ["6378206.4", "6356583.8"];
 
 /// Evaluate the original fixed-axis equation after its caller admits the cost.
 pub(super) fn baidu_mercator_parameters_in(
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<(Rat, Rat), MathError> {
     math.admit_exact_cost(baidu_mercator_parameters_cost().ok_or(MathError::WorkExhausted)?)?;
     progress.math_poll(math)?;
@@ -2242,9 +2131,7 @@ mod tests {
         }
     }
     fn compile(
-        model: OperationModel,
-        input: CoordinateUnit,
-        output: CoordinateUnit,
+        model: OperationModel, input: CoordinateUnit, output: CoordinateUnit,
     ) -> CoordinateOperation {
         CoordinateOperation::compile(reference(1, input), reference(2, output), model).unwrap()
     }

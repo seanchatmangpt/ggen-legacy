@@ -240,9 +240,7 @@ pub struct SerializeOutcome {
 /// is enforced by the writers: XML rejects CONSTRUCT graphs, and CSV/TSV reject
 /// both ASK booleans and CONSTRUCT graphs, all via [`Error::UnsupportedResult`].
 pub fn serialize(
-    result: &SparqlResult,
-    format: SparqlResultsFormat,
-    provenance: &ResultProvenance,
+    result: &SparqlResult, format: SparqlResultsFormat, provenance: &ResultProvenance,
     namespace: Option<&ProvenanceNamespace>,
 ) -> Result<SerializeOutcome, Error> {
     match format {
@@ -292,11 +290,8 @@ pub struct StreamOutcome {
 /// byte; a per-term failure or a write failure may leave a PREFIX of the document
 /// already written, and the caller must discard the target.
 pub fn serialize_into(
-    result: &SparqlResult,
-    format: SparqlResultsFormat,
-    provenance: &ResultProvenance,
-    namespace: Option<&ProvenanceNamespace>,
-    writer: &mut dyn std::io::Write,
+    result: &SparqlResult, format: SparqlResultsFormat, provenance: &ResultProvenance,
+    namespace: Option<&ProvenanceNamespace>, writer: &mut dyn std::io::Write,
 ) -> Result<StreamOutcome, Error> {
     let mut drain = purrdf_core::sink::WriterDrain(writer);
     let mut out = purrdf_core::sink::TextSink::to_drain(&mut drain);
@@ -325,8 +320,7 @@ pub fn serialize_into(
 /// it. CSV and TSV have no extension point at all, so a requested provenance is
 /// always dropped there.
 fn provenance_dropped(
-    format: SparqlResultsFormat,
-    provenance: &ResultProvenance,
+    format: SparqlResultsFormat, provenance: &ResultProvenance,
     namespace: Option<&ProvenanceNamespace>,
 ) -> bool {
     match format {

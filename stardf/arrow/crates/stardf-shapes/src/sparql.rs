@@ -53,9 +53,7 @@ use crate::term::{Literal, NamedNode, Term, term_value_to_native};
 /// (`Boolean` / `Graph` are rejected), or if any solution row has no `?this`
 /// binding.
 pub fn eval_target(
-    dataset: &Arc<RdfDataset>,
-    select: &str,
-    substitutions: &[(String, Term)],
+    dataset: &Arc<RdfDataset>, select: &str, substitutions: &[(String, Term)],
 ) -> Result<Vec<Term>, crate::error::ShapesError> {
     eval_target_view(dataset, select, substitutions)
 }
@@ -64,9 +62,7 @@ pub fn eval_target(
 pub(crate) fn eval_target_view<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
 >(
-    dataset: &D,
-    select: &str,
-    substitutions: &[(String, Term)],
+    dataset: &D, select: &str, substitutions: &[(String, Term)],
 ) -> Result<Vec<Term>, crate::error::ShapesError> {
     eval_target_with_invocation_view(
         dataset,
@@ -82,9 +78,7 @@ pub(crate) fn eval_target_view<
 pub(crate) fn eval_target_with_invocation_view<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
 >(
-    dataset: &D,
-    select: &str,
-    substitutions: &[(String, Term)],
+    dataset: &D, select: &str, substitutions: &[(String, Term)],
     invocation: crate::query_law::Invocation<'_>,
 ) -> Result<Vec<Term>, crate::error::ShapesError> {
     // The NAME borrows: a target's variable names are text out of the shapes
@@ -129,10 +123,7 @@ pub(crate) fn eval_target_with_invocation_view<
 pub(crate) fn eval_target_ask_view<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
 >(
-    dataset: &D,
-    ask: &str,
-    focus: &Term,
-    substitutions: &[(String, Term)],
+    dataset: &D, ask: &str, focus: &Term, substitutions: &[(String, Term)],
 ) -> Result<bool, crate::error::ShapesError> {
     // The NAME borrows, as in `eval_target_with_invocation_view`: a target's
     // variable names are text out of the shapes graph, already allocated there.
@@ -188,15 +179,9 @@ pub(crate) fn eval_target_ask_view<
 /// Returns `Err(String)` if execution fails or if the result is not a SELECT.
 #[allow(clippy::too_many_arguments)] // Signature mirrors the SHACL-SPARQL parameter set.
 pub fn eval_sparql_constraint(
-    dataset: &Arc<RdfDataset>,
-    focus: &Term,
-    select: &str,
-    component: &NamedNode,
-    source_shape: &Term,
-    severity: &Severity,
-    messages: &[Literal],
-    annotations: &[crate::shapes::ResultAnnotation],
-    shapes_graph_iri: Option<&str>,
+    dataset: &Arc<RdfDataset>, focus: &Term, select: &str, component: &NamedNode,
+    source_shape: &Term, severity: &Severity, messages: &[Literal],
+    annotations: &[crate::shapes::ResultAnnotation], shapes_graph_iri: Option<&str>,
     current_shape: Option<&Term>,
 ) -> Result<Vec<ValidationResult>, crate::error::ShapesError> {
     // No id: this door takes an owned focus term from a caller who never resolved
@@ -233,10 +218,7 @@ impl SparqlReportContext<'_> {
     /// The shared dated solution-to-report law used by constraints and SELECT
     /// validators: explicit failure wins; a literal row message has first priority.
     pub(crate) fn row_message(
-        self,
-        focus: &Term,
-        failure: Option<&TermValue>,
-        message: Option<&TermValue>,
+        self, focus: &Term, failure: Option<&TermValue>, message: Option<&TermValue>,
     ) -> Result<Option<Literal>, String> {
         if !self.dated() {
             return Ok(None);
@@ -268,18 +250,10 @@ impl SparqlReportContext<'_> {
 pub(crate) fn eval_sparql_constraint_view<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
 >(
-    dataset: &D,
-    focus: &Term,
-    focus_id: Option<D::Id>,
-    select: &str,
-    component: &NamedNode,
-    source_shape: &Term,
-    severity: &Severity,
-    messages: &[Literal],
-    annotations: &[crate::shapes::ResultAnnotation],
-    shapes_graph_iri: Option<&str>,
-    current_shape: Option<&Term>,
-    report: Option<SparqlReportContext<'_>>,
+    dataset: &D, focus: &Term, focus_id: Option<D::Id>, select: &str, component: &NamedNode,
+    source_shape: &Term, severity: &Severity, messages: &[Literal],
+    annotations: &[crate::shapes::ResultAnnotation], shapes_graph_iri: Option<&str>,
+    current_shape: Option<&Term>, report: Option<SparqlReportContext<'_>>,
 ) -> Result<Vec<ValidationResult>, crate::error::ShapesError> {
     // Pre-bind `$this` to THIS focus node.
     // This MUST be per-focus substitution, not an unsubstituted run grouped by a free
@@ -419,8 +393,7 @@ pub(crate) fn eval_sparql_constraint_view<
 /// The solution-set column of every result annotation's variable, looked up with
 /// `column`. Empty, and allocation-free, when there are no annotations.
 pub(crate) fn annotation_columns(
-    annotations: &[crate::shapes::ResultAnnotation],
-    column: impl Fn(&str) -> Option<usize>,
+    annotations: &[crate::shapes::ResultAnnotation], column: impl Fn(&str) -> Option<usize>,
 ) -> Vec<(&str, Option<usize>)> {
     annotations
         .iter()
@@ -451,9 +424,7 @@ pub(crate) fn annotation_columns(
 /// Returns `Err(String)` if execution fails, the result is not a SELECT, or the
 /// query somehow yields more than one row.
 pub fn eval_scalar_expr(
-    dataset: &Arc<RdfDataset>,
-    sparql_expr: &str,
-    args: &[(String, Term)],
+    dataset: &Arc<RdfDataset>, sparql_expr: &str, args: &[(String, Term)],
 ) -> Result<Option<Term>, crate::error::ShapesError> {
     eval_scalar_expr_view(dataset, sparql_expr, args)
 }
@@ -467,9 +438,7 @@ pub fn eval_scalar_expr(
 pub(crate) fn eval_scalar_expr_view<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
 >(
-    dataset: &D,
-    sparql_expr: &str,
-    args: &[(String, Term)],
+    dataset: &D, sparql_expr: &str, args: &[(String, Term)],
 ) -> Result<Option<Term>, crate::error::ShapesError> {
     eval_scalar_query_view(dataset, &scalar_expr_query(sparql_expr), args)
 }
@@ -499,9 +468,7 @@ pub(crate) fn scalar_expr_query(sparql_expr: &str) -> String {
 pub(crate) fn eval_scalar_query_view<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
 >(
-    dataset: &D,
-    select: &str,
-    args: &[(String, Term)],
+    dataset: &D, select: &str, args: &[(String, Term)],
 ) -> Result<Option<Term>, crate::error::ShapesError> {
     let subs: Vec<Prebinding<'_>> = args
         .iter()
@@ -530,10 +497,7 @@ pub(crate) fn eval_scalar_query_view<
 pub(crate) fn eval_scalar_query_view_minting<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
 >(
-    dataset: &D,
-    select: &str,
-    args: &[(String, Term)],
-    bnode_mint_prefix: &str,
+    dataset: &D, select: &str, args: &[(String, Term)], bnode_mint_prefix: &str,
 ) -> Result<Option<Term>, crate::error::ShapesError> {
     let subs: Vec<Prebinding<'_>> = args
         .iter()
@@ -593,9 +557,7 @@ fn project_scalar<D: DatasetView<ReadError = std::convert::Infallible> + Sync>(
 pub(crate) fn eval_cached_scalar_query_view<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
 >(
-    dataset: &D,
-    select: &str,
-    parameters: &[&str],
+    dataset: &D, select: &str, parameters: &[&str],
     bind: impl FnOnce(&mut ShaclExecution) -> Result<(), String>,
 ) -> Result<Option<Term>, crate::error::ShapesError> {
     run_cached_select_with_shacl_prebinding_view(
@@ -644,11 +606,7 @@ pub(crate) fn eval_cached_scalar_query_view<
 pub(crate) fn eval_select_nodes_view<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
 >(
-    dataset: &D,
-    select: &str,
-    variable: &str,
-    bindings: &[(String, Term)],
-    declared: &[&str],
+    dataset: &D, select: &str, variable: &str, bindings: &[(String, Term)], declared: &[&str],
     invocation: crate::query_law::Invocation<'_>,
 ) -> Result<Vec<Term>, crate::error::ShapesError> {
     let subs: Vec<Prebinding<'_>> = bindings
@@ -704,9 +662,7 @@ pub(crate) fn eval_select_nodes_view<
 /// Returns `Err(String)` if `agg` is not one of `"MIN"`/`"MAX"`/`"SUM"`, or if
 /// the accumulator refuses an operand.
 pub fn eval_aggregate(
-    dataset: &Arc<RdfDataset>,
-    agg: &str,
-    values: &[Term],
+    dataset: &Arc<RdfDataset>, agg: &str, values: &[Term],
 ) -> Result<Option<Term>, String> {
     eval_aggregate_view(dataset, agg, values)
 }
@@ -719,9 +675,7 @@ pub fn eval_aggregate(
 pub(crate) fn eval_aggregate_view<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
 >(
-    _dataset: &D,
-    agg: &str,
-    values: &[Term],
+    _dataset: &D, agg: &str, values: &[Term],
 ) -> Result<Option<Term>, String> {
     let aggregate = match agg {
         "MIN" => ValueAggregate::Min,
@@ -760,9 +714,7 @@ pub(crate) fn eval_aggregate_view<
 /// the fallible shape its callers already thread so a future comparator that can
 /// refuse an operand does not become a breaking change.
 pub fn eval_order(
-    dataset: &Arc<RdfDataset>,
-    values: &[Term],
-    descending: bool,
+    dataset: &Arc<RdfDataset>, values: &[Term], descending: bool,
 ) -> Result<Vec<Term>, String> {
     eval_order_view(dataset, values, descending)
 }
@@ -773,9 +725,7 @@ pub fn eval_order(
 pub(crate) fn eval_order_view<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
 >(
-    _dataset: &D,
-    values: &[Term],
-    descending: bool,
+    _dataset: &D, values: &[Term], descending: bool,
 ) -> Result<Vec<Term>, String> {
     let operands: Vec<TermValue> = values.iter().map(Term::to_term_value).collect();
     Ok(order_values(operands, descending)
@@ -1204,12 +1154,8 @@ fn run_query_view<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
     R,
 >(
-    dataset: &D,
-    query: &str,
-    substitutions: &[Prebinding<'_>],
-    declared_prebound: &[&str],
-    bnode_mint_prefix: Option<&str>,
-    invocation: crate::query_law::Invocation<'_>,
+    dataset: &D, query: &str, substitutions: &[Prebinding<'_>], declared_prebound: &[&str],
+    bnode_mint_prefix: Option<&str>, invocation: crate::query_law::Invocation<'_>,
     visit: impl FnOnce(InternedOutcome<'_, '_, D>) -> Result<R, String>,
 ) -> Result<R, crate::error::ShapesError> {
     let scopes = AmbientScopes::snapshot()?;
@@ -1394,9 +1340,7 @@ impl AmbientScopes {
 
     /// The [`QueryOptions`] a SHACL query over `dataset` runs under.
     fn options<'a, D: FocusGraphSource>(
-        &'a self,
-        dataset: &'a D,
-        declared_prebound: &'a [&'a str],
+        &'a self, dataset: &'a D, declared_prebound: &'a [&'a str],
         bnode_mint_prefix: Option<&'a str>,
     ) -> Result<QueryOptions<'a, 'a>, crate::error::ShapesError> {
         let functions = self.functions();
@@ -1605,10 +1549,7 @@ impl ShaclExecution {
     /// `Err(String)` if `slot` is not a declared parameter — the identical refusal
     /// [`Self::bind`] gives — or if the term at `id` cannot become an algebra term.
     pub(crate) fn bind_id<D: DatasetView<ReadError = std::convert::Infallible>>(
-        &mut self,
-        slot: usize,
-        dataset: &D,
-        id: D::Id,
+        &mut self, slot: usize, dataset: &D, id: D::Id,
     ) -> Result<(), String> {
         self.execution
             .bind_id(slot, dataset, id)
@@ -1621,9 +1562,7 @@ impl ShaclExecution {
     /// the query — an `OPTIONAL` arm, an unprojected sub-`SELECT`, an `EXISTS` body —
     /// so the plan admits calls there with the parameter bound.
     fn prepare(
-        query: &str,
-        parameters: &[&str],
-        scopes: &AmbientScopes,
+        query: &str, parameters: &[&str], scopes: &AmbientScopes,
     ) -> Result<Self, crate::error::ShapesError> {
         debug_assert!(
             parameters_are_distinct(parameters),
@@ -1665,11 +1604,7 @@ impl ShaclExecution {
 /// `Err(String)` if `slot` is not a declared parameter, or if the focus node cannot
 /// become an algebra term.
 pub(crate) fn bind_focus<D: DatasetView<ReadError = std::convert::Infallible>>(
-    execution: &mut ShaclExecution,
-    slot: usize,
-    dataset: &D,
-    focus: &Term,
-    focus_id: Option<D::Id>,
+    execution: &mut ShaclExecution, slot: usize, dataset: &D, focus: &Term, focus_id: Option<D::Id>,
 ) -> Result<(), String> {
     match focus_id {
         Some(id) => execution.bind_id(slot, dataset, id),
@@ -1777,9 +1712,7 @@ fn run_bound_view<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
     R,
 >(
-    dataset: &D,
-    handle: &mut ShaclExecution,
-    bnode_mint_prefix: Option<&str>,
+    dataset: &D, handle: &mut ShaclExecution, bnode_mint_prefix: Option<&str>,
     invocation: crate::query_law::Invocation<'_>,
     visit: impl FnOnce(InternedOutcome<'_, '_, D>) -> Result<R, String>,
 ) -> Result<R, crate::error::ShapesError> {
@@ -1877,9 +1810,7 @@ thread_local! {
 /// The `RefCell` borrow is released before preparation and before the caller runs:
 /// nothing in this module may hold it across an evaluation.
 fn checkout_execution(
-    query: &str,
-    parameters: &[&str],
-    scopes: &AmbientScopes,
+    query: &str, parameters: &[&str], scopes: &AmbientScopes,
 ) -> Result<ShaclExecution, crate::error::ShapesError> {
     let cached = PREPARED_EXECUTIONS.with(|cache| {
         cache.borrow_mut().get_mut(query).and_then(|entries| {
@@ -1967,8 +1898,7 @@ fn own_parameters(parameters: &[&str]) -> Box<[Box<str>]> {
 /// into a fresh preparation, a performance defect no test asserting an ANSWER could
 /// see.
 pub(crate) fn with_cached_execution<R>(
-    query: &str,
-    parameters: &[&str],
+    query: &str, parameters: &[&str],
     body: impl FnOnce(&mut ShaclExecution) -> Result<R, crate::error::ShapesError>,
 ) -> Result<R, crate::error::ShapesError> {
     debug_assert!(
@@ -1996,10 +1926,7 @@ fn run_cached_prepared_view<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
     R,
 >(
-    dataset: &D,
-    query: &str,
-    parameters: &[&str],
-    bnode_mint_prefix: Option<&str>,
+    dataset: &D, query: &str, parameters: &[&str], bnode_mint_prefix: Option<&str>,
     invocation: crate::query_law::Invocation<'_>,
     bind: impl FnOnce(&mut ShaclExecution) -> Result<(), String>,
     visit: impl FnOnce(InternedOutcome<'_, '_, D>) -> Result<R, String>,
@@ -2080,10 +2007,7 @@ pub(crate) fn run_cached_select_with_shacl_prebinding_view<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
     R,
 >(
-    dataset: &D,
-    select: &str,
-    parameters: &[&str],
-    bnode_mint_prefix: Option<&str>,
+    dataset: &D, select: &str, parameters: &[&str], bnode_mint_prefix: Option<&str>,
     invocation: crate::query_law::Invocation<'_>,
     bind: impl FnOnce(&mut ShaclExecution) -> Result<(), String>,
     project: impl FnOnce(&InternedSolutions<'_, '_, D>) -> Result<R, String>,
@@ -2110,9 +2034,7 @@ pub(crate) fn run_cached_select_with_shacl_prebinding_view<
 pub(crate) fn run_bound_ask_with_shacl_prebinding_view<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
 >(
-    dataset: &D,
-    handle: &mut ShaclExecution,
-    invocation: crate::query_law::Invocation<'_>,
+    dataset: &D, handle: &mut ShaclExecution, invocation: crate::query_law::Invocation<'_>,
 ) -> Result<bool, crate::error::ShapesError> {
     run_bound_view(dataset, handle, None, invocation, project_boolean)
 }
@@ -2130,9 +2052,7 @@ pub(crate) fn run_bound_ask_with_shacl_prebinding_view<
 pub(crate) fn run_bound_construct_with_shacl_prebinding_view<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
 >(
-    dataset: &D,
-    handle: &mut ShaclExecution,
-    bnode_mint_prefix: Option<&str>,
+    dataset: &D, handle: &mut ShaclExecution, bnode_mint_prefix: Option<&str>,
     invocation: crate::query_law::Invocation<'_>,
 ) -> Result<purrdf_sparql_eval::RetainedGraph, crate::error::ShapesError> {
     run_bound_view(
@@ -2243,10 +2163,8 @@ impl CachedEnv {
     /// comparison while the entry is cached — which is the hazard that makes pointer
     /// identity unusable in general.
     fn matching(
-        &self,
-        relations: Option<&Arc<PropertyFunctionRegistry<'static>>>,
-        aggregates: Option<&Arc<AggregateRegistry>>,
-        options: Option<&Arc<ParserOptions>>,
+        &self, relations: Option<&Arc<PropertyFunctionRegistry<'static>>>,
+        aggregates: Option<&Arc<AggregateRegistry>>, options: Option<&Arc<ParserOptions>>,
     ) -> Option<Arc<ExtensionEnv<'static>>> {
         fn same<T>(left: Option<&Arc<T>>, right: Option<&Arc<T>>) -> bool {
             match (left, right) {
@@ -2288,8 +2206,7 @@ impl CachedEnv {
 /// declared access mode can serve, fails HERE, once, rather than per row during
 /// evaluation.
 pub fn bind_in_current_env(
-    shapes: &crate::shapes::Shapes,
-    shapes_graph: Option<&str>,
+    shapes: &crate::shapes::Shapes, shapes_graph: Option<&str>,
 ) -> Result<Arc<BoundFunctionRegistry>, String> {
     let functions = &shapes.functions;
     let shapes_graph = shapes_graph.or(shapes.shapes_graph.as_deref());
@@ -2600,8 +2517,7 @@ fn law_binds_shape_context() -> bool {
 /// pre-binds none ([`law_binds_shape_context`]). Every helper below reads the context
 /// through this, so a name list and its value list cannot disagree.
 fn bound_shape_context<'a, 't>(
-    shapes_graph_iri: Option<&'a str>,
-    current_shape: Option<&'t Term>,
+    shapes_graph_iri: Option<&'a str>, current_shape: Option<&'t Term>,
 ) -> (Option<&'a str>, Option<&'t Term>) {
     if law_binds_shape_context() {
         (shapes_graph_iri, current_shape)
@@ -2620,9 +2536,7 @@ fn bound_shape_context<'a, 't>(
 /// caller that runs the same query for many nodes now builds the whole
 /// substitution list once and overwrites only the cells that actually vary.
 pub(crate) fn push_shape_context(
-    subs: &mut Vec<Prebinding<'_>>,
-    shapes_graph_iri: Option<&str>,
-    current_shape: Option<&Term>,
+    subs: &mut Vec<Prebinding<'_>>, shapes_graph_iri: Option<&str>, current_shape: Option<&Term>,
 ) {
     let (shapes_graph_iri, current_shape) = bound_shape_context(shapes_graph_iri, current_shape);
     if let Some(iri) = shapes_graph_iri {
@@ -2672,9 +2586,7 @@ pub(crate) fn node_expression_prebound_names(scope: &[String]) -> Vec<&str> {
 /// `$shapesGraph`'s slot. Kept immediately beside [`push_shape_context`] for that
 /// reason, and checked against it by `shape_context_names_match_push_shape_context`.
 pub(crate) fn push_shape_context_names(
-    names: &mut Vec<&str>,
-    shapes_graph_iri: Option<&str>,
-    current_shape: Option<&Term>,
+    names: &mut Vec<&str>, shapes_graph_iri: Option<&str>, current_shape: Option<&Term>,
 ) {
     let (shapes_graph_iri, current_shape) = bound_shape_context(shapes_graph_iri, current_shape);
     if shapes_graph_iri.is_some() {
@@ -2692,8 +2604,7 @@ pub(crate) fn push_shape_context_names(
 /// once per FOCUS NODE and building a two-element list there is the per-focus-node
 /// allocation the prepared door exists to remove.
 pub(crate) fn this_and_shape_context_names(
-    shapes_graph_iri: Option<&str>,
-    current_shape: Option<&Term>,
+    shapes_graph_iri: Option<&str>, current_shape: Option<&Term>,
 ) -> &'static [&'static str] {
     let (shapes_graph_iri, current_shape) = bound_shape_context(shapes_graph_iri, current_shape);
     match (shapes_graph_iri.is_some(), current_shape.is_some()) {
@@ -2715,9 +2626,7 @@ pub(crate) fn this_and_shape_context_names(
 /// the name list and the value list disagree, the one mistake this pairing exists to
 /// make impossible.
 pub(crate) fn bind_shape_context(
-    execution: &mut ShaclExecution,
-    mut slot: usize,
-    shapes_graph_iri: Option<&str>,
+    execution: &mut ShaclExecution, mut slot: usize, shapes_graph_iri: Option<&str>,
     current_shape: Option<&Term>,
 ) -> Result<usize, String> {
     let (shapes_graph_iri, current_shape) = bound_shape_context(shapes_graph_iri, current_shape);
@@ -2740,10 +2649,7 @@ fn run_select_view<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
     R,
 >(
-    dataset: &D,
-    select: &str,
-    substitutions: &[Prebinding<'_>],
-    declared_prebound: &[&str],
+    dataset: &D, select: &str, substitutions: &[Prebinding<'_>], declared_prebound: &[&str],
     invocation: crate::query_law::Invocation<'_>,
     project: impl FnOnce(&InternedSolutions<'_, '_, D>) -> Result<R, String>,
 ) -> Result<R, crate::error::ShapesError> {
@@ -2768,10 +2674,7 @@ pub(crate) fn run_select_generic_view<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
     R,
 >(
-    dataset: &D,
-    select: &str,
-    substitutions: &[Prebinding<'_>],
-    declared_prebound: &[&str],
+    dataset: &D, select: &str, substitutions: &[Prebinding<'_>], declared_prebound: &[&str],
     invocation: crate::query_law::Invocation<'_>,
     project: impl FnOnce(&InternedSolutions<'_, '_, D>) -> Result<R, String>,
 ) -> Result<R, crate::error::ShapesError> {
@@ -2794,10 +2697,7 @@ pub(crate) fn run_select_with_shacl_prebinding_view<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
     R,
 >(
-    dataset: &D,
-    select: &str,
-    substitutions: &[Prebinding<'_>],
-    bnode_mint_prefix: Option<&str>,
+    dataset: &D, select: &str, substitutions: &[Prebinding<'_>], bnode_mint_prefix: Option<&str>,
     invocation: crate::query_law::Invocation<'_>,
     project: impl FnOnce(&InternedSolutions<'_, '_, D>) -> Result<R, String>,
 ) -> Result<R, crate::error::ShapesError> {
@@ -2825,9 +2725,7 @@ pub(crate) fn run_select_with_shacl_prebinding_view<
 pub(crate) fn run_ask_with_shacl_prebinding_view<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync + FocusGraphSource,
 >(
-    dataset: &D,
-    ask: &str,
-    substitutions: &[Prebinding<'_>],
+    dataset: &D, ask: &str, substitutions: &[Prebinding<'_>],
     invocation: crate::query_law::Invocation<'_>,
 ) -> Result<bool, crate::error::ShapesError> {
     run_query_view(
@@ -3625,9 +3523,7 @@ mod tests {
         }
 
         fn open<'cursor>(
-            &self,
-            args: &purrdf_sparql_eval::PfArgs<'_>,
-            _ceiling: Option<u64>,
+            &self, args: &purrdf_sparql_eval::PfArgs<'_>, _ceiling: Option<u64>,
         ) -> Result<Box<dyn purrdf_sparql_eval::PfCursor + 'cursor>, purrdf_sparql_eval::EvalError>
         where
             Self: 'cursor,
@@ -3883,9 +3779,7 @@ mod tests {
         }
 
         fn open<'cursor>(
-            &self,
-            _args: &purrdf_sparql_eval::PfArgs<'_>,
-            _ceiling: Option<u64>,
+            &self, _args: &purrdf_sparql_eval::PfArgs<'_>, _ceiling: Option<u64>,
         ) -> Result<Box<dyn purrdf_sparql_eval::PfCursor + 'cursor>, purrdf_sparql_eval::EvalError>
         where
             Self: 'cursor,
@@ -3924,8 +3818,7 @@ mod tests {
     /// test — the production call sites in `components.rs` and `rules.rs` differ
     /// from this only in which parameters they declare.
     fn still_current_ask(
-        registry: Arc<PropertyFunctionRegistry<'static>>,
-        focus: &str,
+        registry: Arc<PropertyFunctionRegistry<'static>>, focus: &str,
     ) -> Result<bool, crate::error::ShapesError> {
         let _scope = enter_property_function_scope(registry);
         let dataset = dataset_from_ntriples(&[]);

@@ -23,9 +23,7 @@ purrdf_lex::json_record!(CarrierManifest as "struct CarrierManifest" {
 });
 
 pub(super) fn write_manifest(
-    profile: &str,
-    graph: &LpgGraph,
-    config: &LpgConfig,
+    profile: &str, graph: &LpgGraph, config: &LpgConfig,
 ) -> Result<Vec<u8>, ProjectionError> {
     canonical_json_bounded(
         &CarrierManifest {
@@ -39,10 +37,7 @@ pub(super) fn write_manifest(
 }
 
 pub(super) fn read_manifest(
-    bytes: &[u8],
-    profile: &str,
-    config: &LpgConfig,
-    path: &str,
+    bytes: &[u8], profile: &str, config: &LpgConfig, path: &str,
 ) -> Result<u32, ProjectionError> {
     let manifest: CarrierManifest = parse_json(bytes, config, "LPG carrier manifest", path)?;
     if manifest.profile != profile || manifest.profile_version != PROFILE_VERSION {
@@ -56,9 +51,7 @@ pub(super) fn read_manifest(
 }
 
 pub(super) fn json_string<T: ToJson + ?Sized>(
-    value: &T,
-    config: &LpgConfig,
-    description: &str,
+    value: &T, config: &LpgConfig, description: &str,
 ) -> Result<String, ProjectionError> {
     String::from_utf8(canonical_json_bounded(value, config.limits(), description)?).map_err(
         |error| ProjectionError::integrity(format!("JSON encoder emitted non-UTF-8: {error}")),
@@ -66,10 +59,7 @@ pub(super) fn json_string<T: ToJson + ?Sized>(
 }
 
 pub(super) fn parse_json<T: FromJson + ToJson>(
-    bytes: &[u8],
-    config: &LpgConfig,
-    description: &str,
-    path: &str,
+    bytes: &[u8], config: &LpgConfig, description: &str, path: &str,
 ) -> Result<T, ProjectionError> {
     if bytes.len() > config.limits().max_artifact_bytes() {
         return Err(ProjectionError::limit(format!(
@@ -90,8 +80,7 @@ pub(super) fn parse_json<T: FromJson + ToJson>(
 }
 
 pub(super) fn validate_package_bounds(
-    package: &ProjectionPackage,
-    limits: ProjectionLimits,
+    package: &ProjectionPackage, limits: ProjectionLimits,
 ) -> Result<(), ProjectionError> {
     if package.len() > limits.max_artifacts() {
         return Err(ProjectionError::limit(format!(
@@ -121,9 +110,7 @@ pub(super) fn validate_package_bounds(
 }
 
 pub(super) fn require_canonical_package(
-    actual: &ProjectionPackage,
-    canonical: &ProjectionPackage,
-    profile: &str,
+    actual: &ProjectionPackage, canonical: &ProjectionPackage, profile: &str,
 ) -> Result<(), ProjectionError> {
     if !actual.artifacts().eq(canonical.artifacts()) {
         return Err(ProjectionError::syntax(format!(
@@ -144,8 +131,7 @@ const HEX_BLOCK_BYTES: usize = 8_192;
 /// Blocking rather than emitting per byte keeps the sink call count proportional
 /// to the payload size divided by [`HEX_BLOCK_BYTES`], not to the byte count.
 pub(super) fn render_hex_blocks(
-    value: &[u8],
-    mut emit: impl FnMut(&[u8]) -> Result<(), ProjectionError>,
+    value: &[u8], mut emit: impl FnMut(&[u8]) -> Result<(), ProjectionError>,
 ) -> Result<(), ProjectionError> {
     let mut block = [0u8; HEX_BLOCK_BYTES];
     // Two output characters per source byte, so a block holds half its size in
@@ -182,9 +168,7 @@ impl<T: LpgTextWriter + ?Sized> LpgTextWriter for &mut T {
 
 impl BoundedText {
     pub(super) fn new(
-        limits: ProjectionLimits,
-        description: &'static str,
-        path: &'static str,
+        limits: ProjectionLimits, description: &'static str, path: &'static str,
     ) -> Self {
         Self {
             bytes: Vec::new(),
@@ -242,9 +226,7 @@ impl LpgTextWriter for BoundedText {
 }
 
 pub(super) fn hex_decode(
-    value: &str,
-    description: &str,
-    path: &str,
+    value: &str, description: &str, path: &str,
 ) -> Result<Vec<u8>, ProjectionError> {
     purrdf_hash::hex::decode_canonical(value).map_err(|error| {
         let reason = match error {

@@ -450,8 +450,7 @@ impl Diagnostic {
     /// it never authorizes dropping a cause and reporting the original as retained.
     #[must_use]
     pub fn with_native_cause(
-        mut self,
-        cause: impl purrdf_hash::error::NativeError + 'static,
+        mut self, cause: impl purrdf_hash::error::NativeError + 'static,
     ) -> Self {
         match retain_native_cause(cause) {
             Ok(cause) => self.cause = Some(DiagnosticCause::Native(cause)),
@@ -749,8 +748,7 @@ impl Graph {
     /// Every `(triple, graph?)` binding recorded for one reifier id, in fold
     /// order.
     pub fn reifier_bindings(
-        &self,
-        rid: usize,
+        &self, rid: usize,
     ) -> impl Iterator<Item = (Triple3, Option<usize>)> + '_ {
         self.reifiers
             .iter()

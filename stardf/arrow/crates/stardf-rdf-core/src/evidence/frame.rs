@@ -77,8 +77,7 @@ impl Frame {
     /// # Errors
     /// Returns native admission, layout or allocator refusal.
     pub fn from_components<S: Admission + ?Sized>(
-        components: &[FrameComponent],
-        memory: &mut Memory<'_, S>,
+        components: &[FrameComponent], memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         if components.is_empty() {
             return Ok(Self::actual());
@@ -94,8 +93,7 @@ impl Frame {
     }
 
     fn copy_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         memory.scope(|memory| {
             let mut alternatives = Vec::new();
@@ -116,9 +114,7 @@ impl Frame {
     /// # Errors
     /// Returns physical cardinality overflow or native storage refusal.
     pub fn meet<S: Admission + ?Sized>(
-        &self,
-        other: &Self,
-        memory: &mut Memory<'_, S>,
+        &self, other: &Self, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         if self.is_unrestricted_actual() {
             return other.copy_with_memory(memory);
@@ -152,9 +148,7 @@ impl Frame {
     /// # Errors
     /// Returns physical cardinality overflow or native storage refusal.
     pub fn union<S: Admission + ?Sized>(
-        &self,
-        other: &Self,
-        memory: &mut Memory<'_, S>,
+        &self, other: &Self, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         if self.is_unrestricted_actual() || other.is_unrestricted_actual() {
             return Ok(Self::actual());
@@ -178,8 +172,7 @@ impl Frame {
     }
 
     fn normalize<S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         self.alternatives.sort_unstable();
         let mut index = 0;
@@ -246,8 +239,7 @@ impl Frame {
     /// # Errors
     /// Returns the original admission callback's refund refusal.
     pub fn release<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         let Self { mut alternatives } = self;
         for branch in &mut alternatives {

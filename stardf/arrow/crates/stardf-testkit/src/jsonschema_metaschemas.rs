@@ -5,9 +5,12 @@
 //!
 //! `purrdf-jsonschema` carries no meta-schema: its callers register the ones
 //! they need. The workspace's tests and examples take them from here — the
-//! verbatim upstream documents vendored under
-//! `crates/jsonschema/tests/metaschemas/` (provenance and licence recorded
-//! there), which never reach a published crate. Each entry is
+//! verbatim upstream documents vendored under `metaschemas/` in this crate
+//! (copy-and-rename of `crates/jsonschema/tests/metaschemas/`, where
+//! provenance and licence are recorded; Lane 10, 2026-10-31: the copy lives
+//! INSIDE the package so the `include_str!`s resolve from a published
+//! .crate — the previous cross-crate path pointed at the path-only
+//! `crates/jsonschema` and could not compile standalone). Each entry is
 //! `(retrieval URI, JSON text)`; the URI is the document's own `$id` without
 //! an empty fragment.
 
@@ -16,7 +19,7 @@ pub type Document = (&'static str, &'static str);
 
 macro_rules! vendored {
     ($path:literal) => {
-        include_str!(concat!("../../jsonschema/tests/metaschemas/", $path))
+        include_str!(concat!("../metaschemas/", $path))
     };
 }
 

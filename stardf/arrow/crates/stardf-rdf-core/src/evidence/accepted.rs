@@ -151,10 +151,7 @@ where
     /// # Errors
     /// Refuses unsorted/repeated/unknown reason identities or an aborted owner.
     pub fn new(
-        established: A,
-        undecided: U,
-        workspace: &'a EvidenceWorkspace<S>,
-        accepted: &'a [ReasonId],
+        established: A, undecided: U, workspace: &'a EvidenceWorkspace<S>, accepted: &'a [ReasonId],
     ) -> Result<Self, AcceptedMergeError> {
         if accepted.windows(2).any(|pair| pair[0] >= pair[1]) {
             return Err(AcceptedMergeError::NonCanonicalReasons);

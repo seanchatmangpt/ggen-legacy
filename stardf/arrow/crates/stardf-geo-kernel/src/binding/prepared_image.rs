@@ -24,10 +24,7 @@ impl GeoProfile {
     /// Refuses missing or ambiguous registrations, incompatible targets,
     /// uncertified areal topology and incomplete native resource admission.
     pub fn prepare_transformed_literal(
-        &self,
-        source: &GeometryLiteral,
-        target: &Crs,
-        epoch: Option<&Rat>,
+        &self, source: &GeometryLiteral, target: &Crs, epoch: Option<&Rat>,
         context: &mut MetricContext,
     ) -> Result<PreparedGeometry, GeoError> {
         self.prepare_transformed_inner(source, ImageTarget::Carrier(target), epoch, context, None)
@@ -38,12 +35,8 @@ impl GeoProfile {
     /// # Errors
     /// Adds observer refusal to [`Self::prepare_transformed_literal`].
     pub fn prepare_transformed_literal_metered(
-        &self,
-        source: &GeometryLiteral,
-        target: &Crs,
-        epoch: Option<&Rat>,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, source: &GeometryLiteral, target: &Crs, epoch: Option<&Rat>,
+        context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<PreparedGeometry, GeoError> {
         self.prepare_transformed_inner(
             source,
@@ -59,10 +52,7 @@ impl GeoProfile {
     /// # Errors
     /// Refuses a source-carrier mismatch and the complete native image contract.
     pub fn prepare_transformed_literal_named(
-        &self,
-        name: &Crs,
-        source: &GeometryLiteral,
-        epoch: Option<&Rat>,
+        &self, name: &Crs, source: &GeometryLiteral, epoch: Option<&Rat>,
         context: &mut MetricContext,
     ) -> Result<PreparedGeometry, GeoError> {
         self.prepare_named_inner(name, source, epoch, context, None)
@@ -73,12 +63,8 @@ impl GeoProfile {
     /// # Errors
     /// Adds observer refusal to [`Self::prepare_transformed_literal_named`].
     pub fn prepare_transformed_literal_named_metered(
-        &self,
-        name: &Crs,
-        source: &GeometryLiteral,
-        epoch: Option<&Rat>,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, name: &Crs, source: &GeometryLiteral, epoch: Option<&Rat>,
+        context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<PreparedGeometry, GeoError> {
         self.prepare_named_inner(name, source, epoch, context, Some(observer))
     }
@@ -89,11 +75,7 @@ impl GeoProfile {
     /// # Errors
     /// Refuses an incompatible target, required metadata or complete admission.
     pub fn prepare_transformed_edge_named(
-        &self,
-        name: &Crs,
-        start: &Coord,
-        end: &Coord,
-        epoch: Option<&Rat>,
+        &self, name: &Crs, start: &Coord, end: &Coord, epoch: Option<&Rat>,
         context: &mut MetricContext,
     ) -> Result<PreparedEdge, GeoError> {
         self.prepare_edge_inner(name, start, end, epoch, context, None)
@@ -104,25 +86,15 @@ impl GeoProfile {
     /// # Errors
     /// Adds observer refusal to [`Self::prepare_transformed_edge_named`].
     pub fn prepare_transformed_edge_named_metered(
-        &self,
-        name: &Crs,
-        start: &Coord,
-        end: &Coord,
-        epoch: Option<&Rat>,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, name: &Crs, start: &Coord, end: &Coord, epoch: Option<&Rat>,
+        context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<PreparedEdge, GeoError> {
         self.prepare_edge_inner(name, start, end, epoch, context, Some(observer))
     }
 
     fn prepare_edge_inner(
-        &self,
-        name: &Crs,
-        start: &Coord,
-        end: &Coord,
-        epoch: Option<&Rat>,
-        context: &mut MetricContext,
-        observer: Option<&mut dyn MetricWorkObserver>,
+        &self, name: &Crs, start: &Coord, end: &Coord, epoch: Option<&Rat>,
+        context: &mut MetricContext, observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<PreparedEdge, GeoError> {
         let result = (|| {
             context.begin(1)?;
@@ -174,23 +146,15 @@ impl GeoProfile {
     }
 
     fn prepare_named_inner(
-        &self,
-        name: &Crs,
-        source: &GeometryLiteral,
-        epoch: Option<&Rat>,
-        context: &mut MetricContext,
-        observer: Option<&mut dyn MetricWorkObserver>,
+        &self, name: &Crs, source: &GeometryLiteral, epoch: Option<&Rat>,
+        context: &mut MetricContext, observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<PreparedGeometry, GeoError> {
         self.prepare_transformed_inner(source, ImageTarget::Named(name), epoch, context, observer)
     }
 
     fn prepare_transformed_inner(
-        &self,
-        source: &GeometryLiteral,
-        target: ImageTarget<'_>,
-        epoch: Option<&Rat>,
-        context: &mut MetricContext,
-        observer: Option<&mut dyn MetricWorkObserver>,
+        &self, source: &GeometryLiteral, target: ImageTarget<'_>, epoch: Option<&Rat>,
+        context: &mut MetricContext, observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<PreparedGeometry, GeoError> {
         let result = (|| {
             context.begin(1)?;
@@ -212,13 +176,9 @@ impl GeoProfile {
     }
 
     fn prepare_transformed_attempt(
-        &self,
-        (source, target): (&GeometryLiteral, &Crs),
-        epoch: Option<&Rat>,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
-        selected: Option<&OperationChain>,
-        (work_base, workspace_base): (u64, u64),
+        &self, (source, target): (&GeometryLiteral, &Crs), epoch: Option<&Rat>,
+        context: &mut MetricContext, progress: &mut WorkProgress<'_>,
+        selected: Option<&OperationChain>, (work_base, workspace_base): (u64, u64),
     ) -> Result<PreparedGeometry, GeoError> {
         let reference = self.reference_with_progress(target, context, progress)?;
         if !crate::numerical::reference_matches(reference, context, progress)? {
@@ -476,10 +436,7 @@ impl ImagePreparation<'_, '_, '_> {
     }
 
     fn curve(
-        &mut self,
-        coordinates: &[Coord],
-        reverse: bool,
-        close: bool,
+        &mut self, coordinates: &[Coord], reverse: bool, close: bool,
     ) -> Result<PreparedCurve, GeoError> {
         let edge_count = if close {
             coordinates.len()
@@ -836,8 +793,7 @@ impl ImagePreparation<'_, '_, '_> {
 }
 
 fn finish_image_preparation<T>(
-    result: Result<T, GeoError>,
-    context: &mut MetricContext,
+    result: Result<T, GeoError>, context: &mut MetricContext,
 ) -> Result<T, GeoError> {
     match result {
         Ok(value) => {
@@ -862,9 +818,7 @@ fn retained(context: &MetricContext) -> u64 {
 }
 
 fn share_chain(
-    chain: &OperationChain,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    chain: &OperationChain, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<OperationChain, GeoError> {
     context.charge_work(16)?;
     // The fixed-width chain shares its existing compiled table and models.
@@ -880,9 +834,7 @@ fn remaining(context: &MetricContext) -> Result<ExecutionPolicy, GeoError> {
 }
 
 fn retain_geometry(
-    geometry: &PreparedGeometry,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    geometry: &PreparedGeometry, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     context.admit_workspace(geometry.retained_workspace_bytes())?;
     progress.context_poll(context)
@@ -951,9 +903,7 @@ mod tests {
     }
 
     fn polynomial_image_profile(
-        degree: u16,
-        terms: Vec<crate::operation::PolynomialTerm>,
-        swapped_axes: bool,
+        degree: u16, terms: Vec<crate::operation::PolynomialTerm>, swapped_axes: bool,
     ) -> (GeoProfile, Crs, Crs) {
         let mut profile = GeoProfile::standard();
         let source = Crs::new("http://example.org/original-polynomial-plane").unwrap();

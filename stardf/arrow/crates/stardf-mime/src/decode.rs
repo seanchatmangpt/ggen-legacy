@@ -15,10 +15,7 @@ use purrdf_core::{
 use crate::{MimeError, Profile, SourceDocument, analyze, error::metadata, project};
 
 fn one(
-    dataset: &RdfDataset,
-    subject: &str,
-    predicate: &str,
-    field: &'static str,
+    dataset: &RdfDataset, subject: &str, predicate: &str, field: &'static str,
 ) -> Result<TermValue, MimeError> {
     let mut values = dataset
         .quads()
@@ -36,10 +33,7 @@ fn one(
 }
 
 fn literal(
-    value: TermValue,
-    datatype: &str,
-    subject: &str,
-    field: &'static str,
+    value: TermValue, datatype: &str, subject: &str, field: &'static str,
 ) -> Result<String, MimeError> {
     match value {
         TermValue::Literal {
@@ -53,10 +47,7 @@ fn literal(
 }
 
 fn number(
-    dataset: &RdfDataset,
-    subject: &str,
-    profile: &Profile,
-    field: &'static str,
+    dataset: &RdfDataset, subject: &str, profile: &Profile, field: &'static str,
 ) -> Result<u64, MimeError> {
     let spelling = literal(
         one(dataset, subject, profile.vocabulary().iri(field), field)?,
@@ -74,9 +65,7 @@ fn number(
 }
 
 fn selected(
-    dataset: &RdfDataset,
-    document: &str,
-    profile: &Profile,
+    dataset: &RdfDataset, document: &str, profile: &Profile,
 ) -> Result<BTreeSet<Vec<u8>>, MimeError> {
     let prefix = format!("{document}/");
     let mut statements = BTreeSet::new();
@@ -132,9 +121,7 @@ fn selected(
 /// # Errors
 /// Returns typed metadata, profile, cover, caller-resource or RDF refusals.
 pub fn decode_document(
-    dataset: &RdfDataset,
-    document: &str,
-    profile: &Profile,
+    dataset: &RdfDataset, document: &str, profile: &Profile,
 ) -> Result<Vec<u8>, MimeError> {
     let vocabulary = profile.vocabulary();
     let TermValue::Iri(source) = one(dataset, document, vocabulary.iri("source"), "source")? else {

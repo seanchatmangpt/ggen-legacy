@@ -400,15 +400,13 @@ impl Pattern {
     /// [`GeoError::PatternSyntax`] for malformed pattern terminals, or the original
     /// physical admission refusal before any diagnostic buffer is created.
     pub fn parse_metered(
-        text: &str,
-        observer: &mut dyn crate::MetricWorkObserver,
+        text: &str, observer: &mut dyn crate::MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::parse_observed(text, Some(observer))
     }
 
     fn parse_observed(
-        text: &str,
-        observer: Option<&mut dyn crate::MetricWorkObserver>,
+        text: &str, observer: Option<&mut dyn crate::MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         let count = text.chars().count();
         if count != 9 {

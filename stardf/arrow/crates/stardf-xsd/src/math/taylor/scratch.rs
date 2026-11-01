@@ -66,9 +66,7 @@ impl fmt::Debug for TaylorScratch {
 
 impl TaylorScratch {
     pub(super) fn new(
-        coefficients: usize,
-        jets: usize,
-        zero: FixedInterval,
+        coefficients: usize, jets: usize, zero: FixedInterval,
     ) -> Result<Self, MathError> {
         Self::new_with_storage(coefficients, jets, zero, Resident)
             .map_err(|(error, _)| MathError::TaylorScratch(error))
@@ -83,10 +81,7 @@ impl TaylorScratch {
     /// Returns the original storage with a domain or physical refusal, after
     /// destroying every partial buffer. No resident replacement is allocated.
     pub fn new_with_storage<S: Admission + Send + Sync + 'static>(
-        coefficients: usize,
-        jets: usize,
-        zero: FixedInterval,
-        mut storage: S,
+        coefficients: usize, jets: usize, zero: FixedInterval, mut storage: S,
     ) -> Result<Self, (TaylorScratchError, S)> {
         if !zero.lower().is_zero() || !zero.upper().is_zero() {
             return Err((TaylorScratchError::InvalidInitializer, storage));

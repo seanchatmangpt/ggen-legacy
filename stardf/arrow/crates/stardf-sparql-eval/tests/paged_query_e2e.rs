@@ -375,10 +375,7 @@ fn query_materializes_only_the_pages_the_plan_needs() {
 /// guards against a vacuous pass (empty == empty). The pages MUST be exactly the corpus
 /// re-partitioned, so any divergence is the paged evaluation, not a different dataset.
 fn assert_paged_matches_single(
-    corpus: &[Triple],
-    pages: Vec<Arc<RdfDataset>>,
-    query: &str,
-    min_rows: usize,
+    corpus: &[Triple], pages: Vec<Arc<RdfDataset>>, query: &str, min_rows: usize,
 ) {
     let single = build_page(corpus).expect("authored fixture");
     let paged = paged_over(pages);

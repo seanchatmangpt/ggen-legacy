@@ -17,12 +17,9 @@ pub(super) struct DirectionalImage {
 }
 
 pub(super) fn evaluate(
-    model: &OperationModel,
-    point: &OperationPoint,
+    model: &OperationModel, point: &OperationPoint,
     (coordinates, derivative): (&[FixedInterval], Option<&[FixedInterval]>),
-    limits: OperationSolverLimits,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    limits: OperationSolverLimits, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<Option<DirectionalImage>, MathError> {
     match model {
         OperationModel::Helmert(parameters) => {
@@ -83,9 +80,7 @@ pub(super) fn evaluate(
 }
 
 fn with_matrix(
-    coordinates: OperationCoordinates,
-    matrix: &Matrix3,
-    derivative: Option<&[FixedInterval]>,
+    coordinates: OperationCoordinates, matrix: &Matrix3, derivative: Option<&[FixedInterval]>,
     math: &mut CoordinateMath,
 ) -> Result<DirectionalImage, MathError> {
     let derivative = derivative
@@ -110,11 +105,8 @@ fn with_matrix(
 /// from the east unit vector cancels exactly. This is the differential of the
 /// same unique latitude/height family used by the geographic inverse.
 pub(super) fn geocentric_normal(
-    coordinates: &[FixedInterval],
-    derivative: Option<&[FixedInterval]>,
-    ellipsoid: &PreparedEllipsoid,
-    limits: OperationSolverLimits,
-    math: &mut CoordinateMath,
+    coordinates: &[FixedInterval], derivative: Option<&[FixedInterval]>,
+    ellipsoid: &PreparedEllipsoid, limits: OperationSolverLimits, math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<super::OperationNormalEnclosure, MathError> {
     let family = super::super::inverse::geocentric_family(
@@ -175,9 +167,7 @@ pub(super) fn geocentric_normal(
 }
 
 fn geocentric_jacobian(
-    coordinates: &[FixedInterval],
-    ellipsoid: &PreparedEllipsoid,
-    math: &mut CoordinateMath,
+    coordinates: &[FixedInterval], ellipsoid: &PreparedEllipsoid, math: &mut CoordinateMath,
 ) -> Result<Matrix3, MathError> {
     let height = coordinates
         .get(2)

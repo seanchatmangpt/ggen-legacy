@@ -80,8 +80,7 @@ impl Iri {
     /// Copy caller-owned configuration once under native authority; later
     /// clones share that same payload and original control without allocation.
     pub(crate) fn clone_admitted(
-        &self,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<Self, purrdf_sparql_eval::EvalError> {
         self.0.clone_admitted(workspace).map(Self)
     }
@@ -145,8 +144,7 @@ purrdf_lex::constructors! {
 
 impl Term {
     pub(crate) fn clone_admitted(
-        &self,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<Self, purrdf_sparql_eval::EvalError> {
         self.0
             .try_clone_with(|text| workspace.authored_text(text))

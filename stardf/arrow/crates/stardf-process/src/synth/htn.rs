@@ -167,9 +167,7 @@ impl HtnWorkflow {
     /// [`ProcessError::UnknownTask`] or
     /// [`ProcessError::DependencyCycle`].
     pub fn new(
-        name: impl Into<String>,
-        goal: Option<String>,
-        tasks: Vec<HtnTaskDef>,
+        name: impl Into<String>, goal: Option<String>, tasks: Vec<HtnTaskDef>,
         methods: Vec<HtnMethod>,
     ) -> Result<Self, ProcessError> {
         let task_ids: BTreeSet<&str> = tasks.iter().map(|t| t.id.as_str()).collect();
@@ -231,11 +229,8 @@ fn find_cycle(tasks: &[HtnTaskDef]) -> Option<Vec<String>> {
 
 /// DFS cycle detection over `after` edges (state 0/1/2 = new/open/closed).
 fn dfs(
-    node: usize,
-    tasks: &[HtnTaskDef],
-    index_of: &dyn Fn(&str) -> Option<usize>,
-    state: &mut Vec<u8>,
-    path: &mut Vec<String>,
+    node: usize, tasks: &[HtnTaskDef], index_of: &dyn Fn(&str) -> Option<usize>,
+    state: &mut Vec<u8>, path: &mut Vec<String>,
 ) -> Option<Vec<String>> {
     state[node] = 1;
     path.push(tasks[node].id.clone());

@@ -46,8 +46,7 @@ impl FrictionlessConfig {
     /// Rejects an empty/control-bearing profile identity or a package name outside
     /// the Data Package v1 lowercase identifier grammar.
     pub fn new(
-        common: ResearchObjectConfig,
-        package_profile: impl Into<String>,
+        common: ResearchObjectConfig, package_profile: impl Into<String>,
         package_name: impl Into<String>,
     ) -> Result<Self, ProjectionError> {
         let package_profile = package_profile.into();
@@ -96,8 +95,7 @@ purrdf_lex::json_record!(impl ToJson for FrictionlessConfig {
 /// Returns typed mapping, configuration, identity, resource-shape, or caller
 /// resource-limit failures. Every representational loss is returned.
 pub fn project_frictionless<D: DatasetView>(
-    view: &D,
-    config: &FrictionlessConfig,
+    view: &D, config: &FrictionlessConfig,
 ) -> Result<ResearchObjectPackageProjection, ProjectionError> {
     let projection = project_research_object(view, FRICTIONLESS_PROFILE, config.common())?;
     let mut ledger = projection.loss_ledger;
@@ -128,8 +126,7 @@ pub fn project_frictionless<D: DatasetView>(
 /// drift, unsafe paths or resource names, malformed standard members, invalid
 /// hashes, duplicate resource identities, or configured limit excesses.
 pub fn read_frictionless(
-    package: &ProjectionPackage,
-    config: &FrictionlessConfig,
+    package: &ProjectionPackage, config: &FrictionlessConfig,
 ) -> Result<ResearchObjectReadOutcome, ProjectionError> {
     let bytes = require_artifact(package, FRICTIONLESS_ARTIFACT, config.common())?;
     let value = parse_strict_json(
@@ -157,9 +154,7 @@ pub fn read_frictionless(
 }
 
 fn encode_document(
-    model: &ResearchObjectModel,
-    config: &FrictionlessConfig,
-    contract: &LossLedger,
+    model: &ResearchObjectModel, config: &FrictionlessConfig, contract: &LossLedger,
     ledger: &mut LossLedger,
 ) -> Result<Value, ProjectionError> {
     if model.dataset.resources.is_empty() {
@@ -328,9 +323,7 @@ fn encode_document(
 }
 
 fn encode_licenses(
-    dataset: &ResearchDataset,
-    config: &FrictionlessConfig,
-    contract: &LossLedger,
+    dataset: &ResearchDataset, config: &FrictionlessConfig, contract: &LossLedger,
     ledger: &mut LossLedger,
 ) -> Vec<Value> {
     let mut encoded = Vec::new();
@@ -365,11 +358,8 @@ fn encode_licenses(
 }
 
 fn encode_contributors(
-    model: &ResearchObjectModel,
-    agents: &BTreeMap<&str, &ResearchAgent>,
-    config: &FrictionlessConfig,
-    contract: &LossLedger,
-    ledger: &mut LossLedger,
+    model: &ResearchObjectModel, agents: &BTreeMap<&str, &ResearchAgent>,
+    config: &FrictionlessConfig, contract: &LossLedger, ledger: &mut LossLedger,
 ) -> Result<Vec<Value>, ProjectionError> {
     let mut linked = BTreeSet::new();
     let mut contributors = Vec::new();
@@ -407,10 +397,7 @@ fn encode_contributors(
 }
 
 fn encode_contributor(
-    agent: &ResearchAgent,
-    role: &str,
-    config: &FrictionlessConfig,
-    contract: &LossLedger,
+    agent: &ResearchAgent, role: &str, config: &FrictionlessConfig, contract: &LossLedger,
     ledger: &mut LossLedger,
 ) -> Result<Value, ProjectionError> {
     let name = agent.names.first().ok_or_else(|| {
@@ -436,9 +423,7 @@ fn encode_contributor(
 }
 
 fn encode_resource(
-    resource: &ResearchResource,
-    config: &FrictionlessConfig,
-    contract: &LossLedger,
+    resource: &ResearchResource, config: &FrictionlessConfig, contract: &LossLedger,
     ledger: &mut LossLedger,
 ) -> Result<Value, ProjectionError> {
     let native_name = resource
@@ -540,9 +525,7 @@ fn encode_resource(
 }
 
 fn encode_hash(
-    resource: &ResearchResource,
-    config: &FrictionlessConfig,
-    contract: &LossLedger,
+    resource: &ResearchResource, config: &FrictionlessConfig, contract: &LossLedger,
     ledger: &mut LossLedger,
 ) -> Option<String> {
     let checksum = resource.checksums.first()?;
@@ -582,13 +565,8 @@ fn encode_hash(
 }
 
 fn insert_required_single_text(
-    object: &mut Object,
-    member: &str,
-    values: &[ResearchText],
-    subject: &str,
-    config: &FrictionlessConfig,
-    contract: &LossLedger,
-    ledger: &mut LossLedger,
+    object: &mut Object, member: &str, values: &[ResearchText], subject: &str,
+    config: &FrictionlessConfig, contract: &LossLedger, ledger: &mut LossLedger,
 ) -> Result<(), ProjectionError> {
     if values.is_empty() {
         return Err(ProjectionError::integrity(format!(
@@ -600,13 +578,8 @@ fn insert_required_single_text(
 }
 
 fn insert_single_text(
-    object: &mut Object,
-    member: &str,
-    values: &[ResearchText],
-    subject: &str,
-    config: &FrictionlessConfig,
-    contract: &LossLedger,
-    ledger: &mut LossLedger,
+    object: &mut Object, member: &str, values: &[ResearchText], subject: &str,
+    config: &FrictionlessConfig, contract: &LossLedger, ledger: &mut LossLedger,
 ) {
     let Some(value) = values.first() else {
         return;
@@ -625,13 +598,8 @@ fn insert_single_text(
 
 #[allow(clippy::too_many_arguments)]
 fn insert_single_value(
-    object: &mut Object,
-    member: &str,
-    values: &[ResearchValue],
-    subject: &str,
-    config: &FrictionlessConfig,
-    contract: &LossLedger,
-    ledger: &mut LossLedger,
+    object: &mut Object, member: &str, values: &[ResearchValue], subject: &str,
+    config: &FrictionlessConfig, contract: &LossLedger, ledger: &mut LossLedger,
     require_absolute: bool,
 ) -> Result<(), ProjectionError> {
     let Some(value) = values.first() else {
@@ -655,11 +623,8 @@ fn insert_single_value(
 }
 
 fn record_value_fidelity(
-    value: &ResearchValue,
-    config: &FrictionlessConfig,
-    contract: &LossLedger,
-    ledger: &mut LossLedger,
-    subject: &str,
+    value: &ResearchValue, config: &FrictionlessConfig, contract: &LossLedger,
+    ledger: &mut LossLedger, subject: &str,
 ) {
     if let ResearchValue::Text(value) = value {
         record_text_fidelity(value, config, contract, ledger, subject);
@@ -667,11 +632,8 @@ fn record_value_fidelity(
 }
 
 fn record_text_fidelity(
-    value: &ResearchText,
-    config: &FrictionlessConfig,
-    contract: &LossLedger,
-    ledger: &mut LossLedger,
-    subject: &str,
+    value: &ResearchText, config: &FrictionlessConfig, contract: &LossLedger,
+    ledger: &mut LossLedger, subject: &str,
 ) {
     if value.datatype != config.common().roles().iri(super::ResearchRole::XsdString)
         || value.language.is_some()
@@ -789,8 +751,7 @@ impl FrictionlessDecoder<'_> {
     }
 
     fn decode_contributors(
-        &mut self,
-        value: Option<Value>,
+        &mut self, value: Option<Value>,
     ) -> Result<DecodedContributors, ProjectionError> {
         let Some(value) = value else {
             return Ok(DecodedContributors {
@@ -850,8 +811,7 @@ impl FrictionlessDecoder<'_> {
     }
 
     fn decode_licenses(
-        &mut self,
-        value: Option<Value>,
+        &mut self, value: Option<Value>,
     ) -> Result<Vec<ResearchValue>, ProjectionError> {
         let Some(value) = value else {
             return Ok(Vec::new());
@@ -894,8 +854,7 @@ impl FrictionlessDecoder<'_> {
     }
 
     fn decode_resources(
-        &mut self,
-        value: Option<Value>,
+        &mut self, value: Option<Value>,
     ) -> Result<Vec<ResearchResource>, ProjectionError> {
         let Some(value) = value else {
             return Err(self.shape("Frictionless resources are required", "/resources"));
@@ -932,9 +891,7 @@ impl FrictionlessDecoder<'_> {
     }
 
     fn decode_resource(
-        &mut self,
-        value: Value,
-        pointer: &str,
+        &mut self, value: Value, pointer: &str,
     ) -> Result<Option<ResearchResource>, ProjectionError> {
         let Owned::Object(mut object) = into_owned(value) else {
             return Err(self.shape("Frictionless resource must be an object", pointer));
@@ -1015,9 +972,7 @@ impl FrictionlessDecoder<'_> {
     }
 
     fn decode_paths(
-        &mut self,
-        value: Option<Value>,
-        parent: &str,
+        &mut self, value: Option<Value>, parent: &str,
     ) -> Result<(Vec<String>, Vec<ResearchValue>), ProjectionError> {
         let Some(value) = value else {
             return Ok((Vec::new(), Vec::new()));
@@ -1054,9 +1009,7 @@ impl FrictionlessDecoder<'_> {
     }
 
     fn decode_hash(
-        &self,
-        value: Option<Value>,
-        parent: &str,
+        &self, value: Option<Value>, parent: &str,
     ) -> Result<Option<ResearchChecksum>, ProjectionError> {
         let Some(value) = value else {
             return Ok(None);
@@ -1090,11 +1043,7 @@ impl FrictionlessDecoder<'_> {
     }
 
     fn require_exact_string(
-        &self,
-        object: &mut Object,
-        member: &str,
-        expected: &str,
-        parent: &str,
+        &self, object: &mut Object, member: &str, expected: &str, parent: &str,
     ) -> Result<(), ProjectionError> {
         let actual = object.remove(member).ok_or_else(|| {
             self.shape(
@@ -1112,20 +1061,14 @@ impl FrictionlessDecoder<'_> {
     }
 
     fn require_text(
-        &self,
-        object: &mut Object,
-        member: &str,
-        parent: &str,
+        &self, object: &mut Object, member: &str, parent: &str,
     ) -> Result<ResearchText, ProjectionError> {
         self.require_string(object, member, parent)
             .and_then(|value| self.plain_text(value))
     }
 
     fn take_text(
-        &self,
-        object: &mut Object,
-        member: &str,
-        parent: &str,
+        &self, object: &mut Object, member: &str, parent: &str,
     ) -> Result<Option<ResearchText>, ProjectionError> {
         self.take_string(object, member, parent)?
             .map(|value| self.plain_text(value))
@@ -1133,10 +1076,7 @@ impl FrictionlessDecoder<'_> {
     }
 
     fn require_string(
-        &self,
-        object: &mut Object,
-        member: &str,
-        parent: &str,
+        &self, object: &mut Object, member: &str, parent: &str,
     ) -> Result<String, ProjectionError> {
         self.take_string(object, member, parent)?.ok_or_else(|| {
             self.shape(
@@ -1147,10 +1087,7 @@ impl FrictionlessDecoder<'_> {
     }
 
     fn take_string(
-        &self,
-        object: &mut Object,
-        member: &str,
-        parent: &str,
+        &self, object: &mut Object, member: &str, parent: &str,
     ) -> Result<Option<String>, ProjectionError> {
         let Some(value) = object.remove(member) else {
             return Ok(None);
@@ -1165,10 +1102,7 @@ impl FrictionlessDecoder<'_> {
     }
 
     fn take_absolute_value(
-        &self,
-        object: &mut Object,
-        member: &str,
-        parent: &str,
+        &self, object: &mut Object, member: &str, parent: &str,
     ) -> Result<Option<ResearchValue>, ProjectionError> {
         let Some(value) = self.take_string(object, member, parent)? else {
             return Ok(None);
@@ -1179,10 +1113,7 @@ impl FrictionlessDecoder<'_> {
     }
 
     fn take_scalar_value(
-        &self,
-        object: &mut Object,
-        member: &str,
-        parent: &str,
+        &self, object: &mut Object, member: &str, parent: &str,
     ) -> Result<Option<ResearchValue>, ProjectionError> {
         let Some(value) = self.take_string(object, member, parent)? else {
             return Ok(None);
@@ -1195,10 +1126,7 @@ impl FrictionlessDecoder<'_> {
     }
 
     fn take_u64(
-        &self,
-        object: &mut Object,
-        member: &str,
-        parent: &str,
+        &self, object: &mut Object, member: &str, parent: &str,
     ) -> Result<Option<u64>, ProjectionError> {
         let Some(value) = object.remove(member) else {
             return Ok(None);
@@ -1213,10 +1141,7 @@ impl FrictionlessDecoder<'_> {
     }
 
     fn take_string_array(
-        &mut self,
-        object: &mut Object,
-        member: &str,
-        parent: &str,
+        &mut self, object: &mut Object, member: &str, parent: &str,
     ) -> Result<Vec<ResearchText>, ProjectionError> {
         let Some(value) = object.remove(member) else {
             return Ok(Vec::new());

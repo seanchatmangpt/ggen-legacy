@@ -41,10 +41,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     /// original source, analysis, capacity and ranking errors as causes.
     /// Refuses providers without independently maintained source evidence.
     pub fn with_delta<D: DatasetView, A: DatasetView, R: DatasetView>(
-        mut self,
-        next: &D,
-        added: &A,
-        removed: &R,
+        mut self, next: &D, added: &A, removed: &R,
     ) -> Result<Self, TextDeltaError>
     where
         D::ReadError: purrdf_hash::error::StructuredError,
@@ -218,9 +215,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     }
 
     fn merge_changed(
-        &mut self,
-        partial: Self,
-        changed: &BTreeSet<DocumentIdentity<'_, P>>,
+        &mut self, partial: Self, changed: &BTreeSet<DocumentIdentity<'_, P>>,
     ) -> Result<(), TextDeltaError> {
         let mut removed = Vec::new();
         for key in changed {
@@ -400,8 +395,7 @@ where
 }
 
 fn selected_graph<P: CorpusProfile>(
-    config: &super::TextIndexConfig<P>,
-    graph: Option<&purrdf_core::TermValue>,
+    config: &super::TextIndexConfig<P>, graph: Option<&purrdf_core::TermValue>,
 ) -> bool {
     match P::selector(config.graph()) {
         None | Some(GraphSelector::Any) => true,
@@ -416,11 +410,7 @@ impl SourceCoverage {
     /// coverage change cannot validate itself. Reuse the same independently
     /// observed nonempty bit, including the separate reifier layer.
     fn with_delta<P: CorpusProfile>(
-        &self,
-        config: &super::TextIndexConfig<P>,
-        added: &Self,
-        removed: &Self,
-        observed: &Self,
+        &self, config: &super::TextIndexConfig<P>, added: &Self, removed: &Self, observed: &Self,
     ) -> Result<Self, TextDeltaError> {
         let mut counts = Vec::with_capacity(config.predicates().len());
         for (ordinal, predicate) in config.predicates().iter().enumerate() {
@@ -460,11 +450,8 @@ type DocumentIdentity<'a, P> = (
 /// Check added-row membership against the independently read next source, then
 /// reverse its multiset summary without corpus-sized temporary reference tables.
 fn validate_delta<P: CorpusProfile>(
-    rows: &[SourceRow<P>],
-    added: &[SourceRow<P>],
-    removed: &[SourceRow<P>],
-    mut expected: SourceDigest,
-    mut prior: SourceDigest,
+    rows: &[SourceRow<P>], added: &[SourceRow<P>], removed: &[SourceRow<P>],
+    mut expected: SourceDigest, mut prior: SourceDigest,
 ) -> Result<SourceDigest, TextDeltaError> {
     // Refuse a self-contradictory delta before any mutation: a row in both
     // the additions and the removals would cancel in the multiset summary

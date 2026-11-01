@@ -240,10 +240,7 @@ impl<A: Admission> WaCertificate<A> {
     /// # Errors
     /// Returns altered evidence/source, original work/stop or storage refusal.
     pub fn prepare<'p, const N: usize>(
-        mut self,
-        program: &'p [DlClause<N>],
-        limits: AnalysisLimits,
-        stop: Option<&dyn StopSignal>,
+        mut self, program: &'p [DlClause<N>], limits: AnalysisLimits, stop: Option<&dyn StopSignal>,
     ) -> Result<PreparedChase<'p, A, N>, TerminationError> {
         let checked = self.verify(program, limits, stop);
         match checked {
@@ -262,10 +259,7 @@ impl<A: Admission> WaCertificate<A> {
     /// # Errors
     /// Returns malformed evidence, original accounting failure, cancellation or work exhaustion.
     pub fn verify<const N: usize>(
-        &mut self,
-        program: &[DlClause<N>],
-        limits: AnalysisLimits,
-        stop: Option<&dyn StopSignal>,
+        &mut self, program: &[DlClause<N>], limits: AnalysisLimits, stop: Option<&dyn StopSignal>,
     ) -> Result<AnalysisReport, TerminationError> {
         let mut meter = Meter {
             work: 0,
@@ -344,9 +338,7 @@ impl<A: Admission, const N: usize> PreparedChase<'_, A, N> {
     /// # Errors
     /// Returns the existing executor's fragment, storage, stop or budget failure.
     pub fn chase_with(
-        &self,
-        edb: RelationStore<TermInterner, N>,
-        options: &EvalOptions,
+        &self, edb: RelationStore<TermInterner, N>, options: &EvalOptions,
         stop: Option<&dyn StopSignal>,
     ) -> Result<ChaseOutcome<N>, ChaseError>
     where
@@ -374,10 +366,7 @@ pub fn certify<const N: usize>(program: &[DlClause<N>]) -> Result<WaCertificate,
 /// # Errors
 /// Returns uncertified WA, stop, work exhaustion or original storage/accounting failure.
 pub fn certify_with<const N: usize, A: Admission>(
-    program: &[DlClause<N>],
-    mut account: A,
-    limits: AnalysisLimits,
-    stop: Option<&dyn StopSignal>,
+    program: &[DlClause<N>], mut account: A, limits: AnalysisLimits, stop: Option<&dyn StopSignal>,
 ) -> Result<WaCertificate<A>, TerminationError> {
     let mut meter = Meter {
         work: 0,
@@ -456,10 +445,7 @@ pub fn certify_with<const N: usize, A: Admission>(
 }
 
 fn check_rank(
-    ranks: &[u64],
-    from: usize,
-    to: usize,
-    special: bool,
+    ranks: &[u64], from: usize, to: usize, special: bool,
 ) -> Result<(), TerminationError> {
     if if special {
         ranks[from] < ranks[to]
@@ -473,8 +459,7 @@ fn check_rank(
 }
 
 fn atom<const N: usize>(
-    program: &[DlClause<N>],
-    position: SourcePosition,
+    program: &[DlClause<N>], position: SourcePosition,
 ) -> Result<&ClauseAtom<N>, TerminationError> {
     let clause = program
         .get(position.clause)
@@ -506,9 +491,7 @@ fn surface(term: &ClauseTerm) -> (&str, &str, &str) {
     }
 }
 fn compare_term(
-    left: &ClauseTerm,
-    right: &ClauseTerm,
-    meter: &mut Meter<'_>,
+    left: &ClauseTerm, right: &ClauseTerm, meter: &mut Meter<'_>,
 ) -> Result<Ordering, TerminationError> {
     meter.charge(1)?;
     match (left.is_var(), right.is_var()) {
@@ -531,10 +514,7 @@ fn compare_term(
     }
 }
 fn compare_position<const N: usize>(
-    program: &[DlClause<N>],
-    left: SourcePosition,
-    right: SourcePosition,
-    meter: &mut Meter<'_>,
+    program: &[DlClause<N>], left: SourcePosition, right: SourcePosition, meter: &mut Meter<'_>,
 ) -> Result<Ordering, TerminationError> {
     meter.charge(1)?;
     let slot = left.slot.cmp(&right.slot);
@@ -555,9 +535,7 @@ fn compare_position<const N: usize>(
     Ok(Ordering::Equal)
 }
 fn search<const N: usize>(
-    program: &[DlClause<N>],
-    positions: &[SourcePosition],
-    position: SourcePosition,
+    program: &[DlClause<N>], positions: &[SourcePosition], position: SourcePosition,
     meter: &mut Meter<'_>,
 ) -> Result<Result<usize, usize>, TerminationError> {
     let (mut lo, mut hi) = (0, positions.len());
@@ -572,17 +550,13 @@ fn search<const N: usize>(
     Ok(Err(lo))
 }
 fn locate<const N: usize>(
-    program: &[DlClause<N>],
-    positions: &[SourcePosition],
-    position: SourcePosition,
+    program: &[DlClause<N>], positions: &[SourcePosition], position: SourcePosition,
     meter: &mut Meter<'_>,
 ) -> Result<usize, TerminationError> {
     search(program, positions, position, meter)?.map_err(|_| TerminationError::InvalidEvidence)
 }
 fn source_positions<const N: usize, A: Admission + ?Sized>(
-    program: &[DlClause<N>],
-    memory: &mut Memory<'_, A>,
-    meter: &mut Meter<'_>,
+    program: &[DlClause<N>], memory: &mut Memory<'_, A>, meter: &mut Meter<'_>,
 ) -> Result<Vec<SourcePosition>, TerminationError> {
     let mut positions = Vec::new();
     walk_edges(program, meter, |from, to, _, meter| {
@@ -598,10 +572,7 @@ fn source_positions<const N: usize, A: Admission + ?Sized>(
     Ok(positions)
 }
 fn insert_sorted<T: Ord, A: Admission + ?Sized>(
-    rows: &mut Vec<T>,
-    value: T,
-    memory: &mut Memory<'_, A>,
-    meter: &mut Meter<'_>,
+    rows: &mut Vec<T>, value: T, memory: &mut Memory<'_, A>, meter: &mut Meter<'_>,
 ) -> Result<(), TerminationError> {
     let (mut lo, mut hi) = (0, rows.len());
     while lo < hi {
@@ -619,9 +590,7 @@ fn insert_sorted<T: Ord, A: Admission + ?Sized>(
     Ok(())
 }
 fn compatibility<const N: usize>(
-    program: &[DlClause<N>],
-    positions: &[SourcePosition],
-    meter: &mut Meter<'_>,
+    program: &[DlClause<N>], positions: &[SourcePosition], meter: &mut Meter<'_>,
     mut emit: impl FnMut(usize, usize, &mut Meter<'_>) -> Result<(), TerminationError>,
 ) -> Result<(), TerminationError> {
     for (i, &left) in positions.iter().enumerate() {
@@ -665,8 +634,7 @@ fn same_name(left: &str, right: &str, meter: &mut Meter<'_>) -> Result<bool, Ter
     Ok(true)
 }
 fn walk_edges<const N: usize>(
-    program: &[DlClause<N>],
-    meter: &mut Meter<'_>,
+    program: &[DlClause<N>], meter: &mut Meter<'_>,
     mut emit: impl FnMut(
         SourcePosition,
         SourcePosition,

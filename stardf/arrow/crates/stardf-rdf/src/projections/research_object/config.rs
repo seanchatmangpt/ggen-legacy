@@ -285,8 +285,7 @@ impl ResearchObjectIdentity {
     /// Both values must be absolute IRIs; the entity base must end in `/` or `#`
     /// so deterministic relative resolution is unambiguous.
     pub fn new(
-        dataset_iri: impl Into<String>,
-        entity_base_iri: impl Into<String>,
+        dataset_iri: impl Into<String>, entity_base_iri: impl Into<String>,
     ) -> Result<Self, ProjectionError> {
         let dataset_iri = dataset_iri.into();
         let entity_base_iri = entity_base_iri.into();
@@ -356,10 +355,7 @@ impl ResearchObjectPolicy {
     /// Every bound must be non-zero, entity/value counts cannot exceed the
     /// record ceiling, and JSON nesting cannot exceed the kernel term-depth cap.
     pub fn new(
-        limits: ProjectionLimits,
-        max_records: usize,
-        max_entities: usize,
-        max_values: usize,
+        limits: ProjectionLimits, max_records: usize, max_entities: usize, max_values: usize,
         max_json_depth: usize,
     ) -> Result<Self, ProjectionError> {
         if [max_records, max_entities, max_values, max_json_depth].contains(&0) {
@@ -436,9 +432,7 @@ pub struct ResearchObjectConfig {
 impl ResearchObjectConfig {
     /// Construct common validated research-object configuration.
     pub const fn new(
-        roles: ResearchObjectRoles,
-        identity: ResearchObjectIdentity,
-        policy: ResearchObjectPolicy,
+        roles: ResearchObjectRoles, identity: ResearchObjectIdentity, policy: ResearchObjectPolicy,
     ) -> Self {
         Self {
             roles,

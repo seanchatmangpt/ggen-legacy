@@ -131,9 +131,7 @@ impl<S: Admission> CompiledGlobSet<S> {
     /// A pattern refusal retains its source index and original cause; aggregate
     /// storage refusal retains its native cause without fabricating an index.
     pub fn compile_with_storage(
-        patterns: &[impl AsRef<str>],
-        mode: Mode,
-        storage: S,
+        patterns: &[impl AsRef<str>], mode: Mode, storage: S,
     ) -> Result<Self, SetCompileError> {
         compile::compile_set(patterns, mode, storage)
     }
@@ -144,10 +142,7 @@ impl<S: Admission> CompiledGlobSet<S> {
     /// Workspace refusal precedes execution. Work exhaustion returns no report;
     /// workspace contents on refusal are scratch, never a completed answer.
     pub fn match_literal<'a>(
-        &self,
-        lexical: &str,
-        max_work: u64,
-        workspace: &'a mut [usize],
+        &self, lexical: &str, max_work: u64, workspace: &'a mut [usize],
     ) -> Result<SetMatchReport<'a>, SetMatchError> {
         self.matches(Some(lexical), max_work, workspace)
     }
@@ -157,20 +152,14 @@ impl<S: Admission> CompiledGlobSet<S> {
     /// # Errors
     /// Returns original workspace or aggregate work refusal, with no report.
     pub fn match_iri<'a>(
-        &self,
-        iri: &purrdf_iri::Iri,
-        component: IriComponent,
-        max_work: u64,
+        &self, iri: &purrdf_iri::Iri, component: IriComponent, max_work: u64,
         workspace: &'a mut [usize],
     ) -> Result<SetMatchReport<'a>, SetMatchError> {
         self.matches(iri_surface(iri, component), max_work, workspace)
     }
 
     pub(super) fn matches<'a>(
-        &self,
-        lexical: Option<&str>,
-        max_work: u64,
-        workspace: &'a mut [usize],
+        &self, lexical: Option<&str>, max_work: u64, workspace: &'a mut [usize],
     ) -> Result<SetMatchReport<'a>, SetMatchError> {
         if workspace.len() < self.ends.len() {
             return Err(SetMatchError::Workspace {

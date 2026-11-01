@@ -452,10 +452,7 @@ SELECT ?p ?a WHERE {
 /// guard is scoped to this call so the override never leaks into the next
 /// query in the corpus loop.
 fn eval_forced(
-    engine: &NativeSparqlEngine,
-    ds: &Arc<RdfDataset>,
-    query: &str,
-    force: bool,
+    engine: &NativeSparqlEngine, ds: &Arc<RdfDataset>, query: &str, force: bool,
 ) -> SparqlResult {
     let _guard = force_parallel_for_test(force);
     engine
@@ -630,9 +627,7 @@ impl crate::property_fn::PropertyFunction for TagRelation {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &crate::property_fn::PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, args: &crate::property_fn::PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn crate::property_fn::PfCursor + 'cursor>, crate::EvalError>
     where
         Self: 'cursor,
@@ -797,8 +792,7 @@ impl crate::agg_fn::AggregateAccumulator for ListCollectorAccumulator {
     }
 
     fn combine(
-        &mut self,
-        other: Box<dyn crate::agg_fn::AggregateAccumulator>,
+        &mut self, other: Box<dyn crate::agg_fn::AggregateAccumulator>,
     ) -> Result<(), crate::error::EvalError> {
         // An ordered list join IS its own sufficient merge state, so this
         // finishes the other partial through the same public surface a caller
@@ -840,8 +834,7 @@ impl crate::agg_fn::CustomAggregate for ListCollectorAggregate {
         256
     }
     fn init(
-        &self,
-        _scalarvals: &[(String, purrdf_core::TermValue)],
+        &self, _scalarvals: &[(String, purrdf_core::TermValue)],
     ) -> Box<dyn crate::agg_fn::AggregateAccumulator> {
         Box::new(ListCollectorAccumulator { items: Vec::new() })
     }

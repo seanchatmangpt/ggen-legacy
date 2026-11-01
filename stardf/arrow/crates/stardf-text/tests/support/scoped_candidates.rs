@@ -40,10 +40,7 @@ impl CandidateConstraint for Scope {
     }
 
     fn decide(
-        &self,
-        candidate: &TermValue,
-        evidence: &QueryEvidence,
-        _: &WorkspaceCapability,
+        &self, candidate: &TermValue, evidence: &QueryEvidence, _: &WorkspaceCapability,
     ) -> Result<ConstraintDecision, EvalError> {
         if self.fails {
             return Err(EvalError::AllocationFailed {

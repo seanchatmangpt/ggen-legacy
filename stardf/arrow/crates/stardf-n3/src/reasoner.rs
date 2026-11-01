@@ -96,8 +96,7 @@ struct SearchBudget {
 
 impl SearchBudget {
     fn new(
-        options: &ReasonerOptions,
-        completed_backward_goals: HashMap<String, Vec<Triple>>,
+        options: &ReasonerOptions, completed_backward_goals: HashMap<String, Vec<Triple>>,
     ) -> Self {
         Self {
             steps: 0,
@@ -430,10 +429,7 @@ fn bindings_without_bound<'a>(graph: &Graph, bindings: &'a Bindings) -> Cow<'a, 
 }
 
 fn resolve_formula_pattern(
-    term: &Term,
-    graph: &Graph,
-    bindings: &Bindings,
-    seen: &HashSet<Name>,
+    term: &Term, graph: &Graph, bindings: &Bindings, seen: &HashSet<Name>,
 ) -> Term {
     match term {
         Term::Blank(n) if graph.existentials.contains(n) => term.clone(),
@@ -725,10 +721,7 @@ impl FactIndex {
     }
 
     pub(crate) fn candidates<'a>(
-        &'a self,
-        facts: &'a [Triple],
-        pattern: &Triple,
-        bindings: &Bindings,
+        &'a self, facts: &'a [Triple], pattern: &Triple, bindings: &Bindings,
     ) -> Vec<&'a Triple> {
         let s = resolve_pattern(&pattern.s, bindings);
         let p = resolve_pattern(&pattern.p, bindings);
@@ -796,10 +789,7 @@ impl FactIndex {
     /// every node of the search, and materialising a `Vec<&Triple>` each time
     /// was the allocation the search spent most of its time on.
     pub(crate) fn any_candidate_matches(
-        &self,
-        facts: &[Triple],
-        pattern: &Triple,
-        bindings: &Bindings,
+        &self, facts: &[Triple], pattern: &Triple, bindings: &Bindings,
     ) -> bool {
         let s = resolve_pattern(&pattern.s, bindings);
         let p = resolve_pattern(&pattern.p, bindings);
@@ -855,10 +845,7 @@ impl FactIndex {
     /// match (so the bucket size is the exact candidate count). `None` when the
     /// lookup shape is not a plain bucket (unbound predicate, open list subject).
     pub(crate) fn estimate(
-        &self,
-        facts: &[Triple],
-        pattern: &Triple,
-        bindings: &Bindings,
+        &self, facts: &[Triple], pattern: &Triple, bindings: &Bindings,
     ) -> Option<(usize, bool)> {
         let s = resolve_pattern(&pattern.s, bindings);
         let p = resolve_pattern(&pattern.p, bindings);
@@ -894,10 +881,7 @@ impl FactIndex {
     }
 
     fn deep_list_subject_candidates(
-        &self,
-        facts: &[Triple],
-        predicate: &Term,
-        subject: &Term,
+        &self, facts: &[Triple], predicate: &Term, subject: &Term,
     ) -> Option<Vec<usize>> {
         let Term::List(pattern_items) = subject else {
             return None;
@@ -1525,12 +1509,8 @@ pub fn reason(doc: &Document, options: &ReasonerOptions) -> ReasonerResult {
 }
 
 fn reason_with_plan(
-    doc: &Document,
-    options: &ReasonerOptions,
-    query_rules: &[Rule],
-    active_rules: &[Rule],
-    agenda_index: &AgendaIndex,
-    axioms: &[usize],
+    doc: &Document, options: &ReasonerOptions, query_rules: &[Rule], active_rules: &[Rule],
+    agenda_index: &AgendaIndex, axioms: &[usize],
 ) -> ReasonerResult {
     // Borrowed until a rule reifies itself as data mid-run (rare -- see
     // `rule_from_triple`/`pending_rules` below) and has to be appended: only
@@ -1886,13 +1866,8 @@ fn is_deferred_scoped_premise(premise: &Triple) -> bool {
 /// conclusion is. Without this, an example whose whole printed result comes
 /// from a query had nothing to write a proof from.
 fn evaluate_query_rules(
-    query_rules: &[Rule],
-    closure: &[Triple],
-    fact_index: Option<&FactIndex>,
-    rules: &[Rule],
-    options: &ReasonerOptions,
-    report: &mut RunReport,
-    proofs: &mut Vec<DerivedFact>,
+    query_rules: &[Rule], closure: &[Triple], fact_index: Option<&FactIndex>, rules: &[Rule],
+    options: &ReasonerOptions, report: &mut RunReport, proofs: &mut Vec<DerivedFact>,
 ) -> Vec<Triple> {
     let mut out = Vec::<Triple>::new();
     let mut seen = HashSet::<Triple>::new();
@@ -1973,11 +1948,8 @@ fn conclusion_blanks(graph: &Graph) -> BTreeMap<Name, Term> {
 /// the universals left open: a proof explains an instance the goal search
 /// used by replaying that firing at the instance.
 fn register_quantified_assertion(
-    graph: Graph,
-    seen: &mut HashSet<Triple>,
-    pending: &mut Vec<Rule>,
-    proof: Option<(&Arc<Rule>, &Bindings)>,
-    proofs: &mut Vec<DerivedFact>,
+    graph: Graph, seen: &mut HashSet<Triple>, pending: &mut Vec<Rule>,
+    proof: Option<(&Arc<Rule>, &Bindings)>, proofs: &mut Vec<DerivedFact>,
 ) -> bool {
     let marker = Triple::new(
         Term::formula(Vec::new()),
@@ -1999,18 +1971,10 @@ fn register_quantified_assertion(
 }
 
 fn emit_conclusions(
-    rule: &Rule,
-    bindings: &Bindings,
-    closure: &mut Vec<Triple>,
-    fact_index: &mut FactIndex,
-    seen: &mut ClosureSet,
-    generated_rule_facts: &mut HashSet<Triple>,
-    derived: &mut Vec<Triple>,
-    proofs: &mut Vec<DerivedFact>,
-    pending_rules: &mut Vec<Rule>,
-    capture_proof: bool,
-    max_term_bytes: usize,
-    report: &mut RunReport,
+    rule: &Rule, bindings: &Bindings, closure: &mut Vec<Triple>, fact_index: &mut FactIndex,
+    seen: &mut ClosureSet, generated_rule_facts: &mut HashSet<Triple>, derived: &mut Vec<Triple>,
+    proofs: &mut Vec<DerivedFact>, pending_rules: &mut Vec<Rule>, capture_proof: bool,
+    max_term_bytes: usize, report: &mut RunReport,
 ) -> bool {
     let mut rules_changed = false;
     // One handle per firing, shared by every fact this firing derives. A
@@ -2218,17 +2182,10 @@ impl TermWalk {
 }
 
 fn insert_materialized_triple(
-    t: Triple,
-    closure: &mut Vec<Triple>,
-    fact_index: &mut FactIndex,
-    seen: &mut ClosureSet,
-    generated_rule_facts: &mut HashSet<Triple>,
-    derived: &mut Vec<Triple>,
-    proofs: &mut Vec<DerivedFact>,
-    proof: Option<DerivedFact>,
-    pending_rules: &mut Vec<Rule>,
-    max_term_bytes: usize,
-    report: &mut RunReport,
+    t: Triple, closure: &mut Vec<Triple>, fact_index: &mut FactIndex, seen: &mut ClosureSet,
+    generated_rule_facts: &mut HashSet<Triple>, derived: &mut Vec<Triple>,
+    proofs: &mut Vec<DerivedFact>, proof: Option<DerivedFact>, pending_rules: &mut Vec<Rule>,
+    max_term_bytes: usize, report: &mut RunReport,
 ) -> bool {
     if !admissible_fact(&t) {
         return false;
@@ -2326,11 +2283,8 @@ fn build_forward_agenda(rules: &[Rule]) -> AgendaIndex {
 }
 
 fn agenda_entries_for_rule(
-    rule_index: usize,
-    rule: &Rule,
-    backward_head_predicates: &HashSet<Term>,
-    has_wild_backward_head: bool,
-    allow_multi_premise_agenda: bool,
+    rule_index: usize, rule: &Rule, backward_head_predicates: &HashSet<Term>,
+    has_wild_backward_head: bool, allow_multi_premise_agenda: bool,
 ) -> Vec<AgendaEntry> {
     if !rule.is_forward || rule.is_fuse {
         return Vec::new();
@@ -2586,10 +2540,7 @@ pub(crate) fn is_boolean_false(term: &Term) -> bool {
 
 /// The first fuse whose premise is provable against the closure so far.
 fn fired_fuse(
-    rules: &[Rule],
-    closure: &[Triple],
-    fact_index: &FactIndex,
-    options: &ReasonerOptions,
+    rules: &[Rule], closure: &[Triple], fact_index: &FactIndex, options: &ReasonerOptions,
     report: &mut RunReport,
 ) -> Option<FiredFuse> {
     for rule in rules.iter().filter(|rule| rule.is_fuse) {
@@ -2637,12 +2588,8 @@ fn rule_from_triple(t: &Triple) -> Option<Rule> {
 }
 
 fn match_premises(
-    premises: &Graph,
-    facts: &[Triple],
-    fact_index: Option<&FactIndex>,
-    rules: &[Rule],
-    options: &ReasonerOptions,
-    report: &mut RunReport,
+    premises: &Graph, facts: &[Triple], fact_index: Option<&FactIndex>, rules: &[Rule],
+    options: &ReasonerOptions, report: &mut RunReport,
 ) -> Vec<Bindings> {
     let mut out = Vec::new();
     let mut backward_stack = HashSet::<String>::new();
@@ -2668,16 +2615,9 @@ fn match_premises(
 }
 
 fn match_premise_at(
-    premises: &[Triple],
-    facts: &[Triple],
-    fact_index: Option<&FactIndex>,
-    rules: &[Rule],
-    index: usize,
-    bindings: Bindings,
-    depth: usize,
-    backward_stack: &mut HashSet<String>,
-    budget: &mut SearchBudget,
-    out: &mut Vec<Bindings>,
+    premises: &[Triple], facts: &[Triple], fact_index: Option<&FactIndex>, rules: &[Rule],
+    index: usize, bindings: Bindings, depth: usize, backward_stack: &mut HashSet<String>,
+    budget: &mut SearchBudget, out: &mut Vec<Bindings>,
 ) {
     match_premise_remaining(
         premises,
@@ -2977,9 +2917,7 @@ fn match_premise_remaining(
 }
 
 fn premise_needs_broad_fact_scan(
-    premise: &Triple,
-    fact_index: Option<&FactIndex>,
-    bindings: &Bindings,
+    premise: &Triple, fact_index: Option<&FactIndex>, bindings: &Bindings,
 ) -> bool {
     // Without an index every ordinary fact premise is necessarily a scan, so
     // there is no useful cheap-vs-broad distinction to make.
@@ -3002,10 +2940,7 @@ fn premise_needs_broad_fact_scan(
 }
 
 fn aggregate_waits_for_sibling_binding(
-    premise: &Triple,
-    premises: &[Triple],
-    remaining: &[usize],
-    premise_index: usize,
+    premise: &Triple, premises: &[Triple], remaining: &[usize], premise_index: usize,
     bindings: &Bindings,
 ) -> bool {
     let pred = resolve(&premise.p, bindings);
@@ -3091,9 +3026,7 @@ fn aggregate_waits_for_sibling_binding(
 }
 
 fn collect_sibling_context_var_names(
-    triple: &Triple,
-    bindings: &Bindings,
-    out: &mut HashSet<String>,
+    triple: &Triple, bindings: &Bindings, out: &mut HashSet<String>,
 ) {
     let pred = resolve(&triple.p, bindings);
     if matches!(pred, Term::Iri(ref iri) if matches!(iri.as_str(), LOG_COLLECT_ALL_IN | LOG_FOR_ALL_IN | LOG_NOT_INCLUDES))
@@ -3228,12 +3161,8 @@ fn premise_is_a_test_that_holds(premise: &Triple, bindings: &Bindings) -> bool {
 }
 
 fn premise_is_definitively_false(
-    premise: &Triple,
-    facts: &[Triple],
-    fact_index: Option<&FactIndex>,
-    rules: &[Rule],
-    bindings: &Bindings,
-    budget: &mut SearchBudget,
+    premise: &Triple, facts: &[Triple], fact_index: Option<&FactIndex>, rules: &[Rule],
+    bindings: &Bindings, budget: &mut SearchBudget,
 ) -> bool {
     let pred = resolve(&premise.p, bindings);
     let Term::Iri(iri) = pred else {
@@ -3342,15 +3271,9 @@ fn backward_rules_may_derive_predicate(predicate: &Term, rules: &[Rule]) -> bool
 }
 
 fn include_backward_alternatives_for_selected_premise(
-    premise: &Triple,
-    facts: &[Triple],
-    fact_index: Option<&FactIndex>,
-    rules: &[Rule],
-    bindings: &Bindings,
-    depth: usize,
-    backward_stack: &mut HashSet<String>,
-    budget: &mut SearchBudget,
-    direct_candidates: Vec<Bindings>,
+    premise: &Triple, facts: &[Triple], fact_index: Option<&FactIndex>, rules: &[Rule],
+    bindings: &Bindings, depth: usize, backward_stack: &mut HashSet<String>,
+    budget: &mut SearchBudget, direct_candidates: Vec<Bindings>,
 ) -> Vec<Bindings> {
     if !should_try_backward_goal(premise, bindings) {
         return direct_candidates;
@@ -3382,15 +3305,9 @@ fn include_backward_alternatives_for_selected_premise(
 }
 
 fn match_one_premise(
-    premise: &Triple,
-    facts: &[Triple],
-    fact_index: Option<&FactIndex>,
-    rules: &[Rule],
-    bindings: &Bindings,
-    depth: usize,
-    backward_stack: &mut HashSet<String>,
-    budget: &mut SearchBudget,
-    allow_backward: bool,
+    premise: &Triple, facts: &[Triple], fact_index: Option<&FactIndex>, rules: &[Rule],
+    bindings: &Bindings, depth: usize, backward_stack: &mut HashSet<String>,
+    budget: &mut SearchBudget, allow_backward: bool,
 ) -> Vec<Bindings> {
     if let Some(next_bindings) = eval_builtin(
         premise,
@@ -3564,13 +3481,8 @@ fn backward_goal_key(goal: &Triple) -> String {
 }
 
 fn solve_backward_goal(
-    goal: &Triple,
-    facts: &[Triple],
-    fact_index: Option<&FactIndex>,
-    rules: &[Rule],
-    bindings: &Bindings,
-    depth: usize,
-    backward_stack: &mut HashSet<String>,
+    goal: &Triple, facts: &[Triple], fact_index: Option<&FactIndex>, rules: &[Rule],
+    bindings: &Bindings, depth: usize, backward_stack: &mut HashSet<String>,
     budget: &mut SearchBudget,
 ) -> Vec<Bindings> {
     if depth >= budget.max_backward_depth {
@@ -3689,10 +3601,7 @@ fn solve_backward_goal(
 }
 
 fn match_quantified_axiom(
-    goal: &Triple,
-    head: &Triple,
-    graph: &Graph,
-    bindings: &Bindings,
+    goal: &Triple, head: &Triple, graph: &Graph, bindings: &Bindings,
 ) -> Option<Bindings> {
     // First discover universal assignments, including occurrences in nested
     // graph terms. Existentials are placeholders during this discovery only;
@@ -3755,16 +3664,9 @@ fn match_quantified_axiom(
 }
 
 fn match_backward_premises_ordered(
-    premises: &[Triple],
-    remaining: Vec<usize>,
-    facts: &[Triple],
-    fact_index: Option<&FactIndex>,
-    rules: &[Rule],
-    bindings: Bindings,
-    depth: usize,
-    backward_stack: &mut HashSet<String>,
-    budget: &mut SearchBudget,
-    out: &mut Vec<Bindings>,
+    premises: &[Triple], remaining: Vec<usize>, facts: &[Triple], fact_index: Option<&FactIndex>,
+    rules: &[Rule], bindings: Bindings, depth: usize, backward_stack: &mut HashSet<String>,
+    budget: &mut SearchBudget, out: &mut Vec<Bindings>,
 ) {
     if !budget.tick() {
         return;
@@ -3921,13 +3823,8 @@ pub enum BackwardStep {
 /// index costs one pass over every fact -- so building it per call made
 /// writing a proof cost the product of the two.
 pub(crate) fn explain_backward_indexed(
-    goal: &Triple,
-    facts: &[Triple],
-    fact_index: &FactIndex,
-    given: &BTreeSet<Triple>,
-    rules: &[Rule],
-    max_depth: usize,
-    emit: &mut dyn FnMut(BackwardStep),
+    goal: &Triple, facts: &[Triple], fact_index: &FactIndex, given: &BTreeSet<Triple>,
+    rules: &[Rule], max_depth: usize, emit: &mut dyn FnMut(BackwardStep),
 ) -> bool {
     let mut state = ExplainState {
         visited: HashSet::new(),
@@ -3961,11 +3858,7 @@ pub(crate) fn index_of_facts(facts: &[Triple]) -> FactIndex {
 /// explanation; see [`explain_backward_indexed`] for the caller-supplied-index
 /// variant.
 pub fn explain_backward(
-    goal: &Triple,
-    facts: &[Triple],
-    given: &BTreeSet<Triple>,
-    rules: &[Rule],
-    max_depth: usize,
+    goal: &Triple, facts: &[Triple], given: &BTreeSet<Triple>, rules: &[Rule], max_depth: usize,
     emit: &mut dyn FnMut(BackwardStep),
 ) -> bool {
     let fact_index = index_of_facts(facts);
@@ -4140,14 +4033,8 @@ impl Evidence {
 
 #[allow(clippy::too_many_arguments)]
 fn explain_backward_inner(
-    goal: &Triple,
-    facts: &[Triple],
-    fact_index: &FactIndex,
-    given: &BTreeSet<Triple>,
-    rules: &[Rule],
-    depth: usize,
-    max_depth: usize,
-    state: &mut ExplainState,
+    goal: &Triple, facts: &[Triple], fact_index: &FactIndex, given: &BTreeSet<Triple>,
+    rules: &[Rule], depth: usize, max_depth: usize, state: &mut ExplainState,
 ) -> bool {
     if depth > max_depth {
         state.budget.hit_limit(ReasonerLimit::BackwardDepth);
@@ -4355,10 +4242,7 @@ fn bind_concrete_blanks(term: &Term, out: &mut Bindings) {
 /// `rules`, returning the goal-directed derivation steps or [`None`] when no
 /// proof exists within `max_depth`.
 pub fn find_backward_proof_for_goal(
-    goal: &Triple,
-    facts: &[Triple],
-    rules: &[Rule],
-    max_depth: usize,
+    goal: &Triple, facts: &[Triple], rules: &[Rule], max_depth: usize,
 ) -> Option<ProofNode> {
     let mut fact_index = FactIndex::default();
     for idx in 0..facts.len() {
@@ -4391,14 +4275,8 @@ pub fn find_backward_proof_for_goal(
 /// for that context alone, not in general.
 #[allow(clippy::too_many_arguments)]
 fn find_backward_proof_inner(
-    goal: &Triple,
-    facts: &[Triple],
-    fact_index: &FactIndex,
-    rules: &[Rule],
-    depth: usize,
-    max_depth: usize,
-    visited: &mut HashSet<String>,
-    budget: &mut SearchBudget,
+    goal: &Triple, facts: &[Triple], fact_index: &FactIndex, rules: &[Rule], depth: usize,
+    max_depth: usize, visited: &mut HashSet<String>, budget: &mut SearchBudget,
     explained: &mut HashMap<String, ProofNode>,
 ) -> Option<ProofNode> {
     if depth > max_depth {
@@ -4569,10 +4447,7 @@ fn find_backward_proof_inner(
 }
 
 fn salted_backward_prefix(
-    depth: usize,
-    rule_index: usize,
-    goal: &Triple,
-    bindings: &Bindings,
+    depth: usize, rule_index: usize, goal: &Triple, bindings: &Bindings,
 ) -> String {
     // Each backward-rule application must receive fresh variables.  A prefix
     // based only on `(depth, rule_index)` is not enough: recursive rules can
@@ -4797,14 +4672,8 @@ fn unknown_builtin_name(pred: &Term) -> Option<String> {
 }
 
 fn eval_builtin(
-    premise: &Triple,
-    bindings: &Bindings,
-    facts: &[Triple],
-    fact_index: Option<&FactIndex>,
-    rules: &[Rule],
-    depth: usize,
-    backward_stack: &mut HashSet<String>,
-    budget: &mut SearchBudget,
+    premise: &Triple, bindings: &Bindings, facts: &[Triple], fact_index: Option<&FactIndex>,
+    rules: &[Rule], depth: usize, backward_stack: &mut HashSet<String>, budget: &mut SearchBudget,
 ) -> Option<Vec<Bindings>> {
     let pred = resolve(&premise.p, bindings);
     // Every predicate the arms below answer to lives in one of three
@@ -5026,10 +4895,7 @@ fn eval_equal(left: &Term, right: &Term, bindings: &Bindings, facts: &[Triple]) 
 }
 
 fn eval_not_equal(
-    left: &Term,
-    right: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
+    left: &Term, right: &Term, bindings: &Bindings, facts: &[Triple],
 ) -> Vec<Bindings> {
     let l = normalize_for_builtin_equality(resolve_pattern(left, bindings), facts);
     let r = normalize_for_builtin_equality(resolve_pattern(right, bindings), facts);
@@ -5041,15 +4907,9 @@ fn eval_not_equal(
 }
 
 fn eval_collect_all_in(
-    subject: &Term,
-    object: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
-    fact_index: Option<&FactIndex>,
-    rules: &[Rule],
-    depth: usize,
-    backward_stack: &mut HashSet<String>,
-    budget: &mut SearchBudget,
+    subject: &Term, object: &Term, bindings: &Bindings, facts: &[Triple],
+    fact_index: Option<&FactIndex>, rules: &[Rule], depth: usize,
+    backward_stack: &mut HashSet<String>, budget: &mut SearchBudget,
 ) -> Vec<Bindings> {
     let Some(parts) = rdf_or_native_list(subject, bindings, facts) else {
         return Vec::new();
@@ -5174,15 +5034,9 @@ fn collect_blank_labels(term: &Term, out: &mut HashSet<String>) {
 }
 
 fn eval_for_all_in(
-    subject: &Term,
-    object: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
-    fact_index: Option<&FactIndex>,
-    rules: &[Rule],
-    depth: usize,
-    backward_stack: &mut HashSet<String>,
-    budget: &mut SearchBudget,
+    subject: &Term, object: &Term, bindings: &Bindings, facts: &[Triple],
+    fact_index: Option<&FactIndex>, rules: &[Rule], depth: usize,
+    backward_stack: &mut HashSet<String>, budget: &mut SearchBudget,
 ) -> Vec<Bindings> {
     let Some(parts) = rdf_or_native_list(subject, bindings, facts) else {
         return Vec::new();
@@ -5264,10 +5118,7 @@ fn eval_for_all_in(
 }
 
 fn eval_log_conclusion(
-    subject: &Term,
-    object: &Term,
-    bindings: &Bindings,
-    budget: &mut SearchBudget,
+    subject: &Term, object: &Term, bindings: &Bindings, budget: &mut SearchBudget,
 ) -> Vec<Bindings> {
     let Term::Formula(input) = resolve(subject, bindings) else {
         return Vec::new();
@@ -5301,10 +5152,7 @@ fn eval_log_conclusion(
 }
 
 fn eval_log_conjunction(
-    subject: &Term,
-    object: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
+    subject: &Term, object: &Term, bindings: &Bindings, facts: &[Triple],
 ) -> Vec<Bindings> {
     let items = match resolve(subject, bindings) {
         Term::Formula(g) => vec![Term::Formula(g)],
@@ -5357,11 +5205,7 @@ fn eval_log_conjunction(
 }
 
 fn eval_log_includes(
-    subject: &Term,
-    object: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
-    rules: &[Rule],
+    subject: &Term, object: &Term, bindings: &Bindings, facts: &[Triple], rules: &[Rule],
 ) -> Vec<Bindings> {
     let subject_resolved = resolve(subject, bindings);
     let scope = match subject_resolved {
@@ -5429,10 +5273,7 @@ fn graph_has_symbol_prefix(graph: &Graph, prefix: &str) -> bool {
 
 /// Existential consequence, without universal instantiation.
 fn match_existential_consequence(
-    scope: &Graph,
-    pattern: &Graph,
-    bindings: &Bindings,
-    out: &mut Vec<Bindings>,
+    scope: &Graph, pattern: &Graph, bindings: &Bindings, out: &mut Vec<Bindings>,
 ) {
     // The input can spell any IRI or variable name. Internal symbols must
     // be disjoint from both graphs and the caller's environment, or a
@@ -5557,16 +5398,10 @@ fn match_existential_consequence(
 }
 
 fn match_formula_subset(
-    scope: &[Triple],
-    pattern: &[Triple],
-    bindings: &Bindings,
-    out: &mut Vec<Bindings>,
+    scope: &[Triple], pattern: &[Triple], bindings: &Bindings, out: &mut Vec<Bindings>,
 ) {
     fn go(
-        scope: &[Triple],
-        pattern: &[Triple],
-        idx: usize,
-        bindings: Bindings,
+        scope: &[Triple], pattern: &[Triple], idx: usize, bindings: Bindings,
         out: &mut Vec<Bindings>,
     ) {
         if idx == pattern.len() {
@@ -5587,14 +5422,8 @@ fn match_formula_subset(
 }
 
 fn eval_log_not_includes(
-    premise: &Triple,
-    bindings: &Bindings,
-    facts: &[Triple],
-    fact_index: Option<&FactIndex>,
-    rules: &[Rule],
-    depth: usize,
-    backward_stack: &mut HashSet<String>,
-    budget: &mut SearchBudget,
+    premise: &Triple, bindings: &Bindings, facts: &[Triple], fact_index: Option<&FactIndex>,
+    rules: &[Rule], depth: usize, backward_stack: &mut HashSet<String>, budget: &mut SearchBudget,
 ) -> Vec<Bindings> {
     let subj = resolve_pattern(&premise.s, bindings);
     let Term::Formula(pattern) = resolve(&premise.o, bindings) else {
@@ -5689,14 +5518,8 @@ fn eval_log_not_includes(
 }
 
 fn current_graph_matches_pattern(
-    pattern: &[Triple],
-    bindings: &Bindings,
-    facts: &[Triple],
-    fact_index: Option<&FactIndex>,
-    rules: &[Rule],
-    depth: usize,
-    backward_stack: &mut HashSet<String>,
-    budget: &mut SearchBudget,
+    pattern: &[Triple], bindings: &Bindings, facts: &[Triple], fact_index: Option<&FactIndex>,
+    rules: &[Rule], depth: usize, backward_stack: &mut HashSet<String>, budget: &mut SearchBudget,
 ) -> bool {
     let mut solutions = Vec::new();
     // A cycle cut inside this window means the pattern's truth is unknown
@@ -5781,10 +5604,7 @@ fn eval_log_raw_type(subject: &Term, object: &Term, bindings: &Bindings) -> Vec<
 }
 
 fn eval_datatype_inspection(
-    subject: &Term,
-    object: &Term,
-    bindings: &Bindings,
-    datatype: bool,
+    subject: &Term, object: &Term, bindings: &Bindings, datatype: bool,
 ) -> Vec<Bindings> {
     let Term::Literal(lit) = resolve_pattern(subject, bindings) else {
         return Vec::new();
@@ -5815,10 +5635,7 @@ const RDF_LANG_STRING_IRI: &str = "http://www.w3.org/1999/02/22-rdf-syntax-ns#la
 pub(crate) const XSD_STRING_IRI: &str = "http://www.w3.org/2001/XMLSchema#string";
 
 fn eval_log_dtlit(
-    subject: &Term,
-    object: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
+    subject: &Term, object: &Term, bindings: &Bindings, facts: &[Triple],
 ) -> Vec<Bindings> {
     let s = rdf_or_native_list(subject, bindings, facts)
         .map(Term::List)
@@ -5903,10 +5720,7 @@ fn dtlit_pair(lit: &Literal) -> Term {
 }
 
 fn eval_log_langlit(
-    subject: &Term,
-    object: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
+    subject: &Term, object: &Term, bindings: &Bindings, facts: &[Triple],
 ) -> Vec<Bindings> {
     let s = rdf_or_native_list(subject, bindings, facts)
         .map(Term::List)
@@ -5993,9 +5807,7 @@ fn eval_log_semantics(subject: &Term, object: &Term, bindings: &Bindings) -> Vec
 }
 
 fn eval_log_semantics_or_error(
-    subject: &Term,
-    object: &Term,
-    bindings: &Bindings,
+    subject: &Term, object: &Term, bindings: &Bindings,
 ) -> Vec<Bindings> {
     let value = match resolve(subject, bindings) {
         Term::Iri(iri) if iri.ends_with("/HELLO.n3") => {
@@ -6200,9 +6012,7 @@ fn rdf_or_native_list(term: &Term, bindings: &Bindings, facts: &[Triple]) -> Opt
 /// `rdf:nil` cases below return before touching `facts` at all, so this
 /// costs nothing extra for the common case of a parsed `( ... )` list.
 fn rdf_or_native_list_resolved(
-    term: &Term,
-    facts: &[Triple],
-    seen: &mut HashSet<Term>,
+    term: &Term, facts: &[Triple], seen: &mut HashSet<Term>,
 ) -> Option<Vec<Term>> {
     match term {
         Term::List(items) => return Some(items.clone()),
@@ -6275,10 +6085,7 @@ fn unify_listish(term: &Term, items: Vec<Term>, bindings: &mut Bindings, facts: 
 }
 
 fn unify_listish_loose_numeric(
-    term: &Term,
-    items: Vec<Term>,
-    bindings: &mut Bindings,
-    facts: &[Triple],
+    term: &Term, items: Vec<Term>, bindings: &mut Bindings, facts: &[Triple],
 ) -> bool {
     let list_term = Term::List(items.clone());
     let mut local = bindings.clone();
@@ -6304,10 +6111,7 @@ fn unify_listish_loose_numeric(
 }
 
 fn unify_list_terms_loose_numeric(
-    left: &Term,
-    right: &Term,
-    bindings: &mut Bindings,
-    facts: &[Triple],
+    left: &Term, right: &Term, bindings: &mut Bindings, facts: &[Triple],
 ) -> bool {
     let l = resolve_pattern(left, bindings);
     let r = resolve_pattern(right, bindings);
@@ -6345,10 +6149,7 @@ fn terms_equal_loose_numeric(a: &Term, b: &Term) -> bool {
 }
 
 fn eval_list_append(
-    left: &Term,
-    right: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
+    left: &Term, right: &Term, bindings: &Bindings, facts: &[Triple],
 ) -> Vec<Bindings> {
     let Some(parts) = rdf_or_native_list(left, bindings, facts) else {
         return Vec::new();
@@ -6389,13 +6190,8 @@ fn eval_list_append(
 }
 
 fn match_list_append_parts(
-    parts: &[Term],
-    result_items: &[Term],
-    part_index: usize,
-    result_index: usize,
-    bindings: &Bindings,
-    facts: &[Triple],
-    out: &mut Vec<Bindings>,
+    parts: &[Term], result_items: &[Term], part_index: usize, result_index: usize,
+    bindings: &Bindings, facts: &[Triple], out: &mut Vec<Bindings>,
 ) {
     if part_index == parts.len() {
         if result_index == result_items.len() {
@@ -6490,10 +6286,7 @@ fn list_append_minimum_len(parts: &[Term], bindings: &Bindings, facts: &[Triple]
 }
 
 fn eval_list_iterate(
-    left: &Term,
-    right: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
+    left: &Term, right: &Term, bindings: &Bindings, facts: &[Triple],
 ) -> Vec<Bindings> {
     let Some(items) = rdf_or_native_list(left, bindings, facts) else {
         return Vec::new();
@@ -6510,15 +6303,9 @@ fn eval_list_iterate(
 }
 
 fn eval_list_map(
-    left: &Term,
-    right: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
-    fact_index: Option<&FactIndex>,
-    rules: &[Rule],
-    depth: usize,
-    backward_stack: &mut HashSet<String>,
-    budget: &mut SearchBudget,
+    left: &Term, right: &Term, bindings: &Bindings, facts: &[Triple],
+    fact_index: Option<&FactIndex>, rules: &[Rule], depth: usize,
+    backward_stack: &mut HashSet<String>, budget: &mut SearchBudget,
 ) -> Vec<Bindings> {
     let Some(parts) = rdf_or_native_list(left, bindings, facts) else {
         return Vec::new();
@@ -6571,10 +6358,7 @@ fn eval_list_map(
 }
 
 fn eval_list_first_rest(
-    left: &Term,
-    right: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
+    left: &Term, right: &Term, bindings: &Bindings, facts: &[Triple],
 ) -> Vec<Bindings> {
     if let Some(items) = rdf_or_native_list(left, bindings, facts) {
         if items.is_empty() {
@@ -6611,10 +6395,7 @@ fn eval_list_first_rest(
 }
 
 fn eval_list_reverse(
-    left: &Term,
-    right: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
+    left: &Term, right: &Term, bindings: &Bindings, facts: &[Triple],
 ) -> Vec<Bindings> {
     if let Some(mut items) = rdf_or_native_list(left, bindings, facts) {
         items.reverse();
@@ -6638,10 +6419,7 @@ fn eval_list_reverse(
 }
 
 fn eval_list_sort(
-    left: &Term,
-    right: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
+    left: &Term, right: &Term, bindings: &Bindings, facts: &[Triple],
 ) -> Vec<Bindings> {
     let input = rdf_or_native_list(left, bindings, facts)
         .map(|items| (items, true))
@@ -6696,10 +6474,7 @@ fn compare_terms_for_list_sort(a: &Term, b: &Term) -> std::cmp::Ordering {
 }
 
 fn eval_list_not_member(
-    left: &Term,
-    right: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
+    left: &Term, right: &Term, bindings: &Bindings, facts: &[Triple],
 ) -> Vec<Bindings> {
     let Some(items) = rdf_or_native_list(left, bindings, facts) else {
         return Vec::new();
@@ -6762,10 +6537,7 @@ fn terms_equal_list_builtin(a: &Term, b: &Term) -> bool {
 }
 
 fn unify_term_list_builtin_facts(
-    left: &Term,
-    right: &Term,
-    bindings: &mut Bindings,
-    facts: &[Triple],
+    left: &Term, right: &Term, bindings: &mut Bindings, facts: &[Triple],
 ) -> bool {
     let l = resolve_pattern(left, bindings);
     // The right-hand side is the candidate value supplied by the builtin.
@@ -6791,11 +6563,7 @@ fn unify_term_list_builtin_facts(
 }
 
 fn eval_list_builtin(
-    pred: &str,
-    left: &Term,
-    right: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
+    pred: &str, left: &Term, right: &Term, bindings: &Bindings, facts: &[Triple],
 ) -> Vec<Bindings> {
     match pred {
         LIST_LAST => {
@@ -6904,10 +6672,7 @@ fn eval_list_builtin(
 }
 
 fn eval_rdf_first(
-    left: &Term,
-    right: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
+    left: &Term, right: &Term, bindings: &Bindings, facts: &[Triple],
 ) -> Vec<Bindings> {
     if let Some(items) = rdf_or_native_list(left, bindings, facts) {
         let Some(first) = items.first().cloned() else {
@@ -6957,10 +6722,7 @@ fn eval_rdf_first(
 }
 
 fn eval_rdf_rest(
-    left: &Term,
-    right: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
+    left: &Term, right: &Term, bindings: &Bindings, facts: &[Triple],
 ) -> Vec<Bindings> {
     if let Some(items) = rdf_or_native_list(left, bindings, facts) {
         if items.is_empty() {
@@ -7007,10 +6769,7 @@ fn eval_rdf_rest(
 }
 
 fn eval_math_difference(
-    left: &Term,
-    right: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
+    left: &Term, right: &Term, bindings: &Bindings, facts: &[Triple],
 ) -> Vec<Bindings> {
     let Some(items) = rdf_or_native_list(left, bindings, facts) else {
         return Vec::new();
@@ -7075,11 +6834,7 @@ fn is_math_operator(iri: &str) -> bool {
 }
 
 fn eval_math_operator(
-    pred: &str,
-    left: &Term,
-    right: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
+    pred: &str, left: &Term, right: &Term, bindings: &Bindings, facts: &[Triple],
 ) -> Vec<Bindings> {
     match pred {
         MATH_PRODUCT => eval_numeric_list(left, right, bindings, facts, |items| {
@@ -7189,11 +6944,7 @@ fn unify_term_loose_numeric(left: &Term, right: &Term, bindings: &mut Bindings) 
 }
 
 fn eval_numeric_list<F>(
-    left: &Term,
-    right: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
-    op: F,
+    left: &Term, right: &Term, bindings: &Bindings, facts: &[Triple], op: F,
 ) -> Vec<Bindings>
 where
     F: FnOnce(Vec<Numeric>) -> Option<Term>,
@@ -7226,12 +6977,7 @@ where
 /// an integer, which is where it has to stay exact -- negating 10^16 - 1
 /// twice has to give 10^16 - 1 back, and through an `f64` it does not.
 fn eval_unary_numeric<F, G>(
-    left: &Term,
-    right: &Term,
-    bindings: &Bindings,
-    op: F,
-    exact_op: G,
-    integer_if_integral: bool,
+    left: &Term, right: &Term, bindings: &Bindings, op: F, exact_op: G, integer_if_integral: bool,
     allow_inverse: bool,
 ) -> Vec<Bindings>
 where
@@ -7300,11 +7046,7 @@ where
 /// `1 math:acos "0"^^xsd:decimal`. A result that is not a whole number
 /// promotes to decimal on its own, in `numeric_literal`.
 fn eval_unary_numeric_with_inverse<F, G>(
-    left: &Term,
-    right: &Term,
-    bindings: &Bindings,
-    forward: F,
-    inverse: G,
+    left: &Term, right: &Term, bindings: &Bindings, forward: F, inverse: G,
 ) -> Vec<Bindings>
 where
     F: Fn(f64) -> f64,
@@ -7391,10 +7133,7 @@ where
 }
 
 fn eval_exponentiation(
-    left: &Term,
-    right: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
+    left: &Term, right: &Term, bindings: &Bindings, facts: &[Triple],
 ) -> Vec<Bindings> {
     let Some(items) = rdf_or_native_list(left, bindings, facts) else {
         return Vec::new();
@@ -7472,10 +7211,7 @@ fn is_math_comparison(iri: &str) -> bool {
 }
 
 fn eval_math_sum(
-    left: &Term,
-    right: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
+    left: &Term, right: &Term, bindings: &Bindings, facts: &[Triple],
 ) -> Vec<Bindings> {
     let Some(items) = rdf_or_native_list(left, bindings, facts) else {
         return Vec::new();
@@ -7569,11 +7305,7 @@ fn is_string_builtin(iri: &str) -> bool {
 }
 
 fn eval_string_builtin(
-    pred: &str,
-    left: &Term,
-    right: &Term,
-    bindings: &Bindings,
-    facts: &[Triple],
+    pred: &str, left: &Term, right: &Term, bindings: &Bindings, facts: &[Triple],
 ) -> Vec<Bindings> {
     match pred {
         STRING_LESS_THAN | STRING_GREATER_THAN | STRING_NOT_LESS_THAN | STRING_NOT_GREATER_THAN => {
@@ -8146,10 +7878,7 @@ fn eval_math_compare(pred: &str, left: &Term, right: &Term, bindings: &Bindings)
 /// asking the question costs nothing: the answer is a bool, where building a
 /// solution for it copies the whole binding map.
 fn math_comparison_holds(
-    pred: &str,
-    left: &Term,
-    right: &Term,
-    bindings: &Bindings,
+    pred: &str, left: &Term, right: &Term, bindings: &Bindings,
 ) -> Option<bool> {
     let lterm = resolve(left, bindings);
     let rterm = resolve(right, bindings);
@@ -8828,10 +8557,7 @@ fn unify_formula_unordered(left: &Graph, right: &Graph, bindings: &mut Bindings)
     // A continuation lets a failed sibling graph retry an alternative
     // renaming in an earlier nested graph, rather than committing greedily.
     fn term(
-        a: &Term,
-        b: &Term,
-        alpha: &mut Alpha,
-        bindings: &mut Bindings,
+        a: &Term, b: &Term, alpha: &mut Alpha, bindings: &mut Bindings,
         next: &mut dyn FnMut(&mut Alpha, &mut Bindings) -> bool,
     ) -> bool {
         let ak = alpha.left.get(a);
@@ -8877,10 +8603,7 @@ fn unify_formula_unordered(left: &Graph, right: &Graph, bindings: &mut Bindings)
         }
     }
     fn sequence(
-        pairs: &[(&Term, &Term)],
-        i: usize,
-        alpha: &mut Alpha,
-        bindings: &mut Bindings,
+        pairs: &[(&Term, &Term)], i: usize, alpha: &mut Alpha, bindings: &mut Bindings,
         next: &mut dyn FnMut(&mut Alpha, &mut Bindings) -> bool,
     ) -> bool {
         if i == pairs.len() {
@@ -8895,10 +8618,7 @@ fn unify_formula_unordered(left: &Graph, right: &Graph, bindings: &mut Bindings)
         )
     }
     fn graph(
-        left: &Graph,
-        right: &Graph,
-        outer: &mut Alpha,
-        bindings: &mut Bindings,
+        left: &Graph, right: &Graph, outer: &mut Alpha, bindings: &mut Bindings,
         next: &mut dyn FnMut(&mut Alpha, &mut Bindings) -> bool,
     ) -> bool {
         // The same graph, closed and with no outer renaming in play, is its
@@ -8943,13 +8663,8 @@ fn unify_formula_unordered(left: &Graph, right: &Graph, bindings: &mut Bindings)
             .right
             .extend(bb.iter().map(|(term, kind)| (term.clone(), (*kind, level))));
         fn go(
-            a: &[&Triple],
-            b: &[&Triple],
-            used: &mut [bool],
-            i: usize,
-            alpha: &mut Alpha,
-            bindings: &mut Bindings,
-            next: &mut dyn FnMut(&mut Alpha, &mut Bindings) -> bool,
+            a: &[&Triple], b: &[&Triple], used: &mut [bool], i: usize, alpha: &mut Alpha,
+            bindings: &mut Bindings, next: &mut dyn FnMut(&mut Alpha, &mut Bindings) -> bool,
         ) -> bool {
             if i == a.len() {
                 return next(alpha, bindings);
@@ -9081,9 +8796,7 @@ fn canonicalize_bindings(bindings: &Bindings) -> Bindings {
 }
 
 pub(crate) fn instantiate_triple(
-    t: &Triple,
-    bindings: &Bindings,
-    blank_map: &mut BTreeMap<Name, Term>,
+    t: &Triple, bindings: &Bindings, blank_map: &mut BTreeMap<Name, Term>,
 ) -> Option<Triple> {
     Some(Triple::new(
         instantiate_term(&t.s, bindings, blank_map)?,
@@ -9093,9 +8806,7 @@ pub(crate) fn instantiate_triple(
 }
 
 fn instantiate_term(
-    term: &Term,
-    bindings: &Bindings,
-    blank_map: &mut BTreeMap<Name, Term>,
+    term: &Term, bindings: &Bindings, blank_map: &mut BTreeMap<Name, Term>,
 ) -> Option<Term> {
     match term {
         Term::Var(name) => bindings.get(name).map(|value| resolve(value, bindings)),
@@ -9122,10 +8833,7 @@ fn instantiate_term(
 }
 
 fn instantiate_formula_triple(
-    t: &Triple,
-    bindings: &Bindings,
-    blank_map: &mut BTreeMap<Name, Term>,
-    salt: &str,
+    t: &Triple, bindings: &Bindings, blank_map: &mut BTreeMap<Name, Term>, salt: &str,
 ) -> Triple {
     Triple::new(
         instantiate_formula_term(&t.s, bindings, blank_map, salt),
@@ -9135,10 +8843,7 @@ fn instantiate_formula_triple(
 }
 
 fn instantiate_formula_term(
-    term: &Term,
-    bindings: &Bindings,
-    blank_map: &mut BTreeMap<Name, Term>,
-    salt: &str,
+    term: &Term, bindings: &Bindings, blank_map: &mut BTreeMap<Name, Term>, salt: &str,
 ) -> Term {
     match term {
         Term::Var(name) => bindings
@@ -9165,9 +8870,7 @@ fn instantiate_formula_term(
 }
 
 fn instantiate_graph_term(
-    graph: &Graph,
-    bindings: &Bindings,
-    outer_blanks: &BTreeMap<Name, Term>,
+    graph: &Graph, bindings: &Bindings, outer_blanks: &BTreeMap<Name, Term>,
 ) -> Graph {
     let local = bindings_without_bound(graph, bindings);
     let salt = stable_formula_suffix(&local, graph);
@@ -9348,10 +9051,7 @@ fn occurs_in(name: &str, term: &Term, bindings: &Bindings) -> bool {
 }
 
 fn occurs_in_with_seen(
-    name: &str,
-    term: &Term,
-    bindings: &Bindings,
-    seen: &mut HashSet<String>,
+    name: &str, term: &Term, bindings: &Bindings, seen: &mut HashSet<String>,
 ) -> bool {
     match term {
         Term::Var(var) if var == name => true,

@@ -119,9 +119,7 @@ impl LpgCarrier {
     }
 
     fn stream(
-        self,
-        dataset: &RdfDataset,
-        config: &LpgConfig,
+        self, dataset: &RdfDataset, config: &LpgConfig,
     ) -> (LpgStreamProjection, DiscardSink) {
         let mut sink = DiscardSink::default();
         let mut observer = |_progress: &LpgProgress| Ok(());
@@ -193,10 +191,7 @@ fn lpg_limits() -> ProjectionLimits {
 }
 
 fn push_iri(
-    builder: &mut RdfDatasetBuilder,
-    subject: &str,
-    predicate: &str,
-    object: &str,
+    builder: &mut RdfDatasetBuilder, subject: &str, predicate: &str, object: &str,
 ) -> Result<(), purrdf_lex::allocation::StorageError> {
     let subject = builder.intern_iri(subject)?;
     let predicate = builder.intern_iri(predicate)?;

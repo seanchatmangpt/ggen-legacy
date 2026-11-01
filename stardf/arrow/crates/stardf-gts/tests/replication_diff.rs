@@ -213,11 +213,7 @@ fn synth_frame(frame_index: u64, id: &[u8], prev: Option<&[u8]>, valid: bool) ->
 
 /// Build a minimal, "clean" (no diagnostics) [`SegmentInventory`].
 fn synth_segment(
-    index: u64,
-    start: u64,
-    end: u64,
-    head: Option<Vec<u8>>,
-    frames: Vec<FrameInventory>,
+    index: u64, start: u64, end: u64, head: Option<Vec<u8>>, frames: Vec<FrameInventory>,
 ) -> SegmentInventory {
     SegmentInventory {
         index,

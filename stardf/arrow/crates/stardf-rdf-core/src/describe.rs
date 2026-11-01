@@ -105,10 +105,7 @@ fn read_diagnostic(error: impl std::fmt::Display) -> RdfDiagnostic {
 }
 
 fn insert<K: Eq + Hash, V, S: Admission + ?Sized>(
-    map: &mut FastMap<K, V>,
-    key: K,
-    value: V,
-    memory: &mut Memory<'_, S>,
+    map: &mut FastMap<K, V>, key: K, value: V, memory: &mut Memory<'_, S>,
 ) -> Result<Option<V>, StorageError> {
     if let Some(existing) = map.get_mut(&key) {
         // HashMap::insert may grow a full table even when replacing an existing key.
@@ -123,10 +120,7 @@ fn insert<K: Eq + Hash, V, S: Admission + ?Sized>(
 }
 
 fn adjacency<K: Copy + Eq + Hash, V, S: Admission + ?Sized>(
-    map: &mut FastMap<K, Vec<V>>,
-    key: K,
-    value: V,
-    memory: &mut Memory<'_, S>,
+    map: &mut FastMap<K, Vec<V>>, key: K, value: V, memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     if !map.contains_key(&key) {
         let _ = insert(map, key, Vec::new(), memory)?;
@@ -135,8 +129,7 @@ fn adjacency<K: Copy + Eq + Hash, V, S: Admission + ?Sized>(
 }
 
 fn release_map<K, V, S: Admission + ?Sized>(
-    map: FastMap<K, V>,
-    memory: &mut Memory<'_, S>,
+    map: FastMap<K, V>, memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     let bytes = crate::hash::hash_table_allocation_bound::<(K, V)>(map.capacity())
         .ok_or(StorageError::SizeOverflow)?;
@@ -185,8 +178,7 @@ impl<'a, D: DatasetView> Describer<'a, D> {
     /// # Errors
     /// Returns typed source or native storage refusal without partial publication.
     pub fn try_new_with_memory<S: Admission + ?Sized>(
-        dataset: &'a D,
-        memory: &mut Memory<'_, S>,
+        dataset: &'a D, memory: &mut Memory<'_, S>,
     ) -> Result<Self, DescribeError<D::ReadError>> {
         dataset
             .checked_read(|_| Self::build(dataset, memory))
@@ -194,8 +186,7 @@ impl<'a, D: DatasetView> Describer<'a, D> {
     }
 
     fn build<S: Admission + ?Sized>(
-        dataset: &'a D,
-        memory: &mut Memory<'_, S>,
+        dataset: &'a D, memory: &mut Memory<'_, S>,
     ) -> Result<Self, DescribeError<D::ReadError>> {
         let mut result = Self {
             dataset,
@@ -235,8 +226,7 @@ impl<'a, D: DatasetView> Describer<'a, D> {
     /// # Errors
     /// Propagates the original account's refusal to shrink conservatively.
     pub fn release_with_memory<S: Admission + ?Sized>(
-        mut self,
-        memory: &mut Memory<'_, S>,
+        mut self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         for (_, rows) in self.by_endpoint.drain() {
             memory.release_vec(rows)?;
@@ -265,8 +255,7 @@ impl<'a, D: DatasetView> Describer<'a, D> {
     /// # Errors
     /// Returns source or RDF construction diagnostics.
     pub fn describe_iris<'s>(
-        &self,
-        subjects: impl IntoIterator<Item = &'s str>,
+        &self, subjects: impl IntoIterator<Item = &'s str>,
     ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
         let mut resident = Resident;
         self.describe_iris_with_memory(subjects, &mut Memory::new(&mut resident))
@@ -285,9 +274,7 @@ impl<'a, D: DatasetView> Describer<'a, D> {
     /// # Errors
     /// Returns source, storage, or RDF validation failure before publication.
     pub fn describe_iris_with_memory<'s, S: Admission + ?Sized>(
-        &self,
-        subjects: impl IntoIterator<Item = &'s str>,
-        memory: &mut Memory<'_, S>,
+        &self, subjects: impl IntoIterator<Item = &'s str>, memory: &mut Memory<'_, S>,
     ) -> Result<RdfDataset, DescribeError<D::ReadError>> {
         let mut seeds = Vec::new();
         for subject in subjects {
@@ -310,9 +297,7 @@ impl<'a, D: DatasetView> Describer<'a, D> {
     }
 
     fn describe_seeds_read<S: Admission + ?Sized>(
-        &self,
-        seeds: Vec<D::Id>,
-        memory: &mut Memory<'_, S>,
+        &self, seeds: Vec<D::Id>, memory: &mut Memory<'_, S>,
     ) -> Result<RdfDataset, DescribeError<D::ReadError>> {
         let mut anchors = FastMap::default();
         let mut frontier = Vec::new();
@@ -423,10 +408,7 @@ impl<'a, D: DatasetView> Describer<'a, D> {
     }
 
     fn map_id<S: Admission + ?Sized>(
-        &self,
-        builder: &mut RdfDatasetBuilder,
-        remap: &mut FastMap<D::Id, TermId>,
-        old: D::Id,
+        &self, builder: &mut RdfDatasetBuilder, remap: &mut FastMap<D::Id, TermId>, old: D::Id,
         memory: &mut Memory<'_, S>,
     ) -> Result<TermId, DescribeError<D::ReadError>> {
         intern_view_term_with_memory(self.dataset, builder, remap, old, memory)
@@ -444,10 +426,7 @@ impl<'a, D: DatasetView> Describer<'a, D> {
     reason = "native term memoization must retain the workspace's required fixed-key hasher"
 )]
 pub fn intern_view_term_with_memory<D: DatasetView, S: Admission + ?Sized>(
-    dataset: &D,
-    builder: &mut RdfDatasetBuilder,
-    remap: &mut FastMap<D::Id, TermId>,
-    old: D::Id,
+    dataset: &D, builder: &mut RdfDatasetBuilder, remap: &mut FastMap<D::Id, TermId>, old: D::Id,
     memory: &mut Memory<'_, S>,
 ) -> Result<TermId, DescribeError<D::ReadError>> {
     let mut pending = Vec::new();

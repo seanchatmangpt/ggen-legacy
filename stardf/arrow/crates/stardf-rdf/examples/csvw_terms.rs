@@ -33,11 +33,7 @@ fn titles(title: &str) -> CsvwNaturalLanguage {
 }
 
 fn iri_column(
-    name: &str,
-    title: &str,
-    predicate: &str,
-    cardinality: CsvwTermsCardinality,
-    required: bool,
+    name: &str, title: &str, predicate: &str, cardinality: CsvwTermsCardinality, required: bool,
 ) -> Result<CsvwTermsColumn, Box<dyn Error>> {
     Ok(CsvwTermsColumn::new(
         name,
@@ -50,9 +46,7 @@ fn iri_column(
 }
 
 fn literal_column(
-    name: &str,
-    title: &str,
-    predicate: &str,
+    name: &str, title: &str, predicate: &str,
 ) -> Result<CsvwTermsColumn, Box<dyn Error>> {
     Ok(CsvwTermsColumn::new(
         name,
@@ -65,9 +59,7 @@ fn literal_column(
 }
 
 fn table(
-    name: &str,
-    kind: &str,
-    columns: Vec<CsvwTermsColumn>,
+    name: &str, kind: &str, columns: Vec<CsvwTermsColumn>,
 ) -> Result<CsvwTermsTable, Box<dyn Error>> {
     let path = format!("{name}.csv");
     Ok(CsvwTermsTable::new(

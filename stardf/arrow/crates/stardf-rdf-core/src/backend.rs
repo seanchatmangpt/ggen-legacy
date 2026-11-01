@@ -39,9 +39,7 @@ pub trait TermFactory {
     /// # Errors
     /// Returns the original term-table capacity or physical storage refusal.
     fn intern_blank_value(
-        &mut self,
-        label: &str,
-        scope: BlankScope,
+        &mut self, label: &str, scope: BlankScope,
     ) -> Result<TermId, StorageError>;
 
     /// Intern a literal term.
@@ -53,10 +51,7 @@ pub trait TermFactory {
     /// # Errors
     /// Returns the original term-table capacity or physical storage refusal.
     fn intern_triple_value(
-        &mut self,
-        s: TermId,
-        p: TermId,
-        o: TermId,
+        &mut self, s: TermId, p: TermId, o: TermId,
     ) -> Result<TermId, StorageError>;
 }
 
@@ -72,9 +67,7 @@ impl TermFactory for RdfDatasetBuilder {
     }
 
     fn intern_blank_value(
-        &mut self,
-        label: &str,
-        scope: BlankScope,
+        &mut self, label: &str, scope: BlankScope,
     ) -> Result<TermId, StorageError> {
         self.intern_blank(label, scope)
     }
@@ -84,10 +77,7 @@ impl TermFactory for RdfDatasetBuilder {
     }
 
     fn intern_triple_value(
-        &mut self,
-        s: TermId,
-        p: TermId,
-        o: TermId,
+        &mut self, s: TermId, p: TermId, o: TermId,
     ) -> Result<TermId, StorageError> {
         self.intern_triple(s, p, o)
     }
@@ -117,9 +107,7 @@ pub trait RdfParserBackend {
     /// Returns the first fatal parse diagnostic; events delivered before the
     /// failure may already have reached the sink.
     fn parse_into<S: RdfEventSink + ?Sized>(
-        &self,
-        request: RdfParseRequest<'_>,
-        sink: &mut S,
+        &self, request: RdfParseRequest<'_>, sink: &mut S,
     ) -> Result<(), RdfDiagnostic>;
 }
 
@@ -178,8 +166,7 @@ impl DatasetHandle {
     /// # Errors
     /// Returns actual allocator refusal, destroying dataset before its owner.
     pub fn try_from_admitted<O: Send + Sync + 'static>(
-        value: RdfDataset,
-        owner: O,
+        value: RdfDataset, owner: O,
     ) -> Result<Self, purrdf_lex::allocation::SharedAllocError> {
         purrdf_lex::allocation::SharedOwned::try_from_admitted(value, owner)
             .map(|value| Self(DatasetHandleStorage::Native(value)))
@@ -328,9 +315,7 @@ pub trait SparqlEngine {
     ///
     /// Returns a diagnostic when the query fails to parse or evaluate.
     fn query(
-        &self,
-        dataset: &Self::Dataset,
-        request: SparqlRequest<'_>,
+        &self, dataset: &Self::Dataset, request: SparqlRequest<'_>,
     ) -> Result<SparqlResult, RdfDiagnostic>;
 
     /// Applies a SPARQL update to the dataset in place.
@@ -339,9 +324,7 @@ pub trait SparqlEngine {
     ///
     /// Returns a diagnostic when the update fails to parse or apply.
     fn update(
-        &self,
-        dataset: &mut Self::Dataset,
-        request: SparqlRequest<'_>,
+        &self, dataset: &mut Self::Dataset, request: SparqlRequest<'_>,
     ) -> Result<(), RdfDiagnostic>;
 }
 
@@ -377,10 +360,7 @@ pub trait RdfSerializer {
     /// Returns a diagnostic when the format is unsupported, the dataset cannot
     /// be represented in it, or writing to `output` fails.
     fn serialize<W: Write>(
-        &self,
-        dataset: &RdfDataset,
-        request: RdfSerializeRequest<'_>,
-        output: W,
+        &self, dataset: &RdfDataset, request: RdfSerializeRequest<'_>, output: W,
     ) -> Result<(), RdfDiagnostic>;
 }
 

@@ -49,9 +49,7 @@ pub(crate) trait DirectoryRead {
         Ok(None)
     }
     fn prefix(
-        &self,
-        end: usize,
-        work: &mut SourceDifferenceWork,
+        &self, end: usize, work: &mut SourceDifferenceWork,
     ) -> Result<Multiset256, Self::Error>;
 }
 
@@ -110,8 +108,7 @@ impl SourceDirectory {
     }
 
     pub(crate) fn freeze<S: Admission + ?Sized>(
-        mut records: Vec<SourceRecord>,
-        memory: &mut Memory<'_, S>,
+        mut records: Vec<SourceRecord>, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         records.sort_unstable_by_key(|record| record.digest);
         let mut checkpoints = Vec::new();
@@ -135,8 +132,7 @@ impl SourceDirectory {
     }
 
     pub(crate) fn clone_admitted<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         let records = memory.collect(self.records.iter().copied())?;
         let checkpoints = memory.collect(self.checkpoints.iter().copied())?;
@@ -200,9 +196,7 @@ impl SourceDirectory {
     /// evidence. Equal value-digest ranges skip even when insertion shifted all
     /// subsequent ordinals. The heap work list is admitted by the caller.
     pub(crate) fn visit_changes<S: Admission + ?Sized, E: From<StorageError>>(
-        &self,
-        next: &Self,
-        memory: &mut Memory<'_, S>,
+        &self, next: &Self, memory: &mut Memory<'_, S>,
         mut visit: impl FnMut(bool, SourceRecord, &mut Memory<'_, S>) -> Result<(), E>,
     ) -> Result<SourceDifferenceWork, E> {
         visit_changes(self, next, memory, |change, memory| {
@@ -222,18 +216,14 @@ impl DirectoryRead for SourceDirectory {
         Ok(self.records[index])
     }
     fn prefix(
-        &self,
-        end: usize,
-        work: &mut SourceDifferenceWork,
+        &self, end: usize, work: &mut SourceDifferenceWork,
     ) -> Result<Multiset256, Self::Error> {
         Ok(self.prefix(end, work))
     }
 }
 
 fn summary<D: DirectoryRead, E: From<D::Error> + From<StorageError>>(
-    directory: &D,
-    range: &Range<usize>,
-    work: &mut SourceDifferenceWork,
+    directory: &D, range: &Range<usize>, work: &mut SourceDifferenceWork,
 ) -> Result<Multiset256, E> {
     let mut sum = directory.prefix(range.end, work)?;
     sum.subtract(directory.prefix(range.start, work)?)
@@ -247,9 +237,7 @@ pub(crate) fn visit_changes<
     S: Admission + ?Sized,
     E: From<StorageError> + From<A::Error> + From<B::Error>,
 >(
-    previous: &A,
-    next: &B,
-    memory: &mut Memory<'_, S>,
+    previous: &A, next: &B, memory: &mut Memory<'_, S>,
     mut visit: impl FnMut(DirectoryChange<A::Record, B::Record>, &mut Memory<'_, S>) -> Result<(), E>,
 ) -> Result<SourceDifferenceWork, E> {
     visit_directory_sets(
@@ -269,9 +257,7 @@ pub(crate) fn visit_directory_sets<
     S: Admission + ?Sized,
     E: From<StorageError> + From<A::Error> + From<B::Error>,
 >(
-    previous: &[A],
-    next: &[B],
-    memory: &mut Memory<'_, S>,
+    previous: &[A], next: &[B], memory: &mut Memory<'_, S>,
     mut visit: impl FnMut(
         usize,
         DirectoryChange<A::Record, B::Record>,
@@ -387,9 +373,7 @@ pub(crate) fn visit_directory_sets<
 }
 
 fn group_summary<D: DirectoryRead, E: From<D::Error> + From<StorageError>>(
-    sources: &[D],
-    ranges: &[Range<usize>],
-    work: &mut SourceDifferenceWork,
+    sources: &[D], ranges: &[Range<usize>], work: &mut SourceDifferenceWork,
 ) -> Result<Multiset256, E> {
     let mut sum = Multiset256::default();
     for (source, range) in sources
@@ -409,8 +393,7 @@ struct DigestBounds {
 }
 
 fn group_bounds<D: DirectoryRead>(
-    sources: &[D],
-    ranges: &[Range<usize>],
+    sources: &[D], ranges: &[Range<usize>],
 ) -> Result<Option<DigestBounds>, D::Error> {
     let mut bounds = None;
     for (source, range) in sources
@@ -433,10 +416,7 @@ fn group_bounds<D: DirectoryRead>(
 }
 
 fn partition<D: DirectoryRead>(
-    directory: &D,
-    range: Range<usize>,
-    byte: usize,
-    mask: u8,
+    directory: &D, range: Range<usize>, byte: usize, mask: u8,
 ) -> Result<usize, D::Error> {
     let (mut low, mut high) = (range.start, range.end);
     while low < high {

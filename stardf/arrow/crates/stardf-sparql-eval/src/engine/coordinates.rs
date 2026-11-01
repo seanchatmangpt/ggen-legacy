@@ -96,10 +96,7 @@ impl Eq for SuppliedQueryCoordinates {}
 
 impl QueryCoordinates {
     pub(crate) fn started(
-        now: &XsdValue,
-        seed: u64,
-        supplied_now: bool,
-        supplied_seed: bool,
+        now: &XsdValue, seed: u64, supplied_now: bool, supplied_seed: bool,
     ) -> Result<Self, EvalError> {
         let XsdValue::DateTime(now) = now else {
             return Err(EvalError::Invariant(
@@ -119,10 +116,8 @@ impl QueryCoordinates {
 
 /// Capture the request's exact algebra and effective bindings under its account.
 pub(crate) fn capture_query<D: purrdf_core::DatasetView + Sync>(
-    ctx: &crate::eval::EvalCtx<'_, D>,
-    prepared: &super::PreparedQuery,
-    bindings: crate::substitute::Prebindings<'_>,
-    options: super::QueryOptions<'_, '_>,
+    ctx: &crate::eval::EvalCtx<'_, D>, prepared: &super::PreparedQuery,
+    bindings: crate::substitute::Prebindings<'_>, options: super::QueryOptions<'_, '_>,
 ) -> Result<QueryCoordinates, EvalError> {
     let request: Result<[u8; 32], EvalError> = (|| {
         let mut frame = LexicalFrame::new(&ctx.growth);
@@ -182,9 +177,7 @@ pub(crate) fn capture_query<D: purrdf_core::DatasetView + Sync>(
 
 /// Bind a request digest to its actual immutable source and initial coordinates.
 pub(crate) fn capture_request<D: purrdf_core::DatasetView + Sync>(
-    ctx: &crate::eval::EvalCtx<'_, D>,
-    request: [u8; 32],
-    options: super::QueryOptions<'_, '_>,
+    ctx: &crate::eval::EvalCtx<'_, D>, request: [u8; 32], options: super::QueryOptions<'_, '_>,
     external_source: bool,
 ) -> Result<QueryCoordinates, EvalError> {
     let mut coordinates = QueryCoordinates::started(
@@ -375,8 +368,7 @@ impl std::fmt::Write for DigestText<'_> {
 }
 
 pub(crate) fn now(
-    supplied: Option<&DateTime>,
-    workspace: &WorkspaceCapability,
+    supplied: Option<&DateTime>, workspace: &WorkspaceCapability,
 ) -> Result<XsdValue, EvalError> {
     let Some(supplied) = supplied else {
         return Ok(XsdValue::DateTime(crate::clock::wall_clock_now()));

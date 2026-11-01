@@ -64,8 +64,7 @@ where
 {
     /// Project recorded head facts and order native keys once, before publication.
     pub(super) fn new<D: TermDictionary<Id = I>>(
-        round: RoundBuffer<'r, I, N>,
-        state: &FixpointState<D, N>,
+        round: RoundBuffer<'r, I, N>, state: &FixpointState<D, N>,
     ) -> Result<Self, EvalError<D::Error>> {
         let mut winners = round
             .entries
@@ -99,8 +98,7 @@ where
     }
 
     fn project_fact<D: TermDictionary<Id = I>>(
-        key: &HeadKey<'r, I, N>,
-        state: &FixpointState<D, N>,
+        key: &HeadKey<'r, I, N>, state: &FixpointState<D, N>,
     ) -> Result<Option<ShapeFact<N>>, D::Error> {
         if state.derivation_mode == DerivationMode::Record {
             Ok(Some(key.fact(&state.rel)?))
@@ -111,8 +109,7 @@ where
 
     /// Own the original winners before any publication preparation can suspend.
     pub(super) fn reserve_deferred<A: Admission + ?Sized>(
-        memory: &mut Memory<'_, A>,
-        retired: &mut usize,
+        memory: &mut Memory<'_, A>, retired: &mut usize,
     ) -> Result<PreparationSlot<'r, I, N>, StorageError> {
         let mut slot = Vec::new();
         crate::allocation::reserve_array_in(&mut slot, memory, retired, |slot, memory| {
@@ -122,8 +119,7 @@ where
     }
 
     pub(super) fn deferred(
-        round: RoundBuffer<'r, I, N>,
-        mut slot: PreparationSlot<'r, I, N>,
+        round: RoundBuffer<'r, I, N>, mut slot: PreparationSlot<'r, I, N>,
     ) -> Self {
         slot.0.push(Preparation {
             original: round.entries.into_iter(),
@@ -148,10 +144,7 @@ where
 
     /// Retain each original winner and comparison across caller admission cuts.
     pub(super) fn prepare<D: TermDictionary<Id = I>, A: Admission + ?Sized>(
-        &mut self,
-        state: &FixpointState<D, N>,
-        memory: &mut Memory<'_, A>,
-        retired: &mut usize,
+        &mut self, state: &FixpointState<D, N>, memory: &mut Memory<'_, A>, retired: &mut usize,
         mut allow: impl FnMut(usize) -> bool,
     ) -> Result<bool, EvalError<D::Error>> {
         let Some(frame) = self.preparation.first_mut() else {
@@ -241,8 +234,7 @@ where
 
     /// A refused fact stays pending; already published rows are never visited again.
     pub(super) fn advance<D: TermDictionary<Id = I>>(
-        &mut self,
-        state: &mut FixpointState<D, N>,
+        &mut self, state: &mut FixpointState<D, N>,
     ) -> Result<(), EvalError<D::Error>> {
         let before = state.native_bytes;
         let mut resident = Resident;
@@ -254,9 +246,7 @@ where
     }
 
     pub(super) fn advance_until<D: TermDictionary<Id = I>, A: Admission + ?Sized>(
-        &mut self,
-        state: &mut FixpointState<D, N>,
-        memory: &mut Memory<'_, A>,
+        &mut self, state: &mut FixpointState<D, N>, memory: &mut Memory<'_, A>,
         mut allow: impl FnMut(usize) -> bool,
     ) -> Result<bool, EvalError<D::Error>> {
         assert!(

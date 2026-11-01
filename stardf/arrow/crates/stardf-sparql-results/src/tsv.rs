@@ -48,8 +48,7 @@ use purrdf_core::sink::TextOut;
 /// malformed predicate is rejected rather than laundered into a fabricated
 /// IRI cell.
 pub fn to_tsv(
-    result: &SparqlResult,
-    provenance: &ResultProvenance,
+    result: &SparqlResult, provenance: &ResultProvenance,
 ) -> Result<SerializeOutcome, Error> {
     let mut out = String::new();
     write_tsv(result, provenance, &mut out)?;
@@ -62,9 +61,7 @@ pub fn to_tsv(
 /// The ONE TSV body. The whole-`String` spelling above is this function over a
 /// `String`; the streaming entry point is the same function over a bounded sink.
 pub(crate) fn write_tsv<W: TextOut + ?Sized>(
-    result: &SparqlResult,
-    provenance: &ResultProvenance,
-    out: &mut W,
+    result: &SparqlResult, provenance: &ResultProvenance, out: &mut W,
 ) -> Result<(), Error> {
     // TSV has no provenance extension point at all; the caller's request is
     // reported as dropped by the outcome rather than emitted here.

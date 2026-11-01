@@ -13,9 +13,7 @@ use purrdf_core::TermValue;
 
 /// Check this run's assumptions against the consumer-bound service question.
 pub(super) fn check_run(
-    proof: &ServiceProof,
-    index: usize,
-    ctx: &DlProofContext<'_>,
+    proof: &ServiceProof, index: usize, ctx: &DlProofContext<'_>,
 ) -> Result<(), DlProofError> {
     let assumptions = &proof.runs[index].assumptions;
     if index == 0 && bare(assumptions) {
@@ -148,10 +146,7 @@ fn subsumption(kb: &Kb, assumptions: &RunAssumptions, sub: &TermValue, sup: &Ter
 }
 
 fn membership(
-    kb: &Kb,
-    assumptions: &RunAssumptions,
-    individual: &TermValue,
-    class: &TermValue,
+    kb: &Kb, assumptions: &RunAssumptions, individual: &TermValue, class: &TermValue,
 ) -> bool {
     let Some(individual) = kb.interner.id_of(individual) else {
         return false;
@@ -237,11 +232,7 @@ fn matches_axiom(kb: &Kb, axiom: &DlAxiom, assumptions: &RunAssumptions) -> bool
 }
 
 fn negative_reach(
-    kb: &Kb,
-    assumptions: &RunAssumptions,
-    subject: u32,
-    property: u32,
-    object: u32,
+    kb: &Kb, assumptions: &RunAssumptions, subject: u32, property: u32, object: u32,
     with_role: bool,
 ) -> bool {
     let [(individual, concept)] = assumptions.types.as_slice() else {

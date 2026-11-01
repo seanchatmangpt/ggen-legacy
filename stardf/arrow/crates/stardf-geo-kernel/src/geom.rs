@@ -113,8 +113,7 @@ impl Crs {
     /// # Errors
     /// Preserves exact original IRI diagnostics and physical/source refusal.
     pub fn new_with_storage(
-        iri: &str,
-        observer: &mut dyn crate::MetricWorkObserver,
+        iri: &str, observer: &mut dyn crate::MetricWorkObserver,
         storage: &crate::carrier::CarrierStorage<'_>,
     ) -> Result<Self, GeoError> {
         Self::validate(iri, Some(storage))?;
@@ -128,8 +127,7 @@ impl Crs {
     }
 
     pub(crate) fn validate(
-        iri: &str,
-        storage: Option<&crate::carrier::CarrierStorage<'_>>,
+        iri: &str, storage: Option<&crate::carrier::CarrierStorage<'_>>,
     ) -> Result<(), GeoError> {
         use purrdf_iri::{IriError, IriReadError};
         // The same RFC 3987 scanner used by BaseIri, without a parsed source
@@ -320,8 +318,7 @@ impl Coord {
     /// # Errors
     /// Refuses capacity or destination exhaustion without a detached fallback.
     pub fn copy_in(
-        &self,
-        scratch: &purrdf_xsd::integer::LimbScratch,
+        &self, scratch: &purrdf_xsd::integer::LimbScratch,
     ) -> Result<Self, purrdf_xsd::integer::LimbScratchError> {
         Ok(Self {
             x: self.x.copy_in(scratch)?,
@@ -354,8 +351,7 @@ impl Coord {
     }
 
     pub(crate) fn detached_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         Ok(Self {
             x: self.x.detached_with_memory(memory)?,
@@ -374,8 +370,7 @@ impl Coord {
     }
 
     pub(crate) fn publish_detached(
-        &mut self,
-        original: &purrdf_lex::allocation::SharedOwned<()>,
+        &mut self, original: &purrdf_lex::allocation::SharedOwned<()>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         for value in [&mut self.x, &mut self.y]
             .into_iter()
@@ -601,9 +596,7 @@ impl Geometry {
     /// Keep the native structural diagnostic in its original retained account.
     /// Healthy constructors use the same checks without allocating a control.
     pub(crate) fn new_with_progress(
-        dim: CoordDim,
-        body: GeometryBody,
-        progress: &mut crate::context::WorkProgress<'_>,
+        dim: CoordDim, body: GeometryBody, progress: &mut crate::context::WorkProgress<'_>,
     ) -> Result<Self, GeoError> {
         Self::new_checked(dim, body, |error| {
             progress.retained_error(|_| Ok(geometry_shape_error(error)))
@@ -611,9 +604,7 @@ impl Geometry {
     }
 
     fn new_checked(
-        dim: CoordDim,
-        body: GeometryBody,
-        failure: impl FnOnce(GeometryShapeReason) -> GeoError,
+        dim: CoordDim, body: GeometryBody, failure: impl FnOnce(GeometryShapeReason) -> GeoError,
     ) -> Result<Self, GeoError> {
         check_body(dim, &body).map_err(failure)?;
         Ok(Self { dim, body })
@@ -689,8 +680,7 @@ impl Geometry {
     /// Returns the first exact layout, allocator or admission refusal before
     /// extending the pending collection array.
     pub fn is_empty_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<bool, purrdf_lex::allocation::StorageError> {
         let result = visit_leaves_with_memory(self, memory, |geometry| {
             let empty = match &geometry.body {
@@ -732,8 +722,7 @@ impl Geometry {
     /// Returns checked layout, original admission or allocator refusal before
     /// the pending work list grows.
     pub fn visit_coords_with_memory<'a, S: purrdf_lex::allocation::Admission + ?Sized, B>(
-        &'a self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &'a self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
         visit: impl FnMut(&'a Coord) -> core::ops::ControlFlow<B>,
     ) -> Result<core::ops::ControlFlow<B>, purrdf_lex::allocation::StorageError> {
         tree::visit_coords_with_memory(self, memory, visit)
@@ -971,9 +960,7 @@ impl GeometryLiteral {
     }
 
     pub(crate) fn require_same_crs_with_progress(
-        &self,
-        other: &Self,
-        progress: &mut crate::context::WorkProgress<'_>,
+        &self, other: &Self, progress: &mut crate::context::WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         if self.crs == other.crs {
             return Ok(());

@@ -21,10 +21,8 @@ use purrdf_sparql_algebra::{
 };
 
 pub(crate) fn offer(
-    pattern: &GraphPattern,
-    relations: &crate::PropertyFunctionRegistry<'_>,
-    has_evidence_source: bool,
-    workspace: &WorkspaceCapability,
+    pattern: &GraphPattern, relations: &crate::PropertyFunctionRegistry<'_>,
+    has_evidence_source: bool, workspace: &WorkspaceCapability,
 ) -> Result<Option<ShapeOffer>, EvalError> {
     if let GraphPattern::Lateral { right, .. } = pattern
         && let GraphPattern::PropertyFunction(call) = &**right
@@ -184,8 +182,7 @@ type Certificate<'a> = (
     AdmittedVec<usize>,
 );
 fn certificate<'a>(
-    pattern: &'a GraphPattern,
-    workspace: &WorkspaceCapability,
+    pattern: &'a GraphPattern, workspace: &WorkspaceCapability,
 ) -> Result<Option<Certificate<'a>>, EvalError> {
     let candidate = match pattern {
         GraphPattern::Filter { inner, .. } => &**inner,
@@ -263,9 +260,7 @@ fn certificate<'a>(
 }
 
 fn adjacency(
-    filter: Option<&Expression>,
-    positions: &[&Variable],
-    workspace: &WorkspaceCapability,
+    filter: Option<&Expression>, positions: &[&Variable], workspace: &WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     let Some(filter) = filter else {
         return Ok(positions.len() == 1);
@@ -338,8 +333,7 @@ fn adjacency(
 }
 
 fn follow<'a>(
-    mut pattern: &'a GraphPattern,
-    path: &[usize],
+    mut pattern: &'a GraphPattern, path: &[usize],
 ) -> Result<&'a GraphPattern, EvalError> {
     for &ordinal in path {
         pattern = match (pattern, ordinal) {
@@ -372,9 +366,7 @@ impl<I: ViewTermId> Materialization<I> {
 }
 
 pub(crate) fn execute<D: DatasetView + Sync>(
-    root: &GraphPattern,
-    spec: &ExpandedDictionary,
-    ctx: &mut EvalCtx<'_, D>,
+    root: &GraphPattern, spec: &ExpandedDictionary, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let growth = ctx.growth.clone();
     let schema = crate::eval::syntactic_schema_admitted(root, &growth)?;
@@ -481,11 +473,8 @@ pub(crate) fn execute<D: DatasetView + Sync>(
 }
 
 fn install<D: DatasetView + Sync>(
-    root: &GraphPattern,
-    spec: &ExpandedDictionary,
-    inputs: &AdmittedVec<SolutionSeq<D::Id>>,
-    outputs: AdmittedVec<RowsBuilder<D::Id>>,
-    ctx: &mut EvalCtx<'_, D>,
+    root: &GraphPattern, spec: &ExpandedDictionary, inputs: &AdmittedVec<SolutionSeq<D::Id>>,
+    outputs: AdmittedVec<RowsBuilder<D::Id>>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let mut bags = AdmittedMap::default();
     for ((arm, input), output) in spec.arms.iter().zip(inputs).zip(outputs) {

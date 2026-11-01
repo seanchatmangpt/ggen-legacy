@@ -114,9 +114,7 @@ impl<S: Admission> EvidenceWorkspace<S> {
     /// # Errors
     /// Returns invalid evidence ids, original column refusal or an aborted owner.
     pub fn push_row(
-        &mut self,
-        column: &mut EvidenceColumn,
-        id: EvidenceId,
+        &mut self, column: &mut EvidenceColumn, id: EvidenceId,
     ) -> Result<(), EvidenceWorkspaceError> {
         self.get(id)?;
         self.column_operation(|memory| {
@@ -131,10 +129,7 @@ impl<S: Admission> EvidenceWorkspace<S> {
     /// # Errors
     /// Returns invalid ids/alignment, native column refusal or an aborted owner.
     pub fn set_row(
-        &mut self,
-        column: &mut EvidenceColumn,
-        row: usize,
-        id: EvidenceId,
+        &mut self, column: &mut EvidenceColumn, row: usize, id: EvidenceId,
     ) -> Result<(), EvidenceWorkspaceError> {
         self.get(id)?;
         self.column_operation(|memory| column.set(row, id, memory))
@@ -147,16 +142,13 @@ impl<S: Admission> EvidenceWorkspace<S> {
     /// # Errors
     /// Returns alignment/storage refusal or an aborted owner.
     pub fn select_rows(
-        &mut self,
-        column: &EvidenceColumn,
-        rows: &[usize],
+        &mut self, column: &EvidenceColumn, rows: &[usize],
     ) -> Result<EvidenceColumn, EvidenceWorkspaceError> {
         self.column_operation(|memory| column.select(rows, memory))
     }
 
     fn column_operation<R>(
-        &mut self,
-        operation: impl FnOnce(&mut Memory<'_, S>) -> Result<R, EvidenceColumnError>,
+        &mut self, operation: impl FnOnce(&mut Memory<'_, S>) -> Result<R, EvidenceColumnError>,
     ) -> Result<R, EvidenceWorkspaceError> {
         if self.aborted {
             return Err(EvidenceWorkspaceError::Aborted);
@@ -192,8 +184,7 @@ impl<S: Admission> EvidenceWorkspace<S> {
     /// # Errors
     /// Returns unknown ids, original record/table refusal or an aborted owner.
     pub fn transform(
-        &mut self,
-        id: EvidenceId,
+        &mut self, id: EvidenceId,
         factory: impl FnOnce(
             &EvidenceRecord,
             &mut Memory<'_, S>,
@@ -264,8 +255,7 @@ impl<S: Admission> EvidenceWorkspace<S> {
     /// # Errors
     /// Returns original reference, record or native storage failures.
     pub fn factorized(
-        &mut self,
-        factors: &[&[EvidenceId]],
+        &mut self, factors: &[&[EvidenceId]],
     ) -> Result<Option<EvidenceId>, EvidenceWorkspaceError> {
         for factor in factors {
             for &id in *factor {
@@ -320,10 +310,7 @@ impl<S: Admission> EvidenceWorkspace<S> {
     /// # Errors
     /// Returns the original table/storage failure or refusal of an aborted owner.
     pub fn combine(
-        &mut self,
-        left: EvidenceId,
-        right: EvidenceId,
-        law: EvidenceCombination,
+        &mut self, left: EvidenceId, right: EvidenceId, law: EvidenceCombination,
     ) -> Result<EvidenceId, EvidenceWorkspaceError> {
         if self.aborted {
             return Err(EvidenceWorkspaceError::Aborted);

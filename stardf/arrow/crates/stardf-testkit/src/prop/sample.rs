@@ -35,8 +35,7 @@ impl<T: Clone + fmt::Debug> Strategy for Select<T> {
 /// fragments interleaved with noise reach deep parser states instead of bouncing
 /// off the lexer.
 pub fn interleaved(
-    fragments: Vec<&'static str>,
-    max_parts: usize,
+    fragments: Vec<&'static str>, max_parts: usize,
 ) -> impl Strategy<Value = String> {
     super::collection::vec(select(fragments), 0..max_parts).prop_map(|parts| parts.concat())
 }

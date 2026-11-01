@@ -117,8 +117,7 @@ fn fixture_profile() -> FusionProfile {
 }
 
 fn fixture_env<'a>(
-    registry: &'a PropertyFunctionRegistry<'static>,
-    stats: &'a MockStatistics,
+    registry: &'a PropertyFunctionRegistry<'static>, stats: &'a MockStatistics,
 ) -> AdmissionEnvironment<'a> {
     AdmissionEnvironment {
         registry,
@@ -148,11 +147,8 @@ fn fixture_env<'a>(
 // runtime-agnostic future; see the same allow on `search` itself.
 #[allow(clippy::future_not_send)]
 async fn manual_composition(
-    request: &RetrievalRequest,
-    registry: &PropertyFunctionRegistry<'static>,
-    stats: &MockStatistics,
-    dataset: &RdfDataset,
-    env: &AdmissionEnvironment<'_>,
+    request: &RetrievalRequest, registry: &PropertyFunctionRegistry<'static>,
+    stats: &MockStatistics, dataset: &RdfDataset, env: &AdmissionEnvironment<'_>,
     profile: &FusionProfile,
 ) -> SearchResult {
     let planned = plan(request, registry, stats).expect("the fixture request plans");
@@ -589,9 +585,7 @@ fn search_answers_under_a_profile_that_cannot_separate_every_planned_rank() {
 /// is a property of the plan *and* the law: an environment naming no profile has
 /// nothing to measure against and would report nothing at all.
 fn compiled_under(
-    registry: &PropertyFunctionRegistry<'static>,
-    stats: &MockStatistics,
-    profile: &FusionProfile,
+    registry: &PropertyFunctionRegistry<'static>, stats: &MockStatistics, profile: &FusionProfile,
 ) -> purrdf_retrieval::CompiledRetrieval {
     let planned = plan(&mixed_request(), registry, stats).expect("the fixture request plans");
     let env = AdmissionEnvironment {
@@ -944,9 +938,7 @@ impl PropertyFunction for FailingProducer {
     }
 
     fn open<'cursor>(
-        &self,
-        _args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, _args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -1509,10 +1501,7 @@ fn an_answer_names_its_plan_even_when_no_stream_reached_the_fusion() {
 /// for every other fixture in this file. The pair of tests below is *about* the
 /// policy, so it must be able to state both.
 fn ranked_declaring(
-    stratum: &str,
-    patterns: Vec<TermPattern>,
-    mandatory: bool,
-    duplicates: DuplicatePolicy,
+    stratum: &str, patterns: Vec<TermPattern>, mandatory: bool, duplicates: DuplicatePolicy,
 ) -> RankedDeclaration {
     RankedDeclaration {
         duplicates,
@@ -1910,9 +1899,7 @@ fn the_trailer_reports_the_candidate_domains_the_registry_declared() {
 /// A one-producer registry over the universal stratum: `relation` declaring
 /// `domains`, reading each row's block from `block_position`.
 fn block_declaring_registry(
-    relation: Arc<dyn PropertyFunction>,
-    domains: CandidateDomains,
-    block_position: Option<usize>,
+    relation: Arc<dyn PropertyFunction>, domains: CandidateDomains, block_position: Option<usize>,
 ) -> PropertyFunctionRegistry<'static> {
     let mut registry = PropertyFunctionRegistry::new();
     registry.register_ranked(
@@ -2282,9 +2269,7 @@ fn producer_over(rows: &[usize]) -> Arc<dyn PropertyFunction> {
 /// declaring a block set is already the disjoint case — there is no second
 /// declaration for it to meet.
 fn docs_registry(
-    rows: &[usize],
-    domains: CandidateDomains,
-    duplicates: DuplicatePolicy,
+    rows: &[usize], domains: CandidateDomains, duplicates: DuplicatePolicy,
 ) -> PropertyFunctionRegistry<'static> {
     let mut registry = PropertyFunctionRegistry::new();
     registry.register_ranked(
@@ -2347,8 +2332,7 @@ fn docs_complete_search(registry: &PropertyFunctionRegistry<'static>) -> SearchR
 }
 
 fn docs_search_for(
-    request: &RetrievalRequest,
-    registry: &PropertyFunctionRegistry<'static>,
+    request: &RetrievalRequest, registry: &PropertyFunctionRegistry<'static>,
 ) -> SearchResult {
     let stats = docs_statistics();
     let env = fixture_env(registry, &stats);

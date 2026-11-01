@@ -413,39 +413,28 @@ impl<'dataset> PagedQueryView<'dataset> {
     /// Side-table summaries support exact subject and graph tests; predicate/object
     /// presence is conservative until the admitted row is filtered.
     pub(super) fn stream_pattern(
-        &self,
-        stream: PageStream,
-        s: Option<GlobalTermId>,
-        p: Option<GlobalTermId>,
-        o: Option<GlobalTermId>,
-        g: GraphMatch<GlobalTermId>,
+        &self, stream: PageStream, s: Option<GlobalTermId>, p: Option<GlobalTermId>,
+        o: Option<GlobalTermId>, g: GraphMatch<GlobalTermId>,
     ) -> impl Iterator<Item = (PageId, QuadIds<GlobalTermId>)> + '_ {
         self.stream_pattern_range(stream, s, p, o, g, 0..self.dataset.pages.len())
     }
 
     pub(super) fn stream_pattern_range(
-        &self,
-        stream: PageStream,
-        s: Option<GlobalTermId>,
-        p: Option<GlobalTermId>,
-        o: Option<GlobalTermId>,
-        g: GraphMatch<GlobalTermId>,
-        range: std::ops::Range<usize>,
+        &self, stream: PageStream, s: Option<GlobalTermId>, p: Option<GlobalTermId>,
+        o: Option<GlobalTermId>, g: GraphMatch<GlobalTermId>, range: std::ops::Range<usize>,
     ) -> impl Iterator<Item = (PageId, QuadIds<GlobalTermId>)> + '_ {
         self.stream_pattern_value_range(stream, (s, p, o, g), range, None)
     }
 
     pub(super) fn stream_pattern_value_range<'a>(
-        &'a self,
-        stream: PageStream,
+        &'a self, stream: PageStream,
         (s, p, o, g): (
             Option<GlobalTermId>,
             Option<GlobalTermId>,
             Option<GlobalTermId>,
             GraphMatch<GlobalTermId>,
         ),
-        range: std::ops::Range<usize>,
-        values: Option<&'a crate::AnnotationValueRange<'a>>,
+        range: std::ops::Range<usize>, values: Option<&'a crate::AnnotationValueRange<'a>>,
     ) -> impl Iterator<Item = (PageId, QuadIds<GlobalTermId>)> + 'a {
         admission::candidate_pages_for_stream_in_range(
             self.dataset.graph_index(),
@@ -533,12 +522,8 @@ impl<'dataset> PagedQueryView<'dataset> {
     }
 
     pub(super) fn stream_estimate(
-        &self,
-        stream: PageStream,
-        s: Option<GlobalTermId>,
-        p: Option<GlobalTermId>,
-        o: Option<GlobalTermId>,
-        g: GraphMatch<GlobalTermId>,
+        &self, stream: PageStream, s: Option<GlobalTermId>, p: Option<GlobalTermId>,
+        o: Option<GlobalTermId>, g: GraphMatch<GlobalTermId>,
     ) -> u64 {
         admission::candidate_pages_for_stream(
             self.dataset.graph_index(),
@@ -694,9 +679,7 @@ impl<'dataset> PagedQueryView<'dataset> {
     }
 
     fn validate_materialization(
-        &self,
-        id: PageId,
-        materialization: &PageMaterialization,
+        &self, id: PageId, materialization: &PageMaterialization,
     ) -> Result<(), PagedQueryError> {
         let index = usize::try_from(id.0).expect("page id fits usize");
         let slot = &self.dataset.pages[index];
@@ -807,12 +790,8 @@ impl<'dataset> PagedQueryView<'dataset> {
 }
 
 fn stream_admitted(
-    slot: &super::PageSlot,
-    stream: PageStream,
-    s: Option<GlobalTermId>,
-    p: Option<GlobalTermId>,
-    o: Option<GlobalTermId>,
-    g: GraphMatch<GlobalTermId>,
+    slot: &super::PageSlot, stream: PageStream, s: Option<GlobalTermId>, p: Option<GlobalTermId>,
+    o: Option<GlobalTermId>, g: GraphMatch<GlobalTermId>,
 ) -> bool {
     #[cfg(test)]
     tests::record_admission(stream);
@@ -941,10 +920,7 @@ impl DatasetView for PagedQueryView<'_> {
     }
 
     fn quads_for_pattern(
-        &self,
-        s: Option<GlobalTermId>,
-        p: Option<GlobalTermId>,
-        o: Option<GlobalTermId>,
+        &self, s: Option<GlobalTermId>, p: Option<GlobalTermId>, o: Option<GlobalTermId>,
         g: GraphMatch<GlobalTermId>,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + '_ {
         // Narrow the candidate page set from the graph axis first (zero allocation),
@@ -987,30 +963,19 @@ impl DatasetView for PagedQueryView<'_> {
     }
 
     fn probe_plan(
-        &self,
-        _s_bound: bool,
-        _p_bound: bool,
-        _o_bound: bool,
-        _g: GraphMatch<GlobalTermId>,
+        &self, _s_bound: bool, _p_bound: bool, _o_bound: bool, _g: GraphMatch<GlobalTermId>,
     ) {
     }
 
     fn quads_for_pattern_with_plan(
-        &self,
-        _plan: &(),
-        s: Option<GlobalTermId>,
-        p: Option<GlobalTermId>,
-        o: Option<GlobalTermId>,
-        g: GraphMatch<GlobalTermId>,
+        &self, _plan: &(), s: Option<GlobalTermId>, p: Option<GlobalTermId>,
+        o: Option<GlobalTermId>, g: GraphMatch<GlobalTermId>,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + '_ {
         self.quads_for_pattern(s, p, o, g)
     }
 
     fn cardinality_estimate(
-        &self,
-        s: Option<GlobalTermId>,
-        p: Option<GlobalTermId>,
-        o: Option<GlobalTermId>,
+        &self, s: Option<GlobalTermId>, p: Option<GlobalTermId>, o: Option<GlobalTermId>,
         g: GraphMatch<GlobalTermId>,
     ) -> u64 {
         {
@@ -1071,10 +1036,7 @@ impl DatasetView for PagedQueryView<'_> {
     }
 
     fn source_summary(
-        &self,
-        predicate: Self::Id,
-        graph: GraphMatch<Self::Id>,
-        stream: crate::StatisticsStream,
+        &self, predicate: Self::Id, graph: GraphMatch<Self::Id>, stream: crate::StatisticsStream,
     ) -> Result<Option<crate::source::SourceSummary>, Self::ReadError> {
         if let Some(error) = self.read_error() {
             return Err(error);
@@ -1104,8 +1066,7 @@ impl DatasetView for PagedQueryView<'_> {
     }
 
     fn reifier_quads_of(
-        &self,
-        reifier: GlobalTermId,
+        &self, reifier: GlobalTermId,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + '_ {
         // Per-page narrowing, shaped exactly like `annotations_of_with_graph` below: a
         // page is skipped BEFORE it is requested unless its sealed `PageSummary`
@@ -1140,8 +1101,7 @@ impl DatasetView for PagedQueryView<'_> {
     }
 
     fn annotations_of_with_graph(
-        &self,
-        reifier: GlobalTermId,
+        &self, reifier: GlobalTermId,
     ) -> impl Iterator<Item = (GlobalTermId, GlobalTermId, Option<GlobalTermId>)> + '_ {
         // A page is skipped BEFORE it is requested unless its sealed `PageSummary`
         // proves it owns at least one ANNOTATION row for this term
@@ -1173,8 +1133,7 @@ impl DatasetView for PagedQueryView<'_> {
     /// contract this satisfies. Goes through `self.page`, so the sticky-failure gate
     /// and the page/byte budget still charge for every page this actually visits.
     fn reifier_quads_in_graph(
-        &self,
-        g: GraphMatch<GlobalTermId>,
+        &self, g: GraphMatch<GlobalTermId>,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + '_ {
         // An override, not a new obligation (see the trait's doc comment): narrows the
         // candidate page set to the REIFIER stream's graph postings before any page is
@@ -1209,8 +1168,7 @@ impl DatasetView for PagedQueryView<'_> {
     /// narrowing and the same sticky-gate/budget discipline, over the ANNOTATION
     /// stream's graph postings instead.
     fn annotation_quads_in_graph(
-        &self,
-        g: GraphMatch<GlobalTermId>,
+        &self, g: GraphMatch<GlobalTermId>,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + '_ {
         // See `reifier_quads_in_graph` above: same narrowing and the same sticky-gate/
         // budget-charging discipline (via `self.page`), over the ANNOTATION stream's
@@ -1235,11 +1193,8 @@ impl DatasetView for PagedQueryView<'_> {
     }
 
     fn annotation_quads_for_range<'a>(
-        &'a self,
-        predicate: Option<Self::Id>,
-        object: Option<Self::Id>,
-        graph: GraphMatch<Self::Id>,
-        range: &'a crate::AnnotationValueRange<'a>,
+        &'a self, predicate: Option<Self::Id>, object: Option<Self::Id>,
+        graph: GraphMatch<Self::Id>, range: &'a crate::AnnotationValueRange<'a>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + 'a {
         self.stream_pattern_value_range(
             PageStream::Annotation,

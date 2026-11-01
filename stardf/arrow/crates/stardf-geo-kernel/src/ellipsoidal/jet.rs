@@ -53,9 +53,7 @@ impl<'a> MercatorPolynomial<'a> {
     /// The exact affine normalized arguments of the original edge on
     /// `[start, end]`, or `None` for any other chain.
     pub(crate) fn new(
-        image: &'a OperationImageCurve,
-        [start, end]: [&Rat; 2],
-        math: &mut CoordinateMath,
+        image: &'a OperationImageCurve, [start, end]: [&Rat; 2], math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<Option<Self>, MathError> {
         let operations = image.chain().operations();
@@ -148,11 +146,7 @@ impl<'a> MercatorPolynomial<'a> {
     /// unit scale; a remainder in `τ` would need `half^(ORDER+1)`, which is
     /// below the fixed grid on deep panels.
     pub(super) fn panel(
-        &self,
-        level: u32,
-        index: u64,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, level: u32, index: u64, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<FixedInterval, MathError> {
         let denominator = crate::Int::one().shl(level + 1);
         let centre = Rat::new(crate::Int::from_u64(2 * index + 1), denominator.clone())
@@ -182,10 +176,7 @@ impl<'a> MercatorPolynomial<'a> {
     }
 
     fn constants(
-        &self,
-        centre: &Rat,
-        half: &Rat,
-        math: &mut CoordinateMath,
+        &self, centre: &Rat, half: &Rat, math: &mut CoordinateMath,
     ) -> Result<Constants, MathError> {
         let centre = fixed_from_rat(centre, math)?;
         let half = fixed_from_rat(half, math)?;
@@ -197,10 +188,7 @@ impl<'a> MercatorPolynomial<'a> {
     /// and `half` enclose the exact panel map, and every jet coefficient then
     /// encloses the exact map's coefficient.
     pub(crate) fn constants_fixed(
-        &self,
-        centre: &FixedInterval,
-        half: &FixedInterval,
-        math: &mut CoordinateMath,
+        &self, centre: &FixedInterval, half: &FixedInterval, math: &mut CoordinateMath,
     ) -> Result<Constants, MathError> {
         let one = FixedInterval::from_i64(1, math)?;
         let mut offset = [
@@ -233,11 +221,8 @@ impl<'a> MercatorPolynomial<'a> {
     /// Chart jets of the image at one exact point or over one complete panel:
     /// longitude, the latitude's sine and cosine, and their `σ` rates.
     fn chart<'scope>(
-        &self,
-        parameter: &FixedInterval,
-        constants: &Constants,
-        workspace: &mut TaylorWorkspace<'scope>,
-        math: &mut CoordinateMath,
+        &self, parameter: &FixedInterval, constants: &Constants,
+        workspace: &mut TaylorWorkspace<'scope>, math: &mut CoordinateMath,
     ) -> Result<Chart<'scope>, MathError> {
         let mut arguments = [None, None];
         for (axis, slot) in arguments.iter_mut().enumerate() {
@@ -328,11 +313,8 @@ impl<'a> MercatorPolynomial<'a> {
 
     /// The speed jet `ds/dσ` at one exact point or over one complete panel.
     fn speed<'scope>(
-        &self,
-        parameter: &FixedInterval,
-        constants: &Constants,
-        workspace: &mut TaylorWorkspace<'scope>,
-        math: &mut CoordinateMath,
+        &self, parameter: &FixedInterval, constants: &Constants,
+        workspace: &mut TaylorWorkspace<'scope>, math: &mut CoordinateMath,
     ) -> Result<TaylorJet<'scope>, MathError> {
         let Chart {
             sine,
@@ -367,11 +349,8 @@ impl MercatorPolynomial<'_> {
     /// The geodetic unit normal `(cos φ cos λ, cos φ sin λ, sin φ)` and its
     /// `σ` derivative as jets, at one exact point or over one complete panel.
     pub(crate) fn normal<'scope>(
-        &self,
-        parameter: &FixedInterval,
-        constants: &Constants,
-        workspace: &mut TaylorWorkspace<'scope>,
-        math: &mut CoordinateMath,
+        &self, parameter: &FixedInterval, constants: &Constants,
+        workspace: &mut TaylorWorkspace<'scope>, math: &mut CoordinateMath,
     ) -> Result<([TaylorJet<'scope>; 3], [TaylorJet<'scope>; 3]), MathError> {
         let chart = self.chart(parameter, constants, workspace, math)?;
         let (sl, cl) = workspace.sin_cos(chart.longitude, math)?;

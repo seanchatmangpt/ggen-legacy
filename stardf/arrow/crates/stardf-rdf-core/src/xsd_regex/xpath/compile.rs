@@ -424,11 +424,7 @@ pub type OwnedCompiledPattern<S> = super::OwnedPatternValue<CompiledPattern, S>;
 /// Preserves the original caller account alongside every grammar, work,
 /// layout, allocator or physical-admission failure.
 pub fn compile_with_storage<S: purrdf_lex::allocation::Admission>(
-    profile: Profile,
-    pattern: &str,
-    flags: &str,
-    limits: Limits,
-    storage: S,
+    profile: Profile, pattern: &str, flags: &str, limits: Limits, storage: S,
 ) -> Result<OwnedCompiledPattern<S>, super::OwnedPatternError<S>> {
     compile_owned_law(
         Law::Dated(profile),
@@ -441,11 +437,7 @@ pub fn compile_with_storage<S: purrdf_lex::allocation::Admission>(
 }
 
 pub(super) fn compile_owned_law<T, S: purrdf_lex::allocation::Admission>(
-    law: Law,
-    pattern: &str,
-    flags: &str,
-    limits: Limits,
-    mut storage: S,
+    law: Law, pattern: &str, flags: &str, limits: Limits, mut storage: S,
     wrap: impl FnOnce(CompiledPattern) -> T,
 ) -> Result<super::OwnedPatternValue<T, S>, super::OwnedPatternError<S>> {
     let verdict = compile_budget(
@@ -489,19 +481,13 @@ pub(super) fn compile_owned_law<T, S: purrdf_lex::allocation::Admission>(
 /// Invalid grammar is Syntax; source, work, program or storage refusal is an
 /// operational Resource error. Source admission precedes any parsing or copy.
 pub fn compile(
-    profile: Profile,
-    pattern: &str,
-    flags: &str,
-    limits: Limits,
+    profile: Profile, pattern: &str, flags: &str, limits: Limits,
 ) -> Result<CompiledPattern, Error> {
     compile_budget(Law::Dated(profile), pattern, flags, Budget::new(limits))
 }
 
 fn compile_budget(
-    law: Law,
-    pattern: &str,
-    flags: &str,
-    mut budget: Budget<'_>,
+    law: Law, pattern: &str, flags: &str, mut budget: Budget<'_>,
 ) -> Result<CompiledPattern, Error> {
     budget.limits().admit_pattern(pattern)?;
     if law.is_compatibility() && pattern.len() > crate::xsd_regex::MAX_SOURCE_BYTES {
@@ -597,8 +583,7 @@ fn compile_budget(
 }
 
 fn table(
-    table: &'static [(&'static str, &'static [(u32, u32)])],
-    name: &str,
+    table: &'static [(&'static str, &'static [(u32, u32)])], name: &str,
 ) -> Option<&'static [(u32, u32)]> {
     table
         .binary_search_by_key(&name, |&(name, _)| name)

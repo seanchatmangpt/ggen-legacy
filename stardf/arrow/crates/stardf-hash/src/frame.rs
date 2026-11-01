@@ -68,8 +68,7 @@ pub fn frame_le(out: &mut Vec<u8>, bytes: &[u8]) {
 /// # Errors
 /// Returns the first destination refusal, without appending the remaining part.
 pub fn try_frame_le_with<E>(
-    bytes: &[u8],
-    mut append: impl FnMut(&[u8]) -> Result<(), E>,
+    bytes: &[u8], mut append: impl FnMut(&[u8]) -> Result<(), E>,
 ) -> Result<(), E> {
     append(&prefix(bytes.len()))?;
     append(bytes)
@@ -158,9 +157,7 @@ pub fn frame_le_with(bytes: &[u8], output: &mut impl FnMut(&[u8])) {
 /// Returns a formatting error if the renderer fails or emits a byte count
 /// different from `length`. A failed digest must not be published.
 pub fn frame_le_display_into<D: Digest + ?Sized>(
-    digest: &mut D,
-    length: usize,
-    value: &(impl core::fmt::Display + ?Sized),
+    digest: &mut D, length: usize, value: &(impl core::fmt::Display + ?Sized),
 ) -> core::fmt::Result {
     struct Field<'a, D: ?Sized> {
         digest: &'a mut D,

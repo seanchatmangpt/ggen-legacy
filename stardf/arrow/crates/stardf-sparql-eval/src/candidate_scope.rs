@@ -30,10 +30,7 @@ pub trait CandidateConstraint: core::fmt::Debug + Sync {
     /// # Errors
     /// Returns the original data-read, cancellation or physical failure.
     fn decide(
-        &self,
-        candidate: &TermValue,
-        evidence: &QueryEvidence,
-        workspace: &WorkspaceCapability,
+        &self, candidate: &TermValue, evidence: &QueryEvidence, workspace: &WorkspaceCapability,
     ) -> Result<ConstraintDecision, EvalError>;
 }
 
@@ -52,9 +49,7 @@ pub struct NativeCandidateScope<'a> {
 }
 
 fn scope_error<E>(
-    error: ScopeError<E>,
-    admission: &EvidenceAdmission,
-    workspace: &WorkspaceCapability,
+    error: ScopeError<E>, admission: &EvidenceAdmission, workspace: &WorkspaceCapability,
     callback: impl FnOnce(E) -> EvalError,
 ) -> EvalError {
     match error {
@@ -81,8 +76,7 @@ impl<'a> NativeCandidateScope<'a> {
     /// # Errors
     /// Refuses duplicate/out-of-order identities or original native admission.
     pub fn new(
-        constraints: &[&'a dyn CandidateConstraint],
-        workspace: &WorkspaceCapability,
+        constraints: &[&'a dyn CandidateConstraint], workspace: &WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let admission = EvidenceAdmission::new(workspace)?;
         let mut retained = AdmittedVec::with_capacity(constraints.len(), workspace)?;
@@ -107,8 +101,7 @@ impl<'a> NativeCandidateScope<'a> {
     /// # Errors
     /// Refuses an aborted invocation or a poisoned original counter owner.
     pub fn with_counts<R>(
-        &self,
-        read: impl FnOnce(&[ConstraintCounts]) -> R,
+        &self, read: impl FnOnce(&[ConstraintCounts]) -> R,
     ) -> Result<R, EvalError> {
         let counts = self.counts.lock().map_err(|_| {
             NativeDiagnostic::error(
@@ -137,9 +130,7 @@ impl CandidateScope for NativeCandidateScope<'_> {
     }
 
     fn decide(
-        &self,
-        candidate: &TermValue,
-        workspace: &WorkspaceCapability,
+        &self, candidate: &TermValue, workspace: &WorkspaceCapability,
     ) -> Result<CandidateMembership, EvalError> {
         let mut counts = self.counts.lock().map_err(|_| {
             NativeDiagnostic::error(
@@ -214,10 +205,7 @@ mod tests {
         }
 
         fn decide(
-            &self,
-            _: &TermValue,
-            evidence: &QueryEvidence,
-            _: &WorkspaceCapability,
+            &self, _: &TermValue, evidence: &QueryEvidence, _: &WorkspaceCapability,
         ) -> Result<ConstraintDecision, EvalError> {
             evidence
                 .declare_reason(ReasonDescription {
@@ -242,10 +230,7 @@ mod tests {
         }
 
         fn decide(
-            &self,
-            _: &TermValue,
-            _: &QueryEvidence,
-            _: &WorkspaceCapability,
+            &self, _: &TermValue, _: &QueryEvidence, _: &WorkspaceCapability,
         ) -> Result<ConstraintDecision, EvalError> {
             if self.fails {
                 Err(EvalError::AllocationFailed {

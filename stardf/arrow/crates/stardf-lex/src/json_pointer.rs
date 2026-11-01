@@ -63,9 +63,7 @@ pub fn push_token(pointer: &mut String, token: &str) {
 ///
 /// Returns checked length, allocator or original admission refusal.
 pub fn push_token_with_memory<S: crate::allocation::Admission + ?Sized>(
-    pointer: &mut String,
-    token: &str,
-    memory: &mut crate::allocation::Memory<'_, S>,
+    pointer: &mut String, token: &str, memory: &mut crate::allocation::Memory<'_, S>,
 ) -> Result<(), crate::allocation::StorageError> {
     let escaped = token
         .bytes()

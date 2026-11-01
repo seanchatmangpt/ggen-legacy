@@ -400,9 +400,7 @@ fn contextual_custom_updates_preserve_order_errors_and_numeric_admission() {
             })
         }
         fn exact_numeric_cost(
-            &self,
-            survivors: &[Vec<TermValue>],
-            _: &[(String, TermValue)],
+            &self, survivors: &[Vec<TermValue>], _: &[(String, TermValue)],
         ) -> purrdf_xsd::exact::Cost {
             purrdf_xsd::exact::Cost::new(
                 if matches!(self.pricing, Pricing::Initial) && survivors.is_empty() {

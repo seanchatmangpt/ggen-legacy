@@ -473,10 +473,7 @@ pub fn latent_fixed_amplitude(shape: CorpusShape, sigma: f64, seed: u64) -> Resu
 ///
 /// As [`embedding_like`].
 pub fn separated_manifolds(
-    rows: usize,
-    dims: usize,
-    manifolds: usize,
-    seed: u64,
+    rows: usize, dims: usize, manifolds: usize, seed: u64,
 ) -> Result<VectorMatrix> {
     let manifolds = manifolds.max(1).min(dims);
     let mut stream = Stream::new(seed);

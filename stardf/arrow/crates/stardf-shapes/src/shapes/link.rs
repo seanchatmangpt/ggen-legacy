@@ -88,8 +88,7 @@ pub(crate) type ShapeIndexRef = std::sync::Weak<OnceLock<FastMap<Term, Shape>>>;
 
 /// Retain the model only on exported roots, after its bare definitions are frozen.
 pub(crate) fn retain_roots(
-    shapes: &mut [Shape],
-    rules: &mut crate::rules::RuleGraph,
+    shapes: &mut [Shape], rules: &mut crate::rules::RuleGraph,
     owner: &Arc<crate::shapes::ModelOwner>,
 ) {
     for shape in shapes {
@@ -182,8 +181,7 @@ fn depth_limit() -> ShapesProductError {
 ///
 /// A handle that is not the shared one.
 pub(crate) fn link_global_rules(
-    rules: &[Rule],
-    shape_index: &ShapeIndex,
+    rules: &[Rule], shape_index: &ShapeIndex,
 ) -> Result<(), ShapesProductError> {
     let mut walk = ShapeIndexWalk {
         index: shape_index,
@@ -198,11 +196,8 @@ pub(crate) fn link_global_rules(
 }
 
 pub(crate) fn link_shapes(
-    node_shapes: Vec<Shape>,
-    shape_index: &ShapeIndex,
-    custom_fns: &[Arc<CustomFunction>],
-    native_list: &BTreeSet<String>,
-    bodies: BTreeMap<String, NodeExpr>,
+    node_shapes: Vec<Shape>, shape_index: &ShapeIndex, custom_fns: &[Arc<CustomFunction>],
+    native_list: &BTreeSet<String>, bodies: BTreeMap<String, NodeExpr>,
     registry: &mut UserFunctionRegistry,
 ) -> Result<Arc<crate::shapes::ModelOwner>, ShapesProductError> {
     let owner = link_definitions(node_shapes, shape_index, custom_fns, bodies)?;
@@ -212,9 +207,7 @@ pub(crate) fn link_shapes(
 
 /// Install and audit one complete original domain before exposing its functions.
 pub(super) fn link_definitions(
-    node_shapes: Vec<Shape>,
-    shape_index: &ShapeIndex,
-    custom_fns: &[Arc<CustomFunction>],
+    node_shapes: Vec<Shape>, shape_index: &ShapeIndex, custom_fns: &[Arc<CustomFunction>],
     bodies: BTreeMap<String, NodeExpr>,
 ) -> Result<Arc<crate::shapes::ModelOwner>, ShapesProductError> {
     install_bodies(custom_fns, bodies)?;
@@ -226,8 +219,7 @@ pub(super) fn link_definitions(
 
 /// Install only this model's original declaration domain in its query registry.
 pub(crate) fn register_model_functions(
-    owner: &Arc<crate::shapes::ModelOwner>,
-    native_list: &BTreeSet<String>,
+    owner: &Arc<crate::shapes::ModelOwner>, native_list: &BTreeSet<String>,
     registry: &mut UserFunctionRegistry,
 ) {
     register_native_list_functions(native_list, owner, registry);
@@ -263,8 +255,7 @@ fn keep_existing_registration(iri: &str, registry: &mut UserFunctionRegistry) ->
 /// built-ins are registered, so a shapes graph that does not merge the vocabulary
 /// registers nothing and pays nothing.
 pub(crate) fn register_native_list_functions(
-    native_list: &BTreeSet<String>,
-    owner: &Arc<crate::shapes::ModelOwner>,
+    native_list: &BTreeSet<String>, owner: &Arc<crate::shapes::ModelOwner>,
     registry: &mut UserFunctionRegistry,
 ) {
     for iri in native_list {
@@ -297,8 +288,7 @@ pub(crate) fn register_native_list_functions(
 /// already installed them from the byte stream and supplies none. Only the
 /// after-the-fact check covers both.
 pub(crate) fn install_bodies(
-    custom_fns: &[Arc<CustomFunction>],
-    mut bodies: BTreeMap<String, NodeExpr>,
+    custom_fns: &[Arc<CustomFunction>], mut bodies: BTreeMap<String, NodeExpr>,
 ) -> Result<(), ShapesProductError> {
     for func in custom_fns {
         let Some(body) = bodies.remove(func.iri.as_str()) else {
@@ -339,9 +329,7 @@ pub(crate) fn install_bodies(
 /// The walk runs before moving the bare bodies into the index. A foreign handle
 /// is refused even when no currently exported root reads the definition.
 fn install_shape_index(
-    node_shapes: Vec<Shape>,
-    shape_index: &ShapeIndex,
-    custom_fns: &[Arc<CustomFunction>],
+    node_shapes: Vec<Shape>, shape_index: &ShapeIndex, custom_fns: &[Arc<CustomFunction>],
 ) -> Result<(), ShapesProductError> {
     let mut walk = ShapeIndexWalk {
         index: shape_index,
@@ -390,8 +378,7 @@ fn install_shape_index(
 /// the parsed one — a second copy would drift in exactly the arity the caller
 /// never re-tests.
 pub(crate) fn register_expression_bodied_functions(
-    custom_fns: &[Arc<CustomFunction>],
-    owner: &Arc<crate::shapes::ModelOwner>,
+    custom_fns: &[Arc<CustomFunction>], owner: &Arc<crate::shapes::ModelOwner>,
     registry: &mut UserFunctionRegistry,
 ) {
     for func in custom_fns {
@@ -643,16 +630,14 @@ where
 
     /// Walk focus-local and annotation deactivation expressions in their model.
     fn deactivations(
-        &mut self,
-        expressions: &'model [NodeExpr],
+        &mut self, expressions: &'model [NodeExpr],
         annotations: &'model [crate::shapes::ConstraintAnnotation],
     ) -> Result<(), E> {
         self.walk_deactivations(expressions, annotations)
     }
 
     fn walk_deactivations(
-        &mut self,
-        expressions: &'model [NodeExpr],
+        &mut self, expressions: &'model [NodeExpr],
         annotations: &'model [crate::shapes::ConstraintAnnotation],
     ) -> Result<(), E> {
         for expression in expressions.iter().chain(
@@ -871,8 +856,7 @@ struct ShapeIndexWalk<'a> {
 
 impl ModelWalk<'_> for ShapeIndexWalk<'_> {
     fn first_owner(
-        &mut self,
-        owner: &Arc<crate::shapes::ModelOwner>,
+        &mut self, owner: &Arc<crate::shapes::ModelOwner>,
     ) -> Result<bool, ShapesProductError> {
         let address = Arc::as_ptr(owner).addr();
         if self.seen_catalogs.contains(&address) {
@@ -886,8 +870,7 @@ impl ModelWalk<'_> for ShapeIndexWalk<'_> {
     }
 
     fn first_declaration(
-        &mut self,
-        func: &Arc<CustomFunction>,
+        &mut self, func: &Arc<CustomFunction>,
     ) -> Result<bool, ShapesProductError> {
         if self.seen_fns.iter().any(|seen| Arc::ptr_eq(seen, func)) {
             return Ok(false);

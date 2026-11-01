@@ -115,9 +115,7 @@ impl PropertyFunction for Producer {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,

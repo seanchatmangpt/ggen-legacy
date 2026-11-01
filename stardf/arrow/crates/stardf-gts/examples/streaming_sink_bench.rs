@@ -57,10 +57,7 @@ impl StreamingSink for CountingSink {
     }
 
     fn blob(
-        &mut self,
-        _segment_index: u64,
-        _digest: &str,
-        _meta: Option<&purrdf_lex::cbor::Value>,
+        &mut self, _segment_index: u64, _digest: &str, _meta: Option<&purrdf_lex::cbor::Value>,
     ) {
         self.blobs += 1;
     }
@@ -100,9 +97,7 @@ struct CountingEventSink {
 
 impl RdfEventSink for CountingEventSink {
     fn term(
-        &mut self,
-        _id: EventTermId,
-        _term: EventTerm<'_>,
+        &mut self, _id: EventTermId, _term: EventTerm<'_>,
     ) -> Result<ControlFlow<()>, EventError> {
         self.terms += 1;
         Ok(ControlFlow::Continue(()))
@@ -114,19 +109,14 @@ impl RdfEventSink for CountingEventSink {
     }
 
     fn reifier(
-        &mut self,
-        _reifier: EventTermId,
-        _triple: EventTriple,
+        &mut self, _reifier: EventTermId, _triple: EventTriple,
     ) -> Result<ControlFlow<()>, EventError> {
         self.reifiers += 1;
         Ok(ControlFlow::Continue(()))
     }
 
     fn annotation(
-        &mut self,
-        _reifier: EventTermId,
-        _p: EventTermId,
-        _o: EventTermId,
+        &mut self, _reifier: EventTermId, _p: EventTermId, _o: EventTermId,
     ) -> Result<ControlFlow<()>, EventError> {
         self.annotations += 1;
         Ok(ControlFlow::Continue(()))
@@ -152,9 +142,7 @@ impl GtsEventSink for CountingEventSink {
     }
 
     fn blob(
-        &mut self,
-        _ctx: Option<FrameContext<'_>>,
-        _digest: &str,
+        &mut self, _ctx: Option<FrameContext<'_>>, _digest: &str,
         _meta: Option<&purrdf_lex::cbor::Value>,
     ) -> Result<ControlFlow<()>, EventError> {
         self.blobs += 1;

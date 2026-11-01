@@ -26,9 +26,7 @@ use selected::{PointSample, SelectedDomain};
 /// # Errors
 /// Refuses empty inputs, missing reference operations and incomplete admission.
 pub fn distance(
-    a: &PreparedGeometry,
-    b: &PreparedGeometry,
-    context: &mut MetricContext,
+    a: &PreparedGeometry, b: &PreparedGeometry, context: &mut MetricContext,
 ) -> Result<GeometryMetricEstimate, GeoError> {
     distance_inner(a, b, context, None)
 }
@@ -38,9 +36,7 @@ pub fn distance(
 /// # Errors
 /// Also propagates the observer's original refusal without a partial answer.
 pub fn distance_metered(
-    a: &PreparedGeometry,
-    b: &PreparedGeometry,
-    context: &mut MetricContext,
+    a: &PreparedGeometry, b: &PreparedGeometry, context: &mut MetricContext,
     observer: &mut dyn MetricWorkObserver,
 ) -> Result<GeometryMetricEstimate, GeoError> {
     distance_inner(a, b, context, Some(observer))
@@ -51,10 +47,7 @@ pub fn distance_metered(
 /// # Errors
 /// Refuses empty inputs, reference mismatch and unresolved or unadmitted proof.
 pub fn within_physical(
-    a: &PreparedGeometry,
-    b: &PreparedGeometry,
-    threshold: &Metres,
-    context: &mut MetricContext,
+    a: &PreparedGeometry, b: &PreparedGeometry, threshold: &Metres, context: &mut MetricContext,
 ) -> Result<bool, GeoError> {
     within_inner(a, b, threshold, context, None)
 }
@@ -63,19 +56,13 @@ pub fn within_physical(
 /// # Errors
 /// Also preserves the observer's original refusal.
 pub fn within_physical_metered(
-    a: &PreparedGeometry,
-    b: &PreparedGeometry,
-    threshold: &Metres,
-    context: &mut MetricContext,
+    a: &PreparedGeometry, b: &PreparedGeometry, threshold: &Metres, context: &mut MetricContext,
     observer: &mut dyn MetricWorkObserver,
 ) -> Result<bool, GeoError> {
     within_inner(a, b, threshold, context, Some(observer))
 }
 fn within_inner(
-    a: &PreparedGeometry,
-    b: &PreparedGeometry,
-    threshold: &Metres,
-    context: &mut MetricContext,
+    a: &PreparedGeometry, b: &PreparedGeometry, threshold: &Metres, context: &mut MetricContext,
     observer: Option<&mut dyn MetricWorkObserver>,
 ) -> Result<bool, GeoError> {
     let answer = compute_inner(
@@ -122,9 +109,7 @@ enum Primitive<'a> {
 
 impl<'a> Primitive<'a> {
     fn length(
-        self,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        self, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<Rat, GeoError> {
         match self {
             Self::Selected(domain) => domain.length(context, progress),
@@ -217,12 +202,8 @@ impl<'a> Primitive<'a> {
         }
     }
     fn point(
-        self,
-        parameter: &Rat,
-        child: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
-        physical: bool,
-        precision_bits: u32,
+        self, parameter: &Rat, child: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
+        physical: bool, precision_bits: u32,
     ) -> Result<PointSample, GeoError> {
         if let Self::Selected(domain) = self {
             return domain.point(parameter, child, observer, physical, precision_bits);
@@ -378,10 +359,7 @@ impl<'a> Primitive<'a> {
         PointSample::retained(result?, child, &mut progress)
     }
     fn image_enclosure(
-        self,
-        parameter: &Rat,
-        bits: u32,
-        context: &mut MetricContext,
+        self, parameter: &Rat, bits: u32, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<crate::operation::OperationImageEnclosure, GeoError> {
         match self {
@@ -395,10 +373,8 @@ impl<'a> Primitive<'a> {
 }
 
 fn certified_point(
-    longitude: &purrdf_xsd::math::FixedInterval,
-    latitude: &purrdf_xsd::math::FixedInterval,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    longitude: &purrdf_xsd::math::FixedInterval, latitude: &purrdf_xsd::math::FixedInterval,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(LonLat, Rat), GeoError> {
     let mut admission = ExactAdmission::new(context, progress);
     let (west, east) = admission.bounds(longitude)?;
@@ -447,10 +423,7 @@ fn certified_point(
 }
 
 fn interpolated_point(
-    start: &LonLat,
-    end: &LonLat,
-    parameter: &Rat,
-    context: &mut MetricContext,
+    start: &LonLat, end: &LonLat, parameter: &Rat, context: &mut MetricContext,
     observer: &mut dyn MetricWorkObserver,
 ) -> Result<(LonLat, Rat), GeoError> {
     let mut progress = WorkProgress::new(Some(observer));
@@ -494,9 +467,7 @@ fn primitives<'a>(
         &'a [super::native::Parameters],
         &'a [super::native::Parameters],
     )>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<RetainedBuilder<Primitive<'a>>, GeoError> {
     let mut output = RetainedBuilder::default();
     for primitive in geometry
@@ -627,9 +598,7 @@ crate::context::retained::native_detached_fields!(Candidate {
 
 impl Candidate {
     fn compare(
-        &self,
-        other: &Self,
-        admission: &mut ExactAdmission<'_, '_>,
+        &self, other: &Self, admission: &mut ExactAdmission<'_, '_>,
     ) -> Result<Ordering, GeoError> {
         Ok(admission
             .compare(&other.lower, &self.lower)?
@@ -638,9 +607,7 @@ impl Candidate {
 }
 
 fn distance_inner(
-    a: &PreparedGeometry,
-    b: &PreparedGeometry,
-    context: &mut MetricContext,
+    a: &PreparedGeometry, b: &PreparedGeometry, context: &mut MetricContext,
     mut observer: Option<&mut dyn MetricWorkObserver>,
 ) -> Result<GeometryMetricEstimate, GeoError> {
     let answer = match observer.as_mut() {
@@ -681,11 +648,8 @@ fn distance_inner(
     })
 }
 fn compute_inner(
-    a: &PreparedGeometry,
-    b: &PreparedGeometry,
-    context: &mut MetricContext,
-    observer: Option<&mut dyn MetricWorkObserver>,
-    goal: MinimumGoal<'_>,
+    a: &PreparedGeometry, b: &PreparedGeometry, context: &mut MetricContext,
+    observer: Option<&mut dyn MetricWorkObserver>, goal: MinimumGoal<'_>,
 ) -> Result<MinimumAnswer, GeoError> {
     context.begin(1)?;
     let mut progress = WorkProgress::new(observer);
@@ -789,11 +753,8 @@ fn compute_inner(
 
 fn minimize(
     (a_region, aa): (&PreparedRegion, &[Primitive<'_>]),
-    (b_region, bb): (&PreparedRegion, &[Primitive<'_>]),
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
-    goal: MinimumGoal<'_>,
+    (b_region, bb): (&PreparedRegion, &[Primitive<'_>]), context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut u64, goal: MinimumGoal<'_>,
 ) -> Result<MinimumAnswer, GeoError> {
     if let MinimumGoal::Physical(threshold) = goal
         && threshold.signum() < 0
@@ -1082,11 +1043,8 @@ fn minimize(
 }
 
 fn update_best(
-    best: &mut Option<crate::context::retained::PersistentNumeric<Rat>>,
-    value: &Rat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    best: &mut Option<crate::context::retained::PersistentNumeric<Rat>>, value: &Rat,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<(), GeoError> {
     if let Some(previous) = best
         && ExactAdmission::new(context, progress)
@@ -1105,11 +1063,8 @@ fn update_best(
 }
 
 fn push(
-    queue: &mut RetainedBuilder<Candidate>,
-    node: Candidate,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    queue: &mut RetainedBuilder<Candidate>, node: Candidate, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<(), GeoError> {
     let node =
         crate::context::retained::persistent_numeric_owned(node, context, progress, retained)?;
@@ -1124,16 +1079,9 @@ fn push(
 
 #[allow(clippy::too_many_arguments)] // Complete global box operands and borrowed admission remain explicit.
 fn sample(
-    prepared: &PreparedGeodesic,
-    aa: &[Primitive<'_>],
-    bb: &[Primitive<'_>],
-    a_lengths: &[Rat],
-    b_lengths: &[Rat],
-    node: Candidate,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    goal: MinimumGoal<'_>,
-    retained: &mut u64,
+    prepared: &PreparedGeodesic, aa: &[Primitive<'_>], bb: &[Primitive<'_>], a_lengths: &[Rat],
+    b_lengths: &[Rat], node: Candidate, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, goal: MinimumGoal<'_>, retained: &mut u64,
 ) -> Result<Candidate, GeoError> {
     let mut node = node;
     let previous = node.workspace_receipt;
@@ -1169,16 +1117,9 @@ fn sample(
     reason = "one global sample keeps original domains, proof goal and scoped output admission explicit"
 )]
 fn sample_inner(
-    prepared: &PreparedGeodesic,
-    aa: &[Primitive<'_>],
-    bb: &[Primitive<'_>],
-    a_lengths: &[Rat],
-    b_lengths: &[Rat],
-    mut node: Candidate,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    goal: MinimumGoal<'_>,
-    storage: &mut u64,
+    prepared: &PreparedGeodesic, aa: &[Primitive<'_>], bb: &[Primitive<'_>], a_lengths: &[Rat],
+    b_lengths: &[Rat], mut node: Candidate, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, goal: MinimumGoal<'_>, storage: &mut u64,
 ) -> Result<Candidate, GeoError> {
     let mut child = context.remaining_child()?;
     let parallel = parallel_foot(aa[node.a], bb[node.b], context, progress)?;
@@ -1392,12 +1333,8 @@ fn sample_inner(
 }
 
 fn point_within_threshold(
-    prepared: &PreparedGeodesic,
-    a: &LonLat,
-    b: &LonLat,
-    threshold: &Rat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    prepared: &PreparedGeodesic, a: &LonLat, b: &LonLat, threshold: &Rat,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let mut child = context.remaining_child()?;
     let threshold = Metres::new(ExactAdmission::new(context, progress).copy(threshold)?);
@@ -1422,9 +1359,7 @@ fn point_within_threshold(
 type ProvenFoot<'a> = (&'a LonLat, LonLat, Option<LonLat>);
 
 fn parallel_foot<'a>(
-    a: Primitive<'a>,
-    b: Primitive<'a>,
-    context: &mut MetricContext,
+    a: Primitive<'a>, b: Primitive<'a>, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<ProvenFoot<'a>>, GeoError> {
     let (point, start, end) = match (a, b) {
@@ -1540,12 +1475,8 @@ fn endpoints(primitive: Primitive<'_>) -> Option<(&LonLat, &LonLat)> {
 }
 
 fn intersection(
-    a_region: &PreparedRegion,
-    b_region: &PreparedRegion,
-    aa: &[Primitive<'_>],
-    bb: &[Primitive<'_>],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    a_region: &PreparedRegion, b_region: &PreparedRegion, aa: &[Primitive<'_>],
+    bb: &[Primitive<'_>], context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     for (points, region) in [(aa, b_region), (bb, a_region)] {
         for point in points {

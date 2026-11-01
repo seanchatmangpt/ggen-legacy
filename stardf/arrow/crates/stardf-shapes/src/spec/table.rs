@@ -474,10 +474,7 @@ const fn optional(path: &'static str) -> FunctionParam {
 }
 
 const fn named(
-    iri: &'static str,
-    params: &'static [FunctionParam],
-    key: &'static str,
-    kind: ExprKind,
+    iri: &'static str, params: &'static [FunctionParam], key: &'static str, kind: ExprKind,
 ) -> FunctionRow {
     FunctionRow {
         iri,
@@ -508,9 +505,7 @@ const fn optional_param(path: &'static str, value: ValueRule) -> ComponentParam 
 }
 
 const fn native(
-    iri: &'static str,
-    params: &'static [ComponentParam],
-    variants: &'static [&'static str],
+    iri: &'static str, params: &'static [ComponentParam], variants: &'static [&'static str],
 ) -> ComponentRow {
     ComponentRow {
         iri,

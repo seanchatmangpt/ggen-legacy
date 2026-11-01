@@ -31,8 +31,7 @@ pub fn decomposed_len<const COMPAT: bool, M>(scalars: &[TaggedScalar<M>]) -> Opt
 
 /// Decompose and canonically order annotated scalars using reusable storage.
 pub fn decompose_tagged<const COMPAT: bool, M: Clone>(
-    scalars: &mut Vec<TaggedScalar<M>>,
-    scratch: &mut Vec<TaggedScalar<M>>,
+    scalars: &mut Vec<TaggedScalar<M>>, scratch: &mut Vec<TaggedScalar<M>>,
 ) {
     decompose_tagged_with::<COMPAT, M>(scalars, scratch, |run| {
         canonical_order(run, |scalar| ccc(scalar.value));
@@ -41,9 +40,7 @@ pub fn decompose_tagged<const COMPAT: bool, M: Clone>(
 
 /// The same decomposition law with already-admitted destination and sort work.
 pub fn decompose_tagged_preallocated<const COMPAT: bool, M: Clone>(
-    scalars: &mut Vec<TaggedScalar<M>>,
-    scratch: &mut Vec<TaggedScalar<M>>,
-    order: &mut Vec<usize>,
+    scalars: &mut Vec<TaggedScalar<M>>, scratch: &mut Vec<TaggedScalar<M>>, order: &mut Vec<usize>,
 ) {
     assert!(
         scratch.capacity()
@@ -55,8 +52,7 @@ pub fn decompose_tagged_preallocated<const COMPAT: bool, M: Clone>(
 }
 
 fn decompose_tagged_with<const COMPAT: bool, M: Clone>(
-    scalars: &mut Vec<TaggedScalar<M>>,
-    scratch: &mut Vec<TaggedScalar<M>>,
+    scalars: &mut Vec<TaggedScalar<M>>, scratch: &mut Vec<TaggedScalar<M>>,
     mut order: impl FnMut(&mut [TaggedScalar<M>]),
 ) {
     scratch.clear();
@@ -82,8 +78,7 @@ fn decompose_tagged_with<const COMPAT: bool, M: Clone>(
 /// Compose already decomposed, canonically ordered scalars, combining every
 /// contributing annotation with `merge`. This is NFC/NFKC's composition step.
 pub fn compose_tagged<M>(
-    scalars: &mut Vec<TaggedScalar<M>>,
-    scratch: &mut Vec<TaggedScalar<M>>,
+    scalars: &mut Vec<TaggedScalar<M>>, scratch: &mut Vec<TaggedScalar<M>>,
     mut merge: impl FnMut(&mut M, M),
 ) {
     scratch.clear();

@@ -25,11 +25,8 @@ use crate::{
 };
 
 pub(super) fn evaluate(
-    applicability: &Applicability,
-    coordinates: &[FixedInterval],
-    limits: OperationSolverLimits,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    applicability: &Applicability, coordinates: &[FixedInterval], limits: OperationSolverLimits,
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<OperationCoordinates, MathError> {
     let target = [coordinates[0].clone(), coordinates[1].clone()];
     let source = narrow_domain(applicability, &target, math)?;
@@ -123,11 +120,8 @@ struct PhysicalRoot {
 }
 
 fn retain_distinct(
-    candidate: PhysicalRoot,
-    retained: &mut RetainedBuilder<PhysicalRoot>,
-    system: &mut GcjSystem<'_, '_, '_>,
-    math: &mut CoordinateMath,
-    reserved: &mut usize,
+    candidate: PhysicalRoot, retained: &mut RetainedBuilder<PhysicalRoot>,
+    system: &mut GcjSystem<'_, '_, '_>, math: &mut CoordinateMath, reserved: &mut usize,
 ) -> Result<(), MathError> {
     for previous in retained.iter_mut() {
         if previous.sign == candidate.sign
@@ -165,10 +159,7 @@ fn retain_distinct(
 }
 
 pub(super) fn certify_quantized(
-    applicability: &Applicability,
-    target: &RootBox2,
-    output: &[Rat],
-    math: &mut CoordinateMath,
+    applicability: &Applicability, target: &RootBox2, output: &[Rat], math: &mut CoordinateMath,
 ) -> Result<(), MathError> {
     if !applicability.contains(&output[0], &output[1]) {
         return Err(MathError::PrecisionExhausted);
@@ -197,9 +188,7 @@ struct GcjSystem<'a, 'progress, 'observer> {
 impl RootSystem2 for GcjSystem<'_, '_, '_> {
     crate::numerical::native_root_storage!(cell);
     fn image(
-        &mut self,
-        domain: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, domain: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<RootBox2, MathError> {
         let coordinates = chart_coordinates(domain, self.sign, math)?;
         let x = signed_square(&domain[0], self.sign, math)?;
@@ -210,16 +199,12 @@ impl RootSystem2 for GcjSystem<'_, '_, '_> {
         ])
     }
     fn jacobian(
-        &mut self,
-        domain: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, domain: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<RootJacobian2, MathError> {
         jacobian(domain, self.sign, math)
     }
     fn complete(
-        &mut self,
-        enclosure: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, enclosure: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<bool, MathError> {
         if !self.quantize {
             return root_enclosure_complete(
@@ -246,9 +231,7 @@ impl RootSystem2 for GcjSystem<'_, '_, '_> {
 }
 
 fn signed_square(
-    u: &FixedInterval,
-    sign: i64,
-    math: &mut CoordinateMath,
+    u: &FixedInterval, sign: i64, math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     let square = u.square(math)?;
     if sign < 0 {
@@ -258,9 +241,7 @@ fn signed_square(
     }
 }
 fn chart_coordinates(
-    domain: &RootBox2,
-    sign: i64,
-    math: &mut CoordinateMath,
+    domain: &RootBox2, sign: i64, math: &mut CoordinateMath,
 ) -> Result<RootBox2, MathError> {
     Ok([
         FixedInterval::from_i64(105, math)?.add(&signed_square(&domain[0], sign, math)?, math)?,
@@ -269,10 +250,7 @@ fn chart_coordinates(
 }
 
 fn chart_domain(
-    source: &RootBox2,
-    centre: &FixedInterval,
-    sign: i64,
-    math: &mut CoordinateMath,
+    source: &RootBox2, centre: &FixedInterval, sign: i64, math: &mut CoordinateMath,
 ) -> Result<Option<RootBox2>, MathError> {
     let distance = if sign < 0 {
         centre.sub(&source[0], math)?
@@ -294,9 +272,7 @@ fn chart_domain(
 // oscillations, regardless of how wide the applicability is; it is an exclusion
 // certificate, not an iterative seed or an assumption about national geography.
 fn narrow_domain(
-    applicability: &Applicability,
-    target: &RootBox2,
-    math: &mut CoordinateMath,
+    applicability: &Applicability, target: &RootBox2, math: &mut CoordinateMath,
 ) -> Result<RootBox2, MathError> {
     let mut source = [
         rational_interval(&applicability.west, &applicability.east, math)?,
@@ -377,8 +353,7 @@ fn narrow_domain(
 // term has no finite longitude derivative; callers retain the image enclosure
 // and split the original parameter instead of inventing a Lipschitz constant.
 pub(super) fn forward_jacobian(
-    coordinates: &[FixedInterval],
-    math: &mut CoordinateMath,
+    coordinates: &[FixedInterval], math: &mut CoordinateMath,
 ) -> Result<Option<RootJacobian2>, MathError> {
     let x = coordinates[0].sub(&FixedInterval::from_i64(105, math)?, math)?;
     let zero = Int::zero();
@@ -402,9 +377,7 @@ pub(super) fn forward_jacobian(
 }
 
 fn jacobian(
-    domain: &RootBox2,
-    sign: i64,
-    math: &mut CoordinateMath,
+    domain: &RootBox2, sign: i64, math: &mut CoordinateMath,
 ) -> Result<RootJacobian2, MathError> {
     let x = signed_square(&domain[0], sign, math)?;
     let y = domain[1].sub(&FixedInterval::from_i64(35, math)?, math)?;
@@ -461,9 +434,7 @@ fn jacobian(
 }
 
 fn harmonic_derivative(
-    coordinate: &FixedInterval,
-    terms: &[(i64, i64, i64)],
-    math: &mut CoordinateMath,
+    coordinate: &FixedInterval, terms: &[(i64, i64, i64)], math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     let mut result = FixedInterval::from_i64(0, math)?;
     for &(numerator, denominator, amplitude) in terms {
@@ -482,10 +453,7 @@ fn harmonic_derivative(
 }
 
 fn scale_derivatives(
-    latitude: &FixedInterval,
-    cl: &FixedInterval,
-    cb: &FixedInterval,
-    math: &mut CoordinateMath,
+    latitude: &FixedInterval, cl: &FixedInterval, cb: &FixedInterval, math: &mut CoordinateMath,
 ) -> Result<[FixedInterval; 2], MathError> {
     let (sine, cosine) = radians(latitude, math)?.sin_cos_range(math)?;
     let e2 = decimal("0.00669342162296594323", math)?;
@@ -508,9 +476,7 @@ enum Membership {
     Unresolved,
 }
 fn source_membership(
-    source: &RootBox2,
-    applicability: &Applicability,
-    math: &mut CoordinateMath,
+    source: &RootBox2, applicability: &Applicability, math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Membership, MathError> {
     let (west, east) = exact_bounds_in(&source[0], math)?;
@@ -554,16 +520,13 @@ fn source_membership(
     )
 }
 fn absolute_upper(
-    value: &FixedInterval,
-    math: &mut CoordinateMath,
+    value: &FixedInterval, math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     let value = value.abs(math)?;
     FixedInterval::from_bounds(value.upper().clone(), value.upper().clone(), math)
 }
 fn rational_interval(
-    lower: &Rat,
-    upper: &Rat,
-    math: &mut CoordinateMath,
+    lower: &Rat, upper: &Rat, math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     let lower = fixed_from_rat(lower, math)?;
     let upper = fixed_from_rat(upper, math)?;

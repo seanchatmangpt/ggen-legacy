@@ -1036,10 +1036,7 @@ pub(crate) const fn pattern_role(property: u32, forward: bool) -> Role {
 /// pattern, the backward endpoint of one entering it over a backward pattern. Charges nothing;
 /// the callers charge for the step.
 pub(crate) fn for_each_step(
-    st: &State,
-    y: usize,
-    ach: &[(u32, bool)],
-    mut visit: impl FnMut(usize, changes::reach::Step),
+    st: &State, y: usize, ach: &[(u32, bool)], mut visit: impl FnMut(usize, changes::reach::Step),
 ) {
     let y = find(st, y);
     for &edge in st.class_edges(y) {
@@ -1574,9 +1571,7 @@ pub(crate) fn set_distinct(st: &mut State, a: usize, b: usize) {
 /// second.
 #[cfg(test)]
 pub(crate) fn max_clique(
-    items: &[usize],
-    compat: &dyn Fn(usize, usize) -> bool,
-    meter: &Work,
+    items: &[usize], compat: &dyn Fn(usize, usize) -> bool, meter: &Work,
 ) -> Option<Vec<usize>> {
     clique_of(items, compat, meter, usize::MAX)
 }
@@ -1588,10 +1583,7 @@ pub(crate) fn max_clique(
 /// end and returns the maximum, which is what a rule that has to mint the shortfall needs.
 /// Same order, same charges up to the stop, same `None` on exhaustion.
 pub(crate) fn clique_of(
-    items: &[usize],
-    compat: &dyn Fn(usize, usize) -> bool,
-    meter: &Work,
-    enough: usize,
+    items: &[usize], compat: &dyn Fn(usize, usize) -> bool, meter: &Work, enough: usize,
 ) -> Option<Vec<usize>> {
     let mut search = Clique {
         items,
@@ -2375,10 +2367,7 @@ impl<'a> Graph<'a> {
     /// source, matched by the forward achiever `(p, true)`). Number-restricted roles are simple,
     /// so no transitive closure is walked.
     pub(crate) fn blockable_predecessor_neighbours(
-        &self,
-        st: &State,
-        x: usize,
-        role: Role,
+        &self, st: &State, x: usize, role: Role,
     ) -> Vec<usize> {
         let mut out = Vec::new();
         let mut seen = BTreeSet::new();
@@ -2393,11 +2382,7 @@ impl<'a> Graph<'a> {
 
     /// Read the actual chosen generative predecessor through the shared native predicate.
     pub(crate) fn select_blockable_predecessor(
-        &self,
-        st: &State,
-        x: usize,
-        role: Role,
-        target: usize,
+        &self, st: &State, x: usize, role: Role, target: usize,
     ) -> bool {
         self.visit_blockable_predecessors(st, x, role, &mut |y, child, parent, letter| {
             if y != target {
@@ -2416,10 +2401,7 @@ impl<'a> Graph<'a> {
     }
 
     fn visit_blockable_predecessors(
-        &self,
-        st: &State,
-        x: usize,
-        role: Role,
+        &self, st: &State, x: usize, role: Role,
         visit: &mut dyn FnMut(usize, usize, usize, Role) -> bool,
     ) -> bool {
         if self.work.exhausted() {
@@ -2688,11 +2670,7 @@ impl<'a> Graph<'a> {
     /// A successor whose filler is a DATA RANGE is a node of the data domain, and is therefore
     /// created without the internalized TBox in its label — see [`Node::concrete`].
     pub(crate) fn new_successor(
-        &self,
-        st: &mut State,
-        x: usize,
-        role: Role,
-        fillers: &[u32],
+        &self, st: &mut State, x: usize, role: Role, fillers: &[u32],
     ) -> usize {
         let concrete = fillers.iter().any(|&c| self.is_concrete_filler(c));
         let mut label = if concrete {
@@ -2809,11 +2787,7 @@ impl<'a> Graph<'a> {
     /// `test` runs while the read's scratch is held, so it must not read a neighbourhood
     /// itself; a label or identity test is what it is for.
     pub(crate) fn any_neighbour(
-        &self,
-        st: &State,
-        x: usize,
-        role: Role,
-        test: &mut dyn FnMut(usize) -> bool,
+        &self, st: &State, x: usize, role: Role, test: &mut dyn FnMut(usize) -> bool,
     ) -> bool {
         self.read_neighbours(st, x, role, false, test)
     }
@@ -2834,10 +2808,7 @@ impl<'a> Graph<'a> {
     /// Retain the accepted predecessor chain in reverse path order. The traversal
     /// established these products; this step performs no further graph search.
     fn observe_language_path(
-        &self,
-        role: Role,
-        initial: (usize, usize),
-        target: (usize, usize),
+        &self, role: Role, initial: (usize, usize), target: (usize, usize),
         predecessors: &purrdf_lex::allocation::OrderedTable<(usize, usize), Option<PathStep>>,
     ) -> bool {
         let start = self
@@ -2877,13 +2848,8 @@ impl<'a> Graph<'a> {
     /// are queued; epsilon cycles and graph cycles therefore terminate without
     /// imposing a path-length bound. All scratch dies before its original grant.
     fn read_role_language(
-        &self,
-        st: &State,
-        x: usize,
-        role: Role,
-        machine: &super::roles::Automaton,
-        record_all: bool,
-        visit: &mut dyn FnMut(usize) -> bool,
+        &self, st: &State, x: usize, role: Role, machine: &super::roles::Automaton,
+        record_all: bool, visit: &mut dyn FnMut(usize) -> bool,
     ) -> Result<bool, purrdf_lex::allocation::StorageError> {
         use purrdf_lex::allocation::{Memory, OrderedTable, Resident};
         let mut resident = Resident;
@@ -3042,11 +3008,7 @@ impl<'a> Graph<'a> {
     /// for its member count instead of walked — a walk that will be cached runs to its end
     /// even once `visit` has its answer, so the next read is a cache read.
     fn read_neighbours(
-        &self,
-        st: &State,
-        x: usize,
-        role: Role,
-        record_all: bool,
+        &self, st: &State, x: usize, role: Role, record_all: bool,
         visit: &mut dyn FnMut(usize) -> bool,
     ) -> bool {
         // A neighbourhood read is the single most-called scan in either calculus — every
@@ -3379,10 +3341,7 @@ impl<'a> Graph<'a> {
     /// The cached closure of the root `x` over transitive pattern `index`, brought up to date,
     /// if a read has cached it.
     pub(crate) fn reach_of(
-        &self,
-        st: &State,
-        x: usize,
-        index: usize,
+        &self, st: &State, x: usize, index: usize,
     ) -> Option<std::rc::Rc<Reach>> {
         self.integrate(st);
         st.closures.borrow().get(index, find(st, x)).cloned()
@@ -3410,12 +3369,7 @@ impl<'a> Graph<'a> {
     /// One closure step from `y` over the patterns `ach`: push every endpoint the current walk
     /// has not reached onto the frontier, in edge order.
     fn reach(
-        &self,
-        st: &State,
-        y: usize,
-        ach: &[(u32, bool)],
-        scratch: &mut ReadScratch,
-        index: usize,
+        &self, st: &State, y: usize, ach: &[(u32, bool)], scratch: &mut ReadScratch, index: usize,
         root: usize,
     ) {
         for_each_step(st, y, ach, |z, step| {
@@ -3674,12 +3628,7 @@ impl<'a> Graph<'a> {
     /// demand `n` ELEMENTS rather than `n` edges. No IRI is minted: a witness is an anonymous
     /// tree node.
     pub(crate) fn ensure_at_least(
-        &self,
-        st: &mut State,
-        x: usize,
-        n: u32,
-        role: Role,
-        filler: u32,
+        &self, st: &mut State, x: usize, n: u32, role: Role, filler: u32,
     ) -> bool {
         let n = n as usize;
         if n == 0 {
@@ -3742,12 +3691,7 @@ impl<'a> Graph<'a> {
 
     /// Whether `x` already has `n` pairwise-`≠` `role`-neighbours satisfying `filler`.
     pub(crate) fn has_at_least(
-        &self,
-        st: &State,
-        x: usize,
-        n: u32,
-        role: Role,
-        filler: u32,
+        &self, st: &State, x: usize, n: u32, role: Role, filler: u32,
     ) -> bool {
         if n == 0 {
             return true;
@@ -3872,11 +3816,7 @@ mod tests {
     /// compared against.
     fn reference_neighbors(g: &Graph<'_>, st: &State, x: usize, role: Role) -> Vec<usize> {
         fn step(
-            g: &Graph<'_>,
-            st: &State,
-            x: usize,
-            ach: &[(u32, bool)],
-            seen: &mut BTreeSet<usize>,
+            g: &Graph<'_>, st: &State, x: usize, ach: &[(u32, bool)], seen: &mut BTreeSet<usize>,
             out: &mut Vec<usize>,
         ) {
             let x = find(st, x);

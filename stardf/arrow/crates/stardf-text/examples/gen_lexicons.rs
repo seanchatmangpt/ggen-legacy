@@ -35,10 +35,7 @@ fn publish(path: &Path, bytes: &[u8], check: bool) -> Result<(), Box<dyn Error>>
     Ok(())
 }
 fn generate(
-    root: &Path,
-    name: &str,
-    expected: usize,
-    check: bool,
+    root: &Path, name: &str, expected: usize, check: bool,
 ) -> Result<Value, Box<dyn Error>> {
     let source = std::fs::read(root.join("icu-78.3").join(format!("{name}.txt")))?;
     let text = std::str::from_utf8(&source)?.trim_start_matches('\u{feff}');

@@ -9,20 +9,30 @@
 # `purrdf_lex` verbatim so consumers keep `use purrdf_lex::...` (same posture
 # as stardf-hash's `purrdf_hash`).
 name = "stardf-lex"
-description = "Native lexical foundations for PurRDF's grammars, over the zero-dependency stardf-hash root: the exact Turtle/SPARQL/XML/ECMA-262 character-class terminals and escape decoders, chunked byte-class scanners and needle searches that lower to packed compares, the RFC 8259 JSON string escaper and decoder, the JSON reader, value and deterministic writer, the YAML 1.2 reader and emitter, the RFC 8949 CBOR codec, RFC 6901 JSON Pointer tokens, RFC 3986 percent-encoding, Unicode normalization (NFC, NFD, NFKC, NFKD) as streaming stages, the RDF 1.2 term syntax with its IRI and literal escapers, an XML 1.0 + Namespaces reader, Crockford Base32, ordered association lists, and the heap work lists, iteratively dropped boxes and derive-exact Debug writer that deep trees walk with instead of the machine stack"
-version = "26.9.29"
+# Lane 07-publish-metadata (2026-10-31): v26.11.1 first-class closure —
+# upstream per-crate description retired in favor of the unified workspace
+# description; keywords/categories/repository join via inheritance.
+description.workspace = true
+# Lane 08-dual-key (2026-10-31): closure version inherits the workspace 26.11.1.
+version.workspace = true
 # Vendoring-lane divergence (disclosed): upstream inherits edition 2024 from the
 # purrdf workspace; the stardf/arrow root carries edition 2021, but this crate's
 # src uses let-chains (src/cbor/decode.rs:548 `if deterministic && let ...`),
 # so the edition is pinned 2024 here concretely (upstream-equal). The nightly
 # toolchain (rust-toolchain.toml) supports 2024.
 edition = "2024"
-publish = false
-repository = "https://github.com/seanchatmangpt/ggen-legacy"
+publish = true
+repository.workspace = true
+homepage.workspace = true
 license = "(MIT OR Apache-2.0 OR MulanPSL-2.0) AND MIT AND Unicode-3.0 AND BSD-3-Clause"
 rust-version = "1.98"
-keywords = ["lexer", "grammar", "unicode", "normalization", "rdf"]
-categories = ["parser-implementations", "encoding", "text-processing"]
+keywords.workspace = true
+categories.workspace = true
+# Lane 10 (2026-10-31): crates.io 10MB tarball ceiling — the frozen UCD
+# normalization vectors (tests/vectors, 6.4MB) stay in-tree for `cargo test`,
+# excluded from the packaged crate. data/html/ still rides: src/html.rs cites
+# data/html/ as the BSD-3-Clause notice location (redistribution obligation).
+exclude = ["tests/vectors"]
 
 [package.metadata.docs.rs]
 all-features = true
@@ -57,7 +67,7 @@ name = "purrdf_lex"
 # percent-encoding decoder here reads its digits with: the zero-dependency root.
 # Upstream key `purrdf-hash` renamed per the vendoring law; resolves to package
 # stardf-hash (vendored this workspace; lib name stays `purrdf_hash`).
-stardf-hash = { path = "../stardf-hash" }
+stardf-hash = { workspace = true }
 
 # Upstream [dev-dependencies] purrdf-testkit and purrdf-stack are OMITTED
 # (disclosed): those first-party crates are NOT in this lane's vendoring scope

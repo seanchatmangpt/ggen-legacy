@@ -2,6 +2,27 @@
 # DRAFT - Lane 15 finish (GL-STARDF-001). STAGED DRAFT ONLY. Not wired.
 # Do not merge as-is; see PLACEMENT DECISION below.
 #
+# WIRING TRUTH (re-verified on disk 2026-10-31):
+#   - NOT SPIRED into .github/workflows/ci.yml. ci.yml top-level jobs are
+#     exactly: verify, bounded-planning-replay, dsrust-reconstitution,
+#     docs-pack-reconstitution (4 jobs; no stardf job). This file remains in
+#     stardf/arrow/ci/ where GitHub does not read it.
+#   - .github/expected-workflows.txt = 3 entries
+#     (after-code-reading-crown.yml, ci.yml, v26-9-28-crown.yml); inventory
+#     delta zero, as the Option A plan requires.
+#   - ONE-COMMAND SPLICE (validated by dry-run into a /tmp copy of ci.yml +
+#     yaml.safe_load: parses clean, 5 jobs, stardf job = 10 steps,
+#     ubuntu-24.04, timeout 25):
+#
+#     sed -n '/^#   stardf-arrow-reconstitution:/,/^#           retention-days: 14/p' \
+#       stardf/arrow/ci/stardf-arrow-reconstitution.yml \
+#       | sed 's/^# //' >> .github/workflows/ci.yml
+#
+#     (pattern-anchored, not line-numbered: picks the job key through the
+#     final upload step from the fenced block below; dedents it to the 2-space
+#     indent ci.yml's `jobs:` key expects; appends after
+#     docs-pack-reconstitution. No trigger or expected-workflows.txt change.)
+#
 # PLACEMENT DECISION: OPTION A - extend .github/workflows/ci.yml by appending
 # the job block fenced at the bottom of this file as a new top-level job
 # (alongside dsrust-reconstitution / docs-pack-reconstitution). Rationale:
@@ -17,12 +38,18 @@
 # must NOT be moved into .github/workflows/ - GitHub would read it there and
 # the workflow inventory gate would fail against the 3-entry list.
 #
-# DEPENDENCY STATUS (verified on disk this session):
-#   - scripts/verify.py --emit-receipt <path> HAS LANDED (receipt lane's
-#     file; flag at scripts/verify.py --emit-receipt, emit_receipt() in the
-#     same file). Local court runs green: two runs produce an identical
-#     receipt_sha256 (1b29abcdedfcb4a3... prefix witnessed), and the receipt
-#     reports standing "UNKNOWN".
+# DEPENDENCY STATUS (re-verified on disk 2026-10-31):
+#   - scripts/verify.py --emit-receipt <path> HAS LANDED (flag registered in
+#     scripts/verify.py; emit_receipt() in the same file). Local court runs
+#     green THIS session: two runs produce an identical receipt_sha256
+#     (ceaf5a25f0ddd1d9... prefix witnessed 2026-10-31; supersedes the older
+#     1b29abcdedfcb4a3... prefix cited by the receipt lane — substrate
+#     evolved under the file), standing "UNKNOWN", 3/3 checks passed,
+#     errors[] empty.
+#   - ANTI-VACUITY court re-run green this session: verify.py --mutate
+#     drop-export exits 1 with "[PASS] anti-vacuity: drop-export mutation
+#     correctly FAILed the checks" (exit 1 is the expected mutated-run
+#     refusal; the CI step's if/exit-1 turns it into a step pass).
 #   - The receipt's `standing` field is "UNKNOWN" BY CONTRACT (verify.py
 #     nonclaims row: standing is witnessed externally, never self-asserted by
 #     the script). The court therefore asserts receipt_sha256 equality, all
@@ -30,13 +57,18 @@
 #     Job-level ALIVE is the whole job going green in CI, witnessed by the
 #     uploaded receipt artifact, not a receipt self-claim.
 #
-# AS-BUILT NONCLAIMS (current tree, this session):
-#   - cargo test --workspace --locked is RED in this checkout:
-#     crates/stardf-arrow-capi/tests/alloc_identity.rs fails to compile
-#     (E0425 `bucket` not found, 1 remaining error). Test files are owned by
-#     other lanes; error count dropped 10 -> 1 mid-session as those lanes
-#     landed. The "Execute stardf-arrow workspace baseline" step stays red
-#     until the owning lane lands its fix.
+# AS-BUILT NONCLAIMS (current tree, 2026-10-31):
+#   - cargo test --workspace --locked is STILL RED in this checkout, but the
+#     failing target MOVED. The previously-cited
+#     crates/stardf-arrow-capi/tests/alloc_identity.rs E0425 `bucket` error is
+#     GONE (that target now compiles: `cargo test -p stardf-arrow-capi
+#     --locked --no-run` exits 0, all 5 test targets built). Current blocker
+#     is crates/stardf-shapes: test targets `ontology_schema_surface` and
+#     `emitter_projections` fail E0433 (unresolved crate `purrdf_jsonschema`;
+#     tests reference purrdf_jsonschema:: but stardf-shapes Cargo.toml
+#     declares no such dev-dependency — rename residue, owned by the shapes
+#     lane). The "Execute stardf-arrow workspace baseline" step stays red
+#     until the shapes lane lands its fix.
 #   - Nothing in this lane ran in GitHub Actions; all receipts here are local
 #     (macOS, python3 + locally installed rdflib).
 #   - The anti-vacuity step drops `set -e` deliberately: the mutation run is

@@ -55,10 +55,7 @@ fn resident_taylor_layout<S>(coefficients: usize, jets: usize, _: &S) -> Result<
     TaylorScratch::required_bytes(coefficients, jets).ok_or(MathError::WorkspaceExhausted)
 }
 fn resident_taylor_prepare<S>(
-    coefficients: usize,
-    jets: usize,
-    zero: FixedInterval,
-    _: &mut S,
+    coefficients: usize, jets: usize, zero: FixedInterval, _: &mut S,
 ) -> Result<TaylorScratch, MathError> {
     TaylorScratch::new(coefficients, jets, zero)
 }
@@ -113,9 +110,7 @@ impl Drop for TaylorReservation<'_> {
 /// Refuses count overflow, insufficient work/workspace, invalid arithmetic and
 /// a closure that exceeds its admitted live-jet capacity. No jet can escape.
 pub fn with_taylor_workspace<T>(
-    order: usize,
-    live_jets: usize,
-    math: &mut CoordinateMath,
+    order: usize, live_jets: usize, math: &mut CoordinateMath,
     evaluate: impl for<'scope> FnOnce(
         &mut TaylorWorkspace<'scope>,
         &mut CoordinateMath,
@@ -139,10 +134,7 @@ pub fn with_taylor_workspace<T>(
 /// Adds the observer's original refusal and simultaneous pool checkout to
 /// [`with_taylor_workspace`]'s arithmetic and admission errors.
 pub fn with_taylor_workspace_observed<T, S>(
-    order: usize,
-    live_jets: usize,
-    math: &mut CoordinateMath,
-    state: &mut S,
+    order: usize, live_jets: usize, math: &mut CoordinateMath, state: &mut S,
     observe: impl FnMut(&CoordinateMath, &mut S) -> Result<(), MathError>,
     evaluate: impl for<'scope> FnOnce(
         &mut TaylorWorkspace<'scope>,
@@ -168,10 +160,7 @@ pub fn with_taylor_workspace_observed<T, S>(
 /// # Errors
 /// Preserves observer, physical factory, checkout and arithmetic failures.
 pub fn with_taylor_workspace_observed_with_storage<T, S>(
-    order: usize,
-    live_jets: usize,
-    math: &mut CoordinateMath,
-    state: &mut S,
+    order: usize, live_jets: usize, math: &mut CoordinateMath, state: &mut S,
     mut observe: impl FnMut(&CoordinateMath, &mut S) -> Result<(), MathError>,
     factory: TaylorScratchFactory<S>,
     evaluate: impl for<'scope> FnOnce(
@@ -342,9 +331,7 @@ impl<'scope> TaylorWorkspace<'scope> {
     /// # Errors
     /// Refuses a stale handle or an order beyond the workspace's declared order.
     pub fn coefficient(
-        &self,
-        jet: TaylorJet<'scope>,
-        order: usize,
+        &self, jet: TaylorJet<'scope>, order: usize,
     ) -> Result<&FixedInterval, MathError> {
         if order > self.order {
             return Err(MathError::Domain("Taylor derivative beyond declared order"));
@@ -359,10 +346,7 @@ impl<'scope> TaylorWorkspace<'scope> {
     /// # Errors
     /// Refuses stale handles, an excessive order or a different precision grid.
     pub fn set_coefficient(
-        &mut self,
-        jet: TaylorJet<'scope>,
-        order: usize,
-        value: FixedInterval,
+        &mut self, jet: TaylorJet<'scope>, order: usize, value: FixedInterval,
         math: &mut CoordinateMath,
     ) -> Result<(), MathError> {
         let start = self.validate(jet)?;
@@ -386,9 +370,7 @@ impl<'scope> TaylorWorkspace<'scope> {
     /// # Errors
     /// Refuses exhausted scratch/work admission.
     pub fn constant(
-        &mut self,
-        value: FixedInterval,
-        math: &mut CoordinateMath,
+        &mut self, value: FixedInterval, math: &mut CoordinateMath,
     ) -> Result<TaylorJet<'scope>, MathError> {
         let jet = self.allocate(math)?;
         self.store(jet, 0, value);
@@ -400,10 +382,7 @@ impl<'scope> TaylorWorkspace<'scope> {
     /// # Errors
     /// Refuses a first derivative in an order-zero pool and exhausted admission.
     pub fn argument(
-        &mut self,
-        value: FixedInterval,
-        derivative: FixedInterval,
-        math: &mut CoordinateMath,
+        &mut self, value: FixedInterval, derivative: FixedInterval, math: &mut CoordinateMath,
     ) -> Result<TaylorJet<'scope>, MathError> {
         if self.order == 0 {
             return Err(MathError::Domain(
@@ -424,10 +403,7 @@ impl<'scope> TaylorWorkspace<'scope> {
     /// this in a differential recurrence must prove the supplied input jet's
     /// lower coefficients before interpreting the result as derivatives.
     pub fn integral(
-        &mut self,
-        value: TaylorJet<'scope>,
-        constant: FixedInterval,
-        math: &mut CoordinateMath,
+        &mut self, value: TaylorJet<'scope>, constant: FixedInterval, math: &mut CoordinateMath,
     ) -> Result<TaylorJet<'scope>, MathError> {
         self.validate(value)?;
         let result = self.constant(constant, math)?;
@@ -448,10 +424,7 @@ impl<'scope> TaylorWorkspace<'scope> {
     /// # Errors
     /// Refuses either stale handle and exhausted arithmetic admission.
     pub fn assign(
-        &mut self,
-        target: TaylorJet<'scope>,
-        source: TaylorJet<'scope>,
-        math: &mut CoordinateMath,
+        &mut self, target: TaylorJet<'scope>, source: TaylorJet<'scope>, math: &mut CoordinateMath,
     ) -> Result<(), MathError> {
         let target_start = self.validate(target)?;
         let source_start = self.validate(source)?;
@@ -483,10 +456,7 @@ impl<'scope> TaylorWorkspace<'scope> {
     /// # Errors
     /// Refuses stale handles and arithmetic/admission failures.
     pub fn add(
-        &mut self,
-        left: TaylorJet<'scope>,
-        right: TaylorJet<'scope>,
-        math: &mut CoordinateMath,
+        &mut self, left: TaylorJet<'scope>, right: TaylorJet<'scope>, math: &mut CoordinateMath,
     ) -> Result<TaylorJet<'scope>, MathError> {
         self.validate(left)?;
         self.validate(right)?;
@@ -505,10 +475,7 @@ impl<'scope> TaylorWorkspace<'scope> {
     /// # Errors
     /// Refuses stale handles and arithmetic/admission failures.
     pub fn sub(
-        &mut self,
-        left: TaylorJet<'scope>,
-        right: TaylorJet<'scope>,
-        math: &mut CoordinateMath,
+        &mut self, left: TaylorJet<'scope>, right: TaylorJet<'scope>, math: &mut CoordinateMath,
     ) -> Result<TaylorJet<'scope>, MathError> {
         self.validate(left)?;
         self.validate(right)?;
@@ -527,10 +494,7 @@ impl<'scope> TaylorWorkspace<'scope> {
     /// # Errors
     /// Refuses stale handles and arithmetic/admission failures.
     pub fn scale(
-        &mut self,
-        value: TaylorJet<'scope>,
-        factor: &FixedInterval,
-        math: &mut CoordinateMath,
+        &mut self, value: TaylorJet<'scope>, factor: &FixedInterval, math: &mut CoordinateMath,
     ) -> Result<TaylorJet<'scope>, MathError> {
         self.validate(value)?;
         let result = self.allocate(math)?;
@@ -546,10 +510,7 @@ impl<'scope> TaylorWorkspace<'scope> {
     /// # Errors
     /// Refuses stale handles and arithmetic/admission failures.
     pub fn mul(
-        &mut self,
-        left: TaylorJet<'scope>,
-        right: TaylorJet<'scope>,
-        math: &mut CoordinateMath,
+        &mut self, left: TaylorJet<'scope>, right: TaylorJet<'scope>, math: &mut CoordinateMath,
     ) -> Result<TaylorJet<'scope>, MathError> {
         self.validate(left)?;
         self.validate(right)?;
@@ -579,10 +540,7 @@ impl<'scope> TaylorWorkspace<'scope> {
     /// # Errors
     /// Refuses an unresolved/zero divisor, stale handles and admission failures.
     pub fn div(
-        &mut self,
-        left: TaylorJet<'scope>,
-        right: TaylorJet<'scope>,
-        math: &mut CoordinateMath,
+        &mut self, left: TaylorJet<'scope>, right: TaylorJet<'scope>, math: &mut CoordinateMath,
     ) -> Result<TaylorJet<'scope>, MathError> {
         self.validate(left)?;
         self.validate(right)?;
@@ -608,9 +566,7 @@ impl<'scope> TaylorWorkspace<'scope> {
     /// # Errors
     /// Refuses unresolved zero/domain singularities, stale handles and admission failures.
     pub fn sqrt(
-        &mut self,
-        value: TaylorJet<'scope>,
-        math: &mut CoordinateMath,
+        &mut self, value: TaylorJet<'scope>, math: &mut CoordinateMath,
     ) -> Result<TaylorJet<'scope>, MathError> {
         self.validate(value)?;
         let result = self.allocate(math)?;
@@ -637,9 +593,7 @@ impl<'scope> TaylorWorkspace<'scope> {
     /// # Errors
     /// Refuses stale handles and arithmetic/admission failures.
     pub fn sin_cos(
-        &mut self,
-        value: TaylorJet<'scope>,
-        math: &mut CoordinateMath,
+        &mut self, value: TaylorJet<'scope>, math: &mut CoordinateMath,
     ) -> Result<(TaylorJet<'scope>, TaylorJet<'scope>), MathError> {
         self.validate(value)?;
         let sine = self.allocate(math)?;
@@ -672,9 +626,7 @@ impl<'scope> TaylorWorkspace<'scope> {
     /// # Errors
     /// Refuses a nonpositive/singular interval, stale handles and admission failures.
     pub fn log(
-        &mut self,
-        value: TaylorJet<'scope>,
-        math: &mut CoordinateMath,
+        &mut self, value: TaylorJet<'scope>, math: &mut CoordinateMath,
     ) -> Result<TaylorJet<'scope>, MathError> {
         self.validate(value)?;
         let result = self.allocate(math)?;
@@ -702,9 +654,7 @@ impl<'scope> TaylorWorkspace<'scope> {
     /// # Errors
     /// Refuses stale handles and arithmetic/admission failures.
     pub fn exp(
-        &mut self,
-        value: TaylorJet<'scope>,
-        math: &mut CoordinateMath,
+        &mut self, value: TaylorJet<'scope>, math: &mut CoordinateMath,
     ) -> Result<TaylorJet<'scope>, MathError> {
         self.validate(value)?;
         let result = self.allocate(math)?;
@@ -747,9 +697,7 @@ impl<'a> SymmetricTaylorPanel<'a> {
     /// Refuses different grids, nonpoint center/width, negative width, an
     /// asymmetric panel, or exhausted arithmetic admission.
     pub fn new(
-        center: &'a FixedInterval,
-        interval: &'a FixedInterval,
-        half_width: &'a FixedInterval,
+        center: &'a FixedInterval, interval: &'a FixedInterval, half_width: &'a FixedInterval,
         math: &mut CoordinateMath,
     ) -> Result<Self, MathError> {
         if center.lower() != center.upper()
@@ -788,10 +736,7 @@ impl<'a> SymmetricTaylorPanel<'a> {
 /// Refuses invalid order, arithmetic, scratch or callback admission. No jet
 /// escapes the bounded coefficient pool or survives its scratch rewind.
 pub fn integrate_taylor_panel(
-    order: usize,
-    live_jets: usize,
-    panel: SymmetricTaylorPanel<'_>,
-    math: &mut CoordinateMath,
+    order: usize, live_jets: usize, panel: SymmetricTaylorPanel<'_>, math: &mut CoordinateMath,
     mut evaluate: impl for<'scope> FnMut(
         &FixedInterval,
         &mut TaylorWorkspace<'scope>,
@@ -815,12 +760,8 @@ pub fn integrate_taylor_panel(
 /// # Errors
 /// Adds the observer's original refusal to [`integrate_taylor_panel`].
 pub fn integrate_taylor_panel_observed<S>(
-    order: usize,
-    live_jets: usize,
-    panel: SymmetricTaylorPanel<'_>,
-    math: &mut CoordinateMath,
-    state: &mut S,
-    observe: impl FnMut(&CoordinateMath, &mut S) -> Result<(), MathError>,
+    order: usize, live_jets: usize, panel: SymmetricTaylorPanel<'_>, math: &mut CoordinateMath,
+    state: &mut S, observe: impl FnMut(&CoordinateMath, &mut S) -> Result<(), MathError>,
     evaluate: impl for<'scope> FnMut(
         &FixedInterval,
         &mut TaylorWorkspace<'scope>,
@@ -851,12 +792,8 @@ pub fn integrate_taylor_panel_observed<S>(
     reason = "The original panel, mutable arithmetic state, observation and owned pool factory remain explicit and sequential."
 )]
 pub fn integrate_taylor_panel_observed_with_storage<S>(
-    order: usize,
-    live_jets: usize,
-    panel: SymmetricTaylorPanel<'_>,
-    math: &mut CoordinateMath,
-    state: &mut S,
-    observe: impl FnMut(&CoordinateMath, &mut S) -> Result<(), MathError>,
+    order: usize, live_jets: usize, panel: SymmetricTaylorPanel<'_>, math: &mut CoordinateMath,
+    state: &mut S, observe: impl FnMut(&CoordinateMath, &mut S) -> Result<(), MathError>,
     factory: TaylorScratchFactory<S>,
     mut evaluate: impl for<'scope> FnMut(
         &FixedInterval,

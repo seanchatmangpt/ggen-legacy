@@ -26,25 +26,16 @@ pub(crate) trait NodingWork {
     fn visit(&mut self, work: u64, point: Option<&Coord>) -> Result<(), Self::Error>;
     fn compare(&mut self, a: &Rat, b: &Rat) -> Result<core::cmp::Ordering, Self::Error>;
     fn compare_coordinate(
-        &mut self,
-        a: &Coord,
-        b: &Coord,
+        &mut self, a: &Coord, b: &Coord,
     ) -> Result<core::cmp::Ordering, Self::Error>;
     fn exact<T>(
-        &mut self,
-        operation: ExactOperation,
-        operands: &[&Rat],
-        count: u64,
+        &mut self, operation: ExactOperation, operands: &[&Rat], count: u64,
         evaluate: impl FnOnce(
             &crate::numerical::ExactValues<'_>,
         ) -> Result<T, purrdf_xsd::integer::LimbScratchError>,
     ) -> Result<T, Self::Error>;
     fn intersect(
-        &mut self,
-        a: &Coord,
-        b: &Coord,
-        c: &Coord,
-        d: &Coord,
+        &mut self, a: &Coord, b: &Coord, c: &Coord, d: &Coord,
     ) -> Result<SegmentIntersection, Self::Error>;
     fn on_segment(&mut self, p: &Coord, a: &Coord, b: &Coord) -> Result<bool, Self::Error>;
 }
@@ -79,10 +70,7 @@ impl<E, F: FnMut(u64, Option<&Coord>) -> Result<(), E>> NodingWork for LegacyWor
     /// Preserve the legacy coordinate-event callback's error protocol while the
     /// original exact body runs once; the admitted worker separately meters it.
     fn exact<T>(
-        &mut self,
-        _: ExactOperation,
-        _: &[&Rat],
-        _: u64,
+        &mut self, _: ExactOperation, _: &[&Rat], _: u64,
         evaluate: impl FnOnce(
             &crate::numerical::ExactValues<'_>,
         ) -> Result<T, purrdf_xsd::integer::LimbScratchError>,
@@ -91,11 +79,7 @@ impl<E, F: FnMut(u64, Option<&Coord>) -> Result<(), E>> NodingWork for LegacyWor
             .expect("resident noding arithmetic has its infallible allocation contract"))
     }
     fn intersect(
-        &mut self,
-        a: &Coord,
-        b: &Coord,
-        c: &Coord,
-        d: &Coord,
+        &mut self, a: &Coord, b: &Coord, c: &Coord, d: &Coord,
     ) -> Result<SegmentIntersection, E> {
         Ok(intersect(a, b, c, d))
     }
@@ -132,9 +116,7 @@ impl NodingWork for AdmittedWork<'_, '_> {
         ExactAdmission::new(self.context, self.progress).compare(a, b)
     }
     fn compare_coordinate(
-        &mut self,
-        a: &Coord,
-        b: &Coord,
+        &mut self, a: &Coord, b: &Coord,
     ) -> Result<core::cmp::Ordering, GeoError> {
         super::segment::compare_inner(
             a,
@@ -143,10 +125,7 @@ impl NodingWork for AdmittedWork<'_, '_> {
         )
     }
     fn exact<T>(
-        &mut self,
-        operation: ExactOperation,
-        operands: &[&Rat],
-        count: u64,
+        &mut self, operation: ExactOperation, operands: &[&Rat], count: u64,
         evaluate: impl FnOnce(
             &crate::numerical::ExactValues<'_>,
         ) -> Result<T, purrdf_xsd::integer::LimbScratchError>,
@@ -155,11 +134,7 @@ impl NodingWork for AdmittedWork<'_, '_> {
             .expression(operation, operands, count, evaluate)
     }
     fn intersect(
-        &mut self,
-        a: &Coord,
-        b: &Coord,
-        c: &Coord,
-        d: &Coord,
+        &mut self, a: &Coord, b: &Coord, c: &Coord, d: &Coord,
     ) -> Result<SegmentIntersection, GeoError> {
         intersect_admitted(
             a,
@@ -180,11 +155,8 @@ impl NodingWork for AdmittedWork<'_, '_> {
 }
 
 pub(crate) fn events_admitted<'source>(
-    edges: &[(&Coord, &Coord)],
-    seeds: impl Iterator<Item = &'source Coord>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    edges: &[(&Coord, &Coord)], seeds: impl Iterator<Item = &'source Coord>,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<RetainedBuilder<Coord>, GeoError> {
     events_inner(
         edges,
@@ -198,9 +170,7 @@ pub(crate) fn events_admitted<'source>(
 }
 
 pub(crate) fn events_inner<'source, W: NodingWork>(
-    edges: &[(&Coord, &Coord)],
-    seeds: impl Iterator<Item = Cow<'source, Coord>>,
-    work: &mut W,
+    edges: &[(&Coord, &Coord)], seeds: impl Iterator<Item = Cow<'source, Coord>>, work: &mut W,
 ) -> Result<W::Array<Coord>, W::Error> {
     let mut points = W::Array::default();
     for point in seeds {
@@ -251,11 +221,8 @@ pub(crate) fn events_inner<'source, W: NodingWork>(
 }
 
 pub(crate) fn fragments_admitted<'a>(
-    edge: (&Coord, &Coord),
-    events: &'a [Coord],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    edge: (&Coord, &Coord), events: &'a [Coord], context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<RetainedBuilder<(&'a Coord, &'a Coord)>, GeoError> {
     fragments_inner(
         edge,
@@ -269,9 +236,7 @@ pub(crate) fn fragments_admitted<'a>(
 }
 
 pub(crate) fn fragments_inner<'a, W: NodingWork>(
-    (start, end): (&Coord, &Coord),
-    events: &'a [Coord],
-    work: &mut W,
+    (start, end): (&Coord, &Coord), events: &'a [Coord], work: &mut W,
 ) -> Result<W::Array<(&'a Coord, &'a Coord)>, W::Error> {
     if work.compare_coordinate(start, end)?.is_eq() {
         return Ok(W::Array::default());

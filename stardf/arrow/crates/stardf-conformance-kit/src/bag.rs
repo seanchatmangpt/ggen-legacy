@@ -22,9 +22,7 @@ const NS: &str = "urn:purrdf:conformance:solution:";
 /// # Errors
 /// Returns a typed malformed-input or kernel canonicalization refusal.
 pub fn canonical_solutions(
-    variables: &[String],
-    rows: &[Vec<Option<TermValue>>],
-    ordered: bool,
+    variables: &[String], rows: &[Vec<Option<TermValue>>], ordered: bool,
 ) -> Result<String, GradeError> {
     let names: BTreeSet<&str> = variables.iter().map(String::as_str).collect();
     if names.len() != variables.len() {
@@ -95,11 +93,8 @@ pub fn canonical_solutions(
 /// # Errors
 /// Returns a mismatch or a typed refusal for either malformed input.
 pub fn compare_solutions(
-    expected_variables: &[String],
-    expected_rows: &[Vec<Option<TermValue>>],
-    actual_variables: &[String],
-    actual_rows: &[Vec<Option<TermValue>>],
-    ordered: bool,
+    expected_variables: &[String], expected_rows: &[Vec<Option<TermValue>>],
+    actual_variables: &[String], actual_rows: &[Vec<Option<TermValue>>], ordered: bool,
 ) -> Result<(), GradeError> {
     let expected = canonical_solutions(expected_variables, expected_rows, ordered)?;
     let actual = canonical_solutions(actual_variables, actual_rows, ordered)?;

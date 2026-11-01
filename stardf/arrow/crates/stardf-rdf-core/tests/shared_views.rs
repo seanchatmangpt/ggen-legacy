@@ -1790,10 +1790,7 @@ fn graph_names<D: DatasetView>(view: &D) -> BTreeSet<TermValue> {
 /// view under test, run the pattern, and resolve the answer back to values. A
 /// value interned nowhere matches nothing, which is an empty answer, not a skip.
 fn value_probe<D: DatasetView>(
-    view: &D,
-    s: Option<&TermValue>,
-    p: Option<&TermValue>,
-    o: Option<&TermValue>,
+    view: &D, s: Option<&TermValue>, p: Option<&TermValue>, o: Option<&TermValue>,
     g: GraphMatchValue<'_>,
 ) -> BTreeSet<Row> {
     let bind = |value: Option<&TermValue>| match value {

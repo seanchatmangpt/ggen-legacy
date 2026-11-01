@@ -99,9 +99,7 @@ const READ_BUFFER_BYTES: usize = 64 << 10;
 /// (both correct) failures. Reproducing the buffered precedence would require reading
 /// to the end first, which is the thing streaming exists to avoid.
 pub fn parse_dataset_from_reader<R: Read>(
-    reader: R,
-    media_type: &str,
-    base_iri: Option<&str>,
+    reader: R, media_type: &str, base_iri: Option<&str>,
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
     let format = classify(media_type)?;
     if !format.is_line_oriented() {
@@ -139,9 +137,7 @@ pub fn parse_dataset_from_reader<R: Read>(
 
 /// Drive one line-oriented format's streaming parser to exhaustion.
 fn stream_line_format<R: Read>(
-    reader: R,
-    format: NativeRdfFormat,
-    base: purrdf_iri::BaseScope,
+    reader: R, format: NativeRdfFormat, base: purrdf_iri::BaseScope,
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
     match format {
         NativeRdfFormat::HexTuples => {

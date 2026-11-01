@@ -50,9 +50,7 @@ pub(crate) fn into_array(mut value: Value) -> Result<Vec<Value>, Value> {
 ///
 /// Returns the replaced value.
 pub(crate) fn insert_sorted(
-    object: &mut Object,
-    name: impl Into<String>,
-    value: impl Into<Value>,
+    object: &mut Object, name: impl Into<String>, value: impl Into<Value>,
 ) -> Option<Value> {
     let name = name.into();
     let value = value.into();

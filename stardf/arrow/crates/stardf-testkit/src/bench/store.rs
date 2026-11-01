@@ -94,9 +94,7 @@ impl Store {
     /// Read `record`, or `None` when it does not exist. A record that exists
     /// but cannot be read or parsed is an error, never an absence.
     pub(crate) fn read(
-        &self,
-        components: &[&str],
-        record: &str,
+        &self, components: &[&str], record: &str,
     ) -> Result<Option<Estimates>, String> {
         let path = self.record_path(components, record)?;
         match std::fs::read_to_string(&path) {
@@ -111,10 +109,7 @@ impl Store {
     /// Write `estimates` as `record`, replacing any previous file whole: the
     /// text goes to a sibling temporary file that is then renamed over it.
     pub(crate) fn write(
-        &self,
-        components: &[&str],
-        record: &str,
-        estimates: &Estimates,
+        &self, components: &[&str], record: &str, estimates: &Estimates,
     ) -> Result<PathBuf, String> {
         let text = estimates.to_json().map_err(|error| error.to_string())?;
         self.write_text(components, record, &text)
@@ -122,10 +117,7 @@ impl Store {
 
     /// Write either estimates schema through the same atomic record replacement.
     pub(crate) fn write_text(
-        &self,
-        components: &[&str],
-        record: &str,
-        text: &str,
+        &self, components: &[&str], record: &str, text: &str,
     ) -> Result<PathBuf, String> {
         let path = self.record_path(components, record)?;
         let directory = path

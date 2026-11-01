@@ -110,8 +110,7 @@ impl LineIndex {
     /// # Errors
     /// Returns checked storage overflow, admission refusal or allocator refusal.
     pub fn new_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        src: &str,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        src: &str, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         let bytes = src.as_bytes();
         let mut line_starts = Vec::new();
@@ -129,8 +128,7 @@ impl LineIndex {
     /// # Errors
     /// Returns an accounting invariant or shrink refusal.
     pub fn release_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         memory.release_vec(self.line_starts)
     }

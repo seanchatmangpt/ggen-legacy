@@ -88,8 +88,7 @@ fn assert_backends_agree_store(label: &str, shapes_ttl: &str, dataset: &Arc<RdfD
 }
 
 fn assert_reports_agree(
-    label: &str,
-    a: &purrdf_shapes::report::ValidationReport,
+    label: &str, a: &purrdf_shapes::report::ValidationReport,
     b: &purrdf_shapes::report::ValidationReport,
 ) {
     assert_eq!(

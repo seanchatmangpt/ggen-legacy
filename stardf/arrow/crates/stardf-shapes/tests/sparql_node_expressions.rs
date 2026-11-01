@@ -747,8 +747,7 @@ const TWO_INSTANCES: &str = r"
 /// Validate through `validate_dataset_with_shapes_graph`, the entry point the
 /// report was filed against.
 fn validate_graphs(
-    shapes_ttl: &str,
-    data_ttl: &str,
+    shapes_ttl: &str, data_ttl: &str,
 ) -> Result<purrdf_shapes::report::ValidationReport, String> {
     let shapes = parse_shapes(shapes_ttl, None).map_err(|error| error.to_string())?;
     let data = parse_turtle_to_dataset(data_ttl, None).expect("data parse");

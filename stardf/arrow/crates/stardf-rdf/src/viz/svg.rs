@@ -50,9 +50,7 @@ pub struct VizSvgDocument {
 
 /// Build a complete versioned export from an existing semantic projection.
 pub fn build_export(
-    projection: &VizProjection,
-    spec: &VizSpec,
-    layout_options: &VizLayoutOptions,
+    projection: &VizProjection, spec: &VizSpec, layout_options: &VizLayoutOptions,
 ) -> Result<VizExport, VizError> {
     let scene = build_scene(projection, spec)?;
     let layout = layout_scene(&scene, layout_options)?;
@@ -76,9 +74,7 @@ pub fn build_export(
 
 /// Project a dataset into a complete structured visualization export.
 pub fn project_dataset_export(
-    dataset: &RdfDataset,
-    spec: &VizSpec,
-    layout_options: &VizLayoutOptions,
+    dataset: &RdfDataset, spec: &VizSpec, layout_options: &VizLayoutOptions,
 ) -> Result<VizExport, VizError> {
     let projection = project_dataset(dataset, spec)?;
     build_export(&projection, spec, layout_options)
@@ -86,9 +82,7 @@ pub fn project_dataset_export(
 
 /// Project graph-like input into a complete structured visualization export.
 pub fn project_graph_input_export(
-    input: &VizGraphInput,
-    spec: &VizSpec,
-    layout_options: &VizLayoutOptions,
+    input: &VizGraphInput, spec: &VizSpec, layout_options: &VizLayoutOptions,
 ) -> Result<VizExport, VizError> {
     let projection = project_graph_input(input, spec)?;
     build_export(&projection, spec, layout_options)
@@ -101,9 +95,7 @@ pub fn export_json(export: &VizExport) -> Result<String, VizError> {
 
 /// Render an existing semantic projection to deterministic SVG.
 pub fn render_projection_svg(
-    projection: &VizProjection,
-    spec: &VizSpec,
-    options: &VizRenderOptions,
+    projection: &VizProjection, spec: &VizSpec, options: &VizRenderOptions,
 ) -> Result<VizSvgDocument, VizError> {
     let export = build_export(projection, spec, &options.layout)?;
     let svg = render_export_svg(&export, &options.svg)?;
@@ -112,9 +104,7 @@ pub fn render_projection_svg(
 
 /// Project a dataset and render deterministic SVG.
 pub fn render_dataset_svg(
-    dataset: &RdfDataset,
-    spec: &VizSpec,
-    options: &VizRenderOptions,
+    dataset: &RdfDataset, spec: &VizSpec, options: &VizRenderOptions,
 ) -> Result<VizSvgDocument, VizError> {
     let projection = project_dataset(dataset, spec)?;
     render_projection_svg(&projection, spec, options)
@@ -122,9 +112,7 @@ pub fn render_dataset_svg(
 
 /// Project graph-like input and render deterministic SVG.
 pub fn render_graph_input_svg(
-    input: &VizGraphInput,
-    spec: &VizSpec,
-    options: &VizRenderOptions,
+    input: &VizGraphInput, spec: &VizSpec, options: &VizRenderOptions,
 ) -> Result<VizSvgDocument, VizError> {
     let projection = project_graph_input(input, spec)?;
     render_projection_svg(&projection, spec, options)
@@ -323,9 +311,7 @@ fn build_element_index(scene: &VizScene, layout: &VizLayout) -> Vec<VizElementIn
 }
 
 fn table_cell_binding(
-    table: &VizSceneTable,
-    row: usize,
-    column: usize,
+    table: &VizSceneTable, row: usize, column: usize,
 ) -> (String, Vec<VizSemanticRef>) {
     if row == 0 {
         return (format!("table-header-{column}"), Vec::new());
@@ -343,10 +329,7 @@ fn table_cell_binding(
 }
 
 fn index_entry(
-    element_id: &str,
-    scene_id: &str,
-    bindings: Vec<VizSemanticRef>,
-    kind: VizElementKind,
+    element_id: &str, scene_id: &str, bindings: Vec<VizSemanticRef>, kind: VizElementKind,
 ) -> VizElementIndexEntry {
     VizElementIndexEntry {
         element_id: element_id.to_owned(),
@@ -484,9 +467,7 @@ fn render_graph(export: &VizExport, out: &mut String) -> Result<(), VizError> {
 }
 
 fn render_edge(
-    scene: &VizSceneEdge,
-    layout: &VizLayoutEdge,
-    out: &mut String,
+    scene: &VizSceneEdge, layout: &VizLayoutEdge, out: &mut String,
 ) -> Result<(), VizError> {
     let class = edge_class(scene.kind);
     let color = edge_stroke(scene.kind, &scene.id);
@@ -546,10 +527,7 @@ fn render_edge_label_leader(points: &[VizPoint], label: VizRect, out: &mut Strin
 }
 
 fn render_anchor(
-    edge_id: &str,
-    scene: &VizEdgeAnchor,
-    layout: &VizLayoutAnchor,
-    out: &mut String,
+    edge_id: &str, scene: &VizEdgeAnchor, layout: &VizLayoutAnchor, out: &mut String,
 ) -> Result<(), VizError> {
     let escaped_edge_id = xml_attribute(edge_id)?;
     writeln!(
@@ -579,9 +557,7 @@ fn render_anchor(
 }
 
 fn render_node(
-    scene: &VizSceneNode,
-    layout: &VizLayoutNode,
-    out: &mut String,
+    scene: &VizSceneNode, layout: &VizLayoutNode, out: &mut String,
 ) -> Result<(), VizError> {
     let mut class = format!("node {}", node_class(scene.kind));
     if scene
@@ -773,11 +749,7 @@ fn render_legend_symbol(entry: &VizLegendEntry, rect: VizRect, out: &mut String)
 }
 
 fn render_label_box(
-    id: &str,
-    scene: &VizSceneLabel,
-    layout: &VizLayoutLabel,
-    class: &str,
-    out: &mut String,
+    id: &str, scene: &VizSceneLabel, layout: &VizLayoutLabel, class: &str, out: &mut String,
 ) -> Result<(), VizError> {
     render_rect(layout.rect, &format!("{class}-box"), out);
     render_text(id, scene, layout, class, out)?;
@@ -785,11 +757,7 @@ fn render_label_box(
 }
 
 fn render_text(
-    id: &str,
-    scene: &VizSceneLabel,
-    layout: &VizLayoutLabel,
-    class: &str,
-    out: &mut String,
+    id: &str, scene: &VizSceneLabel, layout: &VizLayoutLabel, class: &str, out: &mut String,
 ) -> Result<(), VizError> {
     let id = xml_attribute(id)?;
     write!(
@@ -828,11 +796,7 @@ fn render_text(
 }
 
 fn render_badges(
-    owner_id: &str,
-    scene: &[VizBadge],
-    layout: &[VizLayoutBadge],
-    class: &str,
-    out: &mut String,
+    owner_id: &str, scene: &[VizBadge], layout: &[VizLayoutBadge], class: &str, out: &mut String,
 ) -> Result<(), VizError> {
     let escaped_owner_id = xml_attribute(owner_id)?;
     for geometry in layout {
@@ -919,9 +883,7 @@ fn path_data(points: &[VizPoint]) -> String {
 }
 
 fn rounded_corner(
-    previous: VizPoint,
-    corner: VizPoint,
-    next: VizPoint,
+    previous: VizPoint, corner: VizPoint, next: VizPoint,
 ) -> Option<(VizPoint, VizPoint)> {
     let incoming_horizontal = previous.y == corner.y;
     let outgoing_horizontal = corner.y == next.y;

@@ -20,10 +20,7 @@ pub(crate) enum Request {
 
 impl Request {
     pub(crate) fn read<I: ViewTermId>(
-        self,
-        provider: &dyn SnapshotStatistics<I>,
-        pattern: ProbePattern<I>,
-        layered: bool,
+        self, provider: &dyn SnapshotStatistics<I>, pattern: ProbePattern<I>, layered: bool,
     ) -> Option<PredicateStatistics> {
         // Ordinary and annotation rows can change classification when another
         // layer adds or removes a reifier declaration. Either effective stream
@@ -71,8 +68,7 @@ impl Request {
 }
 
 pub(crate) fn combine(
-    sources: impl IntoIterator<Item = Option<PredicateStatistics>>,
-    layered: bool,
+    sources: impl IntoIterator<Item = Option<PredicateStatistics>>, layered: bool,
 ) -> Option<PredicateStatistics> {
     let mut result = PredicateStatistics {
         rows: StatisticCount {
@@ -105,9 +101,7 @@ pub(crate) trait LayeredStatistics: DatasetView + Sync {
     fn statistics_source(&self) -> &'static str;
     fn statistics_revision(&self) -> u64;
     fn physical_statistic(
-        &self,
-        request: Request,
-        pattern: ProbePattern<Self::Id>,
+        &self, request: Request, pattern: ProbePattern<Self::Id>,
     ) -> Option<PredicateStatistics>;
 }
 
@@ -125,9 +119,7 @@ impl<D: LayeredStatistics> SnapshotStatistics<D::Id> for D {
     }
 
     fn stream_rows(
-        &self,
-        graph: GraphMatch<D::Id>,
-        stream: StatisticsStream,
+        &self, graph: GraphMatch<D::Id>, stream: StatisticsStream,
     ) -> Option<StatisticCount> {
         Some(
             self.physical_statistic(
@@ -144,10 +136,7 @@ impl<D: LayeredStatistics> SnapshotStatistics<D::Id> for D {
     }
 
     fn predicate(
-        &self,
-        predicate: D::Id,
-        graph: GraphMatch<D::Id>,
-        stream: StatisticsStream,
+        &self, predicate: D::Id, graph: GraphMatch<D::Id>, stream: StatisticsStream,
     ) -> Option<PredicateStatistics> {
         self.physical_statistic(
             Request::Predicate(stream),
@@ -161,11 +150,7 @@ impl<D: LayeredStatistics> SnapshotStatistics<D::Id> for D {
     }
 
     fn predicate_object(
-        &self,
-        predicate: D::Id,
-        object: D::Id,
-        graph: GraphMatch<D::Id>,
-        stream: StatisticsStream,
+        &self, predicate: D::Id, object: D::Id, graph: GraphMatch<D::Id>, stream: StatisticsStream,
     ) -> Option<StatisticCount> {
         Some(
             self.physical_statistic(
@@ -182,12 +167,8 @@ impl<D: LayeredStatistics> SnapshotStatistics<D::Id> for D {
     }
 
     fn predicate_object_kind(
-        &self,
-        predicate: D::Id,
-        kind: RdfTermKind,
-        datatype: Option<D::Id>,
-        graph: GraphMatch<D::Id>,
-        stream: StatisticsStream,
+        &self, predicate: D::Id, kind: RdfTermKind, datatype: Option<D::Id>,
+        graph: GraphMatch<D::Id>, stream: StatisticsStream,
     ) -> Option<StatisticCount> {
         Some(
             self.physical_statistic(
@@ -204,9 +185,7 @@ impl<D: LayeredStatistics> SnapshotStatistics<D::Id> for D {
     }
 
     fn reifier_target_predicate(
-        &self,
-        predicate: D::Id,
-        graph: GraphMatch<D::Id>,
+        &self, predicate: D::Id, graph: GraphMatch<D::Id>,
     ) -> Option<PredicateStatistics> {
         self.physical_statistic(
             Request::Target,

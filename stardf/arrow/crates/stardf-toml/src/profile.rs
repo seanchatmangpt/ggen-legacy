@@ -117,10 +117,7 @@ pub struct Profile {
 impl Profile {
     /// Bind caller-owned naming and resource policy to the shipped grammar.
     pub fn new(
-        name: impl Into<String>,
-        version: u32,
-        vocabulary: Vocabulary,
-        bounds: Bounds,
+        name: impl Into<String>, version: u32, vocabulary: Vocabulary, bounds: Bounds,
     ) -> Result<Self, TomlError> {
         let name = name.into();
         if name.is_empty()

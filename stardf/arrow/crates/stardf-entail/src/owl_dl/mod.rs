@@ -388,24 +388,19 @@ impl Kb {
     /// decisions fail. [`EntailError::Stopped`] preserves the original signal
     /// before or during reverse mapping or key inference.
     pub(crate) fn from_dataset_until<D: DatasetView>(
-        ds: &D,
-        stop: Option<Arc<dyn StopSignal>>,
+        ds: &D, stop: Option<Arc<dyn StopSignal>>,
     ) -> Result<Self, EntailError<D::ReadError>> {
         Self::from_dataset_with_preparation(ds, stop, bounds::SchemaPreparationBudget::default())
     }
 
     pub(crate) fn from_dataset_with_preparation<D: DatasetView>(
-        ds: &D,
-        stop: Option<Arc<dyn StopSignal>>,
-        budget: bounds::SchemaPreparationBudget,
+        ds: &D, stop: Option<Arc<dyn StopSignal>>, budget: bounds::SchemaPreparationBudget,
     ) -> Result<Self, EntailError<D::ReadError>> {
         Self::from_dataset_recording(ds, stop, budget, None)
     }
 
     pub(crate) fn from_dataset_recording<D: DatasetView>(
-        ds: &D,
-        stop: Option<Arc<dyn StopSignal>>,
-        budget: bounds::SchemaPreparationBudget,
+        ds: &D, stop: Option<Arc<dyn StopSignal>>, budget: bounds::SchemaPreparationBudget,
         input: Option<[u8; 32]>,
     ) -> Result<Self, EntailError<D::ReadError>> {
         if stop.as_deref().is_some_and(StopSignal::stopped) {
@@ -587,8 +582,7 @@ impl Kb {
 
     /// Complete the same encoding with a selected fallible work boundary.
     pub(crate) fn finalize_until<E: From<roles::RoleHierarchyError>>(
-        &mut self,
-        mut poll: impl FnMut() -> Result<(), E>,
+        &mut self, mut poll: impl FnMut() -> Result<(), E>,
     ) -> Result<(), E> {
         poll()?;
         // The concept-tree `NN`-rule (the `cfg(test)` differential reference) adds a GUESSED
@@ -634,8 +628,7 @@ impl Kb {
     /// need negation-cache entries of their own, and [`ConceptTable::finalize_until`] is
     /// already cheap for a concept it has already covered (a single `is_none` check per id).
     pub(crate) fn encode_until<E: From<roles::RoleHierarchyError>>(
-        &mut self,
-        mut poll: impl FnMut() -> Result<(), E>,
+        &mut self, mut poll: impl FnMut() -> Result<(), E>,
     ) -> Result<(), E> {
         self.table.finalize_until(&mut poll)?;
         if !self.encoded {
@@ -854,9 +847,7 @@ impl Kb {
     /// [`EntailError::Unsatisfiable`] if the base knowledge base is already
     /// unsatisfiable; [`EntailError::Build`] on step-cap exhaustion.
     pub(crate) fn entails_instance(
-        &self,
-        individual: u32,
-        concept_id: u32,
+        &self, individual: u32, concept_id: u32,
     ) -> Result<bool, EntailError> {
         self.with_negative_instance(individual, concept_id, |assumptions| {
             hyper::consistent(self, assumptions).map(|consistent| !consistent)
@@ -865,9 +856,7 @@ impl Kb {
 
     /// The original consistency guard and selected negative membership question.
     pub(crate) fn with_negative_instance<T>(
-        &self,
-        individual: u32,
-        concept_id: u32,
+        &self, individual: u32, concept_id: u32,
         decide: impl FnOnce(&Assumptions<'_>) -> Result<T, EntailError>,
     ) -> Result<T, EntailError> {
         if !self.is_consistent()? {
@@ -926,9 +915,7 @@ impl Kb {
     /// [`EntailError::Build`] on step-cap exhaustion.
     #[cfg(test)]
     pub(crate) fn entails_subclass_by_concept_tree(
-        &self,
-        sub_id: u32,
-        sup_id: u32,
+        &self, sub_id: u32, sup_id: u32,
     ) -> Result<bool, EntailError> {
         if !self.is_consistent_by_concept_tree()? {
             return Err(EntailError::Unsatisfiable);

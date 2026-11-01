@@ -199,8 +199,7 @@ impl ExactParseError {
     }
 
     pub(crate) fn into_value_error(
-        self,
-        lexical: &str,
+        self, lexical: &str,
     ) -> Result<ExactError, crate::bigint::LimbScratchError> {
         match self {
             Self::InvalidLexical { kind, reason } => Ok(ExactError::invalid(lexical, kind, reason)),

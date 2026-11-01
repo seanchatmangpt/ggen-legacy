@@ -113,9 +113,7 @@ crate::context::retained::native_detached_fields!(HelmertRates {
 
 impl HelmertParameters {
     pub(super) fn validate_with(
-        &self,
-        values: &crate::numerical::ExactValues<'_>,
-        progress: &mut WorkProgress<'_>,
+        &self, values: &crate::numerical::ExactValues<'_>, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         if !values
             .compare(&self.scale_ppm, &Rat::from_i64(-1_000_000))
@@ -135,9 +133,7 @@ impl HelmertParameters {
     }
 
     pub(super) fn validate_point(
-        &self,
-        point: &OperationPoint,
-        progress: &mut WorkProgress<'_>,
+        &self, point: &OperationPoint, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         if point.z.is_none() {
             return Err(GeoError::MissingHeight);
@@ -167,9 +163,7 @@ impl HelmertParameters {
     }
 
     fn adjusted(
-        &self,
-        point: &OperationPoint,
-        progress: &mut WorkProgress<'_>,
+        &self, point: &OperationPoint, progress: &mut WorkProgress<'_>,
     ) -> Result<([Rat; 3], [Rat; 3], Rat), GeoError> {
         let mut translation = self.translation.clone();
         let mut rotation = self.rotation_arcseconds.clone();
@@ -197,8 +191,7 @@ impl HelmertParameters {
     }
 
     pub(super) fn parameters(
-        &self,
-        fields: &mut (impl ParameterSink + ?Sized),
+        &self, fields: &mut (impl ParameterSink + ?Sized),
     ) -> Result<(), GeoError> {
         fields.bytes(&[
             match self.law {
@@ -231,10 +224,7 @@ impl HelmertParameters {
     }
 
     pub(super) fn evaluate(
-        &self,
-        point: &OperationPoint,
-        coordinates: &[FixedInterval],
-        math: &mut CoordinateMath,
+        &self, point: &OperationPoint, coordinates: &[FixedInterval], math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<OperationCoordinates, MathError> {
         self.evaluate_with_matrix(point, coordinates, math, progress)
@@ -242,10 +232,7 @@ impl HelmertParameters {
     }
 
     pub(super) fn evaluate_with_matrix(
-        &self,
-        point: &OperationPoint,
-        coordinates: &[FixedInterval],
-        math: &mut CoordinateMath,
+        &self, point: &OperationPoint, coordinates: &[FixedInterval], math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<(OperationCoordinates, purrdf_xsd::math::Matrix3), MathError> {
         let (translation, rotation, scale) = self.adjusted(point, progress).map_err(|error| {
@@ -371,9 +358,7 @@ crate::context::retained::native_detached_fields!(Similarity2d {
 
 impl Similarity2d {
     pub(super) fn validate_with(
-        &self,
-        values: &crate::numerical::ExactValues<'_>,
-        progress: &mut WorkProgress<'_>,
+        &self, values: &crate::numerical::ExactValues<'_>, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         if !values
             .compare(&self.scale, &Rat::zero())
@@ -385,8 +370,7 @@ impl Similarity2d {
         Ok(())
     }
     pub(super) fn parameters(
-        &self,
-        fields: &mut (impl ParameterSink + ?Sized),
+        &self, fields: &mut (impl ParameterSink + ?Sized),
     ) -> Result<(), GeoError> {
         fields.bytes(&[
             u8::from(self.convention == RotationConvention::CoordinateFrame),
@@ -402,9 +386,7 @@ impl Similarity2d {
         Ok(())
     }
     pub(super) fn evaluate(
-        &self,
-        coordinates: &[FixedInterval],
-        math: &mut CoordinateMath,
+        &self, coordinates: &[FixedInterval], math: &mut CoordinateMath,
     ) -> Result<OperationCoordinates, MathError> {
         let angle = radians(&fixed_from_rat(&self.rotation_degrees, math)?, math)?;
         let (mut sine, cosine) = angle.sin_cos(math)?;

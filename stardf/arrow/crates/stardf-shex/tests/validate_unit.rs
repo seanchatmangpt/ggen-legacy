@@ -40,10 +40,7 @@ fn dataset(triples: &[(T<'_>, &str, T<'_>)]) -> Arc<RdfDataset> {
 }
 
 fn check(
-    schema: &str,
-    data: &Arc<RdfDataset>,
-    focus: TermValue,
-    shape: &str,
+    schema: &str, data: &Arc<RdfDataset>, focus: TermValue, shape: &str,
 ) -> Result<(), String> {
     let schema = parse_shexc(schema, Some("http://a.example/")).expect("schema parses");
     let selector = if shape == "START" {

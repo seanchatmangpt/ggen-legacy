@@ -80,9 +80,7 @@ pub(crate) struct SeekTarEntry {
 
 /// Write a deterministic tar stream from a folded files-profile graph.
 pub fn to_tar<W: Write>(
-    graph: &Graph,
-    mut writer: W,
-    options: &ToTarOptions,
+    graph: &Graph, mut writer: W, options: &ToTarOptions,
 ) -> Result<(), TarError> {
     match options.compression {
         TarCompression::None => write_tar_stream(graph, writer, options),
@@ -117,9 +115,7 @@ pub fn to_tar_vec(graph: &Graph, options: &ToTarOptions) -> Result<Vec<u8>, TarE
 }
 
 fn write_tar_stream<W: Write>(
-    graph: &Graph,
-    mut writer: W,
-    options: &ToTarOptions,
+    graph: &Graph, mut writer: W, options: &ToTarOptions,
 ) -> Result<(), TarError> {
     let entries = read_entries(graph).map_err(TarError::Files)?;
     let blobs: BTreeMap<&str, &BlobEntry> = graph
@@ -137,10 +133,7 @@ fn write_tar_stream<W: Write>(
 }
 
 fn append_entry<W: Write>(
-    writer: &mut W,
-    entry: &FileEntry,
-    blobs: &BTreeMap<&str, &BlobEntry>,
-    options: &ToTarOptions,
+    writer: &mut W, entry: &FileEntry, blobs: &BTreeMap<&str, &BlobEntry>, options: &ToTarOptions,
 ) -> Result<(), TarError> {
     if entry.kind == FileEntryKind::Socket {
         return Err(TarError::Socket {
@@ -229,10 +222,7 @@ impl HeaderMetadata {
 }
 
 fn append_pax_header<W: Write>(
-    writer: &mut W,
-    entry: &FileEntry,
-    metadata: &HeaderMetadata,
-    options: &ToTarOptions,
+    writer: &mut W, entry: &FileEntry, metadata: &HeaderMetadata, options: &ToTarOptions,
 ) -> Result<(), TarError> {
     let mut records: BTreeMap<String, String> = BTreeMap::new();
     if !fits_tar_path(&metadata.path) {
@@ -283,9 +273,7 @@ fn append_pax_header<W: Write>(
 }
 
 fn write_header<W: Write>(
-    writer: &mut W,
-    metadata: &HeaderMetadata,
-    data: &[u8],
+    writer: &mut W, metadata: &HeaderMetadata, data: &[u8],
 ) -> Result<(), TarError> {
     let mut header = [0u8; BLOCK];
     write_path_fields(&mut header, &metadata.path)?;
@@ -649,12 +637,8 @@ fn next_tar_offset(body_offset: u64, size: u64) -> Result<u64, TarError> {
 }
 
 fn raw_entry_from_header<'a>(
-    header: &[u8],
-    typeflag: u8,
-    body: &'a [u8],
-    pax: &BTreeMap<String, String>,
-    long_path: &mut Option<String>,
-    long_link: &mut Option<String>,
+    header: &[u8], typeflag: u8, body: &'a [u8], pax: &BTreeMap<String, String>,
+    long_path: &mut Option<String>, long_link: &mut Option<String>,
 ) -> Result<RawTarEntry<'a>, TarError> {
     let kind = match typeflag {
         b'0' | 0 => FileEntryKind::File,
@@ -736,13 +720,8 @@ fn raw_entry_from_header<'a>(
 }
 
 fn seek_entry_from_header(
-    header: &[u8],
-    typeflag: u8,
-    pax: &BTreeMap<String, String>,
-    long_path: &mut Option<String>,
-    long_link: &mut Option<String>,
-    body_offset: u64,
-    size: u64,
+    header: &[u8], typeflag: u8, pax: &BTreeMap<String, String>, long_path: &mut Option<String>,
+    long_link: &mut Option<String>, body_offset: u64, size: u64,
 ) -> Result<SeekTarEntry, TarError> {
     let kind = match typeflag {
         b'0' | 0 => FileEntryKind::File,

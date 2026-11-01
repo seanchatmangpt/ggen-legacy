@@ -30,8 +30,7 @@ impl SourceSummary {
     }
 
     pub(super) fn decode(
-        words: &[u64],
-        rows: u64,
+        words: &[u64], rows: u64,
     ) -> Result<Self, super::super::pack::bits::PackBitsError> {
         use super::super::pack::bits::PackBitsError::Malformed;
         if words.len() != 13 || words[0] > rows {
@@ -58,12 +57,8 @@ impl SourceSummary {
     /// The record kind participates in whole-source identity. Literal source
     /// projections deliberately preserve occurrences across physical layers.
     pub(super) fn add_row<S: Admission + ?Sized>(
-        &mut self,
-        relation: Relation,
-        quad: QuadIds,
-        dictionary: &FrozenTerms,
-        pending: &mut Vec<TermId>,
-        memory: &mut Memory<'_, S>,
+        &mut self, relation: Relation, quad: QuadIds, dictionary: &FrozenTerms,
+        pending: &mut Vec<TermId>, memory: &mut Memory<'_, S>,
     ) -> Result<([u8; 32], [u8; 32]), StorageError> {
         let mut row = SourceRowHasher::new(quad.g.is_some());
         if let Some(graph) = quad.g {

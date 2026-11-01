@@ -30,9 +30,7 @@ pub use term::{
 /// Resident adapters describe their existing caller-owned buffer before using
 /// the same growth body; native buffers are already in their original account.
 pub(crate) fn push<T>(
-    storage: Option<&CarrierStorage<'_>>,
-    values: &mut Vec<T>,
-    value: T,
+    storage: Option<&CarrierStorage<'_>>, values: &mut Vec<T>, value: T,
 ) -> Result<(), StorageError> {
     with_storage(storage, |memory| {
         if storage.is_none() {
@@ -47,9 +45,7 @@ pub(crate) fn push<T>(
 }
 
 pub(crate) fn reserve<T>(
-    storage: Option<&CarrierStorage<'_>>,
-    values: &mut Vec<T>,
-    capacity: usize,
+    storage: Option<&CarrierStorage<'_>>, values: &mut Vec<T>, capacity: usize,
 ) -> Result<(), StorageError> {
     with_storage(storage, |memory| {
         if storage.is_none() {
@@ -65,8 +61,7 @@ pub(crate) fn reserve<T>(
 
 /// Destroy the original array before returning its exact layout to the account.
 pub(crate) fn release<T>(
-    storage: Option<&CarrierStorage<'_>>,
-    values: Vec<T>,
+    storage: Option<&CarrierStorage<'_>>, values: Vec<T>,
 ) -> Result<(), StorageError> {
     with_storage(storage, |memory| {
         if storage.is_none() {
@@ -81,8 +76,7 @@ pub(crate) fn release<T>(
 }
 
 pub(crate) fn boxed<T>(
-    storage: Option<&CarrierStorage<'_>>,
-    value: T,
+    storage: Option<&CarrierStorage<'_>>, value: T,
 ) -> Result<Box<T>, StorageError> {
     with_storage(storage, |memory| {
         memory.add_bytes(core::alloc::Layout::new::<T>().size())?;
@@ -95,8 +89,7 @@ pub(crate) fn boxed<T>(
 /// separately. The caller retains the account through error destruction.
 #[must_use]
 pub fn text_error(
-    storage: Option<&CarrierStorage<'_>>,
-    message: core::fmt::Arguments<'_>,
+    storage: Option<&CarrierStorage<'_>>, message: core::fmt::Arguments<'_>,
     make: fn(String) -> GeoError,
 ) -> GeoError {
     match with_storage(storage, |memory| memory.format(&message)) {
@@ -106,8 +99,7 @@ pub fn text_error(
 }
 
 pub(crate) fn release_string(
-    storage: Option<&CarrierStorage<'_>>,
-    value: String,
+    storage: Option<&CarrierStorage<'_>>, value: String,
 ) -> Result<(), StorageError> {
     with_storage(storage, |memory| {
         if storage.is_none() {
@@ -124,8 +116,7 @@ pub(crate) fn resident_shared_text(
 }
 
 pub(crate) fn shared_text_with_storage(
-    text: &str,
-    storage: Option<&CarrierStorage<'_>>,
+    text: &str, storage: Option<&CarrierStorage<'_>>,
 ) -> Result<purrdf_lex::allocation::SharedText, GeoError> {
     with_storage(storage, |memory| {
         let text = memory.string(text)?;
@@ -146,8 +137,7 @@ pub(crate) fn resident_owned_text(
 }
 
 fn shared_owned_text<S: purrdf_lex::allocation::Admission + ?Sized>(
-    text: String,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    text: String, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<purrdf_lex::allocation::SharedText, StorageError> {
     use purrdf_lex::allocation::{Resident, SharedText};
     memory.add_bytes(SharedText::allocation_layout::<Resident>().size())?;
@@ -187,9 +177,7 @@ impl ParsedGeometry {
 /// # Errors
 /// Preserves carrier argument errors and fatal work, memory and output refusals.
 pub fn geometry_arg_in_policy(
-    vocab: &GeoVocab,
-    value: &TermValue,
-    policy: crate::ExecutionPolicy,
+    vocab: &GeoVocab, value: &TermValue, policy: crate::ExecutionPolicy,
 ) -> Result<ParsedGeometry, GeoError> {
     parse_admitted(vocab, value, policy, None, None)
 }
@@ -199,9 +187,7 @@ pub fn geometry_arg_in_policy(
 /// # Errors
 /// A refused chunk stops before further source geometry is constructed.
 pub fn geometry_arg_metered(
-    vocab: &GeoVocab,
-    value: &TermValue,
-    policy: crate::ExecutionPolicy,
+    vocab: &GeoVocab, value: &TermValue, policy: crate::ExecutionPolicy,
     observer: &mut dyn crate::MetricWorkObserver,
 ) -> Result<ParsedGeometry, GeoError> {
     parse_admitted(vocab, value, policy, Some(observer), None)
@@ -218,21 +204,15 @@ pub fn geometry_arg_metered(
 /// # Errors
 /// Preserves the first physical, work, source or malformed-carrier failure.
 pub fn geometry_arg_with_storage(
-    vocab: &GeoVocab,
-    value: &TermValue,
-    policy: crate::ExecutionPolicy,
-    observer: &mut dyn crate::MetricWorkObserver,
-    storage: &CarrierStorage<'_>,
+    vocab: &GeoVocab, value: &TermValue, policy: crate::ExecutionPolicy,
+    observer: &mut dyn crate::MetricWorkObserver, storage: &CarrierStorage<'_>,
 ) -> Result<ParsedGeometry, GeoError> {
     parse_admitted(vocab, value, policy, Some(observer), Some(storage))
 }
 
 fn parse_admitted(
-    vocab: &GeoVocab,
-    value: &TermValue,
-    policy: crate::ExecutionPolicy,
-    observer: Option<&mut dyn crate::MetricWorkObserver>,
-    storage: Option<&CarrierStorage<'_>>,
+    vocab: &GeoVocab, value: &TermValue, policy: crate::ExecutionPolicy,
+    observer: Option<&mut dyn crate::MetricWorkObserver>, storage: Option<&CarrierStorage<'_>>,
 ) -> Result<ParsedGeometry, GeoError> {
     let bytes = match value {
         TermValue::Literal { lexical_form, .. } => lexical_form.len(),
@@ -283,9 +263,7 @@ pub fn geometry_arg(vocab: &GeoVocab, value: &TermValue) -> Result<GeometryLiter
 }
 
 fn geometry_arg_inner(
-    vocab: &GeoVocab,
-    value: &TermValue,
-    admission: Option<&RefCell<ParseAdmission<'_, '_, '_>>>,
+    vocab: &GeoVocab, value: &TermValue, admission: Option<&RefCell<ParseAdmission<'_, '_, '_>>>,
 ) -> Result<GeometryLiteral, GeoError> {
     let storage = admission.and_then(|admission| admission.borrow().storage());
     let format = geometry_format(vocab, value, storage)?;
@@ -312,9 +290,7 @@ fn geometry_arg_inner(
 /// # Errors
 /// Preserves unsupported-codec, wrong-type and physical diagnostic refusal.
 pub fn geometry_argument_format(
-    vocab: &GeoVocab,
-    value: &TermValue,
-    storage: &CarrierStorage<'_>,
+    vocab: &GeoVocab, value: &TermValue, storage: &CarrierStorage<'_>,
 ) -> Result<CarrierFormat, GeoError> {
     geometry_format(vocab, value, Some(storage))
 }
@@ -323,9 +299,7 @@ pub fn geometry_argument_format(
 /// Original datatype/type refusals keep priority over this producer invariant.
 #[must_use]
 pub fn missing_parsed_source_error(
-    vocab: &GeoVocab,
-    value: &TermValue,
-    storage: &CarrierStorage<'_>,
+    vocab: &GeoVocab, value: &TermValue, storage: &CarrierStorage<'_>,
 ) -> GeoError {
     match geometry_format(vocab, value, Some(storage)) {
         Err(original) => original,
@@ -338,9 +312,7 @@ pub fn missing_parsed_source_error(
 }
 
 fn geometry_format(
-    vocab: &GeoVocab,
-    value: &TermValue,
-    storage: Option<&CarrierStorage<'_>>,
+    vocab: &GeoVocab, value: &TermValue, storage: Option<&CarrierStorage<'_>>,
 ) -> Result<CarrierFormat, GeoError> {
     let TermValue::Literal { datatype, .. } = value else {
         return Err(crate::CarrierInputError::capture(

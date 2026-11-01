@@ -39,8 +39,7 @@ pub trait RootSystem2 {
     /// # Errors
     /// Returns the original metadata allocation or admission refusal.
     fn with_storage<T>(
-        &mut self,
-        resident_bytes: usize,
+        &mut self, resident_bytes: usize,
         make: impl FnOnce(
             &mut purrdf_lex::allocation::Memory<'_, dyn purrdf_lex::allocation::Admission + '_>,
         ) -> Result<T, purrdf_lex::allocation::StorageError>,
@@ -56,18 +55,14 @@ pub trait RootSystem2 {
     /// # Errors
     /// Propagates numerical admission and unresolved image decisions.
     fn image(
-        &mut self,
-        domain: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, domain: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<RootBox2, MathError>;
     /// Enclose every derivative on the complete box after image exclusion.
     ///
     /// # Errors
     /// Propagates singularities and numerical admission refusals.
     fn jacobian(
-        &mut self,
-        domain: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, domain: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<RootJacobian2, MathError>;
     /// Supply an independently proved exact dyadic zero in the complete box.
     /// Each returned interval must be a point, and its exact residual must be
@@ -78,9 +73,7 @@ pub trait RootSystem2 {
     /// # Errors
     /// Propagates proof admission and cancellation refusals.
     fn exact_root(
-        &mut self,
-        _domain: &RootBox2,
-        _math: &mut CoordinateMath,
+        &mut self, _domain: &RootBox2, _math: &mut CoordinateMath,
     ) -> Result<Option<RootBox2>, MathError> {
         Ok(None)
     }
@@ -89,9 +82,7 @@ pub trait RootSystem2 {
     /// # Errors
     /// Refuses unresolved rounding or insufficient precision.
     fn complete(
-        &mut self,
-        enclosure: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, enclosure: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<bool, MathError>;
     /// Bounded cancellation/work poll between numerical chunks.
     ///
@@ -208,9 +199,7 @@ struct Candidate {
 /// Refuses exhausted depth, convergence, work, workspace, or an unresolved
 /// multiplicity/alias decision. The callback must supply valid whole-box bounds.
 pub fn isolate_roots2(
-    domain: RootBox2,
-    limits: RootIsolationLimits,
-    system: &mut impl RootSystem2,
+    domain: RootBox2, limits: RootIsolationLimits, system: &mut impl RootSystem2,
     math: &mut CoordinateMath,
 ) -> Result<Vec<RootIsolation2>, MathError> {
     let mut roots = Vec::new();
@@ -223,11 +212,8 @@ pub fn isolate_roots2(
 /// # Errors
 /// Carries complete isolation refusals. Every refusal clears all output records.
 pub fn isolate_roots2_into(
-    domain: RootBox2,
-    limits: RootIsolationLimits,
-    system: &mut impl RootSystem2,
-    math: &mut CoordinateMath,
-    roots: &mut impl RootStorage2,
+    domain: RootBox2, limits: RootIsolationLimits, system: &mut impl RootSystem2,
+    math: &mut CoordinateMath, roots: &mut impl RootStorage2,
 ) -> Result<(), MathError> {
     let bytes = isolate_roots2_into_retained(domain, limits, system, math, roots)?;
     math.release_workspace(bytes)
@@ -241,11 +227,8 @@ pub fn isolate_roots2_into(
 /// # Errors
 /// Refuses the same isolation decisions, destroying all output storage on failure.
 pub fn isolate_roots2_into_retained(
-    domain: RootBox2,
-    limits: RootIsolationLimits,
-    system: &mut impl RootSystem2,
-    math: &mut CoordinateMath,
-    roots: &mut impl RootStorage2,
+    domain: RootBox2, limits: RootIsolationLimits, system: &mut impl RootSystem2,
+    math: &mut CoordinateMath, roots: &mut impl RootStorage2,
 ) -> Result<usize, MathError> {
     roots.clear();
     let admitted = (|| {
@@ -275,12 +258,8 @@ pub fn isolate_roots2_into_retained(
 }
 
 fn isolate_inner(
-    domain: RootBox2,
-    limits: RootIsolationLimits,
-    system: &mut impl RootSystem2,
-    math: &mut CoordinateMath,
-    reserved: &mut usize,
-    roots: &mut impl RootStorage2,
+    domain: RootBox2, limits: RootIsolationLimits, system: &mut impl RootSystem2,
+    math: &mut CoordinateMath, reserved: &mut usize, roots: &mut impl RootStorage2,
 ) -> Result<(), MathError> {
     let original = domain.clone();
     let mut pending = WorkList::<Candidate, 8>::new();
@@ -439,11 +418,8 @@ fn isolate_inner(
 }
 
 fn push_candidate(
-    pending: &mut WorkList<Candidate, 8>,
-    candidate: Candidate,
-    math: &mut CoordinateMath,
-    system: &mut impl RootSystem2,
-    retained: &mut usize,
+    pending: &mut WorkList<Candidate, 8>, candidate: Candidate, math: &mut CoordinateMath,
+    system: &mut impl RootSystem2, retained: &mut usize,
 ) -> Result<(), MathError> {
     let previous = core::alloc::Layout::array::<Candidate>(pending.heap_capacity())
         .map_err(|_| MathError::Storage(purrdf_lex::allocation::StorageError::SizeOverflow))?
@@ -475,12 +451,8 @@ fn push_candidate(
 }
 
 fn insert_root(
-    mut root: RootIsolation2,
-    roots: &mut impl RootStorage2,
-    limits: RootIsolationLimits,
-    system: &mut impl RootSystem2,
-    math: &mut CoordinateMath,
-    reserved: &mut usize,
+    mut root: RootIsolation2, roots: &mut impl RootStorage2, limits: RootIsolationLimits,
+    system: &mut impl RootSystem2, math: &mut CoordinateMath, reserved: &mut usize,
 ) -> Result<(), MathError> {
     for old in roots.roots_mut().iter_mut() {
         for iteration in 0..=limits.max_refinements {
@@ -531,9 +503,7 @@ fn insert_root(
 }
 
 fn common_uniqueness(
-    a: &RootIsolation2,
-    b: &RootIsolation2,
-    system: &mut impl RootSystem2,
+    a: &RootIsolation2, b: &RootIsolation2, system: &mut impl RootSystem2,
     math: &mut CoordinateMath,
 ) -> Result<bool, MathError> {
     let union = hull(&a.enclosure, &b.enclosure, math)?;
@@ -545,9 +515,7 @@ fn common_uniqueness(
 }
 
 fn finish_root(
-    root: &mut RootIsolation2,
-    iterations: u32,
-    system: &mut impl RootSystem2,
+    root: &mut RootIsolation2, iterations: u32, system: &mut impl RootSystem2,
     math: &mut CoordinateMath,
 ) -> Result<(), MathError> {
     for _ in 0..iterations {
@@ -561,9 +529,7 @@ fn finish_root(
 }
 
 fn refine_root(
-    root: &mut RootIsolation2,
-    system: &mut impl RootSystem2,
-    math: &mut CoordinateMath,
+    root: &mut RootIsolation2, system: &mut impl RootSystem2, math: &mut CoordinateMath,
 ) -> Result<(), MathError> {
     system.poll(math)?;
     let Some((proposal, _)) = krawczyk(&root.enclosure, system, math)? else {
@@ -585,12 +551,8 @@ fn refine_root(
 /// # Errors
 /// Refuses singular whole-box derivatives and numerical admission.
 pub fn root_enclosure_complete(
-    enclosure: &RootBox2,
-    target: &RootBox2,
-    jacobian: &RootJacobian2,
-    decimal_places: u32,
-    quantize: bool,
-    math: &mut CoordinateMath,
+    enclosure: &RootBox2, target: &RootBox2, jacobian: &RootJacobian2, decimal_places: u32,
+    quantize: bool, math: &mut CoordinateMath,
 ) -> Result<bool, MathError> {
     let zero = FixedInterval::from_i64(0, math)?;
     if quantize {
@@ -627,11 +589,8 @@ pub fn root_enclosure_complete(
 /// # Errors
 /// Propagates numerical admission and refuses a negative supplied width bound.
 pub fn inverse_coordinate_complete(
-    enclosure: &FixedInterval,
-    conditioned_input_width: &FixedInterval,
-    decimal_places: u32,
-    quantize: bool,
-    math: &mut CoordinateMath,
+    enclosure: &FixedInterval, conditioned_input_width: &FixedInterval, decimal_places: u32,
+    quantize: bool, math: &mut CoordinateMath,
 ) -> Result<bool, MathError> {
     inverse_coordinate_complete_with_error(
         enclosure,
@@ -651,11 +610,8 @@ pub fn inverse_coordinate_complete(
 /// # Errors
 /// Propagates admission and refuses negative input or evaluation width bounds.
 pub fn inverse_coordinate_complete_with_error(
-    enclosure: &FixedInterval,
-    conditioned_input_width: &FixedInterval,
-    conditioned_evaluation_width: &FixedInterval,
-    decimal_places: u32,
-    quantize: bool,
+    enclosure: &FixedInterval, conditioned_input_width: &FixedInterval,
+    conditioned_evaluation_width: &FixedInterval, decimal_places: u32, quantize: bool,
     math: &mut CoordinateMath,
 ) -> Result<bool, MathError> {
     if conditioned_input_width.lower() < &Int::zero()
@@ -680,9 +636,7 @@ pub fn inverse_coordinate_complete_with_error(
 /// # Errors
 /// Propagates controlled arithmetic and numerical admission refusals.
 pub fn compose_jacobians2(
-    left: &RootJacobian2,
-    right: &RootJacobian2,
-    math: &mut CoordinateMath,
+    left: &RootJacobian2, right: &RootJacobian2, math: &mut CoordinateMath,
 ) -> Result<RootJacobian2, MathError> {
     let entry = |row: usize, column: usize, math: &mut CoordinateMath| {
         left[row][0]
@@ -700,8 +654,7 @@ pub fn compose_jacobians2(
 /// # Errors
 /// Refuses a determinant enclosure containing zero and arithmetic admission.
 pub fn invert_jacobian2(
-    matrix: &RootJacobian2,
-    math: &mut CoordinateMath,
+    matrix: &RootJacobian2, math: &mut CoordinateMath,
 ) -> Result<RootJacobian2, MathError> {
     let determinant = matrix[0][0]
         .mul(&matrix[1][1], math)?
@@ -722,9 +675,7 @@ pub fn invert_jacobian2(
 }
 
 fn krawczyk(
-    domain: &RootBox2,
-    system: &mut impl RootSystem2,
-    math: &mut CoordinateMath,
+    domain: &RootBox2, system: &mut impl RootSystem2, math: &mut CoordinateMath,
 ) -> Result<Option<(RootBox2, bool)>, MathError> {
     let centre = [domain[0].midpoint(math)?, domain[1].midpoint(math)?];
     let jacobian = system.jacobian(domain, math)?;
@@ -775,8 +726,7 @@ fn krawczyk(
 }
 
 fn preconditioner(
-    jacobian: &RootJacobian2,
-    math: &mut CoordinateMath,
+    jacobian: &RootJacobian2, math: &mut CoordinateMath,
 ) -> Result<Option<RootJacobian2>, MathError> {
     let m = [
         [
@@ -805,12 +755,8 @@ fn preconditioner(
 }
 
 fn subdivide(
-    candidate: Candidate,
-    limits: RootIsolationLimits,
-    pending: &mut WorkList<Candidate, 8>,
-    math: &mut CoordinateMath,
-    system: &mut impl RootSystem2,
-    retained: &mut usize,
+    candidate: Candidate, limits: RootIsolationLimits, pending: &mut WorkList<Candidate, 8>,
+    math: &mut CoordinateMath, system: &mut impl RootSystem2, retained: &mut usize,
 ) -> Result<(), MathError> {
     if candidate.depth >= limits.max_depth {
         return Err(MathError::PrecisionExhausted);
@@ -875,9 +821,7 @@ fn contracted(a: &RootBox2, b: &RootBox2, math: &mut CoordinateMath) -> Result<b
 }
 
 fn intersect(
-    a: &RootBox2,
-    b: &RootBox2,
-    math: &mut CoordinateMath,
+    a: &RootBox2, b: &RootBox2, math: &mut CoordinateMath,
 ) -> Result<Option<RootBox2>, MathError> {
     let Some(first) = a[0].intersection(&b[0], math)? else {
         return Ok(None);
@@ -892,9 +836,7 @@ fn hull(a: &RootBox2, b: &RootBox2, math: &mut CoordinateMath) -> Result<RootBox
 }
 
 fn enlarge(
-    domain: &RootBox2,
-    original: &RootBox2,
-    math: &mut CoordinateMath,
+    domain: &RootBox2, original: &RootBox2, math: &mut CoordinateMath,
 ) -> Result<RootBox2, MathError> {
     let mut expanded = domain.clone();
     for axis in 0..2 {

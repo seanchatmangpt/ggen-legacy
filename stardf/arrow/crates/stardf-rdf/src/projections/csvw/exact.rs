@@ -135,8 +135,7 @@ struct ExactDataset {
 ///
 /// Returns a typed term, dataset-integrity, CSV, package, or resource-limit failure.
 pub fn project_csvw_exact<D: DatasetView>(
-    view: &D,
-    config: &CsvwConfig,
+    view: &D, config: &CsvwConfig,
 ) -> Result<CsvwExactProjection, ProjectionError> {
     let dataset = collect_dataset(view, config)?;
     let package = write_exact(&dataset, config)?;
@@ -157,8 +156,7 @@ pub fn project_csvw_exact<D: DatasetView>(
 ///
 /// Returns a typed syntax, integrity, package, term, or resource-limit failure.
 pub fn read_csvw_exact(
-    package: &ProjectionPackage,
-    config: &CsvwConfig,
+    package: &ProjectionPackage, config: &CsvwConfig,
 ) -> Result<CsvwExactReadOutcome, ProjectionError> {
     validate_package_bounds(package, config.limits())?;
     require_artifact_set(package)?;
@@ -228,8 +226,7 @@ pub fn read_csvw_exact(
 }
 
 fn collect_dataset<D: DatasetView>(
-    view: &D,
-    config: &CsvwConfig,
+    view: &D, config: &CsvwConfig,
 ) -> Result<ExactDataset, ProjectionError> {
     let mut budget = RecordBudget::new(config.max_records(), "CSVW");
     let mut cache = BTreeMap::new();
@@ -341,8 +338,7 @@ fn collect_dataset<D: DatasetView>(
 }
 
 fn write_exact(
-    dataset: &ExactDataset,
-    config: &CsvwConfig,
+    dataset: &ExactDataset, config: &CsvwConfig,
 ) -> Result<ProjectionPackage, ProjectionError> {
     let catalog = TermCatalog::build(dataset, config)?;
     let record_count = catalog
@@ -464,9 +460,7 @@ fn collect_term(term: &ProjectionTerm, terms: &mut BTreeSet<ProjectionTerm>) {
 }
 
 fn write_terms(
-    catalog: &TermCatalog,
-    named_graphs: &BTreeSet<ProjectionTerm>,
-    config: &CsvwConfig,
+    catalog: &TermCatalog, named_graphs: &BTreeSet<ProjectionTerm>, config: &CsvwConfig,
 ) -> Result<Vec<u8>, ProjectionError> {
     let mut rows = Vec::with_capacity(catalog.by_id.len());
     for (id, term) in &catalog.by_id {
@@ -544,9 +538,7 @@ fn write_terms(
 }
 
 fn write_quads(
-    dataset: &ExactDataset,
-    catalog: &TermCatalog,
-    config: &CsvwConfig,
+    dataset: &ExactDataset, catalog: &TermCatalog, config: &CsvwConfig,
 ) -> Result<Vec<u8>, ProjectionError> {
     let mut rows = BTreeMap::new();
     for quad in &dataset.quads {
@@ -577,9 +569,7 @@ fn write_quads(
 }
 
 fn write_reifiers(
-    dataset: &ExactDataset,
-    catalog: &TermCatalog,
-    config: &CsvwConfig,
+    dataset: &ExactDataset, catalog: &TermCatalog, config: &CsvwConfig,
 ) -> Result<Vec<u8>, ProjectionError> {
     let mut rows = BTreeMap::new();
     for reifier in &dataset.reifiers {
@@ -615,9 +605,7 @@ fn write_reifiers(
 }
 
 fn write_annotations(
-    dataset: &ExactDataset,
-    catalog: &TermCatalog,
-    config: &CsvwConfig,
+    dataset: &ExactDataset, catalog: &TermCatalog, config: &CsvwConfig,
 ) -> Result<Vec<u8>, ProjectionError> {
     let mut rows = BTreeMap::new();
     for annotation in &dataset.annotations {
@@ -820,9 +808,7 @@ fn exact_metadata(config: &CsvwConfig) -> Result<Vec<u8>, ProjectionError> {
 }
 
 fn table_metadata(
-    url: &'static str,
-    primary_key: &'static str,
-    header: &[&'static str],
+    url: &'static str, primary_key: &'static str, header: &[&'static str],
     foreign_keys: &[(&'static str, &'static str)],
 ) -> TableMetadata {
     let columns = header
@@ -892,8 +878,7 @@ struct RawTermRow {
 }
 
 fn decode_terms(
-    records: &[StringRecord],
-    config: &CsvwConfig,
+    records: &[StringRecord], config: &CsvwConfig,
 ) -> Result<(BTreeMap<String, ProjectionTerm>, BTreeSet<ProjectionTerm>), ProjectionError> {
     let mut raw = BTreeMap::new();
     let mut previous = None;
@@ -947,12 +932,8 @@ fn decode_terms(
 }
 
 fn resolve_term_row(
-    id: &str,
-    raw: &BTreeMap<String, RawTermRow>,
-    resolved: &mut BTreeMap<String, ProjectionTerm>,
-    active: &mut BTreeSet<String>,
-    config: &CsvwConfig,
-    depth: usize,
+    id: &str, raw: &BTreeMap<String, RawTermRow>, resolved: &mut BTreeMap<String, ProjectionTerm>,
+    active: &mut BTreeSet<String>, config: &CsvwConfig, depth: usize,
 ) -> Result<ProjectionTerm, ProjectionError> {
     if let Some(term) = resolved.get(id) {
         return Ok(term.clone());
@@ -1118,9 +1099,7 @@ fn resolve_term_row(
 }
 
 fn decode_quads(
-    records: &[StringRecord],
-    terms: &BTreeMap<String, ProjectionTerm>,
-    config: &CsvwConfig,
+    records: &[StringRecord], terms: &BTreeMap<String, ProjectionTerm>, config: &CsvwConfig,
 ) -> Result<BTreeSet<ExactQuad>, ProjectionError> {
     let mut rows = BTreeSet::new();
     let mut previous = None;
@@ -1151,9 +1130,7 @@ fn decode_quads(
 }
 
 fn decode_reifiers(
-    records: &[StringRecord],
-    terms: &BTreeMap<String, ProjectionTerm>,
-    config: &CsvwConfig,
+    records: &[StringRecord], terms: &BTreeMap<String, ProjectionTerm>, config: &CsvwConfig,
 ) -> Result<BTreeSet<ExactReifier>, ProjectionError> {
     let mut rows = BTreeSet::new();
     let mut previous = None;
@@ -1192,9 +1169,7 @@ fn decode_reifiers(
 }
 
 fn decode_annotations(
-    records: &[StringRecord],
-    terms: &BTreeMap<String, ProjectionTerm>,
-    config: &CsvwConfig,
+    records: &[StringRecord], terms: &BTreeMap<String, ProjectionTerm>, config: &CsvwConfig,
 ) -> Result<BTreeSet<ExactAnnotation>, ProjectionError> {
     let mut rows = BTreeSet::new();
     let mut previous = None;
@@ -1289,10 +1264,7 @@ fn lift_exact(dataset: &ExactDataset) -> Result<Arc<RdfDataset>, ProjectionError
 }
 
 fn resolve_term<D: DatasetView>(
-    view: &D,
-    id: D::Id,
-    limits: ProjectionLimits,
-    cache: &mut BTreeMap<D::Id, ProjectionTerm>,
+    view: &D, id: D::Id, limits: ProjectionLimits, cache: &mut BTreeMap<D::Id, ProjectionTerm>,
 ) -> Result<ProjectionTerm, ProjectionError> {
     if let Some(term) = cache.get(&id) {
         return Ok(term.clone());
@@ -1303,9 +1275,7 @@ fn resolve_term<D: DatasetView>(
 }
 
 fn require_statement_positions(
-    subject: &ProjectionTerm,
-    predicate: &ProjectionTerm,
-    graph: Option<&ProjectionTerm>,
+    subject: &ProjectionTerm, predicate: &ProjectionTerm, graph: Option<&ProjectionTerm>,
     description: &str,
 ) -> Result<(), ProjectionError> {
     require_resource(subject, &format!("{description} subject"))?;
@@ -1342,17 +1312,13 @@ fn require_graph_name(term: &ProjectionTerm, description: &str) -> Result<(), Pr
 }
 
 fn term_identifier(
-    term: &ProjectionTerm,
-    limits: ProjectionLimits,
+    term: &ProjectionTerm, limits: ProjectionLimits,
 ) -> Result<String, ProjectionError> {
     stable_identifier("CsvwTerm", &term.to_canonical_json(limits)?)
 }
 
 fn row_identifier<T: ToJson>(
-    prefix: &str,
-    row: &T,
-    limits: ProjectionLimits,
-    description: &str,
+    prefix: &str, row: &T, limits: ProjectionLimits, description: &str,
 ) -> Result<String, ProjectionError> {
     stable_identifier(prefix, &canonical_json_bounded(row, limits, description)?)
 }
@@ -1394,10 +1360,7 @@ impl io::Write for LimitedCsvBytes {
 }
 
 fn write_csv<I>(
-    path: &str,
-    header: &[&str],
-    rows: I,
-    limits: ProjectionLimits,
+    path: &str, header: &[&str], rows: I, limits: ProjectionLimits,
 ) -> Result<Vec<u8>, ProjectionError>
 where
     I: IntoIterator<Item = Vec<String>>,
@@ -1424,9 +1387,7 @@ where
 }
 
 fn write_csv_record<I, T>(
-    writer: &mut Writer<LimitedCsvBytes>,
-    record: I,
-    path: &str,
+    writer: &mut Writer<LimitedCsvBytes>, record: I, path: &str,
 ) -> Result<(), ProjectionError>
 where
     I: IntoIterator<Item = T>,
@@ -1442,10 +1403,7 @@ fn csv_write_error(error: impl std::fmt::Display, path: &str) -> ProjectionError
 }
 
 fn read_records(
-    bytes: &[u8],
-    expected_header: &[&str],
-    path: &str,
-    budget: &mut RecordBudget,
+    bytes: &[u8], expected_header: &[&str], path: &str, budget: &mut RecordBudget,
 ) -> Result<Vec<StringRecord>, ProjectionError> {
     let mut reader = Reader::new(Dialect::RFC4180, bytes);
     let mut records = reader.records();
@@ -1483,9 +1441,7 @@ fn require_nonempty(value: &str, field: &str, path: &str) -> Result<(), Projecti
 }
 
 fn require_strict_order(
-    previous: Option<&str>,
-    current: &str,
-    path: &str,
+    previous: Option<&str>, current: &str, path: &str,
 ) -> Result<(), ProjectionError> {
     if previous.is_some_and(|value| value >= current) {
         return Err(ProjectionError::integrity(
@@ -1524,10 +1480,7 @@ fn require_empty_fields(row: &RawTermRow, names: &[&str]) -> Result<(), Projecti
 }
 
 fn referenced_term(
-    terms: &BTreeMap<String, ProjectionTerm>,
-    id: &str,
-    field_name: &str,
-    path: &str,
+    terms: &BTreeMap<String, ProjectionTerm>, id: &str, field_name: &str, path: &str,
 ) -> Result<ProjectionTerm, ProjectionError> {
     require_nonempty(id, field_name, path)?;
     terms.get(id).cloned().ok_or_else(|| {
@@ -1539,10 +1492,7 @@ fn referenced_term(
 }
 
 fn optional_term(
-    terms: &BTreeMap<String, ProjectionTerm>,
-    id: &str,
-    field_name: &str,
-    path: &str,
+    terms: &BTreeMap<String, ProjectionTerm>, id: &str, field_name: &str, path: &str,
 ) -> Result<Option<ProjectionTerm>, ProjectionError> {
     if id.is_empty() {
         Ok(None)
@@ -1569,8 +1519,7 @@ fn require_artifact_set(package: &ProjectionPackage) -> Result<(), ProjectionErr
 }
 
 fn validate_package_bounds(
-    package: &ProjectionPackage,
-    limits: ProjectionLimits,
+    package: &ProjectionPackage, limits: ProjectionLimits,
 ) -> Result<(), ProjectionError> {
     if package.len() > limits.max_artifacts() {
         return Err(ProjectionError::limit(
@@ -1668,9 +1617,7 @@ mod tests {
     }
 
     fn replace_artifact(
-        package: &ProjectionPackage,
-        path: &str,
-        replacement: &[u8],
+        package: &ProjectionPackage, path: &str, replacement: &[u8],
     ) -> ProjectionPackage {
         ProjectionPackage::from_artifacts(
             package.limits(),

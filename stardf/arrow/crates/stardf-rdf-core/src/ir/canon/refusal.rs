@@ -98,8 +98,7 @@ impl<E> Admission for SourceGrant<E> {
 
 impl<E> SourceGrant<E> {
     fn memory<T>(
-        &mut self,
-        operation: impl FnOnce(&mut Memory<'_, Self>) -> Result<T, StorageError>,
+        &mut self, operation: impl FnOnce(&mut Memory<'_, Self>) -> Result<T, StorageError>,
     ) -> Result<T, CanonError<E>> {
         let mut memory = Memory::resume(self, self.live);
         let result = operation(&mut memory);
@@ -120,9 +119,7 @@ pub(super) struct RefusalBuilder<E> {
 
 impl<E: Send + Sync + 'static> RefusalBuilder<E> {
     pub(super) fn new<D: DatasetView<ReadError = E>>(
-        view: &D,
-        iri: &str,
-        position: TermPosition,
+        view: &D, iri: &str, position: TermPosition,
     ) -> Result<Self, CanonError<E>> {
         let reservation = view
             .reserve_owned_workspace(0)
@@ -144,9 +141,7 @@ impl<E: Send + Sync + 'static> RefusalBuilder<E> {
     }
 
     pub(super) fn consider(
-        &mut self,
-        iri: &str,
-        position: TermPosition,
+        &mut self, iri: &str, position: TermPosition,
     ) -> Result<(), CanonError<E>> {
         if (position, iri) < (self.fields.position, self.fields.iri.as_str()) {
             let next = self.grant.memory(|memory| memory.string(iri))?;
@@ -236,18 +231,12 @@ mod tests {
         }
         fn probe_plan(&self, _: bool, _: bool, _: bool, _: GraphMatch) {}
         fn quads_for_pattern_with_plan(
-            &self,
-            (): &(),
-            s: Option<TermId>,
-            p: Option<TermId>,
-            o: Option<TermId>,
-            g: GraphMatch,
+            &self, (): &(), s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
         ) -> impl Iterator<Item = QuadIds> + '_ {
             self.inner.quads_for_pattern(s, p, o, g)
         }
         fn reserve_owned_workspace(
-            &self,
-            _: u64,
+            &self, _: u64,
         ) -> Option<Result<OwnedWorkspaceReservation<CallerRefusal>, CallerRefusal>> {
             match self.capability {
                 Capability::Missing => None,

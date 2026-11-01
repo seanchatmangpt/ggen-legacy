@@ -208,9 +208,7 @@ pub fn parse(lexical: &str, default_crs: &Crs) -> Result<GeometryLiteral, GeoErr
 /// Preserves the grammar and shape errors of [`parse`] and the original resource
 /// refusal, including when exhaustion interrupts a token scan.
 pub fn parse_in_policy(
-    lexical: &str,
-    default_crs: &Crs,
-    policy: crate::ExecutionPolicy,
+    lexical: &str, default_crs: &Crs, policy: crate::ExecutionPolicy,
 ) -> Result<GeometryLiteral, GeoError> {
     crate::carrier::parse_in_policy(lexical.len(), policy, |admission| {
         parse_admitted(lexical, default_crs, Some(admission))
@@ -230,8 +228,7 @@ pub fn parse_unbounded(lexical: &str, default_crs: &Crs) -> Result<GeometryLiter
 }
 
 pub(crate) fn parse_admitted(
-    lexical: &str,
-    default_crs: &Crs,
+    lexical: &str, default_crs: &Crs,
     admission: Option<&std::cell::RefCell<crate::carrier::ParseAdmission<'_, '_, '_>>>,
 ) -> Result<GeometryLiteral, GeoError> {
     // `WS ::= #x20 | #x9 | #xD | #xA`, byte-tested. The test is EXACT over
@@ -334,9 +331,7 @@ pub fn write_exact(literal: &GeometryLiteral) -> Result<String, GeoError> {
 /// # Errors
 /// Refuses work, storage or rendering-bound overflow before further output.
 pub fn write_in_context(
-    literal: &GeometryLiteral,
-    coordinate_scale: u32,
-    context: &mut crate::MetricContext,
+    literal: &GeometryLiteral, coordinate_scale: u32, context: &mut crate::MetricContext,
 ) -> Result<String, GeoError> {
     write_admitted(
         literal,
@@ -350,9 +345,7 @@ pub fn write_in_context(
 /// # Errors
 /// Adds the observer's original refusal to [`write_in_context`].
 pub fn write_in_context_metered(
-    literal: &GeometryLiteral,
-    coordinate_scale: u32,
-    context: &mut crate::MetricContext,
+    literal: &GeometryLiteral, coordinate_scale: u32, context: &mut crate::MetricContext,
     observer: &mut dyn crate::MetricWorkObserver,
 ) -> Result<String, GeoError> {
     write_admitted(
@@ -369,8 +362,7 @@ pub fn write_in_context_metered(
 /// # Errors
 /// Preserves [`write_exact`] refusals and work, memory or output refusals.
 pub fn write_exact_in_context(
-    literal: &GeometryLiteral,
-    context: &mut crate::MetricContext,
+    literal: &GeometryLiteral, context: &mut crate::MetricContext,
 ) -> Result<String, GeoError> {
     write_admitted_with(
         literal,
@@ -386,8 +378,7 @@ pub fn write_exact_in_context(
 /// # Errors
 /// Adds the observer's original refusal to [`write_exact_in_context`].
 pub fn write_exact_in_context_metered(
-    literal: &GeometryLiteral,
-    context: &mut crate::MetricContext,
+    literal: &GeometryLiteral, context: &mut crate::MetricContext,
     observer: &mut dyn crate::MetricWorkObserver,
 ) -> Result<String, GeoError> {
     write_admitted_with(
@@ -400,20 +391,15 @@ pub fn write_exact_in_context_metered(
 }
 
 pub(crate) fn write_admitted(
-    literal: &GeometryLiteral,
-    coordinate_scale: u32,
-    context: &mut crate::MetricContext,
+    literal: &GeometryLiteral, coordinate_scale: u32, context: &mut crate::MetricContext,
     progress: &mut crate::context::WorkProgress<'_>,
 ) -> Result<String, GeoError> {
     write_admitted_with(literal, coordinate_scale, false, context, progress)
 }
 
 fn write_admitted_with(
-    literal: &GeometryLiteral,
-    coordinate_scale: u32,
-    exact: bool,
-    context: &mut crate::MetricContext,
-    progress: &mut crate::context::WorkProgress<'_>,
+    literal: &GeometryLiteral, coordinate_scale: u32, exact: bool,
+    context: &mut crate::MetricContext, progress: &mut crate::context::WorkProgress<'_>,
 ) -> Result<String, GeoError> {
     let mut writer = Writer::admitted(context, progress);
     if exact {
@@ -428,9 +414,7 @@ fn write_admitted_with(
 }
 
 fn write_with(
-    literal: &GeometryLiteral,
-    coordinate_scale: u32,
-    writer: &mut Writer<'_, '_>,
+    literal: &GeometryLiteral, coordinate_scale: u32, writer: &mut Writer<'_, '_>,
 ) -> Result<String, GeoError> {
     let mut out = String::new();
     writer.text(&mut out, "<")?;
@@ -746,8 +730,7 @@ enum Head {
 /// by [`Geometry::new`], which owns that rule — because the two statements cannot
 /// both be true.
 fn parse_head(
-    cursor: &mut Cursor<'_, '_, '_, '_, '_>,
-    inherited: CoordDim,
+    cursor: &mut Cursor<'_, '_, '_, '_, '_>, inherited: CoordDim,
 ) -> Result<Head, GeoError> {
     cursor.skip_whitespace();
     let keyword_at = cursor.pos;
@@ -800,8 +783,7 @@ struct OpenCollection {
 /// literal is read however deep it nests, and a diagnostic anywhere inside it is the
 /// same diagnostic at the same byte as it would be at the top level.
 fn parse_geometry(
-    cursor: &mut Cursor<'_, '_, '_, '_, '_>,
-    inherited: CoordDim,
+    cursor: &mut Cursor<'_, '_, '_, '_, '_>, inherited: CoordDim,
 ) -> Result<Geometry, GeoError> {
     let mut open: Vec<OpenCollection> = Vec::new();
     let mut dim = inherited;
@@ -868,10 +850,7 @@ fn unknown_keyword(cursor: &Cursor<'_, '_, '_, '_, '_>, at: usize, word: &str) -
 #[cold]
 #[inline(never)]
 fn bad_tag(
-    cursor: &Cursor<'_, '_, '_, '_, '_>,
-    kind: GeometryKind,
-    at: usize,
-    word: &str,
+    cursor: &Cursor<'_, '_, '_, '_, '_>, kind: GeometryKind, at: usize, word: &str,
 ) -> GeoError {
     cursor.error(at, crate::WktReason::BadTag { kind, word })
 }
@@ -880,10 +859,7 @@ fn bad_tag(
 #[cold]
 #[inline(never)]
 fn bad_tag_follower(
-    cursor: &Cursor<'_, '_, '_, '_, '_>,
-    tag: &str,
-    at: usize,
-    word: &str,
+    cursor: &Cursor<'_, '_, '_, '_, '_>, tag: &str, at: usize, word: &str,
 ) -> GeoError {
     cursor.error(at, crate::WktReason::BadTagFollower { tag, word })
 }
@@ -906,9 +882,7 @@ fn tag_dim(word: &str) -> Option<CoordDim> {
 /// What to show for a keyword that did not match: the word itself when there was
 /// one, and the offending text when the read produced nothing at all.
 fn preview_word<'a>(
-    cursor: &'a Cursor<'_, '_, '_, '_, '_>,
-    at: usize,
-    word: &'a str,
+    cursor: &'a Cursor<'_, '_, '_, '_, '_>, at: usize, word: &'a str,
 ) -> Preview<'a> {
     if word.is_empty() {
         let rest = &cursor.text[at..];
@@ -926,9 +900,7 @@ fn preview_word<'a>(
 /// [`parse_geometry`]'s own loop, which is the only caller of this function; it
 /// never asks for a collection body here.
 fn parse_body(
-    cursor: &mut Cursor<'_, '_, '_, '_, '_>,
-    kind: GeometryKind,
-    dim: CoordDim,
+    cursor: &mut Cursor<'_, '_, '_, '_, '_>, kind: GeometryKind, dim: CoordDim,
 ) -> Result<GeometryBody, GeoError> {
     match kind {
         GeometryKind::Point => parse_point_body(cursor, dim),
@@ -945,8 +917,7 @@ fn parse_body(
 
 /// `POINT` — `( position )`.
 fn parse_point_body(
-    cursor: &mut Cursor<'_, '_, '_, '_, '_>,
-    dim: CoordDim,
+    cursor: &mut Cursor<'_, '_, '_, '_, '_>, dim: CoordDim,
 ) -> Result<GeometryBody, GeoError> {
     open_list(cursor, "a point")?;
     let coord = parse_coord(cursor, dim)?;
@@ -956,8 +927,7 @@ fn parse_point_body(
 
 /// `LINESTRING` — `( position, ... )`.
 fn parse_line_string_body(
-    cursor: &mut Cursor<'_, '_, '_, '_, '_>,
-    dim: CoordDim,
+    cursor: &mut Cursor<'_, '_, '_, '_, '_>, dim: CoordDim,
 ) -> Result<GeometryBody, GeoError> {
     Ok(GeometryBody::LineString(parse_coord_seq(
         cursor,
@@ -968,8 +938,7 @@ fn parse_line_string_body(
 
 /// `POLYGON` — `( ring, ... )`, a ring being a `<linestring text>`.
 fn parse_polygon_body(
-    cursor: &mut Cursor<'_, '_, '_, '_, '_>,
-    dim: CoordDim,
+    cursor: &mut Cursor<'_, '_, '_, '_, '_>, dim: CoordDim,
 ) -> Result<GeometryBody, GeoError> {
     Ok(GeometryBody::Polygon(parse_comma_list(
         cursor,
@@ -980,8 +949,7 @@ fn parse_polygon_body(
 
 /// `MULTIPOINT` — `( member, ... )` in either admitted spelling.
 fn parse_multipoint_body(
-    cursor: &mut Cursor<'_, '_, '_, '_, '_>,
-    dim: CoordDim,
+    cursor: &mut Cursor<'_, '_, '_, '_, '_>, dim: CoordDim,
 ) -> Result<GeometryBody, GeoError> {
     Ok(GeometryBody::MultiPoint(parse_comma_list(
         cursor,
@@ -992,8 +960,7 @@ fn parse_multipoint_body(
 
 /// `MULTILINESTRING` — `( <linestring text>, ... )`.
 fn parse_multi_line_string_body(
-    cursor: &mut Cursor<'_, '_, '_, '_, '_>,
-    dim: CoordDim,
+    cursor: &mut Cursor<'_, '_, '_, '_, '_>, dim: CoordDim,
 ) -> Result<GeometryBody, GeoError> {
     Ok(GeometryBody::MultiLineString(parse_comma_list(
         cursor,
@@ -1004,8 +971,7 @@ fn parse_multi_line_string_body(
 
 /// `MULTIPOLYGON` — `( <polygon text>, ... )`.
 fn parse_multipolygon_body(
-    cursor: &mut Cursor<'_, '_, '_, '_, '_>,
-    dim: CoordDim,
+    cursor: &mut Cursor<'_, '_, '_, '_, '_>, dim: CoordDim,
 ) -> Result<GeometryBody, GeoError> {
     Ok(GeometryBody::MultiPolygon(parse_comma_list(
         cursor,
@@ -1030,8 +996,7 @@ fn open_list(cursor: &mut Cursor<'_, '_, '_, '_, '_>, what: &'static str) -> Res
 
 /// Read `( item, item, ... )` with at least one item.
 fn parse_comma_list<'a, T>(
-    cursor: &mut Cursor<'a, '_, '_, '_, '_>,
-    what: &'static str,
+    cursor: &mut Cursor<'a, '_, '_, '_, '_>, what: &'static str,
     mut item: impl FnMut(&mut Cursor<'a, '_, '_, '_, '_>) -> Result<T, GeoError>,
 ) -> Result<Vec<T>, GeoError> {
     open_list(cursor, what)?;
@@ -1051,9 +1016,7 @@ fn parse_comma_list<'a, T>(
 /// Read directly into the model's original coordinate array, admitting each
 /// growth before allocation and moving it into the geometry without another copy.
 fn parse_coord_seq(
-    cursor: &mut Cursor<'_, '_, '_, '_, '_>,
-    dim: CoordDim,
-    what: &'static str,
+    cursor: &mut Cursor<'_, '_, '_, '_, '_>, dim: CoordDim, what: &'static str,
 ) -> Result<CoordSeq, GeoError> {
     open_list(cursor, what)?;
     let mut coords = CoordSeq::new();
@@ -1075,8 +1038,7 @@ fn parse_coord_seq(
 /// This one production is a polygon ring, a `MULTILINESTRING` member and a
 /// `LINESTRING` body, exactly as the OGC grammar has it.
 fn parse_line_text(
-    cursor: &mut Cursor<'_, '_, '_, '_, '_>,
-    dim: CoordDim,
+    cursor: &mut Cursor<'_, '_, '_, '_, '_>, dim: CoordDim,
 ) -> Result<CoordSeq, GeoError> {
     if cursor.eat_keyword("EMPTY") {
         return Ok(CoordSeq::new());
@@ -1086,8 +1048,7 @@ fn parse_line_text(
 
 /// Read a `<polygon text>`: `EMPTY`, or a parenthesized list of rings.
 fn parse_polygon_text(
-    cursor: &mut Cursor<'_, '_, '_, '_, '_>,
-    dim: CoordDim,
+    cursor: &mut Cursor<'_, '_, '_, '_, '_>, dim: CoordDim,
 ) -> Result<Rings, GeoError> {
     if cursor.eat_keyword("EMPTY") {
         return Ok(Rings::new());
@@ -1104,8 +1065,7 @@ fn parse_polygon_text(
 /// list: a mixed list is not something OGC writes, but its meaning is unambiguous,
 /// and there is no reading of it worth refusing.
 fn parse_multipoint_member(
-    cursor: &mut Cursor<'_, '_, '_, '_, '_>,
-    dim: CoordDim,
+    cursor: &mut Cursor<'_, '_, '_, '_, '_>, dim: CoordDim,
 ) -> Result<Option<Coord>, GeoError> {
     if cursor.eat_keyword("EMPTY") {
         return Ok(None);
@@ -1154,9 +1114,7 @@ fn parse_coord(cursor: &mut Cursor<'_, '_, '_, '_, '_>, dim: CoordDim) -> Result
 /// Read the `index`-th ordinate of a position, naming the dimension when it is
 /// missing so the diagnostic says *why* one more was expected.
 fn read_ordinate(
-    cursor: &mut Cursor<'_, '_, '_, '_, '_>,
-    dim: CoordDim,
-    index: usize,
+    cursor: &mut Cursor<'_, '_, '_, '_, '_>, dim: CoordDim, index: usize,
 ) -> Result<Rat, GeoError> {
     cursor.skip_whitespace();
     cursor.number().map_err(|error| match error {
@@ -1183,10 +1141,7 @@ fn read_ordinate(
 /// work list in reverse, so they pop in written order. Nesting costs heap and never
 /// stack, and the bytes are exactly the ones the members' own heads and bodies write.
 fn write_geometry(
-    out: &mut String,
-    geometry: &Geometry,
-    scale: u32,
-    writer: &mut Writer<'_, '_>,
+    out: &mut String, geometry: &Geometry, scale: u32, writer: &mut Writer<'_, '_>,
 ) -> Result<(), GeoError> {
     writer.tree(out, geometry, |out, geometry, writer| {
         write_head(out, geometry, writer)?;
@@ -1206,9 +1161,7 @@ fn write_geometry(
 
 /// Append the keyword and dimension tag with their exact separators.
 fn write_head(
-    out: &mut String,
-    geometry: &Geometry,
-    writer: &mut Writer<'_, '_>,
+    out: &mut String, geometry: &Geometry, writer: &mut Writer<'_, '_>,
 ) -> Result<(), GeoError> {
     writer.text(out, geometry.kind().wkt_keyword())?;
     let tag = geometry.dim().wkt_tag();
@@ -1239,10 +1192,7 @@ fn has_no_members(body: &GeometryBody) -> bool {
 
 /// Append one non-collection body. Collections use the writer's one work list.
 fn write_body(
-    out: &mut String,
-    body: &GeometryBody,
-    scale: u32,
-    writer: &mut Writer<'_, '_>,
+    out: &mut String, body: &GeometryBody, scale: u32, writer: &mut Writer<'_, '_>,
 ) -> Result<(), GeoError> {
     match body {
         GeometryBody::Point(point) => match point {
@@ -1286,19 +1236,14 @@ fn write_body(
 
 /// The one member-separator and parentheses law.
 fn write_separated<T>(
-    out: &mut String,
-    items: &[T],
-    writer: &mut Writer<'_, '_>,
+    out: &mut String, items: &[T], writer: &mut Writer<'_, '_>,
     each: impl FnMut(&mut String, &T, &mut Writer<'_, '_>) -> Result<(), GeoError>,
 ) -> Result<(), GeoError> {
     writer.sequence(out, items, "(", ")", each)
 }
 
 fn write_line_text(
-    out: &mut String,
-    coords: &CoordSeq,
-    scale: u32,
-    writer: &mut Writer<'_, '_>,
+    out: &mut String, coords: &CoordSeq, scale: u32, writer: &mut Writer<'_, '_>,
 ) -> Result<(), GeoError> {
     if coords.is_empty() {
         writer.text(out, "EMPTY")
@@ -1307,30 +1252,21 @@ fn write_line_text(
     }
 }
 fn write_coord_seq(
-    out: &mut String,
-    coords: &[Coord],
-    scale: u32,
-    writer: &mut Writer<'_, '_>,
+    out: &mut String, coords: &[Coord], scale: u32, writer: &mut Writer<'_, '_>,
 ) -> Result<(), GeoError> {
     write_separated(out, coords, writer, |buf, coord, writer| {
         write_coord(buf, coord, scale, writer)
     })
 }
 fn write_rings(
-    out: &mut String,
-    rings: &[CoordSeq],
-    scale: u32,
-    writer: &mut Writer<'_, '_>,
+    out: &mut String, rings: &[CoordSeq], scale: u32, writer: &mut Writer<'_, '_>,
 ) -> Result<(), GeoError> {
     write_separated(out, rings, writer, |buf, ring, writer| {
         write_line_text(buf, ring, scale, writer)
     })
 }
 fn write_coord(
-    out: &mut String,
-    coord: &Coord,
-    scale: u32,
-    writer: &mut Writer<'_, '_>,
+    out: &mut String, coord: &Coord, scale: u32, writer: &mut Writer<'_, '_>,
 ) -> Result<(), GeoError> {
     writer.ordinate(out, coord.x(), scale)?;
     writer.text(out, " ")?;

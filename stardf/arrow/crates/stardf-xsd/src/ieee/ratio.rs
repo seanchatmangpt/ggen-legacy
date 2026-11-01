@@ -43,17 +43,13 @@ pub fn dyadic_ratio(numerator: &Int, fractional_bits: u32) -> (Int, Int) {
 /// # Errors
 /// Refuses exhausted destination count or capacity without an allocation fallback.
 pub fn dyadic_ratio_in(
-    numerator: &Int,
-    fractional_bits: u32,
-    scratch: &LimbScratch,
+    numerator: &Int, fractional_bits: u32, scratch: &LimbScratch,
 ) -> Result<(Int, Int), LimbScratchError> {
     dyadic_ratio_using(numerator, fractional_bits, scratch)
 }
 
 fn dyadic_ratio_using(
-    numerator: &Int,
-    fractional_bits: u32,
-    storage: &impl Allocate,
+    numerator: &Int, fractional_bits: u32, storage: &impl Allocate,
 ) -> Result<(Int, Int), LimbScratchError> {
     let Some(zeros) = numerator.trailing_zeros() else {
         return Ok((Int::zero(), Int::one()));
@@ -75,9 +71,7 @@ pub fn round_even_integer(numerator: &Int, denominator: &Int) -> Option<Int> {
 /// # Errors
 /// Refuses scratch exhaustion; a zero denominator returns `Ok(None)`.
 pub fn round_even_integer_in(
-    numerator: &Int,
-    denominator: &Int,
-    scratch: &LimbScratch,
+    numerator: &Int, denominator: &Int, scratch: &LimbScratch,
 ) -> Result<Option<Int>, LimbScratchError> {
     round_even_integer_using(numerator, denominator, scratch)
 }
@@ -92,10 +86,7 @@ pub fn round_even_product(numerator: &Int, factor: &Int, denominator: &Int) -> O
 /// # Errors
 /// Refuses destination exhaustion; a zero denominator returns `Ok(None)`.
 pub fn round_even_product_in(
-    numerator: &Int,
-    factor: &Int,
-    denominator: &Int,
-    scratch: &LimbScratch,
+    numerator: &Int, factor: &Int, denominator: &Int, scratch: &LimbScratch,
 ) -> Result<Option<Int>, LimbScratchError> {
     round_integer_product_in(
         numerator,
@@ -110,10 +101,7 @@ pub fn round_even_product_in(
 /// No intermediate product is retained; a zero denominator returns `None`.
 #[must_use]
 pub fn round_integer_product(
-    numerator: &Int,
-    factor: &Int,
-    denominator: &Int,
-    rounding: Rounding,
+    numerator: &Int, factor: &Int, denominator: &Int, rounding: Rounding,
 ) -> Option<Int> {
     round_product_using(numerator, factor, denominator, rounding, &Unbounded)
         .expect("unbounded integer storage")
@@ -123,19 +111,13 @@ pub fn round_integer_product(
 /// # Errors
 /// Refuses destination exhaustion; a zero denominator returns `Ok(None)`.
 pub fn round_integer_product_in(
-    numerator: &Int,
-    factor: &Int,
-    denominator: &Int,
-    rounding: Rounding,
-    scratch: &LimbScratch,
+    numerator: &Int, factor: &Int, denominator: &Int, rounding: Rounding, scratch: &LimbScratch,
 ) -> Result<Option<Int>, LimbScratchError> {
     round_product_using(numerator, factor, denominator, rounding, scratch)
 }
 
 fn round_even_integer_using(
-    numerator: &Int,
-    denominator: &Int,
-    storage: &impl Allocate,
+    numerator: &Int, denominator: &Int, storage: &impl Allocate,
 ) -> Result<Option<Int>, LimbScratchError> {
     round_product_using(
         numerator,
@@ -147,11 +129,7 @@ fn round_even_integer_using(
 }
 
 pub(crate) fn round_product_using(
-    numerator: &Int,
-    factor: &Int,
-    denominator: &Int,
-    rounding: Rounding,
-    storage: &impl Allocate,
+    numerator: &Int, factor: &Int, denominator: &Int, rounding: Rounding, storage: &impl Allocate,
 ) -> Result<Option<Int>, LimbScratchError> {
     let divisor = denominator.abs_using(storage)?;
     let Some((quotient, remainder)) = numerator.abs_using(storage)?.mul_div_rem_using(
@@ -201,10 +179,7 @@ pub fn to_binary64(numerator: &Int, denominator: &Int, rounding: Rounding) -> Op
 /// # Errors
 /// Refuses destination exhaustion; a zero denominator returns `Ok(None)`.
 pub fn to_binary64_in(
-    numerator: &Int,
-    denominator: &Int,
-    rounding: Rounding,
-    scratch: &LimbScratch,
+    numerator: &Int, denominator: &Int, rounding: Rounding, scratch: &LimbScratch,
 ) -> Result<Option<f64>, LimbScratchError> {
     Ok(
         ratio_bits(numerator, denominator, rounding, Format::BINARY64, scratch)?
@@ -231,17 +206,13 @@ pub fn binary64_order_key(numerator: &Int, denominator: &Int) -> Option<u64> {
 /// Refuses scratch exhaustion without allocating a fallback. A zero
 /// denominator returns `Ok(None)`.
 pub fn binary64_order_key_in(
-    numerator: &Int,
-    denominator: &Int,
-    scratch: &LimbScratch,
+    numerator: &Int, denominator: &Int, scratch: &LimbScratch,
 ) -> Result<Option<u64>, LimbScratchError> {
     binary64_order_key_using(numerator, denominator, scratch)
 }
 
 fn binary64_order_key_using(
-    numerator: &Int,
-    denominator: &Int,
-    storage: &impl Allocate,
+    numerator: &Int, denominator: &Int, storage: &impl Allocate,
 ) -> Result<Option<u64>, LimbScratchError> {
     Ok(ratio_bits(
         numerator,
@@ -313,11 +284,7 @@ impl Format {
 }
 
 fn ratio_bits(
-    n: &Int,
-    d: &Int,
-    rounding: Rounding,
-    format: Format,
-    storage: &impl Allocate,
+    n: &Int, d: &Int, rounding: Rounding, format: Format, storage: &impl Allocate,
 ) -> Result<Option<u64>, LimbScratchError> {
     ratio_bits_admitted(n, d, rounding, format, storage, &mut |_| Ok(()))
 }
@@ -326,11 +293,7 @@ fn ratio_bits(
 /// layouts before every native integer birth. Borrowed source owners are
 /// excluded; actual newly live intermediates are included before the next body.
 pub(crate) fn ratio_bits_admitted(
-    n: &Int,
-    d: &Int,
-    rounding: Rounding,
-    format: Format,
-    storage: &impl Allocate,
+    n: &Int, d: &Int, rounding: Rounding, format: Format, storage: &impl Allocate,
     admit: &mut impl FnMut(crate::exact::cost::NumericOperationLayout) -> Result<(), LimbScratchError>,
 ) -> Result<Option<u64>, LimbScratchError> {
     if d.is_zero() {
@@ -364,10 +327,7 @@ pub(crate) fn ratio_bits_admitted(
 
 /// Compare a rational to a power of two without losing any low bits.
 fn at_least_pow2(
-    n: &Int,
-    d: &Int,
-    exponent: i64,
-    storage: &impl Allocate,
+    n: &Int, d: &Int, exponent: i64, storage: &impl Allocate,
 ) -> Result<bool, LimbScratchError> {
     Ok(if exponent >= 0 {
         n >= &d.shl_using(exponent as u32, storage)?
@@ -380,10 +340,7 @@ fn at_least_pow2(
 /// `None` when an operand or its shift does not fit the narrow path. Identical
 /// to [`to_binary64`] wherever it answers.
 pub(crate) fn binary64_u128(
-    negative: bool,
-    numerator: u128,
-    denominator: u128,
-    rounding: Rounding,
+    negative: bool, numerator: u128, denominator: u128, rounding: Rounding,
 ) -> Option<f64> {
     let magnitude_rounding = match (negative, rounding) {
         (true, Rounding::Down) => Rounding::Up,
@@ -475,21 +432,13 @@ fn positive_bits_u128(n: u128, d: u128, rounding: Rounding, format: Format) -> O
 
 #[cfg(test)]
 fn positive_bits_wide(
-    n: &Int,
-    d: &Int,
-    rounding: Rounding,
-    format: Format,
-    storage: &impl Allocate,
+    n: &Int, d: &Int, rounding: Rounding, format: Format, storage: &impl Allocate,
 ) -> Result<u64, LimbScratchError> {
     positive_bits_wide_admitted(n, d, rounding, format, storage, &mut |_| Ok(()))
 }
 
 fn positive_bits_wide_admitted(
-    n: &Int,
-    d: &Int,
-    rounding: Rounding,
-    format: Format,
-    storage: &impl Allocate,
+    n: &Int, d: &Int, rounding: Rounding, format: Format, storage: &impl Allocate,
     admit: &mut impl FnMut(crate::exact::cost::NumericOperationLayout) -> Result<(), LimbScratchError>,
 ) -> Result<u64, LimbScratchError> {
     let estimate = i128::from(n.bit_len()) - i128::from(d.bit_len());

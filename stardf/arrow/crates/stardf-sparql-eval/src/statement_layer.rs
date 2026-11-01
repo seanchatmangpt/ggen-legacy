@@ -97,16 +97,13 @@ pub(crate) struct StatementProbe<I: ViewTermId> {
 /// order — a deterministic, dataset-derived order, as every result-observable order in
 /// this crate must be.
 pub(crate) fn visit_quads<D: DatasetView>(
-    dataset: &D,
-    probe: StatementProbe<D::Id>,
-    emit: impl FnMut(QuadIds<D::Id>) -> ControlFlow<()>,
+    dataset: &D, probe: StatementProbe<D::Id>, emit: impl FnMut(QuadIds<D::Id>) -> ControlFlow<()>,
 ) {
     visit_quads_range(dataset, probe, None, emit);
 }
 
 pub(crate) fn visit_quads_range<D: DatasetView>(
-    dataset: &D,
-    probe: StatementProbe<D::Id>,
+    dataset: &D, probe: StatementProbe<D::Id>,
     range: Option<purrdf_core::AnnotationValueRange<'_>>,
     mut emit: impl FnMut(QuadIds<D::Id>) -> ControlFlow<()>,
 ) {

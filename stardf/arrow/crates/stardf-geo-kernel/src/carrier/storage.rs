@@ -14,13 +14,10 @@ pub(crate) trait GeometryStorageVisitor {
     fn collection(&mut self, children: usize) -> Result<(), GeoError>;
     fn pending_child(&mut self) -> Result<(), GeoError>;
     fn push_pending<T>(
-        &mut self,
-        pending: &mut crate::context::RetainedBuilder<T>,
-        value: T,
+        &mut self, pending: &mut crate::context::RetainedBuilder<T>, value: T,
     ) -> Result<(), GeoError>;
     fn release_pending<T>(
-        &mut self,
-        pending: crate::context::RetainedBuilder<T>,
+        &mut self, pending: crate::context::RetainedBuilder<T>,
     ) -> Result<(), GeoError>;
 }
 
@@ -45,8 +42,7 @@ fn polygon(rings: &Rings, visitor: &mut impl GeometryStorageVisitor) -> Result<(
 /// Preserve the original source walk's event order for admission and output
 /// storage. This visits capacity even for empty vectors and empty members.
 pub(crate) fn visit_geometry_storage(
-    geometry: &Geometry,
-    visitor: &mut impl GeometryStorageVisitor,
+    geometry: &Geometry, visitor: &mut impl GeometryStorageVisitor,
 ) -> Result<(), GeoError> {
     let mut pending = crate::context::RetainedBuilder::default();
     visitor.push_pending(&mut pending, (geometry, 0))?;
@@ -127,10 +123,7 @@ struct OwnedStorage<'a, 'observer> {
 pub(crate) trait MetadataArray {
     fn len(&self) -> usize;
     fn reserve_required(
-        &mut self,
-        required: usize,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &mut self, required: usize, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError>;
 }
 
@@ -140,10 +133,7 @@ impl<T> MetadataArray for Vec<T> {
     }
 
     fn reserve_required(
-        &mut self,
-        required: usize,
-        _: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &mut self, required: usize, _: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         let original = core::alloc::Layout::array::<T>(self.capacity())
             .map_err(|_| GeoError::Storage(purrdf_lex::allocation::StorageError::SizeOverflow))?
@@ -160,19 +150,14 @@ impl<T> MetadataArray for (&mut crate::context::RetainedBuilder<T>, &mut u64) {
     }
 
     fn reserve_required(
-        &mut self,
-        required: usize,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &mut self, required: usize, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         self.0.reserve_admitted(required, context, progress, self.1)
     }
 }
 
 pub(crate) fn reserve_metadata(
-    values: &mut impl MetadataArray,
-    additional: usize,
-    context: &mut MetricContext,
+    values: &mut impl MetadataArray, additional: usize, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     context.charge_work(
@@ -254,15 +239,12 @@ impl GeometryStorageVisitor for OwnedStorage<'_, '_> {
         self.step(1)
     }
     fn push_pending<T>(
-        &mut self,
-        pending: &mut crate::context::RetainedBuilder<T>,
-        value: T,
+        &mut self, pending: &mut crate::context::RetainedBuilder<T>, value: T,
     ) -> Result<(), GeoError> {
         pending.push_admitted(value, self.context, self.progress, &mut self.temporary)
     }
     fn release_pending<T>(
-        &mut self,
-        pending: crate::context::RetainedBuilder<T>,
+        &mut self, pending: crate::context::RetainedBuilder<T>,
     ) -> Result<(), GeoError> {
         pending.release_admitted(self.context, &mut self.temporary)
     }
@@ -274,9 +256,7 @@ impl GeometryStorageVisitor for OwnedStorage<'_, '_> {
 /// arena storage stays covered by its independent retained context baseline.
 #[cfg(test)]
 pub(crate) fn owned_geometry_storage(
-    geometry: &Geometry,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    geometry: &Geometry, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<GeometryStorage, GeoError> {
     let mut visitor = OwnedStorage {
         owned: GeometryStorage {
@@ -300,8 +280,7 @@ pub(crate) fn owned_geometry_storage(
 /// Inline coordinates, enclosing containers and iterator storage are excluded.
 #[cfg(test)]
 pub(crate) fn owned_coordinates_storage<'a>(
-    coordinates: impl IntoIterator<Item = &'a Coord>,
-    context: &mut MetricContext,
+    coordinates: impl IntoIterator<Item = &'a Coord>, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<GeometryStorage, GeoError> {
     progress.context_poll(context)?;

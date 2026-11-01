@@ -65,9 +65,7 @@ use crate::solution::VarSchema;
 /// is a node of the installed plan and `expr` one of its attached expressions, compiled
 /// on first use; otherwise a program compiled for this call.
 pub(crate) fn program_at<D: DatasetView + Sync>(
-    ctx: &EvalCtx<'_, D>,
-    node: &GraphPattern,
-    expr: &Expression,
+    ctx: &EvalCtx<'_, D>, node: &GraphPattern, expr: &Expression,
 ) -> Result<crate::workspace::SharedWorkspace<ExprProgram>, EvalError> {
     if let Some(plan) = ctx.plan.as_ref()
         && let Some(id) = plan.node_of(node)
@@ -161,8 +159,7 @@ impl Arguments {
     }
 
     fn with_capacity(
-        capacity: usize,
-        workspace: &crate::WorkspaceCapability,
+        capacity: usize, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         Ok(Self {
             values: crate::AdmittedVec::with_capacity(capacity, workspace)?,
@@ -309,9 +306,7 @@ impl ExistsSites<'_> {
     /// Resolve the compiled ordinal against its retained immutable expression
     /// owner. Both the immediate VM and a suspended row use this one path.
     fn pattern<'a>(
-        &'a self,
-        site: u32,
-        expression: Option<&Expression>,
+        &'a self, site: u32, expression: Option<&Expression>,
     ) -> Result<&'a GraphPattern, EvalError> {
         let site = self
             .sites
@@ -350,8 +345,7 @@ enum ExpressionOwner<'e> {
 
 impl ExpressionOwner<'_> {
     fn expression<'a>(
-        &'a self,
-        supplied: Option<&Expression>,
+        &'a self, supplied: Option<&Expression>,
     ) -> Result<&'a Expression, EvalError> {
         use purrdf_sparql_algebra::NodeRef;
         let expression = match self {
@@ -389,8 +383,7 @@ impl ExpressionOwner<'_> {
 type CopiedExpressionPath = (Vec<usize>, Option<crate::WorkspaceAllocation>);
 
 fn copied_expression_path(
-    pattern: &crate::expr::PreparedPattern,
-    target: &Expression,
+    pattern: &crate::expr::PreparedPattern, target: &Expression,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<CopiedExpressionPath>, EvalError> {
     use purrdf_sparql_algebra::walk::{Flow, NodeRef, Visit, WalkError, try_walk_pre_post};
@@ -493,8 +486,7 @@ pub(crate) enum FilterPoll<I> {
 
 impl FilterRowState {
     pub(crate) fn begin<D: DatasetView + Sync>(
-        linked: &mut Linked<'_, D::Id>,
-        ctx: &EvalCtx<'_, D>,
+        linked: &mut Linked<'_, D::Id>, ctx: &EvalCtx<'_, D>,
     ) -> Result<Self, EvalError> {
         linked.begin_term(ctx)?;
         Ok(Self {
@@ -505,12 +497,8 @@ impl FilterRowState {
     /// Stop before entering an EXISTS child. The caller may retain this
     /// cursor and the linked value stack in its admitted worklist frame.
     pub(crate) fn poll<D: DatasetView + Sync>(
-        &mut self,
-        linked: &mut Linked<'_, D::Id>,
-        expression: &Expression,
-        row: &crate::solution::RetainedRow<D::Id>,
-        schema: &VarSchema,
-        ctx: &mut EvalCtx<'_, D>,
+        &mut self, linked: &mut Linked<'_, D::Id>, expression: &Expression,
+        row: &crate::solution::RetainedRow<D::Id>, schema: &VarSchema, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<FilterPoll<D::Id>, EvalError> {
         loop {
             match linked.advance_term(&mut self.cursor, row, ctx)? {
@@ -533,23 +521,16 @@ impl FilterRowState {
     }
 
     pub(crate) fn resume<D: DatasetView + Sync>(
-        &self,
-        linked: &mut Linked<'_, D::Id>,
-        value: Option<SolutionTerm<D::Id>>,
-        record: Option<crate::evidence_exec::RowEvidence>,
-        ctx: &EvalCtx<'_, D>,
+        &self, linked: &mut Linked<'_, D::Id>, value: Option<SolutionTerm<D::Id>>,
+        record: Option<crate::evidence_exec::RowEvidence>, ctx: &EvalCtx<'_, D>,
     ) -> Result<(), EvalError> {
         linked.resume_term(value, record, &self.cursor, ctx)
     }
 
     fn finish<D: DatasetView + Sync>(
-        self,
-        linked: &Linked<'_, D::Id>,
-        expression: &Expression,
-        row: &crate::solution::RetainedRow<D::Id>,
-        schema: &VarSchema,
-        value: Option<SolutionTerm<D::Id>>,
-        ctx: &mut EvalCtx<'_, D>,
+        self, linked: &Linked<'_, D::Id>, expression: &Expression,
+        row: &crate::solution::RetainedRow<D::Id>, schema: &VarSchema,
+        value: Option<SolutionTerm<D::Id>>, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<(bool, Option<crate::evidence_exec::RowEvidence>), EvalError> {
         let value = match value {
             Some(term) => helpers::ebv_term(ctx, term)?,
@@ -565,9 +546,7 @@ impl<'e, I: purrdf_core::ViewTermId> FilterRowFrame<'e, I> {
     }
 
     pub(crate) fn begin<D: DatasetView<Id = I> + Sync>(
-        mut linked: Linked<'e, I>,
-        row: crate::solution::RetainedRow<I>,
-        ctx: &EvalCtx<'_, D>,
+        mut linked: Linked<'e, I>, row: crate::solution::RetainedRow<I>, ctx: &EvalCtx<'_, D>,
     ) -> Result<Self, EvalError> {
         let state = FilterRowState::begin(&mut linked, ctx)?;
         Ok(Self { linked, row, state })
@@ -577,11 +556,7 @@ impl<'e, I: purrdf_core::ViewTermId> FilterRowFrame<'e, I> {
     /// retained in the admitted suspension frame. The same decision can be
     /// completed by the resident adapter or entered by the graph worklist.
     pub(crate) fn prepare_exists<D: DatasetView<Id = I> + Sync>(
-        &self,
-        site: u32,
-        expression: &Expression,
-        schema: &VarSchema,
-        ctx: &mut EvalCtx<'_, D>,
+        &self, site: u32, expression: &Expression, schema: &VarSchema, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<
         (
             crate::expr::ExistsDecision<I>,
@@ -604,10 +579,7 @@ impl<'e, I: purrdf_core::ViewTermId> FilterRowFrame<'e, I> {
     }
 
     pub(crate) fn step<D: DatasetView<Id = I> + Sync>(
-        mut self,
-        expression: &Expression,
-        schema: &VarSchema,
-        ctx: &mut EvalCtx<'_, D>,
+        mut self, expression: &Expression, schema: &VarSchema, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<FilterRowStep<'e, I>, EvalError> {
         match self
             .state
@@ -629,10 +601,8 @@ impl<'e, I: purrdf_core::ViewTermId> FilterRowFrame<'e, I> {
     }
 
     pub(crate) fn resume<D: DatasetView<Id = I> + Sync>(
-        &mut self,
-        value: Option<SolutionTerm<I>>,
-        record: Option<crate::evidence_exec::RowEvidence>,
-        ctx: &EvalCtx<'_, D>,
+        &mut self, value: Option<SolutionTerm<I>>,
+        record: Option<crate::evidence_exec::RowEvidence>, ctx: &EvalCtx<'_, D>,
     ) -> Result<(), EvalError> {
         self.state.resume(&mut self.linked, value, record, ctx)
     }
@@ -642,19 +612,15 @@ impl<'e, I: purrdf_core::ViewTermId> Linked<'e, I> {
     /// Link `program`, compiled from `expr`, to a call over `schema`.
     #[cfg(test)]
     pub(crate) fn link<D: DatasetView<Id = I> + Sync>(
-        program: impl Into<crate::workspace::SharedWorkspace<ExprProgram>>,
-        expr: &'e Expression,
-        schema: &VarSchema,
-        ctx: &mut EvalCtx<'_, D>,
+        program: impl Into<crate::workspace::SharedWorkspace<ExprProgram>>, expr: &'e Expression,
+        schema: &VarSchema, ctx: &mut EvalCtx<'_, D>,
     ) -> Self {
         Self::link_admitted(program, expr, schema, ctx).expect("resident VM link allocation")
     }
 
     pub(crate) fn link_admitted<D: DatasetView<Id = I> + Sync>(
-        program: impl Into<crate::workspace::SharedWorkspace<ExprProgram>>,
-        expr: &'e Expression,
-        schema: &VarSchema,
-        ctx: &mut EvalCtx<'_, D>,
+        program: impl Into<crate::workspace::SharedWorkspace<ExprProgram>>, expr: &'e Expression,
+        schema: &VarSchema, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<Self, EvalError> {
         Self::link_with_owner(
             program.into(),
@@ -669,10 +635,8 @@ impl<'e, I: purrdf_core::ViewTermId> Linked<'e, I> {
     /// substitution runner retains. The owned link itself has no borrow into
     /// that window, so it can move with a suspended worklist frame.
     pub(crate) fn link_filter_admitted<D: DatasetView<Id = I> + Sync>(
-        program: impl Into<crate::workspace::SharedWorkspace<ExprProgram>>,
-        expr: &'e Expression,
-        schema: &VarSchema,
-        ctx: &mut EvalCtx<'_, D>,
+        program: impl Into<crate::workspace::SharedWorkspace<ExprProgram>>, expr: &'e Expression,
+        schema: &VarSchema, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<Self, EvalError> {
         let program = program.into();
         if program.has_exists()
@@ -690,12 +654,9 @@ impl<'e, I: purrdf_core::ViewTermId> Linked<'e, I> {
     /// own the returned link without borrowing the temporary `expr` used to
     /// compile it. The caller derives the path with the one copied-tree walk.
     pub(crate) fn link_copied_filter_admitted<D: DatasetView<Id = I> + Sync>(
-        program: crate::workspace::SharedWorkspace<ExprProgram>,
-        expr: &Expression,
-        pattern: crate::expr::PreparedPattern,
-        steps: Vec<usize>,
-        allocation: Option<crate::WorkspaceAllocation>,
-        schema: &VarSchema,
+        program: crate::workspace::SharedWorkspace<ExprProgram>, expr: &Expression,
+        pattern: crate::expr::PreparedPattern, steps: Vec<usize>,
+        allocation: Option<crate::WorkspaceAllocation>, schema: &VarSchema,
         ctx: &mut EvalCtx<'_, D>,
     ) -> Result<Linked<'static, I>, EvalError> {
         Self::link_with_owner(
@@ -714,11 +675,8 @@ impl<'e, I: purrdf_core::ViewTermId> Linked<'e, I> {
     /// Resolve the compiled FILTER against the immutable copied pattern kept
     /// by a movable graph frame. No expression borrow escapes this call.
     pub(crate) fn link_copied_filter_owner_admitted<D: DatasetView<Id = I> + Sync>(
-        program: crate::workspace::SharedWorkspace<ExprProgram>,
-        expr: &Expression,
-        pattern: crate::expr::PreparedPattern,
-        schema: &VarSchema,
-        ctx: &mut EvalCtx<'_, D>,
+        program: crate::workspace::SharedWorkspace<ExprProgram>, expr: &Expression,
+        pattern: crate::expr::PreparedPattern, schema: &VarSchema, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<Linked<'static, I>, EvalError> {
         let (steps, allocation) = if program.has_exists() {
             copied_expression_path(&pattern, expr, &ctx.growth)?.ok_or_else(|| {
@@ -731,11 +689,8 @@ impl<'e, I: purrdf_core::ViewTermId> Linked<'e, I> {
     }
 
     fn link_with_owner<'owner, D: DatasetView<Id = I> + Sync>(
-        program: crate::workspace::SharedWorkspace<ExprProgram>,
-        expr: &Expression,
-        owner: ExpressionOwner<'owner>,
-        schema: &VarSchema,
-        ctx: &mut EvalCtx<'_, D>,
+        program: crate::workspace::SharedWorkspace<ExprProgram>, expr: &Expression,
+        owner: ExpressionOwner<'owner>, schema: &VarSchema, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<Linked<'owner, I>, EvalError> {
         let mut exists_allocation = None;
         let mut exists = Vec::new();
@@ -860,8 +815,7 @@ impl<'e, I: purrdf_core::ViewTermId> Linked<'e, I> {
     /// Link a program whose expression is not at hand. An `EXISTS` in it has no
     /// pattern to test and fails the run as an internal error.
     pub(crate) fn link_without_exists_admitted<D: DatasetView<Id = I> + Sync>(
-        program: impl Into<crate::workspace::SharedWorkspace<ExprProgram>>,
-        schema: &VarSchema,
+        program: impl Into<crate::workspace::SharedWorkspace<ExprProgram>>, schema: &VarSchema,
         ctx: &mut EvalCtx<'_, D>,
     ) -> Result<Self, EvalError> {
         Self::link_parts(program.into(), None, schema, ctx)
@@ -869,8 +823,7 @@ impl<'e, I: purrdf_core::ViewTermId> Linked<'e, I> {
 
     fn link_parts<D: DatasetView<Id = I> + Sync>(
         program: crate::workspace::SharedWorkspace<ExprProgram>,
-        exists: Option<crate::workspace::SharedWorkspace<ExistsSites<'e>>>,
-        schema: &VarSchema,
+        exists: Option<crate::workspace::SharedWorkspace<ExistsSites<'e>>>, schema: &VarSchema,
         ctx: &mut EvalCtx<'_, D>,
     ) -> Result<Self, EvalError> {
         let stack_capacity = program.ops.len();
@@ -981,11 +934,8 @@ impl<'e, I: purrdf_core::ViewTermId> Linked<'e, I> {
     /// The expression's effective boolean value over `row` (`Ok(None)` is an error or
     /// unbound).
     pub(crate) fn ebv<D: DatasetView<Id = I> + Sync>(
-        &mut self,
-        expression: Option<&Expression>,
-        row: &[Option<SolutionTerm<I>>],
-        schema: &VarSchema,
-        ctx: &mut EvalCtx<'_, D>,
+        &mut self, expression: Option<&Expression>, row: &[Option<SolutionTerm<I>>],
+        schema: &VarSchema, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<Option<bool>, EvalError> {
         match self.term(expression, row, schema, ctx)? {
             Some(term) => Ok(helpers::ebv_term(ctx, term)?),
@@ -997,23 +947,16 @@ impl<'e, I: purrdf_core::ViewTermId> Linked<'e, I> {
     /// A kept ordinary row has no replacement attachment; rejection is separate
     /// from that physical absence so no virtual payload crosses the row loop.
     pub(crate) fn filter<D: DatasetView<Id = I> + Sync>(
-        &mut self,
-        expression: &Expression,
-        row: &crate::solution::RetainedRow<I>,
-        schema: &VarSchema,
-        ctx: &mut EvalCtx<'_, D>,
+        &mut self, expression: &Expression, row: &crate::solution::RetainedRow<I>,
+        schema: &VarSchema, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<(bool, Option<crate::evidence_exec::RowEvidence>), EvalError> {
         let value = self.ebv(Some(expression), row, schema, ctx)?;
         self.finish_filter_value(value, expression, row, schema, ctx)
     }
 
     fn finish_filter_value<D: DatasetView<Id = I> + Sync>(
-        &self,
-        value: Option<bool>,
-        expression: &Expression,
-        row: &crate::solution::RetainedRow<I>,
-        schema: &VarSchema,
-        ctx: &EvalCtx<'_, D>,
+        &self, value: Option<bool>, expression: &Expression, row: &crate::solution::RetainedRow<I>,
+        schema: &VarSchema, ctx: &EvalCtx<'_, D>,
     ) -> Result<(bool, Option<crate::evidence_exec::RowEvidence>), EvalError> {
         if self.evidence.is_none() && ctx.evidence_input.is_none() && !row.has_evidence_attachment()
         {
@@ -1027,11 +970,8 @@ impl<'e, I: purrdf_core::ViewTermId> Linked<'e, I> {
     /// The expression's value over `row`: `Ok(Some)` a term, `Ok(None)` an error or
     /// unbound, `Err` a hard failure. `schema` is the schema the program was linked to.
     pub(crate) fn term<D: DatasetView<Id = I> + Sync>(
-        &mut self,
-        expression: Option<&Expression>,
-        row: &[Option<SolutionTerm<I>>],
-        schema: &VarSchema,
-        ctx: &mut EvalCtx<'_, D>,
+        &mut self, expression: Option<&Expression>, row: &[Option<SolutionTerm<I>>],
+        schema: &VarSchema, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<Option<SolutionTerm<I>>, EvalError> {
         self.begin_term(ctx)?;
         let mut cursor = TermCursor { pc: 0 };
@@ -1057,8 +997,7 @@ impl<'e, I: purrdf_core::ViewTermId> Linked<'e, I> {
     /// Start one expression exactly once; a suspended execution retains its
     /// program counter and stack instead of replaying any previous instruction.
     fn begin_term<D: DatasetView<Id = I> + Sync>(
-        &mut self,
-        ctx: &EvalCtx<'_, D>,
+        &mut self, ctx: &EvalCtx<'_, D>,
     ) -> Result<(), EvalError> {
         self.stack.clear();
         if ctx.may_have_evidence()
@@ -1080,9 +1019,7 @@ impl<'e, I: purrdf_core::ViewTermId> Linked<'e, I> {
     }
 
     fn advance_term<'d, D: DatasetView<Id = I> + Sync>(
-        &mut self,
-        cursor: &mut TermCursor,
-        row: &[Option<SolutionTerm<I>>],
+        &mut self, cursor: &mut TermCursor, row: &[Option<SolutionTerm<I>>],
         ctx: &mut EvalCtx<'d, D>,
     ) -> Result<VmStep<'d, I>, EvalError> {
         if self.evidence.is_some() {
@@ -1093,10 +1030,8 @@ impl<'e, I: purrdf_core::ViewTermId> Linked<'e, I> {
     }
 
     fn resume_term<D: DatasetView<Id = I> + Sync>(
-        &mut self,
-        value: Option<SolutionTerm<I>>,
-        record: Option<crate::evidence_exec::RowEvidence>,
-        cursor: &TermCursor,
+        &mut self, value: Option<SolutionTerm<I>>,
+        record: Option<crate::evidence_exec::RowEvidence>, cursor: &TermCursor,
         ctx: &EvalCtx<'_, D>,
     ) -> Result<(), EvalError> {
         self.stack.push(Val::Term(value));
@@ -1130,10 +1065,7 @@ impl<'e, I: purrdf_core::ViewTermId> Linked<'e, I> {
     /// nested EXISTS or SPARQL function, even when that opcode never runs there.
     #[inline(never)]
     fn advance<'d, const TRACKING: bool, D: DatasetView<Id = I> + Sync>(
-        &mut self,
-        pc: &mut usize,
-        row: &[Option<SolutionTerm<I>>],
-        ctx: &mut EvalCtx<'d, D>,
+        &mut self, pc: &mut usize, row: &[Option<SolutionTerm<I>>], ctx: &mut EvalCtx<'d, D>,
     ) -> Result<VmStep<'d, I>, EvalError> {
         let Self {
             program,
@@ -1532,9 +1464,7 @@ impl<'e, I: purrdf_core::ViewTermId> Linked<'e, I> {
 
 /// The ordering comparison `cmp` over two evaluated operands.
 fn compare<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    cmp: Cmp,
-    a: Option<SolutionTerm<D::Id>>,
+    ctx: &mut EvalCtx<'_, D>, cmp: Cmp, a: Option<SolutionTerm<D::Id>>,
     b: Option<SolutionTerm<D::Id>>,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     use crate::cdt_fn::CdtRelation;
@@ -1559,10 +1489,7 @@ fn compare<D: DatasetView + Sync>(
 /// the registry documents: SPARQL-bodied (which suspends), native, expression-bodied,
 /// then an XSD constructor cast; an IRI none of them names is unsupported.
 fn call_custom<'d, D: DatasetView + Sync>(
-    program: &ExprProgram,
-    call: u32,
-    vals: &mut Arguments,
-    ctx: &mut EvalCtx<'d, D>,
+    program: &ExprProgram, call: u32, vals: &mut Arguments, ctx: &mut EvalCtx<'d, D>,
 ) -> Result<VmStep<'d, D::Id>, EvalError> {
     let Function::Custom(iri) = &program.calls[call as usize] else {
         return Err(EvalError::Invariant(
@@ -1588,12 +1515,8 @@ type Resolved<I> = (
 );
 
 fn resolve<D: DatasetView + Sync>(
-    suspend: Suspend<'_>,
-    exists: Option<&ExistsSites<'_>>,
-    expression: Option<&Expression>,
-    program: &ExprProgram,
-    row: &[Option<SolutionTerm<D::Id>>],
-    schema: &VarSchema,
+    suspend: Suspend<'_>, exists: Option<&ExistsSites<'_>>, expression: Option<&Expression>,
+    program: &ExprProgram, row: &[Option<SolutionTerm<D::Id>>], schema: &VarSchema,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Resolved<D::Id>, EvalError> {
     match suspend {
@@ -1647,10 +1570,7 @@ fn evidence_poisoned() -> EvalError {
 /// Pop `argc` terms and materialize their values into `vals`, in argument order,
 /// replacing what it held.
 fn pop_values<D: DatasetView + Sync>(
-    stack: &mut ValStack<D::Id>,
-    argc: u32,
-    ctx: &EvalCtx<'_, D>,
-    vals: &mut Arguments,
+    stack: &mut ValStack<D::Id>, argc: u32, ctx: &EvalCtx<'_, D>, vals: &mut Arguments,
 ) -> Result<(), EvalError> {
     let start = stack
         .len()
@@ -1702,8 +1622,7 @@ impl StrArg<'_> {
 static NO_FLAGS: helpers::StringArg = (String::new(), None, None);
 
 fn pop_str<'p, I: Copy>(
-    stack: &mut ValStack<I>,
-    strs: &'p [helpers::StringArg],
+    stack: &mut ValStack<I>, strs: &'p [helpers::StringArg],
 ) -> Result<Option<StrArg<'p>>, EvalError> {
     match stack.pop() {
         Some(Val::Str(value)) => Ok(value.map(StrArg::Owned)),

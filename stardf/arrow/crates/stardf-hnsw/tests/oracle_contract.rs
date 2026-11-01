@@ -85,10 +85,7 @@ fn row_of(space: &HnswSpace, row: usize) -> TermValue {
 
 /// Open the relation and drain it, returning the rows and the work reported.
 fn drain(
-    relation: &HnswRelation,
-    seed: Option<&TermValue>,
-    k: &str,
-    neighbour: Option<&TermValue>,
+    relation: &HnswRelation, seed: Option<&TermValue>, k: &str, neighbour: Option<&TermValue>,
     ceiling: Option<u64>,
 ) -> (Vec<PfRow>, u64) {
     let count = TermValue::typed_literal(k, XSD_INTEGER);

@@ -439,13 +439,9 @@ impl purrdf_hash::error::StructuredError for GeometryDomainError {
 
 impl GeometryDomainError {
     pub(crate) fn empty_oriented_integral(
-        query: &[purrdf_xsd::math::FixedInterval; 3],
-        parameter: &purrdf_xsd::math::FixedInterval,
-        total: &purrdf_xsd::math::FixedInterval,
-        line_count: usize,
-        iterations: u32,
-        max_depth: u32,
-        progress: &mut crate::context::WorkProgress<'_>,
+        query: &[purrdf_xsd::math::FixedInterval; 3], parameter: &purrdf_xsd::math::FixedInterval,
+        total: &purrdf_xsd::math::FixedInterval, line_count: usize, iterations: u32,
+        max_depth: u32, progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         let captured = (|| {
             let [x, y, z] =
@@ -476,9 +472,7 @@ impl GeometryDomainError {
     }
 
     pub(crate) fn ring_contact(
-        contact: &crate::atlas::arcs::CurveIntersection,
-        position: [usize; 3],
-        non_jordan: bool,
+        contact: &crate::atlas::arcs::CurveIntersection, position: [usize; 3], non_jordan: bool,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         let captured = crate::context::retained::produce_persistent_numeric_from(contact, progress)
@@ -506,8 +500,7 @@ impl GeometryDomainError {
 
     pub(crate) fn edge_self_contact(
         contact: &crate::atlas::arcs::CurveIntersection,
-        domain: &[purrdf_xsd::math::FixedInterval; 2],
-        position: [usize; 3],
+        domain: &[purrdf_xsd::math::FixedInterval; 2], position: [usize; 3],
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         let captured = (|| {
@@ -538,9 +531,7 @@ impl GeometryDomainError {
     }
 
     pub(crate) fn contact_parameter<T: crate::context::retained::NativeDetached>(
-        points: [&T; 3],
-        reason: SourceContactReason,
-        right: bool,
+        points: [&T; 3], reason: SourceContactReason, right: bool,
         wrap: fn(Box<[T; 3]>) -> SourceContactCoordinates,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
@@ -575,8 +566,7 @@ impl GeometryDomainError {
     }
 
     pub(crate) fn edge_requirement(
-        edge: &crate::PreparedEdge,
-        requirement: PreparedEdgeRequirement,
+        edge: &crate::PreparedEdge, requirement: PreparedEdgeRequirement,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         crate::context::Retained::produce(
@@ -610,10 +600,8 @@ impl GeometryDomainError {
     }
 
     pub(crate) fn written_tangent(
-        points: [&crate::Coord; 3],
-        difference: Option<[&crate::Rat; 2]>,
-        reason: WrittenTangentReason,
-        progress: &mut crate::context::WorkProgress<'_>,
+        points: [&crate::Coord; 3], difference: Option<[&crate::Rat; 2]>,
+        reason: WrittenTangentReason, progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         let captured = (|| {
             let point =
@@ -652,11 +640,8 @@ impl GeometryDomainError {
     }
 
     pub(crate) fn constant_ring_edge(
-        endpoints: [&crate::PreparedCoordinate; 2],
-        kind: crate::PreparedEdgeKind,
-        index: usize,
-        edge_count: usize,
-        progress: &mut crate::context::WorkProgress<'_>,
+        endpoints: [&crate::PreparedCoordinate; 2], kind: crate::PreparedEdgeKind, index: usize,
+        edge_count: usize, progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         let captured = (|| {
             let first =
@@ -687,8 +672,7 @@ impl GeometryDomainError {
     /// Preserve the original planar support refusal through native admission.
     #[must_use]
     pub fn planar_distance_support(
-        first: &crate::Geometry,
-        second: &crate::Geometry,
+        first: &crate::Geometry, second: &crate::Geometry,
         observer: Option<&mut dyn crate::MetricWorkObserver>,
     ) -> super::GeoError {
         let mut progress = crate::context::WorkProgress::integer(observer);
@@ -717,9 +701,7 @@ impl GeometryDomainError {
     }
 
     pub(crate) fn distance_support(
-        stage: DistanceSupportStage,
-        regions: [&crate::PreparedRegion; 2],
-        primitives: [usize; 2],
+        stage: DistanceSupportStage, regions: [&crate::PreparedRegion; 2], primitives: [usize; 2],
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         super::GeoError::retained_failure_with_progress(
@@ -734,9 +716,7 @@ impl GeometryDomainError {
     }
 
     pub(crate) fn membership(
-        input: MembershipInput,
-        expected: usize,
-        actual: &[bool],
+        input: MembershipInput, expected: usize, actual: &[bool],
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         crate::context::Retained::produce(
@@ -757,12 +737,8 @@ impl GeometryDomainError {
     }
 
     pub(crate) fn edge_quotient(
-        first: &crate::Coord,
-        second: &crate::Coord,
-        x: &crate::Rat,
-        offset: &crate::Rat,
-        width: &crate::Rat,
-        operation: EdgeQuotientOperation,
+        first: &crate::Coord, second: &crate::Coord, x: &crate::Rat, offset: &crate::Rat,
+        width: &crate::Rat, operation: EdgeQuotientOperation,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         let captured = (|| {
@@ -806,11 +782,8 @@ impl GeometryDomainError {
     }
 
     pub(crate) fn empty_enclosure(
-        longitude: &purrdf_xsd::math::FixedInterval,
-        latitude: &purrdf_xsd::math::FixedInterval,
-        clipped: [&crate::Rat; 2],
-        axis: usize,
-        progress: &mut crate::context::WorkProgress<'_>,
+        longitude: &purrdf_xsd::math::FixedInterval, latitude: &purrdf_xsd::math::FixedInterval,
+        clipped: [&crate::Rat; 2], axis: usize, progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         let captured = (|| {
             let longitude =
@@ -841,9 +814,7 @@ impl GeometryDomainError {
     }
 
     pub(crate) fn crs_pair(
-        first: &crate::Crs,
-        second: &crate::Crs,
-        progress: &mut crate::context::WorkProgress<'_>,
+        first: &crate::Crs, second: &crate::Crs, progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         crate::context::Retained::produce(
             progress,

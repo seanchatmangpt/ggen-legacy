@@ -558,12 +558,7 @@ fn compose_chains_matching_certificates_and_rejects_mismatched_ones() {
 /// the key active when it was authored"). The shared predicate term rides an
 /// UNSIGNED leading frame (pure vocabulary, not an authorship claim).
 fn source_with_rotated_authors(
-    kid_a: &str,
-    byte_a: u8,
-    n_a: u32,
-    kid_b: &str,
-    byte_b: u8,
-    n_b: u32,
+    kid_a: &str, byte_a: u8, n_a: u32, kid_b: &str, byte_b: u8, n_b: u32,
 ) -> Vec<u8> {
     let mut w = Writer::new("purrdf.gts");
     w.add_terms(&[Term::iri("https://example.org/p".to_string())]);

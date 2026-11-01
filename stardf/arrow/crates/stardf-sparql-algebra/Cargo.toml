@@ -9,9 +9,11 @@
 [package]
 name = "stardf-sparql-algebra"
 description = "Native, wasm-clean SPARQL 1.1/1.2 parser → RDF 1.2-native query algebra AST (quoted triple terms, property paths, FILTER/BIND/VALUES, solution modifiers, GROUP BY) for the RDF 1.2 query stack"
-version = "26.9.29"
+version.workspace = true
 edition = "2024"
-publish = false
+# Lane H03 gate-closure (2026-10-31): G3 fix — tier-4 closure member joins the
+# publish set (was publish=false; the 21:05 ladder receipt named it).
+publish = true
 repository = "https://github.com/seanchatmangpt/ggen-legacy"
 license = "MIT OR Apache-2.0 OR MulanPSL-2.0"
 rust-version = "1.98"
@@ -31,29 +33,32 @@ path = "src/lib.rs"
 name = "purrdf_sparql_algebra"
 
 [dependencies]
-stardf-iri = { path = "../stardf-iri" }
-stardf-xsd = { path = "../stardf-xsd" }
+# Lane H03 gate-closure (2026-10-31): all first-party dep rows dual-keyed per
+# the G5 version+path law (the 21:05 ladder receipt named these rows); the
+# packaged manifest carries the version-only keys.
+stardf-iri = { version = "=26.11.1", path = "../stardf-iri" }
+stardf-xsd = { version = "=26.11.1", path = "../stardf-xsd" }
 # The SEP-0009 composite datatypes (`cdt:List` / `cdt:Map`): the closed function
 # registry (`CdtFn`, `CdtArity`) this parser resolves a call-position CDT IRI
 # against, and the lexical layer a `"…"^^cdt:List` literal is checked with. A
 # closed leaf over `purrdf-iri` + `purrdf-xsd` only, so it adds no edge this
 # crate does not already carry and keeps the front-end `purrdf-core`-free.
-stardf-cdt = { path = "../stardf-cdt" }
+stardf-cdt = { version = "=26.11.1", path = "../stardf-cdt" }
 # The fixed-key table hasher behind the parser's prefix and blank-label maps:
 # their iteration order is the same on every run.
-stardf-hash = { path = "../stardf-hash" }
+stardf-hash = { version = "=26.11.1", path = "../stardf-hash" }
 # The lexical layer: terminals, escape decoders and the chunked byte scans on
 # the tokenizer hot paths (string-literal body, IRIREF end, comment/EOL).
-stardf-lex = { path = "../stardf-lex" }
+stardf-lex = { version = "=26.11.1", path = "../stardf-lex" }
 
 [dev-dependencies]
 # Runs the deep-structure tests on a stack of a stated size: a fresh thread
 # natively, the running stack under a fresh floor on wasm32.
-stardf-stack = { path = "../stardf-stack" }
+stardf-stack = { version = "=26.11.1", path = "../stardf-stack" }
 # Byte-exact golden files for the algebra snapshots, and the property harness
-# (lexer round-trips, parser robustness). Path-only and unpublished, so it is
-# stripped from the packaged manifest.
-stardf-testkit = { path = "../stardf-testkit" }
+# (lexer round-trips, parser robustness). Dual-keyed per the G5 version+path
+# law; the packaged manifest carries the version-only key.
+stardf-testkit = { version = "=26.11.1", path = "../stardf-testkit" }
 # Text extraction for `tests/shipped_sparql_examples.rs` — the gate that pulls
 # SPARQL query/update text and `AGG(<iri>...)` call fragments out of the book,
 # `--help` text, `.pyi`, `.d.ts`, and rustdoc, and parses each with THIS crate's
@@ -61,8 +66,9 @@ stardf-testkit = { path = "../stardf-testkit" }
 # is unaffected.
 regex = { version = "1", default-features = false, features = ["std", "unicode", "perf-cache", "perf-dfa", "perf-onepass", "perf-backtrack", "perf-inline"] }
 # The counting allocator `tests/chain_parse_is_linear.rs` measures a chain's parse
-# with. Path-only and unpublished, so it is stripped from the packaged manifest.
-stardf-alloc-probe = { path = "../stardf-alloc-probe" }
+# with. Dual-keyed per the G5 version+path law; the packaged manifest carries
+# the version-only key.
+stardf-alloc-probe = { version = "=26.11.1", path = "../stardf-alloc-probe" }
 
 [[bench]]
 name = "tokenize"

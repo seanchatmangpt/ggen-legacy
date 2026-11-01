@@ -41,8 +41,7 @@ impl Inventory<'_> {
 
 impl<'model> ModelWalk<'model, Cause> for Inventory<'model> {
     fn first_owner(
-        &mut self,
-        owner: &'model Arc<crate::shapes::ModelOwner>,
+        &mut self, owner: &'model Arc<crate::shapes::ModelOwner>,
     ) -> Result<bool, Cause> {
         self.first(3, Arc::as_ptr(owner).addr())
     }

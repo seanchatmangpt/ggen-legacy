@@ -477,10 +477,7 @@ impl RenderedQuery {
     }
 
     fn text_retaining_outputs(
-        &self,
-        depth: ProbedDepth,
-        declared_rows: Option<u64>,
-        retain: bool,
+        &self, depth: ProbedDepth, declared_rows: Option<u64>, retain: bool,
     ) -> String {
         let render = |position: usize, argument: &UnitArgument| match argument {
             UnitArgument::Placed(text) => text.clone(),
@@ -688,9 +685,7 @@ impl RenderedQuery {
 /// the one [`lookup_mode_is_declared`] asks of a caller's call: does some declared
 /// mode [subsume](BindingPattern::subsumes) the lookup's pattern.
 fn rendered_contract(
-    declaration: &RankedDeclaration,
-    query: &RenderedQuery,
-    descriptor: &PfDescriptor,
+    declaration: &RankedDeclaration, query: &RenderedQuery, descriptor: &PfDescriptor,
 ) -> StreamContract {
     let mut contract = StreamContract::declared(declaration);
     if contract.exclusion.is_declared() {
@@ -1219,10 +1214,7 @@ impl StratumUnit {
     ///   `reason` naming what is in the way — see the section above for why the text
     ///   is read here with every bare predicate IRI taken as a call.
     pub fn new(
-        stratum: Iri,
-        query: String,
-        contract: StreamContract,
-        depth: u32,
+        stratum: Iri, query: String, contract: StreamContract, depth: u32,
         declared_rows: Option<u64>,
     ) -> Result<Self, UnitError> {
         // Decided by the waist's own predicate rather than by a second copy of it,
@@ -1282,12 +1274,8 @@ impl StratumUnit {
     /// makes "the layer wrote this text" a fact about the type rather than a claim
     /// about a string.
     fn emitted(
-        stratum: Iri,
-        query: RenderedQuery,
-        contract: StreamContract,
-        depth: ProbedDepth,
-        bound: RowBound,
-        invoked: BindingPattern,
+        stratum: Iri, query: RenderedQuery, contract: StreamContract, depth: ProbedDepth,
+        bound: RowBound, invoked: BindingPattern,
     ) -> Self {
         Self::assembled(
             stratum,
@@ -1305,12 +1293,8 @@ impl StratumUnit {
 
     /// The one place the fields are written.
     const fn assembled(
-        stratum: Iri,
-        query: UnitQuery,
-        contract: StreamContract,
-        depth: ProbedDepth,
-        declared_rows: Option<u64>,
-        declared_mode: BoundMode,
+        stratum: Iri, query: UnitQuery, contract: StreamContract, depth: ProbedDepth,
+        declared_rows: Option<u64>, declared_mode: BoundMode,
     ) -> Self {
         Self {
             stratum,
@@ -1470,9 +1454,7 @@ impl StratumUnit {
     /// [`ProducerStatus::ExecutionFailed`](crate::ProducerStatus), exactly as it
     /// reports a rendered lookup that will not prepare.
     pub(crate) fn exclusion_sparql(
-        &self,
-        ranking: &PreparedQuery,
-        registry: &PropertyFunctionRegistry<'_>,
+        &self, ranking: &PreparedQuery, registry: &PropertyFunctionRegistry<'_>,
     ) -> Option<Result<Vec<Vec<LookupText>>, String>> {
         if !self.declares_exclusion() {
             return None;
@@ -1657,8 +1639,7 @@ pub trait CompiledRead: sealed::Sealed {
     /// Publish native read streams without changing their reads or evidence.
     #[doc(hidden)]
     fn finish<'d>(
-        &self,
-        streams: purrdf_sparql_eval::AdmittedVec<crate::execute::ReadStratum<'d>>,
+        &self, streams: purrdf_sparql_eval::AdmittedVec<crate::execute::ReadStratum<'d>>,
         statuses: purrdf_sparql_eval::AdmittedOrderedMap<Iri, crate::fusion_stream::ProducerStatus>,
     ) -> Result<Self::Output<'d>, ExecutionError>;
 }
@@ -1682,8 +1663,7 @@ impl CompiledRead for CompiledRetrieval {
         Self::tagged_as_assembled(self)
     }
     fn finish<'d>(
-        &self,
-        streams: purrdf_sparql_eval::AdmittedVec<crate::execute::ReadStratum<'d>>,
+        &self, streams: purrdf_sparql_eval::AdmittedVec<crate::execute::ReadStratum<'d>>,
         statuses: purrdf_sparql_eval::AdmittedOrderedMap<Iri, crate::fusion_stream::ProducerStatus>,
     ) -> Result<Self::Output<'d>, ExecutionError> {
         let workspace = statuses.workspace().clone();
@@ -1713,8 +1693,7 @@ impl CompiledRetrieval {
     /// # Errors
     /// Returns the original key, nested array, arena or control refusal.
     pub fn resolution_admitted(
-        &self,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<
         purrdf_sparql_eval::SharedWorkspace<
             purrdf_sparql_eval::AdmittedOrderedMap<Iri, PlannedResolution>,
@@ -1748,11 +1727,8 @@ impl CompiledRetrieval {
     /// [`Plan`] is; what the record buys is that the claim cannot change afterwards.
     #[must_use]
     pub fn new(
-        units: Vec<StratumUnit>,
-        plan_id: PlanId,
-        registry_id: RegistryId,
-        registry_fingerprint: String,
-        fused_bound: TopK,
+        units: Vec<StratumUnit>, plan_id: PlanId, registry_id: RegistryId,
+        registry_fingerprint: String, fused_bound: TopK,
         resolution: BTreeMap<Iri, PlannedResolution>,
     ) -> Self {
         let attribution = units.iter().map(UnitAttribution::of).collect();
@@ -1786,9 +1762,7 @@ impl CompiledRetrieval {
 
 /// Original producer-attribution check shared by both native compiled bundles.
 pub(crate) fn tagged_units_as_assembled(
-    plan_id: PlanId,
-    units: &[StratumUnit],
-    attribution: &[UnitAttribution],
+    plan_id: PlanId, units: &[StratumUnit], attribution: &[UnitAttribution],
 ) -> Result<(), ExecutionError> {
     let held: Vec<UnitAttribution> = units.iter().map(UnitAttribution::of).collect();
     if held.len() != attribution.len() {
@@ -1879,8 +1853,7 @@ impl PlannedResolution {
     /// # Errors
     /// Returns the first nested array or shared-control refusal.
     pub fn clone_admitted(
-        &self,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<Self, purrdf_sparql_eval::EvalError> {
         if self.sharing_weights.workspace().is_bounded() {
             return Ok(self.clone());
@@ -1947,8 +1920,7 @@ pub(crate) const RANK_NAME: &str = "rank";
 /// The distinct [`AdmissionError`] variant of the first violated admission
 /// dimension; see [`AdmissionError::dimension`].
 pub fn compile(
-    plan: &Plan,
-    env: &AdmissionEnvironment<'_>,
+    plan: &Plan, env: &AdmissionEnvironment<'_>,
 ) -> Result<CompiledRetrieval, AdmissionError> {
     let admitted = admit_plan(plan, env)?;
 
@@ -2121,8 +2093,7 @@ fn fused_bound(plan: &Plan) -> TopK {
 /// fields. One lookup because one declaration: a second read could drift from
 /// the first, and the text and the contract must describe the same producer.
 fn ranked_declaration<'a>(
-    binding: &ProducerBinding,
-    descriptors: &'a BTreeMap<String, PfDescriptor>,
+    binding: &ProducerBinding, descriptors: &'a BTreeMap<String, PfDescriptor>,
 ) -> Result<&'a RankedDeclaration, AdmissionError> {
     descriptors
         .get(&binding.producer)
@@ -2237,10 +2208,7 @@ fn emitted_limit(depth: ProbedDepth) -> u32 {
 /// reads back as a row whose candidate column is absent, where a text that projects no
 /// candidate should be reported as exactly that.
 fn supplied_text(
-    text: &str,
-    body_at: usize,
-    dataset_at: Option<&Range<usize>>,
-    depth: ProbedDepth,
+    text: &str, body_at: usize, dataset_at: Option<&Range<usize>>, depth: ProbedDepth,
 ) -> String {
     // Both offsets are byte positions the parser reported between two of its own
     // tokens, so both are on character boundaries of this very text and every split
@@ -2381,9 +2349,7 @@ impl LookupText {
 /// as the terms the parse made of them rather than as a second spelling of the
 /// caller's bytes.
 fn supplied_exclusion_texts(
-    ranking: &PreparedQuery,
-    registry: &PropertyFunctionRegistry<'_>,
-    basis: ExclusionBasis,
+    ranking: &PreparedQuery, registry: &PropertyFunctionRegistry<'_>, basis: ExclusionBasis,
 ) -> Result<Vec<Vec<LookupText>>, String> {
     let shape = ranking
         .call_read_shape()
@@ -2468,9 +2434,7 @@ fn supplied_exclusion_texts(
 /// point lookup is never a stand-in for inputs the text drives and the lookup does
 /// not.
 fn qualifying_lookup(
-    source: &ColumnSource<'_>,
-    registry: &PropertyFunctionRegistry<'_>,
-    basis: ExclusionBasis,
+    source: &ColumnSource<'_>, registry: &PropertyFunctionRegistry<'_>, basis: ExclusionBasis,
 ) -> Result<LookupText, String> {
     let call = source.call();
     let source_var = source.variable();
@@ -2570,11 +2534,8 @@ fn qualifying_lookup(
 /// needs an input the lookup leaves free, the planner could not have bound it in the
 /// text either.
 fn lookup_mode_is_declared(
-    call: &PropertyFunctionCall,
-    registry: &PropertyFunctionRegistry<'_>,
-    declaration: &RankedDeclaration,
-    candidate: &Variable,
-    arguments: &[&TermPattern],
+    call: &PropertyFunctionCall, registry: &PropertyFunctionRegistry<'_>,
+    declaration: &RankedDeclaration, candidate: &Variable, arguments: &[&TermPattern],
     inputs: &[&Variable],
 ) -> Result<(), String> {
     let bound_variable = |variable: &Variable| variable == candidate || inputs.contains(&variable);
@@ -2693,9 +2654,7 @@ fn term_mentions(term: &TermPattern, variable: &Variable) -> bool {
 
 /// The lookup of a call nothing in its text drives: the call alone, one invocation.
 fn point_lookup(
-    call: &PropertyFunctionCall,
-    source: &Variable,
-    arguments: &[&TermPattern],
+    call: &PropertyFunctionCall, source: &Variable, arguments: &[&TermPattern],
     depth_position: Option<usize>,
 ) -> String {
     // Each position the candidate's variable fills is the lookup's one parameter.
@@ -2772,11 +2731,8 @@ fn point_lookup(
 /// quoted triple so its equalities survive; and every blank the lookup writes carries
 /// a label prefix the driving patterns' text never writes.
 fn driven_lookup(
-    call: &PropertyFunctionCall,
-    source: &ColumnSource<'_>,
-    arguments: &[&TermPattern],
-    depth_position: Option<usize>,
-    inputs: &[&Variable],
+    call: &PropertyFunctionCall, source: &ColumnSource<'_>, arguments: &[&TermPattern],
+    depth_position: Option<usize>, inputs: &[&Variable],
 ) -> LookupText {
     let source_var = source.variable();
     // Built by the shape, which knows how the text evaluates each pattern before the
@@ -2920,10 +2876,7 @@ fn with_dataset(text: String, dataset: &QueryDataset) -> String {
 /// wherever it occurs, every other variable keeps its name, and every blank node its
 /// label behind `kept_blank`.
 fn driven_nested_rewrite(
-    triple: &TriplePattern,
-    source: &Variable,
-    parameter: &str,
-    kept_blank: &str,
+    triple: &TriplePattern, source: &Variable, parameter: &str, kept_blank: &str,
 ) -> TriplePattern {
     map_nested_triple(
         triple,
@@ -2949,8 +2902,7 @@ fn driven_nested_rewrite(
 /// predicate by `predicate`, its quoted triples rebuilt the same way — bottom-up over a
 /// work list, so a triple nested to any depth is rewritten without recursion.
 fn map_nested_triple(
-    triple: &TriplePattern,
-    term: impl Fn(&TermPattern) -> TermPattern,
+    triple: &TriplePattern, term: impl Fn(&TermPattern) -> TermPattern,
     predicate: impl Fn(&NamedNodePattern) -> NamedNodePattern,
 ) -> TriplePattern {
     enum Step<'a> {
@@ -3130,10 +3082,8 @@ fn depth_argument(depth: ProbedDepth, declared_rows: Option<u64>) -> u32 {
 /// placement would build the text under a mode nothing had judged the depth by, which
 /// is why this takes the invocation rather than deriving one.
 fn emit_query(
-    binding: &ProducerBinding,
-    declaration: &RankedDeclaration,
-    descriptors: &BTreeMap<String, PfDescriptor>,
-    invocation: &Invocation,
+    binding: &ProducerBinding, declaration: &RankedDeclaration,
+    descriptors: &BTreeMap<String, PfDescriptor>, invocation: &Invocation,
 ) -> Result<RenderedQuery, AdmissionError> {
     let descriptor = descriptors
         .get(&binding.producer)
@@ -3285,9 +3235,7 @@ mod tests {
         }
 
         fn open<'cursor>(
-            &self,
-            _args: &PfArgs<'_>,
-            _ceiling: Option<u64>,
+            &self, _args: &PfArgs<'_>, _ceiling: Option<u64>,
         ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
         where
             Self: 'cursor,
@@ -3310,8 +3258,7 @@ mod tests {
 
     /// [`neighbours_registry`], the relation declaring `modes`.
     fn neighbours_declaring(
-        exclusion: ExclusionBasis,
-        modes: Vec<BindingPattern>,
+        exclusion: ExclusionBasis, modes: Vec<BindingPattern>,
     ) -> PropertyFunctionRegistry<'static> {
         let mut registry = PropertyFunctionRegistry::new();
         registry.register_ranked(
@@ -3354,8 +3301,7 @@ mod tests {
     /// The lookup a caller's `text` derives under `registry`, and whether that lookup
     /// prepares with the candidate as its one parameter.
     fn supplied_lookup(
-        text: &str,
-        registry: &PropertyFunctionRegistry<'_>,
+        text: &str, registry: &PropertyFunctionRegistry<'_>,
     ) -> Result<String, String> {
         let env = ExtensionEnv::over_relations(registry.clone()).expect("the fixture env");
         let options = || QueryOptions::new().with_env(&env);

@@ -64,11 +64,7 @@ pub fn read_nested(data: &[u8], max_depth: usize, max_decoded_bytes: usize) -> N
 }
 
 fn visit(
-    data: &[u8],
-    depth: usize,
-    max_depth: usize,
-    remaining: &mut usize,
-    seen: &mut FastSet<String>,
+    data: &[u8], depth: usize, max_depth: usize, remaining: &mut usize, seen: &mut FastSet<String>,
     subgraphs: &mut Vec<(String, Graph)>,
 ) -> Graph {
     let mut graph = read(data, true, None);

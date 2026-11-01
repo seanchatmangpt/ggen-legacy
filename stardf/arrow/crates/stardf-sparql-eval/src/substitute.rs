@@ -158,8 +158,7 @@ impl<'a> Prebindings<'a> {
     /// [`NativeSparqlEngine::execute`](crate::NativeSparqlEngine::execute) refuses
     /// before it reaches this.
     pub(crate) fn ground_with_memory(
-        self,
-        index: usize,
+        self, index: usize,
         memory: &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
     ) -> Result<GroundTerm, GroundFailure> {
         match self {
@@ -187,10 +186,7 @@ impl<'a> Prebindings<'a> {
     /// datatype is the same. An IRI already validated and wrapped is shared rather than
     /// validated and copied again; the term is equal to the one [`Self::ground_with_memory`] builds.
     fn ground_reusing_with_memory(
-        self,
-        index: usize,
-        previous: Option<&GroundTerm>,
-        memory: &mut RewriteMemory<'_>,
+        self, index: usize, previous: Option<&GroundTerm>, memory: &mut RewriteMemory<'_>,
     ) -> RewriteResult<GroundTerm> {
         match (previous, self.value(index)) {
             (Some(GroundTerm::NamedNode(before)), Some(TermValue::Iri(iri)))
@@ -446,9 +442,7 @@ impl ProbeList<'_> {
     /// The list `keep` admits of this one: this list when it admits every entry, `None`
     /// when it admits none, and otherwise a narrowed list.
     fn narrowed(
-        &self,
-        keep: impl Fn(&Variable) -> bool,
-        memory: &mut RewriteMemory<'_>,
+        &self, keep: impl Fn(&Variable) -> bool, memory: &mut RewriteMemory<'_>,
     ) -> RewriteResult<Option<Self>> {
         let entries = self.as_slice();
         if entries.iter().all(|(variable, _)| keep(variable)) {
@@ -571,9 +565,7 @@ impl Unwritable {
     }
 
     fn holds_with_memory(
-        self,
-        ground: &GroundTerm,
-        memory: &mut RewriteMemory<'_>,
+        self, ground: &GroundTerm, memory: &mut RewriteMemory<'_>,
     ) -> RewriteResult<bool> {
         match self {
             Self::InPattern => {
@@ -608,9 +600,7 @@ impl Unwritable {
 /// it.
 #[cfg(test)]
 fn driven_arguments(
-    call: &PropertyFunctionCall,
-    probes: &[(Variable, GroundTerm)],
-    rule: Unwritable,
+    call: &PropertyFunctionCall, probes: &[(Variable, GroundTerm)], rule: Unwritable,
     already: Option<&GraphPattern>,
 ) -> Vec<usize> {
     resident_rewrite(|memory| {
@@ -796,8 +786,7 @@ fn undriven_variables(call: &PropertyFunctionCall, seed: &GraphPattern) -> Vec<V
 /// unrelated bindings leaves `call` as it was and returns `None`.
 #[cfg(test)]
 pub(crate) fn bind_call_arguments(
-    call: &mut PropertyFunctionCall,
-    values: &[(Variable, GroundTerm)],
+    call: &mut PropertyFunctionCall, values: &[(Variable, GroundTerm)],
     already: Option<&GraphPattern>,
 ) -> Option<GraphPattern> {
     resident_rewrite(|memory| bind_call_arguments_with_memory(call, values, already, memory))
@@ -809,9 +798,7 @@ pub(crate) fn bind_call_arguments(
 /// replaced, so a leaf that matched none is returned untouched and costs nothing.
 #[cfg(test)]
 fn restore_probed_bindings(
-    leaf: &mut GraphPattern,
-    probed: &[usize],
-    probes: &[(Variable, GroundTerm)],
+    leaf: &mut GraphPattern, probed: &[usize], probes: &[(Variable, GroundTerm)],
     at_core_root: bool,
 ) {
     resident_rewrite(|memory| {
@@ -824,9 +811,7 @@ fn restore_probed_bindings(
 /// that is not a candidate variable is left unchanged.
 #[cfg(test)]
 fn probe_term_pattern(
-    term: &mut TermPattern,
-    probes: &[(Variable, GroundTerm)],
-    probed: &mut Vec<usize>,
+    term: &mut TermPattern, probes: &[(Variable, GroundTerm)], probed: &mut Vec<usize>,
 ) {
     resident_rewrite(|memory| {
         let bytes = std::alloc::Layout::array::<usize>(probed.capacity())
@@ -896,11 +881,8 @@ fn probed_contains(probed: &[usize], index: usize) -> bool {
 }
 
 fn probe_positions_with_memory<'a, S: purrdf_lex::allocation::Admission + ?Sized>(
-    positions: impl IntoIterator<Item = ProbePosition<'a>>,
-    probes: &[(Variable, GroundTerm)],
-    probed: &mut Vec<usize>,
-    rule: ProbeRule,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    positions: impl IntoIterator<Item = ProbePosition<'a>>, probes: &[(Variable, GroundTerm)],
+    probed: &mut Vec<usize>, rule: ProbeRule, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<(), purrdf_lex::allocation::StorageError> {
     // The common matched leaf fits inline. Completing an already-probed SHACL
     // leaf must not allocate once per focus merely to discover no remaining name.
@@ -969,9 +951,7 @@ fn probe_positions_with_memory<'a, S: purrdf_lex::allocation::Admission + ?Sized
 /// with no remaining occurrence is untouched, avoiding duplicate seeds.
 #[cfg(test)]
 fn complete_shacl_leaf(
-    leaf: &mut GraphPattern,
-    probes: &[(Variable, GroundTerm)],
-    scope: WalkScope,
+    leaf: &mut GraphPattern, probes: &[(Variable, GroundTerm)], scope: WalkScope,
 ) {
     resident_rewrite(|memory| complete_shacl_leaf_with_memory(leaf, probes, scope, memory));
 }
@@ -979,10 +959,7 @@ fn complete_shacl_leaf(
 /// Restore SHACL-local bindings, hiding their names from EXISTS row correlation.
 #[cfg(test)]
 fn restore_shacl_bindings(
-    leaf: &mut GraphPattern,
-    bound: &[usize],
-    probes: &[(Variable, GroundTerm)],
-    scope: WalkScope,
+    leaf: &mut GraphPattern, bound: &[usize], probes: &[(Variable, GroundTerm)], scope: WalkScope,
 ) {
     resident_rewrite(|memory| {
         restore_shacl_bindings_with_memory(leaf, bound, probes, scope, memory)
@@ -1104,8 +1081,7 @@ pub(crate) fn term_pattern_from_ground(ground: &GroundTerm) -> Option<TermPatter
 pub(crate) fn term_pattern_from_ground_with_memory<
     S: purrdf_lex::allocation::Admission + ?Sized,
 >(
-    ground: &GroundTerm,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    ground: &GroundTerm, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<Option<TermPattern>, purrdf_lex::allocation::StorageError> {
     /// A quoted triple whose spelling is under way: its subject's spelling once that
     /// is built, with its object's the position being built.
@@ -1205,8 +1181,7 @@ pub(crate) fn term_pattern_from_ground_with_memory<
 ///
 /// As [`build_probes`].
 pub(crate) fn apply_shacl_prebinding(
-    query: Query,
-    substitutions: Prebindings<'_>,
+    query: Query, substitutions: Prebindings<'_>,
 ) -> Result<Query, RdfDiagnostic> {
     let mut frame = crate::workspace::LexicalFrame::new(&crate::WorkspaceCapability::resident());
     let mut memory = purrdf_lex::allocation::Memory::new(&mut frame);
@@ -1382,9 +1357,7 @@ pub(crate) fn named_node_from_ground(ground: &GroundTerm) -> Option<NamedNode> {
 /// every operand in it.
 #[cfg(test)]
 fn substitute_in_graph_pattern(
-    pattern: &mut GraphPattern,
-    expr_subs: &ExprSubs,
-    scope: WalkScope,
+    pattern: &mut GraphPattern, expr_subs: &ExprSubs, scope: WalkScope,
 ) -> SeedColumns {
     resident_rewrite(|memory| {
         substitute_in_graph_pattern_with_memory(pattern, expr_subs, scope, memory)
@@ -1423,9 +1396,7 @@ enum SubstituteStage {
 
 impl SubstituteFrame {
     fn new(
-        node: GraphPattern,
-        scope: WalkScope,
-        stage: SubstituteStage,
+        node: GraphPattern, scope: WalkScope, stage: SubstituteStage,
         memory: &mut RewriteMemory<'_>,
     ) -> Self {
         let workspace = rewrite_workspace(memory);
@@ -1440,8 +1411,7 @@ impl SubstituteFrame {
     }
 
     fn substitute_own_expressions_with_memory(
-        &mut self,
-        expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
+        &mut self, expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
         memory: &mut RewriteMemory<'_>,
     ) -> RewriteResult<Option<GraphPattern>> {
         let roots = own_expressions_with_memory(&mut self.node, memory)?;
@@ -1451,8 +1421,7 @@ impl SubstituteFrame {
     }
 
     fn replace_own_bodies_with_memory(
-        &mut self,
-        memory: &mut RewriteMemory<'_>,
+        &mut self, memory: &mut RewriteMemory<'_>,
     ) -> RewriteResult<()> {
         let bodies = std::mem::replace(
             &mut self.done_bodies,
@@ -1482,10 +1451,7 @@ type SubstituteDescent = (GraphPattern, WalkScope);
 /// column it already named — and drops it otherwise.
 #[cfg(test)]
 fn carry_past_group(
-    node: &mut GraphPattern,
-    expr_subs: &ExprSubs,
-    keys: &[Variable],
-    carried: SeedColumns,
+    node: &mut GraphPattern, expr_subs: &ExprSubs, keys: &[Variable], carried: SeedColumns,
 ) -> SeedColumns {
     resident_rewrite(|memory| carry_past_group_with_memory(node, expr_subs, keys, carried, memory))
 }
@@ -1522,8 +1488,7 @@ impl SeedColumns {
 
     /// What survives a node whose output columns are `columns`.
     fn kept(
-        self,
-        expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
+        self, expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
         columns: purrdf_sparql_algebra::ProjectionNames<'_>,
     ) -> Self {
         let mut kept = self.0;
@@ -1654,10 +1619,7 @@ fn operand_schema(node: &GraphPattern) -> crate::solution::SharedSchema {
 /// by the node before it is driven, so none is carried.
 #[cfg(test)]
 fn carried_columns(
-    node: &GraphPattern,
-    expr_subs: &ExprSubs,
-    reads: &Reads,
-    scope: WalkScope,
+    node: &GraphPattern, expr_subs: &ExprSubs, reads: &Reads, scope: WalkScope,
 ) -> Vec<Variable> {
     resident_rewrite(|memory| carried_columns_with_memory(node, expr_subs, reads, scope, memory))
 }
@@ -1694,8 +1656,7 @@ fn substitute_in_term_pattern(term: &mut TermPattern, values: &[(Variable, Groun
 /// earlier spelling asked `contains_key` and then re-asked `get`, which read as two
 /// tests and was one — presence is implied by a `Some` entry.)
 fn substitute_in_named_node_pattern(
-    pattern: &mut NamedNodePattern,
-    expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
+    pattern: &mut NamedNodePattern, expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
 ) {
     let NamedNodePattern::Variable(var) = pattern else {
         return;
@@ -1713,8 +1674,7 @@ fn substitute_in_named_node_pattern(
 /// body's own scope and put back with [`replace_exists_bodies_with_memory`].
 #[cfg(test)]
 fn substitute_in_expressions<'e>(
-    roots: impl IntoIterator<Item = &'e mut Expression>,
-    expr_subs: &ExprSubs,
+    roots: impl IntoIterator<Item = &'e mut Expression>, expr_subs: &ExprSubs,
     bodies: &mut Vec<GraphPattern>,
 ) {
     let mut native = crate::AdmittedVec::from_resident(std::mem::take(bodies));
@@ -1729,8 +1689,7 @@ fn substitute_in_expressions<'e>(
 /// where it was, so the same walk meets the same positions in the same order.
 #[cfg(test)]
 fn replace_exists_bodies<'e>(
-    roots: impl IntoIterator<Item = &'e mut Expression>,
-    bodies: Vec<GraphPattern>,
+    roots: impl IntoIterator<Item = &'e mut Expression>, bodies: Vec<GraphPattern>,
 ) {
     resident_rewrite(|memory| {
         replace_exists_bodies_with_memory(roots, crate::AdmittedVec::from_resident(bodies), memory)
@@ -1759,9 +1718,7 @@ type RewriteResult<T> = Result<T, GroundFailure>;
 
 impl ParameterValue {
     pub(crate) fn from_id_admitted<D: DatasetView>(
-        dataset: &D,
-        id: D::Id,
-        workspace: &crate::WorkspaceCapability,
+        dataset: &D, id: D::Id, workspace: &crate::WorkspaceCapability,
         source_error: impl FnMut(D::ReadError) -> GroundFailure,
     ) -> RewriteResult<Self> {
         let ground = ground_term_from_id_admitted(dataset, id, workspace, source_error)?;
@@ -1772,8 +1729,7 @@ impl ParameterValue {
 }
 
 fn native_storage<T>(
-    memory: &mut RewriteMemory<'_>,
-    result: Result<T, purrdf_lex::allocation::StorageError>,
+    memory: &mut RewriteMemory<'_>, result: Result<T, purrdf_lex::allocation::StorageError>,
 ) -> RewriteResult<T> {
     result.map_err(|error| {
         memory
@@ -1788,8 +1744,7 @@ fn rewrite_workspace(memory: &mut RewriteMemory<'_>) -> crate::WorkspaceCapabili
 }
 
 fn rewrite_vec<T>(
-    values: impl IntoIterator<Item = T>,
-    memory: &mut RewriteMemory<'_>,
+    values: impl IntoIterator<Item = T>, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<Vec<T>> {
     let mut out = Vec::new();
     for value in values {
@@ -1800,8 +1755,7 @@ fn rewrite_vec<T>(
 }
 
 fn rewrite_scratch<T>(
-    values: impl IntoIterator<Item = T>,
-    memory: &mut RewriteMemory<'_>,
+    values: impl IntoIterator<Item = T>, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<crate::AdmittedVec<T>> {
     let mut out = crate::AdmittedVec::new(&rewrite_workspace(memory));
     for value in values {
@@ -1811,8 +1765,7 @@ fn rewrite_scratch<T>(
 }
 
 fn rewrite_child<T: purrdf_sparql_algebra::Subtree + purrdf_lex::walk::Dismantle>(
-    value: T,
-    memory: &mut RewriteMemory<'_>,
+    value: T, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<Child<T>> {
     let result = memory.add_bytes(std::alloc::Layout::new::<T>().size());
     native_storage(memory, result)?;
@@ -1824,9 +1777,7 @@ fn rewrite_child<T: purrdf_sparql_algebra::Subtree + purrdf_lex::walk::Dismantle
 }
 
 fn rewrite_join(
-    left: GraphPattern,
-    right: GraphPattern,
-    memory: &mut RewriteMemory<'_>,
+    left: GraphPattern, right: GraphPattern, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<GraphPattern> {
     Ok(GraphPattern::Join {
         left: rewrite_child(left, memory)?,
@@ -1835,8 +1786,7 @@ fn rewrite_join(
 }
 
 fn rewrite_variable(
-    text: &impl std::fmt::Display,
-    memory: &mut RewriteMemory<'_>,
+    text: &impl std::fmt::Display, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<Variable> {
     let workspace = rewrite_workspace(memory);
     Ok(Variable::from_admitted(workspace.authored_text(text)?))
@@ -1904,9 +1854,7 @@ impl PreparedProbes {
     }
 
     fn reserve(
-        &mut self,
-        count: usize,
-        workspace: &crate::WorkspaceCapability,
+        &mut self, count: usize, workspace: &crate::WorkspaceCapability,
     ) -> RewriteResult<()> {
         workspace.reserve_vec(&mut self.entries, &mut self.entries_allocation, count)?;
         workspace.reserve_vec(&mut self.children, &mut self.children_allocation, count)?;
@@ -1954,8 +1902,7 @@ impl PreparedProbes {
 }
 
 pub(crate) fn build_prepared_probes(
-    probes: &mut PreparedProbes,
-    substitutions: Prebindings<'_>,
+    probes: &mut PreparedProbes, substitutions: Prebindings<'_>,
     workspace: &crate::WorkspaceCapability,
 ) -> RewriteResult<()> {
     let result = (|| {
@@ -1997,8 +1944,7 @@ pub(crate) fn build_prepared_probes(
 }
 
 fn for_each_expression_mut_with_memory<'e>(
-    roots: impl IntoIterator<Item = &'e mut Expression>,
-    memory: &mut RewriteMemory<'_>,
+    roots: impl IntoIterator<Item = &'e mut Expression>, memory: &mut RewriteMemory<'_>,
     visit: impl FnMut(&mut Expression, &mut RewriteMemory<'_>) -> RewriteResult<()>,
 ) -> RewriteResult<()> {
     match purrdf_sparql_algebra::walk::for_each_expression_mut_with_memory(roots, memory, visit) {
@@ -2017,8 +1963,7 @@ fn for_each_expression_mut_with_memory<'e>(
 /// while the walk is inside them — each aggregate's arguments and then its own `FOLD`
 /// sort keys, aggregate by aggregate.
 fn own_expressions_with_memory<'n>(
-    node: &'n mut GraphPattern,
-    memory: &mut RewriteMemory<'_>,
+    node: &'n mut GraphPattern, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<crate::AdmittedVec<&'n mut Expression>> {
     let mut out = crate::AdmittedVec::new(&rewrite_workspace(memory));
     match node {
@@ -2067,8 +2012,7 @@ fn own_expressions_with_memory<'n>(
 }
 
 fn for_each_node_expression_mut_with_memory(
-    node: &mut GraphPattern,
-    memory: &mut RewriteMemory<'_>,
+    node: &mut GraphPattern, memory: &mut RewriteMemory<'_>,
     mut visit: impl FnMut(&mut Expression, &mut RewriteMemory<'_>) -> RewriteResult<()>,
 ) -> RewriteResult<()> {
     for expression in own_expressions_with_memory(node, memory)? {
@@ -2078,8 +2022,7 @@ fn for_each_node_expression_mut_with_memory(
 }
 
 fn push_child_patterns_with_memory<'p, T>(
-    node: &'p mut GraphPattern,
-    pending: &mut crate::AdmittedVec<T>,
+    node: &'p mut GraphPattern, pending: &mut crate::AdmittedVec<T>,
     mut item: impl FnMut(&'p mut GraphPattern) -> T,
 ) -> RewriteResult<()> {
     // Reserve the exact added population before borrowing the child positions.
@@ -2113,9 +2056,7 @@ fn push_child_patterns_with_memory<'p, T>(
 }
 
 fn apply_probes_with_memory(
-    mut query: Query,
-    probes: &[(Variable, GroundTerm)],
-    memory: &mut RewriteMemory<'_>,
+    mut query: Query, probes: &[(Variable, GroundTerm)], memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<Query> {
     let pattern = query_pattern_mut(&mut query);
     let core = core_slot(pattern);
@@ -2144,9 +2085,7 @@ fn query_pattern_mut(query: &mut Query) -> &mut GraphPattern {
 }
 
 fn probe_term_pattern_with_memory(
-    term: &mut TermPattern,
-    probes: &[(Variable, GroundTerm)],
-    probed: &mut Vec<usize>,
+    term: &mut TermPattern, probes: &[(Variable, GroundTerm)], probed: &mut Vec<usize>,
     memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     let result = probe_positions_with_memory(
@@ -2160,9 +2099,7 @@ fn probe_term_pattern_with_memory(
 }
 
 fn probe_triple_pattern_with_memory(
-    triple: &mut TriplePattern,
-    probes: &[(Variable, GroundTerm)],
-    probed: &mut Vec<usize>,
+    triple: &mut TriplePattern, probes: &[(Variable, GroundTerm)], probed: &mut Vec<usize>,
     memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     probe_term_pattern_with_memory(&mut triple.subject, probes, probed, memory)?;
@@ -2170,8 +2107,7 @@ fn probe_triple_pattern_with_memory(
 }
 
 fn probe_call_arguments_with_memory(
-    call: &mut PropertyFunctionCall,
-    probes: &[(Variable, GroundTerm)],
+    call: &mut PropertyFunctionCall, probes: &[(Variable, GroundTerm)],
     memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<Vec<usize>> {
     let mut probed = Vec::new();
@@ -2186,11 +2122,8 @@ fn probe_call_arguments_with_memory(
 }
 
 fn restore_probed_bindings_with_memory(
-    leaf: &mut GraphPattern,
-    probed: &[usize],
-    probes: &[(Variable, GroundTerm)],
-    at_core_root: bool,
-    memory: &mut RewriteMemory<'_>,
+    leaf: &mut GraphPattern, probed: &[usize], probes: &[(Variable, GroundTerm)],
+    at_core_root: bool, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     if probed.is_empty() || at_core_root {
         return Ok(());
@@ -2201,9 +2134,7 @@ fn restore_probed_bindings_with_memory(
 }
 
 fn complete_shacl_leaf_with_memory(
-    leaf: &mut GraphPattern,
-    probes: &[(Variable, GroundTerm)],
-    scope: WalkScope,
+    leaf: &mut GraphPattern, probes: &[(Variable, GroundTerm)], scope: WalkScope,
     memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     let mut bound = Vec::new();
@@ -2244,10 +2175,7 @@ fn complete_shacl_leaf_with_memory(
 }
 
 fn restore_shacl_bindings_with_memory(
-    leaf: &mut GraphPattern,
-    bound: &[usize],
-    probes: &[(Variable, GroundTerm)],
-    scope: WalkScope,
+    leaf: &mut GraphPattern, bound: &[usize], probes: &[(Variable, GroundTerm)], scope: WalkScope,
     memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     if bound.is_empty() {
@@ -2277,11 +2205,8 @@ fn restore_shacl_bindings_with_memory(
 }
 
 fn driven_arguments_with_memory(
-    call: &PropertyFunctionCall,
-    probes: &[(Variable, GroundTerm)],
-    rule: Unwritable,
-    already: Option<&GraphPattern>,
-    memory: &mut RewriteMemory<'_>,
+    call: &PropertyFunctionCall, probes: &[(Variable, GroundTerm)], rule: Unwritable,
+    already: Option<&GraphPattern>, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<crate::AdmittedVec<usize>> {
     let mut driven = crate::AdmittedVec::new(&rewrite_workspace(memory));
     let mut pending = rewrite_scratch(
@@ -2315,11 +2240,8 @@ fn driven_arguments_with_memory(
 }
 
 fn call_driver_with_memory(
-    call: &PropertyFunctionCall,
-    values: &[(Variable, GroundTerm)],
-    rule: Unwritable,
-    already: Option<&GraphPattern>,
-    memory: &mut RewriteMemory<'_>,
+    call: &PropertyFunctionCall, values: &[(Variable, GroundTerm)], rule: Unwritable,
+    already: Option<&GraphPattern>, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<Option<GraphPattern>> {
     let driven = driven_arguments_with_memory(call, values, rule, already, memory)?;
     if driven.is_empty() {
@@ -2332,9 +2254,7 @@ fn call_driver_with_memory(
 }
 
 fn plant_stand_alone_driver_with_memory(
-    call: &mut GraphPattern,
-    seed: GraphPattern,
-    memory: &mut RewriteMemory<'_>,
+    call: &mut GraphPattern, seed: GraphPattern, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     *call = GraphPattern::Lateral {
         left: rewrite_child(seed, memory)?,
@@ -2344,18 +2264,14 @@ fn plant_stand_alone_driver_with_memory(
 }
 
 fn plant_left_driver_with_memory(
-    left: &mut GraphPattern,
-    seed: GraphPattern,
-    memory: &mut RewriteMemory<'_>,
+    left: &mut GraphPattern, seed: GraphPattern, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     *left = rewrite_join(seed, take_child(left), memory)?;
     Ok(())
 }
 
 fn plant_scoped_driver_with_memory(
-    call: &mut GraphPattern,
-    seed: GraphPattern,
-    variables: Vec<Variable>,
+    call: &mut GraphPattern, seed: GraphPattern, variables: Vec<Variable>,
     memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     let lateral = GraphPattern::Lateral {
@@ -2370,9 +2286,7 @@ fn plant_scoped_driver_with_memory(
 }
 
 fn drive_call_arguments_with_memory(
-    pattern: &mut GraphPattern,
-    probes: &[(Variable, GroundTerm)],
-    rule: Unwritable,
+    pattern: &mut GraphPattern, probes: &[(Variable, GroundTerm)], rule: Unwritable,
     memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     match pattern {
@@ -2394,9 +2308,7 @@ fn drive_call_arguments_with_memory(
 }
 
 fn undriven_variables_with_memory(
-    call: &PropertyFunctionCall,
-    seed: &GraphPattern,
-    memory: &mut RewriteMemory<'_>,
+    call: &PropertyFunctionCall, seed: &GraphPattern, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<Vec<Variable>> {
     enum Position<'a> {
         Term(&'a TermPattern),
@@ -2439,10 +2351,8 @@ fn undriven_variables_with_memory(
 }
 
 pub(crate) fn bind_call_arguments_with_memory(
-    call: &mut PropertyFunctionCall,
-    values: &[(Variable, GroundTerm)],
-    already: Option<&GraphPattern>,
-    memory: &mut RewriteMemory<'_>,
+    call: &mut PropertyFunctionCall, values: &[(Variable, GroundTerm)],
+    already: Option<&GraphPattern>, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<Option<GraphPattern>> {
     for term in call
         .subject_args
@@ -2455,9 +2365,7 @@ pub(crate) fn bind_call_arguments_with_memory(
 }
 
 fn substitute_in_term_pattern_with_memory(
-    term: &mut TermPattern,
-    values: &[(Variable, GroundTerm)],
-    memory: &mut RewriteMemory<'_>,
+    term: &mut TermPattern, values: &[(Variable, GroundTerm)], memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     let mut pending = rewrite_scratch(std::iter::once(term), memory)?;
     while let Some(term) = pending.pop() {
@@ -2569,8 +2477,7 @@ fn for_each_expression_with_memory<'e>(
 }
 
 fn operand_schema_with_memory(
-    node: &GraphPattern,
-    memory: &mut RewriteMemory<'_>,
+    node: &GraphPattern, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<crate::solution::SharedSchema> {
     let source = match node {
         GraphPattern::Extend { inner, .. }
@@ -2587,10 +2494,8 @@ fn operand_schema_with_memory(
 }
 
 fn carried_columns_with_memory(
-    node: &GraphPattern,
-    expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
-    reads: &Reads<impl std::ops::Deref<Target = [usize]>>,
-    scope: WalkScope,
+    node: &GraphPattern, expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
+    reads: &Reads<impl std::ops::Deref<Target = [usize]>>, scope: WalkScope,
     memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<Vec<Variable>> {
     let workspace = rewrite_workspace(memory);
@@ -2624,10 +2529,8 @@ fn carried_columns_with_memory(
 }
 
 fn note_reads_with_memory(
-    expression: &Expression,
-    expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
-    reads: &mut Reads<crate::AdmittedVec<usize>>,
-    memory: &mut RewriteMemory<'_>,
+    expression: &Expression, expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
+    reads: &mut Reads<crate::AdmittedVec<usize>>, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     for_each_expression_with_memory(
         [expression],
@@ -2679,9 +2582,7 @@ fn note_reads_with_memory(
 }
 
 fn rename_reads_with_memory(
-    expression: &mut Expression,
-    renames: &[(Variable, Variable)],
-    memory: &mut RewriteMemory<'_>,
+    expression: &mut Expression, renames: &[(Variable, Variable)], memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     for_each_expression_mut_with_memory([expression], memory, |expression, _| {
         if let Expression::Variable(variable) = expression
@@ -2701,11 +2602,8 @@ impl std::fmt::Display for StandInText<'_> {
 }
 
 fn drive_expression_reads_with_memory(
-    node: &mut GraphPattern,
-    expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
-    scope: WalkScope,
-    operand: SeedColumns,
-    memory: &mut RewriteMemory<'_>,
+    node: &mut GraphPattern, expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
+    scope: WalkScope, operand: SeedColumns, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     if scope == WalkScope::Descent
         && (0..expr_subs.entries().len()).all(|index| operand.carries(index))
@@ -2804,8 +2702,7 @@ fn drive_expression_reads_with_memory(
 }
 
 fn node_expressions_with_memory<'n>(
-    node: &'n GraphPattern,
-    memory: &mut RewriteMemory<'_>,
+    node: &'n GraphPattern, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<crate::AdmittedVec<&'n Expression>> {
     let mut out = crate::AdmittedVec::new(&rewrite_workspace(memory));
     match node {
@@ -2840,11 +2737,8 @@ fn node_expressions_with_memory<'n>(
 }
 
 fn carry_past_group_with_memory(
-    node: &mut GraphPattern,
-    expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
-    keys: &[Variable],
-    carried: SeedColumns,
-    memory: &mut RewriteMemory<'_>,
+    node: &mut GraphPattern, expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
+    keys: &[Variable], carried: SeedColumns, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<SeedColumns> {
     let mut restored = carried.0;
     let mut indices: crate::AdmittedVec<usize> =
@@ -2874,8 +2768,7 @@ fn carry_past_group_with_memory(
 }
 
 fn finish_own_expressions_with_memory(
-    frame: &mut SubstituteFrame,
-    expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
+    frame: &mut SubstituteFrame, expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
     memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<SeedColumns> {
     let operand = frame.operand;
@@ -2918,8 +2811,7 @@ fn finish_own_expressions_with_memory(
 fn substitute_in_expressions_with_memory<'e>(
     roots: impl IntoIterator<Item = &'e mut Expression>,
     expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
-    bodies: &mut crate::AdmittedVec<GraphPattern>,
-    memory: &mut RewriteMemory<'_>,
+    bodies: &mut crate::AdmittedVec<GraphPattern>, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     for_each_expression_mut_with_memory(roots, memory, |expression, memory| {
         match expression {
@@ -2961,8 +2853,7 @@ fn substitute_in_expressions_with_memory<'e>(
 }
 
 fn replace_exists_bodies_with_memory<'e>(
-    roots: impl IntoIterator<Item = &'e mut Expression>,
-    bodies: crate::AdmittedVec<GraphPattern>,
+    roots: impl IntoIterator<Item = &'e mut Expression>, bodies: crate::AdmittedVec<GraphPattern>,
     memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     let mut bodies = bodies.into_iter();
@@ -3017,8 +2908,7 @@ struct ScopeFrame {
 }
 
 fn take_own_exists_with_memory(
-    node: &mut GraphPattern,
-    memory: &mut RewriteMemory<'_>,
+    node: &mut GraphPattern, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<crate::AdmittedVec<GraphPattern>> {
     let mut bodies = crate::AdmittedVec::new(&rewrite_workspace(memory));
     let roots = own_expressions_with_memory(node, memory)?;
@@ -3044,9 +2934,7 @@ fn scope_target(node: &mut GraphPattern, skip: usize) -> &mut GraphPattern {
 }
 
 fn scope_begin_children(
-    frame: &mut ScopeFrame,
-    operation: &mut ScopeOperation<'_>,
-    memory: &mut RewriteMemory<'_>,
+    frame: &mut ScopeFrame, operation: &mut ScopeOperation<'_>, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<Option<(GraphPattern, ScopeFlags)>> {
     let roots = own_expressions_with_memory(&mut frame.node, memory)?;
     let done = std::mem::replace(
@@ -3071,9 +2959,7 @@ fn scope_begin_children(
 /// assignment joining and MINUS seeding, now holding owned frames instead of
 /// recursing through EXISTS levels. Every taken slot stays inside its original box.
 fn scope_walk_with_memory(
-    root: &mut GraphPattern,
-    flags: ScopeFlags,
-    mut operation: ScopeOperation<'_>,
+    root: &mut GraphPattern, flags: ScopeFlags, mut operation: ScopeOperation<'_>,
     memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     let workspace = rewrite_workspace(memory);
@@ -3182,9 +3068,7 @@ impl std::fmt::Display for FreshMinus {
 }
 
 fn compatible_with_binding_with_memory(
-    name: Variable,
-    to: Variable,
-    memory: &mut RewriteMemory<'_>,
+    name: Variable, to: Variable, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<Expression> {
     let left = Expression::Not(rewrite_child(Expression::Bound(to.clone()), memory)?);
     let right = Expression::SameTerm(
@@ -3198,9 +3082,7 @@ fn compatible_with_binding_with_memory(
 }
 
 fn scope_process_node(
-    node: &mut GraphPattern,
-    flags: ScopeFlags,
-    operation: &mut ScopeOperation<'_>,
+    node: &mut GraphPattern, flags: ScopeFlags, operation: &mut ScopeOperation<'_>,
     memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<(ScopeFlags, usize)> {
     match operation {
@@ -3347,11 +3229,7 @@ fn scope_process_node(
 }
 
 fn join_assignments_in_with_memory(
-    root: &mut GraphPattern,
-    on_descent: bool,
-    in_exists: bool,
-    names: &[&str],
-    fresh: &mut usize,
+    root: &mut GraphPattern, on_descent: bool, in_exists: bool, names: &[&str], fresh: &mut usize,
     memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     scope_walk_with_memory(
@@ -3367,9 +3245,7 @@ fn join_assignments_in_with_memory(
 }
 
 pub(crate) fn join_assignments_with_prebinding_with_memory(
-    query: &mut Query,
-    names: &[&str],
-    memory: &mut RewriteMemory<'_>,
+    query: &mut Query, names: &[&str], memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<bool> {
     if !needs_assignment_join_with_memory(query, names, memory)? {
         return Ok(false);
@@ -3381,9 +3257,7 @@ pub(crate) fn join_assignments_with_prebinding_with_memory(
 }
 
 pub(crate) fn needs_assignment_join_with_memory(
-    query: &Query,
-    names: &[&str],
-    memory: &mut RewriteMemory<'_>,
+    query: &Query, names: &[&str], memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<bool> {
     use purrdf_sparql_algebra::walk::NodeRef;
     if names.is_empty() {
@@ -3458,10 +3332,7 @@ pub(crate) fn needs_assignment_join_with_memory(
 }
 
 fn seed_minus_in_with_memory(
-    root: &mut GraphPattern,
-    probes: &[(Variable, GroundTerm)],
-    in_exists: bool,
-    fresh: &mut usize,
+    root: &mut GraphPattern, probes: &[(Variable, GroundTerm)], in_exists: bool, fresh: &mut usize,
     memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     if probes.is_empty() {
@@ -3480,27 +3351,21 @@ fn seed_minus_in_with_memory(
 }
 
 fn seed_both_minus_operands_with_memory(
-    root: &mut GraphPattern,
-    probes: &[(Variable, GroundTerm)],
-    memory: &mut RewriteMemory<'_>,
+    root: &mut GraphPattern, probes: &[(Variable, GroundTerm)], memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     let mut fresh = highest_index_with_memory(root, MINUS_PREFIX, memory)?;
     seed_minus_in_with_memory(root, probes, false, &mut fresh, memory)
 }
 
 fn seed_every_sub_select_with_memory(
-    root: &mut GraphPattern,
-    probes: &[(Variable, GroundTerm)],
-    memory: &mut RewriteMemory<'_>,
+    root: &mut GraphPattern, probes: &[(Variable, GroundTerm)], memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     let seeded: *const GraphPattern = core_slot(root);
     seed_sub_selects_in_with_memory(root, probes, seeded, memory)
 }
 
 fn seed_sub_selects_in_with_memory(
-    root: &mut GraphPattern,
-    probes: &[(Variable, GroundTerm)],
-    seeded: *const GraphPattern,
+    root: &mut GraphPattern, probes: &[(Variable, GroundTerm)], seeded: *const GraphPattern,
     memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     if probes.is_empty() {
@@ -3541,9 +3406,7 @@ fn seed_sub_selects_in_with_memory(
 }
 
 fn seed_above_a_lone_sub_select_with_memory(
-    pattern: &mut GraphPattern,
-    probes: &[(Variable, GroundTerm)],
-    memory: &mut RewriteMemory<'_>,
+    pattern: &mut GraphPattern, probes: &[(Variable, GroundTerm)], memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     let mut core = pattern;
     let mut projected = false;
@@ -3571,9 +3434,7 @@ fn seed_above_a_lone_sub_select_with_memory(
 }
 
 pub(crate) fn apply_shacl_prebinding_with_memory(
-    query: Query,
-    substitutions: Prebindings<'_>,
-    memory: &mut RewriteMemory<'_>,
+    query: Query, substitutions: Prebindings<'_>, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<Query> {
     if substitutions.is_empty() {
         return Ok(query);
@@ -3594,9 +3455,7 @@ pub(crate) fn apply_shacl_prebinding_with_memory(
 }
 
 pub(crate) fn apply_shacl_probes_with_memory(
-    query: Query,
-    probes: &[(Variable, GroundTerm)],
-    memory: &mut RewriteMemory<'_>,
+    query: Query, probes: &[(Variable, GroundTerm)], memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<Query> {
     if probes.is_empty() {
         return Ok(query);
@@ -3608,9 +3467,7 @@ pub(crate) fn apply_shacl_probes_with_memory(
 }
 
 fn walk_shacl_probes_with_memory(
-    mut query: Query,
-    probes: &[(Variable, GroundTerm)],
-    memory: &mut RewriteMemory<'_>,
+    mut query: Query, probes: &[(Variable, GroundTerm)], memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<Query> {
     let names = rewrite_scratch(probes.iter().map(|(variable, _)| variable.as_str()), memory)?;
     join_assignments_with_prebinding_with_memory(&mut query, &names, memory)?;
@@ -3625,9 +3482,7 @@ fn walk_shacl_probes_with_memory(
 }
 
 fn push_probe_constants_with_memory(
-    core: &mut GraphPattern,
-    probes: &[(Variable, GroundTerm)],
-    memory: &mut RewriteMemory<'_>,
+    core: &mut GraphPattern, probes: &[(Variable, GroundTerm)], memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     if probes.is_empty() {
         return Ok(());
@@ -3638,9 +3493,7 @@ fn push_probe_constants_with_memory(
 }
 
 fn push_probes_with_memory(
-    pattern: &mut GraphPattern,
-    probes: &[(Variable, GroundTerm)],
-    at_core_root: bool,
+    pattern: &mut GraphPattern, probes: &[(Variable, GroundTerm)], at_core_root: bool,
     memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<()> {
     let mut open: crate::AdmittedVec<PushFrame<'_>> =
@@ -3675,11 +3528,8 @@ fn push_probes_with_memory(
 /// Enter `node`: rewrite it in place when it is a leaf, or take its first operand out
 /// and hold the node open until the operand comes back.
 fn enter_push_with_memory<'p>(
-    mut node: GraphPattern,
-    probes: ProbeList<'p>,
-    at_core_root: bool,
-    open: &mut crate::AdmittedVec<PushFrame<'p>>,
-    memory: &mut RewriteMemory<'_>,
+    mut node: GraphPattern, probes: ProbeList<'p>, at_core_root: bool,
+    open: &mut crate::AdmittedVec<PushFrame<'p>>, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<Step<PushDescent<'p>, GraphPattern>> {
     // The operand taken out of the node, which operand it is, and the probes it is
     // rewritten with — or `None` once the node is rewritten in full.
@@ -3850,9 +3700,7 @@ fn enter_push_with_memory<'p>(
 /// Put the rewritten `operand` back into `frame`'s node, and go on: enter the node's
 /// next operand, or finish the node.
 fn resume_push_with_memory<'p>(
-    mut frame: PushFrame<'p>,
-    operand: GraphPattern,
-    open: &mut crate::AdmittedVec<PushFrame<'p>>,
+    mut frame: PushFrame<'p>, operand: GraphPattern, open: &mut crate::AdmittedVec<PushFrame<'p>>,
     memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<Step<PushDescent<'p>, GraphPattern>> {
     let probes = frame.probes.as_slice();
@@ -3940,10 +3788,8 @@ fn resume_push_with_memory<'p>(
 }
 
 fn substitute_in_graph_pattern_with_memory(
-    pattern: &mut GraphPattern,
-    expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
-    scope: WalkScope,
-    memory: &mut RewriteMemory<'_>,
+    pattern: &mut GraphPattern, expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
+    scope: WalkScope, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<SeedColumns> {
     let mut open: crate::AdmittedVec<SubstituteFrame> =
         crate::AdmittedVec::new(&rewrite_workspace(memory));
@@ -3977,11 +3823,9 @@ fn substitute_in_graph_pattern_with_memory(
 /// Enter `node`: substitute in it when it is a leaf, or take its first operand out and
 /// hold the node open until the operand comes back.
 fn enter_substitution_with_memory(
-    mut node: GraphPattern,
-    scope: WalkScope,
+    mut node: GraphPattern, scope: WalkScope,
     expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
-    open: &mut crate::AdmittedVec<SubstituteFrame>,
-    memory: &mut RewriteMemory<'_>,
+    open: &mut crate::AdmittedVec<SubstituteFrame>, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<Step<SubstituteDescent, (GraphPattern, SeedColumns)>> {
     // A node that is not a solution-modifier wrapper hands its children the scope
     // beneath the seed; a wrapper hands its inner pattern its own.
@@ -4078,8 +3922,7 @@ fn enter_substitution_with_memory(
 
 /// Take `frame`'s inner pattern out and enter it in the node's own scope.
 fn descend_into_inner_with_memory(
-    mut frame: SubstituteFrame,
-    open: &mut crate::AdmittedVec<SubstituteFrame>,
+    mut frame: SubstituteFrame, open: &mut crate::AdmittedVec<SubstituteFrame>,
     _memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<Step<SubstituteDescent, (GraphPattern, SeedColumns)>> {
     let child = match &mut frame.node {
@@ -4104,11 +3947,9 @@ fn descend_into_inner_with_memory(
 /// Put the substituted `operand` back into `frame`'s node, and go on: enter the node's
 /// next operand, or finish the node and report what it carries.
 fn resume_substitution_with_memory(
-    mut frame: SubstituteFrame,
-    operand: (GraphPattern, SeedColumns),
+    mut frame: SubstituteFrame, operand: (GraphPattern, SeedColumns),
     expr_subs: &ExprSubs<impl AsRef<[(Variable, GroundTerm)]>>,
-    open: &mut crate::AdmittedVec<SubstituteFrame>,
-    memory: &mut RewriteMemory<'_>,
+    open: &mut crate::AdmittedVec<SubstituteFrame>, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<Step<SubstituteDescent, (GraphPattern, SeedColumns)>> {
     let (operand, columns) = operand;
     let scope = frame.scope;
@@ -4324,9 +4165,7 @@ fn resume_substitution_with_memory(
 }
 
 fn seed_reaches_every_read_with_memory(
-    query: &Query,
-    probes: &[(Variable, GroundTerm)],
-    memory: &mut RewriteMemory<'_>,
+    query: &Query, probes: &[(Variable, GroundTerm)], memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<bool> {
     let probed = |variable: &Variable| probes.iter().any(|(name, _)| name == variable);
     use purrdf_sparql_algebra::walk::{Flow, NodeRef, Visit};
@@ -4407,9 +4246,7 @@ fn seed_reaches_every_read_with_memory(
 }
 
 fn highest_index_with_memory(
-    pattern: &GraphPattern,
-    prefix: &str,
-    memory: &mut RewriteMemory<'_>,
+    pattern: &GraphPattern, prefix: &str, memory: &mut RewriteMemory<'_>,
 ) -> RewriteResult<usize> {
     use purrdf_sparql_algebra::walk::{Flow, NodeRef, Visit};
     let mut highest = 0_usize;
@@ -4448,8 +4285,7 @@ fn ground_term_from_value(value: &TermValue) -> Result<GroundTerm, RdfDiagnostic
 
 /// Resolve directly into the same grounding body, without materializing TermValue.
 pub(crate) fn ground_term_from_id<D: DatasetView>(
-    dataset: &D,
-    id: D::Id,
+    dataset: &D, id: D::Id,
 ) -> Result<GroundTerm, RdfDiagnostic> {
     let workspace = crate::WorkspaceCapability::default();
     ground_term_from_id_admitted(dataset, id, &workspace, |error| {
@@ -4466,10 +4302,7 @@ pub(crate) fn ground_term_from_id<D: DatasetView>(
 /// Resident reference fixtures share the production literal-facet admission law.
 #[cfg(test)]
 fn literal_from_value(
-    lexical_form: &str,
-    datatype: &str,
-    language: Option<&str>,
-    direction: Option<RdfTextDirection>,
+    lexical_form: &str, datatype: &str, language: Option<&str>, direction: Option<RdfTextDirection>,
 ) -> Result<Literal, RdfDiagnostic> {
     literal_from_value_admitted(
         lexical_form,
@@ -4532,8 +4365,7 @@ purrdf_lex::variant_from!(GroundFailure { Operational(crate::EvalError) });
 
 impl GroundFailure {
     fn diagnostic(
-        code: &str,
-        message: &(impl std::fmt::Display + ?Sized),
+        code: &str, message: &(impl std::fmt::Display + ?Sized),
         workspace: &crate::WorkspaceCapability,
     ) -> Self {
         match crate::RetainedDiagnostic::render(code, message, workspace) {
@@ -4563,8 +4395,7 @@ impl GroundFailure {
 /// Convert a caller-owned value without re-owning intermediate TermValue trees.
 #[cfg(test)]
 pub(crate) fn ground_term_from_value_admitted(
-    value: &TermValue,
-    workspace: &crate::WorkspaceCapability,
+    value: &TermValue, workspace: &crate::WorkspaceCapability,
 ) -> Result<AdmittedGroundTerm, GroundFailure> {
     let mut frame = crate::workspace::LexicalFrame::new(workspace);
     let term = {
@@ -4613,9 +4444,7 @@ pub(crate) fn ground_term_from_value_with_memory(
 /// The caller moves a bounded source error into its typed account; it must not
 /// render an opaque D::ReadError before that account selects the original cause.
 pub(crate) fn ground_term_from_id_admitted<D: DatasetView>(
-    dataset: &D,
-    id: D::Id,
-    workspace: &crate::WorkspaceCapability,
+    dataset: &D, id: D::Id, workspace: &crate::WorkspaceCapability,
     source_error: impl FnMut(D::ReadError) -> GroundFailure,
 ) -> Result<AdmittedGroundTerm, GroundFailure> {
     let mut frame = crate::workspace::LexicalFrame::new(workspace);
@@ -4631,8 +4460,7 @@ pub(crate) fn ground_term_from_id_admitted<D: DatasetView>(
 
 /// Resolve directly into an enclosing query's original native child-box grant.
 pub(crate) fn ground_term_from_id_with_memory<D: DatasetView>(
-    dataset: &D,
-    id: D::Id,
+    dataset: &D, id: D::Id,
     memory: &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
     mut source_error: impl FnMut(D::ReadError) -> GroundFailure,
 ) -> Result<GroundTerm, GroundFailure> {
@@ -4729,8 +4557,7 @@ enum GroundTripleStage {
 /// The original subject/predicate/object postorder walk. A non-IRI predicate is
 /// refused before its object is entered; the first refused component wins.
 fn ground_term_over<C: Copy>(
-    root: C,
-    memory: &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
+    root: C, memory: &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
     mut convert: impl FnMut(C) -> Result<GroundComponent<C>, GroundFailure>,
 ) -> Result<GroundTerm, GroundFailure> {
     let baseline = memory.admitted_bytes();
@@ -4850,9 +4677,7 @@ fn ground_term_over<C: Copy>(
 
 /// Scope qualification uses the existing native canonical blank-label encoder.
 pub(crate) fn blank_admitted(
-    label: &str,
-    scope: purrdf_core::BlankScope,
-    workspace: &crate::WorkspaceCapability,
+    label: &str, scope: purrdf_core::BlankScope, workspace: &crate::WorkspaceCapability,
 ) -> Result<BlankNode, GroundFailure> {
     let mut frame = crate::workspace::LexicalFrame::new(workspace);
     let encoded = {
@@ -4880,11 +4705,8 @@ pub(crate) fn blank_admitted(
 /// and a present language chooses its standard datatype rather than the supplied
 /// datatype, exactly as the resident constructor did.
 fn literal_from_value_admitted(
-    lexical_form: &str,
-    datatype: &str,
-    language: Option<&str>,
-    direction: Option<RdfTextDirection>,
-    workspace: &crate::WorkspaceCapability,
+    lexical_form: &str, datatype: &str, language: Option<&str>,
+    direction: Option<RdfTextDirection>, workspace: &crate::WorkspaceCapability,
 ) -> Result<Literal, GroundFailure> {
     match language {
         Some(language) => {
@@ -4912,8 +4734,7 @@ fn literal_from_value_admitted(
 /// Validate using the existing scanner and retain its original lexical error
 /// through exact NamedNode diagnostic rendering. No generic IRI reason replaces it.
 fn node_admitted(
-    iri: &str,
-    workspace: &crate::WorkspaceCapability,
+    iri: &str, workspace: &crate::WorkspaceCapability,
 ) -> Result<NamedNode, GroundFailure> {
     let mut frame = crate::workspace::LexicalFrame::new(workspace);
     let verdict = {
@@ -4944,8 +4765,7 @@ fn node_admitted(
 /// The borrowing LANGTAG parser owns no storage and preserves input spelling.
 /// Its Copy error renders only borrowed tag/debug text and static reason/code.
 fn lang_admitted<'a>(
-    tag: &'a str,
-    workspace: &crate::WorkspaceCapability,
+    tag: &'a str, workspace: &crate::WorkspaceCapability,
 ) -> Result<&'a str, GroundFailure> {
     match purrdf_iri::langtag::parse_with(tag, crate::scratch::LANGTAG_PROFILE) {
         Ok(_) => Ok(tag),
@@ -5334,8 +5154,7 @@ mod seed_fast_path_tests {
     /// `ex:a ex:p ex:o1, ex:o2 . ex:b ex:p ex:o3 .`, every row of `query` with `?this`
     /// pre-bound to `ex:a` by `rewrite`, sorted.
     fn answers(
-        query: &str,
-        rewrite: fn(Query, Vec<(Variable, GroundTerm)>) -> Query,
+        query: &str, rewrite: fn(Query, Vec<(Variable, GroundTerm)>) -> Query,
     ) -> Vec<String> {
         let mut builder = RdfDatasetBuilder::new();
         let p = builder.intern_iri(P).unwrap();
@@ -5524,8 +5343,7 @@ mod walk_tests {
     }
 
     fn reference_ground_term_from_id<D: DatasetView>(
-        dataset: &D,
-        id: D::Id,
+        dataset: &D, id: D::Id,
     ) -> Result<GroundTerm, RdfDiagnostic> {
         use purrdf_core::dataset_view::TermGuard as _;
         let guard = dataset.resolve(id).unwrap();
@@ -5571,8 +5389,7 @@ mod walk_tests {
     }
 
     fn reference_substitute_in_term_pattern(
-        term: &mut TermPattern,
-        values: &[(Variable, GroundTerm)],
+        term: &mut TermPattern, values: &[(Variable, GroundTerm)],
     ) {
         let var = match term {
             TermPattern::Variable(var) => var,
@@ -5597,18 +5414,14 @@ mod walk_tests {
     }
 
     fn reference_probe_triple_pattern(
-        triple: &mut TriplePattern,
-        probes: &[(Variable, GroundTerm)],
-        probed: &mut Vec<usize>,
+        triple: &mut TriplePattern, probes: &[(Variable, GroundTerm)], probed: &mut Vec<usize>,
     ) {
         reference_probe_term_pattern(&mut triple.subject, probes, probed);
         reference_probe_term_pattern(&mut triple.object, probes, probed);
     }
 
     fn reference_probe_term_pattern(
-        term: &mut TermPattern,
-        probes: &[(Variable, GroundTerm)],
-        probed: &mut Vec<usize>,
+        term: &mut TermPattern, probes: &[(Variable, GroundTerm)], probed: &mut Vec<usize>,
     ) {
         match term {
             TermPattern::Variable(var) => {
@@ -5629,17 +5442,12 @@ mod walk_tests {
     }
 
     fn reference_driven_arguments(
-        call: &PropertyFunctionCall,
-        probes: &[(Variable, GroundTerm)],
-        rule: Unwritable,
+        call: &PropertyFunctionCall, probes: &[(Variable, GroundTerm)], rule: Unwritable,
         already: Option<&GraphPattern>,
     ) -> Vec<usize> {
         fn visit(
-            term: &TermPattern,
-            probes: &[(Variable, GroundTerm)],
-            rule: Unwritable,
-            already: Option<&GraphPattern>,
-            driven: &mut Vec<usize>,
+            term: &TermPattern, probes: &[(Variable, GroundTerm)], rule: Unwritable,
+            already: Option<&GraphPattern>, driven: &mut Vec<usize>,
         ) {
             match term {
                 TermPattern::Variable(var) => {
@@ -5667,8 +5475,7 @@ mod walk_tests {
     }
 
     fn reference_undriven_variables(
-        call: &PropertyFunctionCall,
-        seed: &GraphPattern,
+        call: &PropertyFunctionCall, seed: &GraphPattern,
     ) -> Vec<Variable> {
         fn keep(var: &Variable, driven: &[Variable], kept: &mut Vec<Variable>) {
             if !driven.contains(var) && !kept.contains(var) {
@@ -5701,9 +5508,7 @@ mod walk_tests {
     }
 
     fn reference_call_driver(
-        call: &PropertyFunctionCall,
-        values: &[(Variable, GroundTerm)],
-        rule: Unwritable,
+        call: &PropertyFunctionCall, values: &[(Variable, GroundTerm)], rule: Unwritable,
         already: Option<&GraphPattern>,
     ) -> Option<GraphPattern> {
         let driven = reference_driven_arguments(call, values, rule, already);
@@ -5711,9 +5516,7 @@ mod walk_tests {
     }
 
     fn reference_drive_call_arguments(
-        pattern: &mut GraphPattern,
-        probes: &[(Variable, GroundTerm)],
-        rule: Unwritable,
+        pattern: &mut GraphPattern, probes: &[(Variable, GroundTerm)], rule: Unwritable,
     ) {
         match pattern {
             GraphPattern::PropertyFunction(call) => {
@@ -5734,8 +5537,7 @@ mod walk_tests {
     }
 
     fn reference_bind_call_arguments(
-        call: &mut PropertyFunctionCall,
-        values: &[(Variable, GroundTerm)],
+        call: &mut PropertyFunctionCall, values: &[(Variable, GroundTerm)],
         already: Option<&GraphPattern>,
     ) -> Option<GraphPattern> {
         for term in call
@@ -5749,9 +5551,7 @@ mod walk_tests {
     }
 
     fn reference_push_probes(
-        pattern: &mut GraphPattern,
-        probes: &[(Variable, GroundTerm)],
-        at_core_root: bool,
+        pattern: &mut GraphPattern, probes: &[(Variable, GroundTerm)], at_core_root: bool,
     ) {
         match pattern {
             GraphPattern::Bgp { patterns } => {
@@ -5870,9 +5670,7 @@ mod walk_tests {
     }
 
     fn reference_substitute_in_graph_pattern(
-        pattern: &mut GraphPattern,
-        expr_subs: &ExprSubs,
-        scope: WalkScope,
+        pattern: &mut GraphPattern, expr_subs: &ExprSubs, scope: WalkScope,
     ) -> SeedColumns {
         let beneath = scope.beneath();
         let core = SeedColumns::at_core(scope, expr_subs.0.len());
@@ -6044,10 +5842,7 @@ mod walk_tests {
     }
 
     fn reference_drive_expression_reads(
-        node: &mut GraphPattern,
-        expr_subs: &ExprSubs,
-        scope: WalkScope,
-        operand: SeedColumns,
+        node: &mut GraphPattern, expr_subs: &ExprSubs, scope: WalkScope, operand: SeedColumns,
     ) {
         if scope == WalkScope::Descent && (0..expr_subs.0.len()).all(|index| operand.carries(index))
         {
@@ -6319,8 +6114,7 @@ mod walk_tests {
     }
 
     fn reference_substitute_in_aggregate(
-        agg: AggregateExpression,
-        expr_subs: &ExprSubs,
+        agg: AggregateExpression, expr_subs: &ExprSubs,
     ) -> AggregateExpression {
         let (function, mut args, scalarvals, mut order_by, distinct) = agg.into_parts();
         for arg in &mut args {
@@ -7603,8 +7397,7 @@ mod walk_tests {
 /// Hand each pattern `node` holds directly — not its expressions' `EXISTS` bodies — to
 /// `visit`.
 fn for_each_child_pattern_mut<'p>(
-    node: &'p mut GraphPattern,
-    visit: &mut dyn FnMut(&'p mut GraphPattern),
+    node: &'p mut GraphPattern, visit: &mut dyn FnMut(&'p mut GraphPattern),
 ) {
     match node {
         GraphPattern::Join { left, right }

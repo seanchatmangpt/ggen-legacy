@@ -112,10 +112,7 @@ impl<I: TermIdentity, const N: usize, R: Copy> RowColumns<I, N, R> {
     }
 
     pub(crate) fn reserve_rows_in<A: Admission + ?Sized>(
-        &mut self,
-        additional: usize,
-        memory: &mut Memory<'_, A>,
-        retired: &mut usize,
+        &mut self, additional: usize, memory: &mut Memory<'_, A>, retired: &mut usize,
     ) -> Result<(), StorageError> {
         let required = self
             .len()
@@ -128,10 +125,7 @@ impl<I: TermIdentity, const N: usize, R: Copy> RowColumns<I, N, R> {
     }
 
     pub(crate) fn reserve_capacity_in<A: Admission + ?Sized>(
-        &mut self,
-        required: usize,
-        memory: &mut Memory<'_, A>,
-        retired: &mut usize,
+        &mut self, required: usize, memory: &mut Memory<'_, A>, retired: &mut usize,
     ) -> Result<(), StorageError> {
         for column in &mut self.columns {
             crate::allocation::reserve_array_in(column, memory, retired, |values, memory| {

@@ -14,8 +14,7 @@ use purrdf_xsd::XsdDatatype;
 type Partition<I> = AdmittedVec<(usize, RetainedRow<I>, AdmittedVec<usize>)>;
 
 pub(crate) fn offer(
-    pattern: &GraphPattern,
-    _workspace: &WorkspaceCapability,
+    pattern: &GraphPattern, _workspace: &WorkspaceCapability,
 ) -> Result<Option<ShapeOffer>, EvalError> {
     let GraphPattern::Group {
         inner, variables, ..
@@ -48,8 +47,7 @@ pub(crate) fn offer(
     Ok(None)
 }
 pub(crate) fn execute<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let previous = ctx.bucketed_group;
     ctx.bucketed_group = Some(std::ptr::from_ref(node) as usize);
@@ -61,9 +59,7 @@ pub(crate) fn execute<D: DatasetView + Sync>(
 /// Native identity equality is the grouping law after the original typed cast.
 /// Sorting never merges different date timezone spellings or unbound keys.
 pub(crate) fn partition<I: purrdf_core::ViewTermId>(
-    seq: &SolutionSeq<I>,
-    columns: &[Option<usize>],
-    workspace: &WorkspaceCapability,
+    seq: &SolutionSeq<I>, columns: &[Option<usize>], workspace: &WorkspaceCapability,
 ) -> Result<Partition<I>, EvalError> {
     let mut ordered = AdmittedVec::with_capacity(seq.rows.len(), workspace)?;
     for (ordinal, row) in seq.rows.iter().enumerate() {
@@ -112,8 +108,7 @@ pub(crate) fn partition<I: purrdf_core::ViewTermId>(
 }
 
 fn compare_cell<I: Ord>(
-    left: Option<crate::scratch::SolutionTerm<I>>,
-    right: Option<crate::scratch::SolutionTerm<I>>,
+    left: Option<crate::scratch::SolutionTerm<I>>, right: Option<crate::scratch::SolutionTerm<I>>,
 ) -> core::cmp::Ordering {
     use crate::scratch::SolutionTerm::{Computed, Existing};
     match (left, right) {

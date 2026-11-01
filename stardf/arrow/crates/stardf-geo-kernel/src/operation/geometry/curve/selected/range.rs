@@ -22,9 +22,7 @@ struct Range {
 }
 
 pub(in super::super) fn selected_range(
-    image: &OperationImageCurve,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    image: &OperationImageCurve, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     retained: &mut u64,
 ) -> Result<Option<OperationImageCurve>, GeoError> {
     context.charge_work(1)?;
@@ -101,11 +99,8 @@ fn dyadic(numerator: u128, depth: u32, math: &mut CoordinateMath) -> Result<Rat,
 }
 
 fn prefix(
-    image: &OperationImageCurve,
-    parameters: [&Rat; 2],
-    limits: &crate::ExecutionLimits,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    image: &OperationImageCurve, parameters: [&Rat; 2], limits: &crate::ExecutionLimits,
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<super::super::super::PanelEnclosure, MathError> {
     image.panel_through_in(
         parameters[0],
@@ -125,9 +120,7 @@ fn prefix(
 }
 
 fn prove_range(
-    image: &OperationImageCurve,
-    limits: &crate::ExecutionLimits,
-    math: &mut CoordinateMath,
+    image: &OperationImageCurve, limits: &crate::ExecutionLimits, math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<(Option<Range>, u64), MathError> {
     let zero = Rat::zero();
@@ -226,11 +219,8 @@ fn prove_range(
 }
 
 fn rebuild(
-    image: &OperationImageCurve,
-    range: Range,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    image: &OperationImageCurve, range: Range, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<Option<OperationImageCurve>, GeoError> {
     let (start, end) = image.source_endpoints();
     let mut admission = ExactAdmission::new(context, progress);

@@ -73,9 +73,7 @@ pub(crate) fn refusal(text: &str, error: json::Error) -> GeoError {
 }
 
 pub(crate) fn refusal_with_storage(
-    text: &str,
-    error: json::Error,
-    storage: Option<&crate::carrier::CarrierStorage<'_>>,
+    text: &str, error: json::Error, storage: Option<&crate::carrier::CarrierStorage<'_>>,
 ) -> GeoError {
     use purrdf_lex::json::ErrorKind;
     match error.kind() {

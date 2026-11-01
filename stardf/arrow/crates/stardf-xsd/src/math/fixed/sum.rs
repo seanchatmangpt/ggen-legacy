@@ -43,9 +43,7 @@ impl FixedIntervalSum {
     /// Refuses a different fixed grid, panel-count overflow, or numerical limits
     /// before allocating endpoint sums. The previous sum survives a refusal.
     pub fn add(
-        &mut self,
-        panel: &FixedInterval,
-        context: &mut CoordinateMath,
+        &mut self, panel: &FixedInterval, context: &mut CoordinateMath,
     ) -> Result<(), MathError> {
         self.update(panel, false, context)
     }
@@ -54,17 +52,12 @@ impl FixedIntervalSum {
     /// # Errors
     /// Adds empty-sum or inconsistent-endpoint refusal to [`Self::add`].
     pub fn remove(
-        &mut self,
-        panel: &FixedInterval,
-        context: &mut CoordinateMath,
+        &mut self, panel: &FixedInterval, context: &mut CoordinateMath,
     ) -> Result<(), MathError> {
         self.update(panel, true, context)
     }
     fn update(
-        &mut self,
-        panel: &FixedInterval,
-        remove: bool,
-        context: &mut CoordinateMath,
+        &mut self, panel: &FixedInterval, remove: bool, context: &mut CoordinateMath,
     ) -> Result<(), MathError> {
         if self.precision_bits != context.limits().precision_bits
             || self.precision_bits != panel.precision_bits()

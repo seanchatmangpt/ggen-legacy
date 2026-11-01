@@ -28,9 +28,7 @@ const MODES: [GraphExistenceMode; 2] = [
 ];
 
 fn apply(
-    engine: &NativeSparqlEngine,
-    dataset: &mut Arc<RdfDataset>,
-    query: &str,
+    engine: &NativeSparqlEngine, dataset: &mut Arc<RdfDataset>, query: &str,
     mode: GraphExistenceMode,
 ) {
     engine

@@ -625,9 +625,7 @@ fn concrete_blank_identity_inside_rdf12_triple_terms_is_structural() {
 }
 
 fn template_partition(
-    dataset: &RdfDataset,
-    expected_subjects: usize,
-    context: &str,
+    dataset: &RdfDataset, expected_subjects: usize, context: &str,
 ) -> BTreeSet<(String, BlankScope)> {
     let mut subjects: BTreeMap<(String, BlankScope), BTreeSet<String>> = BTreeMap::new();
     for quad in dataset.quads() {

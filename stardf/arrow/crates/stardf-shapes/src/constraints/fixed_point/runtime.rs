@@ -121,10 +121,7 @@ impl<'a> Execution<'a> {
         ShapesError::Recursion(RecursionRefusal::work(reason))
     }
     pub(super) fn question(
-        &self,
-        identity: Identity,
-        focus: &FocusNode,
-        body: Body<'a>,
+        &self, identity: Identity, focus: &FocusNode, body: Body<'a>,
     ) -> Result<bool, ShapesError> {
         let mut state = self.state.borrow_mut();
         let index = match state.find(identity, focus) {
@@ -196,9 +193,7 @@ impl<'a> Execution<'a> {
     }
 
     pub(super) fn settled(
-        &self,
-        identity: Identity,
-        focus: &FocusNode,
+        &self, identity: Identity, focus: &FocusNode,
     ) -> Result<(bool, Shared<FocusNode>), ShapesError> {
         let state = self.state.borrow();
         if !state.settled {
@@ -213,8 +208,7 @@ impl<'a> Execution<'a> {
     }
 
     pub(super) fn solve(
-        &self,
-        mut evaluate: impl FnMut(Body<'a>, &FocusNode) -> Result<bool, ShapesError>,
+        &self, mut evaluate: impl FnMut(Body<'a>, &FocusNode) -> Result<bool, ShapesError>,
     ) -> Result<bool, ShapesError> {
         'graph: loop {
             let mut resident = Resident;

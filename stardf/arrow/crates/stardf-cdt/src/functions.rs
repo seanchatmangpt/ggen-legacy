@@ -806,9 +806,7 @@ pub fn list_reverse(items: &[CdtTerm]) -> CdtValue {
 /// # Ok::<(), purrdf_cdt::CdtError>(())
 /// ```
 pub fn list_subseq(
-    items: &[CdtTerm],
-    start: &CdtTerm,
-    length: Option<&CdtTerm>,
+    items: &[CdtTerm], start: &CdtTerm, length: Option<&CdtTerm>,
 ) -> CdtOutcome<CdtValue> {
     list_subseq_admitted(items, start, length, &mut Resident)
         .expect("resident CDT function capacity")
@@ -1392,8 +1390,7 @@ pub fn remove(value: &CdtValue, key: &CdtTerm) -> CdtOutcome<MapRemoval> {
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn list_constructor_admitted(
-    items: Vec<CdtTerm>,
-    storage: &mut dyn Storage,
+    items: Vec<CdtTerm>, storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<CdtValue>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| list_constructor_with_memory(items, memory))?;
@@ -1407,8 +1404,7 @@ pub fn list_constructor_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn map_constructor_admitted(
-    pairs: &[(CdtTerm, CdtTerm)],
-    storage: &mut dyn Storage,
+    pairs: &[(CdtTerm, CdtTerm)], storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<CdtValue>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| map_constructor_with_memory(pairs, memory))?;
@@ -1422,9 +1418,7 @@ pub fn map_constructor_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn list_get_admitted(
-    items: &[CdtTerm],
-    index: &CdtTerm,
-    storage: &mut dyn Storage,
+    items: &[CdtTerm], index: &CdtTerm, storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<CdtTerm>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| list_get_with_memory(items, index, memory))?;
@@ -1438,8 +1432,7 @@ pub fn list_get_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn list_head_admitted(
-    items: &[CdtTerm],
-    storage: &mut dyn Storage,
+    items: &[CdtTerm], storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<CdtTerm>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| list_head_with_memory(items, memory))?;
@@ -1453,8 +1446,7 @@ pub fn list_head_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn list_tail_admitted(
-    items: &[CdtTerm],
-    storage: &mut dyn Storage,
+    items: &[CdtTerm], storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<CdtValue>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| list_tail_with_memory(items, memory))?;
@@ -1468,8 +1460,7 @@ pub fn list_tail_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn list_reverse_admitted(
-    items: &[CdtTerm],
-    storage: &mut dyn Storage,
+    items: &[CdtTerm], storage: &mut dyn Storage,
 ) -> Result<(CdtValue, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| list_reverse_with_memory(items, memory))?;
@@ -1483,10 +1474,7 @@ pub fn list_reverse_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn list_subseq_admitted(
-    items: &[CdtTerm],
-    start: &CdtTerm,
-    length: Option<&CdtTerm>,
-    storage: &mut dyn Storage,
+    items: &[CdtTerm], start: &CdtTerm, length: Option<&CdtTerm>, storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<CdtValue>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| list_subseq_with_memory(items, start, length, memory))?;
@@ -1500,8 +1488,7 @@ pub fn list_subseq_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn list_concat_admitted(
-    lists: &[&[CdtTerm]],
-    storage: &mut dyn Storage,
+    lists: &[&[CdtTerm]], storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<CdtValue>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| list_concat_with_memory(lists, memory))?;
@@ -1515,9 +1502,7 @@ pub fn list_concat_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn list_contains_admitted(
-    items: &[CdtTerm],
-    term: &CdtTerm,
-    storage: &mut dyn Storage,
+    items: &[CdtTerm], term: &CdtTerm, storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<bool>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| list_contains_with_memory(items, term, memory))?;
@@ -1531,9 +1516,7 @@ pub fn list_contains_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn map_get_admitted(
-    entries: &[CdtEntry],
-    key: &CdtTerm,
-    storage: &mut dyn Storage,
+    entries: &[CdtEntry], key: &CdtTerm, storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<CdtTerm>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| map_get_with_memory(entries, key, memory))?;
@@ -1547,9 +1530,7 @@ pub fn map_get_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn map_contains_key_admitted(
-    entries: &[CdtEntry],
-    key: &CdtTerm,
-    storage: &mut dyn Storage,
+    entries: &[CdtEntry], key: &CdtTerm, storage: &mut dyn Storage,
 ) -> Result<(bool, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| map_contains_key_with_memory(entries, key, memory))?;
@@ -1563,8 +1544,7 @@ pub fn map_contains_key_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn map_keys_admitted(
-    entries: &[CdtEntry],
-    storage: &mut dyn Storage,
+    entries: &[CdtEntry], storage: &mut dyn Storage,
 ) -> Result<(CdtValue, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| map_keys_with_memory(entries, memory))?;
@@ -1578,10 +1558,7 @@ pub fn map_keys_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn map_put_admitted(
-    entries: &[CdtEntry],
-    key: &CdtTerm,
-    value: &CdtTerm,
-    storage: &mut dyn Storage,
+    entries: &[CdtEntry], key: &CdtTerm, value: &CdtTerm, storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<CdtValue>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| map_put_with_memory(entries, key, value, memory))?;
@@ -1595,9 +1572,7 @@ pub fn map_put_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn map_remove_admitted(
-    entries: &[CdtEntry],
-    key: &CdtTerm,
-    storage: &mut dyn Storage,
+    entries: &[CdtEntry], key: &CdtTerm, storage: &mut dyn Storage,
 ) -> Result<(MapRemoval, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| map_remove_with_memory(entries, key, memory))?;
@@ -1611,8 +1586,7 @@ pub fn map_remove_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn map_merge_admitted(
-    maps: &[&[CdtEntry]],
-    storage: &mut dyn Storage,
+    maps: &[&[CdtEntry]], storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<CdtValue>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| map_merge_with_memory(maps, memory))?;
@@ -1626,9 +1600,7 @@ pub fn map_merge_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn get_admitted(
-    value: &CdtValue,
-    argument: &CdtTerm,
-    storage: &mut dyn Storage,
+    value: &CdtValue, argument: &CdtTerm, storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<CdtTerm>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| get_with_memory(value, argument, memory))?;
@@ -1642,9 +1614,7 @@ pub fn get_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn contains_admitted(
-    value: &CdtValue,
-    term: &CdtTerm,
-    storage: &mut dyn Storage,
+    value: &CdtValue, term: &CdtTerm, storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<bool>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| contains_with_memory(value, term, memory))?;
@@ -1658,8 +1628,7 @@ pub fn contains_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn head_admitted(
-    value: &CdtValue,
-    storage: &mut dyn Storage,
+    value: &CdtValue, storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<CdtTerm>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| head_with_memory(value, memory))?;
@@ -1673,8 +1642,7 @@ pub fn head_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn tail_admitted(
-    value: &CdtValue,
-    storage: &mut dyn Storage,
+    value: &CdtValue, storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<CdtValue>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| tail_with_memory(value, memory))?;
@@ -1688,8 +1656,7 @@ pub fn tail_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn reverse_admitted(
-    value: &CdtValue,
-    storage: &mut dyn Storage,
+    value: &CdtValue, storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<CdtValue>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| reverse_with_memory(value, memory))?;
@@ -1703,10 +1670,7 @@ pub fn reverse_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn subseq_admitted(
-    value: &CdtValue,
-    start: &CdtTerm,
-    length: Option<&CdtTerm>,
-    storage: &mut dyn Storage,
+    value: &CdtValue, start: &CdtTerm, length: Option<&CdtTerm>, storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<CdtValue>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| subseq_with_memory(value, start, length, memory))?;
@@ -1720,8 +1684,7 @@ pub fn subseq_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn concat_admitted(
-    values: &[CdtValue],
-    storage: &mut dyn Storage,
+    values: &[CdtValue], storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<CdtValue>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| concat_with_memory(values, memory))?;
@@ -1735,9 +1698,7 @@ pub fn concat_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn contains_key_admitted(
-    value: &CdtValue,
-    key: &CdtTerm,
-    storage: &mut dyn Storage,
+    value: &CdtValue, key: &CdtTerm, storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<bool>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| contains_key_with_memory(value, key, memory))?;
@@ -1751,8 +1712,7 @@ pub fn contains_key_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn keys_admitted(
-    value: &CdtValue,
-    storage: &mut dyn Storage,
+    value: &CdtValue, storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<CdtValue>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| keys_with_memory(value, memory))?;
@@ -1766,8 +1726,7 @@ pub fn keys_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn merge_admitted(
-    values: &[CdtValue],
-    storage: &mut dyn Storage,
+    values: &[CdtValue], storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<CdtValue>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| merge_with_memory(values, memory))?;
@@ -1781,10 +1740,7 @@ pub fn merge_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn put_admitted(
-    value: &CdtValue,
-    key: &CdtTerm,
-    item: &CdtTerm,
-    storage: &mut dyn Storage,
+    value: &CdtValue, key: &CdtTerm, item: &CdtTerm, storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<CdtValue>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| put_with_memory(value, key, item, memory))?;
@@ -1798,9 +1754,7 @@ pub fn put_admitted(
 /// # Errors
 /// Returns checked physical layout, allocator or original admission refusal.
 pub fn remove_admitted(
-    value: &CdtValue,
-    key: &CdtTerm,
-    storage: &mut dyn Storage,
+    value: &CdtValue, key: &CdtTerm, storage: &mut dyn Storage,
 ) -> Result<(CdtOutcome<MapRemoval>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let value = memory.scope(|memory| remove_with_memory(value, key, memory))?;
@@ -1808,8 +1762,7 @@ pub fn remove_admitted(
 }
 
 fn integer_argument_with_memory(
-    term: &CdtTerm,
-    memory: &mut Memory<'_>,
+    term: &CdtTerm, memory: &mut Memory<'_>,
 ) -> Result<Option<i128>, StorageError> {
     let CdtTerm::Literal(literal) = term else {
         return Ok(None);
@@ -1840,8 +1793,7 @@ fn integer_argument_with_memory(
 }
 
 fn clone_terms<'a>(
-    items: impl IntoIterator<Item = &'a CdtTerm>,
-    memory: &mut Memory<'_>,
+    items: impl IntoIterator<Item = &'a CdtTerm>, memory: &mut Memory<'_>,
 ) -> Result<Vec<CdtTerm>, StorageError> {
     let iterator = items.into_iter();
     let mut output = Vec::new();
@@ -1854,8 +1806,7 @@ fn clone_terms<'a>(
 }
 
 fn list_constructor_with_memory(
-    items: Vec<CdtTerm>,
-    memory: &mut Memory<'_>,
+    items: Vec<CdtTerm>, memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<CdtValue>, StorageError> {
     Ok(match CdtValue::list_with_memory(items, memory)? {
         Ok(value) => CdtOutcome::Value(value),
@@ -1864,9 +1815,7 @@ fn list_constructor_with_memory(
 }
 
 fn list_get_with_memory(
-    items: &[CdtTerm],
-    index: &CdtTerm,
-    memory: &mut Memory<'_>,
+    items: &[CdtTerm], index: &CdtTerm, memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<CdtTerm>, StorageError> {
     let Some(index) = integer_argument_with_memory(index, memory)? else {
         return Ok(raise("cdt:get on a cdt:List needs an xsd:integer index"));
@@ -1891,8 +1840,7 @@ fn list_get_with_memory(
 }
 
 fn list_head_with_memory(
-    items: &[CdtTerm],
-    memory: &mut Memory<'_>,
+    items: &[CdtTerm], memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<CdtTerm>, StorageError> {
     let Some(item) = items.first() else {
         return Ok(raise("cdt:head on an empty cdt:List"));
@@ -1904,8 +1852,7 @@ fn list_head_with_memory(
 }
 
 fn list_tail_with_memory(
-    items: &[CdtTerm],
-    memory: &mut Memory<'_>,
+    items: &[CdtTerm], memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<CdtValue>, StorageError> {
     let Some((_, rest)) = items.split_first() else {
         return Ok(raise("cdt:tail on an empty cdt:List"));
@@ -1918,8 +1865,7 @@ fn list_tail_with_memory(
 }
 
 fn list_reverse_with_memory(
-    items: &[CdtTerm],
-    memory: &mut Memory<'_>,
+    items: &[CdtTerm], memory: &mut Memory<'_>,
 ) -> Result<CdtValue, StorageError> {
     let mut reversed = clone_terms(items, memory)?;
     reversed.reverse();
@@ -1928,10 +1874,7 @@ fn list_reverse_with_memory(
 }
 
 fn list_subseq_with_memory(
-    items: &[CdtTerm],
-    start: &CdtTerm,
-    length: Option<&CdtTerm>,
-    memory: &mut Memory<'_>,
+    items: &[CdtTerm], start: &CdtTerm, length: Option<&CdtTerm>, memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<CdtValue>, StorageError> {
     let Some(start) = integer_argument_with_memory(start, memory)? else {
         return Ok(raise("cdt:subseq needs an xsd:integer start position"));
@@ -1981,8 +1924,7 @@ fn list_subseq_with_memory(
 }
 
 fn list_concat_with_memory(
-    lists: &[&[CdtTerm]],
-    memory: &mut Memory<'_>,
+    lists: &[&[CdtTerm]], memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<CdtValue>, StorageError> {
     let extent = try_list_extent(lists.iter().copied().flatten(), memory)?;
     if let Err(error) = check_extent(&extent) {
@@ -1995,9 +1937,7 @@ fn list_concat_with_memory(
 }
 
 fn list_contains_with_memory(
-    items: &[CdtTerm],
-    term: &CdtTerm,
-    memory: &mut Memory<'_>,
+    items: &[CdtTerm], term: &CdtTerm, memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<bool>, StorageError> {
     let mut withheld: Option<CdtTypeError> = None;
     for item in items {
@@ -2018,8 +1958,7 @@ fn list_contains_with_memory(
 }
 
 fn release_keyed(
-    mut keyed: Vec<(CdtKey, usize)>,
-    memory: &mut Memory<'_>,
+    mut keyed: Vec<(CdtKey, usize)>, memory: &mut Memory<'_>,
 ) -> Result<(), StorageError> {
     // Preserve original key order and the admitted backing allocation until
     // release_vec destroys it. Empty replacement leaves own no allocation.
@@ -2031,8 +1970,7 @@ fn release_keyed(
 }
 
 fn map_constructor_with_memory(
-    pairs: &[(CdtTerm, CdtTerm)],
-    memory: &mut Memory<'_>,
+    pairs: &[(CdtTerm, CdtTerm)], memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<CdtValue>, StorageError> {
     let mut keyed: Vec<(CdtKey, usize)> = Vec::new();
     for (index, (key, _)) in pairs.iter().enumerate() {
@@ -2081,9 +2019,7 @@ fn map_constructor_with_memory(
 }
 
 fn map_get_with_memory(
-    entries: &[CdtEntry],
-    key: &CdtTerm,
-    memory: &mut Memory<'_>,
+    entries: &[CdtEntry], key: &CdtTerm, memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<CdtTerm>, StorageError> {
     let Some(key) = CdtKey::from_term_with_memory(key, memory)? else {
         return Ok(raise(
@@ -2108,9 +2044,7 @@ fn map_get_with_memory(
 }
 
 fn map_contains_key_with_memory(
-    entries: &[CdtEntry],
-    key: &CdtTerm,
-    memory: &mut Memory<'_>,
+    entries: &[CdtEntry], key: &CdtTerm, memory: &mut Memory<'_>,
 ) -> Result<bool, StorageError> {
     let Some(key) = CdtKey::from_term_with_memory(key, memory)? else {
         return Ok(false);
@@ -2123,8 +2057,7 @@ fn map_contains_key_with_memory(
 }
 
 fn map_keys_with_memory(
-    entries: &[CdtEntry],
-    memory: &mut Memory<'_>,
+    entries: &[CdtEntry], memory: &mut Memory<'_>,
 ) -> Result<CdtValue, StorageError> {
     let mut items = Vec::new();
     memory.reserve(&mut items, entries.len())?;
@@ -2136,10 +2069,7 @@ fn map_keys_with_memory(
 }
 
 fn map_put_with_memory(
-    entries: &[CdtEntry],
-    key: &CdtTerm,
-    value: &CdtTerm,
-    memory: &mut Memory<'_>,
+    entries: &[CdtEntry], key: &CdtTerm, value: &CdtTerm, memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<CdtValue>, StorageError> {
     let Some(key) = CdtKey::from_term_with_memory(key, memory)? else {
         return Ok(raise("cdt:put was given a term that cannot be a map key"));
@@ -2200,9 +2130,7 @@ fn map_put_with_memory(
 }
 
 fn map_remove_with_memory(
-    entries: &[CdtEntry],
-    key: &CdtTerm,
-    memory: &mut Memory<'_>,
+    entries: &[CdtEntry], key: &CdtTerm, memory: &mut Memory<'_>,
 ) -> Result<MapRemoval, StorageError> {
     let Some(key) = CdtKey::from_term_with_memory(key, memory)? else {
         return Ok(MapRemoval::Unchanged);
@@ -2224,8 +2152,7 @@ fn map_remove_with_memory(
 }
 
 fn map_merge_with_memory(
-    maps: &[&[CdtEntry]],
-    memory: &mut Memory<'_>,
+    maps: &[&[CdtEntry]], memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<CdtValue>, StorageError> {
     let mut selected: Vec<(usize, &CdtEntry)> = Vec::new();
     for entries in maps {
@@ -2257,9 +2184,7 @@ fn map_merge_with_memory(
 }
 
 fn get_with_memory(
-    value: &CdtValue,
-    argument: &CdtTerm,
-    memory: &mut Memory<'_>,
+    value: &CdtValue, argument: &CdtTerm, memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<CdtTerm>, StorageError> {
     match value.contents() {
         CdtContents::List(items) => list_get_with_memory(items, argument, memory),
@@ -2267,9 +2192,7 @@ fn get_with_memory(
     }
 }
 fn contains_with_memory(
-    value: &CdtValue,
-    term: &CdtTerm,
-    memory: &mut Memory<'_>,
+    value: &CdtValue, term: &CdtTerm, memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<bool>, StorageError> {
     match value.contents() {
         CdtContents::List(items) => list_contains_with_memory(items, term, memory),
@@ -2279,8 +2202,7 @@ fn contains_with_memory(
     }
 }
 fn head_with_memory(
-    value: &CdtValue,
-    memory: &mut Memory<'_>,
+    value: &CdtValue, memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<CdtTerm>, StorageError> {
     match value.contents() {
         CdtContents::List(items) => list_head_with_memory(items, memory),
@@ -2288,8 +2210,7 @@ fn head_with_memory(
     }
 }
 fn tail_with_memory(
-    value: &CdtValue,
-    memory: &mut Memory<'_>,
+    value: &CdtValue, memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<CdtValue>, StorageError> {
     match value.contents() {
         CdtContents::List(items) => list_tail_with_memory(items, memory),
@@ -2297,8 +2218,7 @@ fn tail_with_memory(
     }
 }
 fn reverse_with_memory(
-    value: &CdtValue,
-    memory: &mut Memory<'_>,
+    value: &CdtValue, memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<CdtValue>, StorageError> {
     match value.contents() {
         CdtContents::List(items) => Ok(CdtOutcome::Value(list_reverse_with_memory(items, memory)?)),
@@ -2306,10 +2226,7 @@ fn reverse_with_memory(
     }
 }
 fn subseq_with_memory(
-    value: &CdtValue,
-    start: &CdtTerm,
-    length: Option<&CdtTerm>,
-    memory: &mut Memory<'_>,
+    value: &CdtValue, start: &CdtTerm, length: Option<&CdtTerm>, memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<CdtValue>, StorageError> {
     match value.contents() {
         CdtContents::List(items) => list_subseq_with_memory(items, start, length, memory),
@@ -2317,8 +2234,7 @@ fn subseq_with_memory(
     }
 }
 fn concat_with_memory(
-    values: &[CdtValue],
-    memory: &mut Memory<'_>,
+    values: &[CdtValue], memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<CdtValue>, StorageError> {
     let mut lists: Vec<&[CdtTerm]> = Vec::new();
     memory.reserve(&mut lists, values.len())?;
@@ -2336,9 +2252,7 @@ fn concat_with_memory(
     Ok(result)
 }
 fn contains_key_with_memory(
-    value: &CdtValue,
-    key: &CdtTerm,
-    memory: &mut Memory<'_>,
+    value: &CdtValue, key: &CdtTerm, memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<bool>, StorageError> {
     match value.contents() {
         CdtContents::Map(entries) => Ok(CdtOutcome::Value(map_contains_key_with_memory(
@@ -2350,8 +2264,7 @@ fn contains_key_with_memory(
     }
 }
 fn keys_with_memory(
-    value: &CdtValue,
-    memory: &mut Memory<'_>,
+    value: &CdtValue, memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<CdtValue>, StorageError> {
     match value.contents() {
         CdtContents::Map(entries) => Ok(CdtOutcome::Value(map_keys_with_memory(entries, memory)?)),
@@ -2359,8 +2272,7 @@ fn keys_with_memory(
     }
 }
 fn merge_with_memory(
-    values: &[CdtValue],
-    memory: &mut Memory<'_>,
+    values: &[CdtValue], memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<CdtValue>, StorageError> {
     let mut maps: Vec<&[CdtEntry]> = Vec::new();
     memory.reserve(&mut maps, values.len())?;
@@ -2378,10 +2290,7 @@ fn merge_with_memory(
     Ok(result)
 }
 fn put_with_memory(
-    value: &CdtValue,
-    key: &CdtTerm,
-    item: &CdtTerm,
-    memory: &mut Memory<'_>,
+    value: &CdtValue, key: &CdtTerm, item: &CdtTerm, memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<CdtValue>, StorageError> {
     match value.contents() {
         CdtContents::Map(entries) => map_put_with_memory(entries, key, item, memory),
@@ -2389,9 +2298,7 @@ fn put_with_memory(
     }
 }
 fn remove_with_memory(
-    value: &CdtValue,
-    key: &CdtTerm,
-    memory: &mut Memory<'_>,
+    value: &CdtValue, key: &CdtTerm, memory: &mut Memory<'_>,
 ) -> Result<CdtOutcome<MapRemoval>, StorageError> {
     match value.contents() {
         CdtContents::Map(entries) => Ok(CdtOutcome::Value(map_remove_with_memory(
@@ -2406,8 +2313,7 @@ fn remove_with_memory(
 /// # Errors
 /// Keeps physical parsing/refusal separate from a non-integer argument.
 pub fn integer_argument_admitted(
-    term: &CdtTerm,
-    storage: &mut dyn Storage,
+    term: &CdtTerm, storage: &mut dyn Storage,
 ) -> Result<(Option<i128>, usize), StorageError> {
     let mut memory = Memory::new(storage);
     let result = memory.scope(|memory| integer_argument_with_memory(term, memory))?;

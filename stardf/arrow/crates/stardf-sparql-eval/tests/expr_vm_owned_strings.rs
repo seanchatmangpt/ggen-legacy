@@ -72,9 +72,7 @@ use purrdf_sparql_eval::{NativeSparqlEngine, QueryGovernors, QueryOptions, Retai
 use support::segmented::{CEILING, fixture, open_with_evidence};
 
 fn literal(
-    value: Option<&TermValue>,
-    lexical: &str,
-    language: Option<&str>,
+    value: Option<&TermValue>, lexical: &str, language: Option<&str>,
     direction: Option<purrdf_core::RdfTextDirection>,
 ) {
     let Some(TermValue::Literal {

@@ -15,9 +15,7 @@ impl Component {
     /// every parameter of a multi-parameter component permits at most one value.
     /// All mandatory parameters must be present before a constraint is emitted.
     pub(crate) fn instantiate(
-        &self,
-        shape: &Term,
-        mut values_of: impl FnMut(&str) -> Vec<Term>,
+        &self, shape: &Term, mut values_of: impl FnMut(&str) -> Vec<Term>,
     ) -> Result<Vec<ParameterBindings>, String> {
         if let [parameter] = self.parameters.as_slice() {
             let mut values = values_of(parameter.path.as_str());
@@ -68,9 +66,7 @@ impl Component {
 /// `parameter-name-not-in` / `parameter-name-VARNAME` for the name it yields,
 /// `optional-maxCount` / `optional-datatype` for `sh:optional`.
 pub(super) fn parse_parameter(
-    data: &purrdf_rdf::RdfDataset,
-    param_node: &Term,
-    component_iri: &str,
+    data: &purrdf_rdf::RdfDataset, param_node: &Term, component_iri: &str,
 ) -> Result<Parameter, (&'static str, String)> {
     let paths = objects_of(data, param_node, sh::PATH);
     let [Term::NamedNode(path)] = paths.as_slice() else {

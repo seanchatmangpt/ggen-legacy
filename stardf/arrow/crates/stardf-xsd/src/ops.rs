@@ -55,8 +55,7 @@ pub fn value_cmp(a: &XsdValue, b: &XsdValue) -> Option<Ordering> {
 /// # Errors
 /// Returns physical refusal separately from incomparable values.
 pub fn value_cmp_admitted(
-    a: &XsdValue,
-    b: &XsdValue,
+    a: &XsdValue, b: &XsdValue,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -203,8 +202,7 @@ pub fn value_equal(a: &XsdValue, b: &XsdValue) -> Option<bool> {
 /// # Errors
 /// Returns physical refusal independently of the equality answer.
 pub fn value_equal_admitted(
-    a: &XsdValue,
-    b: &XsdValue,
+    a: &XsdValue, b: &XsdValue,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -306,8 +304,7 @@ fn temporal_add(a: &XsdValue, b: &XsdValue) -> Result<XsdValue, XsdError> {
 }
 
 fn temporal_add_admitted(
-    a: &XsdValue,
-    b: &XsdValue,
+    a: &XsdValue, b: &XsdValue,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -347,8 +344,7 @@ fn temporal_sub(a: &XsdValue, b: &XsdValue) -> Result<XsdValue, XsdError> {
 }
 
 fn temporal_sub_admitted(
-    a: &XsdValue,
-    b: &XsdValue,
+    a: &XsdValue, b: &XsdValue,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -395,8 +391,7 @@ fn temporal_mul(a: &XsdValue, b: &XsdValue) -> Result<XsdValue, XsdError> {
 }
 
 fn temporal_mul_admitted(
-    a: &XsdValue,
-    b: &XsdValue,
+    a: &XsdValue, b: &XsdValue,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -432,8 +427,7 @@ fn temporal_div(a: &XsdValue, b: &XsdValue) -> Result<XsdValue, XsdError> {
 }
 
 fn temporal_div_admitted(
-    a: &XsdValue,
-    b: &XsdValue,
+    a: &XsdValue, b: &XsdValue,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,
     ) -> Result<(), crate::bigint::LimbScratchError>,
@@ -650,9 +644,7 @@ pub fn value_div(a: &XsdValue, b: &XsdValue) -> Result<XsdValue, XsdError> {
 /// As [`value_div`], plus [`XsdError::Exact`] when `policy` refuses the quotient
 /// (a non-terminating one under [`crate::exact::DivisionPolicy::Exact`]).
 pub fn value_div_with_policy(
-    a: &XsdValue,
-    b: &XsdValue,
-    policy: crate::exact::DivisionPolicy,
+    a: &XsdValue, b: &XsdValue, policy: crate::exact::DivisionPolicy,
 ) -> Result<XsdValue, XsdError> {
     match a {
         XsdValue::Integer { .. }
@@ -680,9 +672,7 @@ pub fn value_div_with_policy(
 /// # Errors
 /// Value-space refusals remain distinct from native storage/admission failures.
 pub fn value_binary_admitted(
-    a: &XsdValue,
-    b: &XsdValue,
-    op: numeric::NumericBinaryOperator,
+    a: &XsdValue, b: &XsdValue, op: numeric::NumericBinaryOperator,
     policy: crate::exact::DivisionPolicy,
     admit: &mut impl FnMut(
         crate::exact::cost::NumericOperationLayout,

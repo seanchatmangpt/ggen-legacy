@@ -114,10 +114,7 @@ fn pending_binding(graph: &Graph, term_id: usize, pending: (usize, Triple3)) -> 
 }
 
 fn term_depends_on_anchor(
-    graph: &Graph,
-    term_id: usize,
-    anchor: usize,
-    pending: (usize, Triple3),
+    graph: &Graph, term_id: usize, anchor: usize, pending: (usize, Triple3),
     seen: &mut FastSet<usize>,
 ) -> bool {
     if term_id == anchor {
@@ -186,9 +183,7 @@ pub const FRAME_BUDGET_DIAGNOSTIC: &str = "FrameBudget";
 /// acting on an unverified claim lets a container assert a refused payload's
 /// identity, and so decide how a selector resolves.
 fn refused_identity(
-    chain: &[Codec],
-    d: Option<&Value>,
-    pub_meta: Option<&Value>,
+    chain: &[Codec], d: Option<&Value>, pub_meta: Option<&Value>,
 ) -> (Option<String>, bool) {
     if chain.is_empty()
         && let Some(raw) = d.and_then(Value::as_bytes)
@@ -199,10 +194,7 @@ fn refused_identity(
 }
 
 fn decrypt_codec(
-    codec: &Codec,
-    data: &[u8],
-    content_key: &ContentKeyResolver<'_>,
-    limit: usize,
+    codec: &Codec, data: &[u8], content_key: &ContentKeyResolver<'_>, limit: usize,
 ) -> Result<Vec<u8>, CodecError> {
     if codec.name != "cose-encrypt0" {
         return Err(CodecError::Unavailable {
@@ -477,9 +469,7 @@ impl<'a> ReadOptions<'a> {
 }
 
 pub(crate) fn push_diagnostic(
-    g: &mut Graph,
-    sink: &mut Option<&mut dyn StreamingSink>,
-    diagnostic: Diagnostic,
+    g: &mut Graph, sink: &mut Option<&mut dyn StreamingSink>, diagnostic: Diagnostic,
 ) {
     if let Some(sink) = sink.as_deref_mut() {
         sink.diagnostic(&diagnostic);
@@ -488,9 +478,7 @@ pub(crate) fn push_diagnostic(
 }
 
 fn push_result_diagnostic(
-    result: &mut StreamingReadResult,
-    sink: &mut dyn StreamingSink,
-    diagnostic: Diagnostic,
+    result: &mut StreamingReadResult, sink: &mut dyn StreamingSink, diagnostic: Diagnostic,
 ) {
     sink.diagnostic(&diagnostic);
     result.diagnostics.push(diagnostic);
@@ -579,11 +567,8 @@ impl Folder<'_, '_, '_> {
     }
 
     fn diag_native(
-        &mut self,
-        code: &'static str,
-        error: impl purrdf_hash::error::NativeError + 'static,
-        detail: String,
-        index: u64,
+        &mut self, code: &'static str, error: impl purrdf_hash::error::NativeError + 'static,
+        detail: String, index: u64,
     ) {
         let diagnostic = Diagnostic {
             code: code.into(),
@@ -597,12 +582,8 @@ impl Folder<'_, '_, '_> {
 
     /// Report a payload the sink's own ceiling refused, before any decode.
     fn emit_blob_refusal(
-        &mut self,
-        digest: Option<&str>,
-        digest_computed: bool,
-        declared_metadata: Option<&Value>,
-        encoded_len: usize,
-        detail: &str,
+        &mut self, digest: Option<&str>, digest_computed: bool, declared_metadata: Option<&Value>,
+        encoded_len: usize, detail: &str,
     ) {
         let segment_index = self.segment_index;
         let Some(sink) = self.sink.as_deref_mut() else {
@@ -619,13 +600,8 @@ impl Folder<'_, '_, '_> {
     }
 
     fn emit_blob(
-        &mut self,
-        digest: &str,
-        bytes: Option<&[u8]>,
-        codecs: &[Codec],
-        declared_metadata: Option<&Value>,
-        payload_present: bool,
-        encoded_len: usize,
+        &mut self, digest: &str, bytes: Option<&[u8]>, codecs: &[Codec],
+        declared_metadata: Option<&Value>, payload_present: bool, encoded_len: usize,
     ) {
         // Only a sink can observe the meta, so look it up only when one is
         // present — and borrow it (`self.g` shared, `self.sink` mut are
@@ -1845,10 +1821,7 @@ pub fn read_with_options(data: &[u8], options: ReadOptions<'_>) -> Graph {
 /// segment-local term ids; the returned [`StreamingReadResult`] carries the
 /// final diagnostics, segment heads, profiles, and streamable-layout state.
 pub fn read_to_sink(
-    data: &[u8],
-    allow_segments: bool,
-    expected_head: Option<&[u8]>,
-    sink: &mut dyn StreamingSink,
+    data: &[u8], allow_segments: bool, expected_head: Option<&[u8]>, sink: &mut dyn StreamingSink,
 ) -> StreamingReadResult {
     read_to_sink_with_options(data, ReadOptions::new(allow_segments, expected_head), sink)
 }
@@ -1859,9 +1832,7 @@ pub fn read_to_sink(
 /// of segment graph complexity: each segment is still folded enough to apply
 /// the same diagnostics and layout checks as [`read_with_options`].
 pub fn read_to_sink_with_options(
-    data: &[u8],
-    options: ReadOptions<'_>,
-    sink: &mut dyn StreamingSink,
+    data: &[u8], options: ReadOptions<'_>, sink: &mut dyn StreamingSink,
 ) -> StreamingReadResult {
     read_to_sink_from_reader(std::io::Cursor::new(data), options, sink)
 }
@@ -1928,10 +1899,7 @@ struct ActiveStreamingSegment {
 
 impl ActiveStreamingSegment {
     fn new(
-        raw_header: &Value,
-        index_offset: u64,
-        segment_index: u64,
-        sink: &mut dyn StreamingSink,
+        raw_header: &Value, index_offset: u64, segment_index: u64, sink: &mut dyn StreamingSink,
     ) -> Self {
         let mut g = Graph::default();
         let mut sink_slot = Some(sink);
@@ -2025,13 +1993,8 @@ impl ActiveStreamingSegment {
     }
 
     fn process_frame<'k>(
-        &mut self,
-        raw: &Value,
-        abs_index: u64,
-        frame_start: u64,
-        frame_end: u64,
-        sink: &mut dyn StreamingSink,
-        content_key: Option<&'k ContentKeyResolver<'k>>,
+        &mut self, raw: &Value, abs_index: u64, frame_start: u64, frame_end: u64,
+        sink: &mut dyn StreamingSink, content_key: Option<&'k ContentKeyResolver<'k>>,
     ) {
         if !self.valid_header {
             return;
@@ -2178,9 +2141,7 @@ impl ActiveStreamingSegment {
     }
 
     fn finish_into_result(
-        mut self,
-        result: &mut StreamingReadResult,
-        sink: &mut dyn StreamingSink,
+        mut self, result: &mut StreamingReadResult, sink: &mut dyn StreamingSink,
     ) {
         if self.valid_header {
             // Every frame of this segment has been folded, so a multi-bound
@@ -2256,9 +2217,7 @@ impl ActiveStreamingSegment {
 /// final graph union, folded quads, suppressions, annotations, opaque rows,
 /// signatures, or blob payloads.
 pub fn read_to_sink_from_reader<R: Read>(
-    reader: R,
-    options: ReadOptions<'_>,
-    sink: &mut dyn StreamingSink,
+    reader: R, options: ReadOptions<'_>, sink: &mut dyn StreamingSink,
 ) -> StreamingReadResult {
     let mut reader = StreamingCountingReader {
         inner: reader,
@@ -2509,8 +2468,7 @@ pub fn read_file_segments(data: &[u8]) -> FileSegments {
 /// diagnostic they carry — are identical to a sequential fold regardless of
 /// scheduling. On targets without threads rayon executes inline.
 fn fold_segments(
-    items: &[(usize, Value)],
-    ranges: &[(usize, usize)],
+    items: &[(usize, Value)], ranges: &[(usize, usize)],
     content_key: Option<&ContentKeyResolver<'_>>,
 ) -> Vec<Graph> {
     if content_key.is_none() && ranges.len() > 1 {
@@ -2548,11 +2506,8 @@ fn parallel_content_ids(items: &[(usize, Value)]) -> Vec<Option<Vec<u8>>> {
 }
 
 fn read_segment_with_sink(
-    items: &[(usize, Value)],
-    index_offset: u64,
-    segment_index: u64,
-    mut sink: Option<&mut dyn StreamingSink>,
-    content_key: Option<&ContentKeyResolver<'_>>,
+    items: &[(usize, Value)], index_offset: u64, segment_index: u64,
+    mut sink: Option<&mut dyn StreamingSink>, content_key: Option<&ContentKeyResolver<'_>>,
 ) -> Graph {
     let mut g = Graph::default();
     let (_, raw_header) = &items[0];

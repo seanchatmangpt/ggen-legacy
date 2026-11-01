@@ -175,11 +175,7 @@ fn header_computed_id(item: &Value) -> Option<Vec<u8>> {
 }
 
 fn collect_frames(
-    items: &[(usize, Value)],
-    torn: Option<usize>,
-    data_len: usize,
-    start: usize,
-    end: usize,
+    items: &[(usize, Value)], torn: Option<usize>, data_len: usize, start: usize, end: usize,
 ) -> Vec<FrameInventory> {
     let mut frames = Vec::new();
     let mut expected_prev = header_stored_id(&items[start].1)
@@ -685,8 +681,7 @@ pub struct DiffResult {
 /// Index of the first frame at which `local_frames` stops being a prefix of
 /// `remote_frames`, comparing frame identity only.
 fn frames_id_mismatch(
-    local_frames: &[FrameInventory],
-    remote_frames: &[FrameInventory],
+    local_frames: &[FrameInventory], remote_frames: &[FrameInventory],
 ) -> Option<usize> {
     local_frames
         .iter()
@@ -932,9 +927,7 @@ pub fn diff(local: &Inventory, remote: &Inventory) -> DiffResult {
 /// or when the spliced (or unchanged) output is not itself a clean
 /// inventory.
 pub fn splice(
-    local_bytes: &[u8],
-    remote_bytes: &[u8],
-    result: &DiffResult,
+    local_bytes: &[u8], remote_bytes: &[u8], result: &DiffResult,
 ) -> Result<Vec<u8>, ReplicationError> {
     if matches!(result.status, DiffStatus::Diverged | DiffStatus::Error) {
         return Err(result

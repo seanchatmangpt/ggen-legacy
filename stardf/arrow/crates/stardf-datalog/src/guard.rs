@@ -133,10 +133,7 @@ impl Guard {
     /// is a FRESH binding, so reading and writing one name in the same guard is a
     /// construction bug rather than a data state.
     pub fn new(
-        name: impl Into<String>,
-        inputs: Vec<String>,
-        outputs: Vec<String>,
-        reads: GuardReads,
+        name: impl Into<String>, inputs: Vec<String>, outputs: Vec<String>, reads: GuardReads,
     ) -> Self {
         for (index, output) in outputs.iter().enumerate() {
             assert!(
@@ -328,8 +325,7 @@ where
     ///
     /// Preserves original source failures and the callback's typed refusal.
     pub fn evaluate_lexical(
-        &self,
-        evaluate: impl FnOnce(&[&str]) -> Result<GuardRows<D::Id>, CallbackError<D::Error>>,
+        &self, evaluate: impl FnOnce(&[&str]) -> Result<GuardRows<D::Id>, CallbackError<D::Error>>,
     ) -> Result<GuardRows<D::Id>, CallbackError<D::Error>> {
         let dictionary = self.model.interner();
         dictionary.check_read().map_err(CallbackError::Source)?;
@@ -361,8 +357,7 @@ where
     ///
     /// A typed source or storage refusal, or a message naming why evaluation failed.
     fn evaluate(
-        &self,
-        call: &GuardCall<'_, D, N>,
+        &self, call: &GuardCall<'_, D, N>,
     ) -> Result<GuardRows<D::Id>, CallbackError<D::Error>>;
 }
 
@@ -440,8 +435,7 @@ impl<E: purrdf_hash::error::StructuredError> purrdf_hash::error::StructuredError
 impl<E> CallbackError<E> {
     /// Preserve source and storage identity; contextualize only the textual diagnostic.
     pub(crate) fn into_eval_error(
-        self,
-        describe: impl FnOnce(CallbackDiagnostic) -> crate::seminaive::EvalError<E>,
+        self, describe: impl FnOnce(CallbackDiagnostic) -> crate::seminaive::EvalError<E>,
     ) -> crate::seminaive::EvalError<E> {
         match self {
             Self::Source(error) => crate::seminaive::EvalError::Source(error),
@@ -490,8 +484,7 @@ where
     Arity<N>: StoreShape<N>,
 {
     fn evaluate(
-        &self,
-        call: &GuardCall<'_, D, N>,
+        &self, call: &GuardCall<'_, D, N>,
     ) -> Result<GuardRows<D::Id>, CallbackError<D::Error>> {
         Err(CallbackError::Native(CallbackDiagnostic::NoEvaluator {
             rule: call.rule,

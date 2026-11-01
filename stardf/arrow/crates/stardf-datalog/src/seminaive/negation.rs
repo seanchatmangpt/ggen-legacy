@@ -108,9 +108,7 @@ where
     }
 
     fn finish<D: TermDictionary<Id = I>>(
-        &mut self,
-        probe: GroupProbe<'_, D, N>,
-        found: bool,
+        &mut self, probe: GroupProbe<'_, D, N>, found: bool,
         evidence: &mut Option<&mut dyn RuleEvidence<D, N>>,
     ) -> Result<(), EvalError<D::Error>> {
         probe
@@ -136,11 +134,8 @@ where
 
     /// Resume the same original DFS; a refused admission never unwinds its parents.
     pub(super) fn advance<D: TermDictionary<Id = I>>(
-        &mut self,
-        runtime: &NegationRuntime<N>,
-        probe: GroupProbe<'_, D, N>,
-        governor: &mut StepGovernor<'_>,
-        evidence: &mut Option<&mut dyn RuleEvidence<D, N>>,
+        &mut self, runtime: &NegationRuntime<N>, probe: GroupProbe<'_, D, N>,
+        governor: &mut StepGovernor<'_>, evidence: &mut Option<&mut dyn RuleEvidence<D, N>>,
     ) -> Result<(), EvalError<D::Error>> {
         probe
             .rel
@@ -353,9 +348,7 @@ where
 
 /// Borrow the original local/outer values only for an invocation's first call.
 fn inputs<'a, D: TermDictionary, const N: usize>(
-    guard: &'a GroupGuard,
-    probe: GroupProbe<'a, D, N>,
-    locals: &'a [Option<LocalValue<D::Id>>],
+    guard: &'a GroupGuard, probe: GroupProbe<'a, D, N>, locals: &'a [Option<LocalValue<D::Id>>],
 ) -> Result<Vec<DictionaryTerm<'a, D::Id>>, EvalError<D::Error>>
 where
     Arity<N>: StoreShape<N>,
@@ -413,8 +406,7 @@ mod tests {
         Arity<N>: StoreShape<N>,
     {
         fn evaluate(
-            &self,
-            call: &GuardCall<'_, HostDictionary, N>,
+            &self, call: &GuardCall<'_, HostDictionary, N>,
         ) -> Result<GuardRows<u64>, CallbackError<SourceLost>> {
             self.calls
                 .lock()
@@ -480,8 +472,7 @@ mod tests {
     }
 
     fn program<const N: usize>(
-        kind: usize,
-        atom: &impl Fn(&str, &str, &str) -> ClauseAtom<N>,
+        kind: usize, atom: &impl Fn(&str, &str, &str) -> ClauseAtom<N>,
     ) -> DlClause<N> {
         let atoms = match kind {
             0 => vec![
@@ -535,8 +526,7 @@ mod tests {
     }
 
     fn oracle<const N: usize>(
-        runtime: &NegationRuntime<N>,
-        probe: GroupProbe<'_, HostDictionary, N>,
+        runtime: &NegationRuntime<N>, probe: GroupProbe<'_, HostDictionary, N>,
         governor: &mut StepGovernor<'_>,
         evidence: &mut Option<&mut dyn RuleEvidence<HostDictionary, N>>,
     ) -> (bool, Option<EvidenceId>)
@@ -567,9 +557,7 @@ mod tests {
     }
 
     fn compare<const N: usize>(
-        runtime: &NegationRuntime<N>,
-        probe: GroupProbe<'_, HostDictionary, N>,
-        accept: bool,
+        runtime: &NegationRuntime<N>, probe: GroupProbe<'_, HostDictionary, N>, accept: bool,
         evidenced: bool,
     ) where
         Arity<N>: StoreShape<N>,

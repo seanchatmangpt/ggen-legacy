@@ -22,10 +22,7 @@ impl MaterializationStorage {
     }
 
     pub(crate) fn retain_native<T: crate::context::NativeDetached>(
-        &mut self,
-        value: T,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &mut self, value: T, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<T, GeoError> {
         let previous = self.total;
         let value = crate::context::persistent_numeric(value, context, progress, &mut self.total)?;
@@ -41,9 +38,7 @@ impl MaterializationStorage {
     }
 
     fn reserve_original(
-        &mut self,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &mut self, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         let previous = self.total;
         let required = self
@@ -72,9 +67,7 @@ impl MaterializationStorage {
     /// layout. Cells move without a clone; the old buffer and control die before
     /// their receipt is refunded. The new account slot exists before extraction.
     pub(crate) fn output_array<T>(
-        &mut self,
-        values: RetainedBuilder<T>,
-        context: &mut MetricContext,
+        &mut self, values: RetainedBuilder<T>, context: &mut MetricContext,
         progress: &mut WorkProgress<'_>,
     ) -> Result<Vec<T>, GeoError> {
         if values.is_empty() {
@@ -152,9 +145,7 @@ impl MaterializationStorage {
     /// The producer removes these bytes from its local counter without releasing
     /// them from the context. No allocation or second admission occurs here.
     pub(crate) fn adopt_admitted_output(
-        &mut self,
-        bytes: u64,
-        context: &MetricContext,
+        &mut self, bytes: u64, context: &MetricContext,
     ) -> Result<(), GeoError> {
         let total = self
             .total
@@ -198,10 +189,7 @@ impl MaterializationStorage {
     /// producer releases only its remaining temporary/storage allowance.
     #[cfg(test)]
     pub(crate) fn adopt_geometry_output(
-        &mut self,
-        geometry: &crate::Geometry,
-        available: u64,
-        context: &mut MetricContext,
+        &mut self, geometry: &crate::Geometry, available: u64, context: &mut MetricContext,
         progress: &mut WorkProgress<'_>,
         admit_count: impl FnOnce(u64, &MetricContext) -> Result<(), GeoError>,
     ) -> Result<u64, GeoError> {
@@ -221,11 +209,8 @@ impl MaterializationStorage {
     /// slot in the enclosing output owner. The supplied allowance was retained
     /// by its actual producers before birth; no storage census is substituted.
     pub(crate) fn adopt_produced_geometry_output(
-        &mut self,
-        geometry: Produced<crate::Geometry>,
-        available: u64,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &mut self, geometry: Produced<crate::Geometry>, available: u64,
+        context: &mut MetricContext, progress: &mut WorkProgress<'_>,
         admit_count: impl FnOnce(u64, &MetricContext) -> Result<(), GeoError>,
     ) -> Result<(crate::Geometry, u64), GeoError> {
         let mut count = 0_u64;
@@ -248,9 +233,7 @@ impl MaterializationStorage {
     }
 
     pub(crate) fn publish_literal(
-        &mut self,
-        literal: crate::GeometryLiteral,
-        context: &mut MetricContext,
+        &mut self, literal: crate::GeometryLiteral, context: &mut MetricContext,
         progress: &mut WorkProgress<'_>,
     ) -> Result<crate::context::Retained<MaterializedLiteral>, GeoError> {
         let value = MaterializedLiteral {
@@ -277,9 +260,7 @@ impl MaterializationStorage {
     /// with the independently retained arrays and scalar owners. The complete
     /// buffer allowance has already been recorded at each original birth.
     pub(crate) fn publish_original_literal(
-        &mut self,
-        literal: crate::GeometryLiteral,
-        context: &mut MetricContext,
+        &mut self, literal: crate::GeometryLiteral, context: &mut MetricContext,
         progress: &mut WorkProgress<'_>,
     ) -> Result<crate::context::Retained<MaterializedLiteral>, GeoError> {
         let controls = crate::context::Retained::<MaterializedLiteral>::required_bytes(progress)?;
@@ -305,10 +286,8 @@ impl MaterializationStorage {
     /// Any failed receipt/control publication destroys the payload before its
     /// policy allowance is refunded, retaining the selected first failure.
     pub(crate) fn finish_result(
-        self,
-        result: Result<crate::context::Retained<MaterializedLiteral>, GeoError>,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        self, result: Result<crate::context::Retained<MaterializedLiteral>, GeoError>,
+        context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<
         (
             crate::context::Retained<MaterializedLiteral>,
@@ -360,10 +339,7 @@ impl MaterializationStorage {
     }
 
     fn admit(
-        &mut self,
-        bytes: u64,
-        output: bool,
-        context: &mut MetricContext,
+        &mut self, bytes: u64, output: bool, context: &mut MetricContext,
     ) -> Result<(), GeoError> {
         let total = self
             .total
@@ -384,25 +360,19 @@ impl MaterializationStorage {
 
     #[cfg(test)]
     pub(crate) fn admit_output(
-        &mut self,
-        bytes: u64,
-        context: &mut MetricContext,
+        &mut self, bytes: u64, context: &mut MetricContext,
     ) -> Result<(), GeoError> {
         self.admit(bytes, true, context)
     }
 
     pub(crate) fn admit_transient(
-        &mut self,
-        bytes: u64,
-        context: &mut MetricContext,
+        &mut self, bytes: u64, context: &mut MetricContext,
     ) -> Result<(), GeoError> {
         self.admit(bytes, false, context)
     }
 
     pub(crate) fn release_transient(
-        &mut self,
-        bytes: u64,
-        context: &mut MetricContext,
+        &mut self, bytes: u64, context: &mut MetricContext,
     ) -> Result<(), GeoError> {
         self.release(bytes, false, context)
     }
@@ -410,18 +380,13 @@ impl MaterializationStorage {
     /// Release a dropped original output while preserving sibling/transferred
     /// outputs and the producer's remaining temporary storage.
     pub(crate) fn release_output(
-        &mut self,
-        bytes: u64,
-        context: &mut MetricContext,
+        &mut self, bytes: u64, context: &mut MetricContext,
     ) -> Result<(), GeoError> {
         self.release(bytes, true, context)
     }
 
     fn release(
-        &mut self,
-        bytes: u64,
-        output: bool,
-        context: &mut MetricContext,
+        &mut self, bytes: u64, output: bool, context: &mut MetricContext,
     ) -> Result<(), GeoError> {
         let remaining_output = if output {
             self.output.checked_sub(bytes)
@@ -446,10 +411,7 @@ impl MaterializationStorage {
     /// producer drops that output before calling this and releases every charge.
     #[cfg(test)]
     pub(crate) fn finish(
-        self,
-        success: bool,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        self, success: bool, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<Option<MaterializedOutputReceipt>, GeoError> {
         let Self {
             total,

@@ -509,11 +509,7 @@ impl Parser<'_> {
     /// [`Limits::scalar_keys`] a number, boolean or null key (plain, or tagged
     /// with the core tag it matches) keeps its source text.
     fn key_text(
-        &self,
-        text: String,
-        plain: bool,
-        tag: Option<(Tag, usize)>,
-        at: usize,
+        &self, text: String, plain: bool, tag: Option<(Tag, usize)>, at: usize,
     ) -> Result<String, Error> {
         match tag {
             None if plain => self.plain_key(&text, at),
@@ -555,11 +551,7 @@ impl Parser<'_> {
     /// The value of a scalar: a plain one resolves by the core schema, a
     /// quoted or block one is a string, and a tag decides both (§10.3).
     fn scalar(
-        &self,
-        text: String,
-        plain: bool,
-        tag: Option<(Tag, usize)>,
-        at: usize,
+        &self, text: String, plain: bool, tag: Option<(Tag, usize)>, at: usize,
     ) -> Result<Value, Error> {
         let Some((tag, tag_at)) = tag else {
             return if plain {
@@ -1195,10 +1187,7 @@ impl Parser<'_> {
     /// detected (`indent` is `None`): the first content line's own spaces, and
     /// no leading empty line may hold more (§8.1.1.1).
     fn block_breaks(
-        &mut self,
-        indent: &mut Option<usize>,
-        breaks: &mut String,
-        owner: isize,
+        &mut self, indent: &mut Option<usize>, breaks: &mut String, owner: isize,
     ) -> Result<(), Error> {
         let floor = usize::try_from(owner + 1).unwrap_or(0);
         let mut widest_empty = 0;
@@ -1296,11 +1285,7 @@ impl Parser<'_> {
     /// In a mapping's key position it is the key's string; either way its
     /// anchor names what it denotes.
     fn flow_scalar(
-        &mut self,
-        text: String,
-        plain: bool,
-        properties: Option<Properties>,
-        key_position: bool,
+        &mut self, text: String, plain: bool, properties: Option<Properties>, key_position: bool,
         at: usize,
     ) -> Result<Value, Error> {
         let (anchor, tag) = split(properties);
@@ -1575,10 +1560,7 @@ impl Parser<'_> {
     /// Hand a complete flow node to the innermost collection; the whole value
     /// once the outermost collection closes.
     fn attach_flow(
-        &self,
-        stack: &mut Vec<Flow>,
-        value: Value,
-        at: usize,
+        &self, stack: &mut Vec<Flow>, value: Value, at: usize,
     ) -> Result<Option<Value>, Error> {
         let mut value = value;
         loop {
@@ -1698,11 +1680,7 @@ impl Parser<'_> {
 
     /// Fill the open slot with a scalar carrying `properties`.
     fn fill_scalar(
-        &mut self,
-        text: String,
-        plain: bool,
-        properties: Option<Properties>,
-        at: usize,
+        &mut self, text: String, plain: bool, properties: Option<Properties>, at: usize,
     ) -> Result<(), Error> {
         let (anchor, tag) = split(properties);
         let explicit_key = matches!(
@@ -1781,12 +1759,7 @@ impl Parser<'_> {
     /// Open a block mapping at `column` whose first key is the scalar `text`
     /// (`plain` when it resolves by the core schema).
     fn open_mapping(
-        &mut self,
-        column: usize,
-        text: String,
-        plain: bool,
-        key_at: usize,
-        line: Line,
+        &mut self, column: usize, text: String, plain: bool, key_at: usize, line: Line,
     ) -> Result<(), Error> {
         if line == Line::Inline {
             return Err(self.error(
@@ -2145,9 +2118,7 @@ impl Parser<'_> {
     /// `1.x` version and appears once, `%TAG` names a handle (once) and a
     /// prefix, and any other directive is reserved and ignored.
     fn directive(
-        &mut self,
-        yaml_seen: &mut bool,
-        handles: &mut HashSet<String, FixedState>,
+        &mut self, yaml_seen: &mut bool, handles: &mut HashSet<String, FixedState>,
     ) -> Result<(), Error> {
         let at = self.pos;
         self.skip_to_line_end();

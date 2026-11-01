@@ -45,8 +45,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn diagnostic_number(
-        &self,
-        value: &Rat,
+        &self, value: &Rat,
     ) -> Result<crate::context::Retained<Rat>, GeoError> {
         if let Some(make) = self.1 {
             return make(value);
@@ -55,8 +54,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn original(
-        &self,
-        value: &Rat,
+        &self, value: &Rat,
     ) -> Result<Rat, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => value.copy_in(scratch),
@@ -65,8 +63,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn coordinate(
-        &self,
-        value: &crate::Coord,
+        &self, value: &crate::Coord,
     ) -> Result<crate::Coord, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => value.copy_in(scratch),
@@ -77,8 +74,7 @@ impl ExactValues<'_> {
     /// Copy only the topology law's two projected ordinates. The caller's
     /// exact-operation certificate therefore need not price unused Z/M limbs.
     pub(crate) fn planar_coordinate(
-        &self,
-        value: &crate::Coord,
+        &self, value: &crate::Coord,
     ) -> Result<crate::Coord, purrdf_xsd::integer::LimbScratchError> {
         Ok(crate::Coord::xy(
             self.original(value.x())?,
@@ -87,8 +83,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn decimal_digits(
-        &self,
-        value: &Int,
+        &self, value: &Int,
     ) -> Result<purrdf_xsd::bigint::PreparedDecimalDigits, purrdf_xsd::integer::LimbScratchError>
     {
         match self.0 {
@@ -98,24 +93,19 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn point(
-        &self,
-        value: &crate::LonLat,
+        &self, value: &crate::LonLat,
     ) -> Result<crate::LonLat, purrdf_xsd::integer::LimbScratchError> {
         value.copy_with(self)
     }
 
     pub(crate) fn location(
-        &self,
-        longitude: &Rat,
-        latitude: &Rat,
+        &self, longitude: &Rat, latitude: &Rat,
     ) -> Result<crate::LonLat, GeoError> {
         self.location_result(longitude, latitude)?
     }
 
     pub(crate) fn location_result(
-        &self,
-        longitude: &Rat,
-        latitude: &Rat,
+        &self, longitude: &Rat, latitude: &Rat,
     ) -> Result<Result<crate::LonLat, GeoError>, purrdf_xsd::integer::LimbScratchError> {
         if let Err(error) = crate::LonLat::validate_with(longitude, latitude, self)? {
             return Ok(Err(error));
@@ -127,8 +117,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn planar_location(
-        &self,
-        point: &crate::LonLat,
+        &self, point: &crate::LonLat,
     ) -> Result<crate::Coord, purrdf_xsd::integer::LimbScratchError> {
         Ok(crate::Coord::xy(
             self.original(point.longitude())?,
@@ -137,9 +126,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn compare_coordinate(
-        &self,
-        a: &crate::Coord,
-        b: &crate::Coord,
+        &self, a: &crate::Coord, b: &crate::Coord,
     ) -> Result<core::cmp::Ordering, purrdf_xsd::integer::LimbScratchError> {
         let x = self.compare(a.x(), b.x())?;
         if x.is_eq() {
@@ -150,10 +137,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn extreme<'a>(
-        &self,
-        a: &'a Rat,
-        b: &'a Rat,
-        maximum: bool,
+        &self, a: &'a Rat, b: &'a Rat, maximum: bool,
     ) -> Result<&'a Rat, purrdf_xsd::integer::LimbScratchError> {
         Ok(if self.compare(a, b)?.is_gt() == maximum {
             a
@@ -163,9 +147,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn normalize(
-        &self,
-        angle: &Rat,
-        origin: i64,
+        &self, angle: &Rat, origin: i64,
     ) -> Result<Rat, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => angle.modulo_integer_in(origin, 360, scratch),
@@ -175,8 +157,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn integer_absolute(
-        &self,
-        value: &Int,
+        &self, value: &Int,
     ) -> Result<Int, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => value.abs_in(scratch),
@@ -185,9 +166,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn integer_shift(
-        &self,
-        value: &Int,
-        bits: u32,
+        &self, value: &Int, bits: u32,
     ) -> Result<Int, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => value.shl_in(bits, scratch),
@@ -196,9 +175,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn integer_multiply(
-        &self,
-        a: &Int,
-        b: &Int,
+        &self, a: &Int, b: &Int,
     ) -> Result<Int, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => a.mul_in(b, scratch),
@@ -207,8 +184,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn integer_root(
-        &self,
-        value: &Int,
+        &self, value: &Int,
     ) -> Result<Option<Int>, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => value.sqrt_floor_in(scratch),
@@ -217,9 +193,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn dyadic(
-        &self,
-        value: &Int,
-        bits: u32,
+        &self, value: &Int, bits: u32,
     ) -> Result<Rat, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => Rat::from_dyadic_integer_in(value, bits, scratch),
@@ -228,8 +202,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn binary64(
-        &self,
-        value: f64,
+        &self, value: f64,
     ) -> Result<Option<Rat>, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => Rat::from_binary64_in(value, scratch),
@@ -238,9 +211,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn decimal(
-        &self,
-        mantissa: &Int,
-        places: u32,
+        &self, mantissa: &Int, places: u32,
     ) -> Result<Rat, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => Rat::from_decimal_in(mantissa, places, scratch),
@@ -249,9 +220,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn round_to_scale(
-        &self,
-        value: &Rat,
-        places: u32,
+        &self, value: &Rat, places: u32,
     ) -> Result<Int, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => value.round_to_scale_in(places, scratch),
@@ -283,9 +252,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn integer_divide(
-        &self,
-        a: &Int,
-        b: &Int,
+        &self, a: &Int, b: &Int,
     ) -> Result<Option<(Int, Int)>, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => a.div_rem_in(b, scratch),
@@ -294,9 +261,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn integer_gcd(
-        &self,
-        a: &Int,
-        b: &Int,
+        &self, a: &Int, b: &Int,
     ) -> Result<Int, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => a.gcd_in(b, scratch),
@@ -305,9 +270,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn integer_subtract(
-        &self,
-        a: &Int,
-        b: &Int,
+        &self, a: &Int, b: &Int,
     ) -> Result<Int, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => a.sub_in(b, scratch),
@@ -316,9 +279,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn integer_add(
-        &self,
-        a: &Int,
-        b: &Int,
+        &self, a: &Int, b: &Int,
     ) -> Result<Int, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => a.add_in(b, scratch),
@@ -327,9 +288,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn add(
-        &self,
-        a: &Rat,
-        b: &Rat,
+        &self, a: &Rat, b: &Rat,
     ) -> Result<Rat, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => a.add_in(b, scratch),
@@ -338,9 +297,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn subtract(
-        &self,
-        a: &Rat,
-        b: &Rat,
+        &self, a: &Rat, b: &Rat,
     ) -> Result<Rat, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => a.sub_in(b, scratch),
@@ -349,9 +306,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn multiply(
-        &self,
-        a: &Rat,
-        b: &Rat,
+        &self, a: &Rat, b: &Rat,
     ) -> Result<Rat, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => a.mul_in(b, scratch),
@@ -360,9 +315,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn divide(
-        &self,
-        a: &Rat,
-        b: &Rat,
+        &self, a: &Rat, b: &Rat,
     ) -> Result<Option<Rat>, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => a.div_in(b, scratch),
@@ -371,8 +324,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn reciprocal(
-        &self,
-        value: &Rat,
+        &self, value: &Rat,
     ) -> Result<Option<Rat>, purrdf_xsd::integer::LimbScratchError> {
         // Reciprocal swaps canonical magnitudes. In the admitted branch the
         // original copy enters the arena first, so its clones share that owner.
@@ -380,8 +332,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn absolute(
-        &self,
-        value: &Rat,
+        &self, value: &Rat,
     ) -> Result<Rat, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => value.abs_in(scratch),
@@ -397,9 +348,7 @@ impl ExactValues<'_> {
     }
 
     pub(crate) fn compare(
-        &self,
-        a: &Rat,
-        b: &Rat,
+        &self, a: &Rat, b: &Rat,
     ) -> Result<core::cmp::Ordering, purrdf_xsd::integer::LimbScratchError> {
         match self.0 {
             Some(scratch) => a.compare_in(b, scratch),
@@ -430,8 +379,7 @@ pub(crate) fn decimal_text_with_memory<S: purrdf_lex::allocation::Admission + ?S
 
 /// Stream the XSD home's already admitted decimal groups into one exact frame.
 pub(crate) fn frame_decimal_digits(
-    hash: &mut purrdf_hash::blake3::Hasher,
-    digits: &purrdf_xsd::bigint::PreparedDecimalDigits,
+    hash: &mut purrdf_hash::blake3::Hasher, digits: &purrdf_xsd::bigint::PreparedDecimalDigits,
 ) -> Result<(), GeoError> {
     purrdf_hash::frame::frame_le_display_into(hash, digits.len(), digits)
         .map_err(|_| GeoError::Storage(purrdf_lex::allocation::StorageError::FormattingFailed))
@@ -440,8 +388,7 @@ pub(crate) fn frame_decimal_digits(
 /// Preserve the original reference preimage while using the caller's native
 /// arena for the sole integer renderer. Each group dies before the next field.
 pub(crate) fn reference_identity_using(
-    reference: &crate::GeographicReference,
-    values: &ExactValues<'_>,
+    reference: &crate::GeographicReference, values: &ExactValues<'_>,
 ) -> Result<crate::GeoBindingId, GeoError> {
     reference.compute_identity_with(|value, hash| {
         let digits = values
@@ -460,8 +407,7 @@ pub(crate) struct ExactAdmission<'context, 'observer> {
 }
 impl<'context, 'observer> ExactAdmission<'context, 'observer> {
     pub(crate) fn new(
-        context: &'context mut MetricContext,
-        progress: &'context mut WorkProgress<'observer>,
+        context: &'context mut MetricContext, progress: &'context mut WorkProgress<'observer>,
     ) -> Self {
         Self {
             context,
@@ -473,8 +419,7 @@ impl<'context, 'observer> ExactAdmission<'context, 'observer> {
     /// Construct a native refusal between admitted expressions while borrowing
     /// this request's existing observer rather than creating a resident account.
     pub(crate) fn failure(
-        &mut self,
-        make: impl FnOnce(&mut WorkProgress<'_>) -> GeoError,
+        &mut self, make: impl FnOnce(&mut WorkProgress<'_>) -> GeoError,
     ) -> GeoError {
         make(self.progress)
     }
@@ -483,8 +428,7 @@ impl<'context, 'observer> ExactAdmission<'context, 'observer> {
     /// including intermediates and error paths, until the enclosing proof
     /// drops all returned values and releases its accumulated counter.
     pub(crate) fn retaining(
-        context: &'context mut MetricContext,
-        progress: &'context mut WorkProgress<'observer>,
+        context: &'context mut MetricContext, progress: &'context mut WorkProgress<'observer>,
         retained: &'context mut u64,
     ) -> Self {
         Self {
@@ -498,10 +442,7 @@ impl<'context, 'observer> ExactAdmission<'context, 'observer> {
     /// Detached fields retain their original lease, while the array's original
     /// control and buffer owner cover each replacement until it actually dies.
     pub(crate) fn push_detached<T: crate::context::NativeDetached>(
-        &mut self,
-        output: &mut crate::context::RetainedBuilder<T>,
-        value: T,
-        retained: &mut u64,
+        &mut self, output: &mut crate::context::RetainedBuilder<T>, value: T, retained: &mut u64,
     ) -> Result<(), GeoError> {
         let value =
             crate::context::persistent_numeric(value, self.context, self.progress, retained)?;
@@ -527,10 +468,7 @@ impl<'context, 'observer> ExactAdmission<'context, 'observer> {
     }
 
     pub(crate) fn rational<T>(
-        &mut self,
-        operation: purrdf_xsd::integer::ExactOperation,
-        operands: &[&Rat],
-        count: u64,
+        &mut self, operation: purrdf_xsd::integer::ExactOperation, operands: &[&Rat], count: u64,
         evaluate: impl FnOnce() -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         let cost = rational_cost(operation, operands, count)
@@ -544,10 +482,7 @@ impl<'context, 'observer> ExactAdmission<'context, 'observer> {
 
     /// Execute through the original physical destinations after complete admission.
     pub(crate) fn rational_with<T>(
-        &mut self,
-        operation: purrdf_xsd::integer::ExactOperation,
-        operands: &[&Rat],
-        count: u64,
+        &mut self, operation: purrdf_xsd::integer::ExactOperation, operands: &[&Rat], count: u64,
         evaluate: impl FnOnce(
             &purrdf_xsd::integer::LimbScratch,
         ) -> Result<T, purrdf_xsd::integer::LimbScratchError>,
@@ -558,10 +493,7 @@ impl<'context, 'observer> ExactAdmission<'context, 'observer> {
     }
 
     fn with_destinations<T>(
-        &mut self,
-        operation: purrdf_xsd::integer::ExactOperation,
-        operands: &[&Rat],
-        count: u64,
+        &mut self, operation: purrdf_xsd::integer::ExactOperation, operands: &[&Rat], count: u64,
         evaluate: impl FnOnce(&purrdf_xsd::integer::LimbScratch) -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         let cost = rational_cost(operation, operands, count).ok_or(
@@ -571,16 +503,14 @@ impl<'context, 'observer> ExactAdmission<'context, 'observer> {
     }
 
     fn with_cost<T>(
-        &mut self,
-        cost: purrdf_xsd::integer::ExactArithmeticCost,
+        &mut self, cost: purrdf_xsd::integer::ExactArithmeticCost,
         evaluate: impl FnOnce(&purrdf_xsd::integer::LimbScratch) -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         self.with_cost_progress(cost, |scratch, _| evaluate(scratch))
     }
 
     fn with_cost_progress<T>(
-        &mut self,
-        cost: purrdf_xsd::integer::ExactArithmeticCost,
+        &mut self, cost: purrdf_xsd::integer::ExactArithmeticCost,
         evaluate: impl FnOnce(
             &purrdf_xsd::integer::LimbScratch,
             &mut WorkProgress<'_>,
@@ -616,8 +546,7 @@ impl<'context, 'observer> ExactAdmission<'context, 'observer> {
     }
 
     fn with_cost_values<T>(
-        &mut self,
-        cost: purrdf_xsd::integer::ExactArithmeticCost,
+        &mut self, cost: purrdf_xsd::integer::ExactArithmeticCost,
         evaluate: impl FnOnce(&ExactValues<'_>) -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         self.with_cost_progress(cost, |scratch, progress| {
@@ -629,10 +558,7 @@ impl<'context, 'observer> ExactAdmission<'context, 'observer> {
     }
 
     pub(crate) fn expression<T>(
-        &mut self,
-        operation: purrdf_xsd::integer::ExactOperation,
-        operands: &[&Rat],
-        count: u64,
+        &mut self, operation: purrdf_xsd::integer::ExactOperation, operands: &[&Rat], count: u64,
         evaluate: impl FnOnce(&ExactValues<'_>) -> Result<T, purrdf_xsd::integer::LimbScratchError>,
     ) -> Result<T, GeoError> {
         let cost = rational_cost(operation, operands, count).ok_or(
@@ -644,10 +570,7 @@ impl<'context, 'observer> ExactAdmission<'context, 'observer> {
     }
 
     pub(crate) fn expression_result<T>(
-        &mut self,
-        operation: purrdf_xsd::integer::ExactOperation,
-        operands: &[&Rat],
-        count: u64,
+        &mut self, operation: purrdf_xsd::integer::ExactOperation, operands: &[&Rat], count: u64,
         evaluate: impl FnOnce(&ExactValues<'_>) -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         let cost = rational_cost(operation, operands, count).ok_or(
@@ -660,10 +583,7 @@ impl<'context, 'observer> ExactAdmission<'context, 'observer> {
     /// refusal. The error is born before arithmetic/scratch settlement, so a
     /// later release failure cannot replace the expression's first fault.
     pub(crate) fn expression_observed<T>(
-        &mut self,
-        operation: purrdf_xsd::integer::ExactOperation,
-        operands: &[&Rat],
-        count: u64,
+        &mut self, operation: purrdf_xsd::integer::ExactOperation, operands: &[&Rat], count: u64,
         evaluate: impl FnOnce(&ExactValues<'_>, &mut WorkProgress<'_>) -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         let cost = rational_cost(operation, operands, count).ok_or(
@@ -675,8 +595,7 @@ impl<'context, 'observer> ExactAdmission<'context, 'observer> {
     }
 
     pub(crate) fn expression_cost<T>(
-        &mut self,
-        cost: purrdf_xsd::integer::ExactArithmeticCost,
+        &mut self, cost: purrdf_xsd::integer::ExactArithmeticCost,
         evaluate: impl FnOnce(&ExactValues<'_>) -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         self.with_cost_values(cost, evaluate)
@@ -763,9 +682,7 @@ impl<'context, 'observer> ExactAdmission<'context, 'observer> {
     /// larger returned owner. The caller drops that owner before releasing the
     /// accumulated allowance, including when a later preparation refuses.
     pub(crate) fn rational_owner<T>(
-        &mut self,
-        operation: purrdf_xsd::integer::ExactOperation,
-        operands: &[&Rat],
+        &mut self, operation: purrdf_xsd::integer::ExactOperation, operands: &[&Rat],
         retained: &mut u64,
         evaluate: impl FnOnce(&ExactValues<'_>) -> Result<T, purrdf_xsd::integer::LimbScratchError>,
     ) -> Result<T, GeoError> {
@@ -775,10 +692,7 @@ impl<'context, 'observer> ExactAdmission<'context, 'observer> {
     /// The same retained owner admission for a complete group of original
     /// operations, such as copying every ordinate of one borrowed coordinate.
     pub(crate) fn rational_owner_counted<T>(
-        &mut self,
-        operation: purrdf_xsd::integer::ExactOperation,
-        operands: &[&Rat],
-        count: u64,
+        &mut self, operation: purrdf_xsd::integer::ExactOperation, operands: &[&Rat], count: u64,
         retained: &mut u64,
         evaluate: impl FnOnce(&ExactValues<'_>) -> Result<T, purrdf_xsd::integer::LimbScratchError>,
     ) -> Result<T, GeoError> {
@@ -834,9 +748,7 @@ impl<'context, 'observer> ExactAdmission<'context, 'observer> {
     /// Distinct monotone keys prove strict order. A key tie always falls back
     /// to the original admitted exact comparison, including rounded zeros.
     pub(crate) fn compare_ordered(
-        &mut self,
-        a: (&Rat, u64),
-        b: (&Rat, u64),
+        &mut self, a: (&Rat, u64), b: (&Rat, u64),
     ) -> Result<core::cmp::Ordering, GeoError> {
         self.context.charge_work(1)?;
         self.progress.context_poll(self.context)?;
@@ -852,9 +764,7 @@ impl<'context, 'observer> ExactAdmission<'context, 'observer> {
     /// Detach the result under that allowance before returning the reusable
     /// destination. The immutable limbs retain their original physical owner.
     pub(crate) fn rational_retained(
-        &mut self,
-        operation: purrdf_xsd::integer::ExactOperation,
-        operands: &[&Rat],
+        &mut self, operation: purrdf_xsd::integer::ExactOperation, operands: &[&Rat],
         retained: &mut u64,
         evaluate: impl FnOnce(&ExactValues<'_>) -> Result<Rat, purrdf_xsd::integer::LimbScratchError>,
     ) -> Result<(Rat, u64), GeoError> {
@@ -895,19 +805,15 @@ impl<'context, 'observer> ExactAdmission<'context, 'observer> {
 
     /// The caller drops the replaced result before releasing its allowance.
     pub(crate) fn release_result(
-        &mut self,
-        bytes: u64,
-        retained: &mut u64,
+        &mut self, bytes: u64, retained: &mut u64,
     ) -> Result<(), GeoError> {
         self.context.release_retained_workspace(bytes, retained)
     }
 }
 
 fn retained_exact<T>(
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    cost: purrdf_xsd::integer::ExactArithmeticCost,
-    retained: &mut u64,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
+    cost: purrdf_xsd::integer::ExactArithmeticCost, retained: &mut u64,
     evaluate: impl FnOnce(&mut WorkProgress<'_>) -> Result<T, GeoError>,
 ) -> Result<T, GeoError> {
     progress.preflight_exact(context, cost, cost.workspace_bytes)?;
@@ -917,10 +823,8 @@ fn retained_exact<T>(
 
 /// The original exact body with optional ownership of its returned rational.
 pub(crate) fn exact_retained_rational(
-    admission: Option<&mut ExactAdmission<'_, '_>>,
-    operation: purrdf_xsd::integer::ExactOperation,
-    operands: &[&Rat],
-    retained: &mut u64,
+    admission: Option<&mut ExactAdmission<'_, '_>>, operation: purrdf_xsd::integer::ExactOperation,
+    operands: &[&Rat], retained: &mut u64,
     evaluate: impl FnOnce(&ExactValues<'_>) -> Result<Rat, purrdf_xsd::integer::LimbScratchError>,
 ) -> Result<(Rat, u64), GeoError> {
     if let Some(admission) = admission {
@@ -934,9 +838,7 @@ pub(crate) fn exact_retained_rational(
 
 /// Keep one original arithmetic body for legacy and admitted entry points.
 pub(crate) fn compare_rational(
-    admission: Option<&mut ExactAdmission<'_, '_>>,
-    a: &Rat,
-    b: &Rat,
+    admission: Option<&mut ExactAdmission<'_, '_>>, a: &Rat, b: &Rat,
 ) -> Result<core::cmp::Ordering, GeoError> {
     match admission {
         Some(admission) => admission.compare(a, b),
@@ -946,9 +848,7 @@ pub(crate) fn compare_rational(
 
 /// Canonical equality reads original limbs without producing arithmetic scratch.
 pub(crate) fn equal_rational(
-    admission: Option<&mut ExactAdmission<'_, '_>>,
-    a: &Rat,
-    b: &Rat,
+    admission: Option<&mut ExactAdmission<'_, '_>>, a: &Rat, b: &Rat,
 ) -> Result<bool, GeoError> {
     match admission {
         Some(admission) => {
@@ -978,8 +878,7 @@ pub(crate) fn canonical_rational_scan_cost(
 
 /// Keep one original arithmetic body for legacy and admitted entry points.
 pub(crate) fn exact_rational<T>(
-    admission: Option<&mut ExactAdmission<'_, '_>>,
-    operation: purrdf_xsd::integer::ExactOperation,
+    admission: Option<&mut ExactAdmission<'_, '_>>, operation: purrdf_xsd::integer::ExactOperation,
     operands: &[&Rat],
     evaluate: impl FnOnce(&ExactValues<'_>) -> Result<T, purrdf_xsd::integer::LimbScratchError>,
 ) -> Result<T, GeoError> {
@@ -988,10 +887,8 @@ pub(crate) fn exact_rational<T>(
 
 /// The same original body with an explicit complete rational-operation count.
 pub(crate) fn exact_rational_counted<T>(
-    admission: Option<&mut ExactAdmission<'_, '_>>,
-    operation: purrdf_xsd::integer::ExactOperation,
-    operands: &[&Rat],
-    count: u64,
+    admission: Option<&mut ExactAdmission<'_, '_>>, operation: purrdf_xsd::integer::ExactOperation,
+    operands: &[&Rat], count: u64,
     evaluate: impl FnOnce(&ExactValues<'_>) -> Result<T, purrdf_xsd::integer::LimbScratchError>,
 ) -> Result<T, GeoError> {
     if let Some(admission) = admission {
@@ -1002,9 +899,7 @@ pub(crate) fn exact_rational_counted<T>(
 }
 
 pub(crate) fn rational_cost(
-    operation: purrdf_xsd::integer::ExactOperation,
-    operands: &[&Rat],
-    count: u64,
+    operation: purrdf_xsd::integer::ExactOperation, operands: &[&Rat], count: u64,
 ) -> Option<purrdf_xsd::integer::ExactArithmeticCost> {
     purrdf_xsd::integer::ExactArithmeticCost::for_rational_operands(
         operation,
@@ -1106,9 +1001,7 @@ impl NativeRootValues {
         }
     }
     fn try_push(
-        &mut self,
-        root: purrdf_xsd::math::RootIsolation2,
-        progress: &mut WorkProgress<'_>,
+        &mut self, root: purrdf_xsd::math::RootIsolation2, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         match self {
             Self::Inline(values) if values.len() < values.inline_size() => {
@@ -1234,8 +1127,7 @@ impl purrdf_xsd::math::RootStorage2 for NativeRootStorage<'_, '_, '_> {
 macro_rules! native_root_storage {
     () => {
         fn with_storage<T>(
-            &mut self,
-            resident_bytes: usize,
+            &mut self, resident_bytes: usize,
             make: impl FnOnce(
                 &mut purrdf_lex::allocation::Memory<'_, dyn purrdf_lex::allocation::Admission + '_>,
             ) -> Result<T, purrdf_lex::allocation::StorageError>,
@@ -1245,8 +1137,7 @@ macro_rules! native_root_storage {
     };
     (cell) => {
         fn with_storage<T>(
-            &mut self,
-            resident_bytes: usize,
+            &mut self, resident_bytes: usize,
             make: impl FnOnce(
                 &mut purrdf_lex::allocation::Memory<'_, dyn purrdf_lex::allocation::Admission + '_>,
             ) -> Result<T, purrdf_lex::allocation::StorageError>,
@@ -1262,11 +1153,8 @@ pub(crate) use native_root_storage;
 /// Extend a numerical traversal through the native work-list spill home.
 /// The old spill remains live until its replacement has moved every entry.
 pub(crate) fn push_math_work<T, const N: usize>(
-    pending: &mut purrdf_lex::walk::WorkList<T, N>,
-    value: T,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut usize,
+    pending: &mut purrdf_lex::walk::WorkList<T, N>, value: T, math: &mut CoordinateMath,
+    progress: &mut WorkProgress<'_>, retained: &mut usize,
 ) -> Result<(), MathError> {
     let replacement = pending.insertion_layout().map_err(MathError::Storage)?;
     math_grow_work(replacement, math, progress, retained, |memory| {
@@ -1277,11 +1165,8 @@ pub(crate) fn push_math_work<T, const N: usize>(
 /// Native priority queues use the same policy/physical replacement admission
 /// as traversal spills. Ordering remains in the original binary-heap body.
 pub(crate) fn push_math_heap<T: Ord>(
-    heap: &mut std::collections::BinaryHeap<T>,
-    value: T,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut usize,
+    heap: &mut std::collections::BinaryHeap<T>, value: T, math: &mut CoordinateMath,
+    progress: &mut WorkProgress<'_>, retained: &mut usize,
 ) -> Result<(), MathError> {
     let replacement =
         purrdf_lex::allocation::heap_insertion_layout(heap).map_err(MathError::Storage)?;
@@ -1291,10 +1176,8 @@ pub(crate) fn push_math_heap<T: Ord>(
 }
 
 fn math_grow_work(
-    replacement: Option<(usize, usize)>,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut usize,
+    replacement: Option<(usize, usize)>, math: &mut CoordinateMath,
+    progress: &mut WorkProgress<'_>, retained: &mut usize,
     make: impl FnOnce(
         &mut purrdf_lex::allocation::Memory<'_, dyn purrdf_lex::allocation::Admission + '_>,
     ) -> Result<(), purrdf_lex::allocation::StorageError>,
@@ -1330,10 +1213,8 @@ fn math_grow_work(
 
 /// Destroy the original pending entries and spill before refunding its layout.
 pub(crate) fn release_math_work<T, const N: usize>(
-    pending: purrdf_lex::walk::WorkList<T, N>,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
-    retained: usize,
+    pending: purrdf_lex::walk::WorkList<T, N>, math: &mut CoordinateMath,
+    progress: &mut WorkProgress<'_>, retained: usize,
 ) -> Result<(), MathError> {
     let destroyed = progress
         .with_storage(retained, |memory| pending.release_admitted(memory))
@@ -1344,10 +1225,8 @@ pub(crate) fn release_math_work<T, const N: usize>(
 
 /// Refund a priority queue only after its actual entries and backing array die.
 pub(crate) fn release_math_heap<T: Ord>(
-    heap: std::collections::BinaryHeap<T>,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
-    retained: usize,
+    heap: std::collections::BinaryHeap<T>, math: &mut CoordinateMath,
+    progress: &mut WorkProgress<'_>, retained: usize,
 ) -> Result<(), MathError> {
     let destroyed = progress
         .with_storage(retained, |memory| memory.release_heap(heap))
@@ -1359,8 +1238,7 @@ pub(crate) fn release_math_heap<T: Ord>(
 /// Copy a worker-owned original reference only after its actual parameter limbs
 /// and prepared bound storage have been admitted in the one arithmetic home.
 pub(crate) fn reference_clone(
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<crate::GeographicReference, GeoError> {
     let cost = reference_copy_cost(context.reference())?;
     context.charge_work(cost.work_items)?;
@@ -1393,8 +1271,7 @@ pub(crate) fn reference_copy_cost(
 /// scans through the existing reference operand inventory. Equality borrows
 /// every field, so it has no temporary result or heap scratch to reserve.
 pub(crate) fn reference_matches(
-    reference: &crate::GeographicReference,
-    context: &mut MetricContext,
+    reference: &crate::GeographicReference, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     compare_reference(
@@ -1409,8 +1286,7 @@ pub(crate) fn reference_matches(
 /// Admit the same borrowed declaration scan before testing the original
 /// physical surface, which deliberately ignores the carrier's axis order.
 pub(crate) fn reference_same_surface(
-    reference: &crate::GeographicReference,
-    context: &mut MetricContext,
+    reference: &crate::GeographicReference, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     compare_reference(
@@ -1426,10 +1302,8 @@ pub(crate) fn reference_same_surface(
 /// physical surfaces. The context supplies the budget, not either declaration.
 #[cfg(test)]
 pub(crate) fn reference_same_surface_pair(
-    left: &crate::GeographicReference,
-    right: &crate::GeographicReference,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    left: &crate::GeographicReference, right: &crate::GeographicReference,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     compare_reference(
         left,
@@ -1441,10 +1315,8 @@ pub(crate) fn reference_same_surface_pair(
 }
 
 fn compare_reference(
-    reference: &crate::GeographicReference,
-    other: Option<&crate::GeographicReference>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    reference: &crate::GeographicReference, other: Option<&crate::GeographicReference>,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     compare: fn(&crate::GeographicReference, &crate::GeographicReference) -> bool,
 ) -> Result<bool, GeoError> {
     let mut cost = reference_copy_cost(reference)?
@@ -1467,8 +1339,7 @@ fn compare_reference(
 /// cached read. An absent source selects the context's immutable reference;
 /// an explicit source checks an independently supplied carrier declaration.
 pub(crate) fn reference_identity(
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     source: Option<&crate::GeographicReference>,
 ) -> Result<crate::GeoBindingId, GeoError> {
     let reference = source
@@ -1491,8 +1362,7 @@ pub(crate) fn reference_identity(
 /// This covers independently supplied immutable references before their cold
 /// canonical rational rendering; cached reads keep the same declared bound.
 pub(crate) fn math_reference_identity(
-    reference: &crate::GeographicReference,
-    math: &mut CoordinateMath,
+    reference: &crate::GeographicReference, math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<crate::GeoBindingId, MathError> {
     let cost = reference_identity_cost(reference).map_err(|_| MathError::WorkExhausted)?;
@@ -1523,8 +1393,7 @@ pub(crate) fn math_reference_identity(
 /// Format the original declared source/target mismatch only after admitting
 /// both cold identities and their two fixed-width hexadecimal fields.
 pub(crate) fn missing_operation(
-    source: &crate::GeographicReference,
-    context: &mut MetricContext,
+    source: &crate::GeographicReference, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<GeoError, GeoError> {
     let source = reference_identity(context, progress, Some(source))?;
@@ -1535,9 +1404,7 @@ pub(crate) fn missing_operation(
 /// Format two already admitted immutable binding IDs through the same fixed
 /// hexadecimal fields as a full original-reference mismatch.
 pub(crate) fn missing_operation_ids(
-    source: crate::GeoBindingId,
-    target: crate::GeoBindingId,
-    context: &mut MetricContext,
+    source: crate::GeoBindingId, target: crate::GeoBindingId, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<GeoError, GeoError> {
     let source = source.digest();
@@ -1562,8 +1429,7 @@ pub(crate) fn missing_operation_ids(
 /// Produce the original fixed-width mismatch fields under their original owner.
 /// Callers govern identity/work at their existing semantic admission sites.
 pub(crate) fn missing_binding_error(
-    source: purrdf_hash::hex::Digest32,
-    target: purrdf_hash::hex::Digest32,
+    source: purrdf_hash::hex::Digest32, target: purrdf_hash::hex::Digest32,
     progress: &mut WorkProgress<'_>,
 ) -> GeoError {
     progress.retained_error(|memory| {
@@ -1624,9 +1490,7 @@ pub(crate) fn reference_identity_cost(
 /// Admit the linear original-coordinate equality proof before the shared
 /// physical alias law scans any caller-provided rational limbs.
 pub(crate) fn same_location_admitted(
-    a: &crate::LonLat,
-    b: &crate::LonLat,
-    context: &mut MetricContext,
+    a: &crate::LonLat, b: &crate::LonLat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     ExactAdmission::new(context, progress).expression_result(
@@ -1639,9 +1503,7 @@ pub(crate) fn same_location_admitted(
 
 /// Admit one exact rational body in a standalone numerical proof context.
 pub(crate) fn math_exact_rational<T>(
-    operation: purrdf_xsd::integer::ExactOperation,
-    operands: &[&Rat],
-    math: &mut CoordinateMath,
+    operation: purrdf_xsd::integer::ExactOperation, operands: &[&Rat], math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
     evaluate: impl FnOnce(&ExactValues<'_>) -> Result<T, purrdf_xsd::integer::LimbScratchError>,
 ) -> Result<T, MathError> {
@@ -1649,11 +1511,8 @@ pub(crate) fn math_exact_rational<T>(
 }
 
 pub(crate) fn math_exact_rationals<T>(
-    operation: purrdf_xsd::integer::ExactOperation,
-    operands: &[&Rat],
-    count: u64,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    operation: purrdf_xsd::integer::ExactOperation, operands: &[&Rat], count: u64,
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     evaluate: impl FnOnce(&ExactValues<'_>) -> Result<T, purrdf_xsd::integer::LimbScratchError>,
 ) -> Result<T, MathError> {
     let cost = rational_cost(operation, operands, count).ok_or(MathError::WorkExhausted)?;
@@ -1674,8 +1533,7 @@ pub(crate) fn math_exact_rationals<T>(
 }
 
 pub(crate) fn fixed_from_rat(
-    value: &Rat,
-    math: &mut CoordinateMath,
+    value: &Rat, math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     // The original ratio kernel borrows source limbs. Its intermediate products,
     // quotient, remainder and endpoints use the already admitted concrete arena;
@@ -1689,9 +1547,7 @@ pub(crate) fn fixed_from_rat(
 
 /// Bridge an inclusive exact rational enclosure onto the one dyadic grid.
 pub(crate) fn fixed_from_bounds(
-    lower: &Rat,
-    upper: &Rat,
-    math: &mut CoordinateMath,
+    lower: &Rat, upper: &Rat, math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     if lower > upper {
         return Err(MathError::Domain("reversed rational enclosure"));
@@ -1710,8 +1566,7 @@ pub(crate) fn exact_bounds(value: &FixedInterval) -> (Rat, Rat) {
 
 /// Exact canonical receipt endpoints using the enclosing admitted arena.
 pub(crate) fn exact_bounds_in(
-    value: &FixedInterval,
-    math: &mut CoordinateMath,
+    value: &FixedInterval, math: &mut CoordinateMath,
 ) -> Result<(Rat, Rat), MathError> {
     let bits = value
         .lower()
@@ -1742,10 +1597,7 @@ pub(crate) fn carrier_integer(value: &Int) -> Int {
 /// copy and complete power-of-two/five cancellation. The caller retains
 /// output storage separately while subsequent numerical bodies run.
 pub(crate) fn math_quantized_decimal(
-    value: &Int,
-    places: u32,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    value: &Int, places: u32, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<Rat, MathError> {
     let cost = purrdf_xsd::integer::ExactArithmeticCost::decimal_rational(value.bit_len(), places)
         .ok_or(MathError::WorkExhausted)?;
@@ -1764,10 +1616,7 @@ pub(crate) fn math_quantized_decimal(
 /// Correctly round an original exact source through the shared rational/IEEE
 /// body, including proven half-even ties that no nonzero interval can isolate.
 pub(crate) fn math_round_decimal(
-    value: &Rat,
-    places: u32,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    value: &Rat, places: u32, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<Int, MathError> {
     let cost = purrdf_xsd::integer::ExactArithmeticCost::rational_round(
         value.numerator().bit_len(),
@@ -1827,8 +1676,7 @@ pub(crate) fn scratch_source_bits(values: &[&Rat], ellipsoid: &crate::PreparedEl
 
 /// Stream original operands without allocating a source collection.
 pub(crate) fn scratch_source_bits_in<'a>(
-    values: impl Iterator<Item = &'a Rat>,
-    ellipsoid: &'a crate::PreparedEllipsoid,
+    values: impl Iterator<Item = &'a Rat>, ellipsoid: &'a crate::PreparedEllipsoid,
 ) -> u64 {
     values
         .chain([ellipsoid.semimajor(), ellipsoid.semiminor()])
@@ -1849,9 +1697,7 @@ pub(crate) fn rational_operand_bits(value: &Rat) -> u64 {
 /// Limb arithmetic remains in XSD; the complete shared buffers and headers are
 /// reserved and observed before detaching reusable destinations.
 pub(crate) fn math_share_rationals<const N: usize>(
-    values: [Rat; N],
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    values: [Rat; N], math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<([Rat; N], u64), MathError> {
     let bytes = crate::context::persistent_numeric_bytes(&values, progress)
         .map_err(|error| progress.math_failure(error))?;
@@ -1879,10 +1725,7 @@ pub(crate) fn math_share_rationals<const N: usize>(
 /// Its concrete scalar layout and retained control are admitted before the
 /// shared factory copies any fields; the caller owns its live policy receipt.
 pub(crate) fn math_share_fields<T: crate::context::NativeDetached>(
-    value: &T,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut usize,
+    value: &T, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>, retained: &mut usize,
     policy: ExecutionPolicy,
 ) -> Result<T, GeoError> {
     let bytes = usize::try_from(crate::context::persistent_numeric_bytes(value, progress)?)
@@ -1917,9 +1760,7 @@ pub(crate) fn math_share_fields<T: crate::context::NativeDetached>(
 /// callback must construct attempt-local owners each time and transfer external
 /// state only on success. Failed work remains charged across these attempts.
 pub(crate) fn with_math<T>(
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    precision_bits: u32,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>, precision_bits: u32,
     reservation: usize,
     evaluate: impl FnMut(&mut CoordinateMath, &mut WorkProgress<'_>) -> Result<T, GeoError>,
 ) -> Result<T, GeoError> {
@@ -1936,11 +1777,8 @@ pub(crate) fn with_math<T>(
 /// Admit the complete original source widths before preparing reusable limbs.
 /// The output grid never substitutes for the exact numerator/denominator width.
 pub(crate) fn with_math_for_sources<T>(
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    precision_bits: u32,
-    reservation: usize,
-    sources: &[&Rat],
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>, precision_bits: u32,
+    reservation: usize, sources: &[&Rat],
     mut evaluate: impl FnMut(&mut CoordinateMath, &mut WorkProgress<'_>) -> Result<T, GeoError>,
 ) -> Result<T, GeoError> {
     with_math_for_sources_retained(
@@ -1959,11 +1797,8 @@ pub(crate) fn with_math_for_sources<T>(
 /// and reports only storage still live at return. That allowance is subtracted
 /// from the phase release; the caller drops the owner before releasing it.
 pub(crate) fn with_math_for_sources_retained<T>(
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    precision_bits: u32,
-    reservation: usize,
-    sources: &[&Rat],
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>, precision_bits: u32,
+    reservation: usize, sources: &[&Rat],
     mut evaluate: impl FnMut(&mut CoordinateMath, &mut WorkProgress<'_>) -> Result<(T, u64), GeoError>,
 ) -> Result<(T, u64), GeoError> {
     loop {
@@ -2094,9 +1929,7 @@ pub(crate) fn frozen_decimal(text: &str) -> Rat {
 /// Construct a declared decimal quantum before any power allocation, keeping
 /// its admitted output allowance live through the consuming exact proof.
 pub(crate) fn with_decimal_quantum<T>(
-    places: u32,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    places: u32, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     consume: impl FnOnce(&Rat, &mut MetricContext, &mut WorkProgress<'_>) -> Result<T, GeoError>,
 ) -> Result<T, GeoError> {
     let maximum = context.policy().limits().max_precision_bits;
@@ -2124,10 +1957,7 @@ pub(crate) fn with_decimal_quantum<T>(
 /// height quantum. The shared original bound uses pi < 22/7 and the ellipsoid's
 /// prepared normal-metric upper radius; refinement never chooses the grid.
 pub(crate) fn validate_angular_output_grid(
-    places: u32,
-    radius: &Rat,
-    height_places: Option<u32>,
-    context: &mut MetricContext,
+    places: u32, radius: &Rat, height_places: Option<u32>, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     use purrdf_xsd::integer::ExactOperation as Op;
@@ -2185,17 +2015,13 @@ pub(crate) fn validate_angular_output_grid(
 /// A Cartesian response has at most three coordinates: sqrt(3)/2 < 1 bounds
 /// its Euclidean half-quantum displacement by one declared metre quantum.
 pub(crate) fn validate_metric_output_grid(
-    places: u32,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    places: u32, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     with_decimal_quantum(places, context, progress, validate_rounding_bound)
 }
 
 fn validate_rounding_bound(
-    error_upper: &Rat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    error_upper: &Rat, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     let maximum = Rat::new(Int::one(), Int::from_u64(1_000_000)).expect("positive");
     let bits = context.policy().limits().max_precision_bits;
@@ -2215,9 +2041,7 @@ fn validate_rounding_bound(
 
 /// Copy original rational limbs only after the one shared exact admission.
 pub(crate) fn copy_rat(
-    value: &Rat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    value: &Rat, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Rat, GeoError> {
     ExactAdmission::new(context, progress).expression(
         purrdf_xsd::integer::ExactOperation::Linear,
@@ -2228,19 +2052,14 @@ pub(crate) fn copy_rat(
 }
 /// Compare original rationals through their shared admitted branch body.
 pub(crate) fn compare_rat(
-    a: &Rat,
-    b: &Rat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    a: &Rat, b: &Rat, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<core::cmp::Ordering, GeoError> {
     ExactAdmission::new(context, progress).compare(a, b)
 }
 /// Fixed completed conservative path bound; proof tightness cannot change it.
 pub(crate) fn quantized_source_linear_bound(
-    start: &crate::LonLat,
-    end: &crate::LonLat,
-    explicit_reference: Option<&crate::GeographicReference>,
-    context: &mut MetricContext,
+    start: &crate::LonLat, end: &crate::LonLat,
+    explicit_reference: Option<&crate::GeographicReference>, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Rat, GeoError> {
     let reference = if let Some(reference) = explicit_reference {

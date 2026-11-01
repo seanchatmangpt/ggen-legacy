@@ -39,15 +39,13 @@ impl purrdf_hash::error::StructuredError for GeoJsonWriteError {
 
 impl GeoJsonWriteError<&str> {
     pub(crate) fn refusal(
-        self,
-        writer: &mut crate::carrier::writer::CarrierWriter<'_, '_>,
+        self, writer: &mut crate::carrier::writer::CarrierWriter<'_, '_>,
     ) -> super::GeoError {
         writer.with_progress(|progress| progress.retained_error(|memory| self.capture(memory)))
     }
 
     pub(crate) fn capture<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<super::GeoError, StorageError> {
         memory.try_scope(|memory| {
             let cause = match self {

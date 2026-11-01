@@ -378,9 +378,7 @@ impl SpineContext {
     /// rather than reach each point through a plan.
     #[cfg(test)]
     const fn from_parts(
-        class: SpineClass,
-        order: OrderCertainty,
-        under_positional_selection: bool,
+        class: SpineClass, order: OrderCertainty, under_positional_selection: bool,
     ) -> Self {
         Self {
             class,
@@ -714,8 +712,7 @@ where
 /// Visit every `EXISTS` pattern reachable from `expr` without leaving the expression —
 /// i.e. without descending into a pattern. Stops as soon as `visit` returns `true`.
 pub(crate) fn visit_exists_patterns_admitted<'a>(
-    expr: &'a Expression,
-    workspace: &WorkspaceCapability,
+    expr: &'a Expression, workspace: &WorkspaceCapability,
     visit: &mut impl FnMut(&'a GraphPattern) -> Result<bool, EvalError>,
 ) -> Result<bool, EvalError> {
     let mut storage = crate::workspace::LexicalFrame::new(workspace);
@@ -780,8 +777,7 @@ where
 }
 
 pub(crate) fn visit_classified_children_admitted<'a>(
-    pattern: &'a GraphPattern,
-    workspace: &WorkspaceCapability,
+    pattern: &'a GraphPattern, workspace: &WorkspaceCapability,
     visit: &mut impl FnMut(&'a GraphPattern, ChildEdge) -> Result<bool, EvalError>,
 ) -> Result<bool, EvalError> {
     let mut failure = None;
@@ -851,8 +847,7 @@ pub(crate) fn child_edges(pattern: &GraphPattern) -> ChildEdges {
 /// Keep the original four inline edge slots and admit actual heap growth before
 /// the same fallible SmallVec replacement. Child classification is unchanged.
 pub(crate) fn child_edges_admitted(
-    pattern: &GraphPattern,
-    workspace: &WorkspaceCapability,
+    pattern: &GraphPattern, workspace: &WorkspaceCapability,
 ) -> Result<ChildEdges, EvalError> {
     let mut out = ChildEdges {
         values: purrdf_core::SmallVec::new(),
@@ -922,8 +917,7 @@ where
 }
 
 pub(crate) fn walk_spine_admitted<'a>(
-    root: &'a GraphPattern,
-    workspace: &WorkspaceCapability,
+    root: &'a GraphPattern, workspace: &WorkspaceCapability,
     visit: &mut impl FnMut(&'a GraphPattern, SpineContext, usize) -> Result<(), EvalError>,
 ) -> Result<(), EvalError> {
     let mut storage = crate::workspace::LexicalFrame::new(workspace);
@@ -1062,9 +1056,7 @@ pub(crate) fn validate_graph_pattern_depth_with_memory(
 /// The match is wildcard-free and names every field, so a new algebra variant is a
 /// compile error here rather than silently inheriting a pushdown it does not support.
 pub(crate) const fn child_row_ceiling(
-    pattern: &GraphPattern,
-    ordinal: usize,
-    ceiling: u64,
+    pattern: &GraphPattern, ordinal: usize, ceiling: u64,
 ) -> Option<u64> {
     match pattern {
         // Leaves have no children; the ceiling is *consumed* here, not propagated.
@@ -1241,10 +1233,7 @@ impl CapPushdown {
     /// ids in that tree; `None` when `root` is not a node of it or no node received a
     /// ceiling.
     pub(crate) fn over_plan_admitted(
-        plan: &PlanHandle,
-        root: &GraphPattern,
-        root_ceiling: u64,
-        workspace: &WorkspaceCapability,
+        plan: &PlanHandle, root: &GraphPattern, root_ceiling: u64, workspace: &WorkspaceCapability,
     ) -> Result<Option<Self>, EvalError> {
         let Some(base) = plan.node_of(root) else {
             return Ok(None);
@@ -1266,9 +1255,7 @@ impl CapPushdown {
     /// The node `pattern` is, as this pushdown numbers it: `plan`'s id for it when the
     /// pushdown is over that tree, and its own otherwise.
     pub(crate) fn locate(
-        &self,
-        pattern: &GraphPattern,
-        plan: Option<&PlanHandle>,
+        &self, pattern: &GraphPattern, plan: Option<&PlanHandle>,
     ) -> Option<(TreeKey, NodeId)> {
         let node = match &self.transient {
             Some(addresses) => addresses
@@ -1359,9 +1346,7 @@ pub(crate) fn plan_cap_pushdown(root: &GraphPattern, root_ceiling: Option<u64>) 
 }
 
 pub(crate) fn plan_cap_pushdown_admitted(
-    root: &GraphPattern,
-    root_ceiling: Option<u64>,
-    workspace: &WorkspaceCapability,
+    root: &GraphPattern, root_ceiling: Option<u64>, workspace: &WorkspaceCapability,
 ) -> Result<CapPushdown, EvalError> {
     let mut transient = AdmittedMap::default();
     let ceilings = match root_ceiling {
@@ -1389,8 +1374,7 @@ pub(crate) fn plan_cap_pushdown_admitted(
 /// [`walk_spine`]'s pre-order, each node that receives one reported to `recorded` with
 /// its offset from `root`.
 fn cap_ceilings<'a>(
-    root: &'a GraphPattern,
-    root_ceiling: u64,
+    root: &'a GraphPattern, root_ceiling: u64,
     mut recorded: impl FnMut(&'a GraphPattern, NodeId) -> Result<(), EvalError>,
     workspace: &WorkspaceCapability,
 ) -> Result<AdmittedVec<Option<u64>>, EvalError> {
@@ -1705,8 +1689,7 @@ pub(crate) type NodeAnalysisTable = AdmittedMap<usize, NodeAnalysis>;
 /// conservative, never less, regardless of which field that particular caller
 /// would otherwise have read.
 fn node_analysis<'a>(
-    pattern: &GraphPattern,
-    table: &'a NodeAnalysisTable,
+    pattern: &GraphPattern, table: &'a NodeAnalysisTable,
 ) -> Option<&'a NodeAnalysis> {
     table.get(&(std::ptr::from_ref(pattern) as usize))
 }
@@ -1727,8 +1710,7 @@ fn node_analysis<'a>(
 /// descent through nested quoted-triple components, since that is exactly what
 /// `ground_triple_pattern_to_value` recurses through before it errors).
 fn path_endpoint_can_hard_error(
-    term: &TermPattern,
-    workspace: &WorkspaceCapability,
+    term: &TermPattern, workspace: &WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     if !matches!(term, TermPattern::Triple(_)) {
         return Ok(false);
@@ -1840,8 +1822,7 @@ fn path_endpoint_can_hard_error(
 /// today by caller accident.
 #[cfg(test)]
 pub(crate) fn analyze_pattern(
-    pattern: &GraphPattern,
-    table: &mut NodeAnalysisTable,
+    pattern: &GraphPattern, table: &mut NodeAnalysisTable,
 ) -> NodeAnalysis {
     analyze_pattern_admitted(pattern, table, &WorkspaceCapability::resident())
         .expect("resident node analysis")
@@ -1849,9 +1830,7 @@ pub(crate) fn analyze_pattern(
 
 /// Analyze the same immutable tree through its original admitted working owners.
 pub(crate) fn analyze_pattern_admitted(
-    pattern: &GraphPattern,
-    table: &mut NodeAnalysisTable,
-    workspace: &WorkspaceCapability,
+    pattern: &GraphPattern, table: &mut NodeAnalysisTable, workspace: &WorkspaceCapability,
 ) -> Result<NodeAnalysis, EvalError> {
     let mut values = AnalysisValues::new(workspace);
     run_analysis(
@@ -1873,8 +1852,7 @@ pub(crate) fn analyze_pattern_admitted(
 /// too, for [`probe_admissible_admitted`]'s later lookup).
 #[cfg(test)]
 pub(crate) fn analyze_expr(
-    expr: &Expression,
-    table: &mut NodeAnalysisTable,
+    expr: &Expression, table: &mut NodeAnalysisTable,
 ) -> (DetHashSet<Variable>, bool, bool) {
     let (variables, stateful, hard_error) =
         analyze_expr_admitted(expr, table, &WorkspaceCapability::resident())
@@ -1888,9 +1866,7 @@ pub(crate) fn analyze_expr(
 
 /// The same expression synthesis with immutable original schema owners.
 pub(crate) fn analyze_expr_admitted(
-    expr: &Expression,
-    table: &mut NodeAnalysisTable,
-    workspace: &WorkspaceCapability,
+    expr: &Expression, table: &mut NodeAnalysisTable, workspace: &WorkspaceCapability,
 ) -> Result<ExprAnalysis, EvalError> {
     let mut values = AnalysisValues::new(workspace);
     run_analysis(AnalysisStep::EnterExpr(expr), table, &mut values, workspace)?;
@@ -1938,9 +1914,7 @@ impl AnalysisValues {
 
     /// The analyses of the last pattern parts, retaining both metadata owners.
     fn pattern_parts(
-        &mut self,
-        count: usize,
-        workspace: &WorkspaceCapability,
+        &mut self, count: usize, workspace: &WorkspaceCapability,
     ) -> Result<AdmittedVec<NodeAnalysis>, EvalError> {
         let first = self.patterns.len() - count;
         let mut out = AdmittedVec::with_capacity(count, workspace)?;
@@ -1957,9 +1931,7 @@ impl AnalysisValues {
 
     /// The analyses of the last expression parts in their original entry order.
     fn expr_parts(
-        &mut self,
-        count: usize,
-        workspace: &WorkspaceCapability,
+        &mut self, count: usize, workspace: &WorkspaceCapability,
     ) -> Result<AdmittedVec<ExprAnalysis>, EvalError> {
         let first = self.exprs.len() - count;
         let mut out = AdmittedVec::with_capacity(count, workspace)?;
@@ -1975,9 +1947,7 @@ impl AnalysisValues {
 /// written to `table` — once every part is. The walk needs no more machine stack for a
 /// deeper tree.
 fn run_analysis(
-    start: AnalysisStep<'_>,
-    table: &mut NodeAnalysisTable,
-    values: &mut AnalysisValues,
+    start: AnalysisStep<'_>, table: &mut NodeAnalysisTable, values: &mut AnalysisValues,
     workspace: &WorkspaceCapability,
 ) -> Result<(), EvalError> {
     let mut steps = AdmittedVec::new(workspace);
@@ -2027,8 +1997,7 @@ fn run_analysis(
 /// (an `OPTIONAL`'s condition, a `FILTER`'s or `BIND`'s or `UNFOLD`'s expression, the
 /// sort keys, each aggregate's arguments then its sort keys).
 fn push_pattern_parts<'a>(
-    pattern: &'a GraphPattern,
-    steps: &mut AdmittedVec<AnalysisStep<'a>>,
+    pattern: &'a GraphPattern, steps: &mut AdmittedVec<AnalysisStep<'a>>,
 ) -> Result<(), EvalError> {
     match pattern {
         GraphPattern::Bgp { .. }
@@ -2112,8 +2081,7 @@ fn push_pattern_parts<'a>(
 /// Push the entry step of every part `expr`'s analysis reads, in the order it reads
 /// them: operands left to right, and an `EXISTS` body.
 fn push_expr_parts<'a>(
-    expr: &'a Expression,
-    steps: &mut AdmittedVec<AnalysisStep<'a>>,
+    expr: &'a Expression, steps: &mut AdmittedVec<AnalysisStep<'a>>,
 ) -> Result<(), EvalError> {
     match expr {
         Expression::NamedNode(_)
@@ -2168,9 +2136,7 @@ fn push_expr_parts<'a>(
 /// the order [`push_pattern_parts`] entered them) by the per-variant derivation
 /// [`analyze_pattern_admitted`]'s doc states.
 fn assemble_pattern(
-    pattern: &GraphPattern,
-    values: &mut AnalysisValues,
-    workspace: &WorkspaceCapability,
+    pattern: &GraphPattern, values: &mut AnalysisValues, workspace: &WorkspaceCapability,
 ) -> Result<NodeAnalysis, EvalError> {
     Ok(match pattern {
         GraphPattern::Bgp { patterns } => {
@@ -2559,9 +2525,7 @@ fn assemble_pattern(
 /// and a stateful builtin or a hard error reachable through any part or named by the
 /// expression itself.
 fn assemble_expr(
-    expr: &Expression,
-    values: &mut AnalysisValues,
-    workspace: &WorkspaceCapability,
+    expr: &Expression, values: &mut AnalysisValues, workspace: &WorkspaceCapability,
 ) -> Result<ExprAnalysis, EvalError> {
     Ok(match expr {
         Expression::NamedNode(_) | Expression::Literal(_) => (VarSchema::default(), false, false),
@@ -2643,8 +2607,7 @@ fn assemble_expr(
 /// The original expression union/boolean fold, with one admitted builder for
 /// all operands rather than repeated immutable prefix copies.
 fn combine_expr_analysis(
-    initial: ExprAnalysis,
-    parts: impl IntoIterator<Item = ExprAnalysis>,
+    initial: ExprAnalysis, parts: impl IntoIterator<Item = ExprAnalysis>,
     workspace: &WorkspaceCapability,
 ) -> Result<ExprAnalysis, EvalError> {
     let (initial_variables, mut stateful, mut hard_error) = initial;
@@ -2676,8 +2639,7 @@ pub(crate) fn pattern_can_hard_error(pattern: &GraphPattern) -> bool {
 }
 
 pub(crate) fn pattern_can_hard_error_admitted(
-    pattern: &GraphPattern,
-    workspace: &WorkspaceCapability,
+    pattern: &GraphPattern, workspace: &WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     let mut table = NodeAnalysisTable::default();
     Ok(analyze_pattern_admitted(pattern, &mut table, workspace)?.can_hard_error)
@@ -2692,8 +2654,7 @@ pub(crate) fn expr_can_hard_error(expr: &Expression) -> bool {
 }
 
 pub(crate) fn expr_can_hard_error_admitted(
-    expr: &Expression,
-    workspace: &WorkspaceCapability,
+    expr: &Expression, workspace: &WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     let mut table = NodeAnalysisTable::default();
     Ok(analyze_expr_admitted(expr, &mut table, workspace)?.2)
@@ -2805,9 +2766,7 @@ pub(crate) fn expr_can_hard_error_admitted(
 ///   `outer_schema`.
 #[cfg(test)]
 pub(crate) fn probe_admissible(
-    pattern: &GraphPattern,
-    table: &NodeAnalysisTable,
-    outer_schema: &VarSchema,
+    pattern: &GraphPattern, table: &NodeAnalysisTable, outer_schema: &VarSchema,
 ) -> bool {
     probe_admissible_admitted(
         pattern,
@@ -2819,9 +2778,7 @@ pub(crate) fn probe_admissible(
 }
 
 pub(crate) fn probe_admissible_admitted(
-    pattern: &GraphPattern,
-    table: &NodeAnalysisTable,
-    outer_schema: &VarSchema,
+    pattern: &GraphPattern, table: &NodeAnalysisTable, outer_schema: &VarSchema,
     workspace: &WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     // Preserve the original fail-closed root lookup, never synthesize an empty set.
@@ -2847,9 +2804,7 @@ enum ProbeStep<'p, 't> {
 /// first refusal. Over a work list, so a pattern of any depth needs no more machine
 /// stack.
 fn pattern_probe_admissible(
-    pattern: &GraphPattern,
-    current_row_vars: &VarSchema,
-    table: &NodeAnalysisTable,
+    pattern: &GraphPattern, current_row_vars: &VarSchema, table: &NodeAnalysisTable,
     workspace: &WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     let mut pending = AdmittedVec::new(workspace);
@@ -2884,9 +2839,7 @@ fn pattern_probe_admissible(
 /// error here, not a silent inheritance of the permissive answer (`true`, which
 /// here would license a WRONG probe).
 fn pattern_probe_step<'p, 't>(
-    pattern: &'p GraphPattern,
-    current_row_vars: &VarSchema,
-    table: &'t NodeAnalysisTable,
+    pattern: &'p GraphPattern, current_row_vars: &VarSchema, table: &'t NodeAnalysisTable,
     pending: &mut AdmittedVec<ProbeStep<'p, 't>>,
 ) -> Result<bool, EvalError> {
     Ok(match pattern {
@@ -3055,8 +3008,7 @@ pub(crate) use purrdf_sparql_algebra::parser::ScopeIntro as RowCollisionIntro;
 /// set; every other node reads its parent's.
 #[cfg(test)]
 pub(crate) fn exists_row_collision<'a>(
-    pattern: &'a GraphPattern,
-    row_scope: &DetHashSet<Variable>,
+    pattern: &'a GraphPattern, row_scope: &DetHashSet<Variable>,
 ) -> Option<(&'a Variable, RowCollisionIntro)> {
     let workspace = WorkspaceCapability::resident();
     let scope = VarSchema::from_vars_admitted(row_scope.iter().cloned(), &workspace)
@@ -3065,9 +3017,7 @@ pub(crate) fn exists_row_collision<'a>(
 }
 
 pub(crate) fn exists_row_collision_admitted<'a>(
-    pattern: &'a GraphPattern,
-    row_scope: &VarSchema,
-    workspace: &WorkspaceCapability,
+    pattern: &'a GraphPattern, row_scope: &VarSchema, workspace: &WorkspaceCapability,
 ) -> Result<Option<(&'a Variable, RowCollisionIntro)>, EvalError> {
     // The scopes `Project` nodes narrowed to, indexed by `CollisionScope::Narrowed`.
     let mut narrowed = AdmittedVec::<VarSchema>::new(workspace);
@@ -3306,11 +3256,8 @@ enum CollisionStep<'a> {
 /// the same `inner_certainly_bound`. A nested `EXISTS` body is judged from its table
 /// entry here and never descended.
 fn expr_probe_step<'p, 't>(
-    expr: &'p Expression,
-    current_row_vars: &VarSchema,
-    inner_certainly_bound: &'t VarSchema,
-    table: &'t NodeAnalysisTable,
-    pending: &mut AdmittedVec<ProbeStep<'p, 't>>,
+    expr: &'p Expression, current_row_vars: &VarSchema, inner_certainly_bound: &'t VarSchema,
+    table: &'t NodeAnalysisTable, pending: &mut AdmittedVec<ProbeStep<'p, 't>>,
 ) -> Result<bool, EvalError> {
     let first = pending.len();
     let admitted = match expr {
@@ -4154,9 +4101,7 @@ mod tests {
     ///
     /// `branch` builds one arm's slice, so a test can vary `start`/`length` per arm.
     fn union_of_bounded_branches(
-        outer: Option<usize>,
-        left: GraphPattern,
-        right: GraphPattern,
+        outer: Option<usize>, left: GraphPattern, right: GraphPattern,
     ) -> GraphPattern {
         let union = GraphPattern::union(left, right);
         let project = GraphPattern::Project {
@@ -4649,8 +4594,7 @@ mod iterative_walks {
     type ReferenceAnalysisTable = DetHashMap<usize, ReferenceAnalysis>;
 
     fn reference_analyze_pattern(
-        pattern: &GraphPattern,
-        table: &mut ReferenceAnalysisTable,
+        pattern: &GraphPattern, table: &mut ReferenceAnalysisTable,
     ) -> ReferenceAnalysis {
         crate::op_count::bump(crate::op_count::Op::Analyzed);
         let addr = std::ptr::from_ref(pattern) as usize;
@@ -4975,8 +4919,7 @@ mod iterative_walks {
 
     /// [`analyze_expr_admitted`], as a recursion over the tree.
     fn reference_analyze_expr(
-        expr: &Expression,
-        table: &mut ReferenceAnalysisTable,
+        expr: &Expression, table: &mut ReferenceAnalysisTable,
     ) -> (DetHashSet<Variable>, bool, bool) {
         match expr {
             Expression::NamedNode(_) | Expression::Literal(_) => {
@@ -5098,9 +5041,7 @@ mod iterative_walks {
 
     /// [`probe_admissible_admitted`], over the recursive references.
     fn reference_probe_admissible(
-        pattern: &GraphPattern,
-        table: &NodeAnalysisTable,
-        outer_schema: &VarSchema,
+        pattern: &GraphPattern, table: &NodeAnalysisTable, outer_schema: &VarSchema,
     ) -> bool {
         let Some(root) = node_analysis(pattern, table) else {
             return false;
@@ -5117,9 +5058,7 @@ mod iterative_walks {
 
     /// The pattern half of [`probe_admissible_admitted`]'s walk, as a recursion.
     fn reference_admissible(
-        pattern: &GraphPattern,
-        current_row_vars: &DetHashSet<Variable>,
-        table: &NodeAnalysisTable,
+        pattern: &GraphPattern, current_row_vars: &DetHashSet<Variable>, table: &NodeAnalysisTable,
     ) -> bool {
         match pattern {
             GraphPattern::Bgp { .. } | GraphPattern::Path { .. } => true,
@@ -5206,10 +5145,8 @@ mod iterative_walks {
 
     /// The expression half of [`probe_admissible_admitted`]'s walk, as a recursion.
     fn reference_expr_admissible(
-        expr: &Expression,
-        current_row_vars: &DetHashSet<Variable>,
-        inner_certainly_bound: &VarSchema,
-        table: &NodeAnalysisTable,
+        expr: &Expression, current_row_vars: &DetHashSet<Variable>,
+        inner_certainly_bound: &VarSchema, table: &NodeAnalysisTable,
     ) -> bool {
         let sub = |e: &Expression| {
             reference_expr_admissible(e, current_row_vars, inner_certainly_bound, table)
@@ -5252,8 +5189,7 @@ mod iterative_walks {
 
     /// [`exists_row_collision_admitted`], as a recursion over the tree.
     fn reference_row_collision<'a>(
-        pattern: &'a GraphPattern,
-        row_scope: &DetHashSet<Variable>,
+        pattern: &'a GraphPattern, row_scope: &DetHashSet<Variable>,
     ) -> Option<(&'a Variable, RowCollisionIntro)> {
         match pattern {
             GraphPattern::Bgp { .. }
@@ -5333,9 +5269,7 @@ mod iterative_walks {
 
     /// The grouping-key half of [`exists_row_collision_admitted`]'s walk, as a recursion.
     fn reference_group_key_collision<'a>(
-        inner: &'a GraphPattern,
-        variables: &[Variable],
-        row_scope: &DetHashSet<Variable>,
+        inner: &'a GraphPattern, variables: &[Variable], row_scope: &DetHashSet<Variable>,
     ) -> Option<(&'a Variable, RowCollisionIntro)> {
         match inner {
             GraphPattern::Extend {

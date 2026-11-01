@@ -479,9 +479,7 @@ fn put(slot: Slot<'_>, node: Node) {
 /// Wildcard-free: a `GraphPattern` variant added later fails to compile here rather
 /// than silently shifting every ordinal after it.
 fn visit_own_cells(
-    pattern: &mut GraphPattern,
-    index: &mut u32,
-    visit: &mut dyn FnMut(u32, Cell<'_>),
+    pattern: &mut GraphPattern, index: &mut u32, visit: &mut dyn FnMut(u32, Cell<'_>),
 ) {
     match pattern {
         GraphPattern::Bgp { patterns } => {
@@ -1050,9 +1048,7 @@ mod iterative_walk_tests {
     }
 
     fn walk_pattern_ref(
-        pattern: &mut GraphPattern,
-        index: &mut u32,
-        visit: &mut dyn FnMut(u32, Cell<'_>),
+        pattern: &mut GraphPattern, index: &mut u32, visit: &mut dyn FnMut(u32, Cell<'_>),
     ) {
         match pattern {
             GraphPattern::Bgp { patterns } => {
@@ -1151,8 +1147,7 @@ mod iterative_walk_tests {
     }
 
     fn walk_aggregates_ref(
-        aggregates: &mut Vec<(Variable, AggregateExpression)>,
-        index: &mut u32,
+        aggregates: &mut Vec<(Variable, AggregateExpression)>, index: &mut u32,
         visit: &mut dyn FnMut(u32, Cell<'_>),
     ) {
         let mut taken = std::mem::take(aggregates);
@@ -1172,9 +1167,7 @@ mod iterative_walk_tests {
     }
 
     fn walk_order_ref(
-        order: &mut OrderExpression,
-        index: &mut u32,
-        visit: &mut dyn FnMut(u32, Cell<'_>),
+        order: &mut OrderExpression, index: &mut u32, visit: &mut dyn FnMut(u32, Cell<'_>),
     ) {
         match order {
             OrderExpression::Asc(expr) | OrderExpression::Desc(expr) => {
@@ -1184,9 +1177,7 @@ mod iterative_walk_tests {
     }
 
     fn walk_term_ref(
-        term: &mut TermPattern,
-        index: &mut u32,
-        visit: &mut dyn FnMut(u32, Cell<'_>),
+        term: &mut TermPattern, index: &mut u32, visit: &mut dyn FnMut(u32, Cell<'_>),
     ) {
         let here = *index;
         *index += 1;
@@ -1201,9 +1192,7 @@ mod iterative_walk_tests {
     }
 
     fn walk_expression_ref(
-        expr: &mut Expression,
-        index: &mut u32,
-        visit: &mut dyn FnMut(u32, Cell<'_>),
+        expr: &mut Expression, index: &mut u32, visit: &mut dyn FnMut(u32, Cell<'_>),
     ) {
         let here = *index;
         *index += 1;

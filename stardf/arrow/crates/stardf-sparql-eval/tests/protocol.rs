@@ -32,9 +32,7 @@ fn get(query_string: &str) -> Result<ProtocolRequest, ProtocolError> {
 }
 
 fn post(
-    content_type: Option<&str>,
-    query_string: Option<&str>,
-    body: &str,
+    content_type: Option<&str>, query_string: Option<&str>, body: &str,
 ) -> Result<ProtocolRequest, ProtocolError> {
     ProtocolRequest::parse("POST", content_type, query_string, body.as_bytes())
 }

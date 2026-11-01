@@ -191,9 +191,7 @@ purrdf_lex::constructors! {
 impl ParseError {
     /// Retain a resident IRI refusal without infallible physical allocation.
     pub(crate) fn iri_validation(
-        lexical: String,
-        cause: purrdf_iri::IriError,
-        include_code: bool,
+        lexical: String, cause: purrdf_iri::IriError, include_code: bool,
     ) -> Self {
         match purrdf_lex::allocation::try_boxed(cause) {
             Ok(cause) => Self::Iri {
@@ -230,8 +228,7 @@ impl ParseError {
     /// # Errors
     /// Returns physical refusal; a storage parse failure remains operational.
     pub fn try_presentation_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> core::result::Result<DiagnosticPresentation, purrdf_lex::allocation::StorageError> {
         if let Self::Storage(error) = self {
             return Err(*error);
@@ -240,8 +237,7 @@ impl ParseError {
     }
 
     fn presentation_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> core::result::Result<DiagnosticPresentation, purrdf_lex::allocation::StorageError> {
         let presentation = self.own_presentation_with_memory(memory)?;
         let Self::Iri { lexical: _, reason } = self else {
@@ -260,8 +256,7 @@ impl ParseError {
         reason = "these templates are validated and rendered by DiagnosticPresentation"
     )]
     fn own_presentation_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> core::result::Result<DiagnosticPresentation, purrdf_lex::allocation::StorageError> {
         use DiagnosticValue::{Text, Unsigned};
 

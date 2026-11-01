@@ -47,8 +47,7 @@ impl<I: ViewTermId> ShapeState<I> {
         }
     }
     pub(crate) fn ensure_reports(
-        &mut self,
-        workspace: &WorkspaceCapability,
+        &mut self, workspace: &WorkspaceCapability,
     ) -> Result<(), EvalError> {
         if self.reports.is_none() {
             self.reports = Some(SharedWorkspace::new_admitted(
@@ -59,16 +58,13 @@ impl<I: ViewTermId> ShapeState<I> {
         Ok(())
     }
     fn report(
-        &mut self,
-        report: ShapeReport,
-        workspace: &WorkspaceCapability,
+        &mut self, report: ShapeReport, workspace: &WorkspaceCapability,
     ) -> Result<(), EvalError> {
         self.ensure_reports(workspace)?;
         lock_read_state(self.reports.as_ref().expect("report home installed")).push(report)
     }
     pub(crate) fn take_reports(
-        &self,
-        workspace: &WorkspaceCapability,
+        &self, workspace: &WorkspaceCapability,
     ) -> Result<AdmittedVec<ShapeReport>, EvalError> {
         let Some(reports) = &self.reports else {
             return Ok(AdmittedVec::new(workspace));
@@ -159,8 +155,7 @@ fn violation(workspace: &WorkspaceCapability, message: &'static str) -> EvalErro
 }
 
 pub(crate) fn eval_shape<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<Evaluated<D::Id>>, EvalError> {
     if ctx.options.disable_shapes || ctx.expanded_dictionary.is_some() {
         return Ok(None);
@@ -363,8 +358,7 @@ pub(crate) fn eval_shape<D: DatasetView + Sync>(
 struct NativeCosts<'a, 'd, D: DatasetView + Sync>(&'a EvalCtx<'d, D>);
 impl<D: DatasetView + Sync> super::ShapeCosts for NativeCosts<'_, '_, D> {
     fn visit(
-        &self,
-        pattern: &purrdf_sparql_algebra::TriplePattern,
+        &self, pattern: &purrdf_sparql_algebra::TriplePattern,
         visit: &mut dyn FnMut(purrdf_core::AccessCost),
     ) -> Result<(), EvalError> {
         crate::bgp::visit_shape_cost(pattern, self.0, visit)
@@ -394,9 +388,7 @@ impl<D: DatasetView + Sync> NativeRuntime<'_, '_, '_, D> {
         Ok((input, value))
     }
     fn publish(
-        &mut self,
-        source: &[ShapeRow],
-        mut bindings: AdmittedVec<ShapeBinding>,
+        &mut self, source: &[ShapeRow], mut bindings: AdmittedVec<ShapeBinding>,
     ) -> Result<bool, EvalError> {
         if self.withheld.is_some() {
             return Err(violation(
@@ -521,9 +513,7 @@ impl<D: DatasetView + Sync> ShapeRuntime for NativeRuntime<'_, '_, '_, D> {
             .ok_or_else(|| violation(&self.ctx.growth, "unknown physical input"))
     }
     fn binding(
-        &self,
-        row: ShapeRow,
-        variable: &Variable,
+        &self, row: ShapeRow, variable: &Variable,
     ) -> Result<Option<WorkspaceTerm>, EvalError> {
         let (input, row) = self.row(row)?;
         input
@@ -537,9 +527,7 @@ impl<D: DatasetView + Sync> ShapeRuntime for NativeRuntime<'_, '_, '_, D> {
         self.publish(rows, AdmittedVec::new(&self.ctx.growth))
     }
     fn emit_with(
-        &mut self,
-        rows: &[ShapeRow],
-        bindings: AdmittedVec<ShapeBinding>,
+        &mut self, rows: &[ShapeRow], bindings: AdmittedVec<ShapeBinding>,
     ) -> Result<bool, EvalError> {
         self.publish(rows, bindings)
     }

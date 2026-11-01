@@ -505,10 +505,7 @@ impl Reader<'_> {
     /// character references expanded, general entity references kept for
     /// where the entity is used) and its end.
     fn entity_value(
-        &self,
-        text: &str,
-        in_doc: bool,
-        at: usize,
+        &self, text: &str, in_doc: bool, at: usize,
     ) -> Result<(String, usize), XmlError> {
         let (start, close) = self.quoted(text, at)?;
         let literal = self.checked(text, in_doc, start, close)?;
@@ -786,10 +783,7 @@ impl Reader<'_> {
     /// an [`AttDefault`], expanded now unless it refers to an entity only an
     /// unread declaration could bind.
     fn attribute_default(
-        &mut self,
-        text: &str,
-        in_doc: bool,
-        at: usize,
+        &mut self, text: &str, in_doc: bool, at: usize,
     ) -> Result<(AttDefault, usize), XmlError> {
         let (start, close) = self.quoted(text, at)?;
         let bytes = text.as_bytes();

@@ -528,10 +528,7 @@ pub(crate) fn attempt(q: &Question<'_>) -> Result<Attempt, EntailError> {
 /// conclusion, or against the same conclusion read a different way — and each refutation is
 /// re-checked by [`Refutation::check`].
 pub(crate) fn verify_refutation(
-    w: &RefutationWarrant,
-    premise: &RdfDataset,
-    conclusion: &RdfDataset,
-    _triples: &[Triple],
+    w: &RefutationWarrant, premise: &RdfDataset, conclusion: &RdfDataset, _triples: &[Triple],
     pending: &BTreeSet<usize>,
 ) -> Option<Replay> {
     let lowering = negation::lowering(conclusion)?;

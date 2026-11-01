@@ -59,8 +59,7 @@ impl BigInt {
     }
 
     pub(crate) fn trailing_decimal_zeros_using(
-        &self,
-        storage: &impl super::Allocate,
+        &self, storage: &impl super::Allocate,
     ) -> Result<u64, super::LimbScratchError> {
         let Some(limit) = self.trailing_zeros() else {
             return Ok(0);
@@ -119,9 +118,7 @@ impl BigInt {
     }
 
     pub(crate) fn from_binary_using(
-        numerator: i128,
-        exponent: i32,
-        storage: &impl super::Allocate,
+        numerator: i128, exponent: i32, storage: &impl super::Allocate,
     ) -> Result<(Self, u32), super::LimbScratchError> {
         let value = Self::from_i128(numerator);
         if exponent >= 0 {
@@ -241,9 +238,7 @@ impl BigInt {
     }
 
     pub(crate) fn div_rem_pow10_using(
-        &self,
-        exponent: u64,
-        storage: &impl super::Allocate,
+        &self, exponent: u64, storage: &impl super::Allocate,
     ) -> Result<(Self, Self), super::LimbScratchError> {
         if exponent == 0 {
             return Ok((self.copy_using(storage)?, Self::zero()));
@@ -309,9 +304,7 @@ impl BigInt {
 
     /// The same product dispatch with explicit destinations.
     pub(crate) fn mul_fast_using(
-        &self,
-        other: &Self,
-        storage: &impl super::Allocate,
+        &self, other: &Self, storage: &impl super::Allocate,
     ) -> Result<Self, super::LimbScratchError> {
         use super::LimbScratchError::SizeOverflow;
         if self.limb_len().min(other.limb_len()) < KARATSUBA_THRESHOLD {
@@ -411,9 +404,7 @@ impl BigInt {
     /// integer coefficients. Each recursive product has at most one third of
     /// the balanced input limbs plus carry; every destination uses `storage`.
     fn mul_toom3_using(
-        &self,
-        other: &Self,
-        storage: &impl super::Allocate,
+        &self, other: &Self, storage: &impl super::Allocate,
     ) -> Result<Self, super::LimbScratchError> {
         let width = self.limb_len().max(other.limb_len()).div_ceil(3);
         let split = |value: &Self| -> Result<[Self; 3], super::LimbScratchError> {
@@ -500,9 +491,7 @@ impl BigInt {
 /// Form a positive Toom point directly in one admitted destination. The
 /// coefficients are magnitudes, and the only callers evaluate at 1 and 2.
 fn eval_positive_point(
-    chunks: [&BigInt; 3],
-    point: u64,
-    storage: &impl super::Allocate,
+    chunks: [&BigInt; 3], point: u64, storage: &impl super::Allocate,
 ) -> Result<BigInt, super::LimbScratchError> {
     use super::LimbScratchError::SizeOverflow;
     debug_assert!(point == 1 || point == 2);
@@ -524,10 +513,7 @@ fn eval_positive_point(
 /// Carry-add a scaled magnitude into an initialized destination. The chunked
 /// product, three-way reconstruction and positive evaluation share this body.
 fn add_scaled_magnitude_at(
-    output: &mut [u64],
-    offset: usize,
-    words: &[u64],
-    factor: u64,
+    output: &mut [u64], offset: usize, words: &[u64], factor: u64,
 ) -> Result<(), super::LimbScratchError> {
     use super::LimbScratchError::SizeOverflow;
     let end = offset.checked_add(words.len()).ok_or(SizeOverflow)?;
@@ -552,9 +538,7 @@ fn add_scaled_magnitude_at(
 }
 
 fn exact_div_small(
-    value: &BigInt,
-    divisor: i128,
-    storage: &impl super::Allocate,
+    value: &BigInt, divisor: i128, storage: &impl super::Allocate,
 ) -> Result<BigInt, super::LimbScratchError> {
     if divisor == 2 {
         // Every interpolation numerator is even. The general one-limb

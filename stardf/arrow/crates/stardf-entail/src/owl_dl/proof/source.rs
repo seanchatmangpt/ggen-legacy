@@ -329,9 +329,7 @@ impl DlProof {
     /// Missing legacy current support is refused, even if structural clause replay
     /// succeeds. This does not infer source premises from a terminal node identity.
     pub fn resolve_clash<'a>(
-        &'a self,
-        index: usize,
-        ctx: &'a DlProofContext<'_>,
+        &'a self, index: usize, ctx: &'a DlProofContext<'_>,
     ) -> Result<ResolvedClash<'a>, DlProofError> {
         let replay = self.replay_clash(index, ctx)?;
         if !replay.current_supported() {
@@ -354,8 +352,7 @@ impl DlProofContext<'_> {
     /// and RBox clauses have no TBox origin. Prepared schema guards can use several
     /// inclusions; their checked derivations are available through ResolvedClash::schema.
     pub fn clause_tbox_origin(
-        &self,
-        index: usize,
+        &self, index: usize,
     ) -> Result<Option<ResolvedAxiomSource<'_>>, DlProofError> {
         if index >= self.clauses.count() {
             return Err(DlProofError::UnknownClause {

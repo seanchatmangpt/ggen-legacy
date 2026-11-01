@@ -103,8 +103,7 @@ impl ExtensionUsage {
 
     /// The union, over every readable site, of the IRI set `pick` selects.
     fn across_sites<'a>(
-        &'a self,
-        pick: impl Fn(&'a PredicateUse) -> &'a std::collections::BTreeSet<String>,
+        &'a self, pick: impl Fn(&'a PredicateUse) -> &'a std::collections::BTreeSet<String>,
     ) -> std::collections::BTreeSet<&'a str> {
         self.sites
             .values()
@@ -206,10 +205,7 @@ pub(crate) trait SparqlSink {
     /// runs with `$this` pre-bound to the focus node. Delivered to [`Self::record`]
     /// unless a sink asks for these texts apart.
     fn select_expression(
-        &mut self,
-        site: String,
-        text: &str,
-        _purpose: crate::profile::QueryPurpose,
+        &mut self, site: String, text: &str, _purpose: crate::profile::QueryPurpose,
     ) {
         self.record(site, text);
     }
@@ -232,8 +228,7 @@ impl SparqlSink for UsageSink<'_> {
 /// Declarations nothing reaches — a `sh:SPARQLFunction` body, a `sh:SPARQLTargetType`
 /// declaration — are not walked here.
 pub(crate) fn walk_reachable(
-    shapes: &Shapes,
-    sink: &mut dyn SparqlSink,
+    shapes: &Shapes, sink: &mut dyn SparqlSink,
 ) -> Result<(), crate::PreparationRefusal> {
     let mut flight = InFlight {
         model: Some(Arc::clone(&shapes.owner)),
@@ -251,8 +246,7 @@ pub(crate) fn walk_reachable(
 /// Apply compatibility pre-binding restrictions to the same constraints the
 /// production reference walk reaches, including private function domains.
 pub(crate) fn reachable_constraint_refusal(
-    shapes: &Shapes,
-    refusals: &BTreeMap<String, crate::shapes::QueryRefusal>,
+    shapes: &Shapes, refusals: &BTreeMap<String, crate::shapes::QueryRefusal>,
 ) -> Result<Option<(String, crate::shapes::QueryRefusal)>, crate::PreparationRefusal> {
     if refusals.is_empty() {
         return Ok(None);
@@ -293,8 +287,7 @@ pub(crate) fn reachable_constraint_refusal(
 /// expression nothing reaches never executes and is not judged. A dated `profile`
 /// judges the query by its own law for the expression's purpose instead.
 pub(crate) fn reachable_select_expression_violation(
-    shapes: &Shapes,
-    expressions: &[NodeExpr],
+    shapes: &Shapes, expressions: &[NodeExpr],
     prebound: &BTreeMap<String, std::collections::BTreeSet<String>>,
     profile: crate::profile::ShaclProfile,
 ) -> Result<Option<(String, crate::shapes::QueryRefusal)>, crate::PreparationRefusal> {
@@ -306,10 +299,7 @@ pub(crate) fn reachable_select_expression_violation(
     impl SparqlSink for Selects<'_> {
         fn record(&mut self, _site: String, _text: &str) {}
         fn select_expression(
-            &mut self,
-            site: String,
-            text: &str,
-            purpose: crate::profile::QueryPurpose,
+            &mut self, site: String, text: &str, purpose: crate::profile::QueryPurpose,
         ) {
             if self.first.is_some() {
                 return;
@@ -358,8 +348,7 @@ pub(crate) fn reachable_select_expression_violation(
 /// A `sh:SPARQLFunction` body is followed only from a call, so a declared function
 /// nothing calls is never read here.
 pub(crate) fn reachable_call_to(
-    shapes: &Shapes,
-    javascript: &std::collections::BTreeSet<String>,
+    shapes: &Shapes, javascript: &std::collections::BTreeSet<String>,
 ) -> Result<Option<(String, String)>, crate::PreparationRefusal> {
     /// Every extension-function call of every text, by site.
     #[derive(Default)]
@@ -427,8 +416,7 @@ impl Shapes {
     /// Returns the original refusal for an unresolved model reference or body,
     /// or when the walk would enter the physical stack margin.
     pub fn extension_usage(
-        &self,
-        env: &ExtensionEnv<'_>,
+        &self, env: &ExtensionEnv<'_>,
     ) -> Result<ExtensionUsage, crate::PreparationRefusal> {
         let mut sink = UsageSink {
             usage: ExtensionUsage::default(),
@@ -572,10 +560,7 @@ fn walk_shape(shape: &Shape, sink: &mut dyn SparqlSink, flight: &mut InFlight) {
 
 /// Follow the expressions and conditions of an actual rule use.
 fn walk_rule(
-    rule: &crate::rules::Rule,
-    owner: &str,
-    sink: &mut dyn SparqlSink,
-    flight: &mut InFlight,
+    rule: &crate::rules::Rule, owner: &str, sink: &mut dyn SparqlSink, flight: &mut InFlight,
 ) {
     match &rule.body {
         RuleBody::Sparql { construct, .. } => sink.record(owner.to_owned(), construct),
@@ -651,10 +636,7 @@ fn walk_targets(targets: &[Target], owner: &str, sink: &mut dyn SparqlSink, flig
 /// `Shapes::node_shapes`, so nothing else reaches it. Wildcard-free for the reason
 /// [`walk_node_expr`] is.
 fn walk_constraints(
-    constraints: &[Constraint],
-    owner: &str,
-    sink: &mut dyn SparqlSink,
-    flight: &mut InFlight,
+    constraints: &[Constraint], owner: &str, sink: &mut dyn SparqlSink, flight: &mut InFlight,
 ) {
     for constraint in constraints {
         match constraint {

@@ -44,6 +44,9 @@ pub fn pdep_u64(val: u64, mask: u64) -> u64 {
     let mut v = val;
     let mut i = 0;
     while i < 64 {
+        // Audited constant-time loop shape is verbatim bcinr (see crate
+        // provenance); the `x & -x` idiom here is the carried subject.
+        #[allow(clippy::manual_isolate_lowest_one)]
         let lowest_mask_bit = m & m.wrapping_neg();
         let cond = (lowest_mask_bit != 0) as u64;
         let v_bit = v & 1;
@@ -76,6 +79,8 @@ pub fn pext_u64(val: u64, mask: u64) -> u64 {
     let mut shift = 0u64;
     let mut i = 0;
     while i < 64 {
+        // Audited constant-time loop shape is verbatim bcinr; see pdep_u64.
+        #[allow(clippy::manual_isolate_lowest_one)]
         let lowest_mask_bit = m & m.wrapping_neg();
         let cond = (lowest_mask_bit != 0) as u64;
         let bit = (val & lowest_mask_bit) != 0;

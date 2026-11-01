@@ -6,6 +6,11 @@
 use std::fmt::Write as _;
 use std::sync::Arc;
 
+// LANED-EXCLUSION (G03 offline ladder, 2026-10-31, D17): `purrdf_jsonschema` is
+// loudly absent from this tree (crates/jsonschema/DISPOSITION.md), so the
+// metaschema support module and the one test consuming it are cfg(any())-parked
+// below, not deleted. Unpark = vendor purrdf-jsonschema.
+#[cfg(any())]
 #[path = "../examples/support/metaschemas.rs"]
 mod metaschemas;
 
@@ -133,6 +138,9 @@ fn shared_dag_admission_keeps_one_body_per_identity() {
     }
 }
 
+// LANED-EXCLUSION (G03 offline ladder, 2026-10-31, D17): consumes the parked
+// metaschemas module above (see rationale there).
+#[cfg(any())]
 #[test]
 fn catalog_references_project_object_and_member_definitions_without_losing_constraints() {
     let parsed = parse_shapes(

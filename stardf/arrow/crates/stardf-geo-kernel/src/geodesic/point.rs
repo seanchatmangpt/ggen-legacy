@@ -92,9 +92,7 @@ pub(super) trait PointInterval: CertifiedInterval {
     fn magnitude(&self, math: &mut IntervalContext<'_>) -> Option<f64>;
     /// The exact enclosure of two finite binary64 endpoints.
     fn from_binary64_bounds(
-        lower: f64,
-        upper: f64,
-        math: &mut IntervalContext<'_>,
+        lower: f64, upper: f64, math: &mut IntervalContext<'_>,
     ) -> Result<Self, MathError>;
 }
 impl PointInterval for FixedInterval {
@@ -110,9 +108,7 @@ impl PointInterval for FixedInterval {
         Some(purrdf_xsd::ieee::f64_mul(middle, 1.000_001))
     }
     fn from_binary64_bounds(
-        lower: f64,
-        upper: f64,
-        math: &mut IntervalContext<'_>,
+        lower: f64, upper: f64, math: &mut IntervalContext<'_>,
     ) -> Result<Self, MathError> {
         let lower = Self::from_binary64(lower, math.math())?;
         let upper = Self::from_binary64(upper, math.math())?;
@@ -142,9 +138,7 @@ impl PointInterval for WordInterval {
         )
     }
     fn from_binary64_bounds(
-        lower: f64,
-        upper: f64,
-        math: &mut IntervalContext<'_>,
+        lower: f64, upper: f64, math: &mut IntervalContext<'_>,
     ) -> Result<Self, MathError> {
         math.math().admit_exact(1, 128)?;
         Self::from_binary64(lower, upper)
@@ -165,9 +159,7 @@ impl PointInterval for FloatEnclosure {
         Some(lower.abs().max(upper.abs()))
     }
     fn from_binary64_bounds(
-        lower: f64,
-        upper: f64,
-        math: &mut IntervalContext<'_>,
+        lower: f64, upper: f64, math: &mut IntervalContext<'_>,
     ) -> Result<Self, MathError> {
         math.math().admit_exact(1, 64)?;
         Self::from_binary64_bounds(lower, upper)
@@ -175,11 +167,7 @@ impl PointInterval for FloatEnclosure {
 }
 
 pub(super) fn reduced_point<I: PointInterval>(
-    latitude: &Rat,
-    source: Option<&PreparedGeodesicPoint>,
-    c: &I,
-    radians_per_degree: &I,
-    ep2: &I,
+    latitude: &Rat, source: Option<&PreparedGeodesicPoint>, c: &I, radians_per_degree: &I, ep2: &I,
     math: &mut IntervalContext<'_>,
 ) -> Result<ReducedPoint<I>, MathError> {
     if let Some(source) = source
@@ -221,9 +209,7 @@ impl PreparedGeodesic {
     /// # Errors
     /// Refuses reference mismatch, cancellation and numerical/resource exhaustion.
     pub fn prepare_point(
-        &self,
-        point: &LonLat,
-        context: &mut MetricContext,
+        &self, point: &LonLat, context: &mut MetricContext,
     ) -> Result<PreparedGeodesicPoint, GeoError> {
         self.prepare_point_observed(point, context, None)
     }
@@ -233,18 +219,13 @@ impl PreparedGeodesic {
     /// # Errors
     /// Adds observer refusals to [`Self::prepare_point`].
     pub fn prepare_point_metered(
-        &self,
-        point: &LonLat,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, point: &LonLat, context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<PreparedGeodesicPoint, GeoError> {
         self.prepare_point_observed(point, context, Some(observer))
     }
 
     fn prepare_point_observed(
-        &self,
-        source: &LonLat,
-        context: &mut MetricContext,
+        &self, source: &LonLat, context: &mut MetricContext,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<PreparedGeodesicPoint, GeoError> {
         context.begin(0)?;
@@ -365,10 +346,7 @@ impl PreparedGeodesic {
     /// # Errors
     /// Uses [`Self::distance`]'s reference, numerical and admission contract.
     pub fn distance_from_prepared(
-        &self,
-        source: &PreparedGeodesicPoint,
-        point: &LonLat,
-        context: &mut MetricContext,
+        &self, source: &PreparedGeodesicPoint, point: &LonLat, context: &mut MetricContext,
     ) -> Result<MetricEstimate, GeoError> {
         self.distance_from_point_observed(source, point, context, None)
     }
@@ -378,20 +356,14 @@ impl PreparedGeodesic {
     /// # Errors
     /// Adds observer refusals to [`Self::distance_from_prepared`].
     pub fn distance_from_prepared_metered(
-        &self,
-        source: &PreparedGeodesicPoint,
-        point: &LonLat,
-        context: &mut MetricContext,
+        &self, source: &PreparedGeodesicPoint, point: &LonLat, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<MetricEstimate, GeoError> {
         self.distance_from_point_observed(source, point, context, Some(observer))
     }
 
     fn distance_from_point_observed(
-        &self,
-        source: &PreparedGeodesicPoint,
-        point: &LonLat,
-        context: &mut MetricContext,
+        &self, source: &PreparedGeodesicPoint, point: &LonLat, context: &mut MetricContext,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<MetricEstimate, GeoError> {
         context.begin(1)?;
@@ -411,10 +383,7 @@ impl PreparedGeodesic {
     /// # Errors
     /// Uses [`Self::within_physical`]'s exact inclusive comparator and refusals.
     pub fn within_physical_from_prepared(
-        &self,
-        source: &PreparedGeodesicPoint,
-        point: &LonLat,
-        threshold: &Metres,
+        &self, source: &PreparedGeodesicPoint, point: &LonLat, threshold: &Metres,
         context: &mut MetricContext,
     ) -> Result<bool, GeoError> {
         self.physical_from_point_observed(source, point, threshold, context, None)
@@ -425,23 +394,15 @@ impl PreparedGeodesic {
     /// # Errors
     /// Adds observer refusals to [`Self::within_physical_from_prepared`].
     pub fn within_physical_from_prepared_metered(
-        &self,
-        source: &PreparedGeodesicPoint,
-        point: &LonLat,
-        threshold: &Metres,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, source: &PreparedGeodesicPoint, point: &LonLat, threshold: &Metres,
+        context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<bool, GeoError> {
         self.physical_from_point_observed(source, point, threshold, context, Some(observer))
     }
 
     fn physical_from_point_observed(
-        &self,
-        source: &PreparedGeodesicPoint,
-        point: &LonLat,
-        threshold: &Metres,
-        context: &mut MetricContext,
-        observer: Option<&mut dyn MetricWorkObserver>,
+        &self, source: &PreparedGeodesicPoint, point: &LonLat, threshold: &Metres,
+        context: &mut MetricContext, observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<bool, GeoError> {
         self.within_physical_observed(
             source.source(),

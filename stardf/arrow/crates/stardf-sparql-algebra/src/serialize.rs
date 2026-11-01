@@ -85,8 +85,7 @@ impl<'m, 'a, S: Admission + ?Sized> RenderStorage<'m, 'a, S> {
         }
     }
     fn run<T>(
-        &self,
-        body: impl FnOnce(&mut Memory<'a, S>) -> Result<T, StorageError>,
+        &self, body: impl FnOnce(&mut Memory<'a, S>) -> Result<T, StorageError>,
     ) -> Option<T> {
         if self.failure.get().is_some() {
             return None;
@@ -289,8 +288,7 @@ pub fn try_pattern_to_select_query(inner: &GraphPattern) -> crate::Result<String
 /// [`try_pattern_to_select_query_with_options`].
 #[must_use]
 pub fn pattern_to_select_query_with_options(
-    inner: &GraphPattern,
-    options: &ParserOptions,
+    inner: &GraphPattern, options: &ParserOptions,
 ) -> String {
     try_pattern_to_select_query_with_options(inner, options)
         .expect("query carrier requires representable binding identities")
@@ -302,8 +300,7 @@ pub fn pattern_to_select_query_with_options(
 /// Refuses explicit hidden projection, grouping, output or expression references,
 /// and concrete blank VALUES bindings.
 pub fn try_pattern_to_select_query_with_options(
-    inner: &GraphPattern,
-    options: &ParserOptions,
+    inner: &GraphPattern, options: &ParserOptions,
 ) -> crate::Result<String> {
     resident_carrier(inner, PredicateRendering::Configured(options))
 }
@@ -349,8 +346,7 @@ impl core::fmt::Display for CarrierError {
 }
 impl std::error::Error for CarrierError {}
 fn resident_carrier(
-    pattern: &GraphPattern,
-    predicates: PredicateRendering<'_>,
+    pattern: &GraphPattern, predicates: PredicateRendering<'_>,
 ) -> crate::Result<String> {
     let mut resident = Resident;
     let mut memory = Memory::new(&mut resident);
@@ -366,8 +362,7 @@ fn resident_carrier(
 /// # Errors
 /// Returns original carrier refusal or physical storage failure before growth.
 pub fn try_pattern_to_select_query_with_memory<S: Admission + ?Sized>(
-    pattern: &GraphPattern,
-    memory: &mut Memory<'_, S>,
+    pattern: &GraphPattern, memory: &mut Memory<'_, S>,
 ) -> Result<String, CarrierError> {
     validate_carrier_pattern_with_memory(pattern, memory)?;
     select_query_with_memory(pattern, PredicateRendering::Independent, memory)
@@ -380,8 +375,7 @@ pub(crate) fn validate_carrier_pattern(pattern: &GraphPattern) -> crate::Result<
     }
 }
 fn validate_carrier_pattern_with_memory<S: Admission + ?Sized>(
-    pattern: &GraphPattern,
-    memory: &mut Memory<'_, S>,
+    pattern: &GraphPattern, memory: &mut Memory<'_, S>,
 ) -> Result<(), CarrierError> {
     match crate::scope::validate_pattern_with_memory(pattern, memory) {
         Ok(()) => {}
@@ -467,8 +461,7 @@ struct RawBlankScopes<'a> {
 }
 impl<'a> RawBlankScopes<'a> {
     fn collect<S: Admission + ?Sized>(
-        pattern: &'a GraphPattern,
-        memory: &mut Memory<'_, S>,
+        pattern: &'a GraphPattern, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         let mut result = Self {
             owners: Vec::new(),
@@ -542,9 +535,7 @@ impl<'a> RawBlankScopes<'a> {
         Ok(result)
     }
     fn carried_labels<S: Admission + ?Sized>(
-        &self,
-        owner: usize,
-        memory: &mut Memory<'_, S>,
+        &self, owner: usize, memory: &mut Memory<'_, S>,
     ) -> Result<ScopeTable<&'a str, ()>, StorageError> {
         let mut labels = ScopeTable::default();
         crate::scope::visit_spine_leaves_with_memory(
@@ -565,8 +556,7 @@ impl<'a> RawBlankScopes<'a> {
         Ok(labels)
     }
     fn release<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         // The original arena's nested vector/table bytes were admitted before
         // construction and remain live until the complete scopes payload dies.
@@ -608,8 +598,7 @@ impl VariableNames {
     }
 
     fn for_pattern<S: Admission + ?Sized>(
-        pattern: &GraphPattern,
-        reserve: impl FnOnce(&mut dyn FnMut(&Variable)),
+        pattern: &GraphPattern, reserve: impl FnOnce(&mut dyn FnMut(&Variable)),
         memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         let mut names = Self::default();
@@ -741,10 +730,7 @@ impl VariableNames {
         Ok(names)
     }
     fn alias_raw_blanks<S: Admission + ?Sized>(
-        &mut self,
-        scopes: &RawBlankScopes<'_>,
-        variable_prefix: &str,
-        memory: &mut Memory<'_, S>,
+        &mut self, scopes: &RawBlankScopes<'_>, variable_prefix: &str, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         let mut owners_per_label: ScopeTable<&str, usize> = ScopeTable::default();
         for ((_, label), _) in scopes.groups.iter() {
@@ -830,9 +816,7 @@ impl VariableNames {
             .expect("a witness identity has an alias")
     }
     fn projection<S: Admission + ?Sized>(
-        &self,
-        s: &mut Surface<'_, '_, '_, S>,
-        pattern: &GraphPattern,
+        &self, s: &mut Surface<'_, '_, '_, S>, pattern: &GraphPattern,
     ) {
         let variables = s
             .storage
@@ -848,9 +832,7 @@ impl VariableNames {
     }
 }
 fn reserve_name<S: Admission + ?Sized>(
-    names: &mut ScopeTable<String, ()>,
-    name: &str,
-    memory: &mut Memory<'_, S>,
+    names: &mut ScopeTable<String, ()>, name: &str, memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     if names.get_by(|stored| name.cmp(stored.as_str())).is_none() {
         let owned = memory.string(name)?;
@@ -859,9 +841,7 @@ fn reserve_name<S: Admission + ?Sized>(
     Ok(())
 }
 fn fresh_prefix_with_memory<'a, S: Admission + ?Sized>(
-    initial: &str,
-    names: &(impl Iterator<Item = &'a str> + Clone),
-    memory: &mut Memory<'_, S>,
+    initial: &str, names: &(impl Iterator<Item = &'a str> + Clone), memory: &mut Memory<'_, S>,
 ) -> Result<String, StorageError> {
     let mut prefix = memory.string(initial)?;
     while (*names).clone().any(|name| name.starts_with(&prefix)) {
@@ -877,9 +857,7 @@ fn fresh_prefix_with_memory<'a, S: Admission + ?Sized>(
 
 /// The brace decisions shared with the renderer for a positive spine's child.
 fn spine_child_needs_bracing_with_memory<S: Admission + ?Sized>(
-    parent: &GraphPattern,
-    child: &GraphPattern,
-    memory: &mut Memory<'_, S>,
+    parent: &GraphPattern, child: &GraphPattern, memory: &mut Memory<'_, S>,
 ) -> Result<bool, StorageError> {
     Ok(match parent {
         GraphPattern::Join { left, .. } => {
@@ -901,9 +879,7 @@ fn spine_child_needs_bracing_with_memory<S: Admission + ?Sized>(
 }
 /// The shared complete-query renderer; the predicate mode affects BGPs alone.
 fn select_query_with_memory<S: Admission + ?Sized>(
-    inner: &GraphPattern,
-    predicates: PredicateRendering<'_>,
-    memory: &mut Memory<'_, S>,
+    inner: &GraphPattern, predicates: PredicateRendering<'_>, memory: &mut Memory<'_, S>,
 ) -> Result<String, CarrierError> {
     let before_names = memory.admitted_bytes();
     let names = VariableNames::for_pattern(inner, |_| {}, memory)?;
@@ -958,9 +934,7 @@ fn select_query_with_memory<S: Admission + ?Sized>(
 
 /// Render an UPDATE group through the same native surface engine.
 pub(crate) fn fmt_group_body(
-    s: &mut String,
-    p: &GraphPattern,
-    reserve: impl FnOnce(&mut dyn FnMut(&Variable)),
+    s: &mut String, p: &GraphPattern, reserve: impl FnOnce(&mut dyn FnMut(&Variable)),
 ) -> core::fmt::Result {
     let mut resident = Resident;
     let mut memory = Memory::new(&mut resident);
@@ -1084,8 +1058,7 @@ fn extend_chain_reaches_group(mut p: &GraphPattern) -> bool {
 /// group structure it renders inline (it does not descend into `Expression`s,
 /// which are always emitted inside their own braces)?
 fn contains_property_function_with_memory<S: Admission + ?Sized>(
-    p: &GraphPattern,
-    memory: &mut Memory<'_, S>,
+    p: &GraphPattern, memory: &mut Memory<'_, S>,
 ) -> Result<bool, StorageError> {
     let mut found = false;
     crate::walk::walk_pre_post_with_memory(
@@ -1248,8 +1221,7 @@ fn rendering_starts_with_a_reabsorbable_left(p: &GraphPattern) -> bool {
 /// left-deep chain. A `Filter` nested inside one of those is braced by that
 /// node's own rendering.
 fn join_right_needs_bracing_with_memory<S: Admission + ?Sized>(
-    pattern: &GraphPattern,
-    memory: &mut Memory<'_, S>,
+    pattern: &GraphPattern, memory: &mut Memory<'_, S>,
 ) -> Result<bool, StorageError> {
     Ok(!is_subselect_node(pattern)
         && (contains_property_function_with_memory(pattern, memory)?
@@ -1449,9 +1421,7 @@ enum Item<'a> {
 
 /// Render `first` onto `s`, and everything it pushes, until the work list is empty.
 fn emit<S: Admission + ?Sized>(
-    s: &mut Surface<'_, '_, '_, S>,
-    first: Item<'_>,
-    predicates: PredicateRendering<'_>,
+    s: &mut Surface<'_, '_, '_, S>, first: Item<'_>, predicates: PredicateRendering<'_>,
     names: &VariableNames,
 ) -> Result<(), StorageError> {
     let mut stack = Items::with(first, s.storage);
@@ -1472,11 +1442,8 @@ fn emit<S: Admission + ?Sized>(
     reason = "one arm per work-list entry, each a transcription of its grammar"
 )]
 fn render<'a, S: Admission + ?Sized>(
-    s: &mut Surface<'_, '_, '_, S>,
-    item: Item<'a>,
-    next: &mut Items<'a, '_, '_, '_, S>,
-    predicates: PredicateRendering<'_>,
-    names: &VariableNames,
+    s: &mut Surface<'_, '_, '_, S>, item: Item<'a>, next: &mut Items<'a, '_, '_, '_, S>,
+    predicates: PredicateRendering<'_>, names: &VariableNames,
 ) {
     match item {
         Item::Str(text) | Item::Raw(text) => s.push_str(text),
@@ -1625,9 +1592,7 @@ fn render<'a, S: Admission + ?Sized>(
 /// Queue `s p o`, with a data predicate for a BGP or a plain predicate inside a
 /// quoted triple term (between `<<( ` and ` )>>`).
 fn triple_items<'a, S: Admission + ?Sized>(
-    t: &'a TriplePattern,
-    next: &mut Items<'a, '_, '_, '_, S>,
-    predicate: Item<'a>,
+    t: &'a TriplePattern, next: &mut Items<'a, '_, '_, '_, S>, predicate: Item<'a>,
 ) {
     next.extend([
         Item::Term(&t.subject),
@@ -1640,9 +1605,7 @@ fn triple_items<'a, S: Admission + ?Sized>(
 
 /// Render a pattern as the body of a group (see [`Item::GroupBody`]).
 fn group_body<'a, S: Admission + ?Sized>(
-    s: &mut Surface<'_, '_, '_, S>,
-    p: &'a GraphPattern,
-    next: &mut Items<'a, '_, '_, '_, S>,
+    s: &mut Surface<'_, '_, '_, S>, p: &'a GraphPattern, next: &mut Items<'a, '_, '_, '_, S>,
     names: &VariableNames,
 ) {
     if is_subselect_node(p) {
@@ -1834,8 +1797,7 @@ fn group_body<'a, S: Admission + ?Sized>(
 /// reads back as an argument list — never as an `rdf:first`/`rdf:rest` chain —
 /// because the predicate names a property function.
 fn property_function<'a, S: Admission + ?Sized>(
-    call: &'a PropertyFunctionCall,
-    next: &mut Items<'a, '_, '_, '_, S>,
+    call: &'a PropertyFunctionCall, next: &mut Items<'a, '_, '_, '_, S>,
 ) {
     property_function_args(&call.subject_args, next);
     next.extend([Item::Char(' '), Item::Iri(&call.iri), Item::Char(' ')]);
@@ -1845,8 +1807,7 @@ fn property_function<'a, S: Admission + ?Sized>(
 
 /// One side of a property-function call (see [`property_function`]).
 fn property_function_args<'a, S: Admission + ?Sized>(
-    args: &'a [TermPattern],
-    next: &mut Items<'a, '_, '_, '_, S>,
+    args: &'a [TermPattern], next: &mut Items<'a, '_, '_, '_, S>,
 ) {
     if let [single] = args {
         next.push(Item::Term(single));
@@ -1865,10 +1826,8 @@ fn property_function_args<'a, S: Admission + ?Sized>(
 
 /// A `VALUES (?v …) { (term …) … }` block (always the parenthesized form).
 fn values<'a, S: Admission + ?Sized>(
-    s: &mut Surface<'_, '_, '_, S>,
-    variables: &'a [Variable],
-    bindings: &'a [Vec<Option<GroundTerm>>],
-    next: &mut Items<'a, '_, '_, '_, S>,
+    s: &mut Surface<'_, '_, '_, S>, variables: &'a [Variable],
+    bindings: &'a [Vec<Option<GroundTerm>>], next: &mut Items<'a, '_, '_, '_, S>,
     names: &VariableNames,
 ) {
     s.push_str("VALUES (");
@@ -1900,9 +1859,7 @@ fn values<'a, S: Admission + ?Sized>(
 /// `SELECT [DISTINCT|REDUCED] <vars|*> WHERE { <body> } [GROUP BY] [HAVING]
 /// [ORDER BY] [LIMIT] [OFFSET]`.
 fn subselect<'a, S: Admission + ?Sized>(
-    s: &mut Surface<'_, '_, '_, S>,
-    p: &'a GraphPattern,
-    next: &mut Items<'a, '_, '_, '_, S>,
+    s: &mut Surface<'_, '_, '_, S>, p: &'a GraphPattern, next: &mut Items<'a, '_, '_, '_, S>,
     names: &VariableNames,
 ) {
     // Peel outer modifiers, recording each, until we reach the WHERE body.
@@ -2306,9 +2263,7 @@ fn subselect<'a, S: Admission + ?Sized>(
 
 /// Queue `ORDER BY` keys, each in its explicit `ASC(…)`/`DESC(…)` form.
 fn order_keys<'a, S: Admission + ?Sized>(
-    keys: &'a [OrderExpression],
-    group: Option<GroupSpec<'a>>,
-    next: &mut Items<'a, '_, '_, '_, S>,
+    keys: &'a [OrderExpression], group: Option<GroupSpec<'a>>, next: &mut Items<'a, '_, '_, '_, S>,
 ) {
     for key in keys {
         let (keyword, e) = match key {
@@ -2347,11 +2302,8 @@ fn order_keys<'a, S: Admission + ?Sized>(
 /// a nested `EXISTS` pattern (a fresh, self-contained WHERE scope, which is why the
 /// `Exists` arm below does not thread `group` through).
 fn expr_bare<'a, S: Admission + ?Sized>(
-    s: &mut Surface<'_, '_, '_, S>,
-    e: &'a Expression,
-    group: Option<GroupSpec<'a>>,
-    next: &mut Items<'a, '_, '_, '_, S>,
-    names: &VariableNames,
+    s: &mut Surface<'_, '_, '_, S>, e: &'a Expression, group: Option<GroupSpec<'a>>,
+    next: &mut Items<'a, '_, '_, '_, S>, names: &VariableNames,
 ) {
     if let Expression::Variable(v) = e
         && let Some((_, aggs)) = group
@@ -2496,10 +2448,7 @@ fn expr_bare<'a, S: Admission + ?Sized>(
 /// Queue `a OP b` for a relational operator: both operands are
 /// `NumericExpression`s, so each must reach [`Level::Additive`].
 fn relational<'a, S: Admission + ?Sized>(
-    a: &'a Expression,
-    op: &'static str,
-    b: &'a Expression,
-    group: Option<GroupSpec<'a>>,
+    a: &'a Expression, op: &'static str, b: &'a Expression, group: Option<GroupSpec<'a>>,
     next: &mut Items<'a, '_, '_, '_, S>,
 ) {
     next.extend([
@@ -2515,10 +2464,7 @@ fn relational<'a, S: Admission + ?Sized>(
 /// opening bracket): the tested operand is a `NumericExpression`, each list entry
 /// any expression.
 fn in_list<'a, S: Admission + ?Sized>(
-    a: &'a Expression,
-    keyword: &'static str,
-    list: &'a [Expression],
-    group: Option<GroupSpec<'a>>,
+    a: &'a Expression, keyword: &'static str, list: &'a [Expression], group: Option<GroupSpec<'a>>,
     next: &mut Items<'a, '_, '_, '_, S>,
 ) {
     next.extend([Item::Expr(a, Level::Additive, group), Item::Str(keyword)]);
@@ -2528,9 +2474,7 @@ fn in_list<'a, S: Admission + ?Sized>(
 
 /// Queue a comma-separated expression list.
 fn expr_list<'a, S: Admission + ?Sized>(
-    list: &'a [Expression],
-    group: Option<GroupSpec<'a>>,
-    next: &mut Items<'a, '_, '_, '_, S>,
+    list: &'a [Expression], group: Option<GroupSpec<'a>>, next: &mut Items<'a, '_, '_, '_, S>,
 ) {
     for (i, e) in list.iter().enumerate() {
         if i > 0 {
@@ -2550,8 +2494,7 @@ fn expr_list<'a, S: Admission + ?Sized>(
 /// plain WHERE-body expressions (nested aggregates are not legal SPARQL), so they
 /// render with no `Group` in scope.
 fn aggregate<'a, S: Admission + ?Sized>(
-    s: &mut Surface<'_, '_, '_, S>,
-    agg: &'a AggregateExpression,
+    s: &mut Surface<'_, '_, '_, S>, agg: &'a AggregateExpression,
     next: &mut Items<'a, '_, '_, '_, S>,
 ) {
     let AggregateExpression {
@@ -2636,8 +2579,7 @@ fn aggregate<'a, S: Admission + ?Sized>(
 /// render as `path{min,max}` (bounded repetition — round-trips) and `<any>` /
 /// `<any:ns>` (predicate wildcard — emit-only).
 fn path_items<'a, S: Admission + ?Sized>(
-    s: &mut Surface<'_, '_, '_, S>,
-    path: &'a PropertyPathExpression,
+    s: &mut Surface<'_, '_, '_, S>, path: &'a PropertyPathExpression,
     next: &mut Items<'a, '_, '_, '_, S>,
 ) {
     use PropertyPathExpression as P;
@@ -2699,9 +2641,7 @@ fn path_items<'a, S: Admission + ?Sized>(
 /// elements joined by `op`, bracketing the element at index `i` when
 /// `parens(i, element)` says the bare text would re-parse differently.
 fn path_chain<'a, S: Admission + ?Sized>(
-    elements: &'a [PropertyPathExpression],
-    op: char,
-    next: &mut Items<'a, '_, '_, '_, S>,
+    elements: &'a [PropertyPathExpression], op: char, next: &mut Items<'a, '_, '_, '_, S>,
     parens: impl Fn(usize, &PropertyPathExpression) -> bool,
 ) {
     for (i, element) in elements.iter().enumerate() {
@@ -2718,9 +2658,7 @@ fn path_chain<'a, S: Admission + ?Sized>(
 
 /// Emit a leaf query-pattern term (any but a quoted triple term).
 fn fmt_leaf_term<S: Admission + ?Sized>(
-    s: &mut Surface<'_, '_, '_, S>,
-    t: &TermPattern,
-    names: &VariableNames,
+    s: &mut Surface<'_, '_, '_, S>, t: &TermPattern, names: &VariableNames,
 ) {
     match t {
         TermPattern::NamedNode(n) => {
@@ -2749,9 +2687,7 @@ fn fmt_leaf_term<S: Admission + ?Sized>(
 
 /// Emit an IRI-or-variable (predicate / `GRAPH`/`SERVICE` name position).
 fn fmt_named_node_pattern<S: Admission + ?Sized>(
-    s: &mut Surface<'_, '_, '_, S>,
-    n: &NamedNodePattern,
-    names: &VariableNames,
+    s: &mut Surface<'_, '_, '_, S>, n: &NamedNodePattern, names: &VariableNames,
 ) {
     match n {
         NamedNodePattern::NamedNode(node) => {

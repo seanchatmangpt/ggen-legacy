@@ -202,9 +202,7 @@ impl Object {
     /// # Errors
     /// Preserves the first checked layout, admission or physical refusal.
     pub fn with_memory<S: crate::allocation::Admission + ?Sized>(
-        mut self,
-        name: &str,
-        value: impl super::record::IntoJsonNative,
+        mut self, name: &str, value: impl super::record::IntoJsonNative,
         memory: &mut crate::allocation::Memory<'_, S>,
     ) -> Result<Self, crate::allocation::StorageError> {
         let name = memory.string(name)?;
@@ -223,9 +221,7 @@ impl Object {
     /// # Errors
     /// Returns the unchanged native member construction refusal.
     pub fn with_memory_cell<S: crate::allocation::Admission + ?Sized>(
-        self,
-        name: &str,
-        value: impl super::record::IntoJsonNative,
+        self, name: &str, value: impl super::record::IntoJsonNative,
         memory: &std::cell::RefCell<crate::allocation::Memory<'_, S>>,
     ) -> Result<Self, crate::allocation::StorageError> {
         self.with_memory(name, value, &mut memory.borrow_mut())
@@ -602,8 +598,7 @@ impl Drop for Value {
 
 /// A copy of a value that owns no value; an array or object here is empty.
 fn clone_leaf<S: crate::allocation::Admission + ?Sized>(
-    value: &Value,
-    memory: &mut crate::allocation::Memory<'_, S>,
+    value: &Value, memory: &mut crate::allocation::Memory<'_, S>,
 ) -> Result<Value, crate::allocation::StorageError> {
     Ok(match value {
         Value::Null => Value::Null,
@@ -621,8 +616,7 @@ impl Value {
     /// # Errors
     /// Returns the first native layout, admission or allocator refusal.
     pub fn clone_with_memory<S: crate::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut crate::allocation::Memory<'_, S>,
+        &self, memory: &mut crate::allocation::Memory<'_, S>,
     ) -> Result<Self, crate::allocation::StorageError> {
         memory.scope(|memory| {
             enum Step<'a> {
@@ -709,9 +703,7 @@ fn by_name(object: &Object) -> Vec<&(String, Value)> {
 /// their names. Members pair by name, so the order they were written in never
 /// matters; a repeated name pairs its occurrences in document order.
 fn pair_members<'v>(
-    left: &'v Object,
-    right: &'v Object,
-    work: &mut Vec<(&'v Value, &'v Value)>,
+    left: &'v Object, right: &'v Object, work: &mut Vec<(&'v Value, &'v Value)>,
 ) -> bool {
     if left.len() != right.len() {
         return false;

@@ -128,8 +128,7 @@ fn resolve_any(dict: &PackDict, value: &TermValue) -> PackTermId {
 /// [`local_lookup`]'s binary search depends on. Mirrors
 /// `triples::assert_strictly_ascending` (private to that module).
 fn assert_strictly_ascending(
-    map: IntVectorRef<'_>,
-    what: &'static str,
+    map: IntVectorRef<'_>, what: &'static str,
 ) -> Result<(), PackSideError> {
     let mut prev: Option<u64> = None;
     for i in 0..map.len() {
@@ -249,8 +248,7 @@ impl SideTables {
     /// `view` — a caller-side contract violation, not a data-dependent error.
     #[must_use]
     pub fn encode<D: DatasetView<ReadError = std::convert::Infallible>>(
-        dict: &PackDict,
-        view: &D,
+        dict: &PackDict, view: &D,
     ) -> Self {
         Self::try_encode(dict, view).expect("a validated resident view resolves its own terms")
     }
@@ -260,8 +258,7 @@ impl SideTables {
     /// # Errors
     /// Returns the source's typed read refusal or an invalid source term.
     pub fn try_encode<D: DatasetView>(
-        dict: &PackDict,
-        view: &D,
+        dict: &PackDict, view: &D,
     ) -> Result<Self, TermLookupError<D::ReadError>> {
         view.checked_read(|view| {
             let mut reifier_rows: Vec<(PackTermId, PackTermId, PackTermId)> = view
@@ -561,8 +558,7 @@ impl<'a> SideTablesRef<'a> {
     /// full scan. Yields exactly the rows of
     /// `reifier_quads().filter(|(r, ..)| *r == reifier)`, in the same order.
     pub fn reifier_quads_of(
-        &self,
-        reifier: PackTermId,
+        &self, reifier: PackTermId,
     ) -> impl Iterator<Item = (PackTermId, PackTermId, PackTermId, Option<PackTermId>)> + '_ {
         let reifies = self.reifies_predicate;
         let start = lower_bound(self.reifier_reifier, reifier);
@@ -611,8 +607,7 @@ impl<'a> SideTablesRef<'a> {
     /// `local_reifier`), then a direct slice of the annotation columns — never a
     /// full scan.
     pub fn annotations_of_with_graph(
-        &self,
-        reifier: PackTermId,
+        &self, reifier: PackTermId,
     ) -> impl Iterator<Item = (PackTermId, PackTermId, Option<PackTermId>)> + '_ {
         let range = local_lookup(self.local_reifier, reifier)
             .map(|g| {
@@ -739,9 +734,7 @@ impl ExactSizeIterator for AnnotationRows<'_, '_> {}
 /// for a concern side-tables/dictionary have no visibility into.
 #[must_use]
 pub fn capabilities(
-    dict: &PackDict,
-    side: &SideTablesRef<'_>,
-    base_named_graphs: bool,
+    dict: &PackDict, side: &SideTablesRef<'_>, base_named_graphs: bool,
 ) -> RdfStoreCapabilities {
     RdfStoreCapabilities {
         named_graphs: base_named_graphs || side.has_graph_reference(),

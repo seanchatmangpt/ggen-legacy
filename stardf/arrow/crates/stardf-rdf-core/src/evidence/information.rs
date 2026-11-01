@@ -80,9 +80,7 @@ impl InformationMap {
     /// # Errors
     /// Refuses undeclared witnesses and original native traversal/storage errors.
     pub fn inherited<S: Admission + ?Sized>(
-        &self,
-        order: &StandpointOrder<Digest32>,
-        memory: &mut Memory<'_, S>,
+        &self, order: &StandpointOrder<Digest32>, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StandpointError<Digest32>> {
         for &(key, _) in &self.entries {
             if let StandpointKey::Declared(key) = key {
@@ -130,9 +128,7 @@ impl InformationMap {
     /// # Errors
     /// Returns physical layout, admission or allocation refusal.
     pub fn from_entries<S: Admission + ?Sized>(
-        fallback: Information,
-        entries: &[(StandpointKey, Information)],
-        memory: &mut Memory<'_, S>,
+        fallback: Information, entries: &[(StandpointKey, Information)], memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         if entries.is_empty() {
             return Ok(Self::uniform(fallback));
@@ -166,9 +162,7 @@ impl InformationMap {
     /// # Errors
     /// Returns native storage refusal or physical cardinality overflow.
     pub fn truth_meet<S: Admission + ?Sized>(
-        &self,
-        other: &Self,
-        memory: &mut Memory<'_, S>,
+        &self, other: &Self, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         self.combine(other, Information::truth_meet, memory)
     }
@@ -178,17 +172,13 @@ impl InformationMap {
     /// # Errors
     /// Returns native storage refusal or physical cardinality overflow.
     pub fn information_join<S: Admission + ?Sized>(
-        &self,
-        other: &Self,
-        memory: &mut Memory<'_, S>,
+        &self, other: &Self, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         self.combine(other, Information::information_join, memory)
     }
 
     fn combine<S: Admission + ?Sized>(
-        &self,
-        other: &Self,
-        law: fn(Information, Information) -> Information,
+        &self, other: &Self, law: fn(Information, Information) -> Information,
         memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         let fallback = law(self.fallback, other.fallback);
@@ -230,8 +220,7 @@ impl InformationMap {
     /// # Errors
     /// Returns native storage refusal.
     pub fn negate<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         let fallback = self.fallback.negate();
         memory.scope(|memory| {
@@ -249,8 +238,7 @@ impl InformationMap {
     /// # Errors
     /// Returns the caller's typed refund refusal marker.
     pub fn release<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         memory.release_vec(self.entries)
     }

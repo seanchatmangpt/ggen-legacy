@@ -100,9 +100,7 @@ fn canonical(ds: &RdfDataset) -> Vec<String> {
 /// Materialize `plan` over the owned dataset AND over its byte-equivalent
 /// `PackView`, and assert the two closures are identical.
 fn assert_closure_parity(
-    label: &str,
-    plan_for_dataset: Materialization<'_>,
-    plan_for_view: Materialization<'_>,
+    label: &str, plan_for_dataset: Materialization<'_>, plan_for_view: Materialization<'_>,
 ) {
     let dataset = sample_dataset();
 

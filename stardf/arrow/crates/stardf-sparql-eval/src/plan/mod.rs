@@ -312,9 +312,7 @@ impl PlanShape {
 
     /// The preparation of `site`, built by `build` the first time it is asked for.
     pub(crate) fn prepared_exists(
-        &self,
-        site: SiteId,
-        workspace: &crate::WorkspaceCapability,
+        &self, site: SiteId, workspace: &crate::WorkspaceCapability,
         build: impl FnOnce() -> Result<PreparedExists, crate::EvalError>,
     ) -> Result<SharedWorkspace<PreparedExists>, crate::EvalError> {
         let slot = &self.sites[site.0 as usize].prepared;
@@ -336,10 +334,7 @@ impl PlanShape {
     /// A volatile expression's program is compiled on every ask, into the tables of the
     /// one it last compiled when nothing holds that one any more.
     pub(crate) fn program(
-        &self,
-        node: NodeId,
-        position: usize,
-        expr: &Expression,
+        &self, node: NodeId, position: usize, expr: &Expression,
     ) -> Arc<ExprProgram> {
         let range = &self.rows[node.index()].exprs;
         if position >= range.len() {
@@ -459,8 +454,7 @@ impl<'q> Tree<'q> {
 
     /// Native numbering and control acquire their original owners before growth.
     pub(crate) fn build_admitted(
-        root: &'q GraphPattern,
-        workspace: &crate::WorkspaceCapability,
+        root: &'q GraphPattern, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, crate::EvalError> {
         let shape = Self::build_shape(root, workspace)?;
         Ok(Self {
@@ -471,8 +465,7 @@ impl<'q> Tree<'q> {
     }
 
     fn build_shape(
-        root: &'q GraphPattern,
-        workspace: &crate::WorkspaceCapability,
+        root: &'q GraphPattern, workspace: &crate::WorkspaceCapability,
     ) -> Result<PlanShape, crate::EvalError> {
         let (mut node_count, mut expr_count) = (0_usize, 0_usize);
         walk_spine_admitted(root, workspace, &mut |node, _, _| {
@@ -668,8 +661,7 @@ impl<'q> Tree<'q> {
 /// The existing reverse fold, prepared before publication so a bounded lazy
 /// classification never allocates on an evaluator path after refusal.
 fn positive_region_table(
-    rows: &[NodeRow],
-    workspace: &crate::WorkspaceCapability,
+    rows: &[NodeRow], workspace: &crate::WorkspaceCapability,
 ) -> Result<AdmittedVec<bool>, crate::EvalError> {
     if !rows.iter().any(|row| row.kind.label() == "Union") {
         return Ok(AdmittedVec::new(workspace));
@@ -804,9 +796,7 @@ impl PlanCache {
     /// holds — numbered on the first call, and pointed at where `root` lives now.
     /// Constructs the same kept numbering with admitted, fallible storage.
     pub(crate) fn handle_admitted(
-        &self,
-        root: &GraphPattern,
-        workspace: &crate::WorkspaceCapability,
+        &self, root: &GraphPattern, workspace: &crate::WorkspaceCapability,
     ) -> Result<PlanHandle, crate::EvalError> {
         if self.kept.get().is_none() {
             let handle = Tree::build_admitted(root, workspace)?.handle();

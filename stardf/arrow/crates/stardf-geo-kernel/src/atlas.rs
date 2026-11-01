@@ -42,9 +42,7 @@ use core::cmp::Ordering;
 /// # Errors
 /// Refuses cancellation, arithmetic overflow and incomplete work/workspace admission.
 pub fn locate(
-    point: &LonLat,
-    region: &PreparedRegion,
-    context: &mut MetricContext,
+    point: &LonLat, region: &PreparedRegion, context: &mut MetricContext,
 ) -> Result<Set, GeoError> {
     locate_impl(point, region, context, None)
 }
@@ -52,17 +50,13 @@ pub fn locate(
 /// # Errors
 /// Adds observer refusal to the exact atlas contract.
 pub fn locate_metered(
-    point: &LonLat,
-    region: &PreparedRegion,
-    context: &mut MetricContext,
+    point: &LonLat, region: &PreparedRegion, context: &mut MetricContext,
     observer: &mut dyn MetricWorkObserver,
 ) -> Result<Set, GeoError> {
     locate_impl(point, region, context, Some(observer))
 }
 fn locate_impl(
-    point: &LonLat,
-    region: &PreparedRegion,
-    context: &mut MetricContext,
+    point: &LonLat, region: &PreparedRegion, context: &mut MetricContext,
     observer: Option<&mut dyn MetricWorkObserver>,
 ) -> Result<Set, GeoError> {
     let mut progress = WorkProgress::new(observer);
@@ -102,16 +96,12 @@ fn locate_impl(
 }
 
 pub(crate) fn locate_inner(
-    point: &LonLat,
-    region: &PreparedRegion,
-    context: &mut MetricContext,
+    point: &LonLat, region: &PreparedRegion, context: &mut MetricContext,
 ) -> Result<Set, GeoError> {
     locate_with_progress(point, region, context, &mut WorkProgress::new(None))
 }
 pub(crate) fn locate_inner_metered(
-    point: &LonLat,
-    region: &PreparedRegion,
-    context: &mut MetricContext,
+    point: &LonLat, region: &PreparedRegion, context: &mut MetricContext,
     observer: &mut dyn MetricWorkObserver,
 ) -> Result<Set, GeoError> {
     let mut progress = WorkProgress::new(Some(observer));
@@ -123,9 +113,7 @@ pub(crate) fn locate_inner_metered(
     result
 }
 pub(crate) fn locate_with_progress(
-    point: &LonLat,
-    region: &PreparedRegion,
-    context: &mut MetricContext,
+    point: &LonLat, region: &PreparedRegion, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Set, GeoError> {
     check_region_reference(region, context, progress)?;
@@ -139,20 +127,15 @@ pub(crate) fn locate_with_progress(
 /// this shares the checked entry's membership body without walking the same
 /// reference inventory again for every arrangement face.
 pub(crate) fn locate_validated_with_progress(
-    point: &LonLat,
-    region: &PreparedRegion,
-    context: &mut MetricContext,
+    point: &LonLat, region: &PreparedRegion, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Set, GeoError> {
     locate_with_chart_index(point, region, None, context, progress)
 }
 
 fn locate_with_chart_index(
-    point: &LonLat,
-    region: &PreparedRegion,
-    index: Option<&chart_index::ChartIndex<'_>>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    point: &LonLat, region: &PreparedRegion, index: Option<&chart_index::ChartIndex<'_>>,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Set, GeoError> {
     match region {
         PreparedRegion::Empty => Ok(Set::Exterior),
@@ -192,11 +175,8 @@ fn locate_with_chart_index(
 /// Coordinates are inclusive unrounded degree enclosures. `None` means a
 /// possible boundary contact or unresolved uniform class and requires refinement.
 pub(crate) fn locate_enclosure(
-    longitude: &purrdf_xsd::math::FixedInterval,
-    latitude: &purrdf_xsd::math::FixedInterval,
-    region: &PreparedRegion,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    longitude: &purrdf_xsd::math::FixedInterval, latitude: &purrdf_xsd::math::FixedInterval,
+    region: &PreparedRegion, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Option<Set>, GeoError> {
     check_region_reference(region, context, progress)?;
     match region {
@@ -258,11 +238,8 @@ pub(crate) fn locate_enclosure(
 /// validated native Jordan ring. The caller retains the ring's preparation
 /// witness; this borrows the exact curve without synthesizing a carrier polygon.
 pub(crate) fn locate_ring_enclosure(
-    longitude: &purrdf_xsd::math::FixedInterval,
-    latitude: &purrdf_xsd::math::FixedInterval,
-    curve: &PreparedCurve,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    longitude: &purrdf_xsd::math::FixedInterval, latitude: &purrdf_xsd::math::FixedInterval,
+    curve: &PreparedCurve, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Option<Set>, GeoError> {
     let binding = crate::numerical::reference_identity(context, progress, None)?;
     for edge in curve.edges() {
@@ -336,10 +313,7 @@ pub(crate) fn locate_ring_enclosure(
 }
 
 pub(super) fn longitude_intervals(
-    west: &Rat,
-    east: &Rat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    west: &Rat, east: &Rat, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Vec<(Rat, Rat)>, GeoError> {
     use purrdf_xsd::integer::ExactOperation::{RationalAdd, RationalCompare};
     let unchanged = crate::numerical::ExactAdmission::new(context, progress).expression_result(
@@ -413,9 +387,7 @@ pub(super) fn longitude_intervals(
 }
 
 fn rectangle_center(
-    rectangle: [&Rat; 4],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    rectangle: [&Rat; 4], context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<LonLat, GeoError> {
     let [west, east, south, north] = rectangle;
     let two = Rat::from_i64(2);
@@ -460,13 +432,8 @@ fn rectangle_center(
     Ok(center)
 }
 fn locate_rectangle(
-    west: &Rat,
-    east: &Rat,
-    south: &Rat,
-    north: &Rat,
-    region: &PreparedRegion,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    west: &Rat, east: &Rat, south: &Rat, north: &Rat, region: &PreparedRegion,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Option<Set>, GeoError> {
     let center = rectangle_center([west, east, south, north], context, progress)?;
     if south == north && (west == east || south.abs() == Rat::from_i64(90)) {
@@ -520,28 +487,19 @@ fn locate_rectangle(
 
 #[cfg(test)]
 pub(crate) fn segment_rectangle(
-    a: &Coord,
-    b: &Coord,
-    west: &Rat,
-    east: &Rat,
-    south: &Rat,
-    north: &Rat,
+    a: &Coord, b: &Coord, west: &Rat, east: &Rat, south: &Rat, north: &Rat,
 ) -> bool {
     segment_rectangle_inner(a, b, [west, east, south, north], None)
         .expect("pure exact rectangle has no admission refusal")
 }
 pub(crate) fn segment_rectangle_admitted(
-    a: &Coord,
-    b: &Coord,
-    rectangle: [&Rat; 4],
+    a: &Coord, b: &Coord, rectangle: [&Rat; 4],
     admission: &mut crate::numerical::ExactAdmission<'_, '_>,
 ) -> Result<bool, GeoError> {
     segment_rectangle_inner(a, b, rectangle, Some(admission))
 }
 fn segment_rectangle_inner(
-    a: &Coord,
-    b: &Coord,
-    rectangle: [&Rat; 4],
+    a: &Coord, b: &Coord, rectangle: [&Rat; 4],
     mut admission: Option<&mut crate::numerical::ExactAdmission<'_, '_>>,
 ) -> Result<bool, GeoError> {
     let [west, east, south, north] = rectangle;
@@ -589,9 +547,7 @@ fn segment_rectangle_inner(
 /// The exact endpoint/bounding-box phase of the one closed-rectangle predicate.
 /// Axis-aligned segments need no rational crossing construction after overlap.
 fn segment_rectangle_bounds(
-    a: &Coord,
-    b: &Coord,
-    rectangle: [&Rat; 4],
+    a: &Coord, b: &Coord, rectangle: [&Rat; 4],
     mut admission: Option<&mut crate::numerical::ExactAdmission<'_, '_>>,
 ) -> Result<Option<bool>, GeoError> {
     let [west, east, south, north] = rectangle;
@@ -637,9 +593,7 @@ fn segment_rectangle_bounds(
 }
 
 fn charge(
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    count: u64,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>, count: u64,
 ) -> Result<(), GeoError> {
     let before = context.work_items();
     context.charge_work(count)?;
@@ -650,9 +604,7 @@ fn charge(
 }
 
 fn check_region_reference(
-    region: &PreparedRegion,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    region: &PreparedRegion, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     let binding = crate::numerical::reference_identity(context, progress, None)?;
     region.check_binding_admitted(binding, context, progress)
@@ -670,10 +622,7 @@ fn vertex_count(region: &PreparedRegion) -> u64 {
     }
 }
 fn union_location(
-    point: &Coord,
-    polygons: &[PreparedPolygon],
-    complementary: bool,
-    context: &mut MetricContext,
+    point: &Coord, polygons: &[PreparedPolygon], complementary: bool, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Set, GeoError> {
     let mut polygons = polygons.iter();
@@ -693,9 +642,7 @@ struct ChartCandidate<'a> {
 /// One original union body; the broad phase supplies certified base locations
 /// or candidates for the same exact surface predicate.
 fn union_location_with<'a>(
-    point: &Coord,
-    complementary: bool,
-    context: &mut MetricContext,
+    point: &Coord, complementary: bool, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
     mut next: impl FnMut(
         &mut MetricContext,
@@ -745,9 +692,7 @@ fn union_location_with<'a>(
 /// Native bases intersect the rings' Left sides. Written carrier bases select
 /// the exterior ring and remove the hole interiors. Counts are exact contracts.
 pub(crate) fn polygon_base_membership(
-    polygon: &PreparedPolygon,
-    ring_interiors: &[bool],
-    progress: &mut WorkProgress<'_>,
+    polygon: &PreparedPolygon, ring_interiors: &[bool], progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     if ring_interiors.len() != polygon.rings().len() || ring_interiors.is_empty() {
         return Err(crate::GeometryDomainError::membership(
@@ -774,9 +719,7 @@ fn polygon_selected_membership(polygon: &PreparedPolygon, base: bool) -> bool {
 /// Each base has already been established by the relevant ring or written-chart
 /// law. Boundary points require the sector arrangement and cannot be booleans.
 pub(crate) fn region_membership(
-    region: &PreparedRegion,
-    polygon_bases: &[bool],
-    progress: &mut WorkProgress<'_>,
+    region: &PreparedRegion, polygon_bases: &[bool], progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let (polygons, complementary) = match region {
         PreparedRegion::Empty | PreparedRegion::Whole => {
@@ -839,12 +782,8 @@ pub(crate) fn ring_intersection_location(
     Ok(location)
 }
 fn oriented_union_location(
-    point: &LonLat,
-    region: &PreparedRegion,
-    polygons: &[PreparedPolygon],
-    complementary: bool,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    point: &LonLat, region: &PreparedRegion, polygons: &[PreparedPolygon], complementary: bool,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Set, GeoError> {
     let (raw, boundaries) =
         oriented_union_status(point, polygons, complementary, context, progress)?;
@@ -866,10 +805,8 @@ fn oriented_union_location(
 /// Reuse a complete original native arrangement for union membership, including
 /// exact pole/seam nodes and boundaries removed from the actual union.
 pub(crate) fn locate_selected_boundary(
-    point: &LonLat,
-    boundary: &arcs::arrangement::NativeBoundaryArrangement,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    point: &LonLat, boundary: &arcs::arrangement::NativeBoundaryArrangement,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Set, GeoError> {
     let (PreparedRegion::Polygons(polygons) | PreparedRegion::ComplementOfPolygons(polygons)) =
         boundary.region()
@@ -894,9 +831,7 @@ pub(crate) fn locate_selected_boundary(
 /// so several original contacts cannot form an internal areal wall. This is
 /// a complete admitted inventory witness, not a sampled dimension estimate.
 fn only_closed_support(
-    polygons: &[PreparedPolygon],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    polygons: &[PreparedPolygon], context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     for polygon in polygons {
         charge(context, progress, 1)?;
@@ -913,10 +848,7 @@ fn only_closed_support(
 /// an empty positive open-face union; its closed complement is the whole local
 /// neighbourhood.
 fn rectangle_union_status(
-    point: &LonLat,
-    polygons: &[PreparedPolygon],
-    complementary: bool,
-    context: &mut MetricContext,
+    point: &LonLat, polygons: &[PreparedPolygon], complementary: bool, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<Set>, GeoError> {
     let mut sectors = 0;
@@ -938,9 +870,7 @@ fn rectangle_union_status(
 /// inclusion or exact agreement of an inner/outer wall proves each axis side;
 /// interval overlap never substitutes for equality with the true wall.
 fn certified_polygon_sectors(
-    point: &LonLat,
-    polygon: &PreparedPolygon,
-    context: &mut MetricContext,
+    point: &LonLat, polygon: &PreparedPolygon, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<u8>, GeoError> {
     let selected = if polygon.closed_support() {
@@ -1020,10 +950,8 @@ fn certified_polygon_sectors(
 /// the base Exterior. Any enclosure touching the chart seam, a wall, or a
 /// polygon without walls is left to the original ring predicate.
 pub(crate) fn enclosure_outside_certified_walls(
-    polygon: &PreparedPolygon,
-    longitude: &purrdf_xsd::math::FixedInterval,
-    latitude: &purrdf_xsd::math::FixedInterval,
-    context: &mut MetricContext,
+    polygon: &PreparedPolygon, longitude: &purrdf_xsd::math::FixedInterval,
+    latitude: &purrdf_xsd::math::FixedInterval, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     if polygon.closed_support() {
@@ -1061,8 +989,7 @@ pub(crate) fn enclosure_outside_certified_walls(
 }
 
 fn rectangle_axis_sides(
-    point: &Rat,
-    [outer_min, outer_max, inner_min, inner_max]: [&Rat; 4],
+    point: &Rat, [outer_min, outer_max, inner_min, inner_max]: [&Rat; 4],
     admission: &mut crate::numerical::ExactAdmission<'_, '_>,
 ) -> Result<Option<u8>, GeoError> {
     let lower = admission.compare(point, inner_min)?;
@@ -1079,11 +1006,8 @@ fn rectangle_axis_sides(
 }
 
 fn selected_union_status(
-    point: &LonLat,
-    boundary: &arcs::arrangement::NativeBoundaryArrangement,
-    complementary: bool,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    point: &LonLat, boundary: &arcs::arrangement::NativeBoundaryArrangement, complementary: bool,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Set, GeoError> {
     if arcs::arrangement::selected_boundary_contact(point, boundary, context, progress)? {
         Ok(Set::Boundary)
@@ -1100,10 +1024,7 @@ fn selected_union_status(
 }
 
 fn oriented_union_status(
-    point: &LonLat,
-    polygons: &[PreparedPolygon],
-    complementary: bool,
-    context: &mut MetricContext,
+    point: &LonLat, polygons: &[PreparedPolygon], complementary: bool, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<(Set, u64), GeoError> {
     raw_union_location(
@@ -1127,8 +1048,7 @@ fn oriented_union_status(
 /// Complete selected polygon classes before identifying internal union walls.
 /// Multiple Boundary classes require the caller's fully noded sector proof.
 pub(crate) fn raw_union_location(
-    locations: impl IntoIterator<Item = Result<Set, GeoError>>,
-    complementary: bool,
+    locations: impl IntoIterator<Item = Result<Set, GeoError>>, complementary: bool,
 ) -> Result<(Set, u64), GeoError> {
     let mut boundaries = 0_u64;
     for located in locations {
@@ -1165,9 +1085,7 @@ pub(crate) fn raw_union_location(
 /// Original single-polygon location without manufacturing a cloned region.
 /// The caller has already checked this immutable polygon's actual reference.
 pub(crate) fn polygon_location(
-    point: &LonLat,
-    polygon: &PreparedPolygon,
-    context: &mut MetricContext,
+    point: &LonLat, polygon: &PreparedPolygon, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Set, GeoError> {
     if !polygon.closed_support()
@@ -1244,9 +1162,7 @@ fn edges(polygons: &[PreparedPolygon]) -> impl Iterator<Item = (&Coord, &Coord)>
         .flat_map(|ring| ring.windows(2).map(|pair| (&pair[0], &pair[1])))
 }
 fn chart_point(
-    point: &LonLat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    point: &LonLat, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Coord, GeoError> {
     crate::numerical::ExactAdmission::new(context, progress).expression_result(
         purrdf_xsd::integer::ExactOperation::Linear,
@@ -1256,9 +1172,7 @@ fn chart_point(
     )
 }
 fn vector(
-    from: &Coord,
-    to: &Coord,
-    admission: &mut crate::numerical::ExactAdmission<'_, '_>,
+    from: &Coord, to: &Coord, admission: &mut crate::numerical::ExactAdmission<'_, '_>,
 ) -> Result<[Rat; 2], GeoError> {
     let x = crate::numerical::exact_rational(
         Some(admission),
@@ -1275,16 +1189,12 @@ fn vector(
     Ok([x, y])
 }
 fn cross(
-    a: &[Rat; 2],
-    b: &[Rat; 2],
-    admission: &mut crate::numerical::ExactAdmission<'_, '_>,
+    a: &[Rat; 2], b: &[Rat; 2], admission: &mut crate::numerical::ExactAdmission<'_, '_>,
 ) -> Result<Rat, GeoError> {
     crate::topology::determinant2_admitted(&a[0], &a[1], &b[0], &b[1], admission)
 }
 fn translated(
-    point: &Coord,
-    longitude: i64,
-    admission: &mut crate::numerical::ExactAdmission<'_, '_>,
+    point: &Coord, longitude: i64, admission: &mut crate::numerical::ExactAdmission<'_, '_>,
 ) -> Result<Coord, GeoError> {
     let offset = Rat::from_i64(longitude);
     let x = crate::numerical::exact_rational(
@@ -1305,9 +1215,7 @@ fn upper_half(direction: &[Rat; 2]) -> bool {
     direction[1] > Rat::zero() || (direction[1] == Rat::zero() && direction[0] >= Rat::zero())
 }
 fn direction_order(
-    a: &[Rat; 2],
-    b: &[Rat; 2],
-    admission: &mut crate::numerical::ExactAdmission<'_, '_>,
+    a: &[Rat; 2], b: &[Rat; 2], admission: &mut crate::numerical::ExactAdmission<'_, '_>,
 ) -> Result<Ordering, GeoError> {
     let half = admission.expression_result(
         purrdf_xsd::integer::ExactOperation::RationalCompare,
@@ -1327,11 +1235,7 @@ fn direction_order(
 /// The caller has validated the region binding and excluded every non-collinear
 /// contact from the fragment's interior, including longitude-cut aliases.
 pub(crate) fn written_boundary_sides(
-    point: &Coord,
-    from: &Coord,
-    to: &Coord,
-    region: &PreparedRegion,
-    context: &mut MetricContext,
+    point: &Coord, from: &Coord, to: &Coord, region: &PreparedRegion, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     if crate::numerical::ExactAdmission::new(context, progress).rational(
@@ -1349,11 +1253,7 @@ pub(crate) fn written_boundary_sides(
 /// Complete formal transverse face labels of an open, fully noded written
 /// fragment. This is the same classifier used to select physical boundaries.
 pub(crate) fn written_boundary_locations(
-    point: &Coord,
-    from: &Coord,
-    to: &Coord,
-    region: &PreparedRegion,
-    context: &mut MetricContext,
+    point: &Coord, from: &Coord, to: &Coord, region: &PreparedRegion, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<[Set; 2], GeoError> {
     let (PreparedRegion::Polygons(polygons) | PreparedRegion::ComplementOfPolygons(polygons)) =
@@ -1378,13 +1278,8 @@ pub(crate) fn written_boundary_locations(
 }
 
 pub(crate) fn written_boundary_locations_in(
-    point: &Coord,
-    from: &Coord,
-    to: &Coord,
-    polygons: &[PreparedPolygon],
-    complementary: bool,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    point: &Coord, from: &Coord, to: &Coord, polygons: &[PreparedPolygon], complementary: bool,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<[Set; 2], GeoError> {
     use crate::numerical::{ExactAdmission, exact_rational};
     use purrdf_xsd::integer::ExactOperation::{Linear, RationalAdd, RationalCompare};
@@ -1482,10 +1377,7 @@ pub(crate) fn written_boundary_locations_in(
 }
 
 fn sectors(
-    point: &Coord,
-    polygons: &[PreparedPolygon],
-    complementary: bool,
-    context: &mut MetricContext,
+    point: &Coord, polygons: &[PreparedPolygon], complementary: bool, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Set, GeoError> {
     let mut rays = vec![
@@ -1606,8 +1498,7 @@ fn sectors(
 /// preserves both incidence and the edge-to-query direction, and avoids copying
 /// every edge three times. Poles use their separate identified-point atlas.
 fn cut_alias(
-    point: &Coord,
-    admission: &mut crate::numerical::ExactAdmission<'_, '_>,
+    point: &Coord, admission: &mut crate::numerical::ExactAdmission<'_, '_>,
 ) -> Result<Option<Coord>, GeoError> {
     let west = Rat::from_i64(-180);
     let east = Rat::from_i64(180);
@@ -1633,13 +1524,8 @@ fn cut_alias(
 }
 
 fn union_direction(
-    point: &Coord,
-    direction: &[Rat; 2],
-    polygons: &[PreparedPolygon],
-    complementary: bool,
-    transverse: bool,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    point: &Coord, direction: &[Rat; 2], polygons: &[PreparedPolygon], complementary: bool,
+    transverse: bool, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Set, GeoError> {
     let mut admission = crate::numerical::ExactAdmission::new(context, progress);
     let shift = admission.rational(
@@ -1692,9 +1578,7 @@ fn union_direction(
     })
 }
 fn positive_min(
-    bound: &mut Rat,
-    parameter: Rat,
-    admission: &mut crate::numerical::ExactAdmission<'_, '_>,
+    bound: &mut Rat, parameter: Rat, admission: &mut crate::numerical::ExactAdmission<'_, '_>,
 ) -> Result<(), GeoError> {
     if admission.expression_result(
         purrdf_xsd::integer::ExactOperation::RationalCompare,
@@ -1710,9 +1594,7 @@ fn positive_min(
     Ok(())
 }
 fn canonical_point(
-    point: &Coord,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    point: &Coord, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<LonLat, GeoError> {
     use crate::numerical::{ExactAdmission, exact_rational};
     use purrdf_xsd::integer::ExactOperation::{Linear, RationalAdd, RationalCompare};
@@ -1750,10 +1632,7 @@ fn canonical_point(
 }
 
 fn pole(
-    point: &LonLat,
-    polygons: &[PreparedPolygon],
-    complementary: bool,
-    context: &mut MetricContext,
+    point: &LonLat, polygons: &[PreparedPolygon], complementary: bool, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Set, GeoError> {
     use crate::numerical::{ExactAdmission, exact_rational};

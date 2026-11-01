@@ -87,9 +87,7 @@ fn ring_dataset(nodes: usize) -> Arc<RdfDataset> {
 }
 
 fn run_plain(
-    engine: &NativeSparqlEngine,
-    dataset: &Arc<RdfDataset>,
-    prepared: &PreparedQuery,
+    engine: &NativeSparqlEngine, dataset: &Arc<RdfDataset>, prepared: &PreparedQuery,
 ) -> usize {
     let result = engine
         .query_prepared(dataset, prepared, &[], QueryOptions::EMPTY)
@@ -98,9 +96,7 @@ fn run_plain(
 }
 
 fn run_governed(
-    engine: &NativeSparqlEngine,
-    dataset: &Arc<RdfDataset>,
-    prepared: &PreparedQuery,
+    engine: &NativeSparqlEngine, dataset: &Arc<RdfDataset>, prepared: &PreparedQuery,
     governors: &QueryGovernors,
 ) -> (usize, u64) {
     let outcome = engine
@@ -264,9 +260,7 @@ fn bench_path_scaling(c: &mut Bench) {
 }
 
 fn run_loop(
-    engine: &NativeSparqlEngine,
-    dataset: &Arc<RdfDataset>,
-    prepared: &PreparedQuery,
+    engine: &NativeSparqlEngine, dataset: &Arc<RdfDataset>, prepared: &PreparedQuery,
     governors: Option<&QueryGovernors>,
 ) -> usize {
     governors.map_or_else(

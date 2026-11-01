@@ -296,9 +296,7 @@ impl DatasetSink {
 
 impl RdfEventSink for DatasetSink {
     fn term(
-        &mut self,
-        id: EventTermId,
-        term: EventTerm<'_>,
+        &mut self, id: EventTermId, term: EventTerm<'_>,
     ) -> Result<ControlFlow<()>, EventError> {
         // Redeclaration of the same id while its declaring scope is still open is an
         // error (no last-writer-wins). Single lookup: fetch the prior scope and bail.
@@ -322,38 +320,26 @@ impl RdfEventSink for DatasetSink {
     }
 
     fn reifier(
-        &mut self,
-        reifier: EventTermId,
-        triple: EventTriple,
+        &mut self, reifier: EventTermId, triple: EventTriple,
     ) -> Result<ControlFlow<()>, EventError> {
         self.reifier_in_graph(reifier, triple, None)
     }
 
     fn annotation(
-        &mut self,
-        reifier: EventTermId,
-        p: EventTermId,
-        o: EventTermId,
+        &mut self, reifier: EventTermId, p: EventTermId, o: EventTermId,
     ) -> Result<ControlFlow<()>, EventError> {
         self.annotation_in_graph(reifier, p, o, None)
     }
 
     fn reifier_in_graph(
-        &mut self,
-        reifier: EventTermId,
-        triple: EventTriple,
-        g: Option<EventTermId>,
+        &mut self, reifier: EventTermId, triple: EventTriple, g: Option<EventTermId>,
     ) -> Result<ControlFlow<()>, EventError> {
         self.raw_reifiers.push((reifier, triple, g));
         Ok(ControlFlow::Continue(()))
     }
 
     fn annotation_in_graph(
-        &mut self,
-        reifier: EventTermId,
-        p: EventTermId,
-        o: EventTermId,
-        g: Option<EventTermId>,
+        &mut self, reifier: EventTermId, p: EventTermId, o: EventTermId, g: Option<EventTermId>,
     ) -> Result<ControlFlow<()>, EventError> {
         self.raw_annotations.push((reifier, p, o, g));
         Ok(ControlFlow::Continue(()))
@@ -524,9 +510,7 @@ impl<'a> FrozenDatasetSource<'a> {
     /// Emit one term declaration, translating the IR's [`TermRef`] into the protocol's
     /// [`EventTerm`]. Returns the sink's control flow.
     fn emit_term<S: RdfEventSink + ?Sized>(
-        &self,
-        sink: &mut S,
-        id: TermId,
+        &self, sink: &mut S, id: TermId,
     ) -> Result<ControlFlow<()>, EventError> {
         let event_id = EventTermId(u64::try_from(id.index()).expect("bounded local term index"));
         match self.dataset.resolve(id) {
@@ -982,9 +966,7 @@ mod tests {
         }
         impl RdfEventSink for BreakingSink {
             fn term(
-                &mut self,
-                id: EventTermId,
-                term: EventTerm<'_>,
+                &mut self, id: EventTermId, term: EventTerm<'_>,
             ) -> Result<ControlFlow<()>, EventError> {
                 self.inner.term(id, term)
             }
@@ -994,17 +976,12 @@ mod tests {
                 Ok(ControlFlow::Break(()))
             }
             fn reifier(
-                &mut self,
-                reifier: EventTermId,
-                triple: EventTriple,
+                &mut self, reifier: EventTermId, triple: EventTriple,
             ) -> Result<ControlFlow<()>, EventError> {
                 self.inner.reifier(reifier, triple)
             }
             fn annotation(
-                &mut self,
-                reifier: EventTermId,
-                p: EventTermId,
-                o: EventTermId,
+                &mut self, reifier: EventTermId, p: EventTermId, o: EventTermId,
             ) -> Result<ControlFlow<()>, EventError> {
                 self.inner.annotation(reifier, p, o)
             }

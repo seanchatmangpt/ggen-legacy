@@ -93,8 +93,7 @@ impl RoCrateAssets {
     ///
     /// Enforces package limits, safe paths, uniqueness, and reserved-name ownership.
     pub fn from_artifacts<I, P, B>(
-        limits: ProjectionLimits,
-        artifacts: I,
+        limits: ProjectionLimits, artifacts: I,
     ) -> Result<Self, ProjectionError>
     where
         I: IntoIterator<Item = (P, B)>,
@@ -431,13 +430,9 @@ impl RoCrateConfig {
     /// Rejects a non-absolute profile, unsafe/colliding native identities, or a
     /// vocabulary term without a caller-provided offline expansion.
     pub fn new(
-        common: ResearchObjectConfig,
-        context: OfflineJsonLdContext,
-        vocabulary: RoCrateVocabulary,
-        profile_iri: impl Into<String>,
-        metadata_descriptor_id: impl Into<String>,
-        root_dataset_id: impl Into<String>,
-        packaging: RoCratePackaging,
+        common: ResearchObjectConfig, context: OfflineJsonLdContext, vocabulary: RoCrateVocabulary,
+        profile_iri: impl Into<String>, metadata_descriptor_id: impl Into<String>,
+        root_dataset_id: impl Into<String>, packaging: RoCratePackaging,
     ) -> Result<Self, ProjectionError> {
         let profile_iri = profile_iri.into();
         let metadata_descriptor_id = metadata_descriptor_id.into();
@@ -534,8 +529,7 @@ purrdf_lex::json_record!(impl ToJson for RoCrateConfig {
 /// Returns a typed configuration, RDF interpretation, resource-limit, or JSON
 /// encoding failure with every representational loss in the outcome.
 pub fn project_ro_crate<D: DatasetView>(
-    view: &D,
-    config: &RoCrateConfig,
+    view: &D, config: &RoCrateConfig,
 ) -> Result<ResearchObjectPackageProjection, ProjectionError> {
     if config.packaging() != RoCratePackaging::MetadataOnly {
         return Err(ProjectionError::configuration(
@@ -552,9 +546,7 @@ pub fn project_ro_crate<D: DatasetView>(
 /// Requires attached packaging, standard crate-root identities, complete one-to-one
 /// local resource ownership, exact declared sizes, and sufficient package limits.
 pub fn project_ro_crate_with_assets<D: DatasetView>(
-    view: &D,
-    config: &RoCrateConfig,
-    assets: &RoCrateAssets,
+    view: &D, config: &RoCrateConfig, assets: &RoCrateAssets,
 ) -> Result<ResearchObjectPackageProjection, ProjectionError> {
     require_attached_config(config)?;
     let projection = project_research_object(view, RO_CRATE_PROFILE, config.common())?;
@@ -577,8 +569,7 @@ pub fn project_ro_crate_with_assets<D: DatasetView>(
 }
 
 fn project_ro_crate_metadata<D: DatasetView>(
-    view: &D,
-    config: &RoCrateConfig,
+    view: &D, config: &RoCrateConfig,
 ) -> Result<ResearchObjectPackageProjection, ProjectionError> {
     let projection = project_research_object(view, RO_CRATE_PROFILE, config.common())?;
     let document = encode_document(&projection.model, config)?;
@@ -601,8 +592,7 @@ fn project_ro_crate_metadata<D: DatasetView>(
 /// drift, duplicate/dangling graph identities, malformed entity shapes, unsafe
 /// local IDs, or configured resource-limit excesses.
 pub fn read_ro_crate(
-    package: &ProjectionPackage,
-    config: &RoCrateConfig,
+    package: &ProjectionPackage, config: &RoCrateConfig,
 ) -> Result<ResearchObjectReadOutcome, ProjectionError> {
     let bytes = match config.packaging() {
         RoCratePackaging::MetadataOnly => {
@@ -671,9 +661,7 @@ fn require_attached_config(config: &RoCrateConfig) -> Result<(), ProjectionError
 }
 
 fn validate_attached_assets(
-    model: &ResearchObjectModel,
-    assets: &RoCrateAssets,
-    config: &RoCrateConfig,
+    model: &ResearchObjectModel, assets: &RoCrateAssets, config: &RoCrateConfig,
 ) -> Result<(), ProjectionError> {
     let mut local_resources = BTreeMap::<String, &ResearchResource>::new();
     for resource in &model.resources {
@@ -744,9 +732,7 @@ fn validate_attached_assets(
 }
 
 fn encode_preview(
-    document: &Value,
-    assets: &RoCrateAssets,
-    config: &RoCrateConfig,
+    document: &Value, assets: &RoCrateAssets, config: &RoCrateConfig,
 ) -> Result<Vec<u8>, ProjectionError> {
     let graph = document
         .get("@graph")
@@ -838,8 +824,7 @@ fn validate_native_id(value: &str, allow_dot_root: bool) -> Result<(), Projectio
 }
 
 fn encode_document(
-    model: &ResearchObjectModel,
-    config: &RoCrateConfig,
+    model: &ResearchObjectModel, config: &RoCrateConfig,
 ) -> Result<Value, ProjectionError> {
     let terms = config.vocabulary();
     let mut descriptor = typed_object(
@@ -1204,10 +1189,7 @@ struct RoDecoder<'a> {
 }
 
 fn decode_document(
-    value: Value,
-    config: &RoCrateConfig,
-    contract: &LossLedger,
-    ledger: &mut LossLedger,
+    value: Value, config: &RoCrateConfig, contract: &LossLedger, ledger: &mut LossLedger,
 ) -> Result<ResearchObjectModel, ProjectionError> {
     RoDecoder {
         config,
@@ -1238,9 +1220,7 @@ impl ProfileReader for RoDecoder<'_> {
     }
 
     fn parse_reference_value(
-        &mut self,
-        value: &Value,
-        pointer: &str,
+        &mut self, value: &Value, pointer: &str,
     ) -> Result<Option<ResearchValue>, ProjectionError> {
         let native = self.parse_native_ref(value, pointer)?;
         let resolved = self.resolve_model_id(&native, pointer)?;
@@ -1411,9 +1391,7 @@ impl RoDecoder<'_> {
     }
 
     fn decode_root(
-        &mut self,
-        mut node: RawNode,
-        kind_by_native: &BTreeMap<String, RoCrateRole>,
+        &mut self, mut node: RawNode, kind_by_native: &BTreeMap<String, RoCrateRole>,
     ) -> Result<ResearchDataset, ProjectionError> {
         self.require_type(
             &mut node.object,
@@ -1567,9 +1545,7 @@ impl RoDecoder<'_> {
     }
 
     fn decode_record_set(
-        &mut self,
-        mut node: RawNode,
-        fields: &mut BTreeMap<String, ResearchField>,
+        &mut self, mut node: RawNode, fields: &mut BTreeMap<String, ResearchField>,
     ) -> Result<ResearchRecordSet, ProjectionError> {
         let id = self.resolve_model_id(&node.native_id, &node.pointer)?;
         let names = self.take_texts(&mut node.object, RoCrateRole::Name, &node.pointer)?;
@@ -1599,11 +1575,7 @@ impl RoDecoder<'_> {
     }
 
     fn take_single_native_ref(
-        &mut self,
-        object: &mut Object,
-        role: RoCrateRole,
-        parent: &str,
-        require_known: bool,
+        &mut self, object: &mut Object, role: RoCrateRole, parent: &str, require_known: bool,
     ) -> Result<String, ProjectionError> {
         let values = self.take_native_refs(object, role, parent, require_known)?;
         if values.len() != 1 {
@@ -1616,10 +1588,7 @@ impl RoDecoder<'_> {
     }
 
     fn take_entity_refs(
-        &mut self,
-        object: &mut Object,
-        role: RoCrateRole,
-        parent: &str,
+        &mut self, object: &mut Object, role: RoCrateRole, parent: &str,
     ) -> Result<Vec<String>, ProjectionError> {
         self.take_native_refs(object, role, parent, true)?
             .into_iter()
@@ -1628,11 +1597,7 @@ impl RoDecoder<'_> {
     }
 
     fn take_native_refs(
-        &mut self,
-        object: &mut Object,
-        role: RoCrateRole,
-        parent: &str,
-        require_known: bool,
+        &mut self, object: &mut Object, role: RoCrateRole, parent: &str, require_known: bool,
     ) -> Result<Vec<String>, ProjectionError> {
         let term = self.config.vocabulary().term(role).to_owned();
         let mut references = Vec::new();
@@ -1655,9 +1620,7 @@ impl RoDecoder<'_> {
     }
 
     fn parse_native_ref(
-        &mut self,
-        value: &Value,
-        pointer: &str,
+        &mut self, value: &Value, pointer: &str,
     ) -> Result<String, ProjectionError> {
         match value {
             Value::String(value) => Ok(value.clone()),
@@ -1703,9 +1666,7 @@ impl RoDecoder<'_> {
     }
 
     fn take_paths(
-        &mut self,
-        object: &mut Object,
-        parent: &str,
+        &mut self, object: &mut Object, parent: &str,
     ) -> Result<Vec<String>, ProjectionError> {
         let term = self.config.vocabulary().term(RoCrateRole::Path).to_owned();
         let mut paths = Vec::new();
@@ -1741,9 +1702,7 @@ impl RoDecoder<'_> {
     }
 
     fn take_checksums(
-        &mut self,
-        object: &mut Object,
-        parent: &str,
+        &mut self, object: &mut Object, parent: &str,
     ) -> Result<Vec<ResearchChecksum>, ProjectionError> {
         let term = self
             .config
@@ -1828,10 +1787,7 @@ impl RoDecoder<'_> {
     }
 
     fn require_type(
-        &mut self,
-        object: &mut Object,
-        parent: &str,
-        expected: &str,
+        &mut self, object: &mut Object, parent: &str, expected: &str,
     ) -> Result<(), ProjectionError> {
         let actual = self.take_type(object, parent)?;
         if actual != expected {

@@ -164,9 +164,7 @@ pub fn suite_manifests(root: &Path) -> Result<Vec<SuiteManifest>, DiscoveryError
 /// Collect the manifests below `dir`, whose components below the root are
 /// `prefix`.
 fn walk(
-    dir: &Path,
-    prefix: &mut Vec<OsString>,
-    found: &mut Vec<(Vec<String>, PathBuf)>,
+    dir: &Path, prefix: &mut Vec<OsString>, found: &mut Vec<(Vec<String>, PathBuf)>,
 ) -> Result<(), DiscoveryError> {
     let io_error = |operation, path: &Path, source| DiscoveryError::Io {
         operation,

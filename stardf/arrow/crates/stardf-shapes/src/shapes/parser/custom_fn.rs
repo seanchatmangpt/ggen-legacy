@@ -412,8 +412,7 @@ impl Parser<'_> {
     /// one, when the body does not parse as a node expression, or when the body
     /// references an argument key the declaration does not have.
     pub(crate) fn parse_custom_function_bodies(
-        &mut self,
-        index: &CustomFnIndex,
+        &mut self, index: &CustomFnIndex,
     ) -> Result<BTreeMap<String, crate::expression::NodeExpr>, String> {
         let mut parsed_bodies = BTreeMap::new();
         for func in index.iter() {
@@ -475,8 +474,7 @@ impl Parser<'_> {
 /// silently contribute nothing at every call. The declaration and the body are both
 /// in hand at load, so the mismatch is decided there.
 fn check_body_args(
-    func: &CustomFunction,
-    body: &crate::expression::NodeExpr,
+    func: &CustomFunction, body: &crate::expression::NodeExpr,
 ) -> Result<(), String> {
     let mut used: Vec<ArgKey> = Vec::new();
     collect_arg_keys(body, &mut used);

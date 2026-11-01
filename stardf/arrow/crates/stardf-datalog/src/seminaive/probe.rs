@@ -146,12 +146,8 @@ where
     Arity<N>: StoreShape<N>,
 {
     pub(super) fn new(
-        exe: &'a Executable<N>,
-        state: &'a FixpointState<D, N>,
-        guards: &'a dyn GuardEvaluator<D, N>,
-        index: usize,
-        head: usize,
-        terms: [D::Id; N],
+        exe: &'a Executable<N>, state: &'a FixpointState<D, N>,
+        guards: &'a dyn GuardEvaluator<D, N>, index: usize, head: usize, terms: [D::Id; N],
     ) -> Result<Self, ProbeError<D::Error>> {
         Ok(Self {
             state,
@@ -171,9 +167,7 @@ where
     /// Preserves and poisons original source/guard failures. Physical refusals
     /// retain the native frames and return a typed paused progress value.
     pub fn resume(
-        &mut self,
-        max_join_steps: u64,
-        stop: Option<&dyn StopSignal>,
+        &mut self, max_join_steps: u64, stop: Option<&dyn StopSignal>,
     ) -> Result<ResumeProgress<D::Error>, ProbeError<D::Error>> {
         self.frame
             .resume(self.state, self.guards, max_join_steps, stop)
@@ -193,10 +187,7 @@ where
     Arity<N>: StoreShape<N>,
 {
     pub(super) fn new(
-        exe: &'r Executable<N>,
-        state: &FixpointState<D, N>,
-        index: usize,
-        head: usize,
+        exe: &'r Executable<N>, state: &FixpointState<D, N>, index: usize, head: usize,
         terms: [D::Id; N],
     ) -> Result<Self, ProbeError<D::Error>> {
         let dictionary = state.rel.interner();
@@ -243,10 +234,7 @@ where
 
     /// Bind an original positive atom, retaining every head including present rows.
     pub(super) fn from_body(
-        exe: &'r Executable<N>,
-        state: &FixpointState<D, N>,
-        index: usize,
-        body: usize,
+        exe: &'r Executable<N>, state: &FixpointState<D, N>, index: usize, body: usize,
         terms: [D::Id; N],
     ) -> Result<Self, EvalError<D::Error>> {
         let (_, plan) = exe.rule_entry(index);
@@ -291,11 +279,8 @@ where
     }
 
     fn seeded(
-        exe: &'r Executable<N>,
-        state: &FixpointState<D, N>,
-        index: usize,
-        demand: RuleBindings<D::Id, N>,
-        matches: bool,
+        exe: &'r Executable<N>, state: &FixpointState<D, N>, index: usize,
+        demand: RuleBindings<D::Id, N>, matches: bool,
     ) -> Self {
         let (rule, plan) = exe.rule_entry(index);
         Self {
@@ -327,10 +312,8 @@ where
 
 /// One native substitution law shared by authored head and body bindings.
 fn bind_native<D: TermDictionary, const N: usize>(
-    seed: &mut SlotSolution<D::Id, N>,
-    arguments: [(Option<usize>, Option<&str>); N],
-    terms: [D::Id; N],
-    dictionary: &D,
+    seed: &mut SlotSolution<D::Id, N>, arguments: [(Option<usize>, Option<&str>); N],
+    terms: [D::Id; N], dictionary: &D,
 ) -> Result<bool, D::Error>
 where
     Arity<N>: StoreShape<N>,
@@ -377,11 +360,8 @@ where
     /// Preserves and poisons original source/guard failures. Physical refusals
     /// retain the native frames and return a typed paused progress value.
     pub(super) fn resume(
-        &mut self,
-        state: &FixpointState<D, N>,
-        guards: &dyn GuardEvaluator<D, N>,
-        max_join_steps: u64,
-        stop: Option<&dyn StopSignal>,
+        &mut self, state: &FixpointState<D, N>, guards: &dyn GuardEvaluator<D, N>,
+        max_join_steps: u64, stop: Option<&dyn StopSignal>,
     ) -> Result<ResumeProgress<D::Error>, ProbeError<D::Error>> {
         if let Some(error) = &self.failure {
             return Err(ProbeError::Failed(error.clone()));
@@ -469,8 +449,7 @@ where
     /// # Errors
     /// Refuses an incomplete probe, poisoned execution or dead original source.
     pub(super) fn witness<'a>(
-        &'a self,
-        state: &'a FixpointState<D, N>,
+        &'a self, state: &'a FixpointState<D, N>,
     ) -> Result<Option<HeadWitness<'a, D, N>>, ProbeError<D::Error>> {
         if let Some(error) = &self.failure {
             return Err(ProbeError::Failed(error.clone()));

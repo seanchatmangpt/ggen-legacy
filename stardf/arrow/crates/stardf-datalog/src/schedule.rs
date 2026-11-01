@@ -238,8 +238,7 @@ where
 /// Returns exact protected/undecidable head refusal before the ordinary
 /// executor's fragment checks, then the same errors as [`compile_scheduled`].
 pub fn compile_scheduled_with_declarations<const N: usize>(
-    rules: Vec<DlClause<N>>,
-    schedule: Schedule,
+    rules: Vec<DlClause<N>>, schedule: Schedule,
     declarations: &crate::admission::NeverDeriveDeclarations,
 ) -> Result<ScheduledProgram<N>, EvalError>
 where
@@ -265,8 +264,7 @@ where
 /// [`EvalError::NonDatalogHead`], [`EvalError::UnboundHeadVariable`] or
 /// [`EvalError::MalformedSchedule`].
 pub fn compile_scheduled<const N: usize>(
-    rules: Vec<DlClause<N>>,
-    schedule: Schedule,
+    rules: Vec<DlClause<N>>, schedule: Schedule,
 ) -> Result<ScheduledProgram<N>, EvalError>
 where
     Arity<N>: StoreShape<N>,
@@ -329,9 +327,7 @@ where
     ///
     /// A message, which aborts the evaluation as [`EvalError::LayerHook`].
     fn assume(
-        &mut self,
-        layer: usize,
-        model: &RelationStore<TermInterner, N>,
+        &mut self, layer: usize, model: &RelationStore<TermInterner, N>,
     ) -> Result<Vec<ShapeFact<N>>, crate::guard::CallbackError> {
         let _ = (layer, model);
         Ok(Vec::new())
@@ -345,10 +341,7 @@ where
     ///
     /// A message, which aborts the evaluation as [`EvalError::LayerHook`].
     fn retract(
-        &mut self,
-        layer: usize,
-        model: &RelationStore<TermInterner, N>,
-        withdrawn: &[ShapeFact<N>],
+        &mut self, layer: usize, model: &RelationStore<TermInterner, N>, withdrawn: &[ShapeFact<N>],
     ) -> Result<Vec<ShapeFact<N>>, crate::guard::CallbackError> {
         let _ = (layer, model, withdrawn);
         Ok(Vec::new())
@@ -360,8 +353,7 @@ where
     ///
     /// A message, which aborts the evaluation as [`EvalError::LayerHook`].
     fn finish(
-        &mut self,
-        model: &RelationStore<TermInterner, N>,
+        &mut self, model: &RelationStore<TermInterner, N>,
     ) -> Result<Vec<ShapeFact<N>>, crate::guard::CallbackError> {
         let _ = model;
         Ok(Vec::new())
@@ -386,12 +378,9 @@ impl<const N: usize> LayerHooks<N> for NoHooks where Arity<N>: StoreShape<N> {}
 /// Every refusal [`crate::seminaive::evaluate_guarded`] makes, plus
 /// [`EvalError::LayerHook`].
 pub fn evaluate_scheduled<const N: usize>(
-    program: &ScheduledProgram<N>,
-    edb: RelationStore<TermInterner, N>,
-    guards: &dyn GuardEvaluator<TermInterner, N>,
-    hooks: &mut dyn LayerHooks<N>,
-    options: &EvalOptions,
-    stop: Option<&dyn StopSignal>,
+    program: &ScheduledProgram<N>, edb: RelationStore<TermInterner, N>,
+    guards: &dyn GuardEvaluator<TermInterner, N>, hooks: &mut dyn LayerHooks<N>,
+    options: &EvalOptions, stop: Option<&dyn StopSignal>,
 ) -> Result<Evaluation<TermInterner, N>, EvalError>
 where
     Arity<N>: StoreShape<N>,
@@ -421,8 +410,7 @@ where
 
 /// Admission and actual resource refusal precede cooperative cancellation.
 fn check_running<const N: usize>(
-    state: &FixpointState<TermInterner, N>,
-    stop: Option<&dyn StopSignal>,
+    state: &FixpointState<TermInterner, N>, stop: Option<&dyn StopSignal>,
 ) -> Result<(), EvalError>
 where
     Arity<N>: StoreShape<N>,
@@ -438,13 +426,9 @@ where
 
 /// Run one layer into `state`.
 fn run_layer<const N: usize>(
-    program: &ScheduledProgram<N>,
-    layer_index: usize,
-    layer: &Layer,
-    state: &mut FixpointState<TermInterner, N>,
-    guards: &dyn GuardEvaluator<TermInterner, N>,
-    hooks: &mut dyn LayerHooks<N>,
-    stop: Option<&dyn StopSignal>,
+    program: &ScheduledProgram<N>, layer_index: usize, layer: &Layer,
+    state: &mut FixpointState<TermInterner, N>, guards: &dyn GuardEvaluator<TermInterner, N>,
+    hooks: &mut dyn LayerHooks<N>, stop: Option<&dyn StopSignal>,
 ) -> Result<(), EvalError>
 where
     Arity<N>: StoreShape<N>,
@@ -566,9 +550,7 @@ where
 
 /// Evaluate one group as one round and commit it. Returns whether it committed anything.
 fn run_group<const N: usize>(
-    program: &ScheduledProgram<N>,
-    group: &[usize],
-    state: &mut FixpointState<TermInterner, N>,
+    program: &ScheduledProgram<N>, group: &[usize], state: &mut FixpointState<TermInterner, N>,
     run: GroupRun<'_, '_, N>,
 ) -> Result<bool, EvalError>
 where
@@ -650,8 +632,7 @@ where
 
 /// Retract indexed native rows and drop their own derivations without copying survivors.
 fn retract<const N: usize>(
-    state: &mut FixpointState<TermInterner, N>,
-    facts: &[ShapeFact<N>],
+    state: &mut FixpointState<TermInterner, N>, facts: &[ShapeFact<N>],
 ) -> Result<(), EvalError>
 where
     Arity<N>: StoreShape<N>,
@@ -806,8 +787,7 @@ fn body_reads<const N: usize>(rule: &DlClause<N>) -> Vec<(&ClauseAtom<N>, bool)>
 ///
 /// Panics if `run_once` does not have one entry per rule — a construction bug.
 pub fn stratify_rules<const N: usize>(
-    rules: &[DlClause<N>],
-    run_once: &[bool],
+    rules: &[DlClause<N>], run_once: &[bool],
 ) -> Result<Schedule, EvalError> {
     assert_eq!(
         rules.len(),
@@ -910,8 +890,7 @@ impl DependencyGraph {
 ///
 /// Panics if `run_once` does not have one entry per rule — a construction bug.
 pub fn stratify_dependency_graph(
-    graph: &DependencyGraph,
-    run_once: &[bool],
+    graph: &DependencyGraph, run_once: &[bool],
 ) -> Result<Schedule, EvalError> {
     assert_eq!(
         graph.rules,
@@ -1032,8 +1011,7 @@ mod tests {
 
     impl GuardEvaluator for Guards {
         fn evaluate(
-            &self,
-            call: &GuardCall<'_>,
+            &self, call: &GuardCall<'_>,
         ) -> Result<crate::guard::GuardRows, crate::guard::CallbackError> {
             call.evaluate_lexical(|inputs| {
                 let name = call.guard.name();
@@ -1156,8 +1134,7 @@ mod tests {
         }
         impl GuardEvaluator for Trace {
             fn evaluate(
-                &self,
-                call: &GuardCall<'_>,
+                &self, call: &GuardCall<'_>,
             ) -> Result<crate::guard::GuardRows, crate::guard::CallbackError> {
                 call.evaluate_lexical(|inputs| {
                     assert_eq!(std::thread::current().id(), self.caller);
@@ -1803,24 +1780,18 @@ mod tests {
         struct Hooks;
         impl LayerHooks for Hooks {
             fn assume(
-                &mut self,
-                _: usize,
-                _: &RelationStore,
+                &mut self, _: usize, _: &RelationStore,
             ) -> Result<Vec<Fact>, crate::guard::CallbackError> {
                 Ok(vec![fact("a", "area", "\"1\""), fact("b", "area", "\"2\"")])
             }
             fn retract(
-                &mut self,
-                _: usize,
-                _: &RelationStore,
-                withdrawn: &[Fact],
+                &mut self, _: usize, _: &RelationStore, withdrawn: &[Fact],
             ) -> Result<Vec<Fact>, crate::guard::CallbackError> {
                 assert_eq!(withdrawn, [fact("a", "area", "\"1\"")]);
                 Ok(vec![fact("a", "note", "\"withdrawn\"")])
             }
             fn finish(
-                &mut self,
-                _: &RelationStore,
+                &mut self, _: &RelationStore,
             ) -> Result<Vec<Fact>, crate::guard::CallbackError> {
                 Ok(vec![fact("b", "temp", "\"t\"")])
             }
@@ -1896,9 +1867,7 @@ mod tests {
         struct Assumptions(Vec<Fact>);
         impl LayerHooks for Assumptions {
             fn assume(
-                &mut self,
-                layer: usize,
-                _: &RelationStore,
+                &mut self, layer: usize, _: &RelationStore,
             ) -> Result<Vec<Fact>, crate::guard::CallbackError> {
                 Ok(if layer == 1 {
                     self.0.clone()
@@ -1907,10 +1876,7 @@ mod tests {
                 })
             }
             fn retract(
-                &mut self,
-                layer: usize,
-                _: &RelationStore,
-                _: &[Fact],
+                &mut self, layer: usize, _: &RelationStore, _: &[Fact],
             ) -> Result<Vec<Fact>, crate::guard::CallbackError> {
                 Ok(if layer == 1 {
                     vec![test_fact("discard", "seed", "x")]
@@ -2034,23 +2000,17 @@ mod tests {
         }
         impl LayerHooks for Refusal {
             fn assume(
-                &mut self,
-                _: usize,
-                _: &RelationStore,
+                &mut self, _: usize, _: &RelationStore,
             ) -> Result<Vec<Fact>, crate::guard::CallbackError> {
                 self.run(0)
             }
             fn retract(
-                &mut self,
-                _: usize,
-                _: &RelationStore,
-                _: &[Fact],
+                &mut self, _: usize, _: &RelationStore, _: &[Fact],
             ) -> Result<Vec<Fact>, crate::guard::CallbackError> {
                 self.run(1)
             }
             fn finish(
-                &mut self,
-                _: &RelationStore,
+                &mut self, _: &RelationStore,
             ) -> Result<Vec<Fact>, crate::guard::CallbackError> {
                 self.run(2)
             }
@@ -2104,8 +2064,7 @@ mod tests {
         }
         impl GuardEvaluator for Errors {
             fn evaluate(
-                &self,
-                call: &GuardCall<'_>,
+                &self, call: &GuardCall<'_>,
             ) -> Result<crate::guard::GuardRows, crate::guard::CallbackError> {
                 call.evaluate_lexical(|inputs| {
                     if call.guard.name() == "first" && inputs[0] == surface("b") {
@@ -2182,9 +2141,7 @@ mod tests {
         struct Hooks;
         impl LayerHooks for Hooks {
             fn assume(
-                &mut self,
-                layer: usize,
-                _: &RelationStore,
+                &mut self, layer: usize, _: &RelationStore,
             ) -> Result<Vec<Fact>, crate::guard::CallbackError> {
                 Ok(if layer == 1 {
                     vec![Fact {

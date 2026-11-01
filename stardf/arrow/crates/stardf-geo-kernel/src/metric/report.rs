@@ -25,9 +25,7 @@ pub fn reported_double(value: &Rat, context: &mut MetricContext) -> Result<f64, 
 /// `context.workspace_peak()`. This output continuation reports only added
 /// work and growth, preserving the previously observed preparation prefix.
 pub fn reported_double_metered(
-    value: &Rat,
-    context: &mut MetricContext,
-    observer: &mut dyn MetricWorkObserver,
+    value: &Rat, context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
 ) -> Result<f64, GeoError> {
     let mut continuation =
         MetricWorkContinuation::new(observer, context.work_items(), context.workspace_peak());
@@ -39,9 +37,7 @@ pub fn reported_double_metered(
 }
 
 pub(crate) fn reported_double_with_progress(
-    value: &Rat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    value: &Rat, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<f64, GeoError> {
     let cost = ExactArithmeticCost::rational_binary64(
         value.numerator().bit_len(),

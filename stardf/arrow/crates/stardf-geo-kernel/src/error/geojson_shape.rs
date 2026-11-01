@@ -134,8 +134,7 @@ impl purrdf_hash::error::StructuredError for GeoJsonShapeError {
 
 impl GeoJsonShapeError<&str> {
     fn into_owned<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<GeoJsonShapeError, StorageError> {
         Ok(match self {
             Self::TypeNotString { found } => GeoJsonShapeError::TypeNotString { found },
@@ -194,8 +193,7 @@ impl GeoJsonShapeError<&str> {
     }
 
     pub(crate) fn capture(
-        self,
-        storage: Option<&crate::carrier::CarrierStorage<'_>>,
+        self, storage: Option<&crate::carrier::CarrierStorage<'_>>,
     ) -> super::GeoError {
         crate::carrier::with_storage(storage, |memory| {
             memory.try_scope(|memory| {

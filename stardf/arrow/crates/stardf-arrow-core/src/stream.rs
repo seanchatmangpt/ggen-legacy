@@ -1,8 +1,8 @@
 //! Arrow C Stream Interface (`ArrowArrayStream`) — structural mirror of the
-//! avec-arrow release discipline, zero avec dependency.
+//! cgap-arrow release discipline, zero cgap dependency.
 //!
 //! Spec flag convention: `0` = OK, any nonzero = error, `10` (ENOENT) = end
-//! of stream. Release safety (same FMEA as `avec-arrow/src/c_abi.rs:70-127`):
+//! of stream. Release safety (same FMEA as `cgap-arrow/src/c_abi.rs:70-127`):
 //! the release callback atomically CAS-swaps the release slot to NULL *before*
 //! dropping private data, so a double release is a typed no-op, never a double
 //! free.
@@ -15,8 +15,8 @@ use core::ffi::{c_char, c_int, c_void};
 use core::sync::atomic::{AtomicPtr, Ordering};
 
 // ---------------------------------------------------------------------------
-// C Data Interface value structs (mirror of avec-arrow c_abi.rs — duplicated
-// here only because this crate has no avec dependency; layout is spec-fixed).
+// C Data Interface value structs (mirror of cgap-arrow c_abi.rs — duplicated
+// here only because this crate has no cgap dependency; layout is spec-fixed).
 // ---------------------------------------------------------------------------
 
 /// struct ArrowSchema (C Data Interface spec).
@@ -152,7 +152,7 @@ unsafe fn release_stream(stream: *mut ArrowArrayStream) {
     }
     // Option<unsafe fn> is a nullable pointer with a niche; AtomicPtr<c_void>
     // is repr(transparent) over *mut c_void — an in-place atomic view of the
-    // release slot is a pointer pun (same as avec-arrow c_abi.rs:70-77).
+    // release slot is a pointer pun (same as cgap-arrow c_abi.rs:70-77).
     let slot: &AtomicPtr<c_void> =
         unsafe { &*(core::ptr::addr_of_mut!((*stream).release) as *mut AtomicPtr<c_void>) };
     let prev = slot.swap(core::ptr::null_mut(), Ordering::AcqRel);

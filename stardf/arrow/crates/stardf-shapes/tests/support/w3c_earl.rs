@@ -52,8 +52,7 @@ pub fn is_full_commit(commit: &str) -> bool {
 /// Parse the two settings. Neither set means no reports are written; either one
 /// alone, an empty directory or a commit that is not 40 hex digits is an error.
 pub fn parse_config(
-    dir: Option<OsString>,
-    commit: Option<OsString>,
+    dir: Option<OsString>, commit: Option<OsString>,
 ) -> Result<Option<EarlConfig>, String> {
     match (dir, commit) {
         (None, None) => Ok(None),
@@ -220,10 +219,7 @@ pub enum Class {
 /// fail; an entry that passes (XPASS) is refused, as is a failure that no ledger
 /// names, an entry in both ledgers and a ledgered entry that passes.
 pub fn classify(
-    id: &str,
-    result: &Result<(), String>,
-    xfail: Option<&str>,
-    spec_contradicted: Option<&str>,
+    id: &str, result: &Result<(), String>, xfail: Option<&str>, spec_contradicted: Option<&str>,
 ) -> Result<Class, String> {
     match (result, xfail, spec_contradicted) {
         (_, Some(_), Some(_)) => Err(format!(
@@ -246,9 +242,7 @@ pub fn classify(
 /// Check a `SPEC_CONTRADICTED` table: its length is the pinned count, each id occurs
 /// once and names a discovered entry (`known`), and each rationale is non-empty.
 pub fn check_spec_table(
-    table: &[(&str, &str)],
-    pinned: usize,
-    known: impl Fn(&str) -> bool,
+    table: &[(&str, &str)], pinned: usize, known: impl Fn(&str) -> bool,
 ) -> Result<(), String> {
     if table.len() != pinned {
         return Err(format!(
@@ -515,11 +509,7 @@ pub fn assertions_by_key(bytes: &[u8]) -> Result<BTreeMap<String, Assertion>, St
 /// `earl:subject` is the PurRDF project resource and every `earl:assertedBy` is the
 /// assertor, each described once.
 pub fn check_descriptions(
-    bytes: &[u8],
-    purrdf_commit: &str,
-    suite_commit: &str,
-    law: &str,
-    law_independent_records: bool,
+    bytes: &[u8], purrdf_commit: &str, suite_commit: &str, law: &str, law_independent_records: bool,
 ) -> Result<(), String> {
     let statements = statements(bytes)?;
     let about = |subject: &str| -> BTreeSet<(String, String)> {
@@ -618,9 +608,7 @@ pub fn predicates(bytes: &[u8]) -> Result<BTreeSet<String>, String> {
 
 /// The counts of an EARL-scope scoreboard line, `LABEL: passed P, FAILED_LABEL F of N`.
 pub fn parse_scope_line(
-    line: &str,
-    label: &str,
-    failed_label: &str,
+    line: &str, label: &str, failed_label: &str,
 ) -> Result<(usize, usize, usize), String> {
     let rest = line
         .trim()
@@ -645,10 +633,7 @@ pub fn parse_scope_line(
 /// EARL-scope line and the SERIALIZED report: the same entries, the same outcome for
 /// each, and the same totals in all three.
 pub fn agree(
-    serialized: &[u8],
-    printed: &str,
-    label: &str,
-    failed_label: &str,
+    serialized: &[u8], printed: &str, label: &str, failed_label: &str,
     tally: &BTreeMap<String, bool>,
 ) -> Result<(), String> {
     let (line_passed, line_failed, line_total) = parse_scope_line(printed, label, failed_label)?;
@@ -945,10 +930,7 @@ pub fn check_classification() {
 /// three mutations of the serialized report alone: one outcome flipped, one
 /// assertion removed, one assertion added.
 pub fn check_agreement_and_mutations(
-    serialized: &[u8],
-    printed: &str,
-    label: &str,
-    failed_label: &str,
+    serialized: &[u8], printed: &str, label: &str, failed_label: &str,
     tally: &BTreeMap<String, bool>,
 ) {
     agree(serialized, printed, label, failed_label, tally)

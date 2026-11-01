@@ -60,8 +60,7 @@ impl<'a> Cursor<'a> {
     /// Charge before scanning; even a discarded out-of-range reference spends
     /// work, and operational refusal remains separate from FORX0004.
     pub(super) fn next<E>(
-        &mut self,
-        charge: &mut impl FnMut(u64) -> Result<(), E>,
+        &mut self, charge: &mut impl FnMut(u64) -> Result<(), E>,
     ) -> Result<Option<Part<'a>>, ParseFailure<E>> {
         if let Some(suffix) = self.suffix.take() {
             return Ok(Some(Part::Literal(suffix)));
@@ -145,8 +144,7 @@ impl Template {
     /// that is neither `\\` nor `\$` — the two `err:FORX0004` conditions of
     /// F&O 3.1 §5.6.2.
     pub(super) fn parse(
-        replacement: &str,
-        capture_groups: usize,
+        replacement: &str, capture_groups: usize,
     ) -> Result<Self, ReplacementError> {
         let mut pieces = Vec::new();
         let mut literal = String::new();

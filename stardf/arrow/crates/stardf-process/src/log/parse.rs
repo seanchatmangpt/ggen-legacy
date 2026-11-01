@@ -404,8 +404,7 @@ fn parse_o2o_list(value: &Value) -> Result<Vec<ObjectRelationship>, ProcessError
 /// Both attribute shapes for events: a name-to-scalar map, or a
 /// `{name, value}` pair list (ex4pm `normalize_attributes/1`).
 fn attribute_map(
-    value: &Value,
-    document: &str,
+    value: &Value, document: &str,
 ) -> Result<BTreeMap<String, AttrValue>, ProcessError> {
     let mut out = BTreeMap::new();
     match value {

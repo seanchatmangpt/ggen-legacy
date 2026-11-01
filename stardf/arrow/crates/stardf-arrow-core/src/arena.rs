@@ -5,7 +5,7 @@
 //!
 //! - 64-byte alignment: every arena buffer is allocated with
 //!   `Layout::from_size_align(bytes, 64)` (pattern:
-//!   avec/crates/avec-arrow/src/buffer.rs); asserted by test on the exact
+//!   cgap/crates/cgap-arrow/src/buffer.rs); asserted by test on the exact
 //!   allocation the arena owns.
 //! - u32 id space: BOTTOM_ID (0) is reserved and never minted (minting
 //!   starts at 1); WILDCARD_ID (u32::MAX) is refused as mintable with a
@@ -20,7 +20,7 @@
 //!   refusal is typed (ArenaError), never a panic.
 //! - Zero post-freeze allocation: TermArena::freeze converts to a
 //!   FrozenArena whose reads perform no allocation; asserted by a
-//!   counting-allocator test (pattern: avec audit/src/alloc_counter.rs).
+//!   counting-allocator test (pattern: cgap audit/src/alloc_counter.rs).
 
 #![forbid(unsafe_op_in_unsafe_fn)]
 
@@ -163,7 +163,7 @@ impl Admission for Budget {
     }
 }
 
-/// 64-byte aligned, growable byte buffer (pattern: avec-arrow buffer.rs).
+/// 64-byte aligned, growable byte buffer (pattern: cgap-arrow buffer.rs).
 struct AlignedBuf {
     ptr: NonNull<u8>,
     len: usize,
@@ -461,7 +461,7 @@ mod tests {
     use std::cell::Cell;
 
     // Per-thread tracking state: `Copy + Cell` + const-init TLS so the alloc
-    // hook never allocates while reading it (avec alloc_counter pattern).
+    // hook never allocates while reading it (cgap alloc_counter pattern).
     // Thread-local because the test harness runs each test on its own
     // thread; parallel test threads must not pollute each other's counts.
     #[derive(Clone, Copy)]
@@ -488,7 +488,7 @@ mod tests {
         });
     }
 
-    /// Test-local counting allocator (pattern: avec audit/src/alloc_counter.rs).
+    /// Test-local counting allocator (pattern: cgap audit/src/alloc_counter.rs).
     /// Pass-through over System; per-thread scoped tracking.
     struct CountingAlloc;
 

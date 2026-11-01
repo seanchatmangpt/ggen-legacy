@@ -39,11 +39,8 @@ fn text(value: &TermValue) -> Option<&str> {
 /// This does not traverse an occurrence stream. A semantic mismatch declines
 /// before physical source execution; physical refusals are never downgraded.
 pub(crate) fn prepare<P: CorpusProfile>(
-    index: &Arc<TextIndex<P>>,
-    cache: &DictionaryCache,
-    generation: &Arc<str>,
-    inputs: &[OccurrenceDictionaryInput],
-    workspace: &WorkspaceCapability,
+    index: &Arc<TextIndex<P>>, cache: &DictionaryCache, generation: &Arc<str>,
+    inputs: &[OccurrenceDictionaryInput], workspace: &WorkspaceCapability,
 ) -> Result<Option<Box<dyn OccurrenceDictionary>>, EvalError> {
     let mut chosen = AdmittedVec::with_capacity(inputs.len(), workspace)?;
     let mut payloads = AdmittedVec::with_capacity(inputs.len(), workspace)?;
@@ -132,8 +129,7 @@ struct Prepared<P: CorpusProfile> {
 }
 impl<P: CorpusProfile> OccurrenceDictionary for Prepared<P> {
     fn scan(
-        &self,
-        workspace: &WorkspaceCapability,
+        &self, workspace: &WorkspaceCapability,
     ) -> Result<Box<dyn OccurrenceMatches>, EvalError> {
         let matches = self.dictionary.scan(self.index.clone(), None, workspace)?;
         let allocation = workspace.charge(
@@ -172,8 +168,7 @@ impl<P: CorpusProfile> OccurrenceMatches for Matches<P> {
         IndexGeneration::Declared(self.generation.clone())
     }
     fn next(
-        &mut self,
-        workspace: &WorkspaceCapability,
+        &mut self, workspace: &WorkspaceCapability,
     ) -> Result<Option<(usize, AdmittedVec<AdmittedPfRow>)>, EvalError> {
         let Some(matched) = self.found.rows().get(self.at) else {
             return Ok(None);

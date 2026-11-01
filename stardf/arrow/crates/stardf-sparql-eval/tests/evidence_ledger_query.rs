@@ -197,8 +197,7 @@ fn shared_reason_group_count_and_private_construct_use_the_native_engine() {
 }
 
 fn assert_queries_and_private_projection<D: FallibleDatasetView + Sync>(
-    ledger: &D,
-    cause: &TermValue,
+    ledger: &D, cause: &TermValue,
 ) {
     let engine = NativeSparqlEngine::new();
     let grouped = engine

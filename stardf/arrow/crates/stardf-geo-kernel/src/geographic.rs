@@ -52,8 +52,7 @@ impl LonLat {
     }
 
     pub(crate) fn copy_with(
-        &self,
-        values: &crate::numerical::ExactValues<'_>,
+        &self, values: &crate::numerical::ExactValues<'_>,
     ) -> Result<Self, purrdf_xsd::integer::LimbScratchError> {
         Ok(Self::from_validated(
             values.original(&self.longitude)?,
@@ -61,8 +60,7 @@ impl LonLat {
         ))
     }
     pub(crate) fn detached_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         Ok(Self {
             longitude: self.longitude.detached_with_memory(memory)?,
@@ -80,8 +78,7 @@ impl LonLat {
     }
 
     pub(crate) fn publish_detached(
-        &mut self,
-        original: &purrdf_lex::allocation::SharedOwned<()>,
+        &mut self, original: &purrdf_lex::allocation::SharedOwned<()>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         self.longitude.publish_detached(original)?;
         self.latitude.publish_detached(original)
@@ -105,9 +102,7 @@ impl LonLat {
     /// # Errors
     /// Preserves exact axis/range diagnostics and native destination refusal.
     pub fn new_in(
-        longitude: Rat,
-        latitude: Rat,
-        scratch: &purrdf_xsd::integer::LimbScratch,
+        longitude: Rat, latitude: Rat, scratch: &purrdf_xsd::integer::LimbScratch,
     ) -> Result<Self, GeoError> {
         Self::new_using(
             longitude,
@@ -117,9 +112,7 @@ impl LonLat {
     }
 
     pub(crate) fn new_using(
-        longitude: Rat,
-        latitude: Rat,
-        values: &crate::numerical::ExactValues<'_>,
+        longitude: Rat, latitude: Rat, values: &crate::numerical::ExactValues<'_>,
     ) -> Result<Self, GeoError> {
         Self::validate_with(&longitude, &latitude, values)
             .map_err(GeoError::NumericalScratch)??;
@@ -127,9 +120,7 @@ impl LonLat {
     }
 
     pub(crate) fn validate_with(
-        longitude: &Rat,
-        latitude: &Rat,
-        values: &crate::numerical::ExactValues<'_>,
+        longitude: &Rat, latitude: &Rat, values: &crate::numerical::ExactValues<'_>,
     ) -> Result<Result<(), GeoError>, purrdf_xsd::integer::LimbScratchError> {
         match Self::range_failure_with(longitude, latitude, values)? {
             Some((axis, value)) => Ok(Err(match values.diagnostic_number(value) {
@@ -143,9 +134,7 @@ impl LonLat {
     /// Native range failures retain the actual original scalar owner, rather
     /// than a borrowed reusable arena or an unadmitted error-path deep clone.
     pub(crate) fn validate_with_progress(
-        longitude: &Rat,
-        latitude: &Rat,
-        values: &crate::numerical::ExactValues<'_>,
+        longitude: &Rat, latitude: &Rat, values: &crate::numerical::ExactValues<'_>,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         if let Some((axis, value)) = Self::range_failure_with(longitude, latitude, values)
@@ -160,9 +149,7 @@ impl LonLat {
     }
 
     fn range_failure_with<'a>(
-        longitude: &'a Rat,
-        latitude: &'a Rat,
-        values: &crate::numerical::ExactValues<'_>,
+        longitude: &'a Rat, latitude: &'a Rat, values: &crate::numerical::ExactValues<'_>,
     ) -> Result<Option<(&'static str, &'a Rat)>, purrdf_xsd::integer::LimbScratchError> {
         for (axis, value, bound) in [("longitude", longitude, 180), ("latitude", latitude, 90)] {
             if values.compare(value, &Rat::from_i64(-bound))?.is_lt()

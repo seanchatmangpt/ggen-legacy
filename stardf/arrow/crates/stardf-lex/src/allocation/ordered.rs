@@ -294,8 +294,7 @@ impl<K, V> OrderedTable<K, V> {
 
     /// Destroy this arena before releasing its original physical array layout.
     pub fn release<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         memory.release_vec(self.slots)
     }
@@ -303,8 +302,7 @@ impl<K, V> OrderedTable<K, V> {
     /// Copy only slot metadata and shallow immutable native key/value owners.
     /// K/V clones used by the parser must themselves allocate no payload.
     pub fn try_clone<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError>
     where
         K: Clone,
@@ -421,8 +419,7 @@ impl<K, V> OrderedTable<K, V> {
     /// Reserve the actual next array layout without modifying any key/value.
     /// Consumers may reserve their parallel output destination before insertion.
     pub fn reserve_insert<S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         if self.free.is_none() {
             let required = self
@@ -451,9 +448,7 @@ impl<K, V> OrderedTable<K, V> {
     /// # Errors
     /// Preserves the original comparison or physical-storage refusal.
     pub fn prepare_insert<S: Admission + ?Sized, E: From<StorageError>>(
-        &mut self,
-        key: K,
-        memory: &mut Memory<'_, S>,
+        &mut self, key: K, memory: &mut Memory<'_, S>,
         mut compare: impl FnMut(&K, &K) -> Result<Ordering, E>,
     ) -> Result<OrderedEntry<'_, K, V>, E> {
         let mut at = self.root;
@@ -506,9 +501,7 @@ impl<K, V> OrderedTable<K, V> {
     /// # Errors
     /// Preserves the original comparison, payload or physical-storage refusal.
     pub fn try_insert_with<S: Admission + ?Sized, E: From<StorageError>>(
-        &mut self,
-        key: K,
-        memory: &mut Memory<'_, S>,
+        &mut self, key: K, memory: &mut Memory<'_, S>,
         compare: impl FnMut(&K, &K) -> Result<Ordering, E>,
         make: impl FnOnce(&mut Memory<'_, S>, OrderedSlot, bool) -> Result<V, E>,
     ) -> Result<(OrderedSlot, Option<V>), E> {
@@ -608,10 +601,7 @@ impl<K: Ord, V> OrderedTable<K, V> {
     /// Replace the value in place, or admit storage before adding a new key.
     /// Refusal leaves every existing association unchanged.
     pub fn insert<S: Admission + ?Sized>(
-        &mut self,
-        key: K,
-        value: V,
-        memory: &mut Memory<'_, S>,
+        &mut self, key: K, value: V, memory: &mut Memory<'_, S>,
     ) -> Result<Option<V>, StorageError> {
         self.try_insert_with(
             key,
@@ -661,8 +651,7 @@ impl<K: Ord, V> OrderedTable<K, V> {
 
     /// Seek both bounds in logarithmic time, then visit only matching entries.
     pub fn range<Q: ?Sized + Ord, R: std::ops::RangeBounds<Q>>(
-        &self,
-        bounds: R,
+        &self, bounds: R,
     ) -> OrderedRange<'_, K, V>
     where
         K: std::borrow::Borrow<Q>,

@@ -141,8 +141,7 @@ impl Literal {
     /// A language-tagged literal (datatype `rdf:langString`).
     #[inline]
     pub fn new_language_tagged_literal_unchecked(
-        value: impl Into<String>,
-        language: impl Into<String>,
+        value: impl Into<String>, language: impl Into<String>,
     ) -> Self {
         Self {
             lexical: value.into(),
@@ -155,9 +154,7 @@ impl Literal {
     /// A directional language-tagged literal (RDF 1.2).
     #[inline]
     pub fn new_directional_language_tagged_literal_unchecked(
-        value: impl Into<String>,
-        language: impl Into<String>,
-        direction: RdfTextDirection,
+        value: impl Into<String>, language: impl Into<String>, direction: RdfTextDirection,
     ) -> Self {
         Self {
             lexical: value.into(),
@@ -427,10 +424,7 @@ impl<'a> CanonicalBytes<'a> {
     /// Push `<<( `, the subject, ` <predicate> `, the object and ` )>>` (in
     /// reverse, the parts being a stack).
     fn push_triple(
-        &mut self,
-        subject: CanonicalPart<'a>,
-        predicate: &'a str,
-        object: CanonicalPart<'a>,
+        &mut self, subject: CanonicalPart<'a>, predicate: &'a str, object: CanonicalPart<'a>,
     ) {
         self.parts
             .push(CanonicalPart::Raw(TRIPLE_TERM_CLOSE.as_bytes()));
@@ -544,10 +538,7 @@ impl<'a> CanonicalBytes<'a> {
     /// The bytes [`term_syntax::write_literal`] writes, as parts, shared by the
     /// owned and interned arms so they cannot drift.
     fn push_literal(
-        &mut self,
-        lexical: &'a str,
-        datatype: &'a str,
-        language: Option<&'a str>,
+        &mut self, lexical: &'a str, datatype: &'a str, language: Option<&'a str>,
         direction: Option<RdfTextDirection>,
     ) {
         if let Some(language) = language {
@@ -875,9 +866,7 @@ pub(crate) fn canonical_cmp_ids(dataset: &impl ShaclRead, left: TermId, right: T
 
 /// [`canonical_cmp`] between an interned term and an owned one.
 pub(crate) fn canonical_cmp_id_term(
-    dataset: &impl ShaclRead,
-    left: TermId,
-    right: &Term,
+    dataset: &impl ShaclRead, left: TermId, right: &Term,
 ) -> Ordering {
     let resolver: &dyn TermResolve = dataset;
     let left_ref = resolver.resolve_id(left);
@@ -1031,9 +1020,7 @@ impl Term {
     ///
     /// The first error `leaf`, `predicate` or `triple` returns.
     pub(crate) fn fold_nested<C, T, E>(
-        &self,
-        ctx: &mut C,
-        mut leaf: impl FnMut(&mut C, &Self) -> Result<T, E>,
+        &self, ctx: &mut C, mut leaf: impl FnMut(&mut C, &Self) -> Result<T, E>,
         mut predicate: impl FnMut(&mut C, &NamedNode) -> Result<T, E>,
         mut triple: impl FnMut(&mut C, T, T, T) -> Result<T, E>,
     ) -> Result<T, E> {
@@ -1057,8 +1044,7 @@ impl Term {
     /// a quoted triple first, then its subject with everything below it, then its
     /// object. The first `Break` ends the visit and is returned.
     pub(crate) fn visit_nested<'t, B>(
-        &'t self,
-        mut visit: impl FnMut(&'t Self) -> ControlFlow<B>,
+        &'t self, mut visit: impl FnMut(&'t Self) -> ControlFlow<B>,
     ) -> ControlFlow<B> {
         visit_nested(TermNode::Term(self), |node| match node {
             TermNode::Term(term) => {
@@ -1171,8 +1157,7 @@ impl Term {
     /// its subject next, with its predicate, its object and the closing ` )>>` held
     /// back in that order until the subject's whole nesting is written.
     fn write_canonical<W: TextOut + ?Sized>(
-        &self,
-        out: &mut W,
+        &self, out: &mut W,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         let mut resident = purrdf_lex::allocation::Resident;
         let mut memory = purrdf_lex::allocation::Memory::new(&mut resident);
@@ -1279,8 +1264,7 @@ where
 
 /// One scoped RDF term conversion for resident and fallible read owners.
 fn fold_native_term<'a, E>(
-    term: TermRef<'a>,
-    resolve: &impl Fn(TermId) -> Result<TermRef<'a>, E>,
+    term: TermRef<'a>, resolve: &impl Fn(TermId) -> Result<TermRef<'a>, E>,
     storage: &impl Fn(purrdf_lex::allocation::StorageError) -> E,
 ) -> Result<Term, E> {
     use purrdf_lex::allocation::{Memory, Resident};
@@ -1360,8 +1344,7 @@ fn fold_native_term<'a, E>(
 
 /// Materialize an original retained report focus through the same term producer.
 pub(crate) fn try_report_term(
-    dataset: &impl ShaclRead,
-    id: TermId,
+    dataset: &impl ShaclRead, id: TermId,
 ) -> Result<Term, purrdf_lex::allocation::StorageError> {
     fold_native_term(
         dataset.resolve_term(id),

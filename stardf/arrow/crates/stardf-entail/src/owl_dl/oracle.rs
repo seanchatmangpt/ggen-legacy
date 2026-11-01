@@ -1443,9 +1443,7 @@ fn forces_unnamed_element(c: &Concept, asserted: bool) -> bool {
 /// `cfg(test)`-only and no service reads its numbers, so without this they would be three
 /// fields nothing ever looks at.
 fn counters_are_coherent(
-    core: &str,
-    decision: &graph::Decision,
-    case: &Case,
+    core: &str, decision: &graph::Decision, case: &Case,
 ) -> Result<(), TestCaseError> {
     let complaint = |detail: &str| {
         TestCaseError::fail(format!(
@@ -1497,10 +1495,7 @@ fn counters_are_coherent(
 /// cleared immediately, so everything downstream — the failure messages, the oracle — sees the
 /// knowledge base as the shipped discipline decides it.
 fn blocking_differential(
-    case: &mut Case,
-    shipped: &graph::Decision,
-    cap: graph::Budget,
-    tally: &RefCell<Tally>,
+    case: &mut Case, shipped: &graph::Decision, cap: graph::Budget, tally: &RefCell<Tally>,
 ) -> Result<(), TestCaseError> {
     case.kb.label_only_blocking = true;
     let mutated = hyper::decide(&case.kb, &Assumptions::of_kb(), cap);
@@ -1533,10 +1528,7 @@ fn blocking_differential(
 /// that moves under the full re-match is a node the region missed — a fixpoint reported that
 /// is not one — and it fails the run.
 fn delta_differential(
-    case: &mut Case,
-    shipped: &graph::Decision,
-    cap: graph::Budget,
-    tally: &RefCell<Tally>,
+    case: &mut Case, shipped: &graph::Decision, cap: graph::Budget, tally: &RefCell<Tally>,
 ) -> Result<(), TestCaseError> {
     case.kb.full_rematch = true;
     let full = hyper::decide(&case.kb, &Assumptions::of_kb(), cap);
@@ -1573,10 +1565,7 @@ fn delta_differential(
 /// model and [`forces_unnamed_element`] says the bound was sufficient, `consistent` is
 /// asserted to be false.
 fn check(
-    sig: Signature,
-    axioms: &[Axiom],
-    tally: &RefCell<Tally>,
-    rounds: u64,
+    sig: Signature, axioms: &[Axiom], tally: &RefCell<Tally>, rounds: u64,
 ) -> Result<(), TestCaseError> {
     let mut case = Case::assemble(sig, axioms);
     let cap = suite_budget(&case.kb, rounds);
@@ -1781,15 +1770,8 @@ enum Bound {
 // given `#[test]` chose to override.
 #[allow(clippy::too_many_arguments)]
 fn run_property(
-    name: &str,
-    sig: Signature,
-    cases: u32,
-    tag: u8,
-    bound: Bound,
-    rounds: u64,
-    step_ceiling: u64,
-    work_ceiling: u64,
-    strategy: &BoxedStrategy<Vec<Axiom>>,
+    name: &str, sig: Signature, cases: u32, tag: u8, bound: Bound, rounds: u64, step_ceiling: u64,
+    work_ceiling: u64, strategy: &BoxedStrategy<Vec<Axiom>>,
 ) {
     let runner = prop::Runner::new(Config::with_cases(cases), &seed_name(tag));
     let tally = RefCell::new(Tally::default());

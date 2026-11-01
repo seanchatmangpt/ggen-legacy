@@ -449,9 +449,7 @@ pub fn canon(dag: &TermDag, node: NodeId) -> String {
 /// resolution that never knew about sorts.
 #[must_use]
 pub fn canon_sorted(
-    dag: &TermDag,
-    node: NodeId,
-    sort_of: &impl Fn(MetaId) -> Option<NodeId>,
+    dag: &TermDag, node: NodeId, sort_of: &impl Fn(MetaId) -> Option<NodeId>,
 ) -> String {
     let mut numbering: Vec<MetaId> = Vec::new();
     let mut out = String::new();
@@ -461,11 +459,8 @@ pub fn canon_sorted(
 
 /// The recursive core of [`canon_sorted`].
 fn canon_sorted_at(
-    dag: &TermDag,
-    node: NodeId,
-    sort_of: &impl Fn(MetaId) -> Option<NodeId>,
-    numbering: &mut Vec<MetaId>,
-    out: &mut String,
+    dag: &TermDag, node: NodeId, sort_of: &impl Fn(MetaId) -> Option<NodeId>,
+    numbering: &mut Vec<MetaId>, out: &mut String,
 ) {
     match dag.data(node) {
         NodeData::Leaf(sym) => {
@@ -531,9 +526,7 @@ fn canon_sorted_at(
 /// re-derives it from the cited clause and rejects a mismatch.
 #[must_use]
 pub fn clause_identity(
-    dag: &TermDag,
-    clause: &FolClause,
-    meta_sorts: &BTreeMap<MetaId, NodeId>,
+    dag: &TermDag, clause: &FolClause, meta_sorts: &BTreeMap<MetaId, NodeId>,
 ) -> String {
     let sort_of = |m: MetaId| meta_sorts.get(&m).copied();
     let mut numbering: Vec<MetaId> = Vec::new();
@@ -639,10 +632,7 @@ impl Engine {
     /// so a subsequent [`unify::unify_sorted`] enforces the order-sorted discipline
     /// for those variables. A no-op when the program declared no sorts.
     fn declare_known_sorts(
-        &self,
-        dag: &TermDag,
-        subst: &mut Subst,
-        node: NodeId,
+        &self, dag: &TermDag, subst: &mut Subst, node: NodeId,
     ) -> Result<(), StorageError> {
         if self.meta_sort.is_empty() {
             return Ok(());
@@ -726,9 +716,7 @@ type FreshenedClause = (NodeId, Vec<FolLit>, Vec<(MetaId, NodeId)>);
 /// unifying — this is how the order-sorted discipline follows a clause into every
 /// instantiation. The list is empty when the clause mentions no sorted variable.
 fn freshen_clause(
-    dag: &mut TermDag,
-    clause: &FolClause,
-    meta_sorts: &BTreeMap<MetaId, NodeId>,
+    dag: &mut TermDag, clause: &FolClause, meta_sorts: &BTreeMap<MetaId, NodeId>,
 ) -> Result<FreshenedClause, StorageError> {
     let mut nodes: Vec<NodeId> = vec![clause.head];
     nodes.extend(clause.body.iter().copied().map(FolLit::atom));
@@ -790,13 +778,8 @@ struct SolveLimits<'a> {
 }
 
 fn solve_body(
-    dag: &mut TermDag,
-    engine: &mut Engine,
-    body: &[FolLit],
-    selected: &mut [bool],
-    subst: &Subst,
-    limits: SolveLimits<'_>,
-    out: &mut Vec<Subst>,
+    dag: &mut TermDag, engine: &mut Engine, body: &[FolLit], selected: &mut [bool], subst: &Subst,
+    limits: SolveLimits<'_>, out: &mut Vec<Subst>,
 ) -> Result<(), StorageError> {
     // THE SEARCH IS WHERE THE WORK IS. Charging only committed rules bounds the OUTPUT
     // and leaves the enumeration that produces it unbounded, which is how a fully-variable
@@ -876,11 +859,7 @@ struct Produced {
 /// One grounding round: cross every currently-demanded call against every
 /// program clause, and return every newly-derivable ground rule instance found.
 fn expand_round(
-    dag: &mut TermDag,
-    engine: &mut Engine,
-    program: &FolProgram,
-    ctx: &SortContext,
-    cap: u64,
+    dag: &mut TermDag, engine: &mut Engine, program: &FolProgram, ctx: &SortContext, cap: u64,
 ) -> Result<Vec<Produced>, StorageError> {
     let mut produced = Vec::new();
     let call_keys: Vec<(String, NodeId)> = engine
@@ -971,11 +950,7 @@ fn expand_round(
 /// The content key of one ground rule instance: `(head, pos atoms, neg atoms,
 /// rule index)`, length-prefixed throughout.
 fn ground_rule_key(
-    dag: &TermDag,
-    head: NodeId,
-    pos: &[NodeId],
-    neg: &[NodeId],
-    rule: usize,
+    dag: &TermDag, head: NodeId, pos: &[NodeId], neg: &[NodeId], rule: usize,
 ) -> String {
     let mut out = String::new();
     frame(&mut out, &canon(dag, head));
@@ -999,10 +974,7 @@ fn ground_rule_key(
 /// a recursive rule's positive premise can only be satisfied once that call has
 /// itself accumulated an answer. Returns `true` if the resolution floundered.
 fn ground(
-    dag: &mut TermDag,
-    engine: &mut Engine,
-    program: &FolProgram,
-    ctx: &SortContext,
+    dag: &mut TermDag, engine: &mut Engine, program: &FolProgram, ctx: &SortContext,
     budget: FolBudget,
 ) -> Result<bool, StorageError> {
     // Seed the goal's own metavariables' sorts into the run-wide registry FIRST, so the
@@ -1135,9 +1107,7 @@ fn positive_least_model(dag: &TermDag, engine: &Engine) -> BTreeSet<String> {
 /// no rule relying on negation can found a `True` answer under an incomplete
 /// grounding.
 fn well_founded(
-    dag: &TermDag,
-    engine: &Engine,
-    exhausted: bool,
+    dag: &TermDag, engine: &Engine, exhausted: bool,
 ) -> (BTreeSet<String>, BTreeSet<String>) {
     if exhausted {
         let w = positive_least_model(dag, engine);
@@ -1173,10 +1143,7 @@ fn well_founded(
 /// deliberately not simply trusted from `w`'s own membership, so a defect in
 /// `w`'s computation cannot silently launder into a proof.
 fn build_proofs(
-    dag: &TermDag,
-    engine: &Engine,
-    program: &FolProgram,
-    w: &BTreeSet<String>,
+    dag: &TermDag, engine: &Engine, program: &FolProgram, w: &BTreeSet<String>,
     not_false: &BTreeSet<String>,
 ) -> BTreeMap<String, FolProof> {
     let mut proofs: BTreeMap<String, FolProof> = BTreeMap::new();
@@ -1244,12 +1211,8 @@ fn build_proofs(
 /// candidates under which the goal becomes FULLY ground, deduplicating by
 /// content key and sorting for a deterministic answer order.
 fn project(
-    dag: &mut TermDag,
-    engine: &Engine,
-    program: &FolProgram,
-    ctx: &SortContext,
-    w: &BTreeSet<String>,
-    proofs: &BTreeMap<String, FolProof>,
+    dag: &mut TermDag, engine: &Engine, program: &FolProgram, ctx: &SortContext,
+    w: &BTreeSet<String>, proofs: &BTreeMap<String, FolProof>,
 ) -> Result<Vec<FolBinding>, StorageError> {
     let mut candidates: Vec<(String, NodeId)> = engine
         .atoms
@@ -1330,10 +1293,7 @@ fn project(
 /// lower bound resolves soundly but may prune a unification a lattice would
 /// complete (the pinned clash-on-ambiguity contract).
 pub fn resolve_fol(
-    dag: &mut TermDag,
-    program: &FolProgram,
-    ctx: &SortContext,
-    budget: &FolBudget,
+    dag: &mut TermDag, program: &FolProgram, ctx: &SortContext, budget: &FolBudget,
 ) -> Result<FolControl, StorageError> {
     for (index, clause) in program.clauses.iter().enumerate() {
         if clause.body.len() > MAX_BODY_LITERALS {
@@ -1472,11 +1432,8 @@ impl purrdf_hash::error::StructuredError for FolProofError {
 /// even on an otherwise well-formed record. A [`FolProof::Assert`] is the
 /// zero-premise case restricted to an UNCONDITIONAL clause.
 pub fn check_fol_proof(
-    dag: &mut TermDag,
-    proof: &FolProof,
-    clauses: &[FolClause],
-    meta_sorts: &BTreeMap<MetaId, NodeId>,
-    ctx: &SortContext,
+    dag: &mut TermDag, proof: &FolProof, clauses: &[FolClause],
+    meta_sorts: &BTreeMap<MetaId, NodeId>, ctx: &SortContext,
     not_false: &impl Fn(&TermDag, NodeId) -> bool,
 ) -> Result<NodeId, FolProofError> {
     let rule = proof.rule();
@@ -1717,9 +1674,7 @@ purrdf_lex::variant_from!(FolError { Clause(NonDatalogClause), Storage(StorageEr
 /// that same metavariable every time after — clause-scoped, exactly like a
 /// [`crate::clause::ClauseTerm::Var`] itself is.
 fn lower_term(
-    dag: &mut TermDag,
-    scope: &mut BTreeMap<String, NodeId>,
-    term: &ClauseTerm,
+    dag: &mut TermDag, scope: &mut BTreeMap<String, NodeId>, term: &ClauseTerm,
 ) -> Result<NodeId, StorageError> {
     match term {
         ClauseTerm::Var(name) => {
@@ -1741,10 +1696,7 @@ fn lower_term(
 
 /// Lower one [`ClauseAtom`] into the 4-ary application `"triple"(s, p, o, g)`.
 fn lower_atom(
-    dag: &mut TermDag,
-    triple_op: NodeId,
-    scope: &mut BTreeMap<String, NodeId>,
-    atom: &ClauseAtom,
+    dag: &mut TermDag, triple_op: NodeId, scope: &mut BTreeMap<String, NodeId>, atom: &ClauseAtom,
 ) -> Result<NodeId, StorageError> {
     let args: Vec<NodeId> = atom
         .terms()
@@ -1764,9 +1716,7 @@ fn lower_atom(
 /// [`crate::clause::HeadForm::Atomic`]. This backward-resolution lowering currently
 /// requires one head atom; the semi-naive evaluator also admits conjunctions.
 fn lower_datalog_clauses(
-    dag: &mut TermDag,
-    triple_op: NodeId,
-    clauses: &[DlClause],
+    dag: &mut TermDag, triple_op: NodeId, clauses: &[DlClause],
 ) -> Result<Vec<FolClause>, FolError> {
     let mut out = Vec::with_capacity(clauses.len());
     for (index, clause) in clauses.iter().enumerate() {
@@ -1805,9 +1755,7 @@ fn lower_datalog_clauses(
 /// (independent of every clause's), recording every distinct
 /// [`ClauseTerm::Var`] it mentions, in FIRST-OCCURRENCE order.
 fn lower_goal(
-    dag: &mut TermDag,
-    triple_op: NodeId,
-    goal: &ClauseAtom,
+    dag: &mut TermDag, triple_op: NodeId, goal: &ClauseAtom,
 ) -> Result<(NodeId, Vec<(NodeId, String)>), StorageError> {
     let mut scope = BTreeMap::new();
     let mut order = Vec::new();
@@ -1857,9 +1805,7 @@ fn lower_goal(
 /// for any clause that is not [`crate::clause::HeadForm::Atomic`] — this
 /// adapter is Datalog-only, exactly like [`crate::seminaive::compile`].
 pub fn solve_datalog_goal(
-    clauses: &[DlClause],
-    goal: &ClauseAtom,
-    budget: &FolBudget,
+    clauses: &[DlClause], goal: &ClauseAtom, budget: &FolBudget,
 ) -> Result<(TermDag, FolControl), FolError> {
     let mut dag = TermDag::default();
     let triple_op = dag.intern_leaf("triple")?;

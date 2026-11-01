@@ -149,9 +149,7 @@ impl PropertyFunction for Table {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -358,13 +356,8 @@ fn interned_rows<D: purrdf_core::DatasetView<ReadError = std::convert::Infallibl
 
 /// Run `query` through `door` with `substitutions`, under `lane`.
 fn request(
-    engine: &NativeSparqlEngine,
-    data: &Arc<RdfDataset>,
-    env: &ExtensionEnv<'static>,
-    door: Door,
-    lane: ShaclPrebinding,
-    query: &str,
-    substitutions: &[(String, TermValue)],
+    engine: &NativeSparqlEngine, data: &Arc<RdfDataset>, env: &ExtensionEnv<'static>, door: Door,
+    lane: ShaclPrebinding, query: &str, substitutions: &[(String, TermValue)],
 ) -> Result<Vec<Vec<Option<TermValue>>>, String> {
     let options = QueryOptions::new().with_env(env).with_prebinding(lane);
     let owned = SparqlRequest {
@@ -429,12 +422,8 @@ fn request(
 
 /// Run `query` as a prepared execution declaring `?q`, bound to `value`, under `lane`.
 fn prepared(
-    engine: &NativeSparqlEngine,
-    data: &Arc<RdfDataset>,
-    env: &ExtensionEnv<'static>,
-    lane: ShaclPrebinding,
-    query: &str,
-    value: &TermValue,
+    engine: &NativeSparqlEngine, data: &Arc<RdfDataset>, env: &ExtensionEnv<'static>,
+    lane: ShaclPrebinding, query: &str, value: &TermValue,
 ) -> Result<Vec<Vec<Option<TermValue>>>, String> {
     let options = QueryOptions::new().with_env(env).with_prebinding(lane);
     let mut execution = engine
@@ -628,13 +617,8 @@ const HELD: usize = KINDS.len() * NAMES.len();
 /// through every request door, each on a fresh engine — and hold every run to
 /// `expected` and to a relation invoked bound, with exactly `value`, every time.
 fn admitted_bound_everywhere(
-    env: &ExtensionEnv<'static>,
-    invocations: &Mutex<Vec<Invocation>>,
-    lane: ShaclPrebinding,
-    query: &str,
-    value: &TermValue,
-    expected: &[Vec<Option<TermValue>>],
-    context: &str,
+    env: &ExtensionEnv<'static>, invocations: &Mutex<Vec<Invocation>>, lane: ShaclPrebinding,
+    query: &str, value: &TermValue, expected: &[Vec<Option<TermValue>>], context: &str,
 ) {
     let data = dataset();
     let expected = sorted(expected.to_vec());
@@ -679,10 +663,7 @@ fn admitted_bound_everywhere(
 /// and against the free-capable one, whose invocations must include a FREE one: the
 /// observation that the refusal is right, and not merely strict.
 fn refused_and_free_when_served(
-    lane: ShaclPrebinding,
-    query: &str,
-    value: &TermValue,
-    context: &str,
+    lane: ShaclPrebinding, query: &str, value: &TermValue, context: &str,
 ) {
     let data = dataset();
     let (env, invocations) = relations();

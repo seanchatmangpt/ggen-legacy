@@ -101,9 +101,7 @@ impl purrdf_sparql_eval::HttpTransport for &SpyTransport {
 /// Run `query` against [`local_dataset`] with `resolver` injected and `base_iri` in
 /// scope for relative IRI references.
 fn run_with_base(
-    resolver: &(dyn ServiceResolver + Sync),
-    query: &str,
-    base_iri: Option<&str>,
+    resolver: &(dyn ServiceResolver + Sync), query: &str, base_iri: Option<&str>,
 ) -> Result<SparqlResult, purrdf_core::RdfDiagnostic> {
     NativeSparqlEngine::new().query_with_source(
         &local_dataset(),
@@ -119,8 +117,7 @@ fn run_with_base(
 
 /// Run `query` against [`local_dataset`] with `resolver` injected and no base IRI.
 fn run(
-    resolver: &(dyn ServiceResolver + Sync),
-    query: &str,
+    resolver: &(dyn ServiceResolver + Sync), query: &str,
 ) -> Result<SparqlResult, purrdf_core::RdfDiagnostic> {
     run_with_base(resolver, query, None)
 }
@@ -131,8 +128,7 @@ type Recorded = (SparqlResult, Vec<(String, &'static str)>);
 /// Run `query` governed (metered) against [`local_dataset`] with `resolver` injected:
 /// the complete result, and each silenced invocation as `(endpoint, kind label)`.
 fn run_recorded(
-    resolver: &(dyn ServiceResolver + Sync),
-    query: &str,
+    resolver: &(dyn ServiceResolver + Sync), query: &str,
 ) -> Result<Recorded, purrdf_core::RdfDiagnostic> {
     let outcome = NativeSparqlEngine::new().query_governed(
         &local_dataset(),
@@ -707,8 +703,7 @@ struct EndpointSpy(Mutex<Vec<String>>);
 
 impl ServiceResolver for EndpointSpy {
     fn resolve(
-        &self,
-        request: ServiceRequest<'_>,
+        &self, request: ServiceRequest<'_>,
     ) -> Result<purrdf_sparql_eval::ResolvedBindings, RemoteError> {
         self.0
             .lock()
@@ -794,8 +789,7 @@ fn the_silent_flag_reaches_the_resolver() {
 
     impl ServiceResolver for SilentSpy {
         fn resolve(
-            &self,
-            request: ServiceRequest<'_>,
+            &self, request: ServiceRequest<'_>,
         ) -> Result<purrdf_sparql_eval::ResolvedBindings, RemoteError> {
             self.0.lock().expect("lock").push(request.silent);
             Err(RemoteError::Transport("observed".to_owned()))

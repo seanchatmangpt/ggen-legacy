@@ -357,11 +357,7 @@ impl Scan {
 
     /// Check every placed class expression against the EL, QL and RL grammars.
     fn class_expressions(
-        &self,
-        interner: &Interner,
-        v: &Vocab,
-        index: &TripleIndex,
-        out: &mut Vec<ProfileViolation>,
+        &self, interner: &Interner, v: &Vocab, index: &TripleIndex, out: &mut Vec<ProfileViolation>,
     ) {
         for (&node, preds) in index {
             let Some(former) = former(preds, v) else {
@@ -396,11 +392,7 @@ impl Scan {
     /// Check the axiom-level vocabulary — the constructs whose profile membership does not
     /// depend on a class-expression position.
     fn axioms(
-        &self,
-        interner: &Interner,
-        v: &Vocab,
-        chain: u32,
-        index: &TripleIndex,
+        &self, interner: &Interner, v: &Vocab, chain: u32, index: &TripleIndex,
         out: &mut Vec<ProfileViolation>,
     ) {
         for (&s, preds) in index {
@@ -426,13 +418,8 @@ impl Scan {
 
     /// Check the OWL 2 DL global restrictions this module can decide syntactically.
     fn description_logic(
-        &self,
-        interner: &Interner,
-        v: &Vocab,
-        extra: &Extra,
-        index: &TripleIndex,
-        role_refusal: Option<&crate::RoleHierarchyError>,
-        out: &mut Vec<ProfileViolation>,
+        &self, interner: &Interner, v: &Vocab, extra: &Extra, index: &TripleIndex,
+        role_refusal: Option<&crate::RoleHierarchyError>, out: &mut Vec<ProfileViolation>,
     ) {
         let Extra {
             chain,
@@ -543,11 +530,7 @@ fn el_denies(former: Former, index: &TripleIndex, v: &Vocab, node: u32) -> Optio
 
 /// Why OWL 2 QL excludes `former` at `positions`, if it does.
 fn ql_denies(
-    former: Former,
-    positions: u8,
-    index: &TripleIndex,
-    v: &Vocab,
-    node: u32,
+    former: Former, positions: u8, index: &TripleIndex, v: &Vocab, node: u32,
 ) -> Option<&'static str> {
     if positions & SUB != 0 {
         // QL's subClassExpression is a class or an UNQUALIFIED existential.
@@ -571,12 +554,7 @@ fn ql_denies(
 
 /// Why OWL 2 RL excludes `former` at `positions`, if it does.
 fn rl_denies(
-    former: Former,
-    positions: u8,
-    index: &TripleIndex,
-    interner: &Interner,
-    v: &Vocab,
-    node: u32,
+    former: Former, positions: u8, index: &TripleIndex, interner: &Interner, v: &Vocab, node: u32,
 ) -> Option<&'static str> {
     if positions & SUB != 0
         && !matches!(
@@ -628,10 +606,7 @@ fn some_values_filler(index: &TripleIndex, v: &Vocab, node: u32) -> Option<u32> 
 
 /// The lexical form of a max-cardinality bound, if the restriction states exactly one.
 fn max_cardinality_bound<'a>(
-    index: &TripleIndex,
-    interner: &'a Interner,
-    v: &Vocab,
-    node: u32,
+    index: &TripleIndex, interner: &'a Interner, v: &Vocab, node: u32,
 ) -> Option<&'a str> {
     let preds = index.get(&node)?;
     let bounds = preds.get(&v.max_card).or_else(|| preds.get(&v.max_qcard))?;
@@ -737,9 +712,7 @@ fn typing_denials(object: u32, v: &Vocab) -> &'static [(OwlProfile, &'static str
 
 /// The profiles a predicate excludes the ontology from, with the reason.
 fn predicate_denials(
-    predicate: u32,
-    chain: u32,
-    v: &Vocab,
+    predicate: u32, chain: u32, v: &Vocab,
 ) -> &'static [(OwlProfile, &'static str)] {
     if predicate == v.inverse_of {
         &[(OwlProfile::El, EL_NO_INVERSE)]

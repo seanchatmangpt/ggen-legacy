@@ -461,9 +461,7 @@ fn peak_width(height: usize) -> Result<usize, ProofError> {
 }
 
 fn peak_index_for_leaf(
-    count: usize,
-    heights: &[usize],
-    leaf_index: usize,
+    count: usize, heights: &[usize], leaf_index: usize,
 ) -> Result<usize, ProofError> {
     if leaf_index >= count {
         return Err(ProofError::LeafRange { leaf_index, count });

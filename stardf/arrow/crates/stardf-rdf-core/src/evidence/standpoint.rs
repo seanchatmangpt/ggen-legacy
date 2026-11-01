@@ -96,10 +96,7 @@ impl<K: Copy + Ord> StandpointOrder<K> {
     /// # Errors
     /// Returns undeclared/unscoped references, a directed cycle or storage refusal.
     pub fn new<S: Admission + ?Sized>(
-        declared: &[K],
-        sharpening: &[(K, K)],
-        unscoped: Option<K>,
-        memory: &mut Memory<'_, S>,
+        declared: &[K], sharpening: &[(K, K)], unscoped: Option<K>, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StandpointError<K>> {
         memory.try_scope(|memory| {
             let mut nodes = memory.collect(
@@ -161,9 +158,7 @@ impl<K: Copy + Ord> StandpointOrder<K> {
     /// Propagate declared seed values once along each original order edge.
     /// The returned canonical-node array retains its native construction grant.
     pub(super) fn inherit_values<V: Copy, S: Admission + ?Sized>(
-        &self,
-        mut seed: impl FnMut(K) -> V,
-        mut join: impl FnMut(V, V) -> V,
+        &self, mut seed: impl FnMut(K) -> V, mut join: impl FnMut(V, V) -> V,
         memory: &mut Memory<'_, S>,
     ) -> Result<Vec<V>, StorageError> {
         memory.scope(|memory| {
@@ -197,10 +192,7 @@ impl<K: Copy + Ord> StandpointOrder<K> {
     /// # Errors
     /// Refuses an undeclared/unscoped reference or native traversal storage.
     pub fn sharpens<S: Admission + ?Sized>(
-        &self,
-        sharper: K,
-        broader: K,
-        memory: &mut Memory<'_, S>,
+        &self, sharper: K, broader: K, memory: &mut Memory<'_, S>,
     ) -> Result<bool, StandpointError<K>> {
         let from = self.index(sharper)?;
         let to = self.index(broader)?;
@@ -239,8 +231,7 @@ impl<K: Copy + Ord> StandpointOrder<K> {
     /// # Errors
     /// Propagates the original native admission callback's refund refusal.
     pub fn release<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         let Self {
             nodes,

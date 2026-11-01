@@ -148,9 +148,7 @@ impl PropertyFunction for MockProducer {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -228,10 +226,7 @@ fn producer(prefix: &str, count: usize) -> Arc<dyn PropertyFunction> {
 /// actually holds; they are separate parameters because the whole depth-probe
 /// question is what happens when the two disagree.
 fn producer_declaring(
-    prefix: &str,
-    count: usize,
-    rows: u64,
-    attests: Attests,
+    prefix: &str, count: usize, rows: u64, attests: Attests,
 ) -> Arc<dyn PropertyFunction> {
     producer_counting(prefix, count, rows, attests, Arc::new(AtomicU64::new(0)))
 }
@@ -239,11 +234,7 @@ fn producer_declaring(
 /// The same producer, counting its invocations into `opens` so a test can see
 /// how many times the relation was actually entered.
 fn producer_counting(
-    prefix: &str,
-    count: usize,
-    rows: u64,
-    attests: Attests,
-    opens: Arc<AtomicU64>,
+    prefix: &str, count: usize, rows: u64, attests: Attests, opens: Arc<AtomicU64>,
 ) -> Arc<dyn PropertyFunction> {
     let arity = PfArity::new(1, 1);
     let emitted = (0..count)
@@ -414,8 +405,7 @@ fn seed_request() -> RetrievalRequest {
 /// Plan and compile [`seed_request`] against `registry`: a genuine bundle, with
 /// the real plan identity and the live registry instance the executor checks.
 fn compiled(
-    registry: &PropertyFunctionRegistry<'static>,
-    stats: &MockStatistics,
+    registry: &PropertyFunctionRegistry<'static>, stats: &MockStatistics,
 ) -> CompiledRetrieval {
     let planned = plan(&seed_request(), registry, stats).expect("the fixture request plans");
     let env = AdmissionEnvironment {
@@ -907,8 +897,7 @@ fn searched(registry: &PropertyFunctionRegistry<'static>, stats: &MockStatistics
 
 /// What one stratum's executed stream attested.
 fn attested(
-    execution: &purrdf_retrieval::ExecutionResult<'_>,
-    stratum: &Iri,
+    execution: &purrdf_retrieval::ExecutionResult<'_>, stratum: &Iri,
 ) -> purrdf_retrieval::PfAttestation {
     execution
         .streams
@@ -1763,9 +1752,7 @@ fn candidate_column(rows: &[Vec<Option<TermValue>>]) -> Vec<String> {
 /// position the grammar puts one — and the whole claim the wrap makes is that putting
 /// that text inside a bounded sub-`SELECT` does not change what it means.
 fn whole_query(
-    sparql: &str,
-    registry: &PropertyFunctionRegistry<'static>,
-    held: &RdfDataset,
+    sparql: &str, registry: &PropertyFunctionRegistry<'static>, held: &RdfDataset,
 ) -> Vec<String> {
     let engine = NativeSparqlEngine::new();
     let outcome = engine
@@ -1790,9 +1777,7 @@ fn whole_query(
 
 /// The same text run the way a unit runs it: wrapped, bounded, through `execute`.
 fn wrapped_query(
-    sparql: &str,
-    registry: &PropertyFunctionRegistry<'static>,
-    stats: &MockStatistics,
+    sparql: &str, registry: &PropertyFunctionRegistry<'static>, stats: &MockStatistics,
     held: &RdfDataset,
 ) -> (Vec<String>, ProducerStatus) {
     let mut bundle = compiled(registry, stats);

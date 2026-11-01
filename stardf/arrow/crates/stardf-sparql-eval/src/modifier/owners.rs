@@ -78,9 +78,7 @@ impl<K: DedupKey, const ADJACENT: bool> DedupState<K, ADJACENT> {
     /// Return the first survivor's ordinal; equality remains binding-only.
     /// Evidence is merged in the original output owner, never in hash keys.
     pub(super) fn survivor(
-        &mut self,
-        row: &RetainedRow<K::Id>,
-        ordinal: usize,
+        &mut self, row: &RetainedRow<K::Id>, ordinal: usize,
     ) -> Result<Option<usize>, EvalError> {
         if ADJACENT {
             if let Some(previous) = &self.previous
@@ -149,8 +147,7 @@ fn row_hash<I: ViewTermId>(row: &RetainedRow<I>) -> u64 {
 /// admitted before allocation; no merge or comparator dispatch grows either.
 /// Left wins ties, and the existing ceil(log2 n) moving-side cost law applies.
 pub(crate) fn order_permutation(
-    length: usize,
-    workspace: &WorkspaceCapability,
+    length: usize, workspace: &WorkspaceCapability,
     mut compare: impl FnMut(usize, usize) -> Result<Ordering, EvalError>,
 ) -> Result<AdmittedVec<usize>, EvalError> {
     let mut order = AdmittedVec::with_capacity(length, workspace)?;

@@ -34,8 +34,7 @@ impl CsvwWritePlan {
     /// Returns a configuration error for an unsafe path, malformed table IRI,
     /// duplicate artifact path, or an empty mapping.
     pub fn new(
-        metadata_path: impl Into<String>,
-        table_paths: BTreeMap<String, String>,
+        metadata_path: impl Into<String>, table_paths: BTreeMap<String, String>,
     ) -> Result<Self, ProjectionError> {
         let metadata_path = metadata_path.into();
         validate_package_path(&metadata_path)?;
@@ -113,10 +112,7 @@ pub trait CsvwRdfTableMapping<D: DatasetView> {
 /// Returns any mapping, model-integrity, serialization, path, or resource-limit
 /// failure without producing a partial package.
 pub fn project_csvw<D, M>(
-    view: &D,
-    mapping: &M,
-    plan: &CsvwWritePlan,
-    config: &CsvwConfig,
+    view: &D, mapping: &M, plan: &CsvwWritePlan, config: &CsvwConfig,
 ) -> Result<CsvwWriteOutcome, ProjectionError>
 where
     D: DatasetView,
@@ -137,18 +133,13 @@ where
 /// Returns a model-integrity, incomplete path mapping, CSV/JSON serialization,
 /// unsafe comment, or configured resource-limit failure.
 pub fn write_csvw(
-    group: &CsvwTableGroup,
-    plan: &CsvwWritePlan,
-    config: &CsvwConfig,
+    group: &CsvwTableGroup, plan: &CsvwWritePlan, config: &CsvwConfig,
 ) -> Result<CsvwWriteOutcome, ProjectionError> {
     write_csvw_with_ledger(group, plan, config, LossLedger::new())
 }
 
 fn write_csvw_with_ledger(
-    group: &CsvwTableGroup,
-    plan: &CsvwWritePlan,
-    config: &CsvwConfig,
-    loss_ledger: LossLedger,
+    group: &CsvwTableGroup, plan: &CsvwWritePlan, config: &CsvwConfig, loss_ledger: LossLedger,
 ) -> Result<CsvwWriteOutcome, ProjectionError> {
     group.validate()?;
     let group_urls = group
@@ -328,9 +319,7 @@ fn schema_metadata(schema: &CsvwSchema, config: &CsvwConfig) -> Result<Value, Pr
 }
 
 fn insert_inherited(
-    object: &mut Object,
-    inherited: &CsvwInheritedProperties,
-    config: &CsvwConfig,
+    object: &mut Object, inherited: &CsvwInheritedProperties, config: &CsvwConfig,
 ) -> Result<(), ProjectionError> {
     insert_optional_string(object, "aboutUrl", inherited.about_url.as_deref());
     object.insert(
@@ -360,8 +349,7 @@ fn insert_inherited(
 }
 
 fn datatype_metadata(
-    datatype: &CsvwDatatype,
-    config: &CsvwConfig,
+    datatype: &CsvwDatatype, config: &CsvwConfig,
 ) -> Result<Value, ProjectionError> {
     let mut object = Object::new();
     object.insert("@type".to_owned(), Value::String("Datatype".to_owned()));
@@ -719,9 +707,7 @@ mod tests {
 
     impl CsvwRdfTableMapping<RdfDataset> for Mapping {
         fn map(
-            &self,
-            view: &RdfDataset,
-            _config: &CsvwConfig,
+            &self, view: &RdfDataset, _config: &CsvwConfig,
         ) -> Result<CsvwMappedTableGroup, ProjectionError> {
             if view.quads().next().is_none() {
                 return Err(ProjectionError::integrity(

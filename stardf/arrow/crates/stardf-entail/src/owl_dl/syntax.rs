@@ -117,9 +117,7 @@ impl Syntax {
     /// Traverse only retained native dependencies, including finite expression cycles.
     #[cfg(test)]
     pub(crate) fn selected(
-        &self,
-        roots: &[usize],
-        stop: Option<&dyn purrdf_datalog::StopSignal>,
+        &self, roots: &[usize], stop: Option<&dyn purrdf_datalog::StopSignal>,
     ) -> Result<Vec<usize>, SelectionError> {
         if let Some(original) = self.refusal {
             return Err(SelectionError::Storage(original));
@@ -199,9 +197,7 @@ impl Syntax {
     }
 
     fn ensure(
-        &mut self,
-        kind: Kind,
-        memory: &mut Memory<'_, Resident>,
+        &mut self, kind: Kind, memory: &mut Memory<'_, Resident>,
     ) -> Result<usize, StorageError> {
         if let Some(root) = self.root(kind) {
             return Ok(root);
@@ -221,10 +217,7 @@ impl Syntax {
     }
 
     fn append(
-        &mut self,
-        owner: Owner,
-        read: Read,
-        memory: &mut Memory<'_, Resident>,
+        &mut self, owner: Owner, read: Read, memory: &mut Memory<'_, Resident>,
     ) -> Result<(), StorageError> {
         let reads = match owner {
             Owner::Detached => return Ok(()),
@@ -271,12 +264,7 @@ impl Syntax {
     /// Cells share the original strict walk's two selected objects. No list is
     /// walked again to obtain its provenance.
     pub(crate) fn list_read(
-        &mut self,
-        cell: u32,
-        predicate: u32,
-        object: u32,
-        rest: u32,
-        nil: u32,
+        &mut self, cell: u32, predicate: u32, object: u32, rest: u32, nil: u32,
     ) {
         let _ = self.publish(|syntax, memory| {
             let id = syntax.ensure(Kind::List(cell), memory)?;
@@ -332,10 +320,7 @@ impl Syntax {
     }
 
     pub(crate) fn bind_tbox(
-        &mut self,
-        start: usize,
-        end: usize,
-        root: Option<usize>,
+        &mut self, start: usize, end: usize, root: Option<usize>,
     ) -> Result<(), StorageError> {
         if start == end {
             return Ok(());

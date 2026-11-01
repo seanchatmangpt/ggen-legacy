@@ -134,9 +134,7 @@ fn technical_entries() -> Vec<(String, u32)> {
 }
 
 fn corpus(
-    documents: &[&str],
-    analyzer: Analyzer,
-    reverse_insertion: bool,
+    documents: &[&str], analyzer: Analyzer, reverse_insertion: bool,
 ) -> (Arc<RdfDataset>, Arc<TextIndex>) {
     let mut rows: Vec<_> = documents.iter().enumerate().collect();
     if reverse_insertion {

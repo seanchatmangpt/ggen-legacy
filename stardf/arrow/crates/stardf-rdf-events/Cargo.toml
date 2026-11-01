@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT OR Apache-2.0 OR MulanPSL-2.0
 
 [package]
-name = "stardf-events"
+name = "stardf-rdf-events"
 description = "Permissive RDF 1.2 ingestion protocol: the object-safe event sink/source seam both the GTS container and the IR engine depend ON"
 version.workspace = true
 edition.workspace = true

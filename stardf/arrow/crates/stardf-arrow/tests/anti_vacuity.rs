@@ -10,19 +10,32 @@
 //!
 //! Chicago discipline: real `python3 scripts/verify.py` subprocesses, no mocks.
 //! Skips are loud: missing python3/rdflib → panic with `[SKIP: reason]`.
+//!
+//! Stream reality (witnessed 2026-10-31 against the live verifier): verify.py
+//! prints PASS lines and `[ALL PASS]` on stdout, but every `[FAIL]` line goes
+//! to stderr — so the drifted-symbol assertion must read stderr too, not just
+//! stdout.
 
 use std::path::PathBuf;
 use std::process::Command;
 
+/// Workspace root (`stardf/arrow/`): two levels above this crate's manifest
+/// dir (`crates/stardf-arrow/`). One `.parent()` lands at `crates/`, which is
+/// NOT the root — the verifier, ontology, and capi header all live two up.
 fn arrow_root() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
         .parent()
-        .unwrap()
+        .and_then(|p| p.parent())
+        .expect("CARGO_MANIFEST_DIR must have a two-level ancestor")
         .to_path_buf()
 }
 
+/// Fixtures live in THIS crate's `tests/fixtures/` (byte-copies of the live
+/// artifacts), not under the workspace root's own `tests/` dir.
 fn fixture(name: &str) -> PathBuf {
-    arrow_root().join("tests/fixtures").join(name)
+    PathBuf::from(env!("CARGO_MANIFEST_DIR"))
+        .join("tests/fixtures")
+        .join(name)
 }
 
 fn verify(ttl: &PathBuf, header: &PathBuf) -> (i32, String) {
@@ -37,7 +50,11 @@ fn verify(ttl: &PathBuf, header: &PathBuf) -> (i32, String) {
         .unwrap_or_else(|e| panic!("[SKIP: python3 verify.py unavailable: {e}]"));
     (
         out.status.code().unwrap_or(-1),
-        String::from_utf8_lossy(&out.stdout).into_owned(),
+        format!(
+            "{}{}",
+            String::from_utf8_lossy(&out.stdout),
+            String::from_utf8_lossy(&out.stderr)
+        ),
     )
 }
 
@@ -86,7 +103,10 @@ fn anti_vacuity_verifier_refuses_mutated_header_and_senses_mutated_ontology() {
         &fixture("header_pristine.h"),
     );
     assert_eq!(code_p, 0, "pristine pair must verify: {out_p}");
-    assert!(out_p.contains("[ALL PASS]"), "pristine run lost its PASS line");
+    assert!(
+        out_p.contains("[ALL PASS]"),
+        "pristine run lost its PASS line"
+    );
 
     // Mutated header must FAIL with the drifted symbol named.
     let (code_h, out_h) = verify(
@@ -99,7 +119,10 @@ fn anti_vacuity_verifier_refuses_mutated_header_and_senses_mutated_ontology() {
         "FAIL output must name the drifted symbol: {out_h}"
     );
 
-    // Mutated ontology: census decrements by exactly one individual.
+    // Mutated ontology: census decrements by exactly one individual
+    // (witnessed 2026-10-31: pristine census is individuals=22, the missing-
+    // export fixture drops the `stardf_stream_free` CabiExport individual →
+    // 21) and the verifier must flip to exit 1 naming the unclaimed symbol.
     let out_m = Command::new("python3")
         .arg(arrow_root().join("scripts/verify.py"))
         .arg("--ttl")
@@ -111,10 +134,14 @@ fn anti_vacuity_verifier_refuses_mutated_header_and_senses_mutated_ontology() {
         .current_dir(arrow_root())
         .output()
         .expect("verify.py must run");
-    let census = String::from_utf8_lossy(&out_m.stdout);
+    let census = format!(
+        "{}{}",
+        String::from_utf8_lossy(&out_m.stdout),
+        String::from_utf8_lossy(&out_m.stderr)
+    );
     assert!(
-        census.contains("individuals=17") || out_m.status.code() == Some(1),
-        "ontology mutation must decrement census (18→17) or flip exit; got: {census}"
+        census.contains("individuals=21") || out_m.status.code() == Some(1),
+        "ontology mutation must decrement census (22→21) or flip exit; got: {census}"
     );
 
     // Self-mutation control: the verifier's own --mutate drop-export must flip.

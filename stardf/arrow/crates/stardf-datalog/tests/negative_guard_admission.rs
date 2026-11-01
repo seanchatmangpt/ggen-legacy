@@ -24,8 +24,7 @@ struct Answers {
 
 impl GuardEvaluator for Answers {
     fn evaluate(
-        &self,
-        call: &GuardCall<'_>,
+        &self, call: &GuardCall<'_>,
     ) -> Result<GuardRows, purrdf_datalog::guard::CallbackError> {
         match call.guard.name() {
             "expand" => self

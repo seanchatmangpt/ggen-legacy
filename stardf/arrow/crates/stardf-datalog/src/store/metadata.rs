@@ -65,9 +65,7 @@ where
     Arity<N>: StoreShape<N>,
 {
     pub(crate) fn resume<D: TermDictionary<Id = I>, A: Admission + ?Sized>(
-        &mut self,
-        store: &mut RelationStore<D, N>,
-        memory: &mut Memory<'_, A>,
+        &mut self, store: &mut RelationStore<D, N>, memory: &mut Memory<'_, A>,
         mut allow: impl FnMut(usize) -> bool,
     ) -> Result<bool, DictionaryError<D::Error>> {
         if self.phase == Phase::Complete {

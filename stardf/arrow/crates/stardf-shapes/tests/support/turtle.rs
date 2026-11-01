@@ -35,8 +35,7 @@ pub fn loads(prefixes: &str, shapes_ttl: &str) -> Shapes {
 /// Inspect the original property bodies of a fixture, including identity edges.
 /// This asserts the parser's representation without exporting copied definitions.
 pub fn properties<'a>(
-    shapes: &'a Shapes,
-    shape: &'a Shape,
+    shapes: &'a Shapes, shape: &'a Shape,
 ) -> impl Iterator<Item = &'a PropertyShape> {
     let definition = match shape.constraints.as_slice() {
         [Constraint::Reference(id)] => shapes.owner.definition(id).expect("original definition"),

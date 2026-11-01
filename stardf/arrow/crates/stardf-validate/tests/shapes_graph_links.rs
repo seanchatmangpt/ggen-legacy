@@ -83,9 +83,7 @@ fn linking(targets: &[&str]) -> String {
 
 /// The source shapes of every result of validating `data_nt` against `shapes_ttl`.
 fn fired(
-    shapes_ttl: &str,
-    data_nt: &str,
-    table: &[(&str, &str)],
+    shapes_ttl: &str, data_nt: &str, table: &[(&str, &str)],
 ) -> Result<BTreeSet<String>, ShapesError> {
     let imports = ShapesImports::from_turtle(table)?;
     let report = engine::validate_graphs_with_options(

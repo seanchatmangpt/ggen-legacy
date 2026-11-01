@@ -69,8 +69,7 @@ impl ViewFields<'_> {
     }
 
     fn construct(
-        self,
-        prepared: &PreparedGeodesic,
+        self, prepared: &PreparedGeodesic,
         memory: &mut purrdf_lex::allocation::Memory<'_, dyn purrdf_lex::allocation::Admission + '_>,
     ) -> Result<ArcIntervalView, GeoError> {
         let copy = (|| {
@@ -97,9 +96,7 @@ impl ViewFields<'_> {
     }
 
     fn admitted(
-        self,
-        prepared: &PreparedGeodesic,
-        context: &mut MetricContext,
+        self, prepared: &PreparedGeodesic, context: &mut MetricContext,
         progress: &mut WorkProgress<'_>,
     ) -> Result<ArcIntervalView, GeoError> {
         let bytes = self.layout_bytes(prepared)?;
@@ -205,9 +202,7 @@ pub(crate) struct FixedArcLine {
 // validated pole azimuth frame supplies its meridian; ordinary sources keep
 // their exact written longitude. No periodic reduction is applied here.
 fn exact_meridian_base(
-    start: &LonLat,
-    azimuth: Option<&Rat>,
-    values: &crate::numerical::ExactValues<'_>,
+    start: &LonLat, azimuth: Option<&Rat>, values: &crate::numerical::ExactValues<'_>,
 ) -> Result<Option<Rat>, purrdf_xsd::integer::LimbScratchError> {
     if start.is_pole() {
         azimuth
@@ -230,10 +225,7 @@ fn exact_meridian_base(
 /// nonpolar line is not a meridian. This does not classify its travel length.
 /// The caller drops the returned owner before releasing the added allowance.
 pub(crate) fn meridian_plane_degrees_admitted(
-    start: &LonLat,
-    azimuth: &Rat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    start: &LonLat, azimuth: &Rat, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     retained: &mut u64,
 ) -> Result<Option<Rat>, GeoError> {
     use crate::numerical::ExactAdmission;
@@ -276,10 +268,7 @@ impl PreparedGeodesic {
     /// # Errors
     /// Refuses a negative travel distance.
     pub fn prepare_azimuth_arc_view(
-        &self,
-        start: &LonLat,
-        azimuth: &Rat,
-        length: &Metres,
+        &self, start: &LonLat, azimuth: &Rat, length: &Metres,
     ) -> Result<ArcIntervalView, GeoError> {
         if length.exact() < &Rat::zero() {
             return Err(crate::MetricInputError::negative_travel(
@@ -306,11 +295,7 @@ impl PreparedGeodesic {
     }
 
     pub(crate) fn prepare_azimuth_arc_view_admitted(
-        &self,
-        start: &LonLat,
-        azimuth: &Rat,
-        length: &Metres,
-        context: &mut MetricContext,
+        &self, start: &LonLat, azimuth: &Rat, length: &Metres, context: &mut MetricContext,
         progress: &mut WorkProgress<'_>,
     ) -> Result<ArcIntervalView, GeoError> {
         let mut admission = crate::numerical::ExactAdmission::new(context, progress);
@@ -347,11 +332,7 @@ impl PreparedGeodesic {
     /// # Errors
     /// Refuses ambiguous shortest branches and numerical/resource exhaustion.
     pub fn prepare_shortest_arc_view(
-        &self,
-        start: &LonLat,
-        end: &LonLat,
-        minimum_bits: u32,
-        context: &mut MetricContext,
+        &self, start: &LonLat, end: &LonLat, minimum_bits: u32, context: &mut MetricContext,
         mut observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<ArcIntervalView, GeoError> {
         context.begin(1)?;
@@ -384,10 +365,7 @@ impl PreparedGeodesic {
     /// Reuse only a proof owned by the privately validated endpoint-arc type.
     /// Public mutable receipt records cannot enter this trusted preparation seam.
     pub(crate) fn prepare_shortest_arc_view_with_proof(
-        &self,
-        arc: &ShortestGeodesicArc,
-        minimum_bits: u32,
-        context: &mut MetricContext,
+        &self, arc: &ShortestGeodesicArc, minimum_bits: u32, context: &mut MetricContext,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<ArcIntervalView, GeoError> {
         if minimum_bits > context.policy().limits().max_precision_bits {
@@ -443,12 +421,8 @@ impl PreparedGeodesic {
     }
 
     fn shortest_view_owned_from_proof(
-        &self,
-        start: &LonLat,
-        end: &LonLat,
-        proof: &InverseProofReceipt,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &self, start: &LonLat, end: &LonLat, proof: &InverseProofReceipt,
+        context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<ArcIntervalView, GeoError> {
         if proof.branch_multiplicity != ShortestBranchMultiplicity::Unique {
             return Err(GeoError::AmbiguousGeodesic);
@@ -527,9 +501,7 @@ impl ArcIntervalView {
     /// # Errors
     /// Refuses an uncertifiable branch, numerical exhaustion or reference mismatch.
     pub fn refined(
-        &self,
-        bits: u32,
-        context: &mut MetricContext,
+        &self, bits: u32, context: &mut MetricContext,
         mut observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         context.begin(1)?;
@@ -598,9 +570,7 @@ impl ArcIntervalView {
 
     /// Admit and prepare the one direct line in an enclosing numerical phase.
     pub(crate) fn prepare_in(
-        &self,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<FixedArcLine, MathError> {
         let binding_id =
             crate::numerical::math_reference_identity(&self.prepared.reference, math, progress)?;
@@ -645,10 +615,7 @@ impl ArcIntervalView {
     /// # Errors
     /// Refuses invalid parameters, unresolved singularities and numerical/resource exhaustion.
     pub fn parameter_enclosure(
-        &self,
-        lower: &Rat,
-        upper: &Rat,
-        context: &mut MetricContext,
+        &self, lower: &Rat, upper: &Rat, context: &mut MetricContext,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<ArcIntervalEnclosure, GeoError> {
         context.begin(1)?;
@@ -749,12 +716,8 @@ impl FixedArcLine {
     }
 
     pub(super) fn from_state(
-        binding_id: crate::GeoBindingId,
-        start: LonLat,
-        azimuth: FixedInterval,
-        exact_azimuth: Option<Rat>,
-        length: FixedInterval,
-        line: LineState,
+        binding_id: crate::GeoBindingId, start: LonLat, azimuth: FixedInterval,
+        exact_azimuth: Option<Rat>, length: FixedInterval, line: LineState,
     ) -> Self {
         Self {
             binding_id,
@@ -830,10 +793,7 @@ impl FixedArcLine {
     /// Evaluate the complete source-defined parameter image in borrowed scratch.
     /// The caller admits retained line/image workspace before keeping these values.
     pub(crate) fn parameter_enclosure_in(
-        &self,
-        parameter: &FixedInterval,
-        iterations: u32,
-        math: &mut CoordinateMath,
+        &self, parameter: &FixedInterval, iterations: u32, math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<ArcIntervalEnclosure, MathError> {
         let zero = FixedInterval::from_i64(0, math)?;
@@ -847,10 +807,7 @@ impl FixedArcLine {
     /// Certified continuation around closed source endpoints. This internal
     /// capability shares all source law and equations; no boundary epsilon is used.
     pub(crate) fn continuation_enclosure_in(
-        &self,
-        parameter: &FixedInterval,
-        iterations: u32,
-        math: &mut CoordinateMath,
+        &self, parameter: &FixedInterval, iterations: u32, math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<ArcIntervalEnclosure, MathError> {
         let distance = self.length.mul(parameter, math)?;
@@ -878,10 +835,7 @@ impl FixedArcLine {
     }
 
     pub(super) fn image(
-        &self,
-        sigma: &FixedInterval,
-        derivatives: bool,
-        chunks: &mut ChunkObserver<'_, '_>,
+        &self, sigma: &FixedInterval, derivatives: bool, chunks: &mut ChunkObserver<'_, '_>,
         math: &mut CoordinateMath,
     ) -> Result<ChartImage, MathError> {
         let line = &self.line;
@@ -993,9 +947,7 @@ impl FixedArcLine {
     }
 
     fn normal_image(
-        &self,
-        image: &ChartImage,
-        math: &mut CoordinateMath,
+        &self, image: &ChartImage, math: &mut CoordinateMath,
     ) -> Result<([FixedInterval; 3], [FixedInterval; 3]), MathError> {
         let args = super::normal::NormalArguments {
             c: self.line.c.clone(),
@@ -1019,12 +971,8 @@ impl FixedArcLine {
     /// remainder. The autonomous line IVP determines each successive derivative
     /// by induction; no sampled derivative or quadrature difference is used.
     pub(crate) fn normal_taylor_in<'scope>(
-        &self,
-        parameter: &FixedInterval,
-        iterations: u32,
-        workspace: &mut TaylorWorkspace<'scope>,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, parameter: &FixedInterval, iterations: u32, workspace: &mut TaylorWorkspace<'scope>,
+        math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<([TaylorJet<'scope>; 3], [TaylorJet<'scope>; 3]), MathError> {
         use super::normal::TaylorArithmetic;
         let distance = self.length.mul(parameter, math)?;
@@ -1097,10 +1045,7 @@ impl FixedArcLine {
     }
 
     fn longitude_correction(
-        &self,
-        sigma: &FixedInterval,
-        chunks: &mut ChunkObserver<'_, '_>,
-        math: &mut CoordinateMath,
+        &self, sigma: &FixedInterval, chunks: &mut ChunkObserver<'_, '_>, math: &mut CoordinateMath,
     ) -> Result<FixedInterval, MathError> {
         let line = &self.line;
         if line.sin0.lower().is_zero() && line.sin0.upper().is_zero() {
@@ -1123,12 +1068,8 @@ impl FixedArcLine {
     /// Both parameter endpoint enclosures must be ordered on this source line.
     #[allow(clippy::too_many_arguments)] // Endpoint panel, reference and distinct pure scratch/governor capabilities.
     pub(crate) fn quadrilateral_area_in(
-        &self,
-        lower: &FixedInterval,
-        upper: &FixedInterval,
-        reference: &crate::GeographicReference,
-        iterations: u32,
-        math: &mut CoordinateMath,
+        &self, lower: &FixedInterval, upper: &FixedInterval,
+        reference: &crate::GeographicReference, iterations: u32, math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<FixedInterval, MathError> {
         if self.binding_id != crate::numerical::math_reference_identity(reference, math, progress)?
@@ -1177,10 +1118,7 @@ impl FixedArcLine {
     }
 
     fn area_endpoint_azimuth(
-        &self,
-        parameter: &FixedInterval,
-        sigma: &FixedInterval,
-        math: &mut CoordinateMath,
+        &self, parameter: &FixedInterval, sigma: &FixedInterval, math: &mut CoordinateMath,
     ) -> Result<FixedInterval, MathError> {
         if parameter.lower().is_zero() && parameter.upper().is_zero() && self.start.is_pole() {
             return self.azimuth.mul(&self.line.radians_per_degree, math);
@@ -1208,10 +1146,7 @@ impl FixedArcLine {
     /// Even indices identify North, odd indices South. Source/end pole frames
     /// exclude endpoint events independently of a rounded phase enclosure.
     pub(crate) fn interior_meridian_poles_in(
-        &self,
-        iterations: u32,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, iterations: u32, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<Option<PoleEventRange>, MathError> {
         if self.length.is_exact_zero() {
             return Ok(None);
@@ -1276,10 +1211,7 @@ impl FixedArcLine {
     }
 
     fn meridian_longitude(
-        &self,
-        cosine: &FixedInterval,
-        sigma: &FixedInterval,
-        math: &mut CoordinateMath,
+        &self, cosine: &FixedInterval, sigma: &FixedInterval, math: &mut CoordinateMath,
     ) -> Result<(FixedInterval, Option<PoleEventRange>, Option<Rat>), MathError> {
         let pi = FixedInterval::pi(math)?;
         let (first_side, last_side) = meridian_side_interval(sigma, math)?.floor_bounds(math)?;
@@ -1368,9 +1300,7 @@ impl FixedArcLine {
 /// Continuous auxiliary longitude lift. Folding by pi keeps atan2's cosine
 /// nonnegative, so its negative-axis cut never decides the branch.
 pub(super) fn omega_lift(
-    sigma: &FixedInterval,
-    sin0: &FixedInterval,
-    math: &mut CoordinateMath,
+    sigma: &FixedInterval, sin0: &FixedInterval, math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     let zero = Int::from_i128(0);
     let sign = if sin0.lower() > &zero {
@@ -1401,8 +1331,7 @@ pub(super) fn omega_lift(
 // Meridian chart side j changes at sigma=(j-1/2)*pi. This one original
 // phase expression serves longitude lifts and strict interior pole counts.
 fn meridian_side_interval(
-    sigma: &FixedInterval,
-    math: &mut CoordinateMath,
+    sigma: &FixedInterval, math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     let pi = FixedInterval::pi(math)?;
     sigma
@@ -1411,10 +1340,7 @@ fn meridian_side_interval(
 }
 
 fn omega_point(
-    sigma: &FixedInterval,
-    sin0: &FixedInterval,
-    sign: i64,
-    math: &mut CoordinateMath,
+    sigma: &FixedInterval, sin0: &FixedInterval, sign: i64, math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     let pi = FixedInterval::pi(math)?;
     let half_pi = pi.div(&FixedInterval::from_i64(2, math)?, math)?;
@@ -1466,9 +1392,7 @@ fn math_error(error: SolveError, iterations: u32) -> MathError {
 // Geodetic latitude is strictly increasing in sin(beta). Endpoint evaluation
 // removes the artificial atan2 origin in a broad whole-line rectangle.
 fn reduced_sine_latitude(
-    sine: &FixedInterval,
-    c: &FixedInterval,
-    math: &mut CoordinateMath,
+    sine: &FixedInterval, c: &FixedInterval, math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     let one = FixedInterval::from_i64(1, math)?;
     let negative_one = one.lower().negated();

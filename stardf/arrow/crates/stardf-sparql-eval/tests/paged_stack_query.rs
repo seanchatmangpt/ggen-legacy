@@ -63,9 +63,7 @@ const QUERIES: &[&str] = &[
 ];
 
 fn assert_same_result(
-    actual: impl support::ResultView,
-    expected: impl support::ResultView,
-    query: &str,
+    actual: impl support::ResultView, expected: impl support::ResultView, query: &str,
 ) {
     match (
         actual.solutions_view(),

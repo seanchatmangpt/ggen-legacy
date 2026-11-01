@@ -105,10 +105,7 @@ pub struct CausalRefutation<'a> {
 
 impl<'a> CausalRefutation<'a> {
     pub(crate) const fn checked(
-        proof: &'a DlProof,
-        kb: &'a Kb,
-        replay: &'a RefutationReplay,
-        capture: &'a Capture,
+        proof: &'a DlProof, kb: &'a Kb, replay: &'a RefutationReplay, capture: &'a Capture,
     ) -> Self {
         Self {
             proof,

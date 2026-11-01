@@ -50,9 +50,7 @@ impl purrdf_sparql_eval::PropertyFunction for BorrowedText<'_> {
         self.0.rows_per_invocation(mode)
     }
     fn open<'cursor>(
-        &self,
-        args: &purrdf_sparql_eval::PfArgs<'_>,
-        ceiling: Option<u64>,
+        &self, args: &purrdf_sparql_eval::PfArgs<'_>, ceiling: Option<u64>,
     ) -> Result<Box<dyn purrdf_sparql_eval::PfCursor + 'cursor>, purrdf_sparql_eval::EvalError>
     where
         Self: 'cursor,
@@ -60,9 +58,7 @@ impl purrdf_sparql_eval::PropertyFunction for BorrowedText<'_> {
         self.0.open(args, ceiling)
     }
     fn open_admitted<'cursor>(
-        &self,
-        args: &purrdf_sparql_eval::PfArgs<'_>,
-        ceiling: Option<u64>,
+        &self, args: &purrdf_sparql_eval::PfArgs<'_>, ceiling: Option<u64>,
         workspace: purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<purrdf_sparql_eval::WorkspaceCursor<'cursor>, purrdf_sparql_eval::EvalError>
     where
@@ -258,9 +254,7 @@ fn ranked() -> (Arc<RdfDataset>, Arc<TextIndex>) {
 /// every IRI beneath it — including registered ones — would have left the whole
 /// suite green.
 fn answer_with_options(
-    dataset: &RdfDataset,
-    registry: &PropertyFunctionRegistry<'_>,
-    options: ParserOptions,
+    dataset: &RdfDataset, registry: &PropertyFunctionRegistry<'_>, options: ParserOptions,
     query: &str,
 ) -> Vec<Vec<String>> {
     let result = NativeSparqlEngine::new()
@@ -287,9 +281,7 @@ fn answer_with_options(
 /// The diagnostic message of a query that must NOT evaluate, on an engine
 /// configured with `options`.
 fn refusal(
-    dataset: &RdfDataset,
-    registry: &PropertyFunctionRegistry<'_>,
-    options: ParserOptions,
+    dataset: &RdfDataset, registry: &PropertyFunctionRegistry<'_>, options: ParserOptions,
     query: &str,
 ) -> String {
     let outcome = NativeSparqlEngine::new().query_with_options_view(
@@ -867,9 +859,7 @@ fn generation_query() -> String {
 /// outcome's relation identity, which is the surface a host actually reads —
 /// exactly the seam the rest of this file insists on driving.
 fn attested_generations(
-    dataset: &RdfDataset,
-    registry: &PropertyFunctionRegistry<'_>,
-    query: &str,
+    dataset: &RdfDataset, registry: &PropertyFunctionRegistry<'_>, query: &str,
 ) -> BTreeSet<IndexGeneration> {
     let engine = NativeSparqlEngine::new();
     let prepared = engine

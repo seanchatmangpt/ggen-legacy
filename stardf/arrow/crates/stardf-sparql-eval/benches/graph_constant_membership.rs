@@ -58,12 +58,8 @@ where
 type Queries = [(&'static str, Arc<PreparedQuery>, usize); 3];
 
 fn lane<D>(
-    group: &mut purrdf_testkit::bench::BenchmarkGroup<'_>,
-    engine: &NativeSparqlEngine,
-    backend: &str,
-    view: &D,
-    queries: &Queries,
-    sources: usize,
+    group: &mut purrdf_testkit::bench::BenchmarkGroup<'_>, engine: &NativeSparqlEngine,
+    backend: &str, view: &D, queries: &Queries, sources: usize,
 ) where
     D: DatasetView<ReadError = Infallible> + Sync,
 {

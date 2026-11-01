@@ -1,9 +1,9 @@
-//! Consumer courts for `stardf_avec_export_stream` over the C ABI.
+//! Consumer courts for `stardf_cgap_export_stream` over the C ABI.
 //!
 //! Contract: `docs/jira/v26.10.31/02-wave-contracts.md` W3; authority:
 //! `authority/stardf/stardf_contract.ttl` `fn_avec_export_stream`
-//! (downstreamSubstrate avec). Style model:
-//! `/Users/sac/avec/crates/avec-ffi/tests/zero_copy.rs` — real FFI (extern
+//! (downstreamSubstrate cgap). Style model:
+//! `/Users/sac/cgap/crates/cgap-ffi/tests/zero_copy.rs` — real FFI (extern
 //! "C" declarations bound against the same-process rlib), no mocks, assert
 //! final state.
 //!
@@ -42,12 +42,14 @@ fn serial_lock() -> std::sync::MutexGuard<'static, ()> {
 
 use stardf_arrow_capi as capi;
 
-use capi::{ArrowArrayStream, StardfArena, StardfBatch};
+// LANE 09 (2026-10-31): ArrowArray joined the capi re-export import — the
+// test no longer names the cgap git crate (crates.io publish law).
+use capi::{ArrowArray, ArrowArrayStream, StardfArena, StardfBatch};
 
-/// Consumer-side view of `struct ArrowSchema` (the capi crate does not
-/// re-export avec-arrow's ArrowSchema; layout is spec-fixed, and `release`
-/// sits at the same slot so the handed-out callback can be invoked through
-/// this view).
+/// Consumer-side view of `struct ArrowSchema` (the capi crate re-exports the
+/// spec-fixed core ArrowSchema, and this view keeps the test honest about
+/// consumer-side reads: layout is spec-fixed, and `release` sits at the same
+/// slot so the handed-out callback can be invoked through this view).
 #[repr(C)]
 struct ArrowSchemaView {
     format: *const core::ffi::c_char,
@@ -74,7 +76,7 @@ extern "C" {
     fn stardf_batch_append_quad(
         arena: *mut StardfArena, s: u32, p: u32, o: u32, g: u32,
     ) -> *mut StardfBatch;
-    fn stardf_avec_export_stream(
+    fn stardf_cgap_export_stream(
         batch: *mut StardfBatch, out_stream: *mut *mut ArrowArrayStream,
     ) -> i32;
     fn stardf_stream_free(stream: *mut ArrowArrayStream);
@@ -116,7 +118,7 @@ unsafe fn make_stream(n: usize) -> (*mut StardfArena, *mut ArrowArrayStream) {
         }
     }
     let mut stream: *mut ArrowArrayStream = std::ptr::null_mut();
-    let st = stardf_avec_export_stream(batch, &mut stream);
+    let st = stardf_cgap_export_stream(batch, &mut stream);
     assert_eq!(st, STATUS_OK, "export_stream failed: {:?}", err_str());
     assert!(!stream.is_null(), "stream handle must be non-null on OK");
     (arena, stream)
@@ -142,7 +144,7 @@ unsafe fn err_str() -> Option<String> {
 /// # Safety
 /// `stream` must be live and unreleased.
 unsafe fn pull(stream: *mut ArrowArrayStream) -> (i32, i64, bool) {
-    let mut array: avec_arrow::c_abi::ArrowArray = core::mem::zeroed();
+    let mut array: ArrowArray = core::mem::zeroed();
     let get_next = (*stream).get_next.expect("get_next must be armed");
     let flag = get_next(stream, &mut array);
     let out = (flag, array.length, array.release.is_some());
@@ -250,14 +252,14 @@ fn court_3_partial_final_batch_length() {
         let n = 65usize;
         let (arena, stream) = make_stream(n);
         let get_next = (*stream).get_next.expect("get_next must be armed");
-        let mut array: avec_arrow::c_abi::ArrowArray = core::mem::zeroed();
+        let mut array: ArrowArray = core::mem::zeroed();
         let flag = get_next(stream, &mut array);
         assert_eq!(flag, STATUS_OK, "first batch must succeed");
         assert_eq!(array.length, 64, "first batch carries exactly 64 quad rows");
         if let Some(rel) = array.release {
             rel(&mut array);
         }
-        let mut final_array: avec_arrow::c_abi::ArrowArray = core::mem::zeroed();
+        let mut final_array: ArrowArray = core::mem::zeroed();
         let flag = get_next(stream, &mut final_array);
         assert_eq!(flag, STATUS_OK, "partial final batch must succeed");
         assert_eq!(
@@ -313,7 +315,7 @@ fn court_5_use_after_release_returns_error_not_crash() {
         match (*stream).get_next {
             None => {} // nilled slot: the release marked the stream dead.
             Some(get_next) => {
-                let mut array: avec_arrow::c_abi::ArrowArray = core::mem::zeroed();
+                let mut array: ArrowArray = core::mem::zeroed();
                 let flag = get_next(stream, &mut array);
                 assert_ne!(
                     flag, STATUS_OK,

@@ -377,11 +377,7 @@ fn every_refused_stem_is_rejected_at_shexj_ingress() {
 }
 
 fn assert_language_refusal(
-    original: ShexError,
-    json: String,
-    value: &str,
-    what: &str,
-    member: &str,
+    original: ShexError, json: String, value: &str, what: &str, member: &str,
 ) {
     let native = langtag::parse_with(value, Profile::ConcreteSyntaxLangtagBounded).unwrap_err();
     assert_eq!(ExactSchema::parse_shexj(&json, None).unwrap_err(), original);

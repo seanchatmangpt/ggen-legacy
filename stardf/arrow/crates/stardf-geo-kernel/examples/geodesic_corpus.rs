@@ -36,9 +36,7 @@ fn positive_maximum(maximum: u64) -> Result<(), &'static str> {
 }
 
 fn read_rows(
-    mut reader: impl BufRead,
-    maximum: u64,
-    digest: &mut Sha256,
+    mut reader: impl BufRead, maximum: u64, digest: &mut Sha256,
     mut visit: impl FnMut(u64, [Rat; 10]) -> Result<(), Box<dyn std::error::Error>>,
 ) -> Result<(), Box<dyn std::error::Error>> {
     positive_maximum(maximum)?;

@@ -56,9 +56,7 @@ pub trait ShapeCosts {
     /// # Errors
     /// Preserves original term lookup, source and native storage failures.
     fn visit(
-        &self,
-        pattern: &TriplePattern,
-        visit: &mut dyn FnMut(AccessCost),
+        &self, pattern: &TriplePattern, visit: &mut dyn FnMut(AccessCost),
     ) -> Result<(), EvalError>;
 }
 
@@ -69,9 +67,7 @@ pub trait ShapeProvider: Send + Sync {
     /// # Errors
     /// Preserve allocation, source, and contained host failures.
     fn offer(
-        &self,
-        request: ShapeRequest<'_>,
-        workspace: &WorkspaceCapability,
+        &self, request: ShapeRequest<'_>, workspace: &WorkspaceCapability,
     ) -> Result<Option<ShapeOffer>, EvalError>;
 }
 
@@ -142,9 +138,7 @@ pub trait ShapeRuntime {
     fn schema(&self, input: ShapeInput) -> Result<&VarSchema, EvalError>;
     /// Copy a bound cell through the existing before-copy native term home.
     fn binding(
-        &self,
-        row: ShapeRow,
-        variable: &Variable,
+        &self, row: ShapeRow, variable: &Variable,
     ) -> Result<Option<WorkspaceTerm>, EvalError>;
     /// Publish compatible original rows in the offered root's original schema.
     /// Shared cells use native identity; row evidence is conjoined by its original home.
@@ -153,9 +147,7 @@ pub trait ShapeRuntime {
     /// The same publication with native computed bindings. Grants are transferred,
     /// not replaced with a measurement of the finished payload.
     fn emit_with(
-        &mut self,
-        rows: &[ShapeRow],
-        bindings: AdmittedVec<ShapeBinding>,
+        &mut self, rows: &[ShapeRow], bindings: AdmittedVec<ShapeBinding>,
     ) -> Result<bool, EvalError>;
     /// Count source visits, transitions and emitted rows separately from estimates.
     /// False is the original governor stop; no further output may be emitted.
@@ -207,9 +199,7 @@ impl ShapeOffer {
     }
     /// Offer a prebuilt caller-owned immutable strategy.
     pub fn from_shared(
-        name: &'static str,
-        operator: Arc<dyn ShapeOperator>,
-        estimate: ShapeEstimate,
+        name: &'static str, operator: Arc<dyn ShapeOperator>, estimate: ShapeEstimate,
     ) -> Self {
         Self {
             operator: OperatorOwner::Caller(operator),
@@ -224,10 +214,7 @@ impl ShapeOffer {
     /// # Errors
     /// Checked layout overflow, storage refusal, or physical allocator failure.
     pub fn new_admitted<T: ShapeOperator + 'static>(
-        name: &'static str,
-        operator: T,
-        estimate: ShapeEstimate,
-        workspace: &WorkspaceCapability,
+        name: &'static str, operator: T, estimate: ShapeEstimate, workspace: &WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let allocation = workspace.charge(
             u64::try_from(size_of::<T>()).map_err(|_| EvalError::WorkspaceBoundOverflow)?,

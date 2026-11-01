@@ -8,19 +8,18 @@
 //! unary/ternary operator parsing disambiguation, declarative LIMIT envelope refusal,
 //! mid-materialization circuit breaker on row 65, and zero-dependency Arrow IPC framing.
 
-use purrdf_arrow::{ArrowEgressHeader, ArrowEgressHeaderError, canon_arrow_empty_v1};
+use purrdf_arrow::{ArrowEgressHeader, canon_arrow_empty_v1};
 use purrdf_core::TermValue;
 use purrdf_duckdb::{EvaluatorError, PurRdfDuckDB};
 use purrdf_hash::blake3;
 use purrdf_sql::{
-    AstError, Operator, RefusalCode, SelectItem, SelectStatement, SetOpKind, SetOperationStatement,
-    SqlExpr, SqlLiteral, TableRef, compile_turtle, refusal_arm,
+    Operator, RefusalCode, SelectItem, SelectStatement, SqlExpr, SqlLiteral, TableRef, refusal_arm,
 };
 use purrdf_testkit::temp_dir;
 
 #[test]
 fn test_section_1_three_valued_logic_null_reshaping_and_schema_drift() {
-    let temp = temp_dir!("sparse_pivot_court").expect("temp dir");
+    let _temp = temp_dir!("sparse_pivot_court").expect("temp dir");
     let db = PurRdfDuckDB::open_in_memory().expect("open duckdb");
 
     // ------------------------------------------------------------------------
@@ -608,7 +607,7 @@ fn test_section_5_zero_dependency_arrow_ipc_payload_integrity() {
 
     let wire_bytes = empty_header.to_bytes();
     assert_eq!(wire_bytes.len(), 128);
-    assert_eq!(core::mem::align_of::<ArrowEgressHeader>(), 64);
+    assert_eq!(align_of::<ArrowEgressHeader>(), 64);
 
     let parsed = ArrowEgressHeader::from_bytes(&wire_bytes).expect("parse empty header");
     assert_eq!(parsed.batch_count, 0);

@@ -299,16 +299,8 @@ impl DlCertificate {
         reason = "a certificate is eleven independent readings, and taking them as one struct would need a second public type that exists only to be unpacked here"
     )]
     pub fn stated(
-        exhausted: bool,
-        stopped: bool,
-        boundaries: Vec<Boundary>,
-        steps: u64,
-        budget: u64,
-        work: u64,
-        work_budget: u64,
-        decisions: u64,
-        peak_nodes: u64,
-        disjunctions: u64,
+        exhausted: bool, stopped: bool, boundaries: Vec<Boundary>, steps: u64, budget: u64,
+        work: u64, work_budget: u64, decisions: u64, peak_nodes: u64, disjunctions: u64,
         peak_depth: u64,
     ) -> Self {
         Self {
@@ -373,8 +365,7 @@ impl DlCertificate {
     /// not make the stated counters measurements or permit proof publication.
     #[must_use]
     pub const fn with_stated_storage_refusal(
-        mut self,
-        error: purrdf_lex::allocation::StorageError,
+        mut self, error: purrdf_lex::allocation::StorageError,
     ) -> Self {
         self.storage_refusal = Some(error);
         self
@@ -574,9 +565,7 @@ impl purrdf_hash::error::StructuredError for DirectnessRefusal<'_> {
 impl<T> Certified<T> {
     /// Pair an answer with its certificate and, when one was recorded, its proof term.
     pub(crate) const fn new(
-        answer: T,
-        certificate: DlCertificate,
-        proof: Option<ServiceProof>,
+        answer: T, certificate: DlCertificate, proof: Option<ServiceProof>,
     ) -> Self {
         Self {
             answer,
@@ -879,9 +868,7 @@ impl<'a> Session<'a> {
 
     /// Report an already executed decision through the ordinary certificate owner.
     pub(crate) fn certificate_for_decision(
-        kb: &'a Kb,
-        budget: Budget,
-        decision: Decision,
+        kb: &'a Kb, budget: Budget, decision: Decision,
     ) -> DlCertificate {
         let mut session = Self::new(kb, budget, None);
         session.observe(decision);
@@ -958,9 +945,7 @@ impl<'a> Session<'a> {
     /// a closure for the same reason: a question and a claim list are clones of every term the
     /// answer mentions, and a non-recording service must not build them only to drop them.
     pub(crate) fn proof(
-        self,
-        certificate: &DlCertificate,
-        bind: impl FnOnce() -> (Question, Vec<Claim>),
+        self, certificate: &DlCertificate, bind: impl FnOnce() -> (Question, Vec<Claim>),
     ) -> Option<ServiceProof> {
         // Physical refusal is not a fabricated work-limit proof or a completed
         // model certificate. The certified Unknown retains its original cause.

@@ -173,8 +173,7 @@ fn hash_term<E>(hasher: &mut RuleHasher<'_, E>, term: &ClauseTerm) -> Result<(),
 /// The polarity byte is emitted for head atoms too, where it is always `0`: one atom
 /// encoder for both positions is cheaper to keep correct than two that must agree.
 fn hash_atom<const N: usize, E>(
-    hasher: &mut RuleHasher<'_, E>,
-    atom: &ClauseAtom<N>,
+    hasher: &mut RuleHasher<'_, E>, atom: &ClauseAtom<N>,
 ) -> Result<(), E> {
     if N == 3 {
         hasher.update(&[u8::from(
@@ -241,8 +240,7 @@ pub fn canonical_rule_hash<const N: usize>(rules: &[DlClause<N>]) -> [u8; 32] {
 /// # Errors
 /// Returns the original callback refusal before absorbing the refused chunk.
 pub fn canonical_rule_hash_with_control<const N: usize, E>(
-    rules: &[DlClause<N>],
-    mut tick: impl FnMut(usize) -> Result<(), E>,
+    rules: &[DlClause<N>], mut tick: impl FnMut(usize) -> Result<(), E>,
 ) -> Result<[u8; 32], E> {
     let mut guarded = false;
     let mut ordered = false;
@@ -501,8 +499,7 @@ pub fn contract_hash<const N: usize>(rules: &[DlClause<N>]) -> ContractHash {
 /// into a GUARDED program's; a guard-free program's hash is independent of the term
 /// limits.
 pub fn contract_hash_with<const N: usize>(
-    rules: &[DlClause<N>],
-    options: &EvalOptions,
+    rules: &[DlClause<N>], options: &EvalOptions,
 ) -> ContractHash {
     let digest = contract_digest(
         rules,
@@ -560,9 +557,7 @@ fn fold_term_generating_limit(hasher: &mut purrdf_hash::blake3::Hasher, options:
 /// after a rule ran — so they never share an identity. Domain-separated from
 /// [`contract_hash`], so a scheduled program and a stratified one never collide either.
 pub fn scheduled_contract_hash<const N: usize>(
-    rules: &[DlClause<N>],
-    schedule: &Schedule,
-    options: &EvalOptions,
+    rules: &[DlClause<N>], schedule: &Schedule, options: &EvalOptions,
 ) -> ContractHash {
     let mut hasher = purrdf_hash::blake3::Hasher::new();
     frame_le_into(&mut hasher, SCHEDULED_CONTRACT_DIGEST_TAG.as_bytes());
@@ -597,10 +592,7 @@ pub fn scheduled_contract_hash<const N: usize>(
 /// `the_contract_hash_is_the_recipe_over_the_limits_in_force` pins that, so this seam
 /// cannot drift away from the thing it stands in for.
 fn contract_digest<const N: usize>(
-    rules: &[DlClause<N>],
-    calculus_version: &str,
-    max_join_steps: u64,
-    max_stored_facts: u64,
+    rules: &[DlClause<N>], calculus_version: &str, max_join_steps: u64, max_stored_facts: u64,
     max_term_arena_bytes: u64,
 ) -> ContractHash {
     let mut hasher = purrdf_hash::blake3::Hasher::new();
@@ -631,8 +623,7 @@ impl PlanIdentity {
     /// Identity of the rules and every admission declaration and source.
     #[must_use]
     pub fn with_declarations<const N: usize>(
-        contract_hash: &str,
-        rules: &[DlClause<N>],
+        contract_hash: &str, rules: &[DlClause<N>],
         declarations: &crate::admission::NeverDeriveDeclarations,
     ) -> Self {
         if declarations.is_empty() {
@@ -807,9 +798,7 @@ where
     /// diagnosed once and then answered from the cache — the refusal is a *result*, not a
     /// failure to produce one.
     pub fn get_or_compile(
-        &mut self,
-        contract_hash: &str,
-        rules: Vec<DlClause<N>>,
+        &mut self, contract_hash: &str, rules: Vec<DlClause<N>>,
     ) -> PlanLookup<N> {
         let identity = PlanIdentity::new(contract_hash, &rules);
         self.lookup_or_compile(identity, rules, None)
@@ -817,9 +806,7 @@ where
 
     /// Cache admitted programs and typed refusals by the complete policy identity.
     pub fn get_or_compile_with_declarations(
-        &mut self,
-        contract_hash: &str,
-        rules: Vec<DlClause<N>>,
+        &mut self, contract_hash: &str, rules: Vec<DlClause<N>>,
         declarations: &crate::admission::NeverDeriveDeclarations,
     ) -> PlanLookup<N> {
         let identity = PlanIdentity::with_declarations(contract_hash, &rules, declarations);
@@ -827,9 +814,7 @@ where
     }
 
     fn lookup_or_compile(
-        &mut self,
-        identity: PlanIdentity,
-        rules: Vec<DlClause<N>>,
+        &mut self, identity: PlanIdentity, rules: Vec<DlClause<N>>,
         declarations: Option<&crate::admission::NeverDeriveDeclarations>,
     ) -> PlanLookup<N> {
         let stamp = self.tick();

@@ -95,10 +95,7 @@ pub(crate) fn dot<A: Scalar, B: Scalar>(ops: Binary64<'_>, a: &[A], b: &[B]) -> 
 )]
 #[inline(always)]
 pub(crate) fn squared_euclidean_bounded<A: Scalar, B: Scalar>(
-    ops: Binary64<'_>,
-    a: &[A],
-    b: &[B],
-    bound: Bound,
+    ops: Binary64<'_>, a: &[A], b: &[B], bound: Bound,
 ) -> Bounded {
     let len = a.len().min(b.len());
     let (chunks_a, tail_a) = a[..len].as_chunks::<LANES>();
@@ -152,9 +149,7 @@ pub(crate) fn squared_euclidean_bounded<A: Scalar, B: Scalar>(
 )]
 #[inline(always)]
 pub(crate) fn squared_euclidean<A: Scalar, B: Scalar>(
-    ops: Binary64<'_>,
-    a: &[A],
-    b: &[B],
+    ops: Binary64<'_>, a: &[A], b: &[B],
 ) -> Result<f64, NonFinite> {
     match squared_euclidean_bounded(ops, a, b, Bound::Above(f64::INFINITY)) {
         Bounded::Below(sum) => Ok(sum),
@@ -171,12 +166,7 @@ pub(crate) fn squared_euclidean<A: Scalar, B: Scalar>(
 )]
 #[inline(always)]
 pub(crate) fn distance<A: Scalar, B: Scalar>(
-    ops: Binary64<'_>,
-    measure: Measure,
-    a: &[A],
-    a_norm: f64,
-    b: &[B],
-    b_norm: f64,
+    ops: Binary64<'_>, measure: Measure, a: &[A], a_norm: f64, b: &[B], b_norm: f64,
 ) -> Result<f64, NonFinite> {
     let value = match measure {
         Measure::SquaredEuclidean => return squared_euclidean(ops, a, b),
@@ -208,13 +198,7 @@ pub(crate) fn cosine(ops: Binary64<'_>, dot: f64, a_norm: f64, b_norm: f64) -> f
 )]
 #[inline(always)]
 pub(crate) fn distance_bounded<A: Scalar, B: Scalar>(
-    ops: Binary64<'_>,
-    measure: Measure,
-    a: &[A],
-    a_norm: f64,
-    b: &[B],
-    b_norm: f64,
-    bound: Bound,
+    ops: Binary64<'_>, measure: Measure, a: &[A], a_norm: f64, b: &[B], b_norm: f64, bound: Bound,
 ) -> Bounded {
     if measure == Measure::SquaredEuclidean {
         return squared_euclidean_bounded(ops, a, b, bound);
@@ -254,11 +238,7 @@ pub(crate) fn finite(value: f64) -> Result<f64, NonFinite> {
 )]
 #[inline(always)]
 pub(crate) fn distances<Q: Scalar, T: Scalar>(
-    ops: Binary64<'_>,
-    measure: Measure,
-    query: &[Q],
-    query_norm: f64,
-    rows: RowsRef<'_, T>,
+    ops: Binary64<'_>, measure: Measure, query: &[Q], query_norm: f64, rows: RowsRef<'_, T>,
     out: &mut [Result<f64, NonFinite>],
 ) {
     assert_eq!(
@@ -308,13 +288,8 @@ pub(crate) fn distances<Q: Scalar, T: Scalar>(
 )]
 #[inline(always)]
 pub(crate) fn distances_indexed<Q: Scalar, T: Scalar>(
-    ops: Binary64<'_>,
-    measure: Measure,
-    query: &[Q],
-    query_norm: f64,
-    rows: RowsRef<'_, T>,
-    ids: &[usize],
-    out: &mut [Result<f64, NonFinite>],
+    ops: Binary64<'_>, measure: Measure, query: &[Q], query_norm: f64, rows: RowsRef<'_, T>,
+    ids: &[usize], out: &mut [Result<f64, NonFinite>],
 ) {
     assert_eq!(
         query.len(),

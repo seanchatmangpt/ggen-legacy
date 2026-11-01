@@ -33,8 +33,7 @@ pub use crate::turtle_render::render;
 /// Turtle. `extra_prefixes` supplies prefix bindings (the project's standard set);
 /// only those actually used appear in the header.
 pub fn canonical_turtle(
-    input: &[u8],
-    extra_prefixes: &[(String, String)],
+    input: &[u8], extra_prefixes: &[(String, String)],
 ) -> Result<String, RdfDiagnostic> {
     let dataset = ingest(input)?;
     Ok(render(&dataset, extra_prefixes))

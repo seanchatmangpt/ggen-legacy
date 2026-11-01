@@ -94,10 +94,7 @@ impl ResolvedSink for SinkImporter<'_> {
     type Error = RdfDiagnostic;
 
     fn intern_iri(
-        &mut self,
-        segment_index: u64,
-        gts_id: usize,
-        iri: &str,
+        &mut self, segment_index: u64, gts_id: usize, iri: &str,
     ) -> Result<TermId, RdfDiagnostic> {
         if iri.is_empty() {
             return Err(RdfDiagnostic::error(
@@ -117,10 +114,7 @@ impl ResolvedSink for SinkImporter<'_> {
     // blank label in different segments interns to DISTINCT ids, while scope 0
     // stays reserved for the default/global scope.
     fn intern_blank(
-        &mut self,
-        segment_index: u64,
-        _gts_id: usize,
-        label: &str,
+        &mut self, segment_index: u64, _gts_id: usize, label: &str,
     ) -> Result<TermId, RdfDiagnostic> {
         let scope = segment_scope(segment_index)?;
         Ok(self.builder.intern_blank(label, scope)?)
@@ -132,13 +126,8 @@ impl ResolvedSink for SinkImporter<'_> {
     /// preserved onto the literal — direction is NOT a projection loss on this
     /// path. The datatype id is already resolved; it MUST resolve to an IRI.
     fn intern_literal(
-        &mut self,
-        segment_index: u64,
-        gts_id: usize,
-        lexical: String,
-        datatype: Option<TermId>,
-        lang: Option<String>,
-        direction: Option<String>,
+        &mut self, segment_index: u64, gts_id: usize, lexical: String, datatype: Option<TermId>,
+        lang: Option<String>, direction: Option<String>,
     ) -> Result<TermId, RdfDiagnostic> {
         let datatype = match datatype {
             Some(dt_id) => match self.builder.resolve(dt_id) {
@@ -176,35 +165,20 @@ impl ResolvedSink for SinkImporter<'_> {
     }
 
     fn intern_triple(
-        &mut self,
-        _segment_index: u64,
-        _gts_id: usize,
-        s: TermId,
-        p: TermId,
-        o: TermId,
+        &mut self, _segment_index: u64, _gts_id: usize, s: TermId, p: TermId, o: TermId,
     ) -> Result<TermId, RdfDiagnostic> {
         Ok(self.builder.intern_triple(s, p, o)?)
     }
 
     fn push_quad(
-        &mut self,
-        _segment_index: u64,
-        s: TermId,
-        p: TermId,
-        o: TermId,
-        g: Option<TermId>,
+        &mut self, _segment_index: u64, s: TermId, p: TermId, o: TermId, g: Option<TermId>,
     ) -> Result<(), RdfDiagnostic> {
         self.builder.push_quad(s, p, o, g)?;
         Ok(())
     }
 
     fn push_reifier(
-        &mut self,
-        _segment_index: u64,
-        reifier: TermId,
-        s: TermId,
-        p: TermId,
-        o: TermId,
+        &mut self, _segment_index: u64, reifier: TermId, s: TermId, p: TermId, o: TermId,
         g: Option<TermId>,
     ) -> Result<(), RdfDiagnostic> {
         let triple_term = self.builder.intern_triple(s, p, o)?;
@@ -214,12 +188,7 @@ impl ResolvedSink for SinkImporter<'_> {
     }
 
     fn push_annotation(
-        &mut self,
-        _segment_index: u64,
-        reifier: TermId,
-        p: TermId,
-        o: TermId,
-        g: Option<TermId>,
+        &mut self, _segment_index: u64, reifier: TermId, p: TermId, o: TermId, g: Option<TermId>,
     ) -> Result<(), RdfDiagnostic> {
         self.builder.push_annotation_in_graph(reifier, p, o, g)?;
         Ok(())
@@ -278,9 +247,7 @@ impl ResolvedSink for SinkImporter<'_> {
     }
 
     fn suppression(
-        &mut self,
-        _segment_index: u64,
-        suppression: &Suppression,
+        &mut self, _segment_index: u64, suppression: &Suppression,
     ) -> Result<(), RdfDiagnostic> {
         self.lookaside.suppressions.push(RdfSuppressionRecord {
             reason: suppression.reason.clone(),
@@ -297,10 +264,7 @@ impl ResolvedSink for SinkImporter<'_> {
     }
 
     fn blob(
-        &mut self,
-        _segment_index: u64,
-        digest: &str,
-        meta: Option<&Value>,
+        &mut self, _segment_index: u64, digest: &str, meta: Option<&Value>,
     ) -> Result<(), RdfDiagnostic> {
         if let Some(blobs) = &self.blobs {
             blobs.check_metadata_before_retention(digest, meta)?;
@@ -382,9 +346,7 @@ impl ResolvedSink for SinkImporter<'_> {
     }
 
     fn signature(
-        &mut self,
-        _segment_index: u64,
-        signature: &Signature,
+        &mut self, _segment_index: u64, signature: &Signature,
     ) -> Result<(), RdfDiagnostic> {
         self.lookaside.signatures.push(RdfSignatureRecord {
             frame_id: hex::encode(&signature.frame_id),
@@ -405,9 +367,7 @@ impl ResolvedSink for SinkImporter<'_> {
     }
 
     fn streamable_layout(
-        &mut self,
-        segment_index: u64,
-        info: &StreamableInfo,
+        &mut self, segment_index: u64, info: &StreamableInfo,
     ) -> Result<(), RdfDiagnostic> {
         let record = self.ensure_segment_record(segment_index);
         record.claimed_streamable = info.claimed;
@@ -508,8 +468,7 @@ fn is_blob_budget_refusal(diagnostic: &Diagnostic) -> bool {
 }
 
 pub(crate) fn import_with_collector<'a>(
-    bytes: &[u8],
-    blobs: Option<BlobCollector<'a>>,
+    bytes: &[u8], blobs: Option<BlobCollector<'a>>,
 ) -> Result<(GtsBundle, Option<BlobCollector<'a>>), RdfDiagnostic> {
     let mut importer = SinkImporter::new();
     importer.blobs = blobs;
@@ -665,10 +624,7 @@ mod tests {
         type Error = RdfDiagnostic;
 
         fn intern_iri(
-            &mut self,
-            segment_index: u64,
-            gts_id: usize,
-            iri: &str,
+            &mut self, segment_index: u64, gts_id: usize, iri: &str,
         ) -> Result<TermId, RdfDiagnostic> {
             let id = self.inner.intern_iri(segment_index, gts_id, iri)?;
             self.ids.insert((segment_index, gts_id), id);
@@ -676,10 +632,7 @@ mod tests {
         }
 
         fn intern_blank(
-            &mut self,
-            segment_index: u64,
-            gts_id: usize,
-            label: &str,
+            &mut self, segment_index: u64, gts_id: usize, label: &str,
         ) -> Result<TermId, RdfDiagnostic> {
             let id = self.inner.intern_blank(segment_index, gts_id, label)?;
             self.ids.insert((segment_index, gts_id), id);
@@ -687,13 +640,8 @@ mod tests {
         }
 
         fn intern_literal(
-            &mut self,
-            segment_index: u64,
-            gts_id: usize,
-            lexical: String,
-            datatype: Option<TermId>,
-            lang: Option<String>,
-            direction: Option<String>,
+            &mut self, segment_index: u64, gts_id: usize, lexical: String,
+            datatype: Option<TermId>, lang: Option<String>, direction: Option<String>,
         ) -> Result<TermId, RdfDiagnostic> {
             let id = self.inner.intern_literal(
                 segment_index,
@@ -708,12 +656,7 @@ mod tests {
         }
 
         fn intern_triple(
-            &mut self,
-            segment_index: u64,
-            gts_id: usize,
-            s: TermId,
-            p: TermId,
-            o: TermId,
+            &mut self, segment_index: u64, gts_id: usize, s: TermId, p: TermId, o: TermId,
         ) -> Result<TermId, RdfDiagnostic> {
             let id = self.inner.intern_triple(segment_index, gts_id, s, p, o)?;
             self.ids.insert((segment_index, gts_id), id);
@@ -721,44 +664,26 @@ mod tests {
         }
 
         fn push_quad(
-            &mut self,
-            segment_index: u64,
-            s: TermId,
-            p: TermId,
-            o: TermId,
-            g: Option<TermId>,
+            &mut self, segment_index: u64, s: TermId, p: TermId, o: TermId, g: Option<TermId>,
         ) -> Result<(), RdfDiagnostic> {
             self.inner.push_quad(segment_index, s, p, o, g)
         }
 
         fn push_reifier(
-            &mut self,
-            segment_index: u64,
-            reifier: TermId,
-            s: TermId,
-            p: TermId,
-            o: TermId,
+            &mut self, segment_index: u64, reifier: TermId, s: TermId, p: TermId, o: TermId,
             g: Option<TermId>,
         ) -> Result<(), RdfDiagnostic> {
             self.inner.push_reifier(segment_index, reifier, s, p, o, g)
         }
 
         fn push_annotation(
-            &mut self,
-            segment_index: u64,
-            reifier: TermId,
-            p: TermId,
-            o: TermId,
-            g: Option<TermId>,
+            &mut self, segment_index: u64, reifier: TermId, p: TermId, o: TermId, g: Option<TermId>,
         ) -> Result<(), RdfDiagnostic> {
             self.inner.push_annotation(segment_index, reifier, p, o, g)
         }
 
         fn err_dangling_term(
-            &self,
-            segment_index: u64,
-            gts_id: usize,
-            role: &str,
+            &self, segment_index: u64, gts_id: usize, role: &str,
         ) -> RdfDiagnostic {
             self.inner.err_dangling_term(segment_index, gts_id, role)
         }
@@ -776,18 +701,13 @@ mod tests {
         }
 
         fn suppression(
-            &mut self,
-            segment_index: u64,
-            suppression: &Suppression,
+            &mut self, segment_index: u64, suppression: &Suppression,
         ) -> Result<(), RdfDiagnostic> {
             self.inner.suppression(segment_index, suppression)
         }
 
         fn blob(
-            &mut self,
-            segment_index: u64,
-            digest: &str,
-            meta: Option<&Value>,
+            &mut self, segment_index: u64, digest: &str, meta: Option<&Value>,
         ) -> Result<(), RdfDiagnostic> {
             self.inner.blob(segment_index, digest, meta)
         }
@@ -797,9 +717,7 @@ mod tests {
         }
 
         fn signature(
-            &mut self,
-            segment_index: u64,
-            signature: &Signature,
+            &mut self, segment_index: u64, signature: &Signature,
         ) -> Result<(), RdfDiagnostic> {
             self.inner.signature(segment_index, signature)
         }
@@ -809,9 +727,7 @@ mod tests {
         }
 
         fn streamable_layout(
-            &mut self,
-            segment_index: u64,
-            info: &StreamableInfo,
+            &mut self, segment_index: u64, info: &StreamableInfo,
         ) -> Result<(), RdfDiagnostic> {
             self.inner.streamable_layout(segment_index, info)
         }

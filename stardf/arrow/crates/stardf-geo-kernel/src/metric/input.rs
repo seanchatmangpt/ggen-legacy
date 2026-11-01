@@ -15,9 +15,7 @@ use purrdf_xsd::integer::{ExactArithmeticCost, ExactOperation};
 /// # Errors
 /// Refuses wrong numeric types/lexicals, nonfinite values and operational limits.
 pub fn numeric_radius(
-    value: &TermValue,
-    metres_per_unit: &Rat,
-    context: &mut MetricContext,
+    value: &TermValue, metres_per_unit: &Rat, context: &mut MetricContext,
 ) -> Result<Metres, GeoError> {
     radius(
         value,
@@ -31,9 +29,7 @@ pub fn numeric_radius(
 /// # Errors
 /// Preserves argument, numerical admission and observer refusals.
 pub fn numeric_radius_metered(
-    value: &TermValue,
-    metres_per_unit: &Rat,
-    context: &mut MetricContext,
+    value: &TermValue, metres_per_unit: &Rat, context: &mut MetricContext,
     observer: &mut dyn MetricWorkObserver,
 ) -> Result<Metres, GeoError> {
     radius(
@@ -45,9 +41,7 @@ pub fn numeric_radius_metered(
 }
 
 fn radius(
-    value: &TermValue,
-    metres_per_unit: &Rat,
-    context: &mut MetricContext,
+    value: &TermValue, metres_per_unit: &Rat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Metres, GeoError> {
     let TermValue::Literal {

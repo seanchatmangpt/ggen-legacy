@@ -119,19 +119,14 @@ fn project_graph_data(data: &RdfDataset, ns: &Namespaces) -> Value {
 /// Project a single subject term into a JSON-LD node object, compacting keys
 /// and `@type` values through the caller-supplied [`Namespaces`].
 pub fn project_subject(
-    dataset: &std::sync::Arc<RdfDataset>,
-    ns: &Namespaces,
-    subject: &Term,
+    dataset: &std::sync::Arc<RdfDataset>, ns: &Namespaces, subject: &Term,
 ) -> Value {
     let data = dataset.as_ref();
     project_subject_data(data, ns, &ListIndex::build(data), subject)
 }
 
 fn project_subject_data(
-    data: &RdfDataset,
-    ns: &Namespaces,
-    lists: &ListIndex,
-    subject: &Term,
+    data: &RdfDataset, ns: &Namespaces, lists: &ListIndex, subject: &Term,
 ) -> Value {
     if !subject.is_subject() {
         // Literals (and quoted triples) are never node subjects.
@@ -214,11 +209,7 @@ fn project_object(data: &RdfDataset, ns: &Namespaces, lists: &ListIndex, term: &
 /// nodes — which is what `sh:uniqueMembers`, projected as `uniqueItems`,
 /// compares.
 fn project_list_or_value(
-    data: &RdfDataset,
-    ns: &Namespaces,
-    lists: &ListIndex,
-    term: &Term,
-    member: bool,
+    data: &RdfDataset, ns: &Namespaces, lists: &ListIndex, term: &Term, member: bool,
 ) -> Value {
     if let Some(members) = lists.members(data, term) {
         let members: Vec<Value> = members

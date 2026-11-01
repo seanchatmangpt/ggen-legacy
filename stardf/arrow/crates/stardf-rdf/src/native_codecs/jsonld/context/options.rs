@@ -82,9 +82,7 @@ impl JsonLdSerializeOptions {
 
     /// Compile a caller-owned context with immutable offline registry lookup.
     pub fn context_with_registry(
-        context: &Value,
-        document_iri: Option<&str>,
-        registry: &JsonLdContextRegistry,
+        context: &Value, document_iri: Option<&str>, registry: &JsonLdContextRegistry,
     ) -> Result<Self, RdfDiagnostic> {
         let compiled =
             CompiledJsonLdContext::compile_with_registry(context, document_iri, registry)?;
@@ -130,8 +128,7 @@ impl JsonLdSerializeOptions {
 
     /// Attach a non-empty YAML language-server schema IRI reference.
     pub fn with_yaml_schema_url(
-        mut self,
-        schema_url: impl Into<String>,
+        mut self, schema_url: impl Into<String>,
     ) -> Result<Self, RdfDiagnostic> {
         let schema_url = schema_url.into();
         if schema_url.is_empty()
@@ -224,8 +221,7 @@ impl JsonLdSerializeOptions {
 }
 
 fn decode_options(
-    value: &Value,
-    limits: JsonLdContextLimits,
+    value: &Value, limits: JsonLdContextLimits,
 ) -> Result<JsonLdSerializeOptions, RdfDiagnostic> {
     let object = value
         .as_object()
@@ -291,8 +287,7 @@ fn reject_fields(mode: &str, fields: &BTreeSet<&str>) -> Result<(), RdfDiagnosti
 }
 
 fn decode_context_mode(
-    object: &Object,
-    limits: JsonLdContextLimits,
+    object: &Object, limits: JsonLdContextLimits,
 ) -> Result<JsonLdSerializeOptions, RdfDiagnostic> {
     let has_context = object.contains_key("context");
     let has_prefixes = object.contains_key("prefixes");
@@ -339,8 +334,7 @@ fn decode_context_mode(
 }
 
 fn decode_registry(
-    value: Option<&Value>,
-    limits: JsonLdContextLimits,
+    value: Option<&Value>, limits: JsonLdContextLimits,
 ) -> Result<JsonLdContextRegistry, RdfDiagnostic> {
     let Some(value) = value else {
         return Ok(JsonLdContextRegistry::default());

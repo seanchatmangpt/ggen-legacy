@@ -15,12 +15,8 @@ use purrdf_xsd::math::{
 };
 
 pub(super) fn inverse(
-    parameters: &TransverseMercator,
-    point: &OperationPoint,
-    coordinates: &[FixedInterval],
-    limits: OperationSolverLimits,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    parameters: &TransverseMercator, point: &OperationPoint, coordinates: &[FixedInterval],
+    limits: OperationSolverLimits, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<OperationCoordinates, MathError> {
     let half_width = if parameters.family == ZoneFamily::GaussKruger3 {
         Rat::parse_decimal("1.5").expect("frozen decimal")
@@ -202,9 +198,7 @@ struct ProjectionRoots<'input, 'progress, 'observer> {
 impl RootSystem2 for ProjectionRoots<'_, '_, '_> {
     crate::numerical::native_root_storage!(cell);
     fn image(
-        &mut self,
-        domain: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, domain: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<RootBox2, MathError> {
         let image = self.parameters.evaluate(
             self.point,
@@ -219,9 +213,7 @@ impl RootSystem2 for ProjectionRoots<'_, '_, '_> {
         ])
     }
     fn jacobian(
-        &mut self,
-        domain: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, domain: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<RootJacobian2, MathError> {
         Ok(self
             .parameters
@@ -235,9 +227,7 @@ impl RootSystem2 for ProjectionRoots<'_, '_, '_> {
             .1)
     }
     fn complete(
-        &mut self,
-        enclosure: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, enclosure: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<bool, MathError> {
         if self.quantize {
             let zero = FixedInterval::from_i64(0, math)?;
@@ -266,11 +256,8 @@ impl RootSystem2 for ProjectionRoots<'_, '_, '_> {
 }
 
 pub(super) fn residual(
-    parameters: &TransverseMercator,
-    target: &[FixedInterval],
-    output: &[Rat],
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    parameters: &TransverseMercator, target: &[FixedInterval], output: &[Rat],
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<(), MathError> {
     let source = OperationPoint {
         x: output[0].clone(),

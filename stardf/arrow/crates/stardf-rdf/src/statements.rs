@@ -153,10 +153,7 @@ fn require_iri(term: &RdfTerm, context: &str) -> Result<String, RdfDiagnostic> {
 /// input the codec must **reject**, never silently last-write-win — conflicting
 /// structure is a hard failure, not an option to paper over.
 fn set_once_or_error<T: PartialEq>(
-    slot: &mut Option<T>,
-    value: T,
-    subject: &RdfTerm,
-    field: &str,
+    slot: &mut Option<T>, value: T, subject: &RdfTerm, field: &str,
 ) -> Result<(), RdfDiagnostic> {
     if let Some(existing) = slot {
         if *existing != value {

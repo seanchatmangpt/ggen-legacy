@@ -182,12 +182,8 @@ pub struct AnalysisGraph {
 /// Returns [`AnalysisError::SelfAttestationViolation`] if `authored_input_text`
 /// contains the vocab's analysis-graph IRI.
 pub fn emit_analysis_graph(
-    vocab: &SliceVocab,
-    edges: &[DependencyEdge],
-    authored_input_text: &str,
-    all_raw_digests: &[&str],
-    toolchain: &ToolchainContext,
-    tier_of: impl Fn(&SliceIri) -> u8,
+    vocab: &SliceVocab, edges: &[DependencyEdge], authored_input_text: &str,
+    all_raw_digests: &[&str], toolchain: &ToolchainContext, tier_of: impl Fn(&SliceIri) -> u8,
     term_count_of: impl Fn(&SliceIri) -> usize,
 ) -> Result<AnalysisGraph, AnalysisError> {
     let analysis_graph_iri = vocab.analysis_graph_iri();
@@ -348,10 +344,7 @@ mod tests {
     }
 
     fn make_edge(
-        from: &str,
-        to: &str,
-        kind: EdgeKind,
-        status: ReconciliationStatus,
+        from: &str, to: &str, kind: EdgeKind, status: ReconciliationStatus,
     ) -> DependencyEdge {
         DependencyEdge {
             from_slice: from.to_string(),

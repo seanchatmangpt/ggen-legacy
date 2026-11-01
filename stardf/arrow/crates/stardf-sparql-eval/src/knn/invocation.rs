@@ -39,8 +39,7 @@ pub(crate) struct InvocationAdmission {
 }
 
 fn copy_invocation_term(
-    term: &TermValue,
-    workspace: &crate::WorkspaceCapability,
+    term: &TermValue, workspace: &crate::WorkspaceCapability,
     admissions: &mut crate::AdmittedVec<crate::WorkspaceAllocation>,
 ) -> Result<TermValue, EvalError> {
     let (value, allocation) = workspace.clone_term(term)?.into_parts();
@@ -53,8 +52,7 @@ fn copy_invocation_term(
 /// Generate the membership count in its preallocated integer destination. The
 /// decimal rendering itself is std's one integer formatter, with no temporary.
 fn admitted_universe_size(
-    rows: usize,
-    workspace: &crate::WorkspaceCapability,
+    rows: usize, workspace: &crate::WorkspaceCapability,
 ) -> Result<crate::WorkspaceTerm, EvalError> {
     use std::fmt::Write;
     let count = u64::try_from(rows).map_err(|_| EvalError::WorkspaceBoundOverflow)?;
@@ -157,8 +155,7 @@ impl TermRows {
     /// row without a term is a refusal, not a skipped row: a space with an unnamed row
     /// would search every candidate and be able to report only some of them.
     pub fn bind(
-        set: &TargetSetView<'_>,
-        bindings: Vec<(TargetId, TermValue)>,
+        set: &TargetSetView<'_>, bindings: Vec<(TargetId, TermValue)>,
     ) -> Result<Self, EvalError> {
         let row_count = set.row_count();
         let mut terms: Vec<Option<TermValue>> = vec![None; row_count];
@@ -226,9 +223,7 @@ impl TermRows {
 
     /// The same total-order lookup, admitting each native comparison work-list.
     fn row_of_admitted(
-        &self,
-        term: &TermValue,
-        workspace: &crate::WorkspaceCapability,
+        &self, term: &TermValue, workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<usize>, EvalError> {
         let mut lower = 0;
         let mut upper = self.rows_by_term.len();
@@ -301,9 +296,7 @@ impl AdmittedKnnInvocation {
     /// # Errors
     /// Returns the original producer, constraint or allocation failure.
     pub fn cursor_scoped<'query, S: RankSource + 'query>(
-        self,
-        source: S,
-        scope: &dyn crate::CandidateScope,
+        self, source: S, scope: &dyn crate::CandidateScope,
     ) -> Result<crate::WorkspaceCursor<'query>, EvalError> {
         let workspace = &self.workspace;
         let (candidates, work, depth) = match self.invocation.answer {
@@ -383,21 +376,15 @@ impl AdmittedKnnInvocation {
     }
 
     fn prepared_cursor<'query, S: RankSource + 'query>(
-        self,
-        source: S,
-        ranked: crate::AdmittedVec<Ranked>,
-        declarations: crate::AdmittedVec<(usize, crate::RowEvidence)>,
-        work: u64,
+        self, source: S, ranked: crate::AdmittedVec<Ranked>,
+        declarations: crate::AdmittedVec<(usize, crate::RowEvidence)>, work: u64,
     ) -> Result<crate::WorkspaceCursor<'query>, EvalError> {
         self.into_cursor(source, Some(ranked), Some(declarations), work)
     }
 
     fn into_cursor<'query, S: RankSource + 'query>(
-        self,
-        source: S,
-        ranked: Option<crate::AdmittedVec<Ranked>>,
-        declarations: Option<crate::AdmittedVec<(usize, crate::RowEvidence)>>,
-        work: u64,
+        self, source: S, ranked: Option<crate::AdmittedVec<Ranked>>,
+        declarations: Option<crate::AdmittedVec<(usize, crate::RowEvidence)>>, work: u64,
     ) -> Result<crate::WorkspaceCursor<'query>, EvalError> {
         let workspace = self.workspace.clone();
         let mut cursor =
@@ -413,8 +400,7 @@ impl AdmittedKnnInvocation {
     /// # Errors
     /// Returns checked layout overflow, workspace refusal or allocator failure.
     pub fn cursor<'query, S: RankSource + 'query>(
-        self,
-        source: S,
+        self, source: S,
     ) -> Result<crate::WorkspaceCursor<'query>, EvalError> {
         self.into_cursor(source, None, None, 0)
     }
@@ -444,11 +430,7 @@ impl KnnInvocation {
     /// count and the neighbour are both free, or the count is not an admissible `k`
     /// ([`neighbour_count`]).
     pub fn open(
-        relation: &str,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
-        rows: &TermRows,
-        guard: KnnGuard,
+        relation: &str, args: &PfArgs<'_>, ceiling: Option<u64>, rows: &TermRows, guard: KnnGuard,
         membership_lookups: &AtomicU64,
     ) -> Result<Self, EvalError> {
         let (invocation, _) = Self::open_admitted(
@@ -468,13 +450,8 @@ impl KnnInvocation {
     /// # Errors
     /// As for [Self::open], plus typed admission, size and allocator failures.
     pub fn open_owned(
-        relation: &str,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
-        rows: &TermRows,
-        guard: KnnGuard,
-        membership_lookups: &AtomicU64,
-        workspace: crate::WorkspaceCapability,
+        relation: &str, args: &PfArgs<'_>, ceiling: Option<u64>, rows: &TermRows, guard: KnnGuard,
+        membership_lookups: &AtomicU64, workspace: crate::WorkspaceCapability,
     ) -> Result<AdmittedKnnInvocation, EvalError> {
         let (invocation, admission) = Self::open_admitted(
             relation,
@@ -493,13 +470,8 @@ impl KnnInvocation {
     }
 
     pub(crate) fn open_admitted(
-        relation: &str,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
-        rows: &TermRows,
-        guard: KnnGuard,
-        membership_lookups: &AtomicU64,
-        workspace: &crate::WorkspaceCapability,
+        relation: &str, args: &PfArgs<'_>, ceiling: Option<u64>, rows: &TermRows, guard: KnnGuard,
+        membership_lookups: &AtomicU64, workspace: &crate::WorkspaceCapability,
     ) -> Result<(Self, InvocationAdmission), EvalError> {
         let mut admissions = if workspace.is_bounded() {
             crate::AdmittedVec::with_capacity(6, workspace)?
@@ -609,9 +581,7 @@ pub fn neighbour_count(value: &TermValue, guard: KnnGuard) -> Result<usize, Eval
 }
 
 fn neighbour_count_with(
-    value: &TermValue,
-    guard: KnnGuard,
-    workspace: &crate::WorkspaceCapability,
+    value: &TermValue, guard: KnnGuard, workspace: &crate::WorkspaceCapability,
 ) -> Result<usize, EvalError> {
     let parsed = if let TermValue::Literal {
         lexical_form,
@@ -703,9 +673,7 @@ pub trait RankSource {
     /// Returns original producer failures. Opaque sources without this contract
     /// refuse scope rather than silently filtering a depth-limited answer.
     fn candidates_admitted(
-        &self,
-        _query_row: usize,
-        _workspace: &crate::WorkspaceCapability,
+        &self, _query_row: usize, _workspace: &crate::WorkspaceCapability,
     ) -> Result<(crate::AdmittedVec<Ranked>, u64), EvalError> {
         Err(EvalError::WorkspaceUnpriced(
             "ranked source has no pre-depth candidate contract",
@@ -727,10 +695,7 @@ pub trait RankSource {
     /// Returns the ranking error, or refuses an opaque bounded source before its
     /// search body can allocate without an admission contract.
     fn search_admitted(
-        &self,
-        query_row: usize,
-        select_k: usize,
-        workspace: &crate::WorkspaceCapability,
+        &self, query_row: usize, select_k: usize, workspace: &crate::WorkspaceCapability,
     ) -> Result<(crate::AdmittedVec<Ranked>, u64), EvalError> {
         if workspace.is_bounded() {
             return Err(EvalError::WorkspaceUnpriced(
@@ -757,10 +722,7 @@ pub trait RankSource {
     /// # Errors
     /// Refuses an opaque bounded source before invoking unpriced producer code.
     fn distance_admitted(
-        &self,
-        query_row: usize,
-        row: usize,
-        workspace: &crate::WorkspaceCapability,
+        &self, query_row: usize, row: usize, workspace: &crate::WorkspaceCapability,
     ) -> Result<f64, EvalError> {
         if workspace.is_bounded() {
             return Err(EvalError::WorkspaceUnpriced(
@@ -833,9 +795,7 @@ impl<S: RankSource> RankedCursor<S> {
     }
 
     pub(crate) fn with_admission(
-        source: S,
-        invocation: KnnInvocation,
-        admission: InvocationAdmission,
+        source: S, invocation: KnnInvocation, admission: InvocationAdmission,
         workspace: crate::WorkspaceCapability,
     ) -> Self {
         Self {

@@ -719,18 +719,13 @@ pub trait RdfEventSink {
     /// bind one triple). Both the reifier id and the triple's component ids MAY be
     /// forward references.
     fn reifier(
-        &mut self,
-        reifier: EventTermId,
-        triple: EventTriple,
+        &mut self, reifier: EventTermId, triple: EventTriple,
     ) -> Result<ControlFlow<()>, EventError>;
 
     /// A `(reifier, predicate, object)` statement annotation. All three ids MAY be
     /// forward references.
     fn annotation(
-        &mut self,
-        reifier: EventTermId,
-        p: EventTermId,
-        o: EventTermId,
+        &mut self, reifier: EventTermId, p: EventTermId, o: EventTermId,
     ) -> Result<ControlFlow<()>, EventError>;
 
     /// Like [`reifier`](Self::reifier) but carries the named graph the reifier
@@ -741,10 +736,7 @@ pub trait RdfEventSink {
     /// the SAME base triple differently in two named graphs) overrides this instead of
     /// [`reifier`](Self::reifier).
     fn reifier_in_graph(
-        &mut self,
-        reifier: EventTermId,
-        triple: EventTriple,
-        g: Option<EventTermId>,
+        &mut self, reifier: EventTermId, triple: EventTriple, g: Option<EventTermId>,
     ) -> Result<ControlFlow<()>, EventError> {
         let _ = g;
         self.reifier(reifier, triple)
@@ -754,11 +746,7 @@ pub trait RdfEventSink {
     /// annotation was asserted in (`None` = default graph). See
     /// [`reifier_in_graph`](Self::reifier_in_graph).
     fn annotation_in_graph(
-        &mut self,
-        reifier: EventTermId,
-        p: EventTermId,
-        o: EventTermId,
-        g: Option<EventTermId>,
+        &mut self, reifier: EventTermId, p: EventTermId, o: EventTermId, g: Option<EventTermId>,
     ) -> Result<ControlFlow<()>, EventError> {
         let _ = g;
         self.annotation(reifier, p, o)
@@ -978,9 +966,7 @@ mod tests {
 
     impl RdfEventSink for CountingSink {
         fn term(
-            &mut self,
-            _id: EventTermId,
-            _term: EventTerm<'_>,
+            &mut self, _id: EventTermId, _term: EventTerm<'_>,
         ) -> Result<ControlFlow<()>, EventError> {
             self.terms += 1;
             Ok(ControlFlow::Continue(()))
@@ -997,19 +983,14 @@ mod tests {
         }
 
         fn reifier(
-            &mut self,
-            _reifier: EventTermId,
-            _triple: EventTriple,
+            &mut self, _reifier: EventTermId, _triple: EventTriple,
         ) -> Result<ControlFlow<()>, EventError> {
             self.reifiers += 1;
             Ok(ControlFlow::Continue(()))
         }
 
         fn annotation(
-            &mut self,
-            _reifier: EventTermId,
-            _p: EventTermId,
-            _o: EventTermId,
+            &mut self, _reifier: EventTermId, _p: EventTermId, _o: EventTermId,
         ) -> Result<ControlFlow<()>, EventError> {
             self.annotations += 1;
             Ok(ControlFlow::Continue(()))

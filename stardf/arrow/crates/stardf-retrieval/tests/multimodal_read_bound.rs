@@ -139,10 +139,7 @@ fn sum_at(decay: DecayRule, weights: &[Score], rank: u64) -> Score {
 /// so `naming ⊆ sharing` for every fixture here; the two are separate arguments
 /// because the gap between them is the whole phenomenon.
 fn crossing_rank_at(
-    decay: DecayRule,
-    precision: purrdf_retrieval::Precision,
-    naming: &[Score],
-    at_rank: u64,
+    decay: DecayRule, precision: purrdf_retrieval::Precision, naming: &[Score], at_rank: u64,
     sharing: &[Score],
 ) -> u64 {
     crossed(purrdf_retrieval::crossing_rank_at(
@@ -650,9 +647,7 @@ impl PropertyFunction for CountingProducer {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -867,8 +862,7 @@ fn configured_registry(
 
 /// [`configured_registry`], with both producers attesting `generations` when given.
 fn generational_registry(
-    config: Configuration,
-    generations: Option<Generations>,
+    config: Configuration, generations: Option<Generations>,
 ) -> (PropertyFunctionRegistry<'static>, [Arc<Reads>; 2]) {
     let domains = declared_domains(config.blocks);
     let prefixes = candidate_prefixes(config.results);
@@ -1084,9 +1078,7 @@ impl Measured {
     /// they disagree — every assertion in this file is about a number the two
     /// symmetric producers reach together.
     fn both<'a, T: Clone + PartialEq + std::fmt::Debug + 'a>(
-        &self,
-        what: &str,
-        field: impl IntoIterator<Item = (&'a Iri, &'a T)>,
+        &self, what: &str, field: impl IntoIterator<Item = (&'a Iri, &'a T)>,
     ) -> T {
         let [left, right] = strata();
         let mut left_value = None;
@@ -1157,9 +1149,7 @@ fn measure(config: Configuration, dataset: &RdfDataset) -> Measured {
 
 /// [`measure`], with both producers attesting `generations` when given.
 fn measure_generational(
-    config: Configuration,
-    generations: Option<Generations>,
-    dataset: &RdfDataset,
+    config: Configuration, generations: Option<Generations>, dataset: &RdfDataset,
 ) -> Measured {
     let (registry, counters) = generational_registry(config, generations);
     let statistics = fixture_statistics();
@@ -1251,9 +1241,7 @@ fn measure_at_planned_depth(config: Configuration, dataset: &RdfDataset) -> Meas
 /// off the same places by the same code — a second reading would be a second
 /// chance for the comparison to be about the harness.
 fn measured(
-    planned: &Plan,
-    compiled: &CompiledRetrieval,
-    counters: &[Arc<Reads>; 2],
+    planned: &Plan, compiled: &CompiledRetrieval, counters: &[Arc<Reads>; 2],
     trailer: &FusionTrailer,
     rows: purrdf_sparql_eval::SharedWorkspace<purrdf_sparql_eval::AdmittedVec<FusedRow>>,
 ) -> Measured {

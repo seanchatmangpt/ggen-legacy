@@ -397,9 +397,7 @@ pub struct ProjectionLift {
 /// Returns a typed configuration, model, package, serialization, integrity, or
 /// resource-limit failure. `profile` must exactly match the tagged configuration.
 pub fn project_archive<D: DatasetView<ReadError = std::convert::Infallible> + Sync>(
-    view: &D,
-    profile: ProjectionProfile,
-    config: &ProjectionConfig,
+    view: &D, profile: ProjectionProfile, config: &ProjectionConfig,
 ) -> Result<ProjectionArchive, ProjectionError> {
     config.require_profile(profile)?;
     let (package, loss_ledger) = match config {
@@ -491,10 +489,7 @@ pub fn project_archive<D: DatasetView<ReadError = std::convert::Infallible> + Sy
 /// Requires the `ro-crate-1.3` profile, a matching attached configuration, a canonical
 /// payload contract, and sufficient configured package limits.
 pub fn project_archive_with_assets<D: DatasetView>(
-    view: &D,
-    profile: ProjectionProfile,
-    config: &ProjectionConfig,
-    assets: &RoCrateAssets,
+    view: &D, profile: ProjectionProfile, config: &ProjectionConfig, assets: &RoCrateAssets,
 ) -> Result<ProjectionArchive, ProjectionError> {
     config.require_profile(profile)?;
     let ProjectionConfig::RoCrate13(config) = config else {
@@ -522,11 +517,7 @@ pub fn project_archive_with_assets<D: DatasetView>(
 /// resource-limit failure. The sink transaction is aborted on every post-begin
 /// failure.
 pub fn project_lpg_artifacts_to_sink<D, S, O>(
-    view: &D,
-    profile: ProjectionProfile,
-    config: &ProjectionConfig,
-    sink: &mut S,
-    observer: &mut O,
+    view: &D, profile: ProjectionProfile, config: &ProjectionConfig, sink: &mut S, observer: &mut O,
 ) -> Result<LpgStreamProjection, ProjectionError>
 where
     D: DatasetView,
@@ -560,9 +551,7 @@ where
 /// dataset. Curated CSVW/OKF terms, OBO Graphs, SKOS, native DCAT RDF, and VoID are
 /// unrepresentable as [`LiftProfile`].
 pub fn lift_archive(
-    archive: &[u8],
-    profile: LiftProfile,
-    config: &ProjectionConfig,
+    archive: &[u8], profile: LiftProfile, config: &ProjectionConfig,
 ) -> Result<ProjectionLift, ProjectionError> {
     let projection_profile = profile.projection_profile();
     config.require_profile(projection_profile)?;
@@ -617,8 +606,7 @@ fn lift_research_object_package(
 }
 
 fn lift_lpg_package(
-    graph: &super::LpgGraph,
-    config: &LpgConfig,
+    graph: &super::LpgGraph, config: &LpgConfig,
 ) -> Result<ProjectionLift, ProjectionError> {
     let outcome = lift_lpg(graph, config)?;
     Ok(ProjectionLift {

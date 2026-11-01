@@ -132,9 +132,7 @@ impl Limits {
     }
 
     pub(crate) fn check(
-        limit: Option<u64>,
-        actual: u64,
-        resource: &'static str,
+        limit: Option<u64>, actual: u64, resource: &'static str,
     ) -> Result<(), MimeError> {
         if let Some(limit) = limit.filter(|limit| actual > *limit) {
             Err(MimeError::Limit { resource, limit })
@@ -159,9 +157,7 @@ impl Profile {
     /// # Errors
     /// Refuses an empty caller profile name.
     pub fn new(
-        name: impl Into<String>,
-        vocabulary: Vocabulary,
-        limits: Limits,
+        name: impl Into<String>, vocabulary: Vocabulary, limits: Limits,
     ) -> Result<Self, MimeError> {
         let name = name.into();
         if name.is_empty() {

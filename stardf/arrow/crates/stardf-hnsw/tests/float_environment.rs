@@ -52,8 +52,7 @@ fn is_ftz_eval(error: &EvalError) -> bool {
 
 /// Pull every row out of the kNN relation over `space` seeded at row 0.
 fn knn_rows(
-    relation: &EmbeddingKnnRelation,
-    seed: &purrdf_core::TermValue,
+    relation: &EmbeddingKnnRelation, seed: &purrdf_core::TermValue,
 ) -> Result<usize, EvalError> {
     let count =
         purrdf_core::TermValue::typed_literal("3", "http://www.w3.org/2001/XMLSchema#integer");
@@ -435,11 +434,7 @@ fn subnormal_rows() -> Vec<f64> {
 /// The batch kernel's value for `(query, row)` under `resolved`: the oracle every pair
 /// entry point is held to.
 fn batch<A: Arithmetic>(
-    resolved: Resolved<A>,
-    measure: Measure,
-    data: &[f64],
-    query: usize,
-    row: usize,
+    resolved: Resolved<A>, measure: Measure, data: &[f64], query: usize, row: usize,
 ) -> Result<f64, purrdf_core::distance::NonFinite> {
     let rows = RowsRef::new(data, 3, 2, &[]).expect("a 3x2 matrix");
     let mut out = [Ok(0.0); 3];
@@ -450,11 +445,7 @@ fn batch<A: Arithmetic>(
 /// Every public pair entry point on the handle `resolved`, for the pair `(query, row)` of
 /// `matrix`, alongside the batch kernel's value for the same pair.
 fn pairs_equal_batch<A: Arithmetic>(
-    resolved: Resolved<A>,
-    matrix: &VectorMatrix,
-    kernel: Kernel,
-    query: usize,
-    row: usize,
+    resolved: Resolved<A>, matrix: &VectorMatrix, kernel: Kernel, query: usize, row: usize,
     pair: Result<f64, purrdf_core::distance::NonFinite>,
 ) -> f64 {
     let data = subnormal_rows();

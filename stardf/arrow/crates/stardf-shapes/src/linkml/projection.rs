@@ -46,8 +46,7 @@ struct ElementInfo {
 }
 
 pub(super) fn emit(
-    compiled: &CompiledSchema,
-    config: &LinkmlConfig,
+    compiled: &CompiledSchema, config: &LinkmlConfig,
 ) -> Result<LinkmlPackage, LinkmlError> {
     let catalog = CompiledSchemaCatalog::parse(compiled)
         .map_err(|error| LinkmlError::new(error.to_string()))?;
@@ -192,9 +191,7 @@ fn element_infos(definitions: &Object) -> Result<BTreeMap<String, ElementInfo>, 
 }
 
 fn resolve_element_kind(
-    key: &str,
-    definitions: &Object,
-    resolved: &mut BTreeMap<String, ElementKind>,
+    key: &str, definitions: &Object, resolved: &mut BTreeMap<String, ElementKind>,
     visiting: &mut BTreeSet<String>,
 ) -> Result<ElementKind, LinkmlError> {
     if let Some(kind) = resolved.get(key) {
@@ -273,9 +270,7 @@ fn is_object_schema(object: &Object) -> bool {
 /// A shared definition of object alternatives needs the same class-expression
 /// carrier as its inline form. A scalar TypeDefinition would discard its fields.
 fn is_object_choice(
-    object: &Object,
-    definitions: &Object,
-    resolved: &mut BTreeMap<String, ElementKind>,
+    object: &Object, definitions: &Object, resolved: &mut BTreeMap<String, ElementKind>,
     visiting: &mut BTreeSet<String>,
 ) -> Result<bool, LinkmlError> {
     for keyword in ["anyOf", "oneOf"] {
@@ -559,8 +554,7 @@ fn slot_name_seed(config: &LinkmlConfig, source: &str) -> Result<SlotNameSeed, L
 /// ([`purrdf_iri::contract`]), as `(prefix, local)`; `None` when no namespace
 /// matches or the local part is empty (a namespace IRI itself names no slot).
 fn longest_namespace_match<'a>(
-    config: &'a LinkmlConfig,
-    source: &'a str,
+    config: &'a LinkmlConfig, source: &'a str,
 ) -> Option<(&'a str, &'a str)> {
     let curie = purrdf_iri::contract(source, config.curies())?;
     let (prefix, local) = curie.split_once(':')?;
@@ -603,10 +597,7 @@ fn sanitized_local<'a>(source: &'a str, reasons: &mut Vec<LinkmlSlotReason>) -> 
 }
 
 fn bounded_curie(
-    prefix: &str,
-    local: &str,
-    source: &str,
-    reasons: &mut Vec<LinkmlSlotReason>,
+    prefix: &str, local: &str, source: &str, reasons: &mut Vec<LinkmlSlotReason>,
 ) -> Result<String, LinkmlError> {
     let direct = format!("{prefix}:{local}");
     if direct.len() <= MAX_GENERATED_SLOT_NAME_BYTES {
@@ -712,10 +703,8 @@ struct Renderer<'a> {
 
 impl<'a> Renderer<'a> {
     fn new(
-        config: &'a LinkmlConfig,
-        elements: &'a BTreeMap<String, ElementInfo>,
-        definitions: &'a Object,
-        slot_expressions_left: usize,
+        config: &'a LinkmlConfig, elements: &'a BTreeMap<String, ElementInfo>,
+        definitions: &'a Object, slot_expressions_left: usize,
     ) -> Self {
         let mut used_names = BTreeMap::new();
         for (key, info) in elements {
@@ -764,10 +753,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn render_definition(
-        &mut self,
-        key: &str,
-        info: &ElementInfo,
-        definition: &Value,
+        &mut self, key: &str, info: &ElementInfo, definition: &Value,
     ) -> Result<(), LinkmlError> {
         let path = definition_path(key);
         match info.kind {
@@ -793,10 +779,7 @@ impl<'a> Renderer<'a> {
 
 impl<'a> Renderer<'a> {
     fn render_enum(
-        &self,
-        name: &str,
-        schema: &Value,
-        path: &str,
+        &self, name: &str, schema: &Value, path: &str,
     ) -> Result<Map<String, Value>, LinkmlError> {
         let object = schema
             .as_object()
@@ -863,10 +846,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn render_type(
-        &mut self,
-        name: &str,
-        schema: &Value,
-        path: &str,
+        &mut self, name: &str, schema: &Value, path: &str,
     ) -> Result<Map<String, Value>, LinkmlError> {
         let mut definition = Map::new();
         definition.insert("uri".to_owned(), Value::String(self.element_curie(name)));
@@ -1006,11 +986,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn apply_type_compositions(
-        &mut self,
-        object: &Object,
-        definition: &mut Map<String, Value>,
-        base: &str,
-        path: &str,
+        &mut self, object: &Object, definition: &mut Map<String, Value>, base: &str, path: &str,
     ) -> Result<(), LinkmlError> {
         for (source, target) in [
             ("anyOf", "any_of"),
@@ -1048,10 +1024,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn render_type_expression(
-        &mut self,
-        schema: &Value,
-        base: &str,
-        path: &str,
+        &mut self, schema: &Value, base: &str, path: &str,
     ) -> Result<Option<Map<String, Value>>, LinkmlError> {
         let Value::Object(object) = schema else {
             self.record(
@@ -1095,10 +1068,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn apply_scalar_constraints(
-        &self,
-        object: &Object,
-        target: &mut Map<String, Value>,
-        path: &str,
+        &self, object: &Object, target: &mut Map<String, Value>, path: &str,
     ) -> Result<(), LinkmlError> {
         if let Some(pattern) = object.get("pattern") {
             let pattern = pattern
@@ -1125,10 +1095,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn equality_expression(
-        &mut self,
-        value: &Value,
-        path: &str,
-        label: &str,
+        &mut self, value: &Value, path: &str, label: &str,
     ) -> Option<Map<String, Value>> {
         let mut expression = Map::new();
         match value {
@@ -1164,11 +1131,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn render_class(
-        &mut self,
-        name: &str,
-        source_key: Option<&str>,
-        schema: &Value,
-        path: &str,
+        &mut self, name: &str, source_key: Option<&str>, schema: &Value, path: &str,
     ) -> Result<Map<String, Value>, LinkmlError> {
         let mut class = Map::new();
         class.insert(
@@ -1269,10 +1232,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn apply_class_compositions(
-        &mut self,
-        object: &Object,
-        class: &mut Map<String, Value>,
-        path: &str,
+        &mut self, object: &Object, class: &mut Map<String, Value>, path: &str,
     ) -> Result<(), LinkmlError> {
         for (source, target) in [
             ("anyOf", "any_of"),
@@ -1309,9 +1269,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn render_class_expression(
-        &mut self,
-        schema: &Value,
-        path: &str,
+        &mut self, schema: &Value, path: &str,
     ) -> Result<Option<Map<String, Value>>, LinkmlError> {
         let Value::Object(object) = schema else {
             self.record(
@@ -1394,11 +1352,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn plan_class_slots(
-        &mut self,
-        emitted_class: &str,
-        source_class: &str,
-        properties: &Object,
-        path: &str,
+        &mut self, emitted_class: &str, source_class: &str, properties: &Object, path: &str,
     ) -> Result<Vec<PlannedSlot>, LinkmlError> {
         self.total_slots = checked_slot_total(self.total_slots, properties.len(), path)?;
 
@@ -1548,11 +1502,8 @@ impl<'a> Renderer<'a> {
     }
 
     fn allocate_slot_name(
-        &self,
-        seed: &mut SlotNameSeed,
-        used_names: &BTreeMap<String, String>,
-        used_identities: &BTreeMap<String, String>,
-        source_path: &str,
+        &self, seed: &mut SlotNameSeed, used_names: &BTreeMap<String, String>,
+        used_identities: &BTreeMap<String, String>, source_path: &str,
     ) -> Result<(String, Option<String>), LinkmlError> {
         for attempt in 0..=MAX_SLOT_COLLISION_ATTEMPTS {
             let candidate = if attempt == 0 {
@@ -1628,9 +1579,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn reference_info(
-        &self,
-        value: &Value,
-        path: &str,
+        &self, value: &Value, path: &str,
     ) -> Result<(&'a str, &'a ElementInfo, &'a Value), LinkmlError> {
         let reference = value
             .as_str()
@@ -1652,9 +1601,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn render_slot_expression(
-        &mut self,
-        schema: &Value,
-        path: &str,
+        &mut self, schema: &Value, path: &str,
     ) -> Result<Map<String, Value>, LinkmlError> {
         // Reference diamonds can require exponentially many anonymous LinkML
         // expressions. Bound that work by the input byte budget, as the catalog
@@ -1876,11 +1823,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn apply_slot_type(
-        &mut self,
-        kind: &str,
-        object: &Object,
-        slot: &mut Map<String, Value>,
-        path: &str,
+        &mut self, kind: &str, object: &Object, slot: &mut Map<String, Value>, path: &str,
     ) -> Result<(), LinkmlError> {
         match kind {
             "null" => {
@@ -1917,10 +1860,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn apply_array(
-        &mut self,
-        object: &Object,
-        slot: &mut Map<String, Value>,
-        path: &str,
+        &mut self, object: &Object, slot: &mut Map<String, Value>, path: &str,
     ) -> Result<(), LinkmlError> {
         let item_schema = if let Some(prefix_items) = object.get("prefixItems") {
             let prefix_items = prefix_items
@@ -2035,10 +1975,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn apply_slot_compositions(
-        &mut self,
-        object: &Object,
-        slot: &mut Map<String, Value>,
-        path: &str,
+        &mut self, object: &Object, slot: &mut Map<String, Value>, path: &str,
     ) -> Result<(), LinkmlError> {
         for (source, target) in [
             ("anyOf", "any_of"),
@@ -2077,9 +2014,7 @@ impl<'a> Renderer<'a> {
     /// so dropping it widens nothing; an array branch's `uniqueItems` has no
     /// statement in the anonymous expression, and its loss is recorded.
     fn anonymous_expression(
-        &mut self,
-        mut expression: Map<String, Value>,
-        path: &str,
+        &mut self, mut expression: Map<String, Value>, path: &str,
     ) -> Map<String, Value> {
         expression.remove("list_elements_ordered");
         if expression.remove("list_elements_unique") == Some(Value::Bool(true)) {
@@ -2404,10 +2339,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn copy_element_annotations(
-        &self,
-        source: &Object,
-        target: &mut Map<String, Value>,
-        path: &str,
+        &self, source: &Object, target: &mut Map<String, Value>, path: &str,
     ) -> Result<(), LinkmlError> {
         for key in ["title", "description"] {
             if let Some(value) = source.get(key) {
@@ -2424,9 +2356,7 @@ impl<'a> Renderer<'a> {
 }
 
 fn checked_slot_total(
-    current: usize,
-    class_slots: usize,
-    path: &str,
+    current: usize, class_slots: usize, path: &str,
 ) -> Result<usize, LinkmlError> {
     if class_slots > MAX_LINKML_SLOTS_PER_CLASS {
         return Err(LinkmlError::new(format!(
@@ -2480,9 +2410,7 @@ fn object_map<'a>(object: &'a Object, key: &str, path: &str) -> Result<&'a Objec
 }
 
 fn required_names(
-    object: &Object,
-    properties: &Object,
-    path: &str,
+    object: &Object, properties: &Object, path: &str,
 ) -> Result<BTreeSet<String>, LinkmlError> {
     let mut required = BTreeSet::new();
     let Some(values) = object.get("required") else {

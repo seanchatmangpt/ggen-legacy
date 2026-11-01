@@ -572,16 +572,14 @@ impl CdtValue {
     /// # Errors
     /// Returns the original bound diagnostic or checked physical failure.
     pub fn list_admitted(
-        items: Vec<CdtTerm>,
-        storage: &mut dyn crate::memory::Storage,
+        items: Vec<CdtTerm>, storage: &mut dyn crate::memory::Storage,
     ) -> Result<(Self, usize), crate::memory::ReadError> {
         let mut memory = crate::memory::Memory::new(storage);
         let value = memory.scope(|memory| Self::list_with_memory(items, memory))??;
         Ok((value, memory.admitted_bytes()))
     }
     pub(crate) fn list_with_memory(
-        items: Vec<CdtTerm>,
-        memory: &mut crate::memory::Memory<'_>,
+        items: Vec<CdtTerm>, memory: &mut crate::memory::Memory<'_>,
     ) -> Result<Result<Self, CdtError>, crate::memory::StorageError> {
         let extent = crate::limits::try_list_extent(items.iter(), memory)?;
         Ok(crate::limits::check_extent(&extent).map(|()| Self::from_checked_items(items, extent)))
@@ -594,16 +592,14 @@ impl CdtValue {
     /// # Errors
     /// Preserves duplicate-key offsets/wording and bounds separately from storage.
     pub fn map_admitted(
-        entries: Vec<CdtEntry>,
-        storage: &mut dyn crate::memory::Storage,
+        entries: Vec<CdtEntry>, storage: &mut dyn crate::memory::Storage,
     ) -> Result<(Self, usize), crate::memory::ReadError> {
         let mut memory = crate::memory::Memory::new(storage);
         let value = memory.scope(|memory| Self::map_with_memory(entries, memory))??;
         Ok((value, memory.admitted_bytes()))
     }
     pub(crate) fn map_with_memory(
-        mut entries: Vec<CdtEntry>,
-        memory: &mut crate::memory::Memory<'_>,
+        mut entries: Vec<CdtEntry>, memory: &mut crate::memory::Memory<'_>,
     ) -> Result<Result<Self, CdtError>, crate::memory::StorageError> {
         memory.sort_by(&mut entries, |x, y| {
             crate::ops::total_key_cmp(&x.key, &y.key)

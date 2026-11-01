@@ -159,9 +159,7 @@ fn hash_short_blank(bytes: &[u8], scope: u32) -> u64 {
 /// avoid materializing an escaped label merely to probe an existing identity.
 #[inline]
 pub(crate) fn hash_blank_bytes_for_interner(
-    len: usize,
-    mut bytes: impl Iterator<Item = u8>,
-    scope: u32,
+    len: usize, mut bytes: impl Iterator<Item = u8>, scope: u32,
 ) -> u64 {
     use core::hash::Hasher;
     let mut hash = purrdf_hash::fixed::FixedHasher::default();
@@ -195,9 +193,7 @@ pub(crate) fn hash_blank_bytes_for_interner(
 /// `None` remains distinct from `Some("")` through the presence bit.
 #[inline]
 pub(crate) fn hash_literal_for_interner(
-    lexical: &str,
-    datatype: u64,
-    language: Option<&str>,
+    lexical: &str, datatype: u64, language: Option<&str>,
     direction: Option<crate::RdfTextDirection>,
 ) -> u64 {
     use core::hash::Hasher;
@@ -250,9 +246,7 @@ pub(crate) fn hash_triple_for_interner(s: u64, p: u64, o: u64) -> u64 {
 /// # Errors
 /// Returns layout overflow, original admission refusal or allocator refusal.
 pub fn reserve_table_with_memory<T, S: purrdf_lex::allocation::Admission + ?Sized>(
-    table: &mut hashbrown::HashTable<T>,
-    required: usize,
-    hash: impl Fn(&T) -> u64,
+    table: &mut hashbrown::HashTable<T>, required: usize, hash: impl Fn(&T) -> u64,
     memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<(), purrdf_lex::allocation::StorageError> {
     use purrdf_lex::allocation::StorageError;
@@ -289,9 +283,7 @@ pub fn reserve_map_with_memory<
     V,
     S: purrdf_lex::allocation::Admission + ?Sized,
 >(
-    map: &mut FastMap<K, V>,
-    required: usize,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    map: &mut FastMap<K, V>, required: usize, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<(), purrdf_lex::allocation::StorageError> {
     use purrdf_lex::allocation::StorageError;
     let mut retained =
@@ -316,9 +308,7 @@ pub fn reserve_map_with_retained_memory<
     V,
     S: purrdf_lex::allocation::Admission + ?Sized,
 >(
-    map: &mut FastMap<K, V>,
-    retained: &mut usize,
-    required: usize,
+    map: &mut FastMap<K, V>, retained: &mut usize, required: usize,
     memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<(), purrdf_lex::allocation::StorageError> {
     use purrdf_lex::allocation::StorageError;

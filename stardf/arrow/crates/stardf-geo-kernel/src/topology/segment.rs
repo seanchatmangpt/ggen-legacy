@@ -87,20 +87,12 @@ pub(crate) fn cmp_xy(left: &Coord, right: &Coord) -> Ordering {
 
 /// Admit the exact two-dimensional determinant before its original products.
 pub(crate) fn determinant2_admitted(
-    ax: &Rat,
-    ay: &Rat,
-    bx: &Rat,
-    by: &Rat,
-    admission: &mut ExactAdmission<'_, '_>,
+    ax: &Rat, ay: &Rat, bx: &Rat, by: &Rat, admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<Rat, GeoError> {
     determinant2_inner(ax, ay, bx, by, Some(admission))
 }
 fn determinant2_inner(
-    ax: &Rat,
-    ay: &Rat,
-    bx: &Rat,
-    by: &Rat,
-    mut admission: Option<&mut ExactAdmission<'_, '_>>,
+    ax: &Rat, ay: &Rat, bx: &Rat, by: &Rat, mut admission: Option<&mut ExactAdmission<'_, '_>>,
 ) -> Result<Rat, GeoError> {
     let first = exact_rational(
         admission.as_deref_mut(),
@@ -119,10 +111,7 @@ fn determinant2_inner(
     })
 }
 fn cross_inner(
-    a: &Coord,
-    b: &Coord,
-    c: &Coord,
-    mut admission: Option<&mut ExactAdmission<'_, '_>>,
+    a: &Coord, b: &Coord, c: &Coord, mut admission: Option<&mut ExactAdmission<'_, '_>>,
 ) -> Result<Rat, GeoError> {
     let abx = exact_rational(
         admission.as_deref_mut(),
@@ -160,18 +149,12 @@ pub fn orientation(a: &Coord, b: &Coord, c: &Coord) -> i32 {
     orientation_inner(a, b, c, None).expect("pure exact orientation has no admission refusal")
 }
 pub(crate) fn orientation_admitted(
-    a: &Coord,
-    b: &Coord,
-    c: &Coord,
-    admission: &mut ExactAdmission<'_, '_>,
+    a: &Coord, b: &Coord, c: &Coord, admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<i32, GeoError> {
     orientation_inner(a, b, c, Some(admission))
 }
 fn orientation_inner(
-    a: &Coord,
-    b: &Coord,
-    c: &Coord,
-    mut admission: Option<&mut ExactAdmission<'_, '_>>,
+    a: &Coord, b: &Coord, c: &Coord, mut admission: Option<&mut ExactAdmission<'_, '_>>,
 ) -> Result<i32, GeoError> {
     if let Some((ordinate, factor)) = axis_direction_inner(a, b, admission.as_deref_mut())? {
         if factor == 0 {
@@ -191,9 +174,7 @@ fn orientation_inner(
 /// For an original axis edge, its cross product is factor times the selected
 /// displacement ordinate. Canonical equality and comparisons precede any body.
 fn axis_direction_inner(
-    a: &Coord,
-    b: &Coord,
-    mut admission: Option<&mut ExactAdmission<'_, '_>>,
+    a: &Coord, b: &Coord, mut admission: Option<&mut ExactAdmission<'_, '_>>,
 ) -> Result<Option<(usize, i32)>, GeoError> {
     if crate::numerical::equal_rational(admission.as_deref_mut(), a.y(), b.y())? {
         let factor = crate::numerical::compare_rational(admission, b.x(), a.x())? as i32;
@@ -211,10 +192,7 @@ fn axis_direction_inner(
 /// Whether `value` lies in the closed interval spanned by `one` and `other`, in
 /// either order.
 fn between_inner(
-    value: &Rat,
-    one: &Rat,
-    other: &Rat,
-    mut admission: Option<&mut ExactAdmission<'_, '_>>,
+    value: &Rat, one: &Rat, other: &Rat, mut admission: Option<&mut ExactAdmission<'_, '_>>,
 ) -> Result<bool, GeoError> {
     let (low, high) =
         if crate::numerical::compare_rational(admission.as_deref_mut(), one, other)?.is_le() {
@@ -239,10 +217,7 @@ pub fn on_segment(p: &Coord, a: &Coord, b: &Coord) -> bool {
     on_segment_inner(p, a, b, None).expect("pure exact segment membership has no admission refusal")
 }
 pub(crate) fn on_segment_admitted(
-    p: &Coord,
-    a: &Coord,
-    b: &Coord,
-    admission: &mut ExactAdmission<'_, '_>,
+    p: &Coord, a: &Coord, b: &Coord, admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<bool, GeoError> {
     on_segment_inner(p, a, b, Some(admission))
 }
@@ -251,19 +226,12 @@ pub(crate) fn on_segment_direction(p: &Coord, direction: &[Rat; 2], a: &Coord, b
         .expect("pure directional incidence has no admission refusal")
 }
 pub(crate) fn on_segment_direction_admitted(
-    p: &Coord,
-    direction: &[Rat; 2],
-    a: &Coord,
-    b: &Coord,
-    admission: &mut ExactAdmission<'_, '_>,
+    p: &Coord, direction: &[Rat; 2], a: &Coord, b: &Coord, admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<bool, GeoError> {
     on_segment_direction_inner(p, direction, a, b, Some(admission))
 }
 fn on_segment_direction_inner(
-    p: &Coord,
-    direction: &[Rat; 2],
-    a: &Coord,
-    b: &Coord,
+    p: &Coord, direction: &[Rat; 2], a: &Coord, b: &Coord,
     mut admission: Option<&mut ExactAdmission<'_, '_>>,
 ) -> Result<bool, GeoError> {
     let in_box = {
@@ -288,28 +256,19 @@ fn on_segment_direction_inner(
     Ok(in_box && directional_orientation_inner(a, b, p, direction, admission)? == 0)
 }
 pub(crate) fn ray_crosses_direction(
-    point: &Coord,
-    direction: &[Rat; 2],
-    a: &Coord,
-    b: &Coord,
+    point: &Coord, direction: &[Rat; 2], a: &Coord, b: &Coord,
 ) -> bool {
     ray_crosses_direction_inner(point, direction, a, b, None)
         .expect("pure directional crossing has no admission refusal")
 }
 pub(crate) fn ray_crosses_direction_admitted(
-    point: &Coord,
-    direction: &[Rat; 2],
-    a: &Coord,
-    b: &Coord,
+    point: &Coord, direction: &[Rat; 2], a: &Coord, b: &Coord,
     admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<bool, GeoError> {
     ray_crosses_direction_inner(point, direction, a, b, Some(admission))
 }
 fn ray_crosses_direction_inner(
-    point: &Coord,
-    direction: &[Rat; 2],
-    a: &Coord,
-    b: &Coord,
+    point: &Coord, direction: &[Rat; 2], a: &Coord, b: &Coord,
     mut admission: Option<&mut ExactAdmission<'_, '_>>,
 ) -> Result<bool, GeoError> {
     let dy_sign = if let Some(admission) = admission.as_deref_mut() {
@@ -322,10 +281,7 @@ fn ray_crosses_direction_inner(
 }
 /// The sign of edge×(point−a)+ε(edge×direction), for sufficiently small ε>0.
 fn directional_orientation_inner(
-    a: &Coord,
-    b: &Coord,
-    point: &Coord,
-    direction: &[Rat; 2],
+    a: &Coord, b: &Coord, point: &Coord, direction: &[Rat; 2],
     mut admission: Option<&mut ExactAdmission<'_, '_>>,
 ) -> Result<i32, GeoError> {
     let constant = orientation_inner(a, b, point, admission.as_deref_mut())?;
@@ -356,10 +312,7 @@ fn directional_orientation_inner(
     Ok(determinant2_inner(&dx, &dy, &direction[0], &direction[1], admission)?.signum())
 }
 fn on_segment_inner(
-    p: &Coord,
-    a: &Coord,
-    b: &Coord,
-    mut admission: Option<&mut ExactAdmission<'_, '_>>,
+    p: &Coord, a: &Coord, b: &Coord, mut admission: Option<&mut ExactAdmission<'_, '_>>,
 ) -> Result<bool, GeoError> {
     // Closed-box exclusion is exact and avoids constructing a determinant for
     // a point outside either original coordinate interval.
@@ -381,16 +334,12 @@ pub fn midpoint(a: &Coord, b: &Coord) -> Coord {
     midpoint_inner(a, b, None).expect("pure exact midpoint has no admission refusal")
 }
 pub(crate) fn midpoint_admitted(
-    a: &Coord,
-    b: &Coord,
-    admission: &mut ExactAdmission<'_, '_>,
+    a: &Coord, b: &Coord, admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<Coord, GeoError> {
     midpoint_inner(a, b, Some(admission))
 }
 fn midpoint_inner(
-    a: &Coord,
-    b: &Coord,
-    mut admission: Option<&mut ExactAdmission<'_, '_>>,
+    a: &Coord, b: &Coord, mut admission: Option<&mut ExactAdmission<'_, '_>>,
 ) -> Result<Coord, GeoError> {
     Ok(Coord::xy(
         mean_inner(a.x(), b.x(), admission.as_deref_mut())?,
@@ -400,9 +349,7 @@ fn midpoint_inner(
 
 /// The exact scalar mean shared by fragment and arrangement witnesses.
 pub(crate) fn mean_admitted(
-    a: &Rat,
-    b: &Rat,
-    context: &mut crate::MetricContext,
+    a: &Rat, b: &Rat, context: &mut crate::MetricContext,
     progress: &mut crate::context::WorkProgress<'_>,
 ) -> Result<Rat, GeoError> {
     mean_inner(a, b, Some(&mut ExactAdmission::new(context, progress)))
@@ -410,9 +357,7 @@ pub(crate) fn mean_admitted(
 
 /// The same scalar witness mean with the resident or admitted arithmetic owner.
 pub(crate) fn mean_inner(
-    a: &Rat,
-    b: &Rat,
-    mut admission: Option<&mut ExactAdmission<'_, '_>>,
+    a: &Rat, b: &Rat, mut admission: Option<&mut ExactAdmission<'_, '_>>,
 ) -> Result<Rat, GeoError> {
     if crate::numerical::compare_rational(admission.as_deref_mut(), a, b)?.is_eq() {
         return exact_rational(admission, Linear, &[a], |values| values.original(a));
@@ -485,18 +430,12 @@ pub fn intersect(a1: &Coord, a2: &Coord, b1: &Coord, b2: &Coord) -> SegmentInter
 }
 /// The same original exact segment law with stepwise operand admission.
 pub(crate) fn intersect_admitted(
-    a1: &Coord,
-    a2: &Coord,
-    b1: &Coord,
-    b2: &Coord,
-    admission: &mut ExactAdmission<'_, '_>,
+    a1: &Coord, a2: &Coord, b1: &Coord, b2: &Coord, admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<SegmentIntersection, GeoError> {
     intersect_inner(a1, a2, b1, b2, Some(admission))
 }
 pub(crate) fn same_planar_inner(
-    a: &Coord,
-    b: &Coord,
-    mut admission: Option<&mut ExactAdmission<'_, '_>>,
+    a: &Coord, b: &Coord, mut admission: Option<&mut ExactAdmission<'_, '_>>,
 ) -> Result<bool, GeoError> {
     // Canonical equality scans limbs. Admit each ordinate only when the
     // original short-circuiting planar comparison actually reads it.
@@ -508,8 +447,7 @@ pub(crate) fn same_planar_inner(
     Ok(true)
 }
 fn plane_inner(
-    coord: &Coord,
-    admission: Option<&mut ExactAdmission<'_, '_>>,
+    coord: &Coord, admission: Option<&mut ExactAdmission<'_, '_>>,
 ) -> Result<Coord, GeoError> {
     if let Some(admission) = admission {
         admission.expression(Linear, &[coord.x(), coord.y()], 2, |values| {
@@ -523,9 +461,7 @@ fn plane_inner(
     }
 }
 pub(crate) fn compare_inner(
-    a: &Coord,
-    b: &Coord,
-    admission: Option<&mut ExactAdmission<'_, '_>>,
+    a: &Coord, b: &Coord, admission: Option<&mut ExactAdmission<'_, '_>>,
 ) -> Result<Ordering, GeoError> {
     if let Some(admission) = admission {
         let x = admission.compare(a.x(), b.x())?;
@@ -539,10 +475,7 @@ pub(crate) fn compare_inner(
     }
 }
 fn intersect_inner(
-    a1: &Coord,
-    a2: &Coord,
-    b1: &Coord,
-    b2: &Coord,
+    a1: &Coord, a2: &Coord, b1: &Coord, b2: &Coord,
     mut admission: Option<&mut ExactAdmission<'_, '_>>,
 ) -> Result<SegmentIntersection, GeoError> {
     // Disjoint closed boxes prove that no endpoint or supporting-line witness
@@ -615,10 +548,7 @@ fn intersect_inner(
     }
 }
 fn segment_boxes_disjoint<E>(
-    a1: &Coord,
-    a2: &Coord,
-    b1: &Coord,
-    b2: &Coord,
+    a1: &Coord, a2: &Coord, b1: &Coord, b2: &Coord,
     mut compare: impl FnMut(&Rat, &Rat) -> Result<Ordering, E>,
 ) -> Result<bool, E> {
     for (ax, ay, bx, by) in [
@@ -643,10 +573,7 @@ fn segment_boxes_disjoint<E>(
 }
 /// The original nondegenerate law, charging each reduced operand before use.
 fn intersect_nondegenerate(
-    a1: &Coord,
-    a2: &Coord,
-    b1: &Coord,
-    b2: &Coord,
+    a1: &Coord, a2: &Coord, b1: &Coord, b2: &Coord,
     mut admission: Option<&mut ExactAdmission<'_, '_>>,
 ) -> Result<SegmentIntersection, GeoError> {
     let rx = exact_rational(
@@ -721,11 +648,7 @@ fn intersect_nondegenerate(
     Ok(SegmentIntersection::Point(Coord::xy(x, y)))
 }
 fn determinant_ratio(
-    qx: &Rat,
-    qy: &Rat,
-    x: &Rat,
-    y: &Rat,
-    denominator: &Rat,
+    qx: &Rat, qy: &Rat, x: &Rat, y: &Rat, denominator: &Rat,
     mut admission: Option<&mut ExactAdmission<'_, '_>>,
 ) -> Result<Rat, GeoError> {
     let numerator = determinant2_inner(qx, qy, x, y, admission.as_deref_mut())?;
@@ -741,10 +664,7 @@ fn determinant_ratio(
     )
 }
 fn intersect_parallel(
-    a1: &Coord,
-    a2: &Coord,
-    b1: &Coord,
-    b2: &Coord,
+    a1: &Coord, a2: &Coord, b1: &Coord, b2: &Coord,
     mut admission: Option<&mut ExactAdmission<'_, '_>>,
 ) -> Result<SegmentIntersection, GeoError> {
     if orientation_inner(a1, a2, b1, admission.as_deref_mut())? != 0 {
@@ -772,9 +692,7 @@ fn intersect_parallel(
     })
 }
 fn ordered<'a>(
-    one: &'a Coord,
-    other: &'a Coord,
-    admission: Option<&mut ExactAdmission<'_, '_>>,
+    one: &'a Coord, other: &'a Coord, admission: Option<&mut ExactAdmission<'_, '_>>,
 ) -> Result<(&'a Coord, &'a Coord), GeoError> {
     Ok(
         if compare_inner(one, other, admission)? == Ordering::Greater {

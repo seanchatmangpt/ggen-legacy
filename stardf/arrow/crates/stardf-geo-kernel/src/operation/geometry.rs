@@ -44,9 +44,7 @@ pub(crate) struct AdmittedImageSource<'a> {
 impl<'a> AdmittedImageSource<'a> {
     /// Admit the original tree before any geographic validation or image copy.
     pub(crate) fn prepare(
-        source: &'a Geometry,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        source: &'a Geometry, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<Self, GeoError> {
         let policy = context.policy().remaining_after(
             context.work_items(),
@@ -103,9 +101,7 @@ impl purrdf_hash::error::StructuredError for ImageMetric {
 }
 impl ImageMetric {
     fn factor(
-        &self,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &self, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<Rat, GeoError> {
         match self {
             Self::CartesianMetres => Ok(Rat::one()),
@@ -196,13 +192,8 @@ impl OperationChain {
     /// One original continuous-image identity home. Adaptive proof partitions,
     /// output approximations and admission limits are not source content.
     pub(crate) fn image_source_identity(
-        &self,
-        content: Digest32,
-        target: &Crs,
-        metric: Digest32,
-        epoch: Option<&Rat>,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &self, content: Digest32, target: &Crs, metric: Digest32, epoch: Option<&Rat>,
+        context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<Digest32, GeoError> {
         let (epoch_fields, bytes) = super::epoch_fields_admitted(epoch, context, progress)?;
         let result = (|| {
@@ -251,11 +242,7 @@ impl OperationChain {
     /// Refuses incompatible units, uncertified areal image topology, crossing a
     /// model domain, insufficient precision, or complete resource admission.
     pub fn materialize_geometry(
-        &self,
-        source: &Geometry,
-        target: Crs,
-        metric: &ImageMetric,
-        epoch: Option<&Rat>,
+        &self, source: &Geometry, target: Crs, metric: &ImageMetric, epoch: Option<&Rat>,
         context: &mut MetricContext,
     ) -> Result<GeometryImage, GeoError> {
         self.materialize_inner(
@@ -272,13 +259,8 @@ impl OperationChain {
     /// # Errors
     /// Also preserves an observer's original refusal without a partial carrier.
     pub fn materialize_geometry_metered(
-        &self,
-        source: &Geometry,
-        target: Crs,
-        metric: &ImageMetric,
-        epoch: Option<&Rat>,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, source: &Geometry, target: Crs, metric: &ImageMetric, epoch: Option<&Rat>,
+        context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<GeometryImage, GeoError> {
         self.materialize_inner(
             ImageSource::Original(source),
@@ -291,12 +273,8 @@ impl OperationChain {
     }
 
     pub(crate) fn materialize_admitted_image(
-        &self,
-        source: AdmittedImageSource<'_>,
-        target: Crs,
-        metric: &ImageMetric,
-        epoch: Option<&Rat>,
-        context: &mut MetricContext,
+        &self, source: AdmittedImageSource<'_>, target: Crs, metric: &ImageMetric,
+        epoch: Option<&Rat>, context: &mut MetricContext,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<GeometryImage, GeoError> {
         self.materialize_inner(
@@ -310,13 +288,8 @@ impl OperationChain {
     }
 
     fn materialize_inner(
-        &self,
-        source: ImageSource<'_>,
-        target: Crs,
-        metric: &ImageMetric,
-        epoch: Option<&Rat>,
-        context: &mut MetricContext,
-        observer: Option<&mut dyn MetricWorkObserver>,
+        &self, source: ImageSource<'_>, target: Crs, metric: &ImageMetric, epoch: Option<&Rat>,
+        context: &mut MetricContext, observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<GeometryImage, GeoError> {
         let endpoint = self
             .operations()
@@ -510,11 +483,8 @@ struct ImageState {
 }
 impl ImageState {
     fn with_worker<T>(
-        &mut self,
-        chain: &OperationChain,
-        epoch: Option<&Rat>,
-        context: &RefCell<&mut MetricContext>,
-        numerical: &RefCell<&mut WorkProgress<'_>>,
+        &mut self, chain: &OperationChain, epoch: Option<&Rat>,
+        context: &RefCell<&mut MetricContext>, numerical: &RefCell<&mut WorkProgress<'_>>,
         body: impl FnOnce(&mut ImageWorker<'_, '_, '_, '_>) -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         let mut context = context.borrow_mut();
@@ -709,9 +679,7 @@ impl ImageWorker<'_, '_, '_, '_> {
         Ok(output)
     }
     fn map_output<T, U>(
-        &mut self,
-        source: &[T],
-        mut item: impl FnMut(&mut Self, &T) -> Result<U, GeoError>,
+        &mut self, source: &[T], mut item: impl FnMut(&mut Self, &T) -> Result<U, GeoError>,
     ) -> Result<Vec<U>, GeoError> {
         let mut output = crate::context::RetainedBuilder::default();
         output.reserve_admitted(
@@ -727,9 +695,7 @@ impl ImageWorker<'_, '_, '_, '_> {
             .output_array(output, self.context, self.progress)
     }
     fn make_geometry(
-        &mut self,
-        dim: crate::CoordDim,
-        body: GeometryBody,
+        &mut self, dim: crate::CoordDim, body: GeometryBody,
     ) -> Result<Geometry, GeoError> {
         crate::context::native_memory(self.context, self.progress, &mut self.native_bytes, |_| {
             Geometry::new(dim, body)
@@ -907,13 +873,8 @@ impl ImageWorker<'_, '_, '_, '_> {
         })
     }
     fn panel_math(
-        chain: &OperationChain,
-        factor: &Rat,
-        epoch: Option<&Rat>,
-        (a, b): (&Coord, &Coord),
-        solver: OperationSolverLimits,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        chain: &OperationChain, factor: &Rat, epoch: Option<&Rat>, (a, b): (&Coord, &Coord),
+        solver: OperationSolverLimits, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<Rat, MathError> {
         let panel = evaluate_panel(
             chain,
@@ -986,10 +947,7 @@ enum PanelKind {
 }
 
 fn source_delta(
-    start: &Coord,
-    end: &Coord,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    start: &Coord, end: &Coord, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<purrdf_core::SmallVec<[Rat; 3]>, MathError> {
     [
         Some((start.x(), end.x())),
@@ -1011,13 +969,9 @@ fn source_delta(
 }
 
 fn evaluate_panel(
-    chain: &OperationChain,
-    epoch: Option<&Rat>,
-    (a, b): (&Coord, &Coord),
-    original_delta: Option<&[Rat]>,
-    (solver, kind): (OperationSolverLimits, PanelKind),
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    chain: &OperationChain, epoch: Option<&Rat>, (a, b): (&Coord, &Coord),
+    original_delta: Option<&[Rat]>, (solver, kind): (OperationSolverLimits, PanelKind),
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<PanelEnclosure, MathError> {
     evaluate_panel_through(
         chain,
@@ -1031,12 +985,9 @@ fn evaluate_panel(
 }
 
 fn evaluate_panel_through(
-    chain: &OperationChain,
-    epoch: Option<&Rat>,
-    (a, b): (&Coord, &Coord),
+    chain: &OperationChain, epoch: Option<&Rat>, (a, b): (&Coord, &Coord),
     original_delta: Option<&[Rat]>,
-    (solver, kind, count): (OperationSolverLimits, PanelKind, usize),
-    math: &mut CoordinateMath,
+    (solver, kind, count): (OperationSolverLimits, PanelKind, usize), math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<PanelEnclosure, MathError> {
     if count == 0 || count > chain.operations().len() {
@@ -1238,12 +1189,8 @@ fn identity_matrix(math: &mut CoordinateMath) -> Result<RootJacobian2, MathError
     ])
 }
 fn differential(
-    model: &OperationModel,
-    point: &OperationPoint,
-    coordinates: &[FixedInterval],
-    limits: OperationSolverLimits,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    model: &OperationModel, point: &OperationPoint, coordinates: &[FixedInterval],
+    limits: OperationSolverLimits, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<(OperationCoordinates, Option<RootJacobian2>), MathError> {
     match model {
         OperationModel::GcjRationalHarmonicV1(_)
@@ -1333,11 +1280,7 @@ fn differential(
 // dy/dphi = a(1-e²)/(cos(phi)(1-e²sin²(phi))). These interval derivatives
 // bound the complete panel and are independent of point-coordinate rounding.
 fn mercator_jacobian(
-    a: &Rat,
-    e2: &Rat,
-    latitude: &FixedInterval,
-    inverse: bool,
-    math: &mut CoordinateMath,
+    a: &Rat, e2: &Rat, latitude: &FixedInterval, inverse: bool, math: &mut CoordinateMath,
 ) -> Result<RootJacobian2, MathError> {
     let one = FixedInterval::from_i64(1, math)?;
     let zero = FixedInterval::from_i64(0, math)?;

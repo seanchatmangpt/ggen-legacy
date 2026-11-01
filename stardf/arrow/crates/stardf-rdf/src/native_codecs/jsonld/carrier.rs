@@ -31,9 +31,7 @@ pub(super) struct Document {
 
 impl Document {
     pub(super) fn write_expanded_json<W: Write>(
-        &self,
-        writer: W,
-        context: &JsonValue,
+        &self, writer: W, context: &JsonValue,
     ) -> Result<(), RdfDiagnostic> {
         self.write_expanded(&mut Stream::new(writer, Spelling::Json), context)
     }
@@ -43,17 +41,13 @@ impl Document {
     /// Straight from the carrier, exactly as the JSON spelling is: one node's value
     /// tree is resident at a time, never the whole document's.
     pub(super) fn write_expanded_yaml<W: Write>(
-        &self,
-        writer: W,
-        context: &JsonValue,
+        &self, writer: W, context: &JsonValue,
     ) -> Result<(), RdfDiagnostic> {
         self.write_expanded(&mut Stream::new(writer, Spelling::Yaml), context)
     }
 
     fn write_expanded<W: Write>(
-        &self,
-        stream: &mut Stream<W>,
-        context: &JsonValue,
+        &self, stream: &mut Stream<W>, context: &JsonValue,
     ) -> Result<(), RdfDiagnostic> {
         let document = Object::new().with("@context", context.clone());
         if self.default_nodes.is_empty() && self.named_graphs.is_empty() {
@@ -97,8 +91,7 @@ impl Document {
     /// `&self` receiver meant cloning the whole carrier for no reason other than the
     /// receiver's shape.
     fn compact(
-        mut self,
-        context: &CompiledJsonLdContext,
+        mut self, context: &CompiledJsonLdContext,
     ) -> Result<(Self, GraphIndexPlans), RdfDiagnostic> {
         let graph_index_plans = plan_graph_index_containers(&self, context)?;
         consume_graph_index_metadata(&mut self.default_nodes, None, &graph_index_plans);
@@ -128,26 +121,20 @@ impl Document {
     /// Every caller builds its carrier locally and hands it over exactly once, so the
     /// move costs them nothing.
     pub(super) fn write_compacted_json<W: Write>(
-        self,
-        writer: W,
-        context: &CompiledJsonLdContext,
+        self, writer: W, context: &CompiledJsonLdContext,
     ) -> Result<(), RdfDiagnostic> {
         self.write_compacted(&mut Stream::new(writer, Spelling::Json), context)
     }
 
     /// The same document as [`Document::write_compacted_json`], emitted as YAML.
     pub(super) fn write_compacted_yaml<W: Write>(
-        self,
-        writer: W,
-        context: &CompiledJsonLdContext,
+        self, writer: W, context: &CompiledJsonLdContext,
     ) -> Result<(), RdfDiagnostic> {
         self.write_compacted(&mut Stream::new(writer, Spelling::Yaml), context)
     }
 
     fn write_compacted<W: Write>(
-        self,
-        stream: &mut Stream<W>,
-        context: &CompiledJsonLdContext,
+        self, stream: &mut Stream<W>, context: &CompiledJsonLdContext,
     ) -> Result<(), RdfDiagnostic> {
         let (document, graph_index_plans) = self.compact(context)?;
         let skeleton = Object::new().with("@context", context.canonical_context().clone());
@@ -193,10 +180,7 @@ struct CompactionScope<'a> {
 impl CompactionScope<'_> {
     /// One node, compacted, with its graph containers applied.
     fn node(
-        &self,
-        node: &Node,
-        scope: Option<&str>,
-        embedded_graphs: &mut BTreeSet<String>,
+        &self, node: &Node, scope: Option<&str>, embedded_graphs: &mut BTreeSet<String>,
     ) -> Result<JsonValue, RdfDiagnostic> {
         let mut compacted = node.compacted_json(self.context)?;
         apply_graph_containers(
@@ -215,10 +199,7 @@ impl CompactionScope<'_> {
     /// A top-level named graph object, `@id` and `@graph` members in key order, its
     /// nodes streamed.
     fn write_named_graph<W: Write>(
-        &self,
-        graph: &mut Stream<W>,
-        named: &NamedGraph,
-        embedded_graphs: &mut BTreeSet<String>,
+        &self, graph: &mut Stream<W>, named: &NamedGraph, embedded_graphs: &mut BTreeSet<String>,
     ) -> Result<(), RdfDiagnostic> {
         let id_key = compact_keyword(self.context, "@id")?;
         let graph_key = compact_keyword(self.context, "@graph")?;
@@ -313,10 +294,7 @@ impl<W: Write> Stream<W> {
     /// Write `text`, every line that starts in it shifted right by `indent` spaces;
     /// `at_line_start` says whether its first character starts a line.
     fn write_shifted(
-        &mut self,
-        text: &str,
-        indent: usize,
-        at_line_start: bool,
+        &mut self, text: &str, indent: usize, at_line_start: bool,
     ) -> Result<(), RdfDiagnostic> {
         let shifted = shift(text, indent, at_line_start, self.spelling);
         self.out
@@ -350,9 +328,7 @@ impl<W: Write> Stream<W> {
     /// Write `skeleton` — the document, or the current array's next item — with
     /// the array under its member `slot` written item by item by `fill`.
     fn frame(
-        &mut self,
-        mut skeleton: Object,
-        slot: &str,
+        &mut self, mut skeleton: Object, slot: &str,
         fill: impl FnOnce(&mut Self) -> Result<(), RdfDiagnostic>,
     ) -> Result<(), RdfDiagnostic> {
         if self.in_array {
@@ -433,13 +409,9 @@ pub(super) struct NamedGraph {
 
 impl NamedGraph {
     fn compacted_contents(
-        &self,
-        context: &CompiledJsonLdContext,
-        document: &Document,
-        named_by_id: &BTreeMap<&str, &Self>,
-        embedded_graphs: &mut BTreeSet<String>,
-        graph_index_plans: &GraphIndexPlans,
-        force_array: bool,
+        &self, context: &CompiledJsonLdContext, document: &Document,
+        named_by_id: &BTreeMap<&str, &Self>, embedded_graphs: &mut BTreeSet<String>,
+        graph_index_plans: &GraphIndexPlans, force_array: bool,
     ) -> Result<JsonValue, RdfDiagnostic> {
         let nodes = self
             .nodes
@@ -476,8 +448,7 @@ struct GraphIndexPlan {
 }
 
 fn plan_graph_index_containers(
-    document: &Document,
-    context: &CompiledJsonLdContext,
+    document: &Document, context: &CompiledJsonLdContext,
 ) -> Result<GraphIndexPlans, RdfDiagnostic> {
     let named_by_id: BTreeMap<&str, &NamedGraph> = document
         .named_graphs
@@ -526,13 +497,9 @@ fn plan_graph_index_containers(
     reason = "graph-index planning keeps scope, carrier, context, and destination explicit"
 )]
 fn plan_graph_index_scope(
-    scope: Option<&str>,
-    nodes: &[Node],
-    named_by_id: &BTreeMap<&str, &NamedGraph>,
-    references: &BTreeMap<String, u8>,
-    context: &CompiledJsonLdContext,
-    selection: &JsonLdTermSelection,
-    plans: &mut GraphIndexPlans,
+    scope: Option<&str>, nodes: &[Node], named_by_id: &BTreeMap<&str, &NamedGraph>,
+    references: &BTreeMap<String, u8>, context: &CompiledJsonLdContext,
+    selection: &JsonLdTermSelection, plans: &mut GraphIndexPlans,
 ) -> Result<(), RdfDiagnostic> {
     let metadata_by_id: BTreeMap<&str, &Node> =
         nodes.iter().map(|node| (node.id.as_str(), node)).collect();
@@ -615,9 +582,7 @@ fn plan_graph_index_scope(
 }
 
 fn consume_graph_index_metadata(
-    nodes: &mut Vec<Node>,
-    scope: Option<&str>,
-    plans: &GraphIndexPlans,
+    nodes: &mut Vec<Node>, scope: Option<&str>, plans: &GraphIndexPlans,
 ) {
     let consumed: BTreeSet<&str> = plans
         .iter()
@@ -660,14 +625,9 @@ fn count_node_term_ids(node: &Node, counts: &mut BTreeMap<String, u8>) {
     reason = "graph-container emission keeps scope, carrier, context, and state explicit"
 )]
 fn apply_graph_containers(
-    node: &Node,
-    scope: Option<&str>,
-    compacted: &mut JsonValue,
-    context: &CompiledJsonLdContext,
-    document: &Document,
-    named_by_id: &BTreeMap<&str, &NamedGraph>,
-    embedded_graphs: &mut BTreeSet<String>,
-    graph_index_plans: &GraphIndexPlans,
+    node: &Node, scope: Option<&str>, compacted: &mut JsonValue, context: &CompiledJsonLdContext,
+    document: &Document, named_by_id: &BTreeMap<&str, &NamedGraph>,
+    embedded_graphs: &mut BTreeSet<String>, graph_index_plans: &GraphIndexPlans,
 ) -> Result<(), RdfDiagnostic> {
     for (iri, values) in &node.properties {
         if values.is_empty()
@@ -830,10 +790,7 @@ fn apply_graph_containers(
 }
 
 fn remove_regular_property(
-    _node: &Node,
-    compacted: &mut JsonValue,
-    context: &CompiledJsonLdContext,
-    iri: &str,
+    _node: &Node, compacted: &mut JsonValue, context: &CompiledJsonLdContext, iri: &str,
     values: &[Value],
 ) -> Result<(), RdfDiagnostic> {
     let object = compacted
@@ -864,11 +821,8 @@ fn remove_regular_property(
 }
 
 fn insert_compacted_property(
-    compacted: &mut JsonValue,
-    context: &CompiledJsonLdContext,
-    term: &str,
-    definition: &JsonLdTermDefinition,
-    value: JsonValue,
+    compacted: &mut JsonValue, context: &CompiledJsonLdContext, term: &str,
+    definition: &JsonLdTermDefinition, value: JsonValue,
 ) -> Result<(), RdfDiagnostic> {
     let object = compacted
         .as_object_mut()
@@ -1077,8 +1031,7 @@ fn reverse_selection() -> JsonLdTermSelection {
 }
 
 fn relocate_reverse_properties(
-    nodes: &mut Vec<Node>,
-    context: &CompiledJsonLdContext,
+    nodes: &mut Vec<Node>, context: &CompiledJsonLdContext,
 ) -> Result<(), RdfDiagnostic> {
     #[derive(Debug)]
     struct Move {
@@ -1244,9 +1197,7 @@ impl Value {
     /// `json` with this value's annotation nodes, already written, under
     /// `@annotation`: one node bare, several as an array, none left out.
     fn with_annotation(
-        &self,
-        mut json: JsonValue,
-        annotations: impl Iterator<Item = JsonValue>,
+        &self, mut json: JsonValue, annotations: impl Iterator<Item = JsonValue>,
     ) -> JsonValue {
         if !self.annotations.is_empty() {
             let annotations: Vec<JsonValue> = annotations.collect();
@@ -1270,8 +1221,7 @@ impl Value {
     /// as the data nests them, so every walk over the folded carrier goes
     /// through here and its depth costs no machine stack.
     fn fold_lists<T, E>(
-        &self,
-        mut combine: impl FnMut(&Self, usize, Option<Vec<T>>) -> Result<T, E>,
+        &self, mut combine: impl FnMut(&Self, usize, Option<Vec<T>>) -> Result<T, E>,
     ) -> Result<T, E> {
         struct Frame<'a, T> {
             value: &'a Value,
@@ -1601,9 +1551,7 @@ impl Triple {
 }
 
 fn compact_property_values(
-    context: &CompiledJsonLdContext,
-    term: &str,
-    definition: Option<&JsonLdTermDefinition>,
+    context: &CompiledJsonLdContext, term: &str, definition: Option<&JsonLdTermDefinition>,
     values: &[&Value],
 ) -> Result<JsonValue, RdfDiagnostic> {
     if definition.is_some_and(|definition| definition.containers().contains(&JsonLdContainer::Id)) {
@@ -1628,9 +1576,7 @@ fn compact_property_values(
 }
 
 fn compact_id_map(
-    context: &CompiledJsonLdContext,
-    term: &str,
-    definition: Option<&JsonLdTermDefinition>,
+    context: &CompiledJsonLdContext, term: &str, definition: Option<&JsonLdTermDefinition>,
     values: &[&Value],
 ) -> Result<JsonValue, RdfDiagnostic> {
     let definition = definition.expect("@id container requires a term definition");
@@ -1665,9 +1611,7 @@ fn compact_id_map(
 }
 
 fn compact_language_map(
-    context: &CompiledJsonLdContext,
-    term: &str,
-    definition: Option<&JsonLdTermDefinition>,
+    context: &CompiledJsonLdContext, term: &str, definition: Option<&JsonLdTermDefinition>,
     values: &[&Value],
 ) -> Result<JsonValue, RdfDiagnostic> {
     let definition = definition.expect("language container requires a term definition");
@@ -1712,9 +1656,7 @@ fn compact_language_map(
 
 impl Value {
     fn compacted_json(
-        &self,
-        context: &CompiledJsonLdContext,
-        definition: Option<&JsonLdTermDefinition>,
+        &self, context: &CompiledJsonLdContext, definition: Option<&JsonLdTermDefinition>,
     ) -> Result<JsonValue, RdfDiagnostic> {
         self.fold_lists(|value, depth, items| {
             // List-item compaction inherits the property term's
@@ -1732,9 +1674,7 @@ impl Value {
     /// This value compacted under `definition`, a list value from its
     /// already-compacted `items`.
     fn compacted_one(
-        &self,
-        context: &CompiledJsonLdContext,
-        definition: Option<&JsonLdTermDefinition>,
+        &self, context: &CompiledJsonLdContext, definition: Option<&JsonLdTermDefinition>,
         items: Option<Vec<JsonValue>>,
     ) -> Result<JsonValue, RdfDiagnostic> {
         let compacted = match (&self.term, items) {
@@ -1809,16 +1749,13 @@ impl Triple {
 }
 
 fn compact_component(
-    context: &CompiledJsonLdContext,
-    term: &Term,
+    context: &CompiledJsonLdContext, term: &Term,
 ) -> Result<JsonValue, RdfDiagnostic> {
     Value::plain(term.clone()).compacted_json(context, None)
 }
 
 fn compact_literal(
-    context: &CompiledJsonLdContext,
-    definition: Option<&JsonLdTermDefinition>,
-    literal: &Literal,
+    context: &CompiledJsonLdContext, definition: Option<&JsonLdTermDefinition>, literal: &Literal,
     may_collapse: bool,
 ) -> Result<JsonValue, RdfDiagnostic> {
     if may_collapse
@@ -1873,9 +1810,7 @@ fn canonical_json_value(lexical: &str) -> Option<JsonValue> {
 }
 
 fn literal_matches_mapping(
-    context: &CompiledJsonLdContext,
-    definition: &JsonLdTermDefinition,
-    literal: &Literal,
+    context: &CompiledJsonLdContext, definition: &JsonLdTermDefinition, literal: &Literal,
 ) -> bool {
     match (&literal.datatype, definition.type_mapping()) {
         (Some(datatype), Some(JsonLdTypeMapping::Datatype(mapping))) => datatype == mapping,
@@ -1899,16 +1834,13 @@ fn literal_matches_mapping(
 }
 
 fn compact_keyword(
-    context: &CompiledJsonLdContext,
-    keyword: &str,
+    context: &CompiledJsonLdContext, keyword: &str,
 ) -> Result<String, RdfDiagnostic> {
     context.compact_iri(keyword, true)
 }
 
 fn compact_id(
-    context: &CompiledJsonLdContext,
-    id: &str,
-    vocab: bool,
+    context: &CompiledJsonLdContext, id: &str, vocab: bool,
 ) -> Result<String, RdfDiagnostic> {
     if id.starts_with("_:") {
         Ok(id.to_owned())
@@ -1918,9 +1850,7 @@ fn compact_id(
 }
 
 fn insert_unique(
-    object: &mut BTreeMap<String, JsonValue>,
-    key: &str,
-    value: JsonValue,
+    object: &mut BTreeMap<String, JsonValue>, key: &str, value: JsonValue,
 ) -> Result<(), RdfDiagnostic> {
     if object.insert(key.to_owned(), value).is_some() {
         return Err(decode(format!(
@@ -1980,10 +1910,7 @@ mod tests {
     }
 
     fn literal(
-        lexical: &str,
-        datatype: Option<&str>,
-        language: Option<&str>,
-        direction: Option<&str>,
+        lexical: &str, datatype: Option<&str>, language: Option<&str>, direction: Option<&str>,
     ) -> Value {
         Value::plain(Term::Literal(Literal {
             lexical: lexical.to_owned(),

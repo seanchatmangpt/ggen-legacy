@@ -594,10 +594,7 @@ impl Bench {
 
     /// Run one benchmark as the arguments ask.
     fn run(
-        &mut self,
-        id: &FullId,
-        config: Config,
-        throughput: Option<Throughput>,
+        &mut self, id: &FullId, config: Config, throughput: Option<Throughput>,
         routine: &mut dyn FnMut(&mut Bencher),
     ) {
         let text = id.text();
@@ -669,11 +666,7 @@ impl Bench {
     }
 
     fn measure(
-        &mut self,
-        id: &FullId,
-        text: String,
-        config: Config,
-        throughput: Option<Throughput>,
+        &mut self, id: &FullId, text: String, config: Config, throughput: Option<Throughput>,
         routine: &mut dyn FnMut(&mut Bencher),
     ) {
         // `--quick` caps the timing, `--wall-max` (and [`MAX_BENCH_WALL`]) the

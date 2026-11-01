@@ -27,8 +27,7 @@ pub struct SpanGeometry {
 /// # Errors
 /// Refuses inverted coordinates and actual checked-layout/storage failures.
 pub fn longest_first_indices(
-    spans: &[SpanGeometry],
-    workspace: &WorkspaceCapability,
+    spans: &[SpanGeometry], workspace: &WorkspaceCapability,
 ) -> Result<AdmittedVec<usize>, EvalError> {
     let mut ordered = AdmittedVec::with_capacity(spans.len(), workspace)?;
     for (ordinal, span) in spans.iter().enumerate() {

@@ -455,9 +455,7 @@ impl Arguments {
 
 /// The value of an option taking one: inline after `=`, or the next argument.
 fn value_of(
-    name: &str,
-    inline: Option<String>,
-    rest: &mut VecDeque<String>,
+    name: &str, inline: Option<String>, rest: &mut VecDeque<String>,
 ) -> Result<String, ArgumentError> {
     inline
         .or_else(|| rest.pop_front())
@@ -692,18 +690,13 @@ pub fn without_host_clock_or_entropy<T>(computation: impl FnOnce() -> T) -> T {
 /// On wasm32 a panicking case ends the module, and its report goes to the
 /// runner's host console rather than to `out`.
 pub fn run(
-    arguments: &Arguments,
-    trials: Vec<Trial>,
-    out: &mut dyn Write,
+    arguments: &Arguments, trials: Vec<Trial>, out: &mut dyn Write,
 ) -> io::Result<Conclusion> {
     run_to(arguments, trials, out, false)
 }
 
 fn run_to(
-    arguments: &Arguments,
-    trials: Vec<Trial>,
-    out: &mut dyn Write,
-    color: bool,
+    arguments: &Arguments, trials: Vec<Trial>, out: &mut dyn Write, color: bool,
 ) -> io::Result<Conclusion> {
     let mut names = BTreeSet::new();
     for trial in &trials {
@@ -1128,10 +1121,7 @@ pub(crate) mod platform {
 
     /// Natively a panicking case unwinds and the run goes on: nothing to arm.
     pub(super) const fn arm(
-        _report: &Report,
-        _name: &str,
-        _not_run: usize,
-        _started: &Stopwatch,
+        _report: &Report, _name: &str, _not_run: usize, _started: &Stopwatch,
     ) -> bool {
         false
     }

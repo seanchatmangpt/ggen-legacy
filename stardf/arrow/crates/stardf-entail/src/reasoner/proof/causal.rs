@@ -26,10 +26,7 @@ pub(super) struct Captures {
 }
 
 pub(super) fn unavailable(
-    run: usize,
-    clash: Option<usize>,
-    kind: CausalSupportKind,
-    detail: String,
+    run: usize, clash: Option<usize>, kind: CausalSupportKind, detail: String,
 ) -> DlProofError {
     DlProofError::CausalSupport {
         run: Some(run),
@@ -54,10 +51,7 @@ pub(super) fn run_error(run: usize, error: DlProofError) -> DlProofError {
 
 impl Captures {
     pub(super) fn push(
-        &mut self,
-        run: usize,
-        replay: RefutationReplay,
-        capture: Capture,
+        &mut self, run: usize, replay: RefutationReplay, capture: Capture,
     ) -> Result<(), DlProofError> {
         if !replay.is_closed()
             || capture.clashes.len() != replay.clashes() + replay.checked_merges()
@@ -131,9 +125,7 @@ impl ServiceProof {
     /// Original native source/question/calculus, receipt, stopping and admission errors;
     /// `DlProofError::CausalSupport` for missing, unsupported or unclosed causal evidence.
     pub fn verify_prepared_causal<'a>(
-        &'a self,
-        question: &Question,
-        certificate: Option<&DlCertificate>,
+        &'a self, question: &Question, certificate: Option<&DlCertificate>,
         ctx: &'a DlProofContext<'_>,
     ) -> Result<CausalServiceReplay<'a>, DlProofError> {
         let mut captures = Captures::default();

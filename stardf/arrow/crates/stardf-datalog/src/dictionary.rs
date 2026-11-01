@@ -35,8 +35,7 @@ impl<'a, I: TermIdentity> DictionaryTerm<'a, I> {
     ///
     /// Preserves the original dictionary read or resolution failure.
     pub fn lexical<'d, D: TermDictionary<Id = I>>(
-        self,
-        dictionary: &'d D,
+        self, dictionary: &'d D,
     ) -> Result<LexicalTerm<'a, D::Lexical<'d>>, D::Error> {
         dictionary.check_read()?;
         let value = match self {
@@ -115,8 +114,7 @@ impl<L: AsRef<str>> AsRef<str> for LexicalTerm<'_, L> {
 /// Transform the fixed row in position order, stopping at its first refusal.
 /// Completed owners are dropped on failure; the array introduces no allocation.
 pub(crate) fn try_map_row<T, U, E, const N: usize>(
-    row: [T; N],
-    mut convert: impl FnMut(T) -> Result<U, E>,
+    row: [T; N], mut convert: impl FnMut(T) -> Result<U, E>,
 ) -> Result<[U; N], E> {
     let mut converted = core::array::from_fn(|_| None);
     for (slot, value) in converted.iter_mut().zip(row) {
@@ -127,9 +125,7 @@ pub(crate) fn try_map_row<T, U, E, const N: usize>(
 
 /// Lexicographic comparison preserving the first original comparator refusal.
 pub(crate) fn compare_sequences<T, E>(
-    left: &[T],
-    right: &[T],
-    mut compare: impl FnMut(&T, &T) -> Result<Ordering, E>,
+    left: &[T], right: &[T], mut compare: impl FnMut(&T, &T) -> Result<Ordering, E>,
 ) -> Result<Ordering, E> {
     for (left, right) in left.iter().zip(right) {
         let order = compare(left, right)?;
@@ -149,9 +145,7 @@ pub(crate) fn compare_sequences<T, E>(
 /// # Errors
 /// Preserves the dictionary's original read or lexical-resolution refusal.
 pub fn compare_lexical_terms<D: TermDictionary>(
-    dictionary: &D,
-    left: DictionaryTerm<'_, D::Id>,
-    right: DictionaryTerm<'_, D::Id>,
+    dictionary: &D, left: DictionaryTerm<'_, D::Id>, right: DictionaryTerm<'_, D::Id>,
 ) -> Result<Ordering, D::Error> {
     let left = left.lexical(dictionary)?;
     let right = right.lexical(dictionary)?;
@@ -248,15 +242,11 @@ pub trait TermDictionary: Send + Sync {
     /// Both operands may be fresh values produced by a guard. Unsupported values
     /// must return the original typed error, never a substitute order.
     fn compare_terms(
-        &self,
-        left: DictionaryTerm<'_, Self::Id>,
-        right: DictionaryTerm<'_, Self::Id>,
+        &self, left: DictionaryTerm<'_, Self::Id>, right: DictionaryTerm<'_, Self::Id>,
     ) -> Result<Ordering, Self::Error>;
     /// Compare complete rows in position order through the same term contract.
     fn compare_rows(
-        &self,
-        left: &[DictionaryTerm<'_, Self::Id>],
-        right: &[DictionaryTerm<'_, Self::Id>],
+        &self, left: &[DictionaryTerm<'_, Self::Id>], right: &[DictionaryTerm<'_, Self::Id>],
     ) -> Result<Ordering, Self::Error> {
         self.check_read()?;
         let order =
@@ -270,8 +260,7 @@ pub trait TermDictionary: Send + Sync {
     /// remove only identities minted by this operation and return the original error.
     /// The validator borrows the dictionary and cannot publish a partial store row.
     fn with_interned<T, const N: usize>(
-        &mut self,
-        terms: [DictionaryTerm<'_, Self::Id>; N],
+        &mut self, terms: [DictionaryTerm<'_, Self::Id>; N],
         validate: impl FnOnce(&Self, [Self::Id; N]) -> Result<T, DictionaryError<Self::Error>>,
     ) -> Result<T, DictionaryError<Self::Error>>
     where

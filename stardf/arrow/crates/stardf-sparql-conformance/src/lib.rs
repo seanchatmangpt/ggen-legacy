@@ -80,9 +80,7 @@ impl Summary {
     ///
     /// Refuses an ambiguous expected-failure registry entry.
     pub fn record_outcome(
-        &mut self,
-        case: &SparqlTestCase,
-        outcome: Result<run::RunOutcome, String>,
+        &mut self, case: &SparqlTestCase, outcome: Result<run::RunOutcome, String>,
     ) -> Result<(), String> {
         self.record_verdict(case, verdict_of_outcome(case, outcome))
     }
@@ -93,9 +91,7 @@ impl Summary {
     ///
     /// Refuses an ambiguous expected-failure registry entry.
     pub fn record_setup_failure(
-        &mut self,
-        case: &SparqlTestCase,
-        message: String,
+        &mut self, case: &SparqlTestCase, message: String,
     ) -> Result<(), String> {
         self.record_verdict(case, Verdict::Fail(message))
     }

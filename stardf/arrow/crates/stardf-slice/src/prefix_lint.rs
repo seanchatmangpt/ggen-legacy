@@ -95,8 +95,7 @@ fn collect_sources(dir: &Path, out: &mut Vec<PathBuf>) -> Result<(), SliceError>
 /// Returns [`SliceError`] on a filesystem error reading the scanned tree (a missing
 /// root is not an error — it simply contributes no sources).
 pub fn lint_prefix_consistency(
-    root: &Path,
-    vocab: &SliceVocab,
+    root: &Path, vocab: &SliceVocab,
 ) -> Result<Vec<ProjectionDiagnostic>, SliceError> {
     let effective = effective_registry(vocab);
     let registry: BTreeMap<&str, &str> = effective

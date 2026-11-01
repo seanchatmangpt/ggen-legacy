@@ -247,8 +247,7 @@ fn admit_with(bytes: &[u8], host: &HostBindings<'_>) -> Result<PreparedShapes, S
 /// Open and admit `bytes` under the empty host, bound to the input binding
 /// `expected` — the caller's statement of WHICH product it wanted.
 fn admit_expecting(
-    bytes: &[u8],
-    expected: &[u8; 32],
+    bytes: &[u8], expected: &[u8; 32],
 ) -> Result<PreparedShapes, ShapesProductError> {
     ShapesProduct::open(bytes)?.admit_expecting(
         &ShapesProfile::CORE,
@@ -528,9 +527,7 @@ impl PropertyFunction for EmptyRelation {
     }
 
     fn open<'cursor>(
-        &self,
-        _args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, _args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,

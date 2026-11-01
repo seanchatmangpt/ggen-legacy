@@ -97,8 +97,7 @@ pub(crate) struct CacheSlots {
 
 impl CacheSlots {
     fn admit_inventory(
-        &mut self,
-        declarations: &[declarations::Declaration<'_>],
+        &mut self, declarations: &[declarations::Declaration<'_>],
     ) -> Result<&mut FastMap<usize, PatternCache>, Cause> {
         if self.declared.is_none() {
             let mut slots = FastMap::default();
@@ -144,10 +143,7 @@ impl Configuration {
     }
 
     fn compiled(
-        &self,
-        cell: usize,
-        pattern: &str,
-        flags: &str,
+        &self, cell: usize, pattern: &str, flags: &str,
     ) -> Result<Arc<xpath::CompiledPattern>, Cause> {
         let mut caches = self.caches.lock().map_err(|_| Cause::CachePoisoned)?;
         if caches.declared.is_none() {
@@ -207,8 +203,7 @@ impl Configuration {
 
     /// Preserve the caller's own outer error separately from the exact native cause.
     pub(crate) fn run<T, E>(
-        &self,
-        operation: impl FnOnce() -> Result<T, E>,
+        &self, operation: impl FnOnce() -> Result<T, E>,
     ) -> Result<T, RunError<E>> {
         let _scope = enter(self.clone());
         let result = operation();
@@ -423,9 +418,7 @@ impl Facet<'_> {
 }
 
 pub(crate) fn facet<'a>(
-    cell: &'a LegacyCell,
-    pattern: &str,
-    flags: Option<&str>,
+    cell: &'a LegacyCell, pattern: &str, flags: Option<&str>,
 ) -> Result<Facet<'a>, String> {
     let Some(configuration) = current() else {
         return Ok(Facet::Legacy(
@@ -510,9 +503,7 @@ impl XPathPreparedShapes {
     /// # Errors
     /// Returns actual source, target, pattern or constraint operational failures.
     pub fn validate_with_governors(
-        &self,
-        data: ShaclData,
-        governors: &purrdf_sparql_eval::QueryGovernors,
+        &self, data: ShaclData, governors: &purrdf_sparql_eval::QueryGovernors,
     ) -> Result<GovernedValidation, XPathValidationError> {
         crate::engine::governed_validation(governors, || self.bind(data)?.validate())
     }
@@ -524,9 +515,7 @@ impl XPathPreparedShapes {
     /// # Errors
     /// Returns actual projection, target, pattern or constraint operational failures.
     pub fn validate_dataset_with_governors(
-        &self,
-        data: &RdfDataset,
-        governors: &purrdf_sparql_eval::QueryGovernors,
+        &self, data: &RdfDataset, governors: &purrdf_sparql_eval::QueryGovernors,
     ) -> Result<GovernedValidation, XPathValidationError> {
         crate::engine::governed_validation(governors, || self.bind_dataset(data)?.validate())
     }
@@ -561,8 +550,7 @@ impl XPathPreparedShapes {
     /// # Errors
     /// Returns typed projection, target or native operational failures.
     pub fn bind_dataset(
-        &self,
-        data: &RdfDataset,
+        &self, data: &RdfDataset,
     ) -> Result<XPathPreparedValidator, XPathValidationError> {
         self.bound(|prepared| prepared.bind_dataset_request(data))
     }
@@ -571,8 +559,7 @@ impl XPathPreparedShapes {
     /// # Errors
     /// Returns typed source, target or native operational failures.
     pub fn bind_shared_dataset(
-        &self,
-        data: Arc<RdfDataset>,
+        &self, data: Arc<RdfDataset>,
     ) -> Result<XPathPreparedValidator, XPathValidationError> {
         self.bound(|prepared| prepared.bind_shared_dataset_request(data))
     }
@@ -581,8 +568,7 @@ impl XPathPreparedShapes {
     /// # Errors
     /// Returns typed target or native operational failures.
     pub fn bind_view(
-        &self,
-        data: Arc<crate::data_view::ShaclDatasetView>,
+        &self, data: Arc<crate::data_view::ShaclDatasetView>,
     ) -> Result<XPathPreparedValidator, XPathValidationError> {
         self.bound(|prepared| prepared.bind_view_request(data))
     }
@@ -591,10 +577,7 @@ impl XPathPreparedShapes {
     /// # Errors
     /// Returns typed retention, projection, target or native operational failures.
     pub fn bind_shared_dataset_with_shapes_graph(
-        &self,
-        data: Arc<RdfDataset>,
-        iri: Option<&str>,
-        limits: purrdf_rdf::ir::ViewLimits,
+        &self, data: Arc<RdfDataset>, iri: Option<&str>, limits: purrdf_rdf::ir::ViewLimits,
     ) -> Result<XPathPreparedValidator, XPathValidationError> {
         self.bound(|prepared| {
             prepared.bind_shared_dataset_with_shapes_graph_request(data, iri, limits)
@@ -605,9 +588,7 @@ impl XPathPreparedShapes {
     /// # Errors
     /// Returns typed retention, target or native operational failures.
     pub fn bind_delta_with_shapes_graph(
-        &self,
-        data: Arc<purrdf_rdf::ir::DeltaDatasetView>,
-        iri: Option<&str>,
+        &self, data: Arc<purrdf_rdf::ir::DeltaDatasetView>, iri: Option<&str>,
         limits: purrdf_rdf::ir::ViewLimits,
     ) -> Result<XPathPreparedValidator, XPathValidationError> {
         self.bound(|prepared| prepared.bind_delta_with_shapes_graph_request(data, iri, limits))
@@ -617,8 +598,7 @@ impl XPathPreparedShapes {
     /// # Errors
     /// Returns typed target or native operational failures.
     pub fn bind_projected_dataset(
-        &self,
-        data: Arc<RdfDataset>,
+        &self, data: Arc<RdfDataset>,
     ) -> Result<XPathPreparedValidator, XPathValidationError> {
         self.bound(|prepared| prepared.bind_projected_dataset_request(data))
     }
@@ -627,9 +607,7 @@ impl XPathPreparedShapes {
     /// # Errors
     /// Returns typed graph assembly, target or native operational failures.
     pub fn bind_projected_dataset_with_shapes_graph(
-        &self,
-        data: Arc<RdfDataset>,
-        iri: Option<&str>,
+        &self, data: Arc<RdfDataset>, iri: Option<&str>,
     ) -> Result<XPathPreparedValidator, XPathValidationError> {
         self.bound(|prepared| prepared.bind_projected_dataset_with_shapes_graph_request(data, iri))
     }
@@ -681,8 +659,7 @@ impl XPathPreparedValidator {
     /// # Errors
     /// Returns typed operational failures, with no partial report.
     pub fn validate_with_governors(
-        &self,
-        governors: &purrdf_sparql_eval::QueryGovernors,
+        &self, governors: &purrdf_sparql_eval::QueryGovernors,
     ) -> Result<GovernedValidation, XPathValidationError> {
         crate::engine::governed_validation(governors, || self.validate())
     }
@@ -691,8 +668,7 @@ impl XPathPreparedValidator {
     /// # Errors
     /// Returns typed target, source or native operational failures.
     pub fn validate_focus_nodes(
-        &self,
-        nodes: &[Term],
+        &self, nodes: &[Term],
     ) -> Result<ValidationReport, XPathValidationError> {
         self.configuration
             .run(|| {
@@ -706,8 +682,7 @@ impl XPathPreparedValidator {
     /// # Errors
     /// Refuses foreign ids, target failures and native operational failures.
     pub fn validate_focus_node_ids(
-        &self,
-        nodes: &[FocusId],
+        &self, nodes: &[FocusId],
     ) -> Result<ValidationReport, XPathValidationError> {
         self.configuration
             .run(|| {
@@ -727,8 +702,7 @@ impl XPathPreparedValidator {
     /// # Errors
     /// Refuses invalid change or target admission and native operational failures.
     pub fn affected_focus_node_ids(
-        &self,
-        delta: &purrdf_rdf::ir::DeltaDatasetView,
+        &self, delta: &purrdf_rdf::ir::DeltaDatasetView,
     ) -> Result<FocusExpansion, XPathValidationError> {
         self.configuration
             .run(|| self.validator.affected_focus_request(delta))
@@ -748,8 +722,7 @@ impl XPathPreparedValidator {
     /// Refuses a binding not made over `delta`, hard validation failures and native
     /// operational failures, with no partial report.
     pub fn validate_change(
-        &self,
-        delta: &purrdf_rdf::ir::DeltaDatasetView,
+        &self, delta: &purrdf_rdf::ir::DeltaDatasetView,
     ) -> Result<crate::engine::ChangeValidation, XPathValidationError> {
         self.configuration
             .run(|| crate::engine::validate_change(&self.validator, delta))
@@ -763,8 +736,7 @@ impl XPathPreparedValidator {
     /// # Errors
     /// As [`Self::validate_change`]; a tripped governor is the returned outcome.
     pub fn validate_change_with_governors(
-        &self,
-        delta: &purrdf_rdf::ir::DeltaDatasetView,
+        &self, delta: &purrdf_rdf::ir::DeltaDatasetView,
         governors: &purrdf_sparql_eval::QueryGovernors,
     ) -> Result<crate::engine::GovernedChangeValidation, XPathValidationError> {
         self.configuration
@@ -784,10 +756,7 @@ impl XPathPreparedValidator {
 /// # Errors
 /// Returns actual projection, target, native operational or constraint failures.
 pub fn validate_dataset(
-    data: &RdfDataset,
-    shapes: Arc<Shapes>,
-    profile: Profile,
-    limits: Limits,
+    data: &RdfDataset, shapes: Arc<Shapes>, profile: Profile, limits: Limits,
 ) -> Result<ValidationReport, XPathValidationError> {
     PreparedShapes::new(shapes)
         .with_xpath_regex(profile, limits)
@@ -800,10 +769,7 @@ pub fn validate_dataset(
 /// # Errors
 /// Returns actual projection, target, native operational or constraint failures.
 pub fn validate_dataset_with_governors(
-    data: &RdfDataset,
-    shapes: Arc<Shapes>,
-    profile: Profile,
-    limits: Limits,
+    data: &RdfDataset, shapes: Arc<Shapes>, profile: Profile, limits: Limits,
     governors: &purrdf_sparql_eval::QueryGovernors,
 ) -> Result<GovernedValidation, XPathValidationError> {
     PreparedShapes::new(shapes)
@@ -826,14 +792,9 @@ pub fn validate_dataset_with_governors(
     reason = "the compatibility entry's six inputs and the selected law's two"
 )]
 pub fn validate_graphs_with_shapes_graph(
-    data_nt: &str,
-    shapes_ttl: &str,
-    shapes_base: Option<&str>,
-    shapes_graph: Option<&str>,
-    options: &crate::engine::ValidationOptions,
-    imports: &crate::imports::ShapesImports,
-    profile: Profile,
-    limits: Limits,
+    data_nt: &str, shapes_ttl: &str, shapes_base: Option<&str>, shapes_graph: Option<&str>,
+    options: &crate::engine::ValidationOptions, imports: &crate::imports::ShapesImports,
+    profile: Profile, limits: Limits,
 ) -> Result<ValidationReport, XPathValidationError> {
     let (data, shapes) = crate::engine::parse_graphs_with_shapes_graph(
         data_nt,
@@ -861,12 +822,8 @@ pub fn validate_graphs_with_shapes_graph(
 /// text; a native pattern refusal as [`XPathValidationError::Pattern`], and a rule query's
 /// operational diagnostic as [`XPathValidationError::Query`].
 pub fn run_rules(
-    source: crate::RuleSource<'_>,
-    data: &RdfDataset,
-    limits: &crate::RuleLimits,
-    knobs: crate::LimitKnobs,
-    profile: Profile,
-    pattern_limits: Limits,
+    source: crate::RuleSource<'_>, data: &RdfDataset, limits: &crate::RuleLimits,
+    knobs: crate::LimitKnobs, profile: Profile, pattern_limits: Limits,
 ) -> Result<crate::Inference, XPathValidationError> {
     run_rules_with_options(
         source,
@@ -885,11 +842,8 @@ pub fn run_rules(
 /// # Errors
 /// The errors of [`run_rules`], under the caller's execution options.
 pub fn run_rules_with_options(
-    source: crate::RuleSource<'_>,
-    data: &RdfDataset,
-    options: &crate::RuleOptions,
-    profile: Profile,
-    pattern_limits: Limits,
+    source: crate::RuleSource<'_>, data: &RdfDataset, options: &crate::RuleOptions,
+    profile: Profile, pattern_limits: Limits,
 ) -> Result<crate::Inference, XPathValidationError> {
     // The selection's declared-pattern cache is keyed by the cells the shapes own; a
     // clone shares those cells, so the cache serves the rules this run executes. A SPARQL
@@ -926,9 +880,7 @@ pub fn run_rules_with_options(
 /// [`XPathValidationError::Pattern`], and a query's operational diagnostic as
 /// [`XPathValidationError::Query`].
 pub fn evaluate_free_expression(
-    request: &crate::free_expression::FreeExpression<'_>,
-    profile: Profile,
-    limits: Limits,
+    request: &crate::free_expression::FreeExpression<'_>, profile: Profile, limits: Limits,
 ) -> Result<crate::free_expression::NodeExprEvaluation, XPathValidationError> {
     let (shapes, expr) = crate::free_expression::parse(request)?;
     let shapes = Arc::new(shapes);

@@ -40,9 +40,7 @@ fn steps(bounds: &SchemaBoundEvidence, part: Part) -> &[SchemaStep] {
 }
 
 pub(super) fn select(
-    kb: &Kb,
-    bounds: &SchemaBoundEvidence,
-    memory: &mut Memory<'_, Resident>,
+    kb: &Kb, bounds: &SchemaBoundEvidence, memory: &mut Memory<'_, Resident>,
 ) -> Result<Vec<Read>, Error> {
     let mut index = OrderedTable::default();
     for part in [Part::Class, Part::Qualifier] {

@@ -62,8 +62,7 @@ pub struct LpgLiftOutcome {
 /// Returns a typed failure for malformed view data, inconsistent RDF positions,
 /// resource-limit breaches, identifier collisions, or an unsound loss ledger.
 pub fn project_lpg<D: DatasetView>(
-    view: &D,
-    config: &LpgConfig,
+    view: &D, config: &LpgConfig,
 ) -> Result<LpgProjection, ProjectionError> {
     project_lpg_with_progress(view, config, &mut IgnoreProgress)
 }
@@ -76,9 +75,7 @@ pub fn project_lpg<D: DatasetView>(
 /// also fails the operation immediately and produces a final best-effort aborted
 /// snapshot.
 pub fn project_lpg_with_progress<D, O>(
-    view: &D,
-    config: &LpgConfig,
-    observer: &mut O,
+    view: &D, config: &LpgConfig, observer: &mut O,
 ) -> Result<LpgProjection, ProjectionError>
 where
     D: DatasetView,
@@ -93,9 +90,7 @@ where
 }
 
 fn project_lpg_inner<D, O>(
-    view: &D,
-    config: &LpgConfig,
-    progress: &mut MappingProgress<'_, O>,
+    view: &D, config: &LpgConfig, progress: &mut MappingProgress<'_, O>,
 ) -> Result<LpgProjection, ProjectionError>
 where
     D: DatasetView,
@@ -559,10 +554,7 @@ pub fn lift_lpg(graph: &LpgGraph, config: &LpgConfig) -> Result<LpgLiftOutcome, 
 }
 
 fn resolve_predicate<D: DatasetView>(
-    view: &D,
-    id: D::Id,
-    limits: ProjectionLimits,
-    cache: &mut BTreeMap<D::Id, ProjectionTerm>,
+    view: &D, id: D::Id, limits: ProjectionLimits, cache: &mut BTreeMap<D::Id, ProjectionTerm>,
 ) -> Result<String, ProjectionError> {
     let predicate = ProjectionTerm::resolve_cached(view, id, limits, cache)?;
     let ProjectionTerm::Iri { value } = predicate else {
@@ -574,10 +566,7 @@ fn resolve_predicate<D: DatasetView>(
 }
 
 fn context_in_scope<D: DatasetView>(
-    view: &D,
-    id: Option<D::Id>,
-    config: &LpgConfig,
-    cache: &mut BTreeMap<D::Id, ProjectionTerm>,
+    view: &D, id: Option<D::Id>, config: &LpgConfig, cache: &mut BTreeMap<D::Id, ProjectionTerm>,
 ) -> Result<Option<LpgGraphContext>, ProjectionError> {
     let Some(id) = id else {
         return Ok(config
@@ -593,8 +582,7 @@ fn context_in_scope<D: DatasetView>(
 }
 
 fn reified_quad(
-    statement: &ProjectionTerm,
-    graph: &LpgGraphContext,
+    statement: &ProjectionTerm, graph: &LpgGraphContext,
 ) -> Result<LpgRdfQuad, ProjectionError> {
     let ProjectionTerm::Triple {
         subject,
@@ -620,9 +608,7 @@ fn reified_quad(
 }
 
 fn quad_in_scope(
-    quad: &LpgRdfQuad,
-    config: &LpgConfig,
-    node_types: &BTreeMap<ProjectionTerm, BTreeSet<String>>,
+    quad: &LpgRdfQuad, config: &LpgConfig, node_types: &BTreeMap<ProjectionTerm, BTreeSet<String>>,
 ) -> bool {
     if !config.scope().includes_predicate(&quad.predicate)
         || !config
@@ -643,9 +629,7 @@ fn quad_in_scope(
 }
 
 fn insert_named_graph(
-    graphs: &mut BTreeSet<ProjectionTerm>,
-    graph: ProjectionTerm,
-    budget: &mut RecordBudget,
+    graphs: &mut BTreeSet<ProjectionTerm>, graph: ProjectionTerm, budget: &mut RecordBudget,
 ) -> Result<(), ProjectionError> {
     if graphs.insert(graph) {
         budget.consume(&[1], "named graph declaration")?;
@@ -654,9 +638,7 @@ fn insert_named_graph(
 }
 
 fn reject_duplicate_ids<T>(
-    rows: &[T],
-    id: impl Fn(&T) -> &str,
-    description: &str,
+    rows: &[T], id: impl Fn(&T) -> &str, description: &str,
 ) -> Result<(), ProjectionError> {
     reject_duplicate_keys(rows, id, || {
         format!("dataset view exposed duplicate or colliding {description}")
@@ -664,11 +646,8 @@ fn reject_duplicate_ids<T>(
 }
 
 fn record_term_sideband_losses<'a>(
-    ledger: &mut LossLedger,
-    contract: &LossLedger,
-    terms: impl IntoIterator<Item = &'a ProjectionTerm>,
-    graph: &LpgGraphContext,
-    logical: &str,
+    ledger: &mut LossLedger, contract: &LossLedger,
+    terms: impl IntoIterator<Item = &'a ProjectionTerm>, graph: &LpgGraphContext, logical: &str,
     subject: &str,
 ) {
     let terms: Vec<&ProjectionTerm> = terms.into_iter().collect();
@@ -715,8 +694,7 @@ fn push_quad(builder: &mut RdfDatasetBuilder, quad: &LpgRdfQuad) -> Result<(), P
 }
 
 fn intern_context(
-    builder: &mut RdfDatasetBuilder,
-    context: &LpgGraphContext,
+    builder: &mut RdfDatasetBuilder, context: &LpgGraphContext,
 ) -> Result<Option<TermId>, ProjectionError> {
     context.name().map(|name| name.intern(builder)).transpose()
 }

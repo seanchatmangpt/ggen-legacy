@@ -557,11 +557,7 @@ fn dependency_change_invalidates_dependent_reasoning_key() {
 /// canonical RDF and comments can be controlled independently of the module).
 /// The module always defines `term` via `rdfs:isDefinedBy slice_iri`.
 fn write_slice_explicit_manifest(
-    parent: &Path,
-    dirname: &str,
-    slice_iri: &str,
-    term: &str,
-    manifest_body: &str,
+    parent: &Path, dirname: &str, slice_iri: &str, term: &str, manifest_body: &str,
 ) {
     let dir = parent.join(dirname);
     std::fs::create_dir_all(&dir).unwrap();

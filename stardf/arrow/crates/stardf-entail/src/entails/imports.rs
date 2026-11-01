@@ -178,8 +178,7 @@ pub fn rif_resolver(
 /// OWL-Direct reasoner a consistency question opens — so every entailment surface resolves
 /// through this one function rather than re-deriving the refusals.
 pub fn resolve(
-    premise: &RdfDataset,
-    map: &ImportMap,
+    premise: &RdfDataset, map: &ImportMap,
 ) -> Result<Option<Arc<RdfDataset>>, EntailError> {
     let closure = map.closure(premise);
     if let Some(iri) = closure.unresolved().first() {
@@ -994,9 +993,7 @@ mod tests {
     /// The outcome of `entails(premise, conclusion)` under OWL 2 RL, and the constructs its
     /// report names.
     fn run(
-        premise: &RdfDataset,
-        conclusion: &[(&str, &str, &str)],
-        map: &ImportMap,
+        premise: &RdfDataset, conclusion: &[(&str, &str, &str)], map: &ImportMap,
     ) -> Result<(bool, Vec<crate::report::Construct>), EntailError> {
         let certificate = crate::entails(premise, &triples(conclusion), crate::Regime::OwlRl, map)?;
         let entailed = matches!(certificate.outcome(), crate::EntailmentOutcome::Entailed(_));

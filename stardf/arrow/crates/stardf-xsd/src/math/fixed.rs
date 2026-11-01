@@ -37,9 +37,7 @@ impl FixedInterval {
     /// # Errors
     /// Refuses reversed endpoints or inadmissible work/workspace.
     pub fn from_bounds(
-        lower: Int,
-        upper: Int,
-        ctx: &mut CoordinateMath,
+        lower: Int, upper: Int, ctx: &mut CoordinateMath,
     ) -> Result<Self, MathError> {
         ctx.charge(
             1,
@@ -78,9 +76,7 @@ impl FixedInterval {
     /// # Errors
     /// Refuses a zero denominator or exhausted numerical admission.
     pub fn from_ratio(
-        numerator: &Int,
-        denominator: &Int,
-        ctx: &mut CoordinateMath,
+        numerator: &Int, denominator: &Int, ctx: &mut CoordinateMath,
     ) -> Result<Self, MathError> {
         ctx.charge(
             1,
@@ -178,8 +174,7 @@ impl FixedInterval {
     /// # Errors
     /// Preserves original physical layout, allocator or admission refusal.
     pub fn detached_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         Ok(Self {
             lower: self.lower.detached_with_memory(memory)?,
@@ -193,8 +188,7 @@ impl FixedInterval {
     /// # Errors
     /// Reports a native shared-control allocation refusal, retaining the buffer.
     pub fn publish_detached(
-        &mut self,
-        original: &purrdf_lex::allocation::SharedOwned<()>,
+        &mut self, original: &purrdf_lex::allocation::SharedOwned<()>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         self.lower.publish_detached(original)?;
         self.upper.publish_detached(original)
@@ -269,9 +263,7 @@ impl FixedInterval {
     /// # Errors
     /// Refuses a precision mismatch or exhausted numerical admission.
     pub fn intersection(
-        &self,
-        rhs: &Self,
-        ctx: &mut CoordinateMath,
+        &self, rhs: &Self, ctx: &mut CoordinateMath,
     ) -> Result<Option<Self>, MathError> {
         self.admit(Some(rhs), ctx, 1)?;
         let lower = self.lower.clone().max(rhs.lower.clone());
@@ -314,10 +306,7 @@ impl FixedInterval {
     }
 
     fn extremum(
-        &self,
-        rhs: &Self,
-        maximum: bool,
-        ctx: &mut CoordinateMath,
+        &self, rhs: &Self, maximum: bool, ctx: &mut CoordinateMath,
     ) -> Result<Self, MathError> {
         self.admit(Some(rhs), ctx, 1)?;
         let width = self
@@ -563,9 +552,7 @@ impl FixedInterval {
     /// # Errors
     /// Refuses a precision mismatch or exhausted numerical admission.
     pub fn round_decimal(
-        &self,
-        places: u32,
-        ctx: &mut CoordinateMath,
+        &self, places: u32, ctx: &mut CoordinateMath,
     ) -> Result<(Int, Int), MathError> {
         self.round_decimal_with(places, crate::ieee::ratio::Rounding::NearestEven, ctx)
     }
@@ -579,10 +566,7 @@ impl FixedInterval {
     /// # Errors
     /// Refuses a precision mismatch or exhausted numerical/scratch admission.
     pub fn round_decimal_with(
-        &self,
-        places: u32,
-        rounding: crate::ieee::ratio::Rounding,
-        ctx: &mut CoordinateMath,
+        &self, places: u32, rounding: crate::ieee::ratio::Rounding, ctx: &mut CoordinateMath,
     ) -> Result<(Int, Int), MathError> {
         self.admit(None, ctx, 1)?;
         ctx.charge(
@@ -677,10 +661,7 @@ impl FixedInterval {
             .max(self.upper.bits_upper_bound())
     }
     fn admit(
-        &self,
-        rhs: Option<&Self>,
-        ctx: &mut CoordinateMath,
-        multiplier: usize,
+        &self, rhs: Option<&Self>, ctx: &mut CoordinateMath, multiplier: usize,
     ) -> Result<(), MathError> {
         if self.precision_bits != ctx.limits.precision_bits
             || rhs.is_some_and(|rhs| rhs.precision_bits != self.precision_bits)
@@ -724,10 +705,7 @@ impl FixedInterval {
 }
 
 fn directed(
-    numerator: &Int,
-    denominator: &Int,
-    upward: bool,
-    ctx: &CoordinateMath,
+    numerator: &Int, denominator: &Int, upward: bool, ctx: &CoordinateMath,
 ) -> Result<Int, MathError> {
     let (quotient, remainder) = ctx
         .integer_div_rem(numerator, denominator)?
@@ -742,10 +720,7 @@ fn directed(
 }
 
 fn product_bounds(
-    a: &Int,
-    b: &Int,
-    divisor: &Int,
-    ctx: &CoordinateMath,
+    a: &Int, b: &Int, divisor: &Int, ctx: &CoordinateMath,
 ) -> Result<(Int, Int), MathError> {
     let (quotient, remainder) = ctx
         .integer_product_div_rem(a, b, divisor)?
@@ -758,10 +733,7 @@ fn product_bounds(
     )
 }
 fn quotient_bounds(
-    quotient: Int,
-    remainder: &Int,
-    negative: bool,
-    ctx: &CoordinateMath,
+    quotient: Int, remainder: &Int, negative: bool, ctx: &CoordinateMath,
 ) -> Result<(Int, Int), MathError> {
     if remainder.is_zero() {
         Ok((quotient.clone(), quotient))
@@ -776,9 +748,7 @@ fn quotient_bounds(
 }
 
 pub(super) fn nearest_even(
-    numerator: &Int,
-    denominator: &Int,
-    ctx: &CoordinateMath,
+    numerator: &Int, denominator: &Int, ctx: &CoordinateMath,
 ) -> Result<Int, MathError> {
     match ctx.limb_scratch() {
         Some(scratch) => crate::ieee::ratio::round_even_integer_in(numerator, denominator, scratch)

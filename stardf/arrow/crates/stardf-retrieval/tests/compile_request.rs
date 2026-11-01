@@ -100,9 +100,7 @@ impl PropertyFunction for Recorder {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -423,9 +421,7 @@ fn request(terms: Vec<RequestTerm>) -> RetrievalRequest {
 /// Plan and compile `terms` against `registry`, returning each stratum's text
 /// keyed by the stratum's local name.
 fn compile_units(
-    registry: &PropertyFunctionRegistry<'static>,
-    stats: &MockStatistics,
-    terms: Vec<RequestTerm>,
+    registry: &PropertyFunctionRegistry<'static>, stats: &MockStatistics, terms: Vec<RequestTerm>,
 ) -> BTreeMap<String, String> {
     let planned = plan(&request(terms), registry, stats).expect("the fixture request plans");
     let env = AdmissionEnvironment {
@@ -452,9 +448,7 @@ fn compile_units(
 
 /// Plan and compile `terms` against `registry`, returning the single unit's text.
 fn compile_one(
-    registry: &PropertyFunctionRegistry<'static>,
-    stats: &MockStatistics,
-    terms: Vec<RequestTerm>,
+    registry: &PropertyFunctionRegistry<'static>, stats: &MockStatistics, terms: Vec<RequestTerm>,
 ) -> String {
     let mut units = compile_units(registry, stats, terms);
     assert_eq!(units.len(), 1, "the fixture declares one stratum");
@@ -463,8 +457,7 @@ fn compile_one(
 
 /// Run `sparql` through the evaluator with no composition type in the path.
 fn run_query(
-    sparql: &str,
-    registry: &PropertyFunctionRegistry<'static>,
+    sparql: &str, registry: &PropertyFunctionRegistry<'static>,
 ) -> Vec<Vec<Option<TermValue>>> {
     let dataset = RdfDatasetBuilder::new()
         .freeze()
@@ -1018,8 +1011,7 @@ fn a_mandatory_producer_under_a_zero_selectivity_plans_admits_and_runs() {
 /// `rows` is the row count each declared mode reports, so the same two
 /// producers can be built promising nothing and promising one row.
 fn split_registry(
-    rows: u64,
-    mandatory: bool,
+    rows: u64, mandatory: bool,
 ) -> (PropertyFunctionRegistry<'static>, BTreeMap<String, Log>) {
     let under = |predicate: &str| TermPattern {
         kind: TermKind::Literal,
@@ -2417,8 +2409,7 @@ fn the_branch_limit_reaches_the_relation_as_the_observed_ceiling() {
 /// for a corpus: it is the number the planner's depth comes from when the request
 /// licenses no narrowing.
 fn two_stratum_registry(
-    rows: u64,
-    domains: Option<(&str, &str)>,
+    rows: u64, domains: Option<(&str, &str)>,
 ) -> PropertyFunctionRegistry<'static> {
     let corpus = usize::try_from(rows).expect("the fixture corpus fits in a usize");
     two_stratum_corpus(rows, corpus, domains)
@@ -2430,17 +2421,14 @@ fn two_stratum_registry(
 /// about the depth a declaration licenses, and a fixture that really held four
 /// billion rows would be a test of the allocator rather than of the planner.
 fn two_stratum_registry_declaring(
-    rows: u64,
-    domains: Option<(&str, &str)>,
+    rows: u64, domains: Option<(&str, &str)>,
 ) -> PropertyFunctionRegistry<'static> {
     two_stratum_corpus(rows, 2, domains)
 }
 
 /// Both producers declaring `rows` per invocation over a corpus of `corpus` rows.
 fn two_stratum_corpus(
-    rows: u64,
-    corpus: usize,
-    domains: Option<(&str, &str)>,
+    rows: u64, corpus: usize, domains: Option<(&str, &str)>,
 ) -> PropertyFunctionRegistry<'static> {
     let accepted = || {
         vec![alternative(
@@ -2465,8 +2453,7 @@ fn two_stratum_corpus(
 /// recording a read nobody took; an unnarrowed `LIMIT` beside a narrowed depth is
 /// the corpus still being materialized.
 fn depths_and_limits(
-    registry: &PropertyFunctionRegistry<'static>,
-    stats: &MockStatistics,
+    registry: &PropertyFunctionRegistry<'static>, stats: &MockStatistics,
     request: &RetrievalRequest,
 ) -> BTreeMap<String, (u32, u32)> {
     let planned = plan(request, registry, stats).expect("the fixture request plans");

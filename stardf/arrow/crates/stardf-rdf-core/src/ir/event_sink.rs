@@ -73,11 +73,7 @@ pub trait RdfDatasetVisitor {
     /// the annotation was asserted (`None` = default graph). The default delegates
     /// to the graph-unaware callback for compatibility.
     fn annotation_in_graph(
-        &mut self,
-        reifier: TermId,
-        predicate: TermId,
-        object: TermId,
-        graph: Option<TermId>,
+        &mut self, reifier: TermId, predicate: TermId, object: TermId, graph: Option<TermId>,
     ) {
         let _ = graph;
         self.annotation(reifier, predicate, object);
@@ -217,10 +213,7 @@ mod tests {
             }
 
             fn annotation_in_graph(
-                &mut self,
-                reifier: TermId,
-                predicate: TermId,
-                object: TermId,
+                &mut self, reifier: TermId, predicate: TermId, object: TermId,
                 graph: Option<TermId>,
             ) {
                 self.annotations.push((reifier, predicate, object, graph));

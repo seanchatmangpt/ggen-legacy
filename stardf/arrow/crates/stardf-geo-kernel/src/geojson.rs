@@ -259,9 +259,7 @@ pub fn parse(lexical: &str, crs: &Crs) -> Result<GeometryLiteral, GeoError> {
 /// Preserves original resource refusals, including interrupted scans, and the
 /// grammar and shape errors of [`parse`] when resources suffice.
 pub fn parse_in_policy(
-    lexical: &str,
-    crs: &Crs,
-    policy: crate::ExecutionPolicy,
+    lexical: &str, crs: &Crs, policy: crate::ExecutionPolicy,
 ) -> Result<GeometryLiteral, GeoError> {
     crate::carrier::parse_in_policy(lexical.len(), policy, |admission| {
         parse_admitted(lexical, crs, Some(admission))
@@ -279,8 +277,7 @@ pub fn parse_unbounded(lexical: &str, crs: &Crs) -> Result<GeometryLiteral, GeoE
 }
 
 pub(crate) fn parse_admitted(
-    lexical: &str,
-    crs: &Crs,
+    lexical: &str, crs: &Crs,
     admission: Option<&RefCell<crate::carrier::ParseAdmission<'_, '_, '_>>>,
 ) -> Result<GeometryLiteral, GeoError> {
     Ok(GeometryLiteral::new(
@@ -349,8 +346,7 @@ fn geometry_of(lexical: &str) -> Result<Geometry, GeoError> {
     geometry_of_admitted(lexical, None)
 }
 fn geometry_of_admitted(
-    lexical: &str,
-    admission: Option<&RefCell<crate::carrier::ParseAdmission<'_, '_, '_>>>,
+    lexical: &str, admission: Option<&RefCell<crate::carrier::ParseAdmission<'_, '_, '_>>>,
 ) -> Result<Geometry, GeoError> {
     // RFC 8259 §2 `ws = *( %x20 / %x09 / %x0A / %x0D )`, byte-tested and so
     // exact over UTF-8 (no member is above 0x7F, and no byte of a multi-byte
@@ -399,9 +395,7 @@ fn geometry_of_admitted(
 }
 
 fn read_failure(
-    lexical: &str,
-    error: ReadFailure,
-    storage: Option<&crate::carrier::CarrierStorage<'_>>,
+    lexical: &str, error: ReadFailure, storage: Option<&crate::carrier::CarrierStorage<'_>>,
 ) -> GeoError {
     match error {
         ReadFailure::Json(error) => json::refusal_with_storage(lexical, error, storage),
@@ -474,9 +468,7 @@ impl OpenObject<'_> {
     }
 
     fn judge(
-        self,
-        reader: &Reader<'_, '_, '_, '_, '_>,
-        nodes: &mut Vec<PendingNode>,
+        self, reader: &Reader<'_, '_, '_, '_, '_>, nodes: &mut Vec<PendingNode>,
     ) -> Step<Option<CoordDim>> {
         let text = reader.text();
         let storage = reader.storage();
@@ -734,8 +726,7 @@ fn read_literal(reader: &mut Reader<'_, '_, '_, '_, '_>) -> Step<Pending> {
 /// A Geometry object at the cursor: opened onto `open` (`None`), or, when the
 /// value is not an object, checked and refused.
 fn open_object<'a>(
-    reader: &mut Reader<'a, '_, '_, '_, '_>,
-    open: &mut Vec<OpenObject<'a>>,
+    reader: &mut Reader<'a, '_, '_, '_, '_>, open: &mut Vec<OpenObject<'a>>,
 ) -> Result<Option<Result<Option<CoordDim>, GeoError>>, ReadFailure> {
     let kind = reader.peek_kind();
     if kind == Some(Kind::Object) {
@@ -769,8 +760,7 @@ fn read_type_member<'a>(
 /// body when the object's first `type` has named a type with coordinates, and
 /// checked for later otherwise.
 fn coordinates_member(
-    reader: &mut Reader<'_, '_, '_, '_, '_>,
-    kind: Option<&TypeMember<'_>>,
+    reader: &mut Reader<'_, '_, '_, '_, '_>, kind: Option<&TypeMember<'_>>,
 ) -> Result<Coordinates, ReadFailure> {
     if reader.peek_kind() == Some(Kind::Null) {
         reader.next_event()?;
@@ -814,9 +804,7 @@ pub(crate) const fn kind_name(kind: Option<Kind>) -> &'static str {
 /// Genuinely foreign members (`bbox`, `title`, anything else) are ignored,
 /// which is the neighbouring case the tests prove.
 fn foreign_shape_member(
-    storage: Option<&crate::carrier::CarrierStorage<'_>>,
-    wrong: &'static str,
-    type_name: &str,
+    storage: Option<&crate::carrier::CarrierStorage<'_>>, wrong: &'static str, type_name: &str,
     right: &'static str,
 ) -> GeoError {
     crate::GeoJsonShapeError::ForeignShapeMember {
@@ -831,9 +819,7 @@ fn foreign_shape_member(
 /// `null`: RFC 7946 gives `null` no meaning there, and an empty geometry is
 /// written `[]`.
 fn null_member(
-    storage: Option<&crate::carrier::CarrierStorage<'_>>,
-    name: &'static str,
-    type_name: &str,
+    storage: Option<&crate::carrier::CarrierStorage<'_>>, name: &'static str, type_name: &str,
 ) -> GeoError {
     crate::GeoJsonShapeError::NullMember {
         member: name,
@@ -846,9 +832,7 @@ fn null_member(
 /// coordinates is not a geometry, and two `coordinates` arrays denote two
 /// different geometries.
 fn member_count(
-    storage: Option<&crate::carrier::CarrierStorage<'_>>,
-    name: &'static str,
-    type_name: &str,
+    storage: Option<&crate::carrier::CarrierStorage<'_>>, name: &'static str, type_name: &str,
     count: usize,
 ) -> GeoError {
     crate::GeoJsonShapeError::MemberCount {
@@ -861,9 +845,7 @@ fn member_count(
 
 /// `what` is not an array, but a value of kind `kind`.
 fn not_an_array(
-    storage: Option<&crate::carrier::CarrierStorage<'_>>,
-    what: &'static str,
-    kind: Option<Kind>,
+    storage: Option<&crate::carrier::CarrierStorage<'_>>, what: &'static str, kind: Option<Kind>,
 ) -> GeoError {
     crate::GeoJsonShapeError::ExpectedArray {
         production: what,
@@ -887,8 +869,7 @@ fn open_array(reader: &mut Reader<'_, '_, '_, '_, '_>, what: &'static str) -> St
 /// Read the elements of the open array to its close, each with `element`,
 /// into `items`; after the first refusal the rest are checked and not read.
 fn array_items<'a, T>(
-    reader: &mut Reader<'a, '_, '_, '_, '_>,
-    items: &mut Vec<T>,
+    reader: &mut Reader<'a, '_, '_, '_, '_>, items: &mut Vec<T>,
     mut element: impl FnMut(&mut Reader<'a, '_, '_, '_, '_>) -> Step<T>,
 ) -> Step<()> {
     let mut refusal = None;
@@ -911,8 +892,7 @@ fn array_items<'a, T>(
 /// The `coordinates` value of a `type_name` geometry, the cursor on it: the
 /// body and the dimension its positions fixed, `None` when it has none.
 fn read_coordinates(
-    reader: &mut Reader<'_, '_, '_, '_, '_>,
-    type_name: &str,
+    reader: &mut Reader<'_, '_, '_, '_, '_>, type_name: &str,
 ) -> Step<(Box<GeometryBody>, Option<CoordDim>)> {
     let mut dim = None;
     let body = match type_name {
@@ -986,9 +966,7 @@ fn read_coordinates(
 /// An array at the cursor, refused as `what` when it is not one, whose
 /// elements `element` reads into `items`.
 fn nested<'a, T>(
-    reader: &mut Reader<'a, '_, '_, '_, '_>,
-    what: &'static str,
-    items: &mut Vec<T>,
+    reader: &mut Reader<'a, '_, '_, '_, '_>, what: &'static str, items: &mut Vec<T>,
     element: impl FnMut(&mut Reader<'a, '_, '_, '_, '_>) -> Step<T>,
 ) -> Step<()> {
     if let Err(refusal) = open_array(reader, what)? {
@@ -1000,8 +978,7 @@ fn nested<'a, T>(
 /// A Point's `coordinates`: `[]` is the empty point; otherwise the array is
 /// its position.
 fn point(
-    reader: &mut Reader<'_, '_, '_, '_, '_>,
-    dim: &mut Option<CoordDim>,
+    reader: &mut Reader<'_, '_, '_, '_, '_>, dim: &mut Option<CoordDim>,
 ) -> Step<GeometryBody> {
     if let Err(refusal) = open_array(reader, "the `coordinates` of a GeoJSON Point")? {
         return Ok(Err(refusal));
@@ -1019,9 +996,7 @@ fn point(
 /// are `Geometry::new`'s; duplicating them here would be a second place for
 /// them to drift.
 fn rings(
-    reader: &mut Reader<'_, '_, '_, '_, '_>,
-    what: &'static str,
-    dim: &mut Option<CoordDim>,
+    reader: &mut Reader<'_, '_, '_, '_, '_>, what: &'static str, dim: &mut Option<CoordDim>,
 ) -> Step<Rings> {
     let mut rings = Rings::new();
     Ok(nested(reader, what, &mut rings, |reader| {
@@ -1033,9 +1008,7 @@ fn rings(
 /// A position sequence at the cursor, refused as `what` when it is not an
 /// array.
 fn positions(
-    reader: &mut Reader<'_, '_, '_, '_, '_>,
-    what: &'static str,
-    dim: &mut Option<CoordDim>,
+    reader: &mut Reader<'_, '_, '_, '_, '_>, what: &'static str, dim: &mut Option<CoordDim>,
 ) -> Step<CoordSeq> {
     let mut coords = CoordSeq::new();
     Ok(nested(reader, what, &mut coords, |reader| position(reader, dim))?.map(|()| coords))
@@ -1056,9 +1029,7 @@ fn position(reader: &mut Reader<'_, '_, '_, '_, '_>, dim: &mut Option<CoordDim>)
 /// any ordinate, and the dimension before any ordinate too, as the elements'
 /// count decides both.
 fn position_items(
-    reader: &mut Reader<'_, '_, '_, '_, '_>,
-    dim: &mut Option<CoordDim>,
-    first: bool,
+    reader: &mut Reader<'_, '_, '_, '_, '_>, dim: &mut Option<CoordDim>, first: bool,
 ) -> Step<Coord> {
     /// An element among the first three: a number's lexeme, or the kind of
     /// value it is instead.
@@ -1134,8 +1105,7 @@ fn position_items(
 
 /// One ordinate, decided exactly from the JSON number's own text.
 fn read_ordinate(
-    lexeme: &str,
-    index: usize,
+    lexeme: &str, index: usize,
     admission: Option<&RefCell<crate::carrier::ParseAdmission<'_, '_, '_>>>,
 ) -> Result<Rat, GeoError> {
     let storage = admission.and_then(|admission| admission.borrow().storage());
@@ -1194,9 +1164,7 @@ impl Pending {
     /// `count` geometries built as its members. The first refusal is the one the
     /// tree's first offending node raises, in written order.
     fn into_geometry(
-        self,
-        dim: CoordDim,
-        storage: Option<&crate::carrier::CarrierStorage<'_>>,
+        self, dim: CoordDim, storage: Option<&crate::carrier::CarrierStorage<'_>>,
     ) -> Result<Geometry, GeoError> {
         let mut built: Vec<Geometry> = Vec::new();
         let mut nodes = self.nodes;
@@ -1246,8 +1214,7 @@ pub(crate) const GEOMETRY_TYPES: &str = "`Point`, `MultiPoint`, `LineString`, `M
 /// The one dimension every member of a collection shares, given the dimension each
 /// member fixed in written order, or `None` when no member has any position at all.
 fn unified_dim(
-    dims: &[Option<CoordDim>],
-    storage: Option<&crate::carrier::CarrierStorage<'_>>,
+    dims: &[Option<CoordDim>], storage: Option<&crate::carrier::CarrierStorage<'_>>,
 ) -> Result<Option<CoordDim>, GeoError> {
     let mut unified: Option<CoordDim> = None;
     for member in dims {
@@ -1286,9 +1253,7 @@ fn unified_dim(
 /// would state something about the world that is not true. Also everything
 /// [`write_bare`] refuses.
 pub fn write(
-    literal: &GeometryLiteral,
-    required_crs: &Crs,
-    coordinate_scale: u32,
+    literal: &GeometryLiteral, required_crs: &Crs, coordinate_scale: u32,
 ) -> Result<String, GeoError> {
     let mut writer = Writer::plain();
     check_reference(literal, required_crs, &mut writer)?;
@@ -1296,9 +1261,7 @@ pub fn write(
 }
 
 fn check_reference(
-    literal: &GeometryLiteral,
-    required_crs: &Crs,
-    writer: &mut Writer<'_, '_>,
+    literal: &GeometryLiteral, required_crs: &Crs, writer: &mut Writer<'_, '_>,
 ) -> Result<(), GeoError> {
     if literal.crs() != required_crs {
         return Err(crate::GeoJsonWriteError::Reference {
@@ -1315,9 +1278,7 @@ fn check_reference(
 /// # Errors
 /// Preserves carrier-domain errors and refuses incomplete work or output storage.
 pub fn write_in_context(
-    literal: &GeometryLiteral,
-    required_crs: &Crs,
-    coordinate_scale: u32,
+    literal: &GeometryLiteral, required_crs: &Crs, coordinate_scale: u32,
     context: &mut crate::MetricContext,
 ) -> Result<String, GeoError> {
     write_admitted(
@@ -1333,11 +1294,8 @@ pub fn write_in_context(
 /// # Errors
 /// Adds observer refusal to [`write_in_context`].
 pub fn write_in_context_metered(
-    literal: &GeometryLiteral,
-    required_crs: &Crs,
-    coordinate_scale: u32,
-    context: &mut crate::MetricContext,
-    observer: &mut dyn crate::MetricWorkObserver,
+    literal: &GeometryLiteral, required_crs: &Crs, coordinate_scale: u32,
+    context: &mut crate::MetricContext, observer: &mut dyn crate::MetricWorkObserver,
 ) -> Result<String, GeoError> {
     write_admitted(
         literal,
@@ -1349,11 +1307,8 @@ pub fn write_in_context_metered(
 }
 
 pub(crate) fn write_admitted(
-    literal: &GeometryLiteral,
-    required_crs: &Crs,
-    coordinate_scale: u32,
-    context: &mut crate::MetricContext,
-    progress: &mut crate::context::WorkProgress<'_>,
+    literal: &GeometryLiteral, required_crs: &Crs, coordinate_scale: u32,
+    context: &mut crate::MetricContext, progress: &mut crate::context::WorkProgress<'_>,
 ) -> Result<String, GeoError> {
     let mut writer = Writer::admitted(context, progress);
     let result = check_reference(literal, required_crs, &mut writer)
@@ -1394,9 +1349,7 @@ pub fn write_bare(geometry: &Geometry, coordinate_scale: u32) -> Result<String, 
 }
 
 fn write_with(
-    geometry: &Geometry,
-    coordinate_scale: u32,
-    writer: &mut Writer<'_, '_>,
+    geometry: &Geometry, coordinate_scale: u32, writer: &mut Writer<'_, '_>,
 ) -> Result<String, GeoError> {
     if geometry.dim().has_m() {
         return Err(crate::GeoJsonWriteError::Measure {
@@ -1432,10 +1385,7 @@ fn empty_multipoint_error(index: usize, count: usize, writer: &mut Writer<'_, '_
 }
 
 fn write_coordinates(
-    out: &mut String,
-    body: &GeometryBody,
-    scale: u32,
-    writer: &mut Writer<'_, '_>,
+    out: &mut String, body: &GeometryBody, scale: u32, writer: &mut Writer<'_, '_>,
 ) -> Result<(), GeoError> {
     match body {
         GeometryBody::Point(point) => match point {
@@ -1468,10 +1418,7 @@ fn write_coordinates(
 }
 
 fn write_lines(
-    out: &mut String,
-    lines: &[CoordSeq],
-    scale: u32,
-    writer: &mut Writer<'_, '_>,
+    out: &mut String, lines: &[CoordSeq], scale: u32, writer: &mut Writer<'_, '_>,
 ) -> Result<(), GeoError> {
     writer.sequence(out, lines, "[", "]", |out, points, writer| {
         write_positions(out, points, scale, writer)
@@ -1479,10 +1426,7 @@ fn write_lines(
 }
 
 fn write_positions(
-    out: &mut String,
-    points: &[Coord],
-    scale: u32,
-    writer: &mut Writer<'_, '_>,
+    out: &mut String, points: &[Coord], scale: u32, writer: &mut Writer<'_, '_>,
 ) -> Result<(), GeoError> {
     writer.sequence(out, points, "[", "]", |out, point, writer| {
         write_position(out, point, scale, writer)
@@ -1490,10 +1434,7 @@ fn write_positions(
 }
 
 fn write_position(
-    out: &mut String,
-    point: &Coord,
-    scale: u32,
-    writer: &mut Writer<'_, '_>,
+    out: &mut String, point: &Coord, scale: u32, writer: &mut Writer<'_, '_>,
 ) -> Result<(), GeoError> {
     writer.text(out, "[")?;
     writer.ordinate(out, point.x(), scale)?;
@@ -3021,9 +2962,7 @@ mod nesting_tests {
     /// is not a geometry, RFC 7946 gives `null` no meaning here (an empty geometry is
     /// written `[]`), and two `coordinates` arrays denote two different geometries.
     fn decisive_member<'a>(
-        object: &'a JsonValue,
-        name: &str,
-        type_name: &str,
+        object: &'a JsonValue, name: &str, type_name: &str,
     ) -> Result<&'a JsonValue, GeoError> {
         match json::count(object, name) {
             0 => Err(GeoError::literal(format!(
@@ -3055,10 +2994,7 @@ mod nesting_tests {
     /// incompatible things about itself. Genuinely foreign members (`bbox`, `title`,
     /// anything else) are ignored, which is the neighbouring case the tests prove.
     fn reject_foreign_shape_member(
-        object: &JsonValue,
-        wrong: &str,
-        type_name: &str,
-        right: &str,
+        object: &JsonValue, wrong: &str, type_name: &str, right: &str,
     ) -> Result<(), GeoError> {
         if json::count(object, wrong) == 0 {
             return Ok(());
@@ -3072,9 +3008,7 @@ mod nesting_tests {
     }
 
     fn read_coordinates(
-        type_name: &str,
-        coordinates: &JsonValue,
-        dim: &mut Option<CoordDim>,
+        type_name: &str, coordinates: &JsonValue, dim: &mut Option<CoordDim>,
     ) -> Result<GeometryBody, GeoError> {
         match type_name {
             "Point" => {
@@ -3143,9 +3077,7 @@ mod nesting_tests {
     }
 
     fn read_rings(
-        value: &JsonValue,
-        what: &str,
-        dim: &mut Option<CoordDim>,
+        value: &JsonValue, what: &str, dim: &mut Option<CoordDim>,
     ) -> Result<Rings, GeoError> {
         let items = expect_array(value, what)?;
         let mut rings = Rings::with_capacity(items.len());
@@ -3159,9 +3091,7 @@ mod nesting_tests {
     }
 
     fn read_positions(
-        value: &JsonValue,
-        what: &str,
-        dim: &mut Option<CoordDim>,
+        value: &JsonValue, what: &str, dim: &mut Option<CoordDim>,
     ) -> Result<CoordSeq, GeoError> {
         let items = expect_array(value, what)?;
         let mut coords = CoordSeq::with_capacity(items.len());

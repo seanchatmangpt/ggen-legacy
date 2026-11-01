@@ -22,10 +22,8 @@ use purrdf_xsd::datatype::XSD_BOOLEAN;
 /// # Errors
 /// Returns the native diagnostic when declaration or freeze fails.
 pub fn select_query_dataset(
-    dataset: &std::sync::Arc<purrdf_core::RdfDataset>,
-    dataset_scope: bool,
-    default_graph: Option<&purrdf_core::TermValue>,
-    default_union: bool,
+    dataset: &std::sync::Arc<purrdf_core::RdfDataset>, dataset_scope: bool,
+    default_graph: Option<&purrdf_core::TermValue>, default_union: bool,
 ) -> Result<std::sync::Arc<purrdf_core::RdfDataset>, purrdf_core::RdfDiagnostic> {
     use purrdf_core::{
         DatasetMut,
@@ -71,8 +69,7 @@ type Mapping = BTreeMap<Variable, Variable>;
 // once rather than making every independent visitor fixture repack the policy.
 #[allow(clippy::unnecessary_box_returns)]
 pub(crate) fn test_application_policy(
-    inputs: Vec<(Variable, Variable)>,
-    optional: bool,
+    inputs: Vec<(Variable, Variable)>, optional: bool,
 ) -> Box<ApplicationPolicy> {
     Box::new(ApplicationPolicy {
         dataset_required: false,
@@ -207,9 +204,7 @@ fn apply(left: GraphPattern, right: GraphPattern, policy: ApplicationPolicy) -> 
 }
 
 fn row_operation(
-    pattern: GraphPattern,
-    mapping: &Mapping,
-    operation: impl FnOnce(GraphPattern) -> GraphPattern,
+    pattern: GraphPattern, mapping: &Mapping, operation: impl FnOnce(GraphPattern) -> GraphPattern,
 ) -> GraphPattern {
     if let GraphPattern::Apply {
         left,
@@ -238,9 +233,7 @@ fn row_operation(
 }
 
 fn row_operation_base(
-    pattern: GraphPattern,
-    mapping: &Mapping,
-    operation: impl FnOnce(GraphPattern) -> GraphPattern,
+    pattern: GraphPattern, mapping: &Mapping, operation: impl FnOnce(GraphPattern) -> GraphPattern,
 ) -> GraphPattern {
     GraphPattern::Apply {
         left: Child::new(pattern),
@@ -280,10 +273,7 @@ impl<const SINGLE_GRAPH: bool> Compiler<SINGLE_GRAPH> {
     }
 
     fn lookup(
-        &self,
-        name: &Variable,
-        mapping: &Mapping,
-        except: Option<&BTreeSet<Variable>>,
+        &self, name: &Variable, mapping: &Mapping, except: Option<&BTreeSet<Variable>>,
     ) -> Expression {
         let mut choices = Vec::new();
         if let Some(slot) = mapping.get(name) {
@@ -310,10 +300,7 @@ impl<const SINGLE_GRAPH: bool> Compiler<SINGLE_GRAPH> {
     }
 
     fn expression(
-        &mut self,
-        source: &Expression,
-        mapping: &Mapping,
-        except: Option<&BTreeSet<Variable>>,
+        &mut self, source: &Expression, mapping: &Mapping, except: Option<&BTreeSet<Variable>>,
     ) -> Expression {
         let mut expression = source.map_exists_bodies(|body| {
             let compiled = self.take(body);
@@ -379,9 +366,7 @@ impl<const SINGLE_GRAPH: bool> Compiler<SINGLE_GRAPH> {
     }
 
     fn thaw(
-        &mut self,
-        mut driver: GraphPattern,
-        mapping: &Mapping,
+        &mut self, mut driver: GraphPattern, mapping: &Mapping,
         remembered: Option<&BTreeSet<Variable>>,
     ) -> (GraphPattern, Vec<(Variable, Variable)>) {
         let selected: Mapping = mapping
@@ -1053,8 +1038,7 @@ impl<const SINGLE_GRAPH: bool> Compiler<SINGLE_GRAPH> {
 /// Compile an admitted source query with immutable initial bindings. No ordinary
 /// query-variable prebinding pass may be applied to the returned algebra.
 pub(crate) fn compile<const SINGLE_GRAPH: bool>(
-    mut query: Query,
-    bindings: &[(Variable, GroundTerm)],
+    mut query: Query, bindings: &[(Variable, GroundTerm)],
 ) -> (Query, Option<Vec<String>>) {
     let mut head = query.pattern();
     let output_columns = loop {

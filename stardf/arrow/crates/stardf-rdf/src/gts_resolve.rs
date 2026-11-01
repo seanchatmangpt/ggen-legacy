@@ -157,8 +157,7 @@ fn term_edges(graph: &Graph, term_id: usize) -> TermEdges {
 /// language tag hard-fails (`gts-direction-without-language`) rather than silently
 /// producing an ill-formed literal.
 pub(crate) fn parse_gts_direction(
-    value: Option<&str>,
-    language: Option<&str>,
+    value: Option<&str>, language: Option<&str>,
 ) -> Result<Option<RdfTextDirection>, RdfDiagnostic> {
     let Some(value) = value else {
         return Ok(None);
@@ -181,21 +180,14 @@ pub(crate) fn parse_gts_direction(
 /// Resolve a graph term id into an [`RdfTerm`], cloning the borrowed strings.
 #[cfg(test)]
 pub(crate) fn term_from_id(
-    graph: &Graph,
-    term_id: usize,
-    location: RdfLocation,
+    graph: &Graph, term_id: usize, location: RdfLocation,
 ) -> Result<RdfTerm, RdfDiagnostic> {
     term_from_id_depth(graph, term_id, location, 0)
 }
 
 #[cfg(test)]
 fn triple_from_ids_depth(
-    graph: &Graph,
-    s: usize,
-    p: usize,
-    o: usize,
-    location: RdfLocation,
-    depth: usize,
+    graph: &Graph, s: usize, p: usize, o: usize, location: RdfLocation, depth: usize,
 ) -> Result<RdfTriple, RdfDiagnostic> {
     let subject = term_from_id_depth(graph, s, location.clone(), depth)?;
     let predicate = predicate_from_id_depth(graph, p, location.clone(), depth)?;
@@ -205,10 +197,7 @@ fn triple_from_ids_depth(
 
 #[cfg(test)]
 fn predicate_from_id_depth(
-    graph: &Graph,
-    term_id: usize,
-    location: RdfLocation,
-    depth: usize,
+    graph: &Graph, term_id: usize, location: RdfLocation, depth: usize,
 ) -> Result<String, RdfDiagnostic> {
     match term_from_id_depth(graph, term_id, location.clone(), depth)? {
         RdfTerm::Iri(iri) => Ok(iri),
@@ -222,10 +211,7 @@ fn predicate_from_id_depth(
 
 #[cfg(test)]
 fn term_from_id_depth(
-    graph: &Graph,
-    term_id: usize,
-    location: RdfLocation,
-    depth: usize,
+    graph: &Graph, term_id: usize, location: RdfLocation, depth: usize,
 ) -> Result<RdfTerm, RdfDiagnostic> {
     if depth > purrdf_events::MAX_TERM_NESTING_DEPTH {
         return Err(RdfDiagnostic::error(

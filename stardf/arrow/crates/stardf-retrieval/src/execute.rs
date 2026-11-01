@@ -1287,10 +1287,7 @@ impl<D: DatasetView + Sync> DatasetExclusion<'_, D> {
     /// Ask the `index`-th lookup of the `alternative`-th alternative whether
     /// `candidate`, bound as `binding` says, is out of its call's reach.
     fn ask(
-        &mut self,
-        alternative: usize,
-        index: usize,
-        candidate: &Term,
+        &mut self, alternative: usize, index: usize, candidate: &Term,
         binding: Option<&CandidateBinding<D::Id>>,
     ) -> Result<ExclusionVerdict, ProtocolError> {
         let lookup_workspace = self.candidates.borrow().workspace().clone();
@@ -1593,8 +1590,7 @@ impl<'d> RankedStreamImpl<'d> {
     }
 
     fn from_admitted(
-        rows: purrdf_sparql_eval::AdmittedVec<(u64, Term, RowBlock)>,
-        ending: StreamEnding,
+        rows: purrdf_sparql_eval::AdmittedVec<(u64, Term, RowBlock)>, ending: StreamEnding,
         workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Self {
         let materialised = u64::try_from(rows.len()).unwrap_or(u64::MAX);
@@ -1762,8 +1758,7 @@ impl<'d> RankedStreamImpl<'d> {
     /// because a lookup binds candidates any stratum of the call may have named,
     /// and those are only all known once the last ranking read is in.
     pub(crate) fn attach_exclusion(
-        &mut self,
-        lookup: purrdf_sparql_eval::WorkspaceBox<dyn ExclusionLookup + 'd>,
+        &mut self, lookup: purrdf_sparql_eval::WorkspaceBox<dyn ExclusionLookup + 'd>,
     ) {
         self.exclusion = Some(lookup);
     }
@@ -1995,9 +1990,7 @@ pub async fn execute<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync,
     C: CompiledRead,
 >(
-    compiled: &C,
-    registry: &PropertyFunctionRegistry<'static>,
-    dataset: &'d D,
+    compiled: &C, registry: &PropertyFunctionRegistry<'static>, dataset: &'d D,
 ) -> Result<C::Output<'d>, ExecutionError> {
     execute_within(compiled, registry, dataset, ReadSchedule::Materialised).await
 }
@@ -2046,9 +2039,7 @@ pub async fn execute_within<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync,
     C: CompiledRead,
 >(
-    compiled: &C,
-    registry: &PropertyFunctionRegistry<'static>,
-    dataset: &'d D,
+    compiled: &C, registry: &PropertyFunctionRegistry<'static>, dataset: &'d D,
     schedule: ReadSchedule,
 ) -> Result<C::Output<'d>, ExecutionError> {
     let operation = resident_operation(dataset)?;
@@ -2071,11 +2062,8 @@ pub(crate) fn resident_operation<D: DatasetView<ReadError = std::convert::Infall
 }
 
 pub(crate) fn execute_read_within<'d, D: DatasetView + Sync, C: CompiledRead>(
-    compiled: &C,
-    registry: &PropertyFunctionRegistry<'static>,
-    dataset: &'d D,
-    schedule: ReadSchedule,
-    operation: &purrdf_sparql_eval::ReadOperation<D::ReadError>,
+    compiled: &C, registry: &PropertyFunctionRegistry<'static>, dataset: &'d D,
+    schedule: ReadSchedule, operation: &purrdf_sparql_eval::ReadOperation<D::ReadError>,
 ) -> Result<C::Output<'d>, ExecutionError> {
     execute_bound(compiled, registry, dataset, schedule, None, operation)
 }
@@ -2092,11 +2080,8 @@ pub async fn execute_scoped_within<
     D: DatasetView<ReadError = std::convert::Infallible> + Sync,
     C: CompiledRead,
 >(
-    compiled: &C,
-    registry: &PropertyFunctionRegistry<'static>,
-    dataset: &'d D,
-    schedule: ReadSchedule,
-    bindings: &'d crate::ConstraintBindings<'d>,
+    compiled: &C, registry: &PropertyFunctionRegistry<'static>, dataset: &'d D,
+    schedule: ReadSchedule, bindings: &'d crate::ConstraintBindings<'d>,
     source: &'d dyn purrdf_sparql_eval::EvidenceSource<D::Id>,
 ) -> Result<crate::ScopedExecution<C::Output<'d>>, ExecutionError> {
     let operation = resident_operation(dataset)?;
@@ -2114,11 +2099,8 @@ pub async fn execute_scoped_within<
 /// Preserves native execution failures. Original operational causes remain in the
 /// enclosing operation and are returned at its final read checkpoint.
 pub fn execute_scoped_in_read<'d, D: DatasetView + Sync, C: CompiledRead>(
-    compiled: &C,
-    registry: &PropertyFunctionRegistry<'static>,
-    dataset: &'d D,
-    schedule: ReadSchedule,
-    bindings: &'d crate::ConstraintBindings<'d>,
+    compiled: &C, registry: &PropertyFunctionRegistry<'static>, dataset: &'d D,
+    schedule: ReadSchedule, bindings: &'d crate::ConstraintBindings<'d>,
     source: &'d dyn purrdf_sparql_eval::EvidenceSource<D::Id>,
     operation: &purrdf_sparql_eval::ReadOperation<D::ReadError>,
 ) -> Result<crate::ScopedExecution<C::Output<'d>>, ExecutionError> {
@@ -2152,11 +2134,8 @@ struct ScopedExecutionInput<'a, 'b, I: purrdf_core::ViewTermId> {
 }
 
 fn execute_bound<'d, D: DatasetView + Sync, C: CompiledRead>(
-    compiled: &C,
-    registry: &PropertyFunctionRegistry<'static>,
-    dataset: &'d D,
-    schedule: ReadSchedule,
-    mut scoped: Option<ScopedExecutionInput<'_, 'd, D::Id>>,
+    compiled: &C, registry: &PropertyFunctionRegistry<'static>, dataset: &'d D,
+    schedule: ReadSchedule, mut scoped: Option<ScopedExecutionInput<'_, 'd, D::Id>>,
     operation: &purrdf_sparql_eval::ReadOperation<D::ReadError>,
 ) -> Result<C::Output<'d>, ExecutionError> {
     if !compiled.constraints().is_empty() && scoped.is_none() {
@@ -2970,11 +2949,8 @@ fn materialize_cells_admitted<D: DatasetView + Sync>(
 
 /// Zip original ranking with its cells without rendering lexical identity again.
 fn index_candidate_rows<'a, D: DatasetView, C: std::borrow::Borrow<TermValue> + 'a>(
-    index: &mut CandidateIndex<D::Id>,
-    variables: &[impl AsRef<str>],
-    rows: impl IntoIterator<Item = &'a [Option<C>]>,
-    ranked: &[(u64, Term, RowBlock)],
-    dataset: &D,
+    index: &mut CandidateIndex<D::Id>, variables: &[impl AsRef<str>],
+    rows: impl IntoIterator<Item = &'a [Option<C>]>, ranked: &[(u64, Term, RowBlock)], dataset: &D,
     read_error: impl Fn(D::ReadError) -> ExecutionError,
 ) -> Result<(), ExecutionError> {
     let Some(column) = variables
@@ -2996,10 +2972,7 @@ fn index_candidate_rows<'a, D: DatasetView, C: std::borrow::Borrow<TermValue> + 
 /// where it does not. A candidate already recorded is left as it is: the dataset's
 /// id for a term does not depend on which read found it.
 fn index_candidate<D: DatasetView>(
-    index: &mut CandidateIndex<D::Id>,
-    term: &Term,
-    value: &TermValue,
-    dataset: &D,
+    index: &mut CandidateIndex<D::Id>, term: &Term, value: &TermValue, dataset: &D,
     read_error: impl Fn(D::ReadError) -> ExecutionError,
 ) -> Result<(), ExecutionError> {
     if index.contains_key(term) {
@@ -3109,12 +3082,8 @@ impl RankedRows for purrdf_sparql_eval::AdmittedVec<(u64, Term, RowBlock)> {
 /// unsatisfiable at exactly that depth, and every such read — cut or not — would
 /// leave here as `Exhausted`.
 fn bound_to_depth<R: RankedRows>(
-    mut ranked: R,
-    depth: u32,
-    declared_rows: Option<u64>,
-    declared_mode: BoundMode,
-    reach: ReadReach,
-    stratum: &Iri,
+    mut ranked: R, depth: u32, declared_rows: Option<u64>, declared_mode: BoundMode,
+    reach: ReadReach, stratum: &Iri,
 ) -> Result<BoundedRead<R>, ExecutionError> {
     let ceiling = usize::try_from(depth).unwrap_or(usize::MAX);
     let pulled = u64::try_from(ranked.len()).unwrap_or(u64::MAX);
@@ -3205,8 +3174,7 @@ fn bound_to_depth<R: RankedRows>(
 ///
 /// Everything else is [`sole_attestation`]'s rule, unchanged.
 fn read_attestation(
-    witness: &RelationWitness,
-    empty_answer: bool,
+    witness: &RelationWitness, empty_answer: bool,
 ) -> Result<PfAttestation, String> {
     if empty_answer && witness.is_empty() {
         return Ok(PfAttestation::UNDECLARED);
@@ -3298,9 +3266,7 @@ fn sole_attestation(witness: &RelationWitness) -> Result<PfAttestation, String> 
 /// records as this stratum's [`ProducerStatus::ExecutionFailed`].
 #[cfg(test)]
 fn rank_candidates(
-    variables: &[String],
-    rows: &[Vec<Option<TermValue>>],
-    domains: &CandidateDomains,
+    variables: &[String], rows: &[Vec<Option<TermValue>>], domains: &CandidateDomains,
 ) -> Result<Vec<(u64, Term, RowBlock)>, String> {
     rank_candidate_rows(
         variables,
@@ -3317,10 +3283,8 @@ fn rank_candidates(
 }
 
 fn rank_candidate_rows<'a, C: std::borrow::Borrow<TermValue> + 'a>(
-    variables: &[impl AsRef<str> + fmt::Debug],
-    rows: impl IntoIterator<Item = &'a [Option<C>]>,
-    domains: &CandidateDomains,
-    law: purrdf_sparql_eval::RankLaw,
+    variables: &[impl AsRef<str> + fmt::Debug], rows: impl IntoIterator<Item = &'a [Option<C>]>,
+    domains: &CandidateDomains, law: purrdf_sparql_eval::RankLaw,
     workspace: &purrdf_sparql_eval::WorkspaceCapability,
 ) -> Result<purrdf_sparql_eval::AdmittedVec<(u64, Term, RowBlock)>, purrdf_sparql_eval::EvalError> {
     let columns = CandidateColumns::locate(variables, domains, law).map_err(|error| {
@@ -3366,8 +3330,7 @@ impl CandidateColumns {
     /// Found by name rather than by position, because reading a position would make
     /// the candidate and the block depend on projection order.
     pub(crate) fn locate(
-        variables: &[impl AsRef<str> + fmt::Debug],
-        domains: &CandidateDomains,
+        variables: &[impl AsRef<str> + fmt::Debug], domains: &CandidateDomains,
         law: purrdf_sparql_eval::RankLaw,
     ) -> Result<Self, String> {
         let candidate = variables
@@ -3398,10 +3361,7 @@ impl CandidateColumns {
 
     /// One ranked row retains the native producer's original lexical authority.
     pub(crate) fn rank_admitted<C: std::borrow::Borrow<TermValue>>(
-        &self,
-        row: &[Option<C>],
-        rank: u64,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, row: &[Option<C>], rank: u64, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<(u64, Term, RowBlock), purrdf_sparql_eval::EvalError> {
         let rank = if let Some(column) = self.rank {
             let value = row
@@ -3429,10 +3389,7 @@ impl CandidateColumns {
     /// Read an original candidate observation without assigning a rank to an
     /// undecided scoped row. Its evidence retains its original producer rank.
     pub(crate) fn identity_admitted<C: std::borrow::Borrow<TermValue>>(
-        &self,
-        row: &[Option<C>],
-        rank: u64,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, row: &[Option<C>], rank: u64, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<(u64, Term, RowBlock), purrdf_sparql_eval::EvalError> {
         let value = row
             .get(self.candidate)
@@ -3473,8 +3430,7 @@ impl CandidateColumns {
 
     /// The candidate cell of `row`, when it is bound.
     fn candidate_of<'r, C: std::borrow::Borrow<TermValue>>(
-        &self,
-        row: &'r [Option<C>],
+        &self, row: &'r [Option<C>],
     ) -> Option<&'r TermValue> {
         row.get(self.candidate)
             .and_then(Option::as_ref)
@@ -3766,9 +3722,7 @@ fn entailed_block(domains: &CandidateDomains) -> RowBlock {
 /// narrower domain — it has declared one it cannot back, and that is refused where
 /// it is observed.
 fn row_block_admitted(
-    value: Option<&TermValue>,
-    rank: u64,
-    workspace: &purrdf_sparql_eval::WorkspaceCapability,
+    value: Option<&TermValue>, rank: u64, workspace: &purrdf_sparql_eval::WorkspaceCapability,
 ) -> Result<RowBlock, purrdf_sparql_eval::EvalError> {
     let value = value.ok_or_else(|| {
         purrdf_sparql_eval::NativeDiagnostic::error(
@@ -3896,9 +3850,7 @@ mod tests {
             purrdf_core::SegmentedProvider::byte_len(&self.bytes)
         }
         fn read_at(
-            &self,
-            position: u64,
-            output: &mut [u8],
+            &self, position: u64, output: &mut [u8],
         ) -> Result<(), purrdf_core::SegmentedError> {
             if self.refuse.load(std::sync::atomic::Ordering::Relaxed) {
                 return Err(purrdf_core::SegmentedError::Provider {

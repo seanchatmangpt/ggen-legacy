@@ -254,8 +254,7 @@ impl ServiceCredential {
     /// # Panics
     /// Panics for a Basic user id containing a colon, as `header` does.
     pub fn header_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<(String, String), purrdf_lex::allocation::StorageError> {
         let name = memory.string(match self {
             Self::Header { name, .. } => name.as_str(),
@@ -303,9 +302,7 @@ impl ServiceDenial {
     /// A denial of `endpoint` for the want of `withheld`.
     #[must_use]
     pub fn new(
-        endpoint: impl Into<String>,
-        withheld: ServiceCapability,
-        detail: impl Into<String>,
+        endpoint: impl Into<String>, withheld: ServiceCapability, detail: impl Into<String>,
     ) -> Self {
         Self {
             endpoint: endpoint.into(),
@@ -546,8 +543,7 @@ impl ServiceProfile {
     /// # Errors
     /// Returns physical layout, admission or allocator refusal.
     pub fn request_headers_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Vec<(String, String)>, purrdf_lex::allocation::StorageError> {
         let mut headers = Vec::new();
         for (name, value) in &self.headers {
@@ -617,18 +613,14 @@ impl ServiceCatalog {
     /// withholds one of `needs`, or when the profile carries a credential without the
     /// [`ServiceCapability::Credentials`] grant that would let it be sent.
     pub fn authorize(
-        &self,
-        endpoint: &str,
-        needs: ServiceCapabilities,
+        &self, endpoint: &str, needs: ServiceCapabilities,
     ) -> Result<&ServiceProfile, ServiceDenial> {
         self.authorization_decision(endpoint, needs)
             .map_err(|(withheld, detail)| ServiceDenial::new(endpoint, withheld, detail))
     }
 
     pub(crate) fn authorize_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        endpoint: &str,
-        needs: ServiceCapabilities,
+        &self, endpoint: &str, needs: ServiceCapabilities,
         memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<&ServiceProfile, ServiceBuildError> {
         match self.authorization_decision(endpoint, needs) {
@@ -640,9 +632,7 @@ impl ServiceCatalog {
     }
 
     fn authorization_decision(
-        &self,
-        endpoint: &str,
-        needs: ServiceCapabilities,
+        &self, endpoint: &str, needs: ServiceCapabilities,
     ) -> Result<&ServiceProfile, (ServiceCapability, &'static str)> {
         let Some(profile) = self.profile_for(endpoint) else {
             // No profile grants anything, so the first capability the request needs is the
@@ -765,9 +755,7 @@ impl ServiceResolver for InProcessServiceResolver {
     /// depend on how a federation happened to be split up.
     );
     fn resolve_admitted(
-        &self,
-        request: ServiceRequest<'_>,
-        workspace: crate::WorkspaceCapability,
+        &self, request: ServiceRequest<'_>, workspace: crate::WorkspaceCapability,
     ) -> Result<AdmittedResolvedBindings, ServiceResolutionError> {
         if let Some(trip) = request.stop_trip() {
             return Err(crate::remote::invocation_error(trip, &workspace)?);
@@ -844,9 +832,7 @@ impl<'a> ServiceRouter<'a> {
     /// Route `endpoint` to `resolver`.
     #[must_use]
     pub fn with_route(
-        mut self,
-        endpoint: impl Into<String>,
-        resolver: &'a (dyn ServiceResolver + Sync),
+        mut self, endpoint: impl Into<String>, resolver: &'a (dyn ServiceResolver + Sync),
     ) -> Self {
         self.routes.insert(endpoint.into(), resolver);
         self
@@ -863,9 +849,7 @@ impl<'a> ServiceRouter<'a> {
 impl ServiceResolver for ServiceRouter<'_> {
     crate::remote::resident_service_resolve!();
     fn resolve_admitted(
-        &self,
-        request: ServiceRequest<'_>,
-        workspace: crate::WorkspaceCapability,
+        &self, request: ServiceRequest<'_>, workspace: crate::WorkspaceCapability,
     ) -> Result<AdmittedResolvedBindings, ServiceResolutionError> {
         if let Some(trip) = request.stop_trip() {
             return Err(crate::remote::invocation_error(trip, &workspace)?);

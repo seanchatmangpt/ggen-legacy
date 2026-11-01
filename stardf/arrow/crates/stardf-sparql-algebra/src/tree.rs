@@ -141,9 +141,7 @@ macro_rules! list_edge {
             /// # Errors
             /// Returns layout, admission or physical allocation refusal.
             pub fn try_reserve<S: purrdf_lex::allocation::Admission + ?Sized>(
-                &mut self,
-                required: usize,
-                memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+                &mut self, required: usize, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
             ) -> Result<(), purrdf_lex::allocation::StorageError> {
                 memory.reserve(&mut self.0, required)
             }
@@ -153,9 +151,7 @@ macro_rules! list_edge {
             /// # Errors
             /// Returns layout, admission or physical allocation refusal.
             pub fn try_push<S: purrdf_lex::allocation::Admission + ?Sized>(
-                &mut self,
-                value: T,
-                memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+                &mut self, value: T, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
             ) -> Result<(), purrdf_lex::allocation::StorageError> {
                 memory.push(&mut self.0, value)
             }
@@ -318,8 +314,7 @@ impl<T: Subtree> Chain<T> {
 
     /// [`Self::map_ref`], stopping at the first error.
     pub fn try_map_ref<U: Subtree, E>(
-        &self,
-        f: impl FnMut(&T) -> Result<U, E>,
+        &self, f: impl FnMut(&T) -> Result<U, E>,
     ) -> Result<Chain<U>, E> {
         self.0
             .iter()
@@ -420,8 +415,7 @@ impl<T: Subtree> NonEmpty<T> {
 
     /// Apply `f` to every node, in order, stopping at the first error.
     pub fn try_map<U: Subtree, E>(
-        self,
-        f: impl FnMut(T) -> Result<U, E>,
+        self, f: impl FnMut(T) -> Result<U, E>,
     ) -> Result<NonEmpty<U>, E> {
         self.into_vec()
             .into_iter()
@@ -438,8 +432,7 @@ impl<T: Subtree> NonEmpty<T> {
 
     /// [`Self::map_ref`], stopping at the first error.
     pub fn try_map_ref<U: Subtree, E>(
-        &self,
-        f: impl FnMut(&T) -> Result<U, E>,
+        &self, f: impl FnMut(&T) -> Result<U, E>,
     ) -> Result<NonEmpty<U>, E> {
         self.0
             .iter()

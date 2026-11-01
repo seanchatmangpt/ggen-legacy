@@ -138,8 +138,7 @@ use crate::user_fn::Volatility;
 // Out of line by design: see the thin-dispatcher invariant on `eval::eval_node`.
 #[inline(never)]
 pub(crate) fn eval_values<D: DatasetView + Sync>(
-    variables: &[Variable],
-    bindings: &[Vec<Option<purrdf_sparql_algebra::GroundTerm>>],
+    variables: &[Variable], bindings: &[Vec<Option<purrdf_sparql_algebra::GroundTerm>>],
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<SolutionSeq<D::Id>, EvalError> {
     let schema = if ctx.growth.is_bounded() {
@@ -270,10 +269,8 @@ macro_rules! eval_project_sequence {
 // Out of line by design: see the thin-dispatcher invariant on `eval::eval_node`.
 #[inline(never)]
 pub(crate) fn eval_project<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    inner: &GraphPattern,
-    variables: purrdf_sparql_algebra::ProjectionNames<'_>,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, inner: &GraphPattern,
+    variables: purrdf_sparql_algebra::ProjectionNames<'_>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let workspace = ctx.growth.clone();
     let layout = || {
@@ -306,11 +303,8 @@ pub(crate) fn eval_project<D: DatasetView + Sync>(
 #[allow(clippy::inline_always)]
 #[inline(always)]
 pub(crate) fn eval_project_with<D: DatasetView + Sync, M: crate::eval::RowDelivery<D>>(
-    node: &GraphPattern,
-    inner: &GraphPattern,
-    variables: purrdf_sparql_algebra::ProjectionNames<'_>,
-    delivery: M,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, inner: &GraphPattern,
+    variables: purrdf_sparql_algebra::ProjectionNames<'_>, delivery: M, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     if M::ACTIVE {
         crate::eval::yield_transform(
@@ -357,18 +351,14 @@ pub(crate) fn eval_project_with<D: DatasetView + Sync, M: crate::eval::RowDelive
 #[allow(clippy::inline_always)]
 #[inline(always)]
 pub(crate) fn eval_dedup<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    inner: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, inner: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     eval_dedup_with::<D, false>(node, inner, ctx)
 }
 
 #[inline(never)]
 pub(crate) fn eval_dedup_with<D: DatasetView + Sync, const ADJACENT: bool>(
-    node: &GraphPattern,
-    inner: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, inner: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let mut lift = Lift::at_admitted(node, &ctx.growth)?;
     let Some(seq) = lift.absorb(0, eval_evaluated(inner, ctx)?) else {
@@ -392,10 +382,7 @@ pub(crate) fn eval_dedup_delivered<
     const ADJACENT: bool,
     M: crate::eval::RowDelivery<D>,
 >(
-    node: &GraphPattern,
-    inner: &GraphPattern,
-    delivery: M,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, inner: &GraphPattern, delivery: M, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     if !M::ACTIVE {
         return if ADJACENT {
@@ -435,10 +422,7 @@ fn eval_dedup_yielding<
     const ADJACENT: bool,
     M: crate::eval::RowDelivery<D>,
 >(
-    node: &GraphPattern,
-    inner: &GraphPattern,
-    delivery: M,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, inner: &GraphPattern, delivery: M, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let mut state = DedupState::<RetainedRow<D::Id>, ADJACENT>::new(&ctx.growth);
     crate::eval::yield_transform(
@@ -460,9 +444,7 @@ fn eval_dedup_yielding<
 /// Drop duplicate rows, preserving first-seen order (SolutionTerm equality is exact
 /// RDF-term identity — see the scratch-interner promotion rule).
 fn dedup<I: ViewTermId, const ADJACENT: bool>(
-    seq: SolutionSeq<I>,
-    workspace: &crate::WorkspaceCapability,
-    coalesce: bool,
+    seq: SolutionSeq<I>, workspace: &crate::WorkspaceCapability, coalesce: bool,
 ) -> Result<SolutionSeq<I>, EvalError> {
     if coalesce || seq.rows.may_have_evidence_attachment() {
         let mut state = DedupState::<(RetainedRow<I>, usize), ADJACENT>::new(workspace);
@@ -474,8 +456,7 @@ fn dedup<I: ViewTermId, const ADJACENT: bool>(
 }
 
 fn dedup_with_state<K: DedupKey, const ADJACENT: bool>(
-    seq: SolutionSeq<K::Id>,
-    state: &mut DedupState<K, ADJACENT>,
+    seq: SolutionSeq<K::Id>, state: &mut DedupState<K, ADJACENT>,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<SolutionSeq<K::Id>, EvalError> {
     let mut rows = RowsBuilder::new(workspace);
@@ -503,10 +484,7 @@ fn dedup_with_state<K: DedupKey, const ADJACENT: bool>(
 // Out of line by design: see the thin-dispatcher invariant on `eval::eval_node`.
 #[inline(never)]
 pub(crate) fn eval_slice<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    inner: &GraphPattern,
-    start: usize,
-    length: Option<usize>,
+    node: &GraphPattern, inner: &GraphPattern, start: usize, length: Option<usize>,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let lift = Lift::at_admitted(node, &ctx.growth)?.detach();
@@ -517,12 +495,8 @@ pub(crate) fn eval_slice<D: DatasetView + Sync>(
 /// Complete the original slice after its child returns. The ordinary node
 /// worklist retains `lift` and the local cap while that child is suspended.
 pub(crate) fn finish_slice<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    start: usize,
-    length: Option<usize>,
-    lift: crate::governor::lift::DetachedLift,
-    child: Evaluated<D::Id>,
-    ctx: &EvalCtx<'_, D>,
+    node: &GraphPattern, start: usize, length: Option<usize>,
+    lift: crate::governor::lift::DetachedLift, child: Evaluated<D::Id>, ctx: &EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let mut lift = lift.attach(node);
     let Some(seq) = lift.absorb(0, child) else {
@@ -570,11 +544,7 @@ pub(crate) fn finish_slice<D: DatasetView + Sync>(
 #[allow(clippy::inline_always)]
 #[inline(always)]
 pub(crate) fn eval_slice_with<D: DatasetView + Sync, M: crate::eval::RowDelivery<D>>(
-    node: &GraphPattern,
-    inner: &GraphPattern,
-    start: usize,
-    length: Option<usize>,
-    delivery: M,
+    node: &GraphPattern, inner: &GraphPattern, start: usize, length: Option<usize>, delivery: M,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     if !M::ACTIVE {
@@ -585,12 +555,8 @@ pub(crate) fn eval_slice_with<D: DatasetView + Sync, M: crate::eval::RowDelivery
 
 #[inline(never)]
 fn eval_slice_yielding<D: DatasetView + Sync, M: crate::eval::RowDelivery<D>>(
-    node: &GraphPattern,
-    inner: &GraphPattern,
-    start: usize,
-    length: Option<usize>,
-    mut delivery: M,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, inner: &GraphPattern, start: usize, length: Option<usize>,
+    mut delivery: M, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     if ctx.candidate_scope.is_some() {
         // A prefix-only delivery cannot account for undecided candidates later
@@ -656,10 +622,7 @@ fn eval_slice_yielding<D: DatasetView + Sync, M: crate::eval::RowDelivery<D>>(
 // Out of line by design: see the thin-dispatcher invariant on `eval::eval_node`.
 #[inline(never)]
 pub(crate) fn eval_order_by<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    inner: &GraphPattern,
-    exprs: &[OrderExpression],
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, inner: &GraphPattern, exprs: &[OrderExpression], ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let mut lift = Lift::at_admitted(node, &ctx.growth)?;
     let Some(seq) = lift.absorb(0, eval_evaluated(inner, ctx)?) else {
@@ -752,9 +715,7 @@ pub(crate) fn sort_keys_numeric_cost_admitted<
     'value: 'key,
     V: std::borrow::Borrow<XsdValue> + 'key,
 >(
-    keys: &(impl Iterator<Item = &'key SortKey<'value, V>> + Clone),
-    count: usize,
-    width: usize,
+    keys: &(impl Iterator<Item = &'key SortKey<'value, V>> + Clone), count: usize, width: usize,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<purrdf_xsd::exact::Cost, EvalError> {
     let mut total = purrdf_xsd::exact::Cost::ZERO;
@@ -815,10 +776,7 @@ pub(crate) fn rebuild_order(order: &OrderExpression, expr: Expression) -> OrderE
 // Out of line by design: see the thin-dispatcher invariant on `eval::eval_node`.
 #[inline(never)]
 pub(crate) fn eval_graph_with<D: DatasetView + Sync, M: crate::eval::RowDelivery<D>>(
-    node: &GraphPattern,
-    name: &NamedNodePattern,
-    inner: &GraphPattern,
-    mut delivery: M,
+    node: &GraphPattern, name: &NamedNodePattern, inner: &GraphPattern, mut delivery: M,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     match name {
@@ -1179,10 +1137,7 @@ fn graph_holds_no_rows<D: DatasetView>(dataset: &D, g: D::Id) -> bool {
 /// every graph already scanned keeps its complete block — commit granularity at the
 /// per-graph boundary, which is this operator's input row.
 fn eval_graph_var<D: DatasetView + Sync, M: crate::eval::RowDelivery<D>>(
-    node: &GraphPattern,
-    var: &Variable,
-    inner: &GraphPattern,
-    mut delivery: M,
+    node: &GraphPattern, var: &Variable, inner: &GraphPattern, mut delivery: M,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let mut lift = Lift::at_admitted(node, &ctx.growth)?;
@@ -1327,10 +1282,7 @@ fn eval_graph_var<D: DatasetView + Sync, M: crate::eval::RowDelivery<D>>(
 #[allow(clippy::inline_always)]
 #[inline(always)]
 fn append_graph_rows<I: ViewTermId>(
-    seq: SolutionSeq<I>,
-    var: &Variable,
-    candidate: SolutionTerm<I>,
-    rows: &mut RowsBuilder<I>,
+    seq: SolutionSeq<I>, var: &Variable, candidate: SolutionTerm<I>, rows: &mut RowsBuilder<I>,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<VarSchema, EvalError> {
     let mut schema = (*seq.schema).clone();
@@ -1386,9 +1338,7 @@ pub(crate) struct OwnedSortKey<'a> {
 }
 
 pub(crate) fn compare_keys_admitted(
-    left: &[OwnedSortKey<'_>],
-    right: &[OwnedSortKey<'_>],
-    exprs: &[OrderExpression],
+    left: &[OwnedSortKey<'_>], right: &[OwnedSortKey<'_>], exprs: &[OrderExpression],
     workspace: &crate::WorkspaceCapability,
 ) -> Result<Ordering, EvalError> {
     for ((left, right), expression) in left.iter().zip(right).zip(exprs) {
@@ -1615,8 +1565,7 @@ impl<'a, V> TripleKey<'a, V> {
     }
 
     fn new_admitted(
-        components: [SortKey<'a, V>; 3],
-        workspace: &crate::WorkspaceCapability,
+        components: [SortKey<'a, V>; 3], workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let bytes = u64::try_from(std::alloc::Layout::new::<TripleParts<'a, V>>().size())
             .map_err(|_| EvalError::WorkspaceBoundOverflow)?;
@@ -1717,8 +1666,7 @@ pub(crate) fn project(value: Option<&TermValue>) -> SortKey<'_> {
 /// The owned native projection used by operational ORDER and extrema.
 /// XSD parse payloads retain their own immutable grants; each triple owns its box.
 pub(crate) fn project_admitted<'a>(
-    value: Option<&'a TermValue>,
-    workspace: &crate::WorkspaceCapability,
+    value: Option<&'a TermValue>, workspace: &crate::WorkspaceCapability,
 ) -> Result<OwnedSortKey<'a>, EvalError> {
     enum Step<'v> {
         Term(&'v TermValue),
@@ -1756,8 +1704,7 @@ pub(crate) fn project_admitted<'a>(
 }
 
 fn project_shallow_admitted<'a>(
-    value: Option<&'a TermValue>,
-    workspace: &crate::WorkspaceCapability,
+    value: Option<&'a TermValue>, workspace: &crate::WorkspaceCapability,
 ) -> Result<SortKey<'a, ParsedValue>, EvalError> {
     Ok(match value {
         None => SortKey::Unbound,
@@ -1865,9 +1812,7 @@ pub(crate) fn total_order(a: &SortKey<'_>, b: &SortKey<'_>) -> Ordering {
 }
 
 pub(crate) fn total_order_admitted<V: std::borrow::Borrow<XsdValue>>(
-    a: &SortKey<'_, V>,
-    b: &SortKey<'_, V>,
-    workspace: &crate::WorkspaceCapability,
+    a: &SortKey<'_, V>, b: &SortKey<'_, V>, workspace: &crate::WorkspaceCapability,
 ) -> Result<Ordering, EvalError> {
     if !matches!((a, b), (SortKey::Triple(_), SortKey::Triple(_))) {
         return shallow_order_admitted(a, b, workspace);
@@ -1899,9 +1844,7 @@ fn shallow_order(a: &SortKey<'_>, b: &SortKey<'_>) -> Ordering {
 }
 
 fn shallow_order_admitted<V: std::borrow::Borrow<XsdValue>>(
-    a: &SortKey<'_, V>,
-    b: &SortKey<'_, V>,
-    workspace: &crate::WorkspaceCapability,
+    a: &SortKey<'_, V>, b: &SortKey<'_, V>, workspace: &crate::WorkspaceCapability,
 ) -> Result<Ordering, EvalError> {
     Ok(match (a, b) {
         (SortKey::Blank(sa, la), SortKey::Blank(sb, lb)) => (sa, la).cmp(&(sb, lb)),
@@ -2056,8 +1999,7 @@ pub enum ValueAggregate {
 /// A value fold runs outside any evaluation, so no evaluation's sequential decision
 /// applies to it: it forks by the bag's size alone, and the answer is the same either way.
 pub fn fold_values(
-    aggregate: ValueAggregate,
-    values: &[TermValue],
+    aggregate: ValueAggregate, values: &[TermValue],
 ) -> Result<Option<TermValue>, EvalError> {
     fold_values_with_division(aggregate, values, DivisionPolicy::xsd_default())
 }
@@ -2074,9 +2016,7 @@ pub fn fold_values(
 /// [`DivisionPolicy::Exact`](purrdf_xsd::exact::DivisionPolicy::Exact)) is an
 /// aggregate error, so the answer is `Ok(None)`, as for every other aggregate error.
 pub fn fold_values_with_division(
-    aggregate: ValueAggregate,
-    values: &[TermValue],
-    division: DivisionPolicy,
+    aggregate: ValueAggregate, values: &[TermValue], division: DivisionPolicy,
 ) -> Result<Option<TermValue>, EvalError> {
     match aggregate {
         ValueAggregate::Count => {
@@ -2118,11 +2058,8 @@ pub fn fold_values_with_division(
 #[allow(clippy::inline_always)]
 #[inline(always)]
 pub(crate) fn eval_group<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    inner: &GraphPattern,
-    variables: &[Variable],
-    aggregates: &[(Variable, AggregateExpression)],
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, inner: &GraphPattern, variables: &[Variable],
+    aggregates: &[(Variable, AggregateExpression)], ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     eval_group_with(node, inner, variables, aggregates, (), ctx)
 }
@@ -2130,18 +2067,14 @@ pub(crate) fn eval_group<D: DatasetView + Sync>(
 pub(crate) trait GroupDomain: Copy + Sync {
     const CONTEXTUAL: bool;
     fn visible(
-        &self,
-        schema: &VarSchema,
-        workspace: &crate::WorkspaceCapability,
+        &self, schema: &VarSchema, workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<AdmittedVec<usize>>, EvalError>;
 }
 
 impl GroupDomain for () {
     const CONTEXTUAL: bool = false;
     fn visible(
-        &self,
-        schema: &VarSchema,
-        workspace: &crate::WorkspaceCapability,
+        &self, schema: &VarSchema, workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<AdmittedVec<usize>>, EvalError> {
         crate::blank_scope::visible_columns_admitted(schema, workspace)
     }
@@ -2150,9 +2083,7 @@ impl GroupDomain for () {
 impl GroupDomain for &[Variable] {
     const CONTEXTUAL: bool = true;
     fn visible(
-        &self,
-        schema: &VarSchema,
-        workspace: &crate::WorkspaceCapability,
+        &self, schema: &VarSchema, workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<AdmittedVec<usize>>, EvalError> {
         let mut columns = AdmittedVec::new(workspace);
         for name in *self {
@@ -2165,8 +2096,7 @@ impl GroupDomain for &[Variable] {
 }
 
 fn aggregate_evidence<D: DatasetView + Sync>(
-    evidence: &crate::evidence_exec::RowEvidence,
-    aggregates: &[(Variable, AggregateExpression)],
+    evidence: &crate::evidence_exec::RowEvidence, aggregates: &[(Variable, AggregateExpression)],
     ctx: &EvalCtx<'_, D>,
 ) -> Result<crate::evidence_exec::RowEvidence, EvalError> {
     match &ctx.evidence_input {
@@ -2180,9 +2110,7 @@ fn aggregate_evidence<D: DatasetView + Sync>(
 }
 
 fn group_evidence<D: DatasetView + Sync>(
-    members: &[usize],
-    rows: &crate::solution::RowBag<D::Id>,
-    ctx: &EvalCtx<'_, D>,
+    members: &[usize], rows: &crate::solution::RowBag<D::Id>, ctx: &EvalCtx<'_, D>,
 ) -> Result<crate::evidence_exec::RowEvidence, EvalError> {
     if ctx.evidence_input.is_none()
         && rows.search_evidence().is_virtual()
@@ -2205,12 +2133,8 @@ fn group_evidence<D: DatasetView + Sync>(
 // Out of line by design: see the thin-dispatcher invariant on `eval::eval_node`.
 #[inline(never)]
 pub(crate) fn eval_group_with<D: DatasetView + Sync, M: GroupDomain>(
-    node: &GraphPattern,
-    inner: &GraphPattern,
-    variables: &[Variable],
-    aggregates: &[(Variable, AggregateExpression)],
-    domain: M,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, inner: &GraphPattern, variables: &[Variable],
+    aggregates: &[(Variable, AggregateExpression)], domain: M, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     // The output schema is syntactic, including when the input is truncated.
     // Check aggregate targets once before either path can publish its columns.
@@ -2501,9 +2425,7 @@ pub(crate) fn eval_group_with<D: DatasetView + Sync, M: GroupDomain>(
 /// Link every aggregate's expressions to the group input's schema, once per `GROUP`
 /// call: for each aggregate, its arguments in order, then its own `ORDER BY` keys.
 fn link_aggregates<'e, D: DatasetView + Sync>(
-    node: &GraphPattern,
-    aggregates: &'e [(Variable, AggregateExpression)],
-    schema: &VarSchema,
+    node: &GraphPattern, aggregates: &'e [(Variable, AggregateExpression)], schema: &VarSchema,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<AdmittedVec<AdmittedVec<crate::vm::Linked<'e, D::Id>>>, EvalError> {
     let mut groups = AdmittedVec::with_capacity(aggregates.len(), &ctx.growth)?;
@@ -2553,8 +2475,7 @@ struct ContextualCustomFold {
 
 impl ContextualFold {
     fn builtin<A: crate::agg_fn::AggregateAccumulator>(
-        value: A,
-        workspace: &crate::WorkspaceCapability,
+        value: A, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let allocation = workspace.charge(
             u64::try_from(size_of::<A>()).map_err(|_| EvalError::WorkspaceBoundOverflow)?,
@@ -2570,8 +2491,7 @@ impl ContextualFold {
     }
 
     fn start<D: DatasetView + Sync>(
-        agg: &AggregateExpression,
-        ctx: &EvalCtx<'_, D>,
+        agg: &AggregateExpression, ctx: &EvalCtx<'_, D>,
         local_trip: &std::cell::Cell<Option<purrdf_core::TrippedGovernor>>,
     ) -> Result<Option<Self>, EvalError> {
         Ok(Some(match agg.function() {
@@ -2657,9 +2577,7 @@ impl ContextualFold {
     }
 
     fn step<D: DatasetView + Sync>(
-        &mut self,
-        values: AggregateSurvivors,
-        ctx: &EvalCtx<'_, D>,
+        &mut self, values: AggregateSurvivors, ctx: &EvalCtx<'_, D>,
     ) -> Result<Option<purrdf_core::TrippedGovernor>, EvalError> {
         match self {
             Self::Builtin { accumulator, .. } => accumulator
@@ -2716,9 +2634,7 @@ impl ContextualFold {
     }
 
     fn finish(
-        self,
-        division: DivisionPolicy,
-        absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
+        self, division: DivisionPolicy, absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
         match self {
@@ -2750,8 +2666,7 @@ impl ContextualFold {
 
 impl ContextualCustomFold {
     fn finish(
-        self: Box<Self>,
-        absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
+        self: Box<Self>, absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
         let Self {
@@ -2777,9 +2692,7 @@ struct ContextualNumericCost {
 
 impl ContextualNumericCost {
     fn step(
-        &mut self,
-        function: &AggregateFunction,
-        values: &[TermValue],
+        &mut self, function: &AggregateFunction, values: &[TermValue],
     ) -> purrdf_xsd::exact::Cost {
         use purrdf_xsd::exact::Cost;
         self.count = self.count.saturating_add(1);
@@ -2804,9 +2717,7 @@ impl ContextualNumericCost {
     }
 
     fn finish(
-        &self,
-        function: &AggregateFunction,
-        division: DivisionPolicy,
+        &self, function: &AggregateFunction, division: DivisionPolicy,
     ) -> purrdf_xsd::exact::Cost {
         self.sum
             .finish()
@@ -2818,8 +2729,7 @@ impl ContextualNumericCost {
 }
 
 fn record_contextual_trip<D: DatasetView + Sync>(
-    ctx: &EvalCtx<'_, D>,
-    local: &std::cell::Cell<Option<purrdf_core::TrippedGovernor>>,
+    ctx: &EvalCtx<'_, D>, local: &std::cell::Cell<Option<purrdf_core::TrippedGovernor>>,
     trip: purrdf_core::TrippedGovernor,
 ) {
     ctx.record_barrier(trip);
@@ -2829,13 +2739,9 @@ fn record_contextual_trip<D: DatasetView + Sync>(
 }
 
 fn contextual_group_rows<D: DatasetView + Sync, M: GroupDomain>(
-    node: &GraphPattern,
-    inner: &GraphPattern,
-    variables: &[Variable],
-    aggregates: &[(Variable, AggregateExpression)],
-    out_schema: crate::solution::SharedSchema,
-    domain: M,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, inner: &GraphPattern, variables: &[Variable],
+    aggregates: &[(Variable, AggregateExpression)], out_schema: crate::solution::SharedSchema,
+    domain: M, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let in_schema = crate::eval::syntactic_schema_admitted(inner, &ctx.growth)?;
     let var_count = out_schema.len() - aggregates.len();
@@ -3137,8 +3043,7 @@ fn contextual_group_rows<D: DatasetView + Sync, M: GroupDomain>(
 }
 
 fn contextual_lanes<D: DatasetView + Sync>(
-    aggregates: &[(Variable, AggregateExpression)],
-    ctx: &EvalCtx<'_, D>,
+    aggregates: &[(Variable, AggregateExpression)], ctx: &EvalCtx<'_, D>,
     local_trip: &std::cell::Cell<Option<purrdf_core::TrippedGovernor>>,
 ) -> Result<Option<AdmittedVec<ContextualLane<D::Id>>>, EvalError> {
     let mut lanes = AdmittedVec::with_capacity(aggregates.len(), &ctx.growth)?;
@@ -3289,8 +3194,7 @@ impl std::ops::Deref for AggregateScalarvals {
 
 impl AggregateScalarvals {
     fn resolve(
-        aggregate: &AggregateExpression,
-        workspace: &crate::WorkspaceCapability,
+        aggregate: &AggregateExpression, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let length = aggregate.scalarvals().len();
         let mut result = Self {
@@ -3323,9 +3227,7 @@ struct AggregateTupleWitnesses {
 
 impl AggregateTupleWitnesses {
     fn keep(
-        &mut self,
-        tuple: &[TermValue],
-        survivors: &[Vec<TermValue>],
+        &mut self, tuple: &[TermValue], survivors: &[Vec<TermValue>],
         workspace: &crate::WorkspaceCapability,
     ) -> Result<bool, EvalError> {
         use std::hash::Hasher as _;
@@ -3373,13 +3275,8 @@ fn missing_custom_aggregate(iri: &str, workspace: &crate::WorkspaceCapability) -
 }
 
 fn eval_aggregate<D: DatasetView + Sync, M: GroupDomain>(
-    agg: &AggregateExpression,
-    links: &mut [crate::vm::Linked<'_, D::Id>],
-    idxs: &[usize],
-    rows: &[RetainedRow<D::Id>],
-    schema: &VarSchema,
-    domain: M,
-    ctx: &mut EvalCtx<'_, D>,
+    agg: &AggregateExpression, links: &mut [crate::vm::Linked<'_, D::Id>], idxs: &[usize],
+    rows: &[RetainedRow<D::Id>], schema: &VarSchema, domain: M, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     if let Err(tripped) = ctx.charge(ChargePoint::AggregateInvocation) {
         ctx.record_barrier(tripped);
@@ -3683,9 +3580,7 @@ fn eval_aggregate<D: DatasetView + Sync, M: GroupDomain>(
 /// ([`purrdf_xsd::exact::cost::compare_chain`], one round per value). Every other
 /// built-in does no numeric work.
 pub(crate) fn aggregate_numeric_cost(
-    function: &AggregateFunction,
-    survivors: &[TermValue],
-    division: DivisionPolicy,
+    function: &AggregateFunction, survivors: &[TermValue], division: DivisionPolicy,
 ) -> purrdf_xsd::exact::Cost {
     use purrdf_xsd::exact::cost::{compare_chain, sum_chain};
     // A lexical form of nineteen bytes or fewer holds at most eighteen fractional
@@ -3727,9 +3622,7 @@ pub(crate) fn aggregate_numeric_cost(
 #[allow(clippy::inline_always)]
 #[inline(always)]
 fn aggregate_numeric_tail_cost<const CHECK_FAST_PATH: bool>(
-    function: &AggregateFunction,
-    total: purrdf_xsd::exact::cost::Shape,
-    count: u64,
+    function: &AggregateFunction, total: purrdf_xsd::exact::cost::Shape, count: u64,
     division: DivisionPolicy,
 ) -> purrdf_xsd::exact::Cost {
     use purrdf_xsd::exact::{Cost, cost::Shape};
@@ -3756,8 +3649,7 @@ fn aggregate_numeric_tail_cost<const CHECK_FAST_PATH: bool>(
 /// [`crate::agg_fn::AggregateAccumulator::step`] expects, with no allocation
 /// (`std::slice::from_ref`).
 fn acc_step_one<A: crate::agg_fn::AggregateAccumulator>(
-    acc: &mut A,
-    value: &TermValue,
+    acc: &mut A, value: &TermValue,
 ) -> Result<(), EvalError> {
     acc.step(std::slice::from_ref(value))
 }
@@ -3790,9 +3682,7 @@ fn acc_step_one<A: crate::agg_fn::AggregateAccumulator>(
 /// downcast machinery `crate::agg_fn`'s own doc comments describe for that
 /// case, at a strictly narrower and provably-safe use.
 pub(crate) fn fold_builtin<A: crate::agg_fn::AggregateAccumulator, T: Sync>(
-    sequential: bool,
-    survivors: &[T],
-    init: impl Fn() -> A + Sync,
+    sequential: bool, survivors: &[T], init: impl Fn() -> A + Sync,
     step: impl Fn(&mut A, &T) -> Result<(), EvalError> + Sync,
 ) -> Result<Option<TermValue>, EvalError> {
     fold_builtin_admitted(
@@ -3811,9 +3701,7 @@ pub(crate) fn fold_builtin<A: crate::agg_fn::AggregateAccumulator, T: Sync>(
 }
 
 pub(crate) fn fold_builtin_admitted<A: crate::agg_fn::AggregateAccumulator, T: Sync>(
-    sequential: bool,
-    survivors: &[T],
-    init: impl Fn() -> Result<A, EvalError> + Sync,
+    sequential: bool, survivors: &[T], init: impl Fn() -> Result<A, EvalError> + Sync,
     step: impl Fn(&mut A, &T) -> Result<(), EvalError> + Sync,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
@@ -3858,13 +3746,8 @@ pub(crate) fn fold_builtin_admitted<A: crate::agg_fn::AggregateAccumulator, T: S
 /// only when a caller evaluates algebra that bypassed that walk) or if the
 /// resolved aggregate panics anywhere in its contained lifecycle.
 pub(crate) fn eval_custom_aggregate<D: DatasetView + Sync>(
-    iri: &str,
-    agg: &AggregateExpression,
-    links: &mut [crate::vm::Linked<'_, D::Id>],
-    idxs: &[usize],
-    rows: &[RetainedRow<D::Id>],
-    schema: &VarSchema,
-    ctx: &mut EvalCtx<'_, D>,
+    iri: &str, agg: &AggregateExpression, links: &mut [crate::vm::Linked<'_, D::Id>],
+    idxs: &[usize], rows: &[RetainedRow<D::Id>], schema: &VarSchema, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let custom = ctx
         .aggregates
@@ -4036,8 +3919,7 @@ enum NumericFold {
 /// Numeric inputs use the one admitted native parser. Other families poison
 /// this fold without constructing an unused string/binary parse destination.
 fn parse_numeric_fold_value(
-    value: &TermValue,
-    workspace: &crate::WorkspaceCapability,
+    value: &TermValue, workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<ParsedValue>, EvalError> {
     let TermValue::Literal {
         lexical_form,
@@ -4064,11 +3946,8 @@ fn parse_numeric_fold_value(
 /// New native payloads retain their operation frame's admission. A physical
 /// refusal is propagated, never converted into aggregate poisoning/replay.
 pub(crate) fn numeric_fold_binary(
-    a: &XsdValue,
-    b: &XsdValue,
-    op: purrdf_xsd::numeric::NumericBinaryOperator,
-    division: DivisionPolicy,
-    workspace: &crate::WorkspaceCapability,
+    a: &XsdValue, b: &XsdValue, op: purrdf_xsd::numeric::NumericBinaryOperator,
+    division: DivisionPolicy, workspace: &crate::WorkspaceCapability,
 ) -> Result<Result<ParsedValue, Option<purrdf_xsd::ErrorCode>>, EvalError> {
     let mut frame = crate::native_numeric::NumericFrame::new(workspace);
     let computed = purrdf_xsd::ops::value_binary_admitted(a, b, op, division, &mut |layout| {
@@ -4078,9 +3957,7 @@ pub(crate) fn numeric_fold_binary(
 }
 
 fn duration_from_parsed_seconds(
-    months: i64,
-    seconds: &purrdf_xsd::exact::Decimal,
-    datatype: XsdDatatype,
+    months: i64, seconds: &purrdf_xsd::exact::Decimal, datatype: XsdDatatype,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<ParsedValue>, EvalError> {
     let mut frame = crate::native_numeric::NumericFrame::new(workspace);
@@ -4107,9 +3984,7 @@ impl NumericFold {
     /// unchanged; the caller records poisoning. Physical admission/allocation
     /// failure remains a hard operational error.
     fn step_parsed(
-        &mut self,
-        xv: ParsedValue,
-        workspace: &crate::WorkspaceCapability,
+        &mut self, xv: ParsedValue, workspace: &crate::WorkspaceCapability,
     ) -> Result<bool, EvalError> {
         use purrdf_xsd::numeric::NumericBinaryOperator::Add;
         if !xv.is_numeric() && !matches!(&*xv, XsdValue::Duration(_)) {
@@ -4203,8 +4078,7 @@ impl NumericFold {
 
     /// SUM(empty) = integer zero. Duration validation occurs only here.
     fn sum_value(
-        self,
-        workspace: &crate::WorkspaceCapability,
+        self, workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<ParsedValue>, EvalError> {
         match self {
             Self::Empty => ParsedValue::from_admitted(
@@ -4238,9 +4112,7 @@ impl NumericFold {
     /// seconds keep their existing default division law; months round toward
     /// positive infinity at ties. The mean, rather than its raw sum, is validated.
     fn avg_value(
-        self,
-        division: DivisionPolicy,
-        absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
+        self, division: DivisionPolicy, absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<ParsedValue>, EvalError> {
         use purrdf_xsd::numeric::NumericBinaryOperator::Divide;
@@ -4295,8 +4167,7 @@ impl NumericFold {
 
     /// Render through the shared producer home while the native value owner lives.
     fn finish_sum_admitted(
-        self,
-        workspace: &crate::WorkspaceCapability,
+        self, workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
         self.sum_value(workspace)?
             .map(|value| {
@@ -4306,9 +4177,7 @@ impl NumericFold {
     }
 
     fn finish_avg_admitted(
-        self,
-        division: DivisionPolicy,
-        absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
+        self, division: DivisionPolicy, absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
         self.avg_value(division, absorb, workspace)?
@@ -4321,9 +4190,7 @@ impl NumericFold {
     /// Merge adjacent partials only where NumericSummary proves the result is
     /// the source-order chain. IEEE partials are not reassociated in production.
     fn combine_admitted(
-        a: Self,
-        b: Self,
-        workspace: &crate::WorkspaceCapability,
+        a: Self, b: Self, workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<Self>, EvalError> {
         use purrdf_xsd::numeric::NumericBinaryOperator::Add;
         Ok(match (a, b) {
@@ -4472,16 +4339,13 @@ impl crate::agg_fn::AggregateAccumulator for CountAccumulator {
     }
 
     fn step_admitted(
-        &mut self,
-        args: &[TermValue],
-        _workspace: &crate::WorkspaceCapability,
+        &mut self, args: &[TermValue], _workspace: &crate::WorkspaceCapability,
     ) -> Result<(), EvalError> {
         self.step(args)
     }
 
     fn combine(
-        &mut self,
-        other: Box<dyn crate::agg_fn::AggregateAccumulator>,
+        &mut self, other: Box<dyn crate::agg_fn::AggregateAccumulator>,
     ) -> Result<(), EvalError> {
         let other = crate::agg_fn::downcast_combine_partial::<Self>(other)?;
         self.0 += other.0;
@@ -4495,8 +4359,7 @@ impl crate::agg_fn::AggregateAccumulator for CountAccumulator {
     resident_aggregate_finish!("a resident count cannot detach bounded output");
 
     fn finish_admitted(
-        self: Box<Self>,
-        workspace: &crate::WorkspaceCapability,
+        self: Box<Self>, workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
         workspace
             .literal(self.0, purrdf_xsd::datatype::XSD_INTEGER)
@@ -4567,10 +4430,7 @@ enum NumericAggregate {
 /// group onto the chain — its operands parsed in parallel, its additions
 /// replayed one by one in source order.
 fn fold_numeric(
-    sequential: bool,
-    values: &[TermValue],
-    aggregate: NumericAggregate,
-    division: DivisionPolicy,
+    sequential: bool, values: &[TermValue], aggregate: NumericAggregate, division: DivisionPolicy,
     absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
 ) -> Result<Option<TermValue>, EvalError> {
     // Raw output belongs only to this explicitly resident public boundary.
@@ -4582,12 +4442,8 @@ fn fold_numeric(
 /// The shared production fold; native payloads, tail and chunk metadata retain
 /// their original physical admissions through final lexical publication.
 fn fold_numeric_admitted(
-    sequential: bool,
-    values: &[TermValue],
-    aggregate: NumericAggregate,
-    division: DivisionPolicy,
-    absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
-    workspace: &crate::WorkspaceCapability,
+    sequential: bool, values: &[TermValue], aggregate: NumericAggregate, division: DivisionPolicy,
+    absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode), workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
     let fold = if crate::parallel::should_parallelize(sequential, values.len()) {
         crate::parallel::par_chunk_reduce_init_admitted(
@@ -4613,8 +4469,7 @@ fn fold_numeric_admitted(
 
 /// The sequential chain, with the same parser and native addition as summaries.
 fn numeric_chain_admitted(
-    values: &[TermValue],
-    workspace: &crate::WorkspaceCapability,
+    values: &[TermValue], workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<NumericFold>, EvalError> {
     let mut fold = NumericFold::Empty;
     for value in values {
@@ -4788,10 +4643,7 @@ enum ExactMerge {
 /// `a` is the chain's state — see [`NumericSummary`]'s proof for when the
 /// merge is the chain's.
 fn merge_exact(
-    a: NumericFold,
-    a_bound: MagnitudeBound,
-    b: NumericFold,
-    b_bound: MagnitudeBound,
+    a: NumericFold, a_bound: MagnitudeBound, b: NumericFold, b_bound: MagnitudeBound,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<ExactMerge, EvalError> {
     Ok(match (&a, &b) {
@@ -4953,9 +4805,7 @@ impl NumericSummary {
 /// [`MaxAccumulator`]'s `step`/`combine`, parameterized by `want`, rather than
 /// duplicated per direction.
 fn fold_extreme(
-    current: Option<crate::WorkspaceTerm>,
-    value: crate::WorkspaceTerm,
-    want: Ordering,
+    current: Option<crate::WorkspaceTerm>, value: crate::WorkspaceTerm, want: Ordering,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<crate::WorkspaceTerm, EvalError> {
     match current {
@@ -4984,9 +4834,7 @@ impl crate::agg_fn::AggregateAccumulator for MinAccumulator {
     }
 
     fn step_admitted(
-        &mut self,
-        args: &[TermValue],
-        workspace: &crate::WorkspaceCapability,
+        &mut self, args: &[TermValue], workspace: &crate::WorkspaceCapability,
     ) -> Result<(), EvalError> {
         self.1 = workspace.clone();
         if let Some(value) = args.first() {
@@ -5001,8 +4849,7 @@ impl crate::agg_fn::AggregateAccumulator for MinAccumulator {
     }
 
     fn combine(
-        &mut self,
-        other: Box<dyn crate::agg_fn::AggregateAccumulator>,
+        &mut self, other: Box<dyn crate::agg_fn::AggregateAccumulator>,
     ) -> Result<(), EvalError> {
         let other = crate::agg_fn::downcast_combine_partial::<Self>(other)?;
         if let Some(value) = other.0 {
@@ -5017,8 +4864,7 @@ impl crate::agg_fn::AggregateAccumulator for MinAccumulator {
 
     resident_aggregate_finish!("a resident minimum cannot detach bounded output");
     fn finish_admitted(
-        self: Box<Self>,
-        _workspace: &crate::WorkspaceCapability,
+        self: Box<Self>, _workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
         Ok(self.0)
     }
@@ -5033,9 +4879,7 @@ impl crate::agg_fn::AggregateAccumulator for MaxAccumulator {
         self.step_admitted(args, &crate::WorkspaceCapability::resident())
     }
     fn step_admitted(
-        &mut self,
-        args: &[TermValue],
-        workspace: &crate::WorkspaceCapability,
+        &mut self, args: &[TermValue], workspace: &crate::WorkspaceCapability,
     ) -> Result<(), EvalError> {
         self.1 = workspace.clone();
         if let Some(value) = args.first() {
@@ -5050,8 +4894,7 @@ impl crate::agg_fn::AggregateAccumulator for MaxAccumulator {
     }
 
     fn combine(
-        &mut self,
-        other: Box<dyn crate::agg_fn::AggregateAccumulator>,
+        &mut self, other: Box<dyn crate::agg_fn::AggregateAccumulator>,
     ) -> Result<(), EvalError> {
         let other = crate::agg_fn::downcast_combine_partial::<Self>(other)?;
         if let Some(value) = other.0 {
@@ -5071,8 +4914,7 @@ impl crate::agg_fn::AggregateAccumulator for MaxAccumulator {
 
     resident_aggregate_finish!("a resident maximum cannot detach bounded output");
     fn finish_admitted(
-        self: Box<Self>,
-        _workspace: &crate::WorkspaceCapability,
+        self: Box<Self>, _workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
         Ok(self.0)
     }
@@ -5089,9 +4931,7 @@ impl crate::agg_fn::AggregateAccumulator for SampleAccumulator {
         self.step_admitted(args, &crate::WorkspaceCapability::resident())
     }
     fn step_admitted(
-        &mut self,
-        args: &[TermValue],
-        workspace: &crate::WorkspaceCapability,
+        &mut self, args: &[TermValue], workspace: &crate::WorkspaceCapability,
     ) -> Result<(), EvalError> {
         if self.0.is_none()
             && let Some(value) = args.first()
@@ -5102,8 +4942,7 @@ impl crate::agg_fn::AggregateAccumulator for SampleAccumulator {
     }
 
     fn combine(
-        &mut self,
-        other: Box<dyn crate::agg_fn::AggregateAccumulator>,
+        &mut self, other: Box<dyn crate::agg_fn::AggregateAccumulator>,
     ) -> Result<(), EvalError> {
         let other = crate::agg_fn::downcast_combine_partial::<Self>(other)?;
         if self.0.is_none() {
@@ -5118,8 +4957,7 @@ impl crate::agg_fn::AggregateAccumulator for SampleAccumulator {
 
     resident_aggregate_finish!("a resident sample cannot detach bounded output");
     fn finish_admitted(
-        self: Box<Self>,
-        _workspace: &crate::WorkspaceCapability,
+        self: Box<Self>, _workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
         Ok(self.0)
     }
@@ -5194,9 +5032,7 @@ impl crate::agg_fn::AggregateAccumulator for GroupConcatAccumulator {
     }
 
     fn step_admitted(
-        &mut self,
-        args: &[TermValue],
-        workspace: &crate::WorkspaceCapability,
+        &mut self, args: &[TermValue], workspace: &crate::WorkspaceCapability,
     ) -> Result<(), EvalError> {
         self.workspace = workspace.clone();
         if self.poisoned {
@@ -5223,8 +5059,7 @@ impl crate::agg_fn::AggregateAccumulator for GroupConcatAccumulator {
     }
 
     fn combine(
-        &mut self,
-        other: Box<dyn crate::agg_fn::AggregateAccumulator>,
+        &mut self, other: Box<dyn crate::agg_fn::AggregateAccumulator>,
     ) -> Result<(), EvalError> {
         let other = crate::agg_fn::downcast_combine_partial::<Self>(other)?;
         if self.poisoned {
@@ -5255,8 +5090,7 @@ impl crate::agg_fn::AggregateAccumulator for GroupConcatAccumulator {
     }
 
     fn finish_admitted(
-        mut self: Box<Self>,
-        workspace: &crate::WorkspaceCapability,
+        mut self: Box<Self>, workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
         if self.poisoned {
             Ok(None)
@@ -5455,9 +5289,7 @@ mod tests {
     // child edge classification), so the tests build the node and drive the ordinary
     // dispatch — testing the wiring rather than an entry point no query reaches.
     fn eval_order_by<D: DatasetView<Id = purrdf_core::TermId> + Sync>(
-        inner: &GraphPattern,
-        exprs: &[OrderExpression],
-        ctx: &mut EvalCtx<'_, D>,
+        inner: &GraphPattern, exprs: &[OrderExpression], ctx: &mut EvalCtx<'_, D>,
     ) -> Result<SolutionSeq, EvalError> {
         eval(
             &GraphPattern::OrderBy {
@@ -5469,8 +5301,7 @@ mod tests {
     }
 
     fn eval_distinct<D: DatasetView<Id = purrdf_core::TermId> + Sync>(
-        inner: &GraphPattern,
-        ctx: &mut EvalCtx<'_, D>,
+        inner: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<SolutionSeq, EvalError> {
         eval(
             &GraphPattern::Distinct {
@@ -5481,9 +5312,7 @@ mod tests {
     }
 
     fn eval_project<D: DatasetView<Id = purrdf_core::TermId> + Sync>(
-        inner: &GraphPattern,
-        variables: &[Variable],
-        ctx: &mut EvalCtx<'_, D>,
+        inner: &GraphPattern, variables: &[Variable], ctx: &mut EvalCtx<'_, D>,
     ) -> Result<SolutionSeq, EvalError> {
         eval(
             &GraphPattern::Project {
@@ -5548,10 +5377,7 @@ mod tests {
     }
 
     fn eval_slice<D: DatasetView<Id = purrdf_core::TermId> + Sync>(
-        inner: &GraphPattern,
-        start: usize,
-        length: Option<usize>,
-        ctx: &mut EvalCtx<'_, D>,
+        inner: &GraphPattern, start: usize, length: Option<usize>, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<SolutionSeq, EvalError> {
         eval(
             &GraphPattern::Slice {
@@ -5707,9 +5533,7 @@ mod tests {
                 self.0.rows_per_invocation(mode)
             }
             fn open<'cursor>(
-                &self,
-                args: &PfArgs<'_>,
-                ceiling: Option<u64>,
+                &self, args: &PfArgs<'_>, ceiling: Option<u64>,
             ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
             where
                 Self: 'cursor,
@@ -5718,9 +5542,7 @@ mod tests {
                     .and_then(crate::WorkspaceCursor::into_resident)
             }
             fn open_admitted<'cursor>(
-                &self,
-                _args: &PfArgs<'_>,
-                ceiling: Option<u64>,
+                &self, _args: &PfArgs<'_>, ceiling: Option<u64>,
                 workspace: crate::WorkspaceCapability,
             ) -> Result<crate::WorkspaceCursor<'cursor>, EvalError>
             where
@@ -6233,10 +6055,7 @@ mod tests {
 
     /// Helper: resolve an aggregate column via the eval scratch.
     fn agg_lex(
-        ds: &Arc<RdfDataset>,
-        ctx: &EvalCtx<'_, Arc<RdfDataset>>,
-        seq: &SolutionSeq,
-        var: &str,
+        ds: &Arc<RdfDataset>, ctx: &EvalCtx<'_, Arc<RdfDataset>>, seq: &SolutionSeq, var: &str,
     ) -> String {
         let col = seq.schema.index_of(&Variable::new(var)).unwrap();
         match ctx.scratch.value_of(ds, seq.rows[0][col].unwrap()) {
@@ -6852,8 +6671,7 @@ mod tests {
     /// exactly what [`sum_over_mixed_subtype_durations_is_the_general_duration`]
     /// exists to catch, and a lexical-only assertion cannot see it.
     fn eval_numeric_fold_term(
-        ds: &Arc<RdfDataset>,
-        function: AggregateFunction,
+        ds: &Arc<RdfDataset>, function: AggregateFunction,
     ) -> Option<(String, String)> {
         let mut ctx = EvalCtx::new(ds);
         let bgp = GraphPattern::Bgp {
@@ -8190,8 +8008,7 @@ mod tests {
             Ok(())
         }
         fn combine(
-            &mut self,
-            other: Box<dyn crate::agg_fn::AggregateAccumulator>,
+            &mut self, other: Box<dyn crate::agg_fn::AggregateAccumulator>,
         ) -> Result<(), EvalError> {
             // An ordered list join IS its own sufficient merge state (see
             // `crate::agg_fn`'s "Merging structural state" module docs), so —
@@ -8234,8 +8051,7 @@ mod tests {
             256
         }
         fn init(
-            &self,
-            _scalarvals: &[(String, TermValue)],
+            &self, _scalarvals: &[(String, TermValue)],
         ) -> Box<dyn crate::agg_fn::AggregateAccumulator> {
             Box::new(ListCollector { items: Vec::new() })
         }
@@ -8407,9 +8223,7 @@ mod tests {
     /// `stat_agg_*_chunked_fold_forced_parallel_and_sequential_agree` test below
     /// uses.
     fn stat_agg_run_single_arg(
-        ds: &Arc<RdfDataset>,
-        registry: &crate::agg_fn::AggregateRegistry,
-        iri: &str,
+        ds: &Arc<RdfDataset>, registry: &crate::agg_fn::AggregateRegistry, iri: &str,
     ) -> (String, String) {
         let inner = GraphPattern::Bgp {
             patterns: vec![TriplePattern {
@@ -8763,9 +8577,7 @@ mod numeric_chain_tests {
     /// The chunked answer, forced parallel at `chunk` rows per chunk (`None`:
     /// the production chunk plan).
     fn parallel(
-        aggregate: ValueAggregate,
-        values: &[TermValue],
-        chunk: Option<usize>,
+        aggregate: ValueAggregate, values: &[TermValue], chunk: Option<usize>,
     ) -> Option<TermValue> {
         let _parallel = crate::parallel::force_parallel_for_test(true);
         let _chunk = chunk.map(crate::parallel::force_chunk_size_for_test);
@@ -8778,9 +8590,7 @@ mod numeric_chain_tests {
     /// the property test below: it must disagree with the chain somewhere, or
     /// the test could not tell the fix from the defect.
     fn partial_sum_tree(
-        values: &[TermValue],
-        chunk: usize,
-        aggregate: ValueAggregate,
+        values: &[TermValue], chunk: usize, aggregate: ValueAggregate,
     ) -> Option<TermValue> {
         let workspace = crate::WorkspaceCapability::resident();
         let mut acc = Some(NumericFold::Empty);
@@ -9706,8 +9516,7 @@ mod custom_owner_regressions {
             )))
         }
         fn finish_admitted(
-            self: Box<Self>,
-            workspace: &crate::WorkspaceCapability,
+            self: Box<Self>, workspace: &crate::WorkspaceCapability,
         ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
             workspace
                 .literal(self.count, purrdf_xsd::datatype::XSD_INTEGER)
@@ -9736,9 +9545,7 @@ mod custom_owner_regressions {
             })
         }
         fn init_admitted(
-            &self,
-            _: &[(String, TermValue)],
-            _: DivisionPolicy,
+            &self, _: &[(String, TermValue)], _: DivisionPolicy,
             workspace: &crate::WorkspaceCapability,
         ) -> Result<WorkspaceAccumulator, EvalError> {
             WorkspaceAccumulator::new(
@@ -9750,10 +9557,7 @@ mod custom_owner_regressions {
             )
         }
         fn exact_numeric_cost_admitted(
-            &self,
-            _: &[Vec<TermValue>],
-            _: &[(String, TermValue)],
-            _: DivisionPolicy,
+            &self, _: &[Vec<TermValue>], _: &[(String, TermValue)], _: DivisionPolicy,
             _: &crate::WorkspaceCapability,
         ) -> Result<purrdf_xsd::exact::Cost, EvalError> {
             Ok(purrdf_xsd::exact::Cost::ZERO)

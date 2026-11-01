@@ -14,8 +14,7 @@ purrdf_hash::debug_non_exhaustive!(RetainedGeoCause {});
 
 impl RetainedGeoCause {
     pub(crate) fn capture(
-        cause: impl NativeError + 'static,
-        progress: &mut WorkProgress<'_>,
+        cause: impl NativeError + 'static, progress: &mut WorkProgress<'_>,
     ) -> Result<Self, GeoError> {
         Retained::produce(
             progress,

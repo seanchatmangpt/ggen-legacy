@@ -1028,8 +1028,7 @@ impl<E: std::error::Error + 'static> std::error::Error for EntailError<E> {
 /// # Ok::<(), purrdf_lex::allocation::StorageError>(())
 /// ```
 pub fn materialize<D: DatasetView>(
-    ds: &D,
-    plan: Materialization<'_>,
+    ds: &D, plan: Materialization<'_>,
 ) -> Result<(Arc<RdfDataset>, ReasoningReport), EntailError<D::ReadError>> {
     materialize_until(ds, plan, None)
 }
@@ -1079,9 +1078,7 @@ pub fn materialize<D: DatasetView>(
 ///
 /// [`EntailError::Stopped`] if the signal fired, plus every error [`materialize`] returns.
 pub fn materialize_until<D: DatasetView>(
-    ds: &D,
-    plan: Materialization<'_>,
-    stop: Option<&Arc<dyn StopSignal>>,
+    ds: &D, plan: Materialization<'_>, stop: Option<&Arc<dyn StopSignal>>,
 ) -> Result<(Arc<RdfDataset>, ReasoningReport), EntailError<D::ReadError>> {
     materialize_with(ds, plan, &EvalOptions::default(), stop)
 }
@@ -1113,10 +1110,7 @@ pub fn materialize_until<D: DatasetView>(
 ///
 /// Every error [`materialize_until`] returns.
 pub fn materialize_with<D: DatasetView>(
-    ds: &D,
-    plan: Materialization<'_>,
-    options: &EvalOptions,
-    stop: Option<&Arc<dyn StopSignal>>,
+    ds: &D, plan: Materialization<'_>, options: &EvalOptions, stop: Option<&Arc<dyn StopSignal>>,
 ) -> Result<(Arc<RdfDataset>, ReasoningReport), EntailError<D::ReadError>> {
     ds.checked_read(|ds| {
         if stop.is_some_and(|stop| stop.stopped()) {
@@ -1169,10 +1163,7 @@ pub fn materialize_with<D: DatasetView>(
 ///
 /// The three import refusals above, then everything [`materialize_with`] refuses.
 pub fn materialize_with_imports(
-    premise: &RdfDataset,
-    plan: Materialization<'_>,
-    imports: &ImportMap,
-    options: &EvalOptions,
+    premise: &RdfDataset, plan: Materialization<'_>, imports: &ImportMap, options: &EvalOptions,
     stop: Option<&Arc<dyn StopSignal>>,
 ) -> Result<(Arc<RdfDataset>, ReasoningReport), EntailError> {
     let merged = entails::imports::resolve(premise, imports)?;
@@ -1296,12 +1287,8 @@ mod tests {
         fn probe_plan(&self, _: bool, _: bool, _: bool, _: purrdf_core::GraphMatch) {}
 
         fn quads_for_pattern_with_plan(
-            &self,
-            (): &Self::ProbePlan,
-            s: Option<Self::Id>,
-            p: Option<Self::Id>,
-            o: Option<Self::Id>,
-            g: purrdf_core::GraphMatch,
+            &self, (): &Self::ProbePlan, s: Option<Self::Id>, p: Option<Self::Id>,
+            o: Option<Self::Id>, g: purrdf_core::GraphMatch,
         ) -> impl Iterator<Item = purrdf_core::QuadIds> + '_ {
             self.quads_for_pattern(s, p, o, g)
         }

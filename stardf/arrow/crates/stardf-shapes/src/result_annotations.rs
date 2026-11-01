@@ -76,8 +76,7 @@ pub(crate) fn parse(data: &RdfDataset, executable: &Term) -> Result<Vec<ResultAn
 ///
 /// As [`parse`].
 pub(crate) fn parse_with_rule(
-    data: &RdfDataset,
-    executable: &Term,
+    data: &RdfDataset, executable: &Term,
 ) -> Result<Vec<ResultAnnotation>, crate::error::RuleViolation> {
     let mut out = Vec::new();
     for node in objects_of(data, executable, sh::RESULT_ANNOTATION) {
@@ -118,8 +117,7 @@ pub(crate) fn sort(annotations: &mut Vec<ResultAnnotation>) {
 
 /// One result-annotation node.
 fn parse_one(
-    data: &RdfDataset,
-    node: &Term,
+    data: &RdfDataset, node: &Term,
 ) -> Result<ResultAnnotation, crate::error::RuleViolation> {
     for (_, predicate, _) in native_quads(data, Some(node), None, None, GraphFilter::AnyGraph) {
         let p = predicate.as_str();
@@ -219,8 +217,7 @@ fn parse_one(
 /// or else its default values. Sorted by property, then canonical term order,
 /// without duplicates. Allocates nothing when `annotations` is empty.
 pub(crate) fn annotate(
-    annotations: &[ResultAnnotation],
-    mut binding: impl FnMut(&str) -> Option<Term>,
+    annotations: &[ResultAnnotation], mut binding: impl FnMut(&str) -> Option<Term>,
 ) -> Vec<(NamedNode, Term)> {
     if annotations.is_empty() {
         return Vec::new();

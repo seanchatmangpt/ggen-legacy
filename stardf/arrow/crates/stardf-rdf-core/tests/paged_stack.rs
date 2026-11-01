@@ -622,8 +622,7 @@ fn reifier_rows() -> (
     (first, second, annotation)
 }
 fn typed_page(
-    reifiers: &[purrdf_core::QuadValues],
-    annotations: &[purrdf_core::QuadValues],
+    reifiers: &[purrdf_core::QuadValues], annotations: &[purrdf_core::QuadValues],
 ) -> Arc<RdfDataset> {
     let mut b = RdfDatasetBuilder::new();
     for q in reifiers {

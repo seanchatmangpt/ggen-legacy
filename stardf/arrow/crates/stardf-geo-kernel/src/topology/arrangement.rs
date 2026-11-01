@@ -36,12 +36,8 @@ struct BoundedEdge<'a> {
 }
 
 pub(crate) fn decompose(
-    edges: &[(&Coord, &Coord)],
-    domain: [&Rat; 4],
-    coalesce_interior: bool,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    edges: &[(&Coord, &Coord)], domain: [&Rat; 4], coalesce_interior: bool,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>, retained: &mut u64,
     locate: impl FnMut(&Coord, &mut MetricContext, &mut WorkProgress<'_>) -> Result<Set, GeoError>,
 ) -> Result<RetainedBuilder<PlanarStrip>, GeoError> {
     let mut temporary = 0;
@@ -67,12 +63,8 @@ pub(crate) fn decompose(
     reason = "Geometry/domain/classification and the distinct live output and temporary ownership counters must stay separate during the original decomposition"
 )]
 fn decompose_inner(
-    edges: &[(&Coord, &Coord)],
-    domain: [&Rat; 4],
-    coalesce_interior: bool,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    edges: &[(&Coord, &Coord)], domain: [&Rat; 4], coalesce_interior: bool,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>, retained: &mut u64,
     temporary: &mut u64,
     mut locate: impl FnMut(&Coord, &mut MetricContext, &mut WorkProgress<'_>) -> Result<Set, GeoError>,
 ) -> Result<RetainedBuilder<PlanarStrip>, GeoError> {
@@ -314,14 +306,9 @@ fn decompose_inner(
     reason = "The original strip publication transfers event and crossing allowances between distinct live temporary and output counters."
 )]
 fn push_strip(
-    pair: [&Crossing<'_>; 2],
-    bounds: &[PersistentNumeric<Rat>],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
-    temporary: &mut u64,
-    event_transfers: &mut u64,
-    strips: &mut RetainedBuilder<PlanarStrip>,
+    pair: [&Crossing<'_>; 2], bounds: &[PersistentNumeric<Rat>], context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut u64, temporary: &mut u64,
+    event_transfers: &mut u64, strips: &mut RetainedBuilder<PlanarStrip>,
 ) -> Result<(), GeoError> {
     for bound in bounds {
         let bytes = bound.transfer_allowance(temporary, retained)?;
@@ -342,11 +329,8 @@ fn push_strip(
 }
 
 fn corners(
-    crossing: &Crossing<'_>,
-    bounds: &[PersistentNumeric<Rat>],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    crossing: &Crossing<'_>, bounds: &[PersistentNumeric<Rat>], context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<[Coord; 2], GeoError> {
     let mut corner = |x: &Rat| {
         let y = if let Some((a, b)) = crossing.1 {
@@ -360,11 +344,7 @@ fn corners(
     Ok([corner(&bounds[0])?, corner(&bounds[1])?])
 }
 fn ordinate(
-    a: &Coord,
-    b: &Coord,
-    x: &Rat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    a: &Coord, b: &Coord, x: &Rat, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Rat, GeoError> {
     let mut admission = ExactAdmission::new(context, progress);
     let offset = admission.expression_result(RationalAdd, &[x, a.x()], 1, |values| {
@@ -394,11 +374,8 @@ fn ordinate(
     crate::SourceLinearEdge::interpolate_ordinate_admitted(a.y(), b.y(), &parameter, &mut admission)
 }
 fn push_event(
-    value: &Rat,
-    events: &mut RetainedBuilder<PersistentNumeric<Rat>>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    value: &Rat, events: &mut RetainedBuilder<PersistentNumeric<Rat>>, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<(), GeoError> {
     let value = copy(value, context, progress)?;
     let value = persistent_numeric_owned(value, context, progress, retained)?;
@@ -406,9 +383,7 @@ fn push_event(
 }
 
 fn release_duplicate_events(
-    events: &mut RetainedBuilder<PersistentNumeric<Rat>>,
-    kept: usize,
-    context: &mut MetricContext,
+    events: &mut RetainedBuilder<PersistentNumeric<Rat>>, kept: usize, context: &mut MetricContext,
     retained: &mut u64,
 ) -> Result<(), GeoError> {
     let bytes = events[kept..].iter().try_fold(0_u64, |total, value| {

@@ -51,11 +51,8 @@ pub(super) struct RoutedPackagePlan {
 
 impl RoutedPackagePlan {
     pub(super) fn compile(
-        definitions: &Object,
-        names: &BTreeMap<String, String>,
-        topology: &PydanticPackageTopology,
-        package_name: &str,
-        include_version: bool,
+        definitions: &Object, names: &BTreeMap<String, String>, topology: &PydanticPackageTopology,
+        package_name: &str, include_version: bool,
     ) -> Result<Self, PydanticError> {
         let schema_keys = definitions.keys().cloned().collect::<BTreeSet<_>>();
         let route_keys = topology.classes().keys().cloned().collect::<BTreeSet<_>>();
@@ -211,10 +208,7 @@ impl RoutedPackagePlan {
     }
 
     pub(super) fn attach_definition(
-        &mut self,
-        key: &str,
-        source: String,
-        helpers: Vec<LinkedHelper>,
+        &mut self, key: &str, source: String, helpers: Vec<LinkedHelper>,
         private_symbols: BTreeSet<String>,
     ) -> Result<(), PydanticError> {
         let module_path = self.definition_modules.get(key).ok_or_else(|| {
@@ -337,8 +331,7 @@ pub(super) fn relative_root_import(module_path: &str, target: &str) -> String {
 }
 
 fn collect_references(
-    value: &Value,
-    references: &mut BTreeSet<String>,
+    value: &Value, references: &mut BTreeSet<String>,
 ) -> Result<(), PydanticError> {
     let Value::Object(object) = value else {
         return Ok(());

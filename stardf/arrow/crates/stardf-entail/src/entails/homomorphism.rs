@@ -356,10 +356,7 @@ enum Step<'a> {
 ///
 /// [`EntailError::MatchBudget`] when `budget` runs out before the search finishes.
 fn solve(
-    pats: &[PatTriple],
-    index: &Index,
-    bound: &mut Binding,
-    budget: &mut u64,
+    pats: &[PatTriple], index: &Index, bound: &mut Binding, budget: &mut u64,
     collect: &mut Collect<'_>,
 ) -> Result<bool, EntailError> {
     // The empty question is satisfied by the empty mapping: there is nothing to place.
@@ -495,8 +492,7 @@ fn most_constrained_first(mut pats: Vec<PatTriple>) -> Vec<PatTriple> {
 /// finishing — which is neither a mapping nor the absence of one, and is reported as
 /// neither.
 pub(crate) fn find_one(
-    pats: Vec<PatTriple>,
-    closure: &Closure,
+    pats: Vec<PatTriple>, closure: &Closure,
 ) -> Result<Result<Binding, MissReason>, EntailError> {
     let pats = most_constrained_first(pats);
     let mut bound = Binding::new();
@@ -544,9 +540,7 @@ pub(crate) fn find_one(
 ///
 /// [`EntailError::MatchBudget`], as [`find_one`].
 pub(crate) fn find_all(
-    pats: Vec<PatTriple>,
-    closure: &Closure,
-    vars: &[VarKey],
+    pats: Vec<PatTriple>, closure: &Closure, vars: &[VarKey],
 ) -> Result<BTreeSet<Vec<TermValue>>, EntailError> {
     let pats = most_constrained_first(pats);
     let mut bound = Binding::new();
@@ -946,10 +940,7 @@ mod term_walk_tests {
     use crate::entails::pattern::{Pat, VarKey};
 
     fn reference_unify(
-        pat: &Pat,
-        ground: &TermValue,
-        bound: &mut Binding,
-        trail: &mut Vec<VarKey>,
+        pat: &Pat, ground: &TermValue, bound: &mut Binding, trail: &mut Vec<VarKey>,
     ) -> bool {
         match pat {
             Pat::Var(key) => {

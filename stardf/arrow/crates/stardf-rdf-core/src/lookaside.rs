@@ -38,8 +38,7 @@ impl RdfLookaside {
 
     /// The sidecar resources of exactly the given kind, in stored order.
     pub fn resources_of_kind(
-        &self,
-        kind: RdfLookasideKind,
+        &self, kind: RdfLookasideKind,
     ) -> impl Iterator<Item = &RdfLookasideResource> {
         self.resources
             .iter()

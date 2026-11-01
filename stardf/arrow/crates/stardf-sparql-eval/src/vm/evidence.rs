@@ -36,10 +36,7 @@ impl Records {
     }
 
     pub(super) fn begin<D: DatasetView + Sync>(
-        &mut self,
-        op: Op,
-        depth: usize,
-        ctx: &EvalCtx<'_, D>,
+        &mut self, op: Op, depth: usize, ctx: &EvalCtx<'_, D>,
     ) -> Result<Option<RowEvidence>, EvalError> {
         let consumed = match op {
             Op::Const(_)
@@ -106,12 +103,7 @@ impl Records {
     }
 
     pub(super) fn finish(
-        &mut self,
-        op: Op,
-        before: usize,
-        after: usize,
-        pc: usize,
-        record: Option<RowEvidence>,
+        &mut self, op: Op, before: usize, after: usize, pc: usize, record: Option<RowEvidence>,
         workspace: &WorkspaceCapability,
     ) -> Result<(), EvalError> {
         if let Some(record) = record {
@@ -142,10 +134,7 @@ impl Records {
     }
 
     pub(super) fn attach(
-        &mut self,
-        position: usize,
-        record: RowEvidence,
-        workspace: &WorkspaceCapability,
+        &mut self, position: usize, record: RowEvidence, workspace: &WorkspaceCapability,
     ) -> Result<(), EvalError> {
         let record = match self.values.remove(&position) {
             None => record,
@@ -160,10 +149,7 @@ impl Records {
     }
 
     pub(super) fn resume(
-        &mut self,
-        position: usize,
-        record: Option<RowEvidence>,
-        pc: usize,
+        &mut self, position: usize, record: Option<RowEvidence>, pc: usize,
         workspace: &WorkspaceCapability,
     ) -> Result<(), EvalError> {
         if let Some(record) = self.suspended.take() {

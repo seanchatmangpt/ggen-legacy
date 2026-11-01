@@ -59,8 +59,7 @@ const FIELDS: FieldWriter = FieldWriter::new(Dialect::SPARQL_RESULTS);
 /// IRI — RDF 1.2 requires predicates to be IRIs, so a malformed predicate is
 /// rejected rather than laundered into a fabricated IRI cell.
 pub fn to_csv(
-    result: &SparqlResult,
-    provenance: &ResultProvenance,
+    result: &SparqlResult, provenance: &ResultProvenance,
 ) -> Result<SerializeOutcome, Error> {
     let mut out = String::new();
     write_csv(result, provenance, &mut out)?;
@@ -74,9 +73,7 @@ pub fn to_csv(
 /// over a `String`; the streaming entry point is the same function over a bounded
 /// sink, which is what makes their bytes equal by construction.
 pub(crate) fn write_csv<W: TextOut + ?Sized>(
-    result: &SparqlResult,
-    provenance: &ResultProvenance,
-    out: &mut W,
+    result: &SparqlResult, provenance: &ResultProvenance, out: &mut W,
 ) -> Result<(), Error> {
     let _ = provenance;
 

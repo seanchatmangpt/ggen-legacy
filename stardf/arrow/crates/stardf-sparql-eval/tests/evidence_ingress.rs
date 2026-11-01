@@ -380,9 +380,7 @@ impl EvidenceSource<TermId> for Claims {
     }
 
     fn sum_nonnegative(
-        &self,
-        _: &purrdf_sparql_algebra::AggregateExpression,
-        _: GraphMatch<TermId>,
+        &self, _: &purrdf_sparql_algebra::AggregateExpression, _: GraphMatch<TermId>,
     ) -> Result<bool, EvalError> {
         Ok(self.sum_nonnegative)
     }
@@ -429,10 +427,7 @@ impl EvidenceSource<TermId> for ServiceClaims {
     }
 
     fn service_row(
-        &self,
-        endpoint: &str,
-        position: usize,
-        variables: &[purrdf_sparql_algebra::Variable],
+        &self, endpoint: &str, position: usize, variables: &[purrdf_sparql_algebra::Variable],
         binding: &[Option<purrdf_core::TermValue>],
     ) -> Result<Option<purrdf_sparql_eval::evidence_exec::ServiceRowEvidence<'_>>, EvalError> {
         use purrdf_sparql_eval::evidence_exec::ServiceRowEvidence;
@@ -465,8 +460,7 @@ struct ServiceRows {
 
 impl purrdf_sparql_eval::remote::ServiceResolver for ServiceRows {
     fn resolve(
-        &self,
-        _: purrdf_sparql_eval::remote::ServiceRequest<'_>,
+        &self, _: purrdf_sparql_eval::remote::ServiceRequest<'_>,
     ) -> Result<purrdf_sparql_eval::remote::ResolvedBindings, purrdf_sparql_eval::remote::RemoteError>
     {
         use purrdf_core::TermValue;
@@ -486,8 +480,7 @@ impl purrdf_sparql_eval::remote::ServiceResolver for ServiceRows {
     }
 
     fn resolve_admitted(
-        &self,
-        _request: purrdf_sparql_eval::remote::ServiceRequest<'_>,
+        &self, _request: purrdf_sparql_eval::remote::ServiceRequest<'_>,
         workspace: purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<
         purrdf_sparql_eval::remote::AdmittedResolvedBindings,
@@ -1109,9 +1102,7 @@ impl EvidenceSource<TermId> for Gaps {
     }
 
     fn lossy_producer_reason(
-        &self,
-        producer: &str,
-        evidence: &str,
+        &self, producer: &str, evidence: &str,
     ) -> Result<Option<ReasonId>, EvalError> {
         Ok(
             (producer == "https://example.org/search" && evidence == "original missing shard")
@@ -1120,11 +1111,8 @@ impl EvidenceSource<TermId> for Gaps {
     }
 
     fn expression_gap(
-        &self,
-        _: &purrdf_sparql_algebra::Expression,
-        _: &[purrdf_sparql_algebra::Variable],
-        row: &[Option<purrdf_sparql_eval::SolutionTerm<TermId>>],
-        _: GraphMatch<TermId>,
+        &self, _: &purrdf_sparql_algebra::Expression, _: &[purrdf_sparql_algebra::Variable],
+        row: &[Option<purrdf_sparql_eval::SolutionTerm<TermId>>], _: GraphMatch<TermId>,
     ) -> Result<Option<ReasonId>, EvalError> {
         if self.fail {
             return Err(EvalError::WorkspaceUnpriced(
@@ -2387,9 +2375,7 @@ fn native_property_rows_retain_original_declarations_through_normal_ingestion() 
             self.inner.rows_per_invocation(mode)
         }
         fn open<'cursor>(
-            &self,
-            args: &PfArgs<'_>,
-            ceiling: Option<u64>,
+            &self, args: &PfArgs<'_>, ceiling: Option<u64>,
         ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
         where
             Self: 'cursor,
@@ -2398,10 +2384,7 @@ fn native_property_rows_retain_original_declarations_through_normal_ingestion() 
                 .and_then(purrdf_sparql_eval::WorkspaceCursor::into_resident)
         }
         fn open_admitted<'cursor>(
-            &self,
-            args: &PfArgs<'_>,
-            _ceiling: Option<u64>,
-            workspace: WorkspaceCapability,
+            &self, args: &PfArgs<'_>, _ceiling: Option<u64>, workspace: WorkspaceCapability,
         ) -> Result<purrdf_sparql_eval::WorkspaceCursor<'cursor>, EvalError>
         where
             Self: 'cursor,

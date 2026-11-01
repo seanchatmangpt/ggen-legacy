@@ -164,9 +164,7 @@ impl Budget {
         }
     }
     fn charge(
-        &mut self,
-        reason: SubstringRefusalReason,
-        amount: u64,
+        &mut self, reason: SubstringRefusalReason, amount: u64,
     ) -> Result<(), SubstringRefusal> {
         let (counter, limit) = match reason {
             SubstringRefusalReason::PostingOperations => (
@@ -229,8 +227,7 @@ impl<P: CorpusProfile> SurfaceIndex<P> {
     /// # Errors
     /// Returns the analyzer's errors or typed candidate/verification refusals.
     pub fn substring_exhaustive(
-        &self,
-        fragment: &str,
+        &self, fragment: &str,
     ) -> Result<Vec<SubstringMatch<'_, P>>, TextError> {
         Ok(self.substring_exhaustive_report(fragment)?.matches)
     }
@@ -240,16 +237,13 @@ impl<P: CorpusProfile> SurfaceIndex<P> {
     /// # Errors
     /// Same refusals as [`Self::substring_exhaustive`].
     pub fn substring_exhaustive_report(
-        &self,
-        fragment: &str,
+        &self, fragment: &str,
     ) -> Result<SubstringReport<'_, P>, TextError> {
         self.run_substring(fragment, true)
     }
 
     fn run_substring(
-        &self,
-        fragment: &str,
-        exhaustive: bool,
+        &self, fragment: &str, exhaustive: bool,
     ) -> Result<SubstringReport<'_, P>, TextError> {
         let terms = self.analyzer.substring_terms(fragment)?;
         let [needle] = terms.as_slice() else {
@@ -328,9 +322,7 @@ impl<P: CorpusProfile> SurfaceIndex<P> {
     }
 
     fn indexed_candidates(
-        &self,
-        needle: &str,
-        budget: &mut Budget,
+        &self, needle: &str, budget: &mut Budget,
     ) -> Result<Vec<Candidate>, SubstringRefusal> {
         let scalars: Vec<_> = needle.chars().collect();
         let width = scalars.len().min(3);

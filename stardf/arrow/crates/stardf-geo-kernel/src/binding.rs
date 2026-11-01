@@ -437,9 +437,7 @@ impl GeoProfile {
     ///
     /// Refuses conflicting, protected-carrier or invalid EPSG:4326 declarations.
     pub fn register_reference(
-        &mut self,
-        crs: Crs,
-        reference: GeographicReference,
+        &mut self, crs: Crs, reference: GeographicReference,
     ) -> Result<(), GeoError> {
         self.register_reference_in_budget(
             crs,
@@ -452,10 +450,7 @@ impl GeoProfile {
     /// # Errors
     /// Refuses conflicting carriers and cumulative configuration limits.
     pub fn register_reference_in_budget(
-        &mut self,
-        crs: Crs,
-        reference: GeographicReference,
-        budget: &mut crate::PreparationBudget,
+        &mut self, crs: Crs, reference: GeographicReference, budget: &mut crate::PreparationBudget,
     ) -> Result<(), GeoError> {
         self.register_reference_observed(crs, reference, budget, None)
     }
@@ -466,20 +461,14 @@ impl GeoProfile {
     /// # Errors
     /// Adds original observer/allocator refusal to [`Self::register_reference_in_budget`].
     pub fn register_reference_in_budget_metered(
-        &mut self,
-        crs: Crs,
-        reference: GeographicReference,
-        budget: &mut crate::PreparationBudget,
+        &mut self, crs: Crs, reference: GeographicReference, budget: &mut crate::PreparationBudget,
         observer: &mut dyn crate::MetricWorkObserver,
     ) -> Result<(), GeoError> {
         self.register_reference_observed(crs, reference, budget, Some(observer))
     }
 
     fn register_reference_observed(
-        &mut self,
-        crs: Crs,
-        reference: GeographicReference,
-        budget: &mut crate::PreparationBudget,
+        &mut self, crs: Crs, reference: GeographicReference, budget: &mut crate::PreparationBudget,
         observer: Option<&mut dyn crate::MetricWorkObserver>,
     ) -> Result<(), GeoError> {
         let mut cost = crate::numerical::reference_copy_cost(&reference)?;
@@ -512,9 +501,7 @@ impl GeoProfile {
     }
 
     fn register_reference_admitted(
-        &mut self,
-        crs: Crs,
-        reference: GeographicReference,
+        &mut self, crs: Crs, reference: GeographicReference,
         values: &crate::numerical::ExactValues<'_>,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> Result<(), GeoError> {
@@ -630,9 +617,7 @@ impl GeoProfile {
     ///
     /// Refuses nonpositive factors and conflicting unit declarations.
     pub fn register_linear_unit(
-        &mut self,
-        unit: Crs,
-        metres_per_unit: Rat,
+        &mut self, unit: Crs, metres_per_unit: Rat,
     ) -> Result<(), GeoError> {
         self.register_linear_unit_in_budget(
             unit,
@@ -645,10 +630,7 @@ impl GeoProfile {
     /// # Errors
     /// Refuses factor conflicts and work/storage limits before exact equality.
     pub fn register_linear_unit_in_budget(
-        &mut self,
-        unit: Crs,
-        metres_per_unit: Rat,
-        budget: &mut crate::PreparationBudget,
+        &mut self, unit: Crs, metres_per_unit: Rat, budget: &mut crate::PreparationBudget,
     ) -> Result<(), GeoError> {
         self.register_linear_unit_observed(unit, metres_per_unit, budget, None)
     }
@@ -658,20 +640,14 @@ impl GeoProfile {
     /// # Errors
     /// Adds physical observer refusal to [`Self::register_linear_unit_in_budget`].
     pub fn register_linear_unit_in_budget_metered(
-        &mut self,
-        unit: Crs,
-        metres_per_unit: Rat,
-        budget: &mut crate::PreparationBudget,
+        &mut self, unit: Crs, metres_per_unit: Rat, budget: &mut crate::PreparationBudget,
         observer: &mut dyn crate::MetricWorkObserver,
     ) -> Result<(), GeoError> {
         self.register_linear_unit_observed(unit, metres_per_unit, budget, Some(observer))
     }
 
     fn register_linear_unit_observed(
-        &mut self,
-        unit: Crs,
-        metres_per_unit: Rat,
-        budget: &mut crate::PreparationBudget,
+        &mut self, unit: Crs, metres_per_unit: Rat, budget: &mut crate::PreparationBudget,
         observer: Option<&mut dyn crate::MetricWorkObserver>,
     ) -> Result<(), GeoError> {
         let cost = crate::numerical::rational_field_cost(&metres_per_unit)?.0;
@@ -692,10 +668,7 @@ impl GeoProfile {
     }
 
     fn register_linear_unit_admitted(
-        &mut self,
-        unit: Crs,
-        metres_per_unit: Rat,
-        progress: &mut crate::context::WorkProgress<'_>,
+        &mut self, unit: Crs, metres_per_unit: Rat, progress: &mut crate::context::WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         if metres_per_unit.signum() <= 0 {
             return Err(crate::BindingConfigError::unit_factor(
@@ -784,11 +757,7 @@ impl GeoProfile {
     /// Refuses conflicting names and a geographic endpoint whose explicit
     /// realization, degree units or axis declaration disagrees with its carrier.
     pub fn register_operation(
-        &mut self,
-        name: Crs,
-        source: Crs,
-        target: Crs,
-        chain: OperationChain,
+        &mut self, name: Crs, source: Crs, target: Crs, chain: OperationChain,
     ) -> Result<(), GeoError> {
         self.register_operation_in_budget(
             name,
@@ -803,11 +772,7 @@ impl GeoProfile {
     /// # Errors
     /// Refuses declaration conflicts and complete work/storage exhaustion.
     pub fn register_operation_in_budget(
-        &mut self,
-        name: Crs,
-        source: Crs,
-        target: Crs,
-        chain: OperationChain,
+        &mut self, name: Crs, source: Crs, target: Crs, chain: OperationChain,
         budget: &mut crate::PreparationBudget,
     ) -> Result<(), GeoError> {
         self.register_operation_observed((name, source, target, chain), budget, None)
@@ -818,20 +783,14 @@ impl GeoProfile {
     /// # Errors
     /// Adds physical refusal to [`Self::register_operation_in_budget`].
     pub fn register_operation_in_budget_metered(
-        &mut self,
-        name: Crs,
-        source: Crs,
-        target: Crs,
-        chain: OperationChain,
-        budget: &mut crate::PreparationBudget,
-        observer: &mut dyn crate::MetricWorkObserver,
+        &mut self, name: Crs, source: Crs, target: Crs, chain: OperationChain,
+        budget: &mut crate::PreparationBudget, observer: &mut dyn crate::MetricWorkObserver,
     ) -> Result<(), GeoError> {
         self.register_operation_observed((name, source, target, chain), budget, Some(observer))
     }
 
     fn register_operation_observed(
-        &mut self,
-        (name, source, target, chain): (Crs, Crs, Crs, OperationChain),
+        &mut self, (name, source, target, chain): (Crs, Crs, Crs, OperationChain),
         budget: &mut crate::PreparationBudget,
         observer: Option<&mut dyn crate::MetricWorkObserver>,
     ) -> Result<(), GeoError> {
@@ -864,11 +823,7 @@ impl GeoProfile {
     }
 
     fn register_operation_admitted(
-        &mut self,
-        name: Crs,
-        source: Crs,
-        target: Crs,
-        chain: OperationChain,
+        &mut self, name: Crs, source: Crs, target: Crs, chain: OperationChain,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         for (carrier, endpoint) in [
@@ -946,9 +901,7 @@ impl GeoProfile {
     }
 
     pub(crate) fn operation_with_progress<'a>(
-        &'a self,
-        name: &Crs,
-        context: &mut crate::MetricContext,
+        &'a self, name: &Crs, context: &mut crate::MetricContext,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> Result<&'a OperationBinding, GeoError> {
         let cost = carrier_lookup_cost(
@@ -964,10 +917,7 @@ impl GeoProfile {
     }
 
     pub(crate) fn operation_between_with_progress<'a>(
-        &'a self,
-        source: &Crs,
-        target: &Crs,
-        context: &mut crate::MetricContext,
+        &'a self, source: &Crs, target: &Crs, context: &mut crate::MetricContext,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> Result<&'a OperationChain, GeoError> {
         let cost = carrier_lookup_cost(
@@ -990,10 +940,7 @@ impl GeoProfile {
     }
 
     fn image_target_with_progress<'a>(
-        &'a self,
-        source: &Crs,
-        target: ImageTarget<'a>,
-        context: &mut crate::MetricContext,
+        &'a self, source: &Crs, target: ImageTarget<'a>, context: &mut crate::MetricContext,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> Result<(&'a Crs, Option<&'a OperationChain>), GeoError> {
         match target {
@@ -1025,9 +972,7 @@ impl GeoProfile {
     ///
     /// Refuses absent chains and multiple distinct chains rather than guessing.
     pub fn operation_between(
-        &self,
-        source: &Crs,
-        target: &Crs,
+        &self, source: &Crs, target: &Crs,
     ) -> Result<&OperationChain, GeoError> {
         self.operation_between_resolution(source, target)
             .map_err(CarrierResolutionFailure::resident)
@@ -1038,9 +983,7 @@ impl GeoProfile {
         reason = "The pre-admission refusal borrows original bindings and carries exact endpoint identities inline; boxing it would allocate before its caller admits the diagnostic"
     )]
     fn operation_between_resolution<'a, 'b>(
-        &'a self,
-        source: &'b Crs,
-        target: &'b Crs,
+        &'a self, source: &'b Crs, target: &'b Crs,
     ) -> Result<&'a OperationChain, CarrierResolutionFailure<'b>> {
         let mut found: Option<&OperationChain> = None;
         for binding in &self.operations {
@@ -1155,9 +1098,7 @@ impl GeoProfile {
 
     /// The same borrowed lookup at source preparation's pre-context boundary.
     pub(crate) fn reference_retained<'a>(
-        &'a self,
-        crs: &Crs,
-        progress: &mut crate::context::WorkProgress<'_>,
+        &'a self, crs: &Crs, progress: &mut crate::context::WorkProgress<'_>,
     ) -> Result<&'a GeographicReference, GeoError> {
         self.find_reference(crs)
             .ok_or_else(|| CarrierResolutionFailure::UnknownReference(crs).retained(progress))
@@ -1167,9 +1108,7 @@ impl GeoProfile {
     /// an unknown-carrier error copy. Reference identity rendering is admitted
     /// separately by the caller through the shared numerical identity home.
     pub(crate) fn reference_with_progress<'a>(
-        &'a self,
-        crs: &Crs,
-        context: &mut crate::MetricContext,
+        &'a self, crs: &Crs, context: &mut crate::MetricContext,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> Result<&'a GeographicReference, GeoError> {
         let cost = carrier_lookup_cost(
@@ -1190,8 +1129,7 @@ impl GeoProfile {
     /// Refuses an undeclared carrier, ambiguous bindings, and degree carriers
     /// without an actual geographic registration. EPSG:4326 keeps its explicit rule.
     pub fn operation_reference(
-        &self,
-        crs: &Crs,
+        &self, crs: &Crs,
     ) -> Result<crate::operation::OperationReference, GeoError> {
         if let Some(reference) = self.find_reference(crs) {
             return Ok(geographic_operation_reference(reference, reference.id()));
@@ -1200,9 +1138,7 @@ impl GeoProfile {
     }
 
     pub(crate) fn operation_reference_with_progress(
-        &self,
-        crs: &Crs,
-        context: &mut crate::MetricContext,
+        &self, crs: &Crs, context: &mut crate::MetricContext,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> Result<crate::operation::OperationReference, GeoError> {
         let cost = carrier_lookup_cost(
@@ -1237,8 +1173,7 @@ impl GeoProfile {
     }
 
     fn projected_operation_reference(
-        &self,
-        crs: &Crs,
+        &self, crs: &Crs,
     ) -> Result<crate::operation::OperationReference, GeoError> {
         self.projected_operation_reference_resolution(crs)
             .map_err(CarrierResolutionFailure::resident)
@@ -1249,8 +1184,7 @@ impl GeoProfile {
         reason = "The pre-admission refusal borrows original bindings and carries exact endpoint identities inline; boxing it would allocate before its caller admits the diagnostic"
     )]
     fn projected_operation_reference_resolution<'a>(
-        &self,
-        crs: &'a Crs,
+        &self, crs: &'a Crs,
     ) -> Result<crate::operation::OperationReference, CarrierResolutionFailure<'a>> {
         use crate::operation::CoordinateUnit;
         if crs.as_str() == ogc::EPSG4326 {
@@ -1304,10 +1238,7 @@ impl GeoProfile {
     /// # Errors
     /// Preserves reference, domain, topology, certificate and resource refusals.
     pub fn transform_literal(
-        &self,
-        source: &GeometryLiteral,
-        target: &Crs,
-        epoch: Option<&Rat>,
+        &self, source: &GeometryLiteral, target: &Crs, epoch: Option<&Rat>,
         context: &mut crate::MetricContext,
     ) -> Result<crate::operation::GeometryImage, GeoError> {
         self.transform_literal_inner(source, ImageTarget::Carrier(target), epoch, context, None)
@@ -1318,12 +1249,8 @@ impl GeoProfile {
     /// # Errors
     /// Also propagates cancellation without a successful partial geometry.
     pub fn transform_literal_metered(
-        &self,
-        source: &GeometryLiteral,
-        target: &Crs,
-        epoch: Option<&Rat>,
-        context: &mut crate::MetricContext,
-        observer: &mut dyn crate::MetricWorkObserver,
+        &self, source: &GeometryLiteral, target: &Crs, epoch: Option<&Rat>,
+        context: &mut crate::MetricContext, observer: &mut dyn crate::MetricWorkObserver,
     ) -> Result<crate::operation::GeometryImage, GeoError> {
         self.transform_literal_inner(
             source,
@@ -1338,20 +1265,14 @@ impl GeoProfile {
     /// # Errors
     /// Refuses a source-carrier mismatch and all native image/certificate errors.
     pub fn transform_literal_named(
-        &self,
-        name: &Crs,
-        source: &GeometryLiteral,
-        epoch: Option<&Rat>,
+        &self, name: &Crs, source: &GeometryLiteral, epoch: Option<&Rat>,
         context: &mut crate::MetricContext,
     ) -> Result<crate::operation::GeometryImage, GeoError> {
         self.transform_literal_inner(source, ImageTarget::Named(name), epoch, context, None)
     }
 
     fn transform_literal_inner(
-        &self,
-        source: &GeometryLiteral,
-        target: ImageTarget<'_>,
-        epoch: Option<&Rat>,
+        &self, source: &GeometryLiteral, target: ImageTarget<'_>, epoch: Option<&Rat>,
         context: &mut crate::MetricContext,
         mut observer: Option<&mut dyn crate::MetricWorkObserver>,
     ) -> Result<crate::operation::GeometryImage, GeoError> {
@@ -1512,9 +1433,7 @@ impl GeoProfile {
     /// # Errors
     /// Preserves original reference/range errors and fatal resource refusals.
     pub fn validate_literal_in_context(
-        &self,
-        literal: &GeometryLiteral,
-        context: &mut crate::MetricContext,
+        &self, literal: &GeometryLiteral, context: &mut crate::MetricContext,
     ) -> Result<(), GeoError> {
         self.validate_literal_observed(literal, context, None)
     }
@@ -1523,18 +1442,14 @@ impl GeoProfile {
     /// # Errors
     /// Adds observer refusal to [`Self::validate_literal_in_context`].
     pub fn validate_literal_in_context_metered(
-        &self,
-        literal: &GeometryLiteral,
-        context: &mut crate::MetricContext,
+        &self, literal: &GeometryLiteral, context: &mut crate::MetricContext,
         observer: &mut dyn crate::MetricWorkObserver,
     ) -> Result<(), GeoError> {
         self.validate_literal_observed(literal, context, Some(observer))
     }
 
     fn validate_literal_observed(
-        &self,
-        literal: &GeometryLiteral,
-        context: &mut crate::MetricContext,
+        &self, literal: &GeometryLiteral, context: &mut crate::MetricContext,
         observer: Option<&mut dyn crate::MetricWorkObserver>,
     ) -> Result<(), GeoError> {
         let mut progress = crate::context::WorkProgress::integer(observer);
@@ -1553,8 +1468,7 @@ impl GeoProfile {
     }
 
     pub(crate) fn validate_literal_coordinates(
-        literal: &GeometryLiteral,
-        reference: &GeographicReference,
+        literal: &GeometryLiteral, reference: &GeographicReference,
         admission: Option<(
             &mut crate::MetricContext,
             &mut crate::context::WorkProgress<'_>,
@@ -1638,8 +1552,7 @@ impl GeoProfile {
     }
 
     fn compute_binding_with<E>(
-        &self,
-        mut identity: impl FnMut(&GeographicReference) -> Result<GeoBindingId, E>,
+        &self, mut identity: impl FnMut(&GeographicReference) -> Result<GeoBindingId, E>,
         mut rational: impl FnMut(&Rat, &mut blake3::Hasher) -> Result<(), E>,
     ) -> Result<GeoBindingId, E> {
         let mut hash = blake3::Hasher::new();
@@ -1671,8 +1584,7 @@ impl GeoProfile {
     }
 
     fn binding_id_using(
-        &self,
-        values: &crate::numerical::ExactValues<'_>,
+        &self, values: &crate::numerical::ExactValues<'_>,
     ) -> Result<GeoBindingId, GeoError> {
         if let Some(identity) = self.binding.get() {
             return Ok(*identity);
@@ -1720,8 +1632,7 @@ impl GeoProfile {
     /// # Errors
     /// Refuses checked source-work/storage exhaustion before output construction.
     pub fn retain_configuration_in_budget(
-        &self,
-        budget: &mut crate::PreparationBudget,
+        &self, budget: &mut crate::PreparationBudget,
     ) -> Result<(), GeoError> {
         let mut bytes = self
             .references
@@ -1760,11 +1671,8 @@ impl GeoProfile {
     }
 
     fn registration_in_budget<R, T>(
-        &mut self,
-        candidate_bytes: u64,
-        cost: purrdf_xsd::integer::ExactArithmeticCost,
-        table_length: usize,
-        budget: &mut crate::PreparationBudget,
+        &mut self, candidate_bytes: u64, cost: purrdf_xsd::integer::ExactArithmeticCost,
+        table_length: usize, budget: &mut crate::PreparationBudget,
         evaluate: impl FnOnce(
             &mut Self,
             &crate::numerical::ExactValues<'_>,
@@ -1846,8 +1754,7 @@ impl GeoProfile {
     /// # Errors
     /// Refuses before unadmitted integer rendering or binding preimage hashing.
     pub fn query_identity_in_budget(
-        &self,
-        budget: &mut crate::PreparationBudget,
+        &self, budget: &mut crate::PreparationBudget,
     ) -> Result<GeoQueryIdentity, GeoError> {
         self.query_identity_observed(budget, None)
     }
@@ -1857,16 +1764,13 @@ impl GeoProfile {
     /// # Errors
     /// Preserves original storage, integer, work and cancellation refusals.
     pub fn query_identity_in_budget_metered(
-        &self,
-        budget: &mut crate::PreparationBudget,
-        observer: &mut dyn crate::MetricWorkObserver,
+        &self, budget: &mut crate::PreparationBudget, observer: &mut dyn crate::MetricWorkObserver,
     ) -> Result<GeoQueryIdentity, GeoError> {
         self.query_identity_observed(budget, Some(observer))
     }
 
     fn query_identity_observed(
-        &self,
-        budget: &mut crate::PreparationBudget,
+        &self, budget: &mut crate::PreparationBudget,
         observer: Option<&mut dyn crate::MetricWorkObserver>,
     ) -> Result<GeoQueryIdentity, GeoError> {
         self.retain_configuration_in_budget(budget)?;
@@ -1881,9 +1785,7 @@ impl GeoProfile {
     }
 
     pub(crate) fn binding_id_in_context(
-        &self,
-        context: &mut crate::MetricContext,
-        progress: &mut crate::context::WorkProgress<'_>,
+        &self, context: &mut crate::MetricContext, progress: &mut crate::context::WorkProgress<'_>,
     ) -> Result<GeoBindingId, GeoError> {
         let cost = self.binding_cost(|| {
             context.charge_work(1)?;
@@ -1896,8 +1798,7 @@ impl GeoProfile {
     // The pure, prepared-index and host constructors admit one actual binding
     // body; this worker bounds cold reference IDs as well as unit renderings.
     fn binding_cost(
-        &self,
-        mut poll: impl FnMut() -> Result<(), GeoError>,
+        &self, mut poll: impl FnMut() -> Result<(), GeoError>,
     ) -> Result<purrdf_xsd::integer::ExactArithmeticCost, GeoError> {
         use purrdf_xsd::integer::{ExactArithmeticCost, ExactOperation};
         let mut text_bytes = 512_u64;
@@ -1985,11 +1886,8 @@ pub struct LinearUnitBinding {
 /// count is checked before reading metadata; its linear visit bound covers
 /// both binary lookup and complete carrier scans, plus original error copies.
 fn carrier_lookup_cost<'a>(
-    queries: &[&Crs],
-    candidates: impl Iterator<Item = &'a Crs>,
-    count: usize,
-    context: &mut crate::MetricContext,
-    progress: &mut crate::context::WorkProgress<'_>,
+    queries: &[&Crs], candidates: impl Iterator<Item = &'a Crs>, count: usize,
+    context: &mut crate::MetricContext, progress: &mut crate::context::WorkProgress<'_>,
 ) -> Result<purrdf_xsd::integer::ExactArithmeticCost, GeoError> {
     let count =
         u64::try_from(count).map_err(|_| GeoError::ArithmeticOverflow("carrier lookup count"))?;
@@ -2035,8 +1933,7 @@ fn carrier_lookup_cost<'a>(
 }
 
 fn geographic_operation_reference(
-    reference: &GeographicReference,
-    identity: GeoBindingId,
+    reference: &GeographicReference, identity: GeoBindingId,
 ) -> crate::operation::OperationReference {
     crate::operation::OperationReference {
         realization: identity.digest(),
@@ -2064,8 +1961,7 @@ impl LinearUnitBinding {
     reason = "Original endpoint identities remain on the stack until the caller admits their owned diagnostic; a box here would create an unpriced allocation"
 )]
 fn validate_endpoint_resolution<'a>(
-    carrier: &'a Crs,
-    reference: &GeographicReference,
+    carrier: &'a Crs, reference: &GeographicReference,
     endpoint: crate::operation::OperationReference,
 ) -> Result<(), CarrierResolutionFailure<'a>> {
     let expected = geographic_operation_reference(reference, reference.id());

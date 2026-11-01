@@ -139,9 +139,7 @@ enum RankBound {
 
 /// The lexical form of a needle bound at `position`.
 fn needle_text_owned<'a>(
-    value: &'a TermValue,
-    position: usize,
-    workspace: &WorkspaceCapability,
+    value: &'a TermValue, position: usize, workspace: &WorkspaceCapability,
 ) -> Result<&'a str, EvalError> {
     match value {
         TermValue::Literal {
@@ -183,9 +181,7 @@ fn needle_text_owned<'a>(
 /// the two are distinct partitions, and collapsing them would make a query for
 /// untagged text answer with text tagged by an empty string, or the reverse.
 fn language_constraint_owned<'a>(
-    value: &'a TermValue,
-    position: usize,
-    workspace: &WorkspaceCapability,
+    value: &'a TermValue, position: usize, workspace: &WorkspaceCapability,
 ) -> Result<Constraint<&'a str>, EvalError> {
     match value {
         TermValue::Literal {
@@ -256,8 +252,7 @@ fn xsd_integer_parts(lexical_form: &str) -> Option<(bool, &str)> {
 /// might have and does not: 1-based positions have no negative region, so the
 /// request is outside the domain rather than empty within it.
 fn rank_bound_owned(
-    value: &TermValue,
-    workspace: &WorkspaceCapability,
+    value: &TermValue, workspace: &WorkspaceCapability,
 ) -> Result<RankBound, EvalError> {
     let TermValue::Literal {
         lexical_form,
@@ -320,10 +315,7 @@ fn rank_bound_owned(
 /// `open_contained` already checked this for every engine-driven call; a direct
 /// caller gets the same answer rather than an out-of-range read.
 fn check_arity_owned(
-    args: &PfArgs<'_>,
-    declared: PfArity,
-    what: &str,
-    workspace: &WorkspaceCapability,
+    args: &PfArgs<'_>, declared: PfArity, what: &str, workspace: &WorkspaceCapability,
 ) -> Result<(), EvalError> {
     let supplied = args.arity();
     if supplied == declared {
@@ -337,8 +329,7 @@ fn check_arity_owned(
 }
 
 fn bound_terms(
-    args: &PfArgs<'_>,
-    workspace: &WorkspaceCapability,
+    args: &PfArgs<'_>, workspace: &WorkspaceCapability,
 ) -> Result<AdmittedVec<Option<WorkspaceTerm>>, EvalError> {
     let mut bound = AdmittedVec::with_capacity(args.arity().total(), workspace)?;
     for value in args.flattened() {
@@ -348,9 +339,7 @@ fn bound_terms(
 }
 
 fn agrees_owned(
-    bound: &[Option<WorkspaceTerm>],
-    row: &[TermValue],
-    workspace: &WorkspaceCapability,
+    bound: &[Option<WorkspaceTerm>], row: &[TermValue], workspace: &WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     for (want, have) in bound.iter().zip(row) {
         if let Some(want) = want
@@ -999,10 +988,7 @@ impl<P: CorpusProfile> TextSearchRelation<P> {
     /// arrived, and the emptiness a consumer is entitled to read off an invocation
     /// would instead be an error at registration.
     pub fn ranked_declaration(
-        &self,
-        stratum: Iri,
-        predicate: Option<String>,
-        fidelity: RankFidelity,
+        &self, stratum: Iri, predicate: Option<String>, fidelity: RankFidelity,
         domains: CandidateDomains,
     ) -> Result<RankedDeclaration, TextError> {
         let partitions = self
@@ -1147,12 +1133,8 @@ impl<P: CorpusProfile> TextSearchRelation<P> {
     // Keep the shared point lookup out of line across physical corpus shapes.
     #[inline(never)]
     fn holdings_owned(
-        &self,
-        subject: &TermValue,
-        terms: &[&str],
-        language: &Constraint<&str>,
-        workspace: &WorkspaceCapability,
-        predicate: Option<&TermValue>,
+        &self, subject: &TermValue, terms: &[&str], language: &Constraint<&str>,
+        workspace: &WorkspaceCapability, predicate: Option<&TermValue>,
     ) -> Result<AdmittedVec<Holding<'_>>, TextError> {
         let documents = admitted(self.index.documents_with_subject_owned(subject, workspace))?;
         let mut held = admitted(AdmittedVec::with_capacity(documents.len(), workspace))?;
@@ -1208,10 +1190,7 @@ impl<P: CorpusProfile> TextSearchRelation<P> {
     /// Score only held documents when rank is unobserved, through the same
     /// admitted summation the partition ranker uses.
     fn scored_in_place_owned(
-        &self,
-        terms: &[&str],
-        holdings: &[Holding<'_>],
-        workspace: &WorkspaceCapability,
+        &self, terms: &[&str], holdings: &[Holding<'_>], workspace: &WorkspaceCapability,
     ) -> Result<AdmittedVec<Hit>, TextError> {
         self.observations
             .point_scorings
@@ -1243,12 +1222,8 @@ impl<P: CorpusProfile> TextSearchRelation<P> {
 
     /// The single partition-ranker entry; record actual work even on refusal.
     fn ranked_owned(
-        &self,
-        needle: &[QueryString],
-        matches: impl Fn(&PartitionKey<P>) -> bool,
-        ceiling: Option<u64>,
-        partition_rank: Option<u32>,
-        workspace: &WorkspaceCapability,
+        &self, needle: &[QueryString], matches: impl Fn(&PartitionKey<P>) -> bool,
+        ceiling: Option<u64>, partition_rank: Option<u32>, workspace: &WorkspaceCapability,
         predicate: Option<&TermValue>,
     ) -> Result<AdmittedVec<Scored>, TextError> {
         self.observations.rankings.fetch_add(1, Ordering::Relaxed);
@@ -1278,11 +1253,8 @@ impl<P: CorpusProfile> TextSearchRelation<P> {
     }
 
     fn ranked_scoped_owned(
-        &self,
-        needle: &[QueryString],
-        matches: impl Fn(&PartitionKey<P>) -> bool,
-        selection: ScopedSearch<'_>,
-        workspace: &WorkspaceCapability,
+        &self, needle: &[QueryString], matches: impl Fn(&PartitionKey<P>) -> bool,
+        selection: ScopedSearch<'_>, workspace: &WorkspaceCapability,
     ) -> Result<ScopedHits, EvalError> {
         self.observations.rankings.fetch_add(1, Ordering::Relaxed);
         let mut work = ScoringWork::default();
@@ -1408,10 +1380,7 @@ impl<P: CorpusProfile> TextSearchRelation<P> {
     }
 
     fn open_owned(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
-        workspace: WorkspaceCapability,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>, workspace: WorkspaceCapability,
     ) -> Result<WorkspaceCursor<'static>, EvalError> {
         check_arity_owned(args, self.arity(), "text search", &workspace)?;
         let needle = args.get(SEARCH_NEEDLE).ok_or_else(|| NativeDiagnostic::error(NativeDiagnosticKind::Function,
@@ -1763,9 +1732,7 @@ impl<P: CorpusProfile> PropertyFunction for TextSearchRelation<P> {
     /// empty index has none, so nothing is ranked and no corpus statistic is
     /// computed.
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -1775,10 +1742,7 @@ impl<P: CorpusProfile> PropertyFunction for TextSearchRelation<P> {
     }
 
     fn open_admitted<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
-        workspace: WorkspaceCapability,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>, workspace: WorkspaceCapability,
     ) -> Result<WorkspaceCursor<'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -2115,10 +2079,7 @@ impl<P: CorpusProfile> TermOccurrenceRelation<P> {
     }
 
     fn open_owned(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
-        workspace: WorkspaceCapability,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>, workspace: WorkspaceCapability,
     ) -> Result<WorkspaceCursor<'static>, EvalError> {
         check_arity_owned(args, self.arity(), "term occurrence", &workspace)?;
         let needle = args.get(OCCURRENCE_TERM).ok_or_else(|| {
@@ -2210,8 +2171,7 @@ impl<P: CorpusProfile> PropertyFunction for TermOccurrenceRelation<P> {
     }
 
     fn prepare_occurrence_dictionary(
-        &self,
-        inputs: &[purrdf_sparql_eval::property_fn::OccurrenceDictionaryInput],
+        &self, inputs: &[purrdf_sparql_eval::property_fn::OccurrenceDictionaryInput],
         workspace: &WorkspaceCapability,
     ) -> Result<Option<Box<dyn purrdf_sparql_eval::property_fn::OccurrenceDictionary>>, EvalError>
     {
@@ -2287,9 +2247,7 @@ impl<P: CorpusProfile> PropertyFunction for TermOccurrenceRelation<P> {
     /// rows it emits, and the prefix it produces is the prefix of the unbounded
     /// answer whatever is bound.
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -2299,10 +2257,7 @@ impl<P: CorpusProfile> PropertyFunction for TermOccurrenceRelation<P> {
     }
 
     fn open_admitted<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
-        workspace: WorkspaceCapability,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>, workspace: WorkspaceCapability,
     ) -> Result<WorkspaceCursor<'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -2468,9 +2423,7 @@ impl<P: CorpusProfile> PfCursor for OccurrenceCursor<P> {
 ///   built over an empty corpus, unequal to one built over any corpus with text in
 ///   it — and its coverage reports no shortfall.
 pub fn verify_binding<D: DatasetView, P: CorpusProfile>(
-    index: &TextIndex<P>,
-    dataset: &D,
-    config: &TextIndexConfig<P>,
+    index: &TextIndex<P>, dataset: &D, config: &TextIndexConfig<P>,
 ) -> Result<(), TextError>
 where
     D::ReadError: purrdf_hash::error::StructuredError,
@@ -2661,9 +2614,7 @@ mod tests {
 
     /// Open `relation` with the given per-position bindings and drain it.
     fn invoke<R: PropertyFunction>(
-        relation: &R,
-        bound: &[Option<TermValue>],
-        ceiling: Option<u64>,
+        relation: &R, bound: &[Option<TermValue>], ceiling: Option<u64>,
     ) -> Result<Vec<PfRow>, EvalError> {
         let refs: Vec<Option<&TermValue>> = bound.iter().map(Option::as_ref).collect();
         let (subject, object) = refs.split_at(relation.arity().subject);
@@ -3770,10 +3721,7 @@ mod tests {
 
     /// Properties (a) and (b) of the sweep above, for one relation.
     fn check_bounds<R: PropertyFunction>(
-        relation: &R,
-        arity: usize,
-        needle: usize,
-        needles: &[&str],
+        relation: &R, arity: usize, needle: usize, needles: &[&str],
     ) {
         for mode in every_pattern(arity) {
             let declared = relation.rows_per_invocation(mode);

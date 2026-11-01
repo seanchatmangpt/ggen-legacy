@@ -1051,8 +1051,7 @@ impl<E> EvalError<E> {
     /// # Errors
     /// Returns the converter's original failure without rendering or replacing it.
     pub fn try_map_source<F, R>(
-        self,
-        convert: impl FnOnce(E) -> Result<F, R>,
+        self, convert: impl FnOnce(E) -> Result<F, R>,
     ) -> Result<EvalError<F>, R> {
         Ok(match self {
             Self::Source(error) => EvalError::Source(convert(error)?),
@@ -1162,9 +1161,7 @@ pub fn join_step_limit_origin(report: BudgetReport) -> &'static str {
 /// `None` for any other resource.
 #[must_use]
 pub fn render_capacity_refusal(
-    resource: BudgetResource,
-    report: BudgetReport,
-    knob: &str,
+    resource: BudgetResource, report: BudgetReport, knob: &str,
 ) -> Option<String> {
     match resource {
         BudgetResource::StoredFacts => Some(format!(
@@ -1201,9 +1198,7 @@ pub fn render_capacity_refusal(
 /// Hosts supply an action from their own entry point rather than an inner API.
 #[must_use]
 pub fn render_budget_refusal(
-    resource: BudgetResource,
-    report: BudgetReport,
-    remediation: &str,
+    resource: BudgetResource, report: BudgetReport, remediation: &str,
 ) -> String {
     format!(
         "evaluation exceeded the {} limit: {} observed, {} permitted; {remediation}",
@@ -1543,8 +1538,7 @@ where
 /// Returns exact protected/undecidable head refusal before the ordinary
 /// executor's fragment checks, then the same errors as [`compile`].
 pub fn compile_with_declarations<const N: usize>(
-    rules: Vec<DlClause<N>>,
-    declarations: &crate::admission::NeverDeriveDeclarations,
+    rules: Vec<DlClause<N>>, declarations: &crate::admission::NeverDeriveDeclarations,
 ) -> Result<Executable<N>, EvalError>
 where
     Arity<N>: StoreShape<N>,
@@ -1744,8 +1738,7 @@ pub(crate) struct DeltaIndexes<I: TermIdentity> {
 
 impl<I: TermIdentity> DeltaIndexes<I> {
     fn build<D: TermDictionary<Id = I>, const N: usize>(
-        rel: &RelationStore<D, N>,
-        deltas: impl IntoIterator<Item = Delta>,
+        rel: &RelationStore<D, N>, deltas: impl IntoIterator<Item = Delta>,
     ) -> Result<Self, EvalError<D::Error>>
     where
         Arity<N>: StoreShape<N>,
@@ -1897,8 +1890,7 @@ where
 {
     /// This row as a [`ShapeFact<N>`] of lexical surfaces.
     fn fact<D: TermDictionary<Id = I>>(
-        self,
-        rel: &RelationStore<D, N>,
+        self, rel: &RelationStore<D, N>,
     ) -> Result<ShapeFact<N>, D::Error> {
         HeadKey {
             positions: self.terms.map(HeadTerm::Interned),
@@ -1970,8 +1962,7 @@ where
 {
     /// Conjoin the original negative premise without changing positive provenance.
     fn retain_negative<D: TermDictionary<Id = I>>(
-        &mut self,
-        id: purrdf_core::evidence::EvidenceId,
+        &mut self, id: purrdf_core::evidence::EvidenceId,
         owner: &mut dyn evidence::RuleEvidence<D, N>,
     ) -> Result<(), EvalError<D::Error>> {
         self.negative_evidence = Some(match self.negative_evidence {
@@ -2021,10 +2012,7 @@ where
 {
     /// A bound head variable constrains a guard output rather than being overwritten.
     fn unify_guard_value<D: TermDictionary<Id = I>>(
-        &mut self,
-        slot: usize,
-        value: &DictionaryValue<I>,
-        rel: &RelationStore<D, N>,
+        &mut self, slot: usize, value: &DictionaryValue<I>, rel: &RelationStore<D, N>,
     ) -> Result<bool, D::Error> {
         let Some(previous) = self.value(slot).as_term() else {
             self.bind_value(slot, value, rel)?;
@@ -2043,10 +2031,7 @@ where
 
     /// Retain an original identity or canonicalize a genuinely computed spelling.
     fn bind_value<D: TermDictionary<Id = I>>(
-        &mut self,
-        slot: usize,
-        value: &DictionaryValue<I>,
-        rel: &RelationStore<D, N>,
+        &mut self, slot: usize, value: &DictionaryValue<I>, rel: &RelationStore<D, N>,
     ) -> Result<(), D::Error> {
         match value.as_term().canonicalize(rel.interner())? {
             DictionaryTerm::Id(id) => self.bindings[slot] = Some(id),
@@ -2092,8 +2077,7 @@ type ConstantPositions<I, const N: usize> = [Option<PositionValue<I>>; N];
 /// is hoisted out of the per-solution loop exactly as it was before the predicate became a
 /// term. `None` marks a variable position, resolved per solution.
 fn constant_positions<D: TermDictionary, const N: usize>(
-    shape: &AtomShape<N>,
-    rel: &RelationStore<D, N>,
+    shape: &AtomShape<N>, rel: &RelationStore<D, N>,
 ) -> Result<ConstantPositions<D::Id, N>, D::Error>
 where
     Arity<N>: StoreShape<N>,
@@ -2120,12 +2104,8 @@ where
 /// delta filter has no runtime branch.
 #[cfg(test)]
 fn extend_slot_solutions<D: TermDictionary, const N: usize>(
-    operator: &AtomOperator<N>,
-    rel: &RelationStore<D, N>,
-    delta: Delta,
-    indexes: &DeltaIndexes<D::Id>,
-    scan: Scan,
-    solutions: Vec<SlotSolution<D::Id, N>>,
+    operator: &AtomOperator<N>, rel: &RelationStore<D, N>, delta: Delta,
+    indexes: &DeltaIndexes<D::Id>, scan: Scan, solutions: Vec<SlotSolution<D::Id, N>>,
     governor: &mut StepGovernor<'_>,
 ) -> Result<Vec<SlotSolution<D::Id, N>>, D::Error>
 where
@@ -2145,12 +2125,8 @@ where
 /// Probe a physically reordered atom while retaining its logical scan ordinal.
 #[cfg(test)]
 fn extend_rebound_solutions<D: TermDictionary, const N: usize>(
-    operator: &AtomOperator<N>,
-    rel: &RelationStore<D, N>,
-    delta: Delta,
-    indexes: &DeltaIndexes<D::Id>,
-    scan: Scan,
-    solutions: Vec<SlotSolution<D::Id, N>>,
+    operator: &AtomOperator<N>, rel: &RelationStore<D, N>, delta: Delta,
+    indexes: &DeltaIndexes<D::Id>, scan: Scan, solutions: Vec<SlotSolution<D::Id, N>>,
     governor: &mut StepGovernor<'_>,
 ) -> Result<Vec<SlotSolution<D::Id, N>>, D::Error>
 where
@@ -2170,12 +2146,8 @@ where
 /// Drive one original native atom frame through the shared mode dispatch.
 #[cfg(test)]
 fn extend_selected_atom<D: TermDictionary, const N: usize>(
-    operator: &AtomOperator<N>,
-    rel: &RelationStore<D, N>,
-    delta: Delta,
-    indexes: &DeltaIndexes<D::Id>,
-    access: atom::Access,
-    solutions: Vec<SlotSolution<D::Id, N>>,
+    operator: &AtomOperator<N>, rel: &RelationStore<D, N>, delta: Delta,
+    indexes: &DeltaIndexes<D::Id>, access: atom::Access, solutions: Vec<SlotSolution<D::Id, N>>,
     governor: &mut StepGovernor<'_>,
 ) -> Result<Vec<SlotSolution<D::Id, N>>, D::Error>
 where
@@ -2198,9 +2170,7 @@ where
 /// level is one sorted arrangement, and an atom that quantifies over its predicate denotes
 /// a union of them — so the surfaces are always there to resolve.
 fn cycle_atom_partition<'a, D: TermDictionary, const N: usize>(
-    shape: &AtomShape<N>,
-    rel: &'a RelationStore<D, N>,
-    delta_run: Option<&'a DeltaRun<D::Id>>,
+    shape: &AtomShape<N>, rel: &'a RelationStore<D, N>, delta_run: Option<&'a DeltaRun<D::Id>>,
 ) -> Result<Option<PartitionRef<'a, D::Id, N>>, D::Error>
 where
     Arity<N>: StoreShape<N>,
@@ -2266,9 +2236,7 @@ where
     /// Returns `false` — restoring `solution` — if a scan-mode constraint excludes any of
     /// them, which is how the semi-naive decomposition is enforced on a multiway group.
     fn append_sources(
-        &self,
-        solution: &mut SlotSolution<D::Id, N>,
-        work: &cycle::Work,
+        &self, solution: &mut SlotSolution<D::Id, N>, work: &cycle::Work,
     ) -> Result<bool, D::Error> {
         let original = solution.sources.len();
         for &planned in self.cycle.atoms() {
@@ -2315,8 +2283,7 @@ where
 /// Extend the certified component through its one owned traversal frame.
 #[cfg(test)]
 fn extend_solutions_leapfrog<D: TermDictionary, const N: usize>(
-    run: &LeapfrogRun<'_, D, N>,
-    solutions: Vec<SlotSolution<D::Id, N>>,
+    run: &LeapfrogRun<'_, D, N>, solutions: Vec<SlotSolution<D::Id, N>>,
     governor: &mut StepGovernor<'_>,
 ) -> Result<Vec<SlotSolution<D::Id, N>>, D::Error>
 where
@@ -2334,9 +2301,7 @@ where
 /// A free-key full pattern returns `None` rather than sweeping historical partitions.
 /// Subject/object bounds use existing run lengths and the bounded mutable tail.
 fn constant_pattern_count<D: TermDictionary, const N: usize>(
-    operator: &AtomOperator<N>,
-    rel: &RelationStore<D, N>,
-    delta: Option<&DeltaRun<D::Id>>,
+    operator: &AtomOperator<N>, rel: &RelationStore<D, N>, delta: Option<&DeltaRun<D::Id>>,
     seed: Option<&SlotSolution<D::Id, N>>,
 ) -> Result<Option<usize>, D::Error>
 where
@@ -2388,9 +2353,7 @@ where
 /// Freeze metadata advice before any task can warm an access path. Empty means
 /// this all-row, single-atom or Base-reading join needs no adaptive advice.
 fn constant_pattern_counts<D: TermDictionary, const N: usize>(
-    plan: &RulePlan<N>,
-    rel: &RelationStore<D, N>,
-    delta: Delta,
+    plan: &RulePlan<N>, rel: &RelationStore<D, N>, delta: Delta,
 ) -> Result<Vec<Option<usize>>, D::Error>
 where
     Arity<N>: StoreShape<N>,
@@ -2419,9 +2382,7 @@ where
 /// a selective delta never pays for a large old prefix. Unknown/free-key full
 /// patterns cannot displace the delta. Counts read run metadata, not old tuples.
 fn decomposition_seed<D: TermDictionary, const N: usize>(
-    plan: &RulePlan<N>,
-    snapshot: JoinSnapshot<'_, D, N>,
-    anchor: usize,
+    plan: &RulePlan<N>, snapshot: JoinSnapshot<'_, D, N>, anchor: usize,
     full_counts: &[Option<usize>],
 ) -> Result<usize, D::Error>
 where
@@ -2471,11 +2432,8 @@ pub(crate) enum JoinStrategy {
 /// holds every negated relation's final extension.
 #[cfg(test)]
 fn join_body<D: TermDictionary, const N: usize>(
-    plan: &RulePlan<N>,
-    snapshot: JoinSnapshot<'_, D, N>,
-    strategy: JoinStrategy,
-    governor: &mut StepGovernor<'_>,
-    full_counts: Option<&[Option<usize>]>,
+    plan: &RulePlan<N>, snapshot: JoinSnapshot<'_, D, N>, strategy: JoinStrategy,
+    governor: &mut StepGovernor<'_>, full_counts: Option<&[Option<usize>]>,
 ) -> Result<Vec<SlotSolution<D::Id, N>>, D::Error>
 where
     Arity<N>: StoreShape<N>,
@@ -2551,8 +2509,7 @@ where
 /// rows at or after the delta's first row, and there are none to admit. It changes only
 /// the candidates enumerated, which is the join-step count.
 fn delta_can_match<D: TermDictionary, const N: usize>(
-    operator: &AtomOperator<N>,
-    snapshot: JoinSnapshot<'_, D, N>,
+    operator: &AtomOperator<N>, snapshot: JoinSnapshot<'_, D, N>,
 ) -> Result<bool, D::Error>
 where
     Arity<N>: StoreShape<N>,
@@ -2627,9 +2584,7 @@ impl ArgShape {
 
     /// This argument under `solution`, for a store probe.
     fn probe<D: TermDictionary, const N: usize>(
-        &self,
-        solution: &SlotSolution<D::Id, N>,
-        rel: &RelationStore<D, N>,
+        &self, solution: &SlotSolution<D::Id, N>, rel: &RelationStore<D, N>,
     ) -> Result<ProbeValue<D::Id>, D::Error>
     where
         Arity<N>: StoreShape<N>,
@@ -2696,9 +2651,7 @@ where
     /// rule fires.
     #[cfg(test)]
     fn satisfied<D: TermDictionary>(
-        &self,
-        solution: &SlotSolution<D::Id, N>,
-        rel: &RelationStore<D, N>,
+        &self, solution: &SlotSolution<D::Id, N>, rel: &RelationStore<D, N>,
         governor: &mut StepGovernor<'_>,
     ) -> Result<bool, D::Error> {
         self.visit_matches(
@@ -2715,11 +2668,8 @@ where
     /// an earlier visitor failure before inspecting the final source state.
     #[cfg(test)]
     fn visit_matches<D: TermDictionary, E>(
-        &self,
-        solution: &SlotSolution<D::Id, N>,
-        rel: &RelationStore<D, N>,
-        governor: &mut StepGovernor<'_>,
-        visit: impl FnMut(RowId) -> Result<bool, E>,
+        &self, solution: &SlotSolution<D::Id, N>, rel: &RelationStore<D, N>,
+        governor: &mut StepGovernor<'_>, visit: impl FnMut(RowId) -> Result<bool, E>,
         source_error: impl Fn(D::Error) -> E,
     ) -> Result<bool, E> {
         let mut probe = negative::Probe::new(self.source);
@@ -2731,9 +2681,7 @@ where
     /// Retain signed witnesses on the native path; keep the ordinary boolean probe.
     #[cfg(test)]
     fn blocks<D: TermDictionary>(
-        &self,
-        solution: &mut SlotSolution<D::Id, N>,
-        rel: &RelationStore<D, N>,
+        &self, solution: &mut SlotSolution<D::Id, N>, rel: &RelationStore<D, N>,
         governor: &mut StepGovernor<'_>,
         evidence: &mut Option<&mut dyn evidence::RuleEvidence<D, N>>,
     ) -> Result<bool, EvalError<D::Error>> {
@@ -2908,9 +2856,7 @@ where
     /// Retained only as an independent oracle for the owned production search.
     #[cfg(test)]
     fn holds<D: TermDictionary>(
-        &self,
-        probe: GroupProbe<'_, D, N>,
-        governor: &mut StepGovernor<'_>,
+        &self, probe: GroupProbe<'_, D, N>, governor: &mut StepGovernor<'_>,
     ) -> Result<bool, EvalError<D::Error>> {
         probe
             .rel
@@ -2934,9 +2880,7 @@ where
     /// Probe all signed conjunction witnesses through the same atom/guard traversal.
     #[cfg(test)]
     fn blocks<D: TermDictionary>(
-        &self,
-        probe: GroupProbe<'_, D, N>,
-        governor: &mut StepGovernor<'_>,
+        &self, probe: GroupProbe<'_, D, N>, governor: &mut StepGovernor<'_>,
         evidence: &mut Option<&mut dyn evidence::RuleEvidence<D, N>>,
     ) -> Result<(bool, Option<purrdf_core::evidence::EvidenceId>), EvalError<D::Error>> {
         let mut frame = negation::Frame::new(evidence.is_some());
@@ -2947,9 +2891,7 @@ where
 
     /// The store probe value of `arg` under the current bindings.
     fn probe_value<D: TermDictionary>(
-        arg: &GroupArg,
-        probe: GroupProbe<'_, D, N>,
-        locals: &[Option<LocalValue<D::Id>>],
+        arg: &GroupArg, probe: GroupProbe<'_, D, N>, locals: &[Option<LocalValue<D::Id>>],
     ) -> Result<ProbeValue<D::Id>, D::Error> {
         Ok(match arg {
             GroupArg::Outer(slot) => match probe.solution.value(*slot) {
@@ -2975,12 +2917,8 @@ where
     /// Match atom `k` onward.
     #[cfg(test)]
     fn match_atom<D: TermDictionary>(
-        &self,
-        k: usize,
-        probe: GroupProbe<'_, D, N>,
-        locals: &mut Vec<Option<LocalValue<D::Id>>>,
-        governor: &mut StepGovernor<'_>,
-        evidence: &mut Option<GroupEvidence<'_, D, N>>,
+        &self, k: usize, probe: GroupProbe<'_, D, N>, locals: &mut Vec<Option<LocalValue<D::Id>>>,
+        governor: &mut StepGovernor<'_>, evidence: &mut Option<GroupEvidence<'_, D, N>>,
     ) -> Result<bool, EvalError<D::Error>> {
         let Some(atom) = self.atoms.get(k) else {
             return self.match_guard(0, probe, locals, governor, evidence);
@@ -3073,12 +3011,8 @@ where
     /// Evaluate guard `j` onward, every atom having matched.
     #[cfg(test)]
     fn match_guard<D: TermDictionary>(
-        &self,
-        j: usize,
-        probe: GroupProbe<'_, D, N>,
-        locals: &mut Vec<Option<LocalValue<D::Id>>>,
-        governor: &mut StepGovernor<'_>,
-        evidence: &mut Option<GroupEvidence<'_, D, N>>,
+        &self, j: usize, probe: GroupProbe<'_, D, N>, locals: &mut Vec<Option<LocalValue<D::Id>>>,
+        governor: &mut StepGovernor<'_>, evidence: &mut Option<GroupEvidence<'_, D, N>>,
     ) -> Result<bool, EvalError<D::Error>> {
         let Some(guard) = self.guards.get(j) else {
             if let Some(trace) = evidence.as_mut() {
@@ -3175,9 +3109,7 @@ where
 /// answer.
 #[cfg(test)]
 fn call_guard<D: TermDictionary, const N: usize>(
-    guards: &dyn GuardEvaluator<D, N>,
-    call: &GuardCall<'_, D, N>,
-    governor: &mut StepGovernor<'_>,
+    guards: &dyn GuardEvaluator<D, N>, call: &GuardCall<'_, D, N>, governor: &mut StepGovernor<'_>,
 ) -> Result<crate::guard::GuardRows<D::Id>, EvalError<D::Error>>
 where
     Arity<N>: StoreShape<N>,
@@ -3307,8 +3239,7 @@ impl<I: TermIdentity> HeadTerm<'_, I> {
 
     /// This argument's lexical surface.
     fn surface<D: TermDictionary<Id = I>, const N: usize>(
-        &self,
-        rel: &RelationStore<D, N>,
+        &self, rel: &RelationStore<D, N>,
     ) -> Result<String, D::Error>
     where
         Arity<N>: StoreShape<N>,
@@ -3356,8 +3287,7 @@ where
 {
     /// Resolve a publication fact in position order, preserving the first refusal.
     fn fact<D: TermDictionary<Id = I>>(
-        &self,
-        rel: &RelationStore<D, N>,
+        &self, rel: &RelationStore<D, N>,
     ) -> Result<ShapeFact<N>, D::Error> {
         Ok(Arity::<N>::fact(crate::dictionary::try_map_row(
             self.terms(),
@@ -3390,8 +3320,7 @@ where
 {
     /// Retain native proof cells through their original supplemental admission.
     fn copy_in<A: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, A>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, A>,
     ) -> Result<Self, StorageError> {
         Ok(Self {
             rule: self.rule,
@@ -3408,8 +3337,7 @@ where
     /// with a variable predicate matched some concrete one, and the provenance has to say
     /// which.
     fn source_facts<D: TermDictionary<Id = I>>(
-        &self,
-        rel: &RelationStore<D, N>,
+        &self, rel: &RelationStore<D, N>,
     ) -> Result<Vec<ShapeFact<N>>, D::Error> {
         rel.interner().check_read()?;
         let facts = self
@@ -3434,9 +3362,7 @@ where
     /// almost every real collision, and the dictionary-ordered source tail runs
     /// only on an exact numeric tie. Native dictionaries need no lexical projection.
     fn preferred_over<D: TermDictionary<Id = I>>(
-        &self,
-        other: &Self,
-        rel: &RelationStore<D, N>,
+        &self, other: &Self, rel: &RelationStore<D, N>,
     ) -> Result<bool, D::Error> {
         rel.interner().check_read()?;
         let order = witness_preference(
@@ -3451,9 +3377,7 @@ where
 
 /// The canonical numeric prefix, comparing the source tail only on a tie.
 fn witness_preference<E>(
-    mine: (u32, u64),
-    theirs: (u32, u64),
-    lexical: impl FnOnce() -> Result<std::cmp::Ordering, E>,
+    mine: (u32, u64), theirs: (u32, u64), lexical: impl FnOnce() -> Result<std::cmp::Ordering, E>,
 ) -> Result<std::cmp::Ordering, E> {
     match mine.cmp(&theirs) {
         std::cmp::Ordering::Equal => lexical(),
@@ -3463,11 +3387,8 @@ fn witness_preference<E>(
 
 /// The dictionary-ordered tail of the canonical witness law.
 fn source_preference<D: TermDictionary, const N: usize>(
-    mine: &[SourceRow<D::Id, N>],
-    my_rule: usize,
-    theirs: &[SourceRow<D::Id, N>],
-    their_rule: usize,
-    rel: &RelationStore<D, N>,
+    mine: &[SourceRow<D::Id, N>], my_rule: usize, theirs: &[SourceRow<D::Id, N>],
+    their_rule: usize, rel: &RelationStore<D, N>,
 ) -> Result<std::cmp::Ordering, D::Error>
 where
     Arity<N>: StoreShape<N>,
@@ -3496,9 +3417,7 @@ where
 
 /// The lexical tail over owned surfaces, also valid after a store rebuild.
 fn fact_preference<G: Clone + Ord>(
-    mine: &[crate::store::Fact<G>],
-    my_rule: usize,
-    theirs: &[crate::store::Fact<G>],
+    mine: &[crate::store::Fact<G>], my_rule: usize, theirs: &[crate::store::Fact<G>],
     their_rule: usize,
 ) -> std::cmp::Ordering {
     let mut mine_sorted = mine.to_vec();
@@ -3560,8 +3479,7 @@ where
 
 /// Raw maximum and saturated sum of a witness's source heights.
 fn source_heights<I: TermIdentity, const N: usize>(
-    sources: &[SourceRow<I, N>],
-    depth: Depths<'_, I, N>,
+    sources: &[SourceRow<I, N>], depth: Depths<'_, I, N>,
 ) -> (u32, u64)
 where
     Arity<N>: StoreShape<N>,
@@ -3633,10 +3551,7 @@ where
 
     /// Insert or quality-merge one candidate.
     fn insert<D: TermDictionary<Id = I>>(
-        &mut self,
-        key: HeadKey<'r, I, N>,
-        candidate: Candidate<I, N>,
-        rel: &RelationStore<D, N>,
+        &mut self, key: HeadKey<'r, I, N>, candidate: Candidate<I, N>, rel: &RelationStore<D, N>,
     ) -> Result<(), D::Error> {
         rel.interner().check_read()?;
         let replace = match self.entries.get(&key) {
@@ -3656,9 +3571,7 @@ where
 
     /// Fold a completed rule-local buffer in at the scheduling-erasing serial boundary.
     fn merge_from<D: TermDictionary<Id = I>>(
-        &mut self,
-        other: Self,
-        rel: &RelationStore<D, N>,
+        &mut self, other: Self, rel: &RelationStore<D, N>,
     ) -> Result<(), D::Error> {
         rel.interner().check_read()?;
         self.join_steps = self.join_steps.saturating_add(other.join_steps);
@@ -3817,11 +3730,8 @@ impl RoundExecution {
 /// per head atom.
 #[cfg(test)]
 fn evaluate_rule<'r, D: TermDictionary, const N: usize>(
-    entry: RuleEntry<'r, N>,
-    snapshot: RoundSnapshot<'_, D, N>,
-    strategy: JoinStrategy,
-    governor: StepGovernor<'_>,
-    guards: &dyn GuardEvaluator<D, N>,
+    entry: RuleEntry<'r, N>, snapshot: RoundSnapshot<'_, D, N>, strategy: JoinStrategy,
+    governor: StepGovernor<'_>, guards: &dyn GuardEvaluator<D, N>,
     full_counts: Option<&[Option<usize>]>,
 ) -> Result<RoundBuffer<'r, D::Id, N>, EvalError<D::Error>>
 where
@@ -3841,11 +3751,8 @@ where
 /// Apply an authored guard range through the one production callback/filter path.
 #[cfg(test)]
 fn apply_body_guards<D: TermDictionary, const N: usize>(
-    entry: RuleEntry<'_, N>,
-    rel: &RelationStore<D, N>,
-    solutions: Vec<SlotSolution<D::Id, N>>,
-    positions: std::ops::Range<usize>,
-    guards: &dyn GuardEvaluator<D, N>,
+    entry: RuleEntry<'_, N>, rel: &RelationStore<D, N>, solutions: Vec<SlotSolution<D::Id, N>>,
+    positions: std::ops::Range<usize>, guards: &dyn GuardEvaluator<D, N>,
     governor: &mut StepGovernor<'_>,
 ) -> Result<Vec<SlotSolution<D::Id, N>>, EvalError<D::Error>>
 where
@@ -3861,11 +3768,8 @@ where
 /// Binary and certified cyclic segments use the existing join kernels.
 #[cfg(test)]
 fn join_ordered_body<D: TermDictionary, const N: usize>(
-    entry: RuleEntry<'_, N>,
-    snapshot: JoinSnapshot<'_, D, N>,
-    strategy: JoinStrategy,
-    guards: &dyn GuardEvaluator<D, N>,
-    governor: &mut StepGovernor<'_>,
+    entry: RuleEntry<'_, N>, snapshot: JoinSnapshot<'_, D, N>, strategy: JoinStrategy,
+    guards: &dyn GuardEvaluator<D, N>, governor: &mut StepGovernor<'_>,
 ) -> Result<Vec<SlotSolution<D::Id, N>>, EvalError<D::Error>>
 where
     Arity<N>: StoreShape<N>,
@@ -3878,11 +3782,8 @@ where
 
 #[cfg(test)]
 fn evaluate_rule_with_evidence<'r, D: TermDictionary, const N: usize>(
-    entry: RuleEntry<'r, N>,
-    snapshot: RoundSnapshot<'_, D, N>,
-    strategy: JoinStrategy,
-    mut governor: StepGovernor<'_>,
-    guards: &dyn GuardEvaluator<D, N>,
+    entry: RuleEntry<'r, N>, snapshot: RoundSnapshot<'_, D, N>, strategy: JoinStrategy,
+    mut governor: StepGovernor<'_>, guards: &dyn GuardEvaluator<D, N>,
     mut evidence: Option<&mut dyn evidence::RuleEvidence<D, N>>,
     full_counts: Option<&[Option<usize>]>,
 ) -> Result<RoundBuffer<'r, D::Id, N>, EvalError<D::Error>>
@@ -3920,13 +3821,9 @@ where
 /// Original call-stack phase ordering, retained only as a differential rule oracle.
 #[cfg(test)]
 fn reference_evaluate_rule<'r, D: TermDictionary, const N: usize>(
-    entry: RuleEntry<'r, N>,
-    snapshot: RoundSnapshot<'_, D, N>,
-    strategy: JoinStrategy,
-    mut governor: StepGovernor<'_>,
-    guards: &dyn GuardEvaluator<D, N>,
-    mut evidence: Option<&mut dyn evidence::RuleEvidence<D, N>>,
-    full_counts: &[Option<usize>],
+    entry: RuleEntry<'r, N>, snapshot: RoundSnapshot<'_, D, N>, strategy: JoinStrategy,
+    mut governor: StepGovernor<'_>, guards: &dyn GuardEvaluator<D, N>,
+    mut evidence: Option<&mut dyn evidence::RuleEvidence<D, N>>, full_counts: &[Option<usize>],
 ) -> Result<RoundBuffer<'r, D::Id, N>, EvalError<D::Error>>
 where
     Arity<N>: StoreShape<N>,
@@ -4072,13 +3969,9 @@ struct HeadEvidence {
 
 /// Emit one head using the shared ordinary and factorized provenance path.
 fn emit_solution<'r, D: TermDictionary, const N: usize>(
-    buffer: &mut RoundBuffer<'r, D::Id, N>,
-    head: &'r [ArgShape; N],
-    solution: &SlotSolution<D::Id, N>,
-    rule: usize,
-    snapshot: RoundSnapshot<'_, D, N>,
-    evidence: &mut Option<&mut dyn evidence::RuleEvidence<D, N>>,
-    head_evidence: HeadEvidence,
+    buffer: &mut RoundBuffer<'r, D::Id, N>, head: &'r [ArgShape; N],
+    solution: &SlotSolution<D::Id, N>, rule: usize, snapshot: RoundSnapshot<'_, D, N>,
+    evidence: &mut Option<&mut dyn evidence::RuleEvidence<D, N>>, head_evidence: HeadEvidence,
 ) -> Result<(), EvalError<D::Error>>
 where
     Arity<N>: StoreShape<N>,
@@ -4159,8 +4052,7 @@ where
 
 /// The store row of the fact `key` names, if it is present.
 fn present_row<D: TermDictionary, const N: usize>(
-    key: &HeadKey<'_, D::Id, N>,
-    rel: &RelationStore<D, N>,
+    key: &HeadKey<'_, D::Id, N>, rel: &RelationStore<D, N>,
 ) -> Result<Option<RowId>, D::Error>
 where
     Arity<N>: StoreShape<N>,
@@ -4183,8 +4075,7 @@ where
 /// been interned since the plan was lowered; keying either as fresh would let one fact be
 /// keyed two ways and committed twice.
 fn intern_key<'r, D: TermDictionary, const N: usize>(
-    key: HeadKey<'r, D::Id, N>,
-    rel: &RelationStore<D, N>,
+    key: HeadKey<'r, D::Id, N>, rel: &RelationStore<D, N>,
 ) -> Result<HeadKey<'r, D::Id, N>, D::Error>
 where
     Arity<N>: StoreShape<N>,
@@ -4215,8 +4106,7 @@ where
 /// variable positions before the join completes (every guard output is bound by its guard),
 /// so an unbound head slot here would be a contradiction in the range-restriction check.
 fn head_term<'r, I: TermIdentity, const N: usize>(
-    shape: &'r ArgShape,
-    solution: &SlotSolution<I, N>,
+    shape: &'r ArgShape, solution: &SlotSolution<I, N>,
 ) -> HeadTerm<'r, I>
 where
     Arity<N>: StoreShape<N>,
@@ -4258,12 +4148,8 @@ where
 /// Evaluate every scheduled rule against the original frozen round snapshot.
 /// Guarded rules retain caller-thread order; guard-free rules may run in parallel.
 pub(crate) fn evaluate_round<'r, D: TermDictionary, const N: usize>(
-    entries: &[RuleEntry<'r, N>],
-    snapshot: RoundSnapshot<'_, D, N>,
-    execution: RoundExecution,
-    strategy: JoinStrategy,
-    allowance: u64,
-    control: RoundControl<'_, D, N>,
+    entries: &[RuleEntry<'r, N>], snapshot: RoundSnapshot<'_, D, N>, execution: RoundExecution,
+    strategy: JoinStrategy, allowance: u64, control: RoundControl<'_, D, N>,
 ) -> Result<RoundBuffer<'r, D::Id, N>, EvalError<D::Error>>
 where
     Arity<N>: StoreShape<N>,
@@ -4274,12 +4160,8 @@ where
 }
 
 fn evaluate_round_with_evidence<'r, D: TermDictionary, const N: usize>(
-    entries: &[RuleEntry<'r, N>],
-    snapshot: RoundSnapshot<'_, D, N>,
-    execution: RoundExecution,
-    strategy: JoinStrategy,
-    allowance: u64,
-    control: RoundControl<'_, D, N>,
+    entries: &[RuleEntry<'r, N>], snapshot: RoundSnapshot<'_, D, N>, execution: RoundExecution,
+    strategy: JoinStrategy, allowance: u64, control: RoundControl<'_, D, N>,
     mut evidence: Option<&mut dyn evidence::RuleEvidence<D, N>>,
 ) -> Result<RoundBuffer<'r, D::Id, N>, EvalError<D::Error>>
 where
@@ -4303,12 +4185,8 @@ where
 /// The original call-stack round is the differential scheduling oracle.
 #[cfg(test)]
 fn reference_evaluate_round<'r, D: TermDictionary, const N: usize>(
-    entries: &[RuleEntry<'r, N>],
-    snapshot: RoundSnapshot<'_, D, N>,
-    execution: RoundExecution,
-    strategy: JoinStrategy,
-    allowance: u64,
-    guards: &dyn GuardEvaluator<D, N>,
+    entries: &[RuleEntry<'r, N>], snapshot: RoundSnapshot<'_, D, N>, execution: RoundExecution,
+    strategy: JoinStrategy, allowance: u64, guards: &dyn GuardEvaluator<D, N>,
     mut evidence: Option<&mut dyn evidence::RuleEvidence<D, N>>,
 ) -> Result<RoundBuffer<'r, D::Id, N>, EvalError<D::Error>>
 where
@@ -4460,9 +4338,7 @@ where
     }
 
     pub(super) fn seeded_with_native(
-        edb: RelationStore<D, N>,
-        options: EvalOptions,
-        native: bool,
+        edb: RelationStore<D, N>, options: EvalOptions, native: bool,
     ) -> Self {
         let sparse = native || edb.has_sparse_rows();
         let depth = if sparse {
@@ -4552,8 +4428,7 @@ where
     /// [`EvalError::BudgetExhausted`] when work or an individual fact admission
     /// passes a ceiling. Facts already admitted remain within the stated limit.
     pub(crate) fn absorb(
-        &mut self,
-        round: RoundBuffer<'_, D::Id, N>,
+        &mut self, round: RoundBuffer<'_, D::Id, N>,
     ) -> Result<(), EvalError<D::Error>> {
         self.join_steps = self.join_steps.saturating_add(round.join_steps);
         self.join_refused |= round.join_refused;
@@ -4585,8 +4460,7 @@ where
 /// carries a guard, which this entry point has no evaluator for — see
 /// [`evaluate_guarded`].
 pub fn evaluate<D: TermDictionary, const N: usize>(
-    exe: &Executable<N>,
-    edb: RelationStore<D, N>,
+    exe: &Executable<N>, edb: RelationStore<D, N>,
 ) -> Result<Evaluation<D, N>, EvalError<D::Error>>
 where
     Arity<N>: StoreShape<N>,
@@ -4621,9 +4495,7 @@ where
 ///
 /// [`EvalError::Stopped`] if `stop` fired, and every error [`evaluate`] returns.
 pub fn evaluate_until<D: TermDictionary, const N: usize>(
-    exe: &Executable<N>,
-    edb: RelationStore<D, N>,
-    stop: Option<&dyn StopSignal>,
+    exe: &Executable<N>, edb: RelationStore<D, N>, stop: Option<&dyn StopSignal>,
 ) -> Result<Evaluation<D, N>, EvalError<D::Error>>
 where
     Arity<N>: StoreShape<N>,
@@ -4655,11 +4527,8 @@ where
 /// [`EvalError::Guard`] when `guards` cannot evaluate a guard, and every error
 /// [`evaluate_until`] returns.
 pub fn evaluate_guarded<D: TermDictionary, const N: usize>(
-    exe: &Executable<N>,
-    edb: RelationStore<D, N>,
-    guards: &dyn GuardEvaluator<D, N>,
-    options: &EvalOptions,
-    stop: Option<&dyn StopSignal>,
+    exe: &Executable<N>, edb: RelationStore<D, N>, guards: &dyn GuardEvaluator<D, N>,
+    options: &EvalOptions, stop: Option<&dyn StopSignal>,
 ) -> Result<Evaluation<D, N>, EvalError<D::Error>>
 where
     Arity<N>: StoreShape<N>,
@@ -4680,12 +4549,8 @@ where
 /// Scheduling is caller-selected; the join strategy remains planner-owned.
 /// Tests use the private join override to prove both kernels agree.
 fn evaluate_with<D: TermDictionary, const N: usize>(
-    exe: &Executable<N>,
-    edb: RelationStore<D, N>,
-    stop: Option<&dyn StopSignal>,
-    guards: &dyn GuardEvaluator<D, N>,
-    options: EvalOptions,
-    execution: RoundExecution,
+    exe: &Executable<N>, edb: RelationStore<D, N>, stop: Option<&dyn StopSignal>,
+    guards: &dyn GuardEvaluator<D, N>, options: EvalOptions, execution: RoundExecution,
     strategy: JoinStrategy,
 ) -> Result<Evaluation<D, N>, EvalError<D::Error>>
 where
@@ -4732,13 +4597,9 @@ pub struct EvidencedEvaluation<
 /// # Errors
 /// Returns the original execution failure or native evidence refusal.
 pub fn evaluate_evidenced<S: purrdf_lex::allocation::Admission, D: TermDictionary, const N: usize>(
-    exe: &Executable<N>,
-    edb: RelationStore<D, N>,
-    options: &EvalOptions,
-    guards: &dyn GuardEvaluator<D, N>,
-    stop: Option<&dyn StopSignal>,
-    mut rows: crate::evidence::DerivationEvidence<S>,
-    scope: NegationScope,
+    exe: &Executable<N>, edb: RelationStore<D, N>, options: &EvalOptions,
+    guards: &dyn GuardEvaluator<D, N>, stop: Option<&dyn StopSignal>,
+    mut rows: crate::evidence::DerivationEvidence<S>, scope: NegationScope,
 ) -> Result<EvidencedEvaluation<S, D, N>, EvalError<D::Error>>
 where
     Arity<N>: StoreShape<N>,
@@ -4791,10 +4652,7 @@ where
 }
 
 fn evaluate_with_evidence<D: TermDictionary, const N: usize>(
-    exe: &Executable<N>,
-    edb: RelationStore<D, N>,
-    options: EvalOptions,
-    run: StratumRun<'_, D, N>,
+    exe: &Executable<N>, edb: RelationStore<D, N>, options: EvalOptions, run: StratumRun<'_, D, N>,
     evidence: &mut Option<&mut dyn evidence::RuleEvidence<D, N>>,
 ) -> Result<Evaluation<D, N>, EvalError<D::Error>>
 where
@@ -4923,11 +4781,8 @@ where
 
 /// Run one stratum's semi-naive fixpoint into `state`.
 fn run_stratum<D: TermDictionary, const N: usize>(
-    exe: &Executable<N>,
-    runtimes: &[RuleRuntime<N>],
-    stratum: usize,
-    state: &mut FixpointState<D, N>,
-    run: StratumRun<'_, D, N>,
+    exe: &Executable<N>, runtimes: &[RuleRuntime<N>], stratum: usize,
+    state: &mut FixpointState<D, N>, run: StratumRun<'_, D, N>,
     mut evidence: Option<&mut dyn evidence::RuleEvidence<D, N>>,
 ) -> Result<(), EvalError<D::Error>>
 where
@@ -4942,11 +4797,8 @@ where
 /// The original call-stack fixpoint is the differential stratum oracle.
 #[cfg(test)]
 fn reference_run_stratum<D: TermDictionary, const N: usize>(
-    exe: &Executable<N>,
-    runtimes: &[RuleRuntime<N>],
-    stratum: usize,
-    state: &mut FixpointState<D, N>,
-    run: StratumRun<'_, D, N>,
+    exe: &Executable<N>, runtimes: &[RuleRuntime<N>], stratum: usize,
+    state: &mut FixpointState<D, N>, run: StratumRun<'_, D, N>,
     mut evidence: Option<&mut dyn evidence::RuleEvidence<D, N>>,
 ) -> Result<(), EvalError<D::Error>>
 where
@@ -5045,8 +4897,7 @@ where
 /// derivation sequence are all byte-deterministic. Row-id assignment is a purely additive
 /// side effect of this sorted loop; it never orders the commit.
 fn commit_round<D: TermDictionary, const N: usize>(
-    round: RoundBuffer<'_, D::Id, N>,
-    state: &mut FixpointState<D, N>,
+    round: RoundBuffer<'_, D::Id, N>, state: &mut FixpointState<D, N>,
 ) -> Result<(), EvalError<D::Error>>
 where
     Arity<N>: StoreShape<N>,
@@ -5060,8 +4911,7 @@ where
 /// The original publication loop is a differential commit oracle.
 #[cfg(test)]
 fn reference_commit_round<D: TermDictionary, const N: usize>(
-    round: RoundBuffer<'_, D::Id, N>,
-    state: &mut FixpointState<D, N>,
+    round: RoundBuffer<'_, D::Id, N>, state: &mut FixpointState<D, N>,
 ) -> Result<(), EvalError<D::Error>>
 where
     Arity<N>: StoreShape<N>,
@@ -5795,8 +5645,7 @@ mod tests {
         }
         impl GuardEvaluator<HostDictionary> for Guards {
             fn evaluate(
-                &self,
-                call: &GuardCall<'_, HostDictionary>,
+                &self, call: &GuardCall<'_, HostDictionary>,
             ) -> Result<crate::guard::GuardRows<u64>, CallbackError<SourceLost>> {
                 call.evaluate_lexical(|inputs| {
                     self.calls.fetch_add(1, Ordering::Relaxed);
@@ -5941,8 +5790,7 @@ mod tests {
         struct Identity;
         impl GuardEvaluator<HostDictionary> for Identity {
             fn evaluate(
-                &self,
-                call: &GuardCall<'_, HostDictionary>,
+                &self, call: &GuardCall<'_, HostDictionary>,
             ) -> Result<GuardRows<u64>, CallbackError<SourceLost>> {
                 assert_eq!(call.inputs, [DictionaryTerm::Id(ORIGINAL)]);
                 Ok(vec![vec![DictionaryValue::Id(OUTPUT)]])
@@ -6006,8 +5854,7 @@ mod tests {
         }
         impl GuardEvaluator<HostDictionary> for HostGuard {
             fn evaluate(
-                &self,
-                call: &GuardCall<'_, HostDictionary>,
+                &self, call: &GuardCall<'_, HostDictionary>,
             ) -> Result<crate::guard::GuardRows<u64>, CallbackError<SourceLost>> {
                 assert_eq!(
                     call.model.interner().lookup_term("original").unwrap(),
@@ -8313,8 +8160,7 @@ mod tests {
         struct DropAll(std::cell::Cell<usize>);
         impl GuardEvaluator for DropAll {
             fn evaluate(
-                &self,
-                _call: &GuardCall<'_>,
+                &self, _call: &GuardCall<'_>,
             ) -> Result<crate::guard::GuardRows, crate::guard::CallbackError> {
                 self.0.set(self.0.get() + 1);
                 Ok(Vec::new())
@@ -8357,8 +8203,7 @@ mod tests {
         struct Partition;
         impl GuardEvaluator for Partition {
             fn evaluate(
-                &self,
-                _call: &GuardCall<'_>,
+                &self, _call: &GuardCall<'_>,
             ) -> Result<crate::guard::GuardRows, crate::guard::CallbackError> {
                 Ok(vec![
                     vec![surface(R).into(), surface(GRAPH).into()],
@@ -8446,8 +8291,7 @@ mod tests {
         }
         impl GuardEvaluator for Rows {
             fn evaluate(
-                &self,
-                call: &GuardCall<'_>,
+                &self, call: &GuardCall<'_>,
             ) -> Result<crate::guard::GuardRows, crate::guard::CallbackError> {
                 self.calls.fetch_add(1, Ordering::Relaxed);
                 Ok(if !self.keep {

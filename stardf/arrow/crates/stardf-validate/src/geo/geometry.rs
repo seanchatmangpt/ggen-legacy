@@ -118,11 +118,8 @@ pub(super) struct PreparedInput {
 
 /// Prepare both source graphs under one cumulative input and worker admission.
 pub(super) fn prepare_pair<'a>(
-    a: &GeometryInput,
-    b: &GeometryInput,
-    profile: &GeoProfile,
-    budget: purrdf_geo_kernel::PreparationBudget,
-    invocation: &'a Invocation,
+    a: &GeometryInput, b: &GeometryInput, profile: &GeoProfile,
+    budget: purrdf_geo_kernel::PreparationBudget, invocation: &'a Invocation,
 ) -> Result<(PreparedInput, PreparedInput, super::invocation::Context<'a>), GeoCallError> {
     let mut budget = invocation.track_budget(budget);
     let a = a.prepare_in_policy_observed(profile, budget.remaining()?, invocation)?;
@@ -142,8 +139,7 @@ impl GeometryInput {
     }
 
     pub(super) fn from_value_native(
-        value: &Value,
-        decode: &Decode<'_, '_, '_, '_>,
+        value: &Value, decode: &Decode<'_, '_, '_, '_>,
     ) -> Result<Self, GeoCallError> {
         if value.get("kind").and_then(Value::as_str) == Some("image") {
             let mut fields = decode.record(value, "original continuous operation image")?;
@@ -196,26 +192,20 @@ impl GeometryInput {
     }
 
     pub(super) fn prepare_with_admission(
-        &self,
-        profile: &GeoProfile,
+        &self, profile: &GeoProfile,
     ) -> Result<PreparedInput, GeoCallError> {
         self.prepare_in_policy(profile, profile.policy())
     }
 
     pub(super) fn prepare_in_policy(
-        &self,
-        profile: &GeoProfile,
-        policy: ExecutionPolicy,
+        &self, profile: &GeoProfile, policy: ExecutionPolicy,
     ) -> Result<PreparedInput, GeoCallError> {
         let invocation = Invocation::new(policy);
         self.prepare_in_policy_observed(profile, policy, &invocation)
     }
 
     pub(super) fn prepare_in_policy_observed(
-        &self,
-        profile: &GeoProfile,
-        policy: ExecutionPolicy,
-        invocation: &Invocation,
+        &self, profile: &GeoProfile, policy: ExecutionPolicy, invocation: &Invocation,
     ) -> Result<PreparedInput, GeoCallError> {
         match self {
             Self::Carrier(term) => prepare_carrier(term, profile, policy, invocation),
@@ -237,12 +227,8 @@ impl GeometryInput {
 }
 
 fn prepare_image(
-    operation: &Crs,
-    term: &TermValue,
-    epoch: Option<&Rat>,
-    profile: &GeoProfile,
-    policy: ExecutionPolicy,
-    invocation: &Invocation,
+    operation: &Crs, term: &TermValue, epoch: Option<&Rat>, profile: &GeoProfile,
+    policy: ExecutionPolicy, invocation: &Invocation,
 ) -> Result<PreparedInput, GeoCallError> {
     let mut budget = invocation.track_budget(purrdf_geo_kernel::PreparationBudget::new(policy));
     let (work, storage) = request::reference_allowance(operation)?;
@@ -280,10 +266,7 @@ fn prepare_image(
 }
 
 fn prepare_carrier(
-    term: &TermValue,
-    profile: &GeoProfile,
-    policy: ExecutionPolicy,
-    invocation: &Invocation,
+    term: &TermValue, profile: &GeoProfile, policy: ExecutionPolicy, invocation: &Invocation,
 ) -> Result<PreparedInput, GeoCallError> {
     let mut budget = invocation.track_budget(purrdf_geo_kernel::PreparationBudget::new(policy));
     let mut phase = invocation.phase(*budget);
@@ -317,10 +300,7 @@ fn prepare_carrier(
 
 impl GeometryParts {
     fn prepare(
-        &self,
-        profile: &GeoProfile,
-        policy: ExecutionPolicy,
-        invocation: &Invocation,
+        &self, profile: &GeoProfile, policy: ExecutionPolicy, invocation: &Invocation,
     ) -> Result<PreparedInput, GeoCallError> {
         let limit = policy.limits();
         let mut budget = invocation.track_budget(purrdf_geo_kernel::PreparationBudget::new(policy));
@@ -563,10 +543,8 @@ impl GeometryParts {
 }
 
 fn prepare_curves(
-    sources: &[Vec<EdgeInput>],
-    reference: &purrdf_geo_kernel::GeographicReference,
-    profile: &GeoProfile,
-    budget: &mut purrdf_geo_kernel::PreparationBudget,
+    sources: &[Vec<EdgeInput>], reference: &purrdf_geo_kernel::GeographicReference,
+    profile: &GeoProfile, budget: &mut purrdf_geo_kernel::PreparationBudget,
     invocation: &Invocation,
 ) -> Result<purrdf_geo_kernel::PreparedValues<PreparedCurve>, GeoCallError> {
     let mut curves = purrdf_geo_kernel::PreparedValuesBuilder::default();
@@ -648,10 +626,8 @@ fn rational_source_bytes(value: &Rat) -> Result<u64, GeoError> {
 }
 
 fn prepare_coordinate(
-    source: &Coord,
-    reference: &purrdf_geo_kernel::GeographicReference,
-    budget: &mut purrdf_geo_kernel::PreparationBudget,
-    invocation: &Invocation,
+    source: &Coord, reference: &purrdf_geo_kernel::GeographicReference,
+    budget: &mut purrdf_geo_kernel::PreparationBudget, invocation: &Invocation,
 ) -> Result<PreparedCoordinate, GeoCallError> {
     let mut context =
         invocation.context(MetricContext::new(reference.clone(), budget.remaining()?)?);

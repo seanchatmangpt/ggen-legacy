@@ -262,8 +262,7 @@ fn details_match(expected: &[ExpectedResult], produced: &[ValidationResult]) -> 
 /// [`result_matches`] (augmenting paths): the matching size and, per expected
 /// result, the produced result it claims.
 fn max_matching(
-    expected: &[ExpectedResult],
-    produced: &[ValidationResult],
+    expected: &[ExpectedResult], produced: &[ValidationResult],
 ) -> (usize, Vec<Option<usize>>) {
     let edges: Vec<Vec<usize>> = expected
         .iter()
@@ -278,10 +277,7 @@ fn max_matching(
         .collect();
     let mut owner: Vec<Option<usize>> = vec![None; produced.len()];
     fn augment(
-        i: usize,
-        edges: &[Vec<usize>],
-        owner: &mut [Option<usize>],
-        seen: &mut [bool],
+        i: usize, edges: &[Vec<usize>], owner: &mut [Option<usize>], seen: &mut [bool],
     ) -> bool {
         for &j in &edges[i] {
             if seen[j] {

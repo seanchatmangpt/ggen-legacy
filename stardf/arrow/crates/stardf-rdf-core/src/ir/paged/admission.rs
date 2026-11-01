@@ -92,11 +92,8 @@ pub(crate) enum PageAdmission {
 /// for why each check is an exact row count rather than mere term presence, and for
 /// why the admitted result is sound but not complete.
 pub(crate) fn admit_pattern(
-    translation: &PageTranslation,
-    s: Option<GlobalTermId>,
-    p: Option<GlobalTermId>,
-    o: Option<GlobalTermId>,
-    g: GraphMatch<GlobalTermId>,
+    translation: &PageTranslation, s: Option<GlobalTermId>, p: Option<GlobalTermId>,
+    o: Option<GlobalTermId>, g: GraphMatch<GlobalTermId>,
 ) -> PageAdmission {
     let summary = translation.summary();
 
@@ -169,9 +166,7 @@ pub(crate) fn admit_pattern(
 /// each per-axis bound exact.
 #[must_use]
 pub(crate) fn estimate_admitted_page(
-    summary: &PageSummary,
-    local: LocalPattern,
-    quad_count: u64,
+    summary: &PageSummary, local: LocalPattern, quad_count: u64,
 ) -> u64 {
     let axis_counts = [
         local.s.map(|s| summary.base_rows_as_subject(s)),
@@ -222,9 +217,7 @@ impl Iterator for PageCandidates<'_> {
 /// (`0..page_count`, ascending) for `Any`. Reads no page; both branches preserve
 /// today's ascending-`PageId` egress order.
 pub(crate) fn candidate_pages(
-    graph_index: &GraphPageIndex,
-    page_count: u64,
-    g: GraphMatch<GlobalTermId>,
+    graph_index: &GraphPageIndex, page_count: u64, g: GraphMatch<GlobalTermId>,
 ) -> PageCandidates<'_> {
     candidate_pages_for_stream(graph_index, page_count, g, PageStream::Base)
 }
@@ -243,10 +236,7 @@ pub(crate) fn candidate_pages(
 /// under a graph key for a stream when that page's own sealed summary reports a
 /// nonzero row count there), so it can contribute nothing.
 pub(crate) fn candidate_pages_for_stream(
-    graph_index: &GraphPageIndex,
-    page_count: u64,
-    g: GraphMatch<GlobalTermId>,
-    stream: PageStream,
+    graph_index: &GraphPageIndex, page_count: u64, g: GraphMatch<GlobalTermId>, stream: PageStream,
 ) -> PageCandidates<'_> {
     candidate_pages_for_stream_in_range(graph_index, page_count, g, stream, 0..page_count)
 }
@@ -255,10 +245,7 @@ pub(crate) fn candidate_pages_for_stream(
 /// iteration. Sorted postings need only binary boundaries, never a scan over
 /// other layers' postings; `Any` directly addresses the requested dense range.
 pub(crate) fn candidate_pages_for_stream_in_range(
-    graph_index: &GraphPageIndex,
-    page_count: u64,
-    g: GraphMatch<GlobalTermId>,
-    stream: PageStream,
+    graph_index: &GraphPageIndex, page_count: u64, g: GraphMatch<GlobalTermId>, stream: PageStream,
     range: std::ops::Range<u64>,
 ) -> PageCandidates<'_> {
     let start = range.start.min(page_count);

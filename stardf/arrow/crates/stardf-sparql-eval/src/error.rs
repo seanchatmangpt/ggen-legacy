@@ -40,8 +40,7 @@ const SOURCE_RENDER_LIMIT: usize = 2048;
 /// Output refusal is propagated; only the cause's bounded rendering receives
 /// the historical truncation marker. No inspection calls this formatter.
 fn write_source_message(
-    error: &(impl core::fmt::Display + ?Sized),
-    output: &mut dyn core::fmt::Write,
+    error: &(impl core::fmt::Display + ?Sized), output: &mut dyn core::fmt::Write,
 ) -> core::fmt::Result {
     const MARKER: &str = "… [truncated]";
     struct Bounded<'a> {
@@ -240,8 +239,7 @@ impl NativeDiagnostic {
     /// # Errors
     /// Returns typed admission, allocator or inconsistent-rendering failure.
     pub fn render(
-        kind: NativeDiagnosticKind,
-        message: impl core::fmt::Display,
+        kind: NativeDiagnosticKind, message: impl core::fmt::Display,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let preserve_failure = |error| {
@@ -285,8 +283,7 @@ impl NativeDiagnostic {
     /// A refused render returns its original static operational failure.
     #[must_use]
     pub fn error(
-        kind: NativeDiagnosticKind,
-        message: impl core::fmt::Display,
+        kind: NativeDiagnosticKind, message: impl core::fmt::Display,
         workspace: &crate::WorkspaceCapability,
     ) -> EvalError {
         match Self::render(kind, message, workspace) {
@@ -1002,9 +999,7 @@ impl EvalError {
     /// Construct an [`Self::RelationIncomplete`] naming the relation and quoting its
     /// own reason.
     pub(crate) fn relation_incomplete_admitted(
-        iri: &str,
-        reason: &str,
-        workspace: &crate::WorkspaceCapability,
+        iri: &str, reason: &str, workspace: &crate::WorkspaceCapability,
     ) -> Self {
         let result = (|| {
             let iri = workspace.authored_text(&iri)?;

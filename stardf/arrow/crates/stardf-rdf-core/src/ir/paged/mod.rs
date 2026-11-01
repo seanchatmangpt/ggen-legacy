@@ -423,10 +423,7 @@ fn seal_statistics(pages: &mut [PageSlot]) -> Result<Arc<PagedStatistics>, Stati
 
 impl PagedDataset {
     fn range_may_match(
-        &self,
-        slot: &PageSlot,
-        stream: PageStream,
-        predicate: Option<GlobalTermId>,
+        &self, slot: &PageSlot, stream: PageStream, predicate: Option<GlobalTermId>,
         range: crate::AnnotationValueRange<'_>,
     ) -> Result<bool, purrdf_lex::allocation::StorageError> {
         let Some(workspace) = range.workspace else {
@@ -713,9 +710,7 @@ impl PagedDataset {
     /// page counts differ, or [`PagedFreezeError::GenerationMismatch`] if the
     /// provider no longer exposes the certified snapshot. No page is materialized.
     pub fn from_parts(
-        dictionary: GlobalDictionary,
-        provider: Arc<dyn PageProvider>,
-        generation: PageGeneration,
+        dictionary: GlobalDictionary, provider: Arc<dyn PageProvider>, generation: PageGeneration,
         parts: Vec<PagePart>,
     ) -> Result<Self, PagedFreezeError> {
         let provider_page_count = provider.page_count();
@@ -1014,10 +1009,7 @@ impl PagedDataset {
     /// contributes a row.
     #[must_use]
     pub fn pages_for_pattern(
-        &self,
-        s: Option<GlobalTermId>,
-        p: Option<GlobalTermId>,
-        o: Option<GlobalTermId>,
+        &self, s: Option<GlobalTermId>, p: Option<GlobalTermId>, o: Option<GlobalTermId>,
         g: GraphMatch<GlobalTermId>,
     ) -> Vec<PageId> {
         let page_count = u64::try_from(self.pages.len()).expect("resident page count fits u64");
@@ -1286,9 +1278,7 @@ impl PagedDataset {
 /// ([`PagedDataset::page`] and [`PagedQueryView`]'s materialization validator) so the
 /// same drift reads the same way whichever one catches it.
 pub(crate) fn summary_drift_message(
-    sealed: &PageSummary,
-    observed: u64,
-    page: &RdfDataset,
+    sealed: &PageSummary, observed: u64, page: &RdfDataset,
 ) -> String {
     let mut message = format!(
         "materialized content no longer matches the summary it was sealed with: the sealed \
@@ -1338,8 +1328,7 @@ impl DatasetView for PagedDataset {
     }
 
     fn reserve_owned_workspace(
-        &self,
-        _: u64,
+        &self, _: u64,
     ) -> Option<Result<crate::OwnedWorkspaceReservation<Self::ReadError>, Self::ReadError>> {
         Some(Ok(crate::NoopReservation::owned()))
     }
@@ -1365,10 +1354,7 @@ impl DatasetView for PagedDataset {
     }
 
     fn quads_for_pattern(
-        &self,
-        s: Option<GlobalTermId>,
-        p: Option<GlobalTermId>,
-        o: Option<GlobalTermId>,
+        &self, s: Option<GlobalTermId>, p: Option<GlobalTermId>, o: Option<GlobalTermId>,
         g: GraphMatch<GlobalTermId>,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + '_ {
         // Narrow the candidate page set from the graph axis first (zero allocation:
@@ -1411,31 +1397,20 @@ impl DatasetView for PagedDataset {
     }
 
     fn probe_plan(
-        &self,
-        _s_bound: bool,
-        _p_bound: bool,
-        _o_bound: bool,
-        _g: GraphMatch<GlobalTermId>,
+        &self, _s_bound: bool, _p_bound: bool, _o_bound: bool, _g: GraphMatch<GlobalTermId>,
     ) {
     }
 
     fn quads_for_pattern_with_plan(
-        &self,
-        _plan: &(),
-        s: Option<GlobalTermId>,
-        p: Option<GlobalTermId>,
-        o: Option<GlobalTermId>,
-        g: GraphMatch<GlobalTermId>,
+        &self, _plan: &(), s: Option<GlobalTermId>, p: Option<GlobalTermId>,
+        o: Option<GlobalTermId>, g: GraphMatch<GlobalTermId>,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + '_ {
         // The unit plan carries nothing; forward to the pattern query.
         self.quads_for_pattern(s, p, o, g)
     }
 
     fn cardinality_estimate(
-        &self,
-        s: Option<GlobalTermId>,
-        p: Option<GlobalTermId>,
-        o: Option<GlobalTermId>,
+        &self, s: Option<GlobalTermId>, p: Option<GlobalTermId>, o: Option<GlobalTermId>,
         g: GraphMatch<GlobalTermId>,
     ) -> u64 {
         // The Merge-scope summation: Σ over admitted pages of
@@ -1489,10 +1464,7 @@ impl DatasetView for PagedDataset {
     }
 
     fn source_summary(
-        &self,
-        predicate: Self::Id,
-        graph: GraphMatch<Self::Id>,
-        stream: crate::StatisticsStream,
+        &self, predicate: Self::Id, graph: GraphMatch<Self::Id>, stream: crate::StatisticsStream,
     ) -> Result<Option<crate::source::SourceSummary>, Self::ReadError> {
         Ok(Some(
             self.statistics
@@ -1517,8 +1489,7 @@ impl DatasetView for PagedDataset {
     }
 
     fn reifier_quads_of(
-        &self,
-        reifier: GlobalTermId,
+        &self, reifier: GlobalTermId,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + '_ {
         // Per-page narrowing, exactly like `annotations_of_with_graph`: a page is
         // skipped BEFORE materialization unless its sealed `PageSummary` proves it
@@ -1556,8 +1527,7 @@ impl DatasetView for PagedDataset {
     }
 
     fn annotations_of_with_graph(
-        &self,
-        reifier: GlobalTermId,
+        &self, reifier: GlobalTermId,
     ) -> impl Iterator<Item = (GlobalTermId, GlobalTermId, Option<GlobalTermId>)> + '_ {
         // A page is skipped BEFORE materialization (empty inner iterator) unless its
         // sealed `PageSummary` proves it owns at least one ANNOTATION row for this
@@ -1591,8 +1561,7 @@ impl DatasetView for PagedDataset {
     /// never touched; a page that IS admitted may still hold rows in other graphs, so
     /// the per-row filter still runs after materialization.
     fn reifier_quads_in_graph(
-        &self,
-        g: GraphMatch<GlobalTermId>,
+        &self, g: GraphMatch<GlobalTermId>,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + '_ {
         // An override, not a new obligation (see the trait's doc comment): narrows the
         // candidate page set to the REIFIER stream's graph postings BEFORE any page is
@@ -1624,8 +1593,7 @@ impl DatasetView for PagedDataset {
     /// See [`reifier_quads_in_graph`](DatasetView::reifier_quads_in_graph) above: the
     /// same page-postings narrowing, over the ANNOTATION stream instead.
     fn annotation_quads_in_graph(
-        &self,
-        g: GraphMatch<GlobalTermId>,
+        &self, g: GraphMatch<GlobalTermId>,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + '_ {
         // See `reifier_quads_in_graph` above: same narrowing, over the ANNOTATION
         // stream's graph postings instead.
@@ -1649,11 +1617,8 @@ impl DatasetView for PagedDataset {
     }
 
     fn annotation_quads_for_range<'a>(
-        &'a self,
-        predicate: Option<Self::Id>,
-        object: Option<Self::Id>,
-        graph: GraphMatch<Self::Id>,
-        range: &'a crate::AnnotationValueRange<'a>,
+        &'a self, predicate: Option<Self::Id>, object: Option<Self::Id>,
+        graph: GraphMatch<Self::Id>, range: &'a crate::AnnotationValueRange<'a>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + 'a {
         admission::candidate_pages_for_stream(
             self.graph_index(),

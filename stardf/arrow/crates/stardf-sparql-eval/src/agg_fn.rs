@@ -286,9 +286,7 @@ pub trait AggregateAccumulator: Send + 'static {
     /// Returns native failures or refuses an opaque bounded implementation before
     /// its body runs when it provides no physical ownership contract.
     fn step_admitted(
-        &mut self,
-        args: &[TermValue],
-        workspace: &crate::WorkspaceCapability,
+        &mut self, args: &[TermValue], workspace: &crate::WorkspaceCapability,
     ) -> Result<(), EvalError> {
         if workspace.is_bounded()
             && !self
@@ -342,9 +340,7 @@ pub trait AggregateAccumulator: Send + 'static {
     /// # Errors
     /// Refuses an opaque bounded merge before its body executes.
     fn combine_admitted(
-        &mut self,
-        other: Box<dyn AggregateAccumulator>,
-        workspace: &crate::WorkspaceCapability,
+        &mut self, other: Box<dyn AggregateAccumulator>, workspace: &crate::WorkspaceCapability,
     ) -> Result<(), EvalError> {
         if workspace.is_bounded()
             && !self
@@ -394,8 +390,7 @@ pub trait AggregateAccumulator: Send + 'static {
     /// # Errors
     /// Returns native failures or refuses an opaque bounded output before its body.
     fn finish_admitted(
-        self: Box<Self>,
-        workspace: &crate::WorkspaceCapability,
+        self: Box<Self>, workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
         if workspace.is_bounded() {
             return Err(EvalError::WorkspaceUnpriced(
@@ -421,8 +416,7 @@ pub trait AggregateAccumulator: Send + 'static {
     ///
     /// As [`Self::finish`].
     fn finish_absorbing(
-        self: Box<Self>,
-        absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
+        self: Box<Self>, absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
     ) -> Result<Option<TermValue>, EvalError> {
         let _ = absorb;
         self.finish()
@@ -431,8 +425,7 @@ pub trait AggregateAccumulator: Send + 'static {
     /// # Errors
     /// Returns physical refusal or the original aggregate's operational error.
     fn finish_absorbing_admitted(
-        self: Box<Self>,
-        absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
+        self: Box<Self>, absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
         if workspace.is_bounded() {
@@ -536,9 +529,7 @@ pub trait CustomAggregate: Send + Sync {
     /// respects. Default: [`purrdf_xsd::exact::Cost::ZERO`], for an aggregate that
     /// does no arbitrary-precision arithmetic.
     fn exact_numeric_cost(
-        &self,
-        survivors: &[Vec<TermValue>],
-        scalarvals: &[(String, TermValue)],
+        &self, survivors: &[Vec<TermValue>], scalarvals: &[(String, TermValue)],
     ) -> purrdf_xsd::exact::Cost {
         let _ = (survivors, scalarvals);
         purrdf_xsd::exact::Cost::ZERO
@@ -551,9 +542,7 @@ pub trait CustomAggregate: Send + Sync {
     /// evaluator calls this one. Default: [`Self::init`], for an aggregate that never
     /// divides.
     fn init_under(
-        &self,
-        scalarvals: &[(String, TermValue)],
-        division: purrdf_xsd::exact::DivisionPolicy,
+        &self, scalarvals: &[(String, TermValue)], division: purrdf_xsd::exact::DivisionPolicy,
     ) -> Box<dyn AggregateAccumulator> {
         let _ = division;
         self.init(scalarvals)
@@ -563,9 +552,7 @@ pub trait CustomAggregate: Send + Sync {
     /// [`Self::init_under`] states. The evaluator calls this one. Default:
     /// [`Self::exact_numeric_cost`].
     fn exact_numeric_cost_under(
-        &self,
-        survivors: &[Vec<TermValue>],
-        scalarvals: &[(String, TermValue)],
+        &self, survivors: &[Vec<TermValue>], scalarvals: &[(String, TermValue)],
         division: purrdf_xsd::exact::DivisionPolicy,
     ) -> purrdf_xsd::exact::Cost {
         let _ = division;
@@ -575,9 +562,7 @@ pub trait CustomAggregate: Send + Sync {
     /// # Errors
     /// Refuses an opaque bounded factory before calling resident host code.
     fn init_admitted(
-        &self,
-        scalarvals: &[(String, TermValue)],
-        division: purrdf_xsd::exact::DivisionPolicy,
+        &self, scalarvals: &[(String, TermValue)], division: purrdf_xsd::exact::DivisionPolicy,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<WorkspaceAccumulator, EvalError> {
         if workspace.is_bounded() {
@@ -593,11 +578,8 @@ pub trait CustomAggregate: Send + Sync {
     /// # Errors
     /// Refuses an opaque bounded cost producer before its body executes.
     fn exact_numeric_cost_admitted(
-        &self,
-        survivors: &[Vec<TermValue>],
-        scalarvals: &[(String, TermValue)],
-        division: purrdf_xsd::exact::DivisionPolicy,
-        workspace: &crate::WorkspaceCapability,
+        &self, survivors: &[Vec<TermValue>], scalarvals: &[(String, TermValue)],
+        division: purrdf_xsd::exact::DivisionPolicy, workspace: &crate::WorkspaceCapability,
     ) -> Result<purrdf_xsd::exact::Cost, EvalError> {
         if workspace.is_bounded() {
             return Err(EvalError::WorkspaceUnpriced(
@@ -625,8 +607,7 @@ impl WorkspaceAccumulator {
     /// # Errors
     /// Returns physical refusal before the accumulator box is allocated.
     pub fn new<A: AggregateAccumulator>(
-        value: A,
-        workspace: &crate::WorkspaceCapability,
+        value: A, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let (value, allocation) =
             crate::workspace::box_native(value, workspace, "native aggregate control")?;
@@ -655,8 +636,7 @@ impl WorkspaceAccumulator {
 /// Recover native state through the original downcast, admitting its diagnostic
 /// only if a host violates the concrete-type contract.
 pub(crate) fn downcast_combine_partial_admitted<T: 'static>(
-    other: Box<dyn AggregateAccumulator>,
-    workspace: &crate::WorkspaceCapability,
+    other: Box<dyn AggregateAccumulator>, workspace: &crate::WorkspaceCapability,
 ) -> Result<T, EvalError> {
     other.into_any().downcast::<T>().map(|boxed| *boxed).map_err(|_| {
         crate::error::NativeDiagnostic::error(
@@ -671,11 +651,8 @@ pub(crate) fn downcast_combine_partial_admitted<T: 'static>(
 }
 
 pub(crate) fn init_contained_admitted(
-    agg: &dyn CustomAggregate,
-    iri: &str,
-    scalarvals: &[(String, TermValue)],
-    division: purrdf_xsd::exact::DivisionPolicy,
-    workspace: &crate::WorkspaceCapability,
+    agg: &dyn CustomAggregate, iri: &str, scalarvals: &[(String, TermValue)],
+    division: purrdf_xsd::exact::DivisionPolicy, workspace: &crate::WorkspaceCapability,
 ) -> Result<WorkspaceAccumulator, EvalError> {
     crate::contain::call_contained_admitted(
         KIND,
@@ -687,9 +664,7 @@ pub(crate) fn init_contained_admitted(
 }
 
 pub(crate) fn step_contained_admitted(
-    accumulator: &mut WorkspaceAccumulator,
-    iri: &str,
-    args: &[TermValue],
+    accumulator: &mut WorkspaceAccumulator, iri: &str, args: &[TermValue],
     workspace: &crate::WorkspaceCapability,
 ) -> Result<(), EvalError> {
     crate::contain::call_contained_admitted(
@@ -702,9 +677,7 @@ pub(crate) fn step_contained_admitted(
 }
 
 pub(crate) fn combine_contained_admitted(
-    accumulator: &mut WorkspaceAccumulator,
-    iri: &str,
-    other: WorkspaceAccumulator,
+    accumulator: &mut WorkspaceAccumulator, iri: &str, other: WorkspaceAccumulator,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<(), EvalError> {
     let WorkspaceAccumulator { value, allocation } = other;
@@ -720,9 +693,7 @@ pub(crate) fn combine_contained_admitted(
 }
 
 pub(crate) fn finish_contained_admitted(
-    accumulator: WorkspaceAccumulator,
-    iri: &str,
-    absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
+    accumulator: WorkspaceAccumulator, iri: &str, absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
     workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
     let WorkspaceAccumulator { value, allocation } = accumulator;
@@ -738,11 +709,8 @@ pub(crate) fn finish_contained_admitted(
 }
 
 pub(crate) fn exact_numeric_cost_contained_admitted(
-    agg: &dyn CustomAggregate,
-    iri: &str,
-    survivors: &[Vec<TermValue>],
-    scalarvals: &[(String, TermValue)],
-    division: purrdf_xsd::exact::DivisionPolicy,
+    agg: &dyn CustomAggregate, iri: &str, survivors: &[Vec<TermValue>],
+    scalarvals: &[(String, TermValue)], division: purrdf_xsd::exact::DivisionPolicy,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<purrdf_xsd::exact::Cost, EvalError> {
     crate::contain::call_contained_admitted(
@@ -756,9 +724,7 @@ pub(crate) fn exact_numeric_cost_contained_admitted(
 
 /// Read the original declaration with admitted panic diagnostics.
 pub(crate) fn state_bound_contained_admitted(
-    agg: &dyn CustomAggregate,
-    iri: &str,
-    workspace: &crate::WorkspaceCapability,
+    agg: &dyn CustomAggregate, iri: &str, workspace: &crate::WorkspaceCapability,
 ) -> Result<u64, EvalError> {
     crate::contain::declaration_contained_admitted(
         KIND,
@@ -771,9 +737,7 @@ pub(crate) fn state_bound_contained_admitted(
 
 /// Read the original determinism declaration with admitted panic diagnostics.
 pub(crate) fn volatility_contained_admitted(
-    agg: &dyn CustomAggregate,
-    iri: &str,
-    workspace: &crate::WorkspaceCapability,
+    agg: &dyn CustomAggregate, iri: &str, workspace: &crate::WorkspaceCapability,
 ) -> Result<Volatility, EvalError> {
     crate::contain::declaration_contained_admitted(
         KIND,
@@ -798,9 +762,7 @@ const KIND: &str = "custom aggregate";
 /// accumulator.
 #[cfg(test)]
 pub(crate) fn init_contained(
-    agg: &dyn CustomAggregate,
-    iri: &str,
-    scalarvals: &[(String, TermValue)],
+    agg: &dyn CustomAggregate, iri: &str, scalarvals: &[(String, TermValue)],
     division: purrdf_xsd::exact::DivisionPolicy,
 ) -> Result<Box<dyn AggregateAccumulator>, EvalError> {
     crate::contain::declaration_contained(KIND, iri, "initial accumulator", || {
@@ -816,9 +778,7 @@ pub(crate) fn init_contained(
 /// failure. More specific typed causes propagate unchanged.
 #[cfg(test)]
 pub(crate) fn step_contained(
-    accumulator: &mut dyn AggregateAccumulator,
-    iri: &str,
-    args: &[TermValue],
+    accumulator: &mut dyn AggregateAccumulator, iri: &str, args: &[TermValue],
 ) -> Result<(), EvalError> {
     crate::contain::call_contained(KIND, iri, "folding a row", || accumulator.step(args))
 }
@@ -833,9 +793,7 @@ pub(crate) fn step_contained(
 /// failure. More specific typed causes propagate unchanged.
 #[cfg(test)]
 pub(crate) fn combine_contained(
-    accumulator: &mut dyn AggregateAccumulator,
-    iri: &str,
-    other: Box<dyn AggregateAccumulator>,
+    accumulator: &mut dyn AggregateAccumulator, iri: &str, other: Box<dyn AggregateAccumulator>,
 ) -> Result<(), EvalError> {
     crate::contain::call_contained(KIND, iri, "combining partial state", || {
         accumulator.combine(other)
@@ -887,8 +845,7 @@ pub(crate) fn downcast_combine_partial<T: 'static>(
 /// failure. More specific typed causes propagate unchanged.
 #[cfg(test)]
 pub(crate) fn finish_contained(
-    accumulator: Box<dyn AggregateAccumulator>,
-    iri: &str,
+    accumulator: Box<dyn AggregateAccumulator>, iri: &str,
     absorb: &mut dyn FnMut(purrdf_xsd::ErrorCode),
 ) -> Result<Option<TermValue>, EvalError> {
     crate::contain::call_contained(KIND, iri, "finishing", || {
@@ -924,16 +881,14 @@ pub(crate) fn arity_contained(agg: &dyn CustomAggregate, iri: &str) -> Result<Ar
 /// [`EvalError::FunctionOperational`] on a caught panic.
 #[cfg(test)]
 pub(crate) fn scalarvals_contained(
-    agg: &dyn CustomAggregate,
-    iri: &str,
+    agg: &dyn CustomAggregate, iri: &str,
 ) -> Result<Vec<ScalarvalSpec>, EvalError> {
     scalarvals_borrowed(agg, iri).map(<[ScalarvalSpec]>::to_vec)
 }
 
 #[cfg(test)]
 fn scalarvals_borrowed<'a>(
-    agg: &'a dyn CustomAggregate,
-    iri: &str,
+    agg: &'a dyn CustomAggregate, iri: &str,
 ) -> Result<&'a [ScalarvalSpec], EvalError> {
     crate::contain::declaration_contained(KIND, iri, "scalarval declaration", || agg.scalarvals())
 }
@@ -1205,8 +1160,7 @@ impl AggregateRegistry {
     }
 
     pub(crate) fn describe_admitted(
-        &self,
-        workspace: &crate::WorkspaceCapability,
+        &self, workspace: &crate::WorkspaceCapability,
     ) -> Result<crate::workspace::AdmittedRecords<AggDescriptor>, EvalError> {
         let mut out =
             crate::workspace::AdmittedRecords::with_capacity(self.aggregates.len(), workspace)?;

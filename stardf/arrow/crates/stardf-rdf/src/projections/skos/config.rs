@@ -199,12 +199,8 @@ pub struct SkosConfig {
 impl SkosConfig {
     /// Construct a fully explicit SKOS projection policy.
     pub fn new(
-        source: SkosSourceRoles,
-        target: SkosTargetRoles,
-        scheme_iri: impl Into<String>,
-        graph_selection: SkosGraphSelection,
-        limits: ProjectionLimits,
-        max_records: usize,
+        source: SkosSourceRoles, target: SkosTargetRoles, scheme_iri: impl Into<String>,
+        graph_selection: SkosGraphSelection, limits: ProjectionLimits, max_records: usize,
     ) -> Result<Self, ProjectionError> {
         source.validate()?;
         target.validate()?;
@@ -268,8 +264,7 @@ impl SkosConfig {
     ///
     /// Rejects a base that is not an absolute IRI.
     pub fn with_document_base_iri(
-        mut self,
-        document_base_iri: Option<String>,
+        mut self, document_base_iri: Option<String>,
     ) -> Result<Self, ProjectionError> {
         if let Some(base) = &document_base_iri {
             validate_absolute_iri(base, "SKOS document base IRI")?;

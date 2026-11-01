@@ -706,10 +706,7 @@ pub struct ClashStep {
 impl ClashStep {
     /// Record a clash step. Crate-private: the only producer is the instrumented search.
     pub(crate) const fn new(
-        clause: usize,
-        node: NodeRef,
-        frame: Vec<NodeRef>,
-        witness: Vec<ProofFact>,
+        clause: usize, node: NodeRef, frame: Vec<NodeRef>, witness: Vec<ProofFact>,
     ) -> Self {
         Self {
             schema: None,
@@ -881,11 +878,7 @@ pub struct MergeStep {
 impl MergeStep {
     /// Record a merge. Crate-private: the only producer is the instrumented search.
     pub(crate) const fn new(
-        cause: MergeCause,
-        left: NodeRef,
-        right: NodeRef,
-        joined: NodeRef,
-        clashed: bool,
+        cause: MergeCause, left: NodeRef, right: NodeRef, joined: NodeRef, clashed: bool,
         licence: MergeLicence,
     ) -> Self {
         Self {
@@ -1174,10 +1167,7 @@ impl BranchStep {
     /// Record a branch point with every outcome still [`BranchOutcome::Unexplored`].
     /// Crate-private: the only producer is the instrumented search.
     pub(crate) fn new(
-        clause: usize,
-        node: NodeRef,
-        frame: Vec<NodeRef>,
-        alternatives: Vec<ProofAlternative>,
+        clause: usize, node: NodeRef, frame: Vec<NodeRef>, alternatives: Vec<ProofAlternative>,
         introduced: Vec<ProofAlternative>,
     ) -> Self {
         let outcomes = vec![BranchOutcome::Unexplored; alternatives.len() + introduced.len()];
@@ -1490,12 +1480,8 @@ impl Recorder {
         self.support = super::support::Journal::with_budget(budget);
     }
     pub(crate) fn schema_application(
-        &mut self,
-        previous: Option<usize>,
-        clause: usize,
-        frame: &[usize],
-        branch: Option<(usize, usize)>,
-        head: &[Ground<usize>],
+        &mut self, previous: Option<usize>, clause: usize, frame: &[usize],
+        branch: Option<(usize, usize)>, head: &[Ground<usize>],
     ) -> Option<usize> {
         match self.support.record(previous, clause, frame, branch, head) {
             Ok(index) => Some(index),
@@ -1507,9 +1493,7 @@ impl Recorder {
     }
 
     pub(crate) fn current_clash(
-        &mut self,
-        bounds: Option<&super::bounds::SchemaBoundEvidence>,
-        latest: Option<usize>,
+        &mut self, bounds: Option<&super::bounds::SchemaBoundEvidence>, latest: Option<usize>,
         frame: &[usize],
     ) -> Option<(Option<SchemaClashEvidence>, CurrentSupportEvidence)> {
         match self.support.extract(bounds, latest, frame) {
@@ -1627,11 +1611,7 @@ impl Recorder {
     /// and the ANSWER the driver reached. A recorder holds only what it observed, which is what
     /// keeps "what the search wrote down" and "what the run decided" two separate facts.
     pub(crate) fn into_proof(
-        self,
-        kb: &Kb,
-        input: [u8; 32],
-        contract: [u8; 32],
-        answer: ProofAnswer,
+        self, kb: &Kb, input: [u8; 32], contract: [u8; 32], answer: ProofAnswer,
     ) -> DlProof {
         DlProof {
             schema_recording_obstruction: self.support.obstruction(),
@@ -3390,18 +3370,13 @@ impl DlProof {
     ///
     /// Any [`DlProofError`] — every one of them is a rejection of an invalid proof.
     pub fn replay_clash(
-        &self,
-        index: usize,
-        ctx: &DlProofContext<'_>,
+        &self, index: usize, ctx: &DlProofContext<'_>,
     ) -> Result<ClashReplay, DlProofError> {
         self.replay_clash_assuming(index, ctx, &Assumptions::of_kb())
     }
 
     fn replay_clash_assuming(
-        &self,
-        index: usize,
-        ctx: &DlProofContext<'_>,
-        assumptions: &Assumptions<'_>,
+        &self, index: usize, ctx: &DlProofContext<'_>, assumptions: &Assumptions<'_>,
     ) -> Result<ClashReplay, DlProofError> {
         let (report, journal, _) = self.replay_clash_inner(index, ctx, assumptions, None)?;
         debug_assert!(journal.is_none(), "ordinary replay requests no journal");
@@ -3410,19 +3385,14 @@ impl DlProof {
 
     #[cfg(test)]
     fn replay_clash_recording<'a>(
-        &'a self,
-        index: usize,
-        ctx: &'a DlProofContext<'_>,
+        &'a self, index: usize, ctx: &'a DlProofContext<'_>,
         journal: super::graph::changes::Journal,
     ) -> Result<RecordedClash<'a>, DlProofError> {
         self.replay_clash_inner(index, ctx, &Assumptions::of_kb(), Some(journal))
     }
 
     fn replay_clash_inner<'a>(
-        &'a self,
-        index: usize,
-        ctx: &'a DlProofContext<'_>,
-        assumptions: &Assumptions<'_>,
+        &'a self, index: usize, ctx: &'a DlProofContext<'_>, assumptions: &Assumptions<'_>,
         mut journal: Option<super::graph::changes::Journal>,
     ) -> Result<RecordedClash<'a>, DlProofError> {
         self.bound_to(ctx)?;
@@ -3633,9 +3603,7 @@ impl DlProof {
     ///
     /// Any [`DlProofError`] — every one of them is a rejection of an invalid proof.
     pub fn replay_branch(
-        &self,
-        index: usize,
-        ctx: &DlProofContext<'_>,
+        &self, index: usize, ctx: &DlProofContext<'_>,
     ) -> Result<BranchReplay, DlProofError> {
         self.bound_to(ctx)?;
         let step = self
@@ -3761,9 +3729,7 @@ impl DlProof {
     ///
     /// Any [`DlProofError`] — every one of them is a rejection of an invalid proof.
     pub fn replay_merge(
-        &self,
-        index: usize,
-        ctx: &DlProofContext<'_>,
+        &self, index: usize, ctx: &DlProofContext<'_>,
     ) -> Result<MergeReplay, DlProofError> {
         self.bound_to(ctx)?;
         let step = self
@@ -3821,11 +3787,7 @@ impl DlProof {
     /// branch alternative is regenerated by [`Self::replay_branch`] against the branch point's
     /// own cited clause and then indexed.
     fn licensed_atom(
-        &self,
-        index: usize,
-        step: &MergeStep,
-        ctx: &DlProofContext<'_>,
-        checks: &mut CheckReport,
+        &self, index: usize, step: &MergeStep, ctx: &DlProofContext<'_>, checks: &mut CheckReport,
     ) -> Result<ProofGround, DlProofError> {
         let unlicensed = |detail: &str| DlProofError::UnlicensedMerge {
             merge: index,
@@ -3935,9 +3897,7 @@ impl DlProof {
     }
 
     pub(crate) fn replay_partial_assuming(
-        &self,
-        ctx: &DlProofContext<'_>,
-        assumptions: &Assumptions<'_>,
+        &self, ctx: &DlProofContext<'_>, assumptions: &Assumptions<'_>,
     ) -> Result<PartialReplay, DlProofError> {
         self.bound_to(ctx)?;
         if self.answer != ProofAnswer::Undecided {
@@ -4017,24 +3977,19 @@ impl DlProof {
     /// [`DlProofError::Truncated`] if the recording hit its ceiling; and any rejection
     /// [`Self::replay_branch`] or [`Self::replay_clash`] makes.
     pub fn replay_refutation(
-        &self,
-        ctx: &DlProofContext<'_>,
+        &self, ctx: &DlProofContext<'_>,
     ) -> Result<RefutationReplay, DlProofError> {
         self.replay_refutation_assuming(ctx, &Assumptions::of_kb())
     }
 
     pub(crate) fn replay_refutation_assuming(
-        &self,
-        ctx: &DlProofContext<'_>,
-        assumptions: &Assumptions<'_>,
+        &self, ctx: &DlProofContext<'_>, assumptions: &Assumptions<'_>,
     ) -> Result<RefutationReplay, DlProofError> {
         self.replay_refutation_inner(ctx, assumptions, None)
     }
 
     pub(crate) fn replay_refutation_recording(
-        &self,
-        ctx: &DlProofContext<'_>,
-        assumptions: &Assumptions<'_>,
+        &self, ctx: &DlProofContext<'_>, assumptions: &Assumptions<'_>,
     ) -> Result<(RefutationReplay, capture::Capture), DlProofError> {
         let mut capture = capture::Capture::default();
         let report = self.replay_refutation_inner(ctx, assumptions, Some(&mut capture))?;
@@ -4042,9 +3997,7 @@ impl DlProof {
     }
 
     fn replay_refutation_inner(
-        &self,
-        ctx: &DlProofContext<'_>,
-        assumptions: &Assumptions<'_>,
+        &self, ctx: &DlProofContext<'_>, assumptions: &Assumptions<'_>,
         mut capture: Option<&mut capture::Capture>,
     ) -> Result<RefutationReplay, DlProofError> {
         self.bound_to(ctx)?;
@@ -4086,10 +4039,7 @@ impl DlProof {
     }
 
     fn current_applications<'a>(
-        &'a self,
-        ctx: &DlProofContext<'_>,
-        latest: Option<usize>,
-        path: &[(usize, usize)],
+        &'a self, ctx: &DlProofContext<'_>, latest: Option<usize>, path: &[(usize, usize)],
     ) -> Result<Vec<&'a super::support::Application>, DlProofError> {
         let applications = super::support::prefix(&self.support, latest, ctx.kb.stop.as_deref())?;
         if !applications
@@ -4109,11 +4059,8 @@ impl DlProof {
     /// `at` names where the outcome was filed, for a diagnostic. Recursion is bounded by the
     /// `seen` marks: a branch point is entered at most once, and there are finitely many.
     fn walk_closure(
-        &self,
-        (ctx, assumptions): (&DlProofContext<'_>, &Assumptions<'_>),
-        outcome: BranchOutcome,
-        at: Option<(usize, usize)>,
-        seen: &mut [bool],
+        &self, (ctx, assumptions): (&DlProofContext<'_>, &Assumptions<'_>), outcome: BranchOutcome,
+        at: Option<(usize, usize)>, seen: &mut [bool],
         (report, capture): (&mut RefutationReplay, &mut Option<&mut capture::Capture>),
         path: &mut Vec<(usize, usize)>,
     ) -> Result<(), DlProofError> {
@@ -4263,9 +4210,7 @@ impl DlProof {
     /// [`CheckReport::unattested`], never assumed satisfied, and a ceiling nothing can lower is
     /// a branch no test constrains.
     pub(crate) fn replay_completion_within(
-        &self,
-        ctx: &DlProofContext<'_>,
-        budget: u64,
+        &self, ctx: &DlProofContext<'_>, budget: u64,
     ) -> Result<CompletionReplay, DlProofError> {
         self.bound_to(ctx)?;
         if self.answer != ProofAnswer::Consistent {
@@ -4295,8 +4240,7 @@ impl DlProof {
     /// [`DlProofError::MalformedCompletion`], [`DlProofError::ClashInCompletion`],
     /// [`DlProofError::ClauseNotSatisfied`] or [`DlProofError::BlockingSignatureMismatch`].
     pub fn replay_completion(
-        &self,
-        ctx: &DlProofContext<'_>,
+        &self, ctx: &DlProofContext<'_>,
     ) -> Result<CompletionReplay, DlProofError> {
         self.replay_completion_within(ctx, MAX_CHECK_WORK)
     }
@@ -4880,9 +4824,7 @@ fn boundaries_of(boundaries: &BTreeSet<Construct>) -> Vec<Construct> {
 /// of variable `0` satisfying `filler`. Expanding it here rather than trusting a recorded
 /// expansion is what makes a tampered `≤n` witness detectable.
 fn ground_body(
-    clause: &DlClause,
-    index: usize,
-    frame: &[NodeRef],
+    clause: &DlClause, index: usize, frame: &[NodeRef],
 ) -> Result<Vec<ProofFact>, DlProofError> {
     /// The identity `frame` binds `var` to, or a rejection.
     fn at(frame: &[NodeRef], var: u32, clause: usize) -> Result<NodeRef, DlProofError> {
@@ -5003,9 +4945,7 @@ fn identification(atom: &ProofGround) -> Option<(MergeCause, NodeRef, NodeRef)> 
 /// indexes the frame, and the frame is attacker-controlled, so a short one must be a rejection
 /// rather than a panic.
 fn ground_licensing_head(
-    clause: &DlClause,
-    index: usize,
-    frame: &[NodeRef],
+    clause: &DlClause, index: usize, frame: &[NodeRef],
 ) -> Result<Vec<Vec<Ground<NodeRef>>>, DlProofError> {
     let width = head_frame_width(&clause.head)
         .ok_or_else(|| malformed("a head disjunct mixes a schematic pair with other atoms"))?;
@@ -5029,9 +4969,7 @@ fn ground_licensing_head(
 /// an index the clause does not license is rejected here; WHICH predecessors were folded is what
 /// stays [`CheckReport::unattested`].
 fn check_introduced(
-    branch: usize,
-    step: &BranchStep,
-    clause: &DlClause,
+    branch: usize, step: &BranchStep, clause: &DlClause,
 ) -> Result<(), DlProofError> {
     if step.introduced.is_empty() {
         if step.introduction_only {
@@ -5501,10 +5439,7 @@ impl<'a> CompletionView<'a> {
     /// NI saturation is required before a blocked graph can be unravelled into a model.
     /// Return false on the existing check budget, never discharge an unvisited obligation.
     fn introduction_saturated(
-        &self,
-        clause: &DlClause,
-        index: usize,
-        x: usize,
+        &self, clause: &DlClause, index: usize, x: usize,
     ) -> Result<bool, DlProofError> {
         if !self.has_nominals
             || !self.nodes[x].root
@@ -5572,11 +5507,7 @@ impl<'a> CompletionView<'a> {
     /// Match `clause.body[at..]`, extending `frame` — the checker's own left-deep join over the
     /// recorded graph.
     fn walk(
-        &self,
-        clause: &DlClause,
-        at: usize,
-        frame: &mut Vec<usize>,
-        out: &mut Vec<Vec<usize>>,
+        &self, clause: &DlClause, at: usize, frame: &mut Vec<usize>, out: &mut Vec<Vec<usize>>,
     ) {
         self.charge(1);
         if self.spent() {
@@ -5649,11 +5580,7 @@ impl<'a> CompletionView<'a> {
     /// Extend `frame` with every strictly-increasing `remaining`-element selection from
     /// `selection.pool[from..]`, continuing the body walk once the selection is complete.
     fn walk_subsets(
-        &self,
-        selection: &Selection<'_>,
-        frame: &mut Vec<usize>,
-        from: usize,
-        remaining: u32,
+        &self, selection: &Selection<'_>, frame: &mut Vec<usize>, from: usize, remaining: u32,
         out: &mut Vec<Vec<usize>>,
     ) {
         self.charge(1);
@@ -5762,10 +5689,7 @@ impl<'a> CompletionView<'a> {
 /// EARLIER and not itself blocked, neither node is a root, both have a predecessor, and the two
 /// agree on their own label, their predecessor's label and their incoming edge.
 fn check_blocking(
-    completion: &Completion,
-    x: usize,
-    y: usize,
-    position: &BTreeMap<NodeRef, usize>,
+    completion: &Completion, x: usize, y: usize, position: &BTreeMap<NodeRef, usize>,
     blocked: &[bool],
 ) -> Result<(), DlProofError> {
     let (blocked_node, blocker) = (&completion.nodes[x], &completion.nodes[y]);
@@ -5819,10 +5743,7 @@ fn check_blocking(
 /// `Decision`. Nothing in this function consults or charges
 /// the work meter.
 pub(crate) fn observe_body(
-    kb: &Kb,
-    st: &State,
-    clause: &DlClause,
-    frame: &[usize],
+    kb: &Kb, st: &State, clause: &DlClause, frame: &[usize],
 ) -> Vec<ProofFact> {
     /// Whether `node`'s label holds `concept`, `⊤` counting as always held — the same reading
     /// [`crate::owl_dl::graph::Graph::has_concept`] gives, and unmetered like it.
@@ -5978,8 +5899,7 @@ pub(crate) fn observe_completion(st: &State, blocks: &[(NodeRef, NodeRef)]) -> C
 /// bytes. The same shape [`Justification::digest`](crate::explain::Justification::digest)
 /// already uses.
 fn try_input_digest<D: purrdf_core::DatasetView>(
-    ontology: &D,
-    stop: Option<&dyn purrdf_core::StopSignal>,
+    ontology: &D, stop: Option<&dyn purrdf_core::StopSignal>,
 ) -> Result<[u8; 32], purrdf_core::CanonError<D::ReadError>> {
     let canonical = match stop {
         Some(stop) => purrdf_core::try_canonicalize_view_with_stop(
@@ -6029,8 +5949,7 @@ pub fn try_ontology_identity<D: purrdf_core::DatasetView>(
 /// The source/profile refusals of [`try_ontology_identity`], or
 /// [`purrdf_core::CanonError::Stopped`]. No partial digest is returned.
 pub fn try_ontology_identity_with_stop<D: purrdf_core::DatasetView>(
-    ontology: &D,
-    stop: &dyn purrdf_core::StopSignal,
+    ontology: &D, stop: &dyn purrdf_core::StopSignal,
 ) -> Result<[u8; 32], purrdf_core::CanonError<D::ReadError>> {
     try_input_digest(ontology, Some(stop))
 }

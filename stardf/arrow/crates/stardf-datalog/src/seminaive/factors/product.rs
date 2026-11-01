@@ -29,11 +29,8 @@ impl Frame {
 
     /// Emit each original combination once, advancing only after admitted output.
     pub(super) fn advance<'r, D: TermDictionary, const N: usize>(
-        &mut self,
-        product: &Product<'_, 'r, D, N>,
-        buffer: &mut RoundBuffer<'r, D::Id, N>,
-        governor: &mut StepGovernor<'_>,
-        evidence: &mut Option<&mut dyn RuleEvidence<D, N>>,
+        &mut self, product: &Product<'_, 'r, D, N>, buffer: &mut RoundBuffer<'r, D::Id, N>,
+        governor: &mut StepGovernor<'_>, evidence: &mut Option<&mut dyn RuleEvidence<D, N>>,
     ) -> Result<(), EvalError<D::Error>>
     where
         Arity<N>: StoreShape<N>,

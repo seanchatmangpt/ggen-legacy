@@ -68,11 +68,8 @@ where
 
     /// Finish the original probe before attaching its evidence or advancing a filter.
     pub(in crate::seminaive) fn advance<D: TermDictionary<Id = I>>(
-        &mut self,
-        selection: &Selection<'_, D, N>,
-        rel: &RelationStore<D, N>,
-        solution: &mut SlotSolution<I, N>,
-        governor: &mut StepGovernor<'_>,
+        &mut self, selection: &Selection<'_, D, N>, rel: &RelationStore<D, N>,
+        solution: &mut SlotSolution<I, N>, governor: &mut StepGovernor<'_>,
         evidence: &mut Option<&mut dyn RuleEvidence<D, N>>,
     ) -> Result<(), EvalError<D::Error>> {
         rel.interner().check_read().map_err(EvalError::Source)?;
@@ -152,9 +149,7 @@ where
     Arity<N>: StoreShape<N>,
 {
     pub(super) fn new(
-        entry: RuleEntry<'_, N>,
-        evidenced: bool,
-        seed: Option<&SlotSolution<I, N>>,
+        entry: RuleEntry<'_, N>, evidenced: bool, seed: Option<&SlotSolution<I, N>>,
     ) -> Self {
         Self {
             atoms: (0..entry.runtime.negated.len())
@@ -190,11 +185,8 @@ where
     }
 
     pub(super) fn advance<D: TermDictionary<Id = I>>(
-        &mut self,
-        entry: RuleEntry<'_, N>,
-        rel: &RelationStore<D, N>,
-        governor: &mut StepGovernor<'_>,
-        evidence: &mut Option<&mut dyn RuleEvidence<D, N>>,
+        &mut self, entry: RuleEntry<'_, N>, rel: &RelationStore<D, N>,
+        governor: &mut StepGovernor<'_>, evidence: &mut Option<&mut dyn RuleEvidence<D, N>>,
     ) -> Result<(), EvalError<D::Error>> {
         self.filters.advance(
             &Selection {

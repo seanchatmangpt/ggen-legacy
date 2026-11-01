@@ -72,10 +72,7 @@ impl<I: ViewTermId> JoinIndex<I> {
 // Out of line by design: see the thin-dispatcher invariant on `eval::eval_node`.
 #[inline(never)]
 pub(crate) fn eval_join<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    left: &GraphPattern,
-    right: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, left: &GraphPattern, right: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let positive = ctx.positive_region(node).unwrap_or(false);
     if positive
@@ -142,10 +139,7 @@ pub(crate) fn eval_join<D: DatasetView + Sync>(
 #[allow(clippy::inline_always)]
 #[inline(always)]
 pub(crate) fn eval_join_delivered<D: DatasetView + Sync, M: crate::eval::RowDelivery<D>>(
-    node: &GraphPattern,
-    left: &GraphPattern,
-    right: &GraphPattern,
-    delivery: M,
+    node: &GraphPattern, left: &GraphPattern, right: &GraphPattern, delivery: M,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     if M::ACTIVE {
@@ -159,10 +153,7 @@ pub(crate) fn eval_join_delivered<D: DatasetView + Sync, M: crate::eval::RowDeli
 #[allow(clippy::inline_always)]
 #[inline(always)]
 pub(crate) fn eval_minus_delivered<D: DatasetView + Sync, M: crate::eval::RowDelivery<D>>(
-    node: &GraphPattern,
-    left: &GraphPattern,
-    right: &GraphPattern,
-    delivery: M,
+    node: &GraphPattern, left: &GraphPattern, right: &GraphPattern, delivery: M,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     if M::ACTIVE {
@@ -180,10 +171,7 @@ fn eval_binary_yielding<
     const MINUS: bool,
     M: crate::eval::RowDelivery<D>,
 >(
-    node: &GraphPattern,
-    left: &GraphPattern,
-    right: &GraphPattern,
-    delivery: M,
+    node: &GraphPattern, left: &GraphPattern, right: &GraphPattern, delivery: M,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let mut lift = Lift::at_admitted(node, &ctx.growth)?;
@@ -221,10 +209,7 @@ fn eval_binary_yielding<
 /// its seed and physical forecast do not enlarge every frame of a join spine.
 #[inline(never)]
 fn finish_join<D: DatasetView + Sync>(
-    mut lift: Lift<'_>,
-    l: SolutionSeq<D::Id>,
-    right: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    mut lift: Lift<'_>, l: SolutionSeq<D::Id>, right: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     if crate::bgp::PositivePlan::seed_eligible_admitted(right, &l.schema, &ctx.growth)? {
         return finish_seeded_join(lift, l, right, 1, None, ctx);
@@ -247,12 +232,8 @@ fn finish_join<D: DatasetView + Sync>(
 /// driver. A copied correlation supplies the original logical schema; other
 /// joins retain their existing driver-first union schema.
 fn finish_seeded_join<D: DatasetView + Sync>(
-    mut lift: Lift<'_>,
-    driver: SolutionSeq<D::Id>,
-    driven: &GraphPattern,
-    driven_position: usize,
-    output: Option<&VarSchema>,
-    ctx: &mut EvalCtx<'_, D>,
+    mut lift: Lift<'_>, driver: SolutionSeq<D::Id>, driven: &GraphPattern, driven_position: usize,
+    output: Option<&VarSchema>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     // A BGP has its original bound-mask/order compiler. Supplying input to the
     // same leaf kernel needs no positive-region forecast or redundant constant
@@ -317,11 +298,8 @@ fn finish_seeded_join<D: DatasetView + Sync>(
 /// factor-once hash join. A seeded second child's result already contains the
 /// first child's bindings; another join would square driver multiplicities.
 pub(crate) fn eval_positive_join<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    left: &GraphPattern,
-    right: &GraphPattern,
-    input: Option<crate::eval::PositiveInput<'_, D::Id>>,
-    plan: &crate::bgp::PositivePlan,
+    node: &GraphPattern, left: &GraphPattern, right: &GraphPattern,
+    input: Option<crate::eval::PositiveInput<'_, D::Id>>, plan: &crate::bgp::PositivePlan,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let mut lift = Lift::at_admitted(node, &ctx.growth)?;
@@ -404,11 +382,8 @@ pub(crate) fn eval_positive_join<D: DatasetView + Sync>(
 /// expression barrier and answers `false`). Neither caller may memoize this
 /// result: it is specific to `mu`.
 pub(crate) fn eval_correlated<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    mu: &[Option<SolutionTerm<D::Id>>],
-    schema: &VarSchema,
-    source: crate::deferred_exists::CorrelatedSource<'_>,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, mu: &[Option<SolutionTerm<D::Id>>], schema: &VarSchema,
+    source: crate::deferred_exists::CorrelatedSource<'_>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     // Before the substitution walk copies `pattern` for this row, and before the copy is
     // evaluated: both recurse over the correlated subtree. See `crate::stack`.
@@ -433,10 +408,8 @@ pub(crate) fn eval_correlated<D: DatasetView + Sync>(
 #[allow(clippy::inline_always)]
 #[inline(always)]
 pub(crate) fn eval_substituted<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    row: &crate::expr::SubstitutionRow,
-    source: crate::deferred_exists::CorrelatedSource<'_>,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, row: &crate::expr::SubstitutionRow,
+    source: crate::deferred_exists::CorrelatedSource<'_>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     eval_substituted_with::<D, false, false>(pattern, row, source, ctx)
 }
@@ -445,10 +418,8 @@ pub(crate) fn eval_substituted<D: DatasetView + Sync>(
 #[allow(clippy::inline_always)]
 #[inline(always)]
 fn eval_substituted_with<D: DatasetView + Sync, const DECLARED: bool, const FIRST: bool>(
-    pattern: &GraphPattern,
-    row: &crate::expr::SubstitutionRow,
-    source: crate::deferred_exists::CorrelatedSource<'_>,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, row: &crate::expr::SubstitutionRow,
+    source: crate::deferred_exists::CorrelatedSource<'_>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     eval_substituted_delivered::<D, DECLARED, FIRST, _>(pattern, row, source, (), ctx)
 }
@@ -484,8 +455,7 @@ impl SubstitutionFrames {
     }
 
     pub(crate) fn push_prepared<D: DatasetView + Sync>(
-        &mut self,
-        body: crate::expr::PreparedPattern,
+        &mut self, body: crate::expr::PreparedPattern,
         ledger_map: Option<crate::expr::SubstitutionSourceMap>,
         placeholders: Option<
             crate::workspace::SharedWorkspace<crate::deferred_exists::DeferredMap>,
@@ -579,10 +549,8 @@ pub(crate) fn prepare_substituted<
     const DECLARED: bool,
     const FIRST: bool,
 >(
-    pattern: &GraphPattern,
-    row: &crate::expr::SubstitutionRow,
-    source: crate::deferred_exists::CorrelatedSource<'_>,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, row: &crate::expr::SubstitutionRow,
+    source: crate::deferred_exists::CorrelatedSource<'_>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<SubstitutedPreparation, EvalError> {
     #[cfg(test)]
     if !DECLARED && crate::deferred_exists::eager_forced() {
@@ -680,10 +648,8 @@ fn eval_substituted_delivered<
     const FIRST: bool,
     M: crate::eval::RowDelivery<D>,
 >(
-    pattern: &GraphPattern,
-    row: &crate::expr::SubstitutionRow,
-    source: crate::deferred_exists::CorrelatedSource<'_>,
-    mut delivery: M,
+    pattern: &GraphPattern, row: &crate::expr::SubstitutionRow,
+    source: crate::deferred_exists::CorrelatedSource<'_>, mut delivery: M,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     crate::stack::check("correlated evaluation (LATERAL or EXISTS)")?;
@@ -796,10 +762,7 @@ fn eval_substituted_delivered<
 #[allow(clippy::inline_always)]
 #[inline(always)]
 pub(crate) fn eval_lateral<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    left: &GraphPattern,
-    right: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, left: &GraphPattern, right: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     eval_application(node, left, right, (), ctx)
 }
@@ -808,11 +771,8 @@ pub(crate) fn eval_lateral<D: DatasetView + Sync>(
 // application reached through the ordinary materializing entry.
 #[inline(never)]
 pub(crate) fn eval_apply<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    left: &GraphPattern,
-    right: &GraphPattern,
-    policy: &purrdf_sparql_algebra::algebra::ApplicationPolicy,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, left: &GraphPattern, right: &GraphPattern,
+    policy: &purrdf_sparql_algebra::algebra::ApplicationPolicy, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     if policy.dataset_required {
         return Err(EvalError::config(
@@ -867,11 +827,8 @@ pub(crate) fn eval_apply<D: DatasetView + Sync>(
 #[allow(clippy::inline_always)]
 #[inline(always)]
 pub(crate) fn eval_apply_with<D: DatasetView + Sync, M: crate::eval::RowDelivery<D>>(
-    node: &GraphPattern,
-    left: &GraphPattern,
-    right: &GraphPattern,
-    policy: &purrdf_sparql_algebra::algebra::ApplicationPolicy,
-    mut delivery: M,
+    node: &GraphPattern, left: &GraphPattern, right: &GraphPattern,
+    policy: &purrdf_sparql_algebra::algebra::ApplicationPolicy, mut delivery: M,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     if !M::ACTIVE {
@@ -913,11 +870,8 @@ pub(crate) fn eval_apply_with<D: DatasetView + Sync, M: crate::eval::RowDelivery
 
 #[inline(never)]
 fn eval_application_yielding<D: DatasetView + Sync, M: crate::eval::RowDelivery<D>>(
-    node: &GraphPattern,
-    left: &GraphPattern,
-    right: &GraphPattern,
-    policy: &purrdf_sparql_algebra::algebra::ApplicationPolicy,
-    mut delivery: M,
+    node: &GraphPattern, left: &GraphPattern, right: &GraphPattern,
+    policy: &purrdf_sparql_algebra::algebra::ApplicationPolicy, mut delivery: M,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let mut blocks = crate::AdmittedVec::new(&ctx.growth);
@@ -1002,12 +956,8 @@ fn eval_application_yielding<D: DatasetView + Sync, M: crate::eval::RowDelivery<
 #[allow(clippy::inline_always)]
 #[inline(always)]
 fn merge_application_row<I: ViewTermId>(
-    left: &RetainedRow<I>,
-    right: &RetainedRow<I>,
-    left_width: usize,
-    indices: &[usize],
-    width: usize,
-    workspace: &crate::WorkspaceCapability,
+    left: &RetainedRow<I>, right: &RetainedRow<I>, left_width: usize, indices: &[usize],
+    width: usize, workspace: &crate::WorkspaceCapability,
 ) -> Result<RetainedRow<I>, EvalError> {
     let evidence = left.combined_evidence(
         right,
@@ -1029,11 +979,8 @@ fn merge_application_row<I: ViewTermId>(
 }
 
 fn evaluate_application_row<D: DatasetView + Sync>(
-    right: &GraphPattern,
-    driver: &Solution<D::Id>,
-    schema: &VarSchema,
-    policy: &purrdf_sparql_algebra::algebra::ApplicationPolicy,
-    ctx: &mut EvalCtx<'_, D>,
+    right: &GraphPattern, driver: &Solution<D::Id>, schema: &VarSchema,
+    policy: &purrdf_sparql_algebra::algebra::ApplicationPolicy, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     // Even a materializing caller must preserve the stored operand's yield
     // order: its own Slice and accumulator consumers can stop or interleave it.
@@ -1050,11 +997,8 @@ fn evaluate_application_row<D: DatasetView + Sync>(
 }
 
 fn evaluate_application_row_with<D: DatasetView + Sync, M: crate::eval::RowDelivery<D>>(
-    right: &GraphPattern,
-    driver: &Solution<D::Id>,
-    schema: &VarSchema,
-    policy: &purrdf_sparql_algebra::algebra::ApplicationPolicy,
-    mut delivery: M,
+    right: &GraphPattern, driver: &Solution<D::Id>, schema: &VarSchema,
+    policy: &purrdf_sparql_algebra::algebra::ApplicationPolicy, mut delivery: M,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let outer = crate::expr::outer_bindings_for_substitution(driver, schema, ctx)?;
@@ -1149,9 +1093,7 @@ impl LateralPending {
     }
 
     pub(crate) fn finish<D: DatasetView + Sync>(
-        mut self,
-        evaluated: Result<Evaluated<D::Id>, EvalError>,
-        ctx: &mut EvalCtx<'_, D>,
+        mut self, evaluated: Result<Evaluated<D::Id>, EvalError>, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<Evaluated<D::Id>, EvalError> {
         self.abort(ctx);
         evaluated
@@ -1174,11 +1116,8 @@ impl<D: DatasetView + Sync> ResidentAbort<D> for LateralPending {
 }
 
 fn enter_lateral_child<D: DatasetView + Sync>(
-    right: &GraphPattern,
-    mu: &[Option<SolutionTerm<D::Id>>],
-    schema: &VarSchema,
-    deferred: Option<&crate::deferred_exists::DeferredLateral>,
-    ctx: &mut EvalCtx<'_, D>,
+    right: &GraphPattern, mu: &[Option<SolutionTerm<D::Id>>], schema: &VarSchema,
+    deferred: Option<&crate::deferred_exists::DeferredLateral>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<LateralPending, EvalError> {
     crate::stack::check("correlated evaluation (LATERAL or EXISTS)")?;
     let current = crate::expr::outer_bindings_for_substitution(mu, schema, ctx)?;
@@ -1313,10 +1252,7 @@ pub(crate) enum LateralStep<I: ViewTermId> {
 }
 
 pub(crate) fn begin_lateral<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    right: &GraphPattern,
-    lift: DetachedLift,
-    child: Evaluated<D::Id>,
+    node: &GraphPattern, right: &GraphPattern, lift: DetachedLift, child: Evaluated<D::Id>,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<LateralStart<D::Id>, EvalError> {
     let mut lift = lift.attach(node);
@@ -1376,10 +1312,7 @@ impl<I: ViewTermId> LateralSequence<I> {
     }
 
     pub(crate) fn step<D: DatasetView<Id = I> + Sync>(
-        self,
-        node: &GraphPattern,
-        right: &GraphPattern,
-        ctx: &mut EvalCtx<'_, D>,
+        self, node: &GraphPattern, right: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<LateralStep<I>, EvalError> {
         if let Some(mu) = self.left.rows.get(self.ordinal) {
             let child =
@@ -1398,10 +1331,7 @@ impl<I: ViewTermId> LateralSequence<I> {
     }
 
     pub(crate) fn resume<D: DatasetView<Id = I> + Sync>(
-        mut self,
-        node: &GraphPattern,
-        evaluated: Evaluated<I>,
-        ctx: &EvalCtx<'_, D>,
+        mut self, node: &GraphPattern, evaluated: Evaluated<I>, ctx: &EvalCtx<'_, D>,
     ) -> Result<Self, EvalError> {
         let right = match evaluated {
             Evaluated::Complete(seq) => seq,
@@ -1429,10 +1359,7 @@ impl<I: ViewTermId> LateralSequence<I> {
     }
 
     pub(crate) fn run_recursive<D: DatasetView<Id = I> + Sync>(
-        mut self,
-        node: &GraphPattern,
-        right: &GraphPattern,
-        ctx: &mut EvalCtx<'_, D>,
+        mut self, node: &GraphPattern, right: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<Evaluated<I>, EvalError> {
         loop {
             match self.step(node, right, ctx)? {
@@ -1460,10 +1387,7 @@ impl<I: ViewTermId> LateralSequence<I> {
 
 #[inline(never)]
 fn eval_application<D: DatasetView + Sync, M: ApplicationMode>(
-    node: &GraphPattern,
-    left: &GraphPattern,
-    right: &GraphPattern,
-    mode: M,
+    node: &GraphPattern, left: &GraphPattern, right: &GraphPattern, mode: M,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let lift = Lift::at_admitted(node, &ctx.growth)?.detach();
@@ -1538,12 +1462,8 @@ fn eval_application<D: DatasetView + Sync, M: ApplicationMode>(
 type LateralRows<I> = crate::AdmittedVec<(RetainedRow<I>, SolutionSeq<I>)>;
 
 fn finish_application_rows<D: DatasetView + Sync>(
-    left_schema: &VarSchema,
-    right_schema: &VarSchema,
-    per_row: &LateralRows<D::Id>,
-    lift: Lift<'_>,
-    declared: bool,
-    ctx: &EvalCtx<'_, D>,
+    left_schema: &VarSchema, right_schema: &VarSchema, per_row: &LateralRows<D::Id>,
+    lift: Lift<'_>, declared: bool, ctx: &EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let out = left_schema
         .union_admitted(right_schema, &ctx.growth)?
@@ -1630,9 +1550,7 @@ fn finish_application_rows<D: DatasetView + Sync>(
 // Out of line by design: see the thin-dispatcher invariant on `eval::eval_node`.
 #[inline(never)]
 pub(crate) fn eval_union<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    arms: &[GraphPattern],
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, arms: &[GraphPattern], ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     eval_union_with(node, arms, None, None, ctx)
 }
@@ -1641,10 +1559,7 @@ pub(crate) fn eval_union<D: DatasetView + Sync>(
 #[allow(clippy::inline_always)]
 #[inline(always)]
 pub(crate) fn eval_union_delivered<D: DatasetView + Sync, M: crate::eval::RowDelivery<D>>(
-    node: &GraphPattern,
-    arms: &[GraphPattern],
-    delivery: M,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, arms: &[GraphPattern], delivery: M, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     if M::ACTIVE {
         eval_union_yielding(node, arms, delivery, ctx)
@@ -1655,10 +1570,7 @@ pub(crate) fn eval_union_delivered<D: DatasetView + Sync, M: crate::eval::RowDel
 
 #[inline(never)]
 fn eval_union_yielding<D: DatasetView + Sync, M: crate::eval::RowDelivery<D>>(
-    node: &GraphPattern,
-    arms: &[GraphPattern],
-    mut delivery: M,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, arms: &[GraphPattern], mut delivery: M, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let mut lift = Lift::at_admitted(node, &ctx.growth)?;
     let mut blocks = purrdf_core::SmallVec::<[SolutionSeq<D::Id>; 2]>::new();
@@ -1689,20 +1601,16 @@ fn eval_union_yielding<D: DatasetView + Sync, M: crate::eval::RowDelivery<D>>(
 }
 
 pub(crate) fn eval_positive_union<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    arms: &[GraphPattern],
-    input: Option<crate::eval::PositiveInput<'_, D::Id>>,
-    plan: &crate::bgp::PositivePlan,
+    node: &GraphPattern, arms: &[GraphPattern],
+    input: Option<crate::eval::PositiveInput<'_, D::Id>>, plan: &crate::bgp::PositivePlan,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     eval_union_with(node, arms, input, Some(plan), ctx)
 }
 
 fn eval_union_with<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    arms: &[GraphPattern],
-    input: Option<crate::eval::PositiveInput<'_, D::Id>>,
-    plan: Option<&crate::bgp::PositivePlan>,
+    node: &GraphPattern, arms: &[GraphPattern],
+    input: Option<crate::eval::PositiveInput<'_, D::Id>>, plan: Option<&crate::bgp::PositivePlan>,
     ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let mut lift = Lift::at_admitted(node, &ctx.growth)?;
@@ -1903,8 +1811,7 @@ fn eval_union_with<D: DatasetView + Sync>(
 /// capped at the intermediate-cell ceiling for the output's width — the one bag this
 /// node materializes.
 pub(crate) fn concat_union<D: DatasetView + Sync>(
-    arms: impl IntoIterator<Item = SolutionSeq<D::Id>>,
-    ctx: &EvalCtx<'_, D>,
+    arms: impl IntoIterator<Item = SolutionSeq<D::Id>>, ctx: &EvalCtx<'_, D>,
 ) -> Result<SolutionSeq<D::Id>, EvalError> {
     let mut incoming = arms.into_iter();
     let first = incoming.next();
@@ -2050,9 +1957,7 @@ type ChildCertificate = crate::governor::lift::Certificate;
 
 /// The mapping from a right operand's column ordinal to its ordinal in `out`.
 fn right_to_out_map(
-    right: &VarSchema,
-    out: &VarSchema,
-    workspace: &crate::WorkspaceCapability,
+    right: &VarSchema, out: &VarSchema, workspace: &crate::WorkspaceCapability,
 ) -> Result<crate::workspace::AdmittedVec<usize>, EvalError> {
     let mut columns = crate::workspace::AdmittedVec::new(workspace);
     for variable in right.vars() {
@@ -2072,9 +1977,7 @@ fn right_to_out_map(
 /// result **once** and reuse it across every outer row (see [`probe_has_match`]),
 /// rather than rebuilding it per probe.
 pub(crate) fn build_index<I: ViewTermId>(
-    r: &SolutionSeq<I>,
-    shared: &[(usize, usize)],
-    workspace: &crate::WorkspaceCapability,
+    r: &SolutionSeq<I>, shared: &[(usize, usize)], workspace: &crate::WorkspaceCapability,
 ) -> Result<(JoinIndex<I>, crate::AdmittedVec<usize>), EvalError> {
     // Pre-size to the build-row count: the exact upper bound on distinct keys, so a
     // large build side is filled without incremental rehash-and-reallocate churn.
@@ -2147,12 +2050,8 @@ pub(crate) fn build_index<I: ViewTermId>(
 /// evidence-tracked answer for the identical probe. Standard queries carry no
 /// declared gaps, so the common path pays only one flag read per row.
 pub(crate) fn probe_has_match<I: ViewTermId>(
-    probe: &[Option<SolutionTerm<I>>],
-    shared: &[(usize, usize)],
-    keyed: &JoinIndex<I>,
-    wild: &[usize],
-    r_rows: &[RetainedRow<I>],
-    workspace: &crate::WorkspaceCapability,
+    probe: &[Option<SolutionTerm<I>>], shared: &[(usize, usize)], keyed: &JoinIndex<I>,
+    wild: &[usize], r_rows: &[RetainedRow<I>], workspace: &crate::WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     // A row joins only if it is compatible AND its membership is established.
     let member = |rrow: &RetainedRow<I>| -> bool {
@@ -2179,8 +2078,7 @@ pub(crate) fn probe_has_match<I: ViewTermId>(
 /// boolean probes retain their constant-time bucket-presence shortcut above;
 /// an information join necessarily reads each matching original record.
 pub(crate) fn probe_evidence<D: DatasetView + Sync>(
-    probe: &[Option<SolutionTerm<D::Id>>],
-    entry: &crate::eval::ExistsInner<D::Id>,
+    probe: &[Option<SolutionTerm<D::Id>>], entry: &crate::eval::ExistsInner<D::Id>,
     ctx: &EvalCtx<'_, D>,
 ) -> Result<(bool, crate::evidence_exec::RowEvidence), EvalError> {
     let mut combined: Option<crate::evidence_exec::RowEvidence> = None;
@@ -2226,9 +2124,7 @@ pub(crate) fn probe_evidence<D: DatasetView + Sync>(
 
 /// Hash-join two solution sequences on their shared variables.
 fn hash_join<D: DatasetView + Sync>(
-    l: &SolutionSeq<D::Id>,
-    r: &SolutionSeq<D::Id>,
-    ctx: &EvalCtx<'_, D>,
+    l: &SolutionSeq<D::Id>, r: &SolutionSeq<D::Id>, ctx: &EvalCtx<'_, D>,
 ) -> Result<SolutionSeq<D::Id>, EvalError> {
     let out = l.schema.union_admitted(&r.schema, &ctx.growth)?;
     let out_len = out.len();
@@ -2416,9 +2312,7 @@ enum KeySide {
 /// column — the common star-join shape — produces an allocation-free
 /// [`JoinKey::Single`]; zero or ≥2 columns fall back to an owned [`JoinKey::Multi`].
 fn bound_key<I: ViewTermId>(
-    row: &[Option<SolutionTerm<I>>],
-    shared: &[(usize, usize)],
-    side: KeySide,
+    row: &[Option<SolutionTerm<I>>], shared: &[(usize, usize)], side: KeySide,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<JoinKey<I>>, EvalError> {
     let col_of = |ia: usize, ib: usize| match side {
@@ -2446,12 +2340,8 @@ fn bound_key<I: ViewTermId>(
 /// filled from the right (and an already-bound shared column — equal by
 /// compatibility — is left intact).
 fn merge_admitted<I: ViewTermId>(
-    left: &RetainedRow<I>,
-    right: &RetainedRow<I>,
-    left_len: usize,
-    right_to_out: &[usize],
-    width: usize,
-    workspace: &crate::WorkspaceCapability,
+    left: &RetainedRow<I>, right: &RetainedRow<I>, left_len: usize, right_to_out: &[usize],
+    width: usize, workspace: &crate::WorkspaceCapability,
 ) -> Result<RetainedRow<I>, EvalError> {
     #[cfg(test)]
     MERGE_COUNT.with(|count| {
@@ -2530,11 +2420,8 @@ fn counting_merges<T>(run: impl FnOnce() -> T) -> (T, usize) {
 // Out of line by design: see the thin-dispatcher invariant on `eval::eval_node`.
 #[inline(never)]
 pub(crate) fn eval_left_join<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    left: &GraphPattern,
-    right: &GraphPattern,
-    expression: Option<&Expression>,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, left: &GraphPattern, right: &GraphPattern,
+    expression: Option<&Expression>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let evaluated = eval_evaluated(left, ctx)?;
     finish_left_join(node, evaluated, right, expression, ctx)
@@ -2545,11 +2432,8 @@ pub(crate) fn eval_left_join<D: DatasetView + Sync>(
 /// spine, just as the node dispatcher keeps operator work out of its frame.
 #[inline(never)]
 pub(crate) fn finish_left_join<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    evaluated: Evaluated<D::Id>,
-    right: &GraphPattern,
-    expression: Option<&Expression>,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, evaluated: Evaluated<D::Id>, right: &GraphPattern,
+    expression: Option<&Expression>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     if let Evaluated::Complete(rows) = &evaluated
         && crate::bgp::PositivePlan::seed_eligible_admitted(right, &rows.schema, &ctx.growth)?
@@ -2594,12 +2478,8 @@ pub(crate) fn finish_left_join<D: DatasetView + Sync>(
 /// tested. A duplicate driver contributes its own complete match block; an
 /// unmatched occurrence is padded only after its seeded relation finishes.
 fn eval_seeded_left_join<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    left: SolutionSeq<D::Id>,
-    right: &GraphPattern,
-    expression: Option<&Expression>,
-    plan: &crate::bgp::PositivePlan,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, left: SolutionSeq<D::Id>, right: &GraphPattern,
+    expression: Option<&Expression>, plan: &crate::bgp::PositivePlan, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let mut lift = Lift::at_admitted(node, &ctx.growth)?;
     let schema = left
@@ -2675,13 +2555,9 @@ struct SeededOptionalBlock<I: ViewTermId> {
 /// Execute each driver through the same node/read/stop checkpoints. Unfiltered
 /// seeds move their singleton storage; conditions retain the ordinary lift.
 fn seeded_optional_block<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    unit: SolutionSeq<D::Id>,
-    right: &GraphPattern,
-    expression: Option<&Expression>,
-    plan: &crate::bgp::PositivePlan,
-    bgp: &mut Option<crate::bgp::CompiledBgp<D::Id>>,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, unit: SolutionSeq<D::Id>, right: &GraphPattern,
+    expression: Option<&Expression>, plan: &crate::bgp::PositivePlan,
+    bgp: &mut Option<crate::bgp::CompiledBgp<D::Id>>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<SeededOptionalBlock<D::Id>, EvalError> {
     let mut unit = Some(unit);
     let input = if expression.is_none() {
@@ -2722,8 +2598,7 @@ fn seeded_optional_block<D: DatasetView + Sync>(
 /// Complete driver blocks share their layout, padding and sink admission law
 /// across serial execution and the ungoverned indexed chunk reduction.
 fn optional_evidence<D: DatasetView + Sync>(
-    row: &RetainedRow<D::Id>,
-    ctx: &EvalCtx<'_, D>,
+    row: &RetainedRow<D::Id>, ctx: &EvalCtx<'_, D>,
 ) -> Result<Option<crate::evidence_exec::RowEvidence>, EvalError> {
     if ctx.evidence_input.is_none() && !row.has_evidence_attachment() {
         return Ok(None);
@@ -2737,13 +2612,9 @@ fn optional_evidence<D: DatasetView + Sync>(
 }
 
 fn append_seeded_optional_block<D: DatasetView + Sync>(
-    block: SolutionSeq<D::Id>,
-    padding: Option<&RetainedRow<D::Id>>,
-    rows: &mut RowsBuilder<D::Id>,
-    schema: &crate::solution::SharedSchema,
-    row_ceiling: Option<usize>,
-    cell_ceiling: Option<usize>,
-    ctx: &EvalCtx<'_, D>,
+    block: SolutionSeq<D::Id>, padding: Option<&RetainedRow<D::Id>>, rows: &mut RowsBuilder<D::Id>,
+    schema: &crate::solution::SharedSchema, row_ceiling: Option<usize>,
+    cell_ceiling: Option<usize>, ctx: &EvalCtx<'_, D>,
 ) -> Result<bool, EvalError> {
     if let Some(padding) = padding {
         // The ordinary empty outer join admits its padded working row before
@@ -2777,12 +2648,8 @@ fn append_seeded_optional_block<D: DatasetView + Sync>(
 /// operational read can observe a fork. BGPs carry parent terms but mint none,
 /// so each child's complete rows escape without a scratch conversion.
 fn parallel_seeded_optional<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    left: &SolutionSeq<D::Id>,
-    right: &GraphPattern,
-    plan: &crate::bgp::PositivePlan,
-    schema: &crate::solution::SharedSchema,
-    ctx: &EvalCtx<'_, D>,
+    node: &GraphPattern, left: &SolutionSeq<D::Id>, right: &GraphPattern,
+    plan: &crate::bgp::PositivePlan, schema: &crate::solution::SharedSchema, ctx: &EvalCtx<'_, D>,
 ) -> Result<crate::solution::RowBag<D::Id>, EvalError> {
     let (rows, _) = crate::parallel::par_chunk_try_map_init_fallible(
         ctx.sequential_operation_required(),
@@ -2833,11 +2700,8 @@ fn parallel_seeded_optional<D: DatasetView + Sync>(
 /// Admit a completed seeded row before constructing padding or growing its sink.
 /// Matched and unmatched occurrences share the parent's answer and cell ceilings.
 fn push_seeded_join_row<D: DatasetView + Sync>(
-    rows: &mut RowsBuilder<D::Id>,
-    width: usize,
-    row_ceiling: Option<usize>,
-    cell_ceiling: Option<usize>,
-    ctx: &EvalCtx<'_, D>,
+    rows: &mut RowsBuilder<D::Id>, width: usize, row_ceiling: Option<usize>,
+    cell_ceiling: Option<usize>, ctx: &EvalCtx<'_, D>,
     make_row: impl FnOnce() -> Result<RetainedRow<D::Id>, EvalError>,
 ) -> Result<bool, EvalError> {
     if row_ceiling.is_some_and(|cap| rows.len() >= cap) {
@@ -2862,11 +2726,9 @@ fn push_seeded_join_row<D: DatasetView + Sync>(
 /// the arms directly, rather than only through a whole query whose trip point depends on
 /// a charge schedule.
 fn left_join_lift<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    left: Evaluated<D::Id>,
+    node: &GraphPattern, left: Evaluated<D::Id>,
     right: impl FnOnce(&SolutionSeq<D::Id>, &mut EvalCtx<'_, D>) -> Result<Evaluated<D::Id>, EvalError>,
-    expression: Option<&Expression>,
-    ctx: &mut EvalCtx<'_, D>,
+    expression: Option<&Expression>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let mut lift = Lift::at_admitted(node, &ctx.growth)?;
     let Some(l) = lift.absorb(0, left) else {
@@ -2920,11 +2782,8 @@ enum Candidates<'a> {
 /// would visit. A bucket is only ever used when `wild` is empty AND `lrow` is fully
 /// bound on its shared columns; an absent bucket is the empty candidate list.
 fn filtered_candidates<'a, I: ViewTermId>(
-    lrow: &[Option<SolutionTerm<I>>],
-    shared: &[(usize, usize)],
-    keyed: &'a JoinIndex<I>,
-    wild: &[usize],
-    workspace: &crate::WorkspaceCapability,
+    lrow: &[Option<SolutionTerm<I>>], shared: &[(usize, usize)], keyed: &'a JoinIndex<I>,
+    wild: &[usize], workspace: &crate::WorkspaceCapability,
 ) -> Result<Candidates<'a>, EvalError> {
     if wild.is_empty()
         && let Some(key) = bound_key(lrow, shared, KeySide::Left, workspace)?
@@ -2952,12 +2811,8 @@ fn filtered_candidates<'a, I: ViewTermId>(
 /// the whole of it, in which case "no pairing passes" is not a fact this operator holds
 /// and the left-alone row must not be emitted; see [`eval_left_join`].
 fn left_outer_join_filtered<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    l: &SolutionSeq<D::Id>,
-    r: &SolutionSeq<D::Id>,
-    expr: &Expression,
-    ctx: &mut EvalCtx<'_, D>,
-    pad_unmatched: bool,
+    node: &GraphPattern, l: &SolutionSeq<D::Id>, r: &SolutionSeq<D::Id>, expr: &Expression,
+    ctx: &mut EvalCtx<'_, D>, pad_unmatched: bool,
 ) -> Result<SolutionSeq<D::Id>, EvalError> {
     let out = l
         .schema
@@ -3184,10 +3039,7 @@ fn left_outer_join_filtered<D: DatasetView + Sync>(
 /// operator then computes an inner join, which is what a `LeftJoin` over an incomplete
 /// right bag soundly is.
 fn left_outer_join<D: DatasetView + Sync>(
-    l: &SolutionSeq<D::Id>,
-    r: &SolutionSeq<D::Id>,
-    ctx: &EvalCtx<'_, D>,
-    pad_unmatched: bool,
+    l: &SolutionSeq<D::Id>, r: &SolutionSeq<D::Id>, ctx: &EvalCtx<'_, D>, pad_unmatched: bool,
 ) -> Result<SolutionSeq<D::Id>, EvalError> {
     let out = l.schema.union_admitted(&r.schema, &ctx.growth)?;
     let out_len = out.len();
@@ -3378,10 +3230,7 @@ fn left_outer_join<D: DatasetView + Sync>(
 // Out of line by design: see the thin-dispatcher invariant on `eval::eval_node`.
 #[inline(never)]
 pub(crate) fn eval_minus<D: DatasetView + Sync>(
-    node: &GraphPattern,
-    left: &GraphPattern,
-    right: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    node: &GraphPattern, left: &GraphPattern, right: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Evaluated<D::Id>, EvalError> {
     let mut lift = Lift::at_admitted(node, &ctx.growth)?;
     let Some(l) = lift.absorb(0, eval_evaluated(left, ctx)?) else {
@@ -3471,10 +3320,7 @@ pub(crate) fn eval_minus<D: DatasetView + Sync>(
 #[allow(clippy::inline_always)]
 #[inline(always)]
 fn minus_rows<D: DatasetView + Sync>(
-    l: SolutionSeq<D::Id>,
-    r: &SolutionSeq<D::Id>,
-    shared: &[(usize, usize)],
-    ctx: &EvalCtx<'_, D>,
+    l: SolutionSeq<D::Id>, r: &SolutionSeq<D::Id>, shared: &[(usize, usize)], ctx: &EvalCtx<'_, D>,
 ) -> Result<SolutionSeq<D::Id>, EvalError> {
     // Disjoint domains (no shared column): the domain-intersection guard below is
     // `shared.iter().any(..)` over an empty slice, provably `false` for every pair, so
@@ -3539,9 +3385,7 @@ fn minus_rows<D: DatasetView + Sync>(
 }
 
 fn minus_evidence<D: DatasetView + Sync>(
-    left: &RetainedRow<D::Id>,
-    right: &SolutionSeq<D::Id>,
-    shared: &[(usize, usize)],
+    left: &RetainedRow<D::Id>, right: &SolutionSeq<D::Id>, shared: &[(usize, usize)],
     ctx: &EvalCtx<'_, D>,
 ) -> Result<Option<crate::evidence_exec::RowEvidence>, EvalError> {
     // No future right row can remove a left row with no shared bound domain.
@@ -3669,9 +3513,7 @@ mod tests {
     // dispatch — which is also what keeps them testing the wiring rather than a private
     // entry point no query ever reaches.
     fn eval_join<D: DatasetView<Id = TermId> + Sync>(
-        left: &GraphPattern,
-        right: &GraphPattern,
-        ctx: &mut EvalCtx<'_, D>,
+        left: &GraphPattern, right: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<SolutionSeq, EvalError> {
         eval(
             &GraphPattern::Join {
@@ -3683,17 +3525,13 @@ mod tests {
     }
 
     fn eval_union<D: DatasetView<Id = TermId> + Sync>(
-        left: &GraphPattern,
-        right: &GraphPattern,
-        ctx: &mut EvalCtx<'_, D>,
+        left: &GraphPattern, right: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<SolutionSeq, EvalError> {
         eval(&GraphPattern::union(left.clone(), right.clone()), ctx)
     }
 
     fn eval_left_join<D: DatasetView<Id = TermId> + Sync>(
-        left: &GraphPattern,
-        right: &GraphPattern,
-        expression: Option<&Expression>,
+        left: &GraphPattern, right: &GraphPattern, expression: Option<&Expression>,
         ctx: &mut EvalCtx<'_, D>,
     ) -> Result<SolutionSeq, EvalError> {
         eval(
@@ -3707,9 +3545,7 @@ mod tests {
     }
 
     fn eval_minus<D: DatasetView<Id = TermId> + Sync>(
-        left: &GraphPattern,
-        right: &GraphPattern,
-        ctx: &mut EvalCtx<'_, D>,
+        left: &GraphPattern, right: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<SolutionSeq, EvalError> {
         eval(
             &GraphPattern::Minus {
@@ -4243,8 +4079,8 @@ mod tests {
         // Mint one genuinely undecided row-evidence record through the native
         // owner (the only lawful construction path — `with_undecided` is private).
         let query = QueryEvidence::new(&workspace).expect("query evidence owner");
-        let cause = purrdf_core::TermValue::iri("https://example.org/missing-time");
-        let concern = purrdf_core::TermValue::simple_literal("candidate");
+        let cause = TermValue::iri("https://example.org/missing-time");
+        let concern = TermValue::simple_literal("candidate");
         let reason = query
             .declare_reason(ReasonDescription {
                 cause: &cause,
@@ -4271,11 +4107,10 @@ mod tests {
 
         // Attach the records to rows; a non-virtual record forces the tracked
         // owner so `evidence()` observes the real per-row state.
-        let undecided_row =
-            crate::solution::RetainedRow::from_resident(purrdf_core::smallvec![t(2)])
-                .with_evidence(undecided, &workspace)
-                .expect("attach undecided evidence");
-        let decided_row = crate::solution::RetainedRow::from_resident(purrdf_core::smallvec![t(1)])
+        let undecided_row = RetainedRow::from_resident(purrdf_core::smallvec![t(2)])
+            .with_evidence(undecided, &workspace)
+            .expect("attach undecided evidence");
+        let decided_row = RetainedRow::from_resident(purrdf_core::smallvec![t(1)])
             .with_evidence(decided.clone(), &workspace)
             .expect("attach decided evidence");
 
@@ -4313,7 +4148,7 @@ mod tests {
         // A lone undecided compatible row must not establish membership either.
         let mut solo = RowsBuilder::new(&workspace);
         solo.push_row(
-            crate::solution::RetainedRow::from_resident(purrdf_core::smallvec![t(2)])
+            RetainedRow::from_resident(purrdf_core::smallvec![t(2)])
                 .with_evidence(mint_undecided(), &workspace)
                 .expect("attach undecided evidence"),
         )

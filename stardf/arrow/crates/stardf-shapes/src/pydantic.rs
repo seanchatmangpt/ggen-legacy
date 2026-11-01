@@ -298,8 +298,7 @@ impl PydanticConfig {
     ///
     /// Returns [`PydanticError`] for an invalid package path or blank docstring.
     pub fn new(
-        package_name: impl Into<String>,
-        package_docstring: impl Into<String>,
+        package_name: impl Into<String>, package_docstring: impl Into<String>,
         models_docstring: impl Into<String>,
     ) -> Result<Self, PydanticError> {
         let package_name = package_name.into();
@@ -328,8 +327,7 @@ impl PydanticConfig {
     /// Returns [`PydanticError`] when the combined package configuration exceeds
     /// a fixed resource or portable-path ceiling.
     pub fn with_topology(
-        mut self,
-        topology: PydanticPackageTopology,
+        mut self, topology: PydanticPackageTopology,
     ) -> Result<Self, PydanticError> {
         config::validate_full_config(
             &self.package_name,
@@ -349,8 +347,7 @@ impl PydanticConfig {
     /// Returns [`PydanticError`] when the combined package configuration exceeds
     /// a fixed resource or portable-path ceiling.
     pub fn with_version_stamp(
-        mut self,
-        version_stamp: PydanticVersionStamp,
+        mut self, version_stamp: PydanticVersionStamp,
     ) -> Result<Self, PydanticError> {
         config::validate_full_config(
             &self.package_name,
@@ -533,8 +530,7 @@ impl ArtifactAccumulator {
 /// names collide after Python identifier normalization, a routed topology is not an exact total partition, or a fixed input/configuration/
 /// output resource ceiling is exceeded. The function returns no partial package.
 pub fn emit_pydantic(
-    compiled: &CompiledSchema,
-    config: &PydanticConfig,
+    compiled: &CompiledSchema, config: &PydanticConfig,
 ) -> Result<PydanticPackage, PydanticError> {
     let catalog = CompiledSchemaCatalog::parse_with_limits(
         compiled,
@@ -724,8 +720,7 @@ pub fn emit_pydantic(
 /// deterministic emission or when the retained source schema cannot be
 /// imported with the caller's [`SchemaImportConfig`].
 pub fn import_pydantic_package(
-    package: &PydanticPackage,
-    config: &SchemaImportConfig,
+    package: &PydanticPackage, config: &SchemaImportConfig,
 ) -> Result<ImportedShapes, PydanticError> {
     if package.dialect != PYDANTIC_DIALECT {
         return Err(PydanticError::new(format!(
@@ -766,8 +761,7 @@ pub fn import_pydantic_package(
 }
 
 fn definition_names(
-    defs: &Object,
-    routed: bool,
+    defs: &Object, routed: bool,
 ) -> Result<BTreeMap<String, String>, PydanticError> {
     let mut names = BTreeMap::new();
     let mut reverse = BTreeMap::<String, String>::new();
@@ -843,10 +837,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn render_definition(
-        &mut self,
-        key: &str,
-        class_name: &str,
-        definition: &Value,
+        &mut self, key: &str, class_name: &str, definition: &Value,
         class_config: Option<&PydanticClassConfig>,
     ) -> Result<String, PydanticError> {
         let path = format!("#/$defs/{}", pointer_escape(key));
@@ -863,11 +854,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn render_record(
-        &mut self,
-        class_name: &str,
-        definition: &Object,
-        path: &str,
-        schema_literal: &str,
+        &mut self, class_name: &str, definition: &Object, path: &str, schema_literal: &str,
         class_config: Option<&PydanticClassConfig>,
     ) -> Result<String, PydanticError> {
         let properties = properties(definition, path)?;
@@ -952,11 +939,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn render_root(
-        &mut self,
-        class_name: &str,
-        definition: &Value,
-        path: &str,
-        schema_literal: &str,
+        &mut self, class_name: &str, definition: &Value, path: &str, schema_literal: &str,
         class_config: Option<&PydanticClassConfig>,
     ) -> Result<String, PydanticError> {
         let mut out = String::new();
@@ -1116,9 +1099,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn resolve_declared_type(
-        &mut self,
-        object: &Object,
-        path: &str,
+        &mut self, object: &Object, path: &str,
     ) -> Result<String, PydanticError> {
         let Some(declared) = object.get("type") else {
             if object.contains_key("properties") || object.contains_key("additionalProperties") {
@@ -1153,10 +1134,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn resolve_type_name(
-        &mut self,
-        kind: &str,
-        object: &Object,
-        path: &str,
+        &mut self, kind: &str, object: &Object, path: &str,
     ) -> Result<String, PydanticError> {
         match kind {
             "null" => Ok("None".to_owned()),
@@ -1321,10 +1299,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn resolve_composed_union(
-        &mut self,
-        branches: &[Value],
-        parent: &Object,
-        path: &str,
+        &mut self, branches: &[Value], parent: &Object, path: &str,
     ) -> Result<String, PydanticError> {
         let mut types = Vec::with_capacity(branches.len());
         for (index, branch) in branches.iter().enumerate() {
@@ -1575,11 +1550,7 @@ impl<'a> Renderer<'a> {
     }
 
     fn finish_models(
-        &self,
-        docstring: &str,
-        defs_literal: &str,
-        definitions: &[String],
-        exports: &[String],
+        &self, docstring: &str, defs_literal: &str, definitions: &[String], exports: &[String],
     ) -> String {
         let mut out = String::new();
         out.push_str(&python_string(docstring));
@@ -1667,9 +1638,7 @@ fn properties<'a>(object: &'a Object, path: &str) -> Result<&'a Object, Pydantic
 }
 
 fn required_names(
-    object: &Object,
-    properties: &Object,
-    path: &str,
+    object: &Object, properties: &Object, path: &str,
 ) -> Result<BTreeSet<String>, PydanticError> {
     let mut required = BTreeSet::new();
     let Some(values) = object.get("required") else {
@@ -1838,9 +1807,7 @@ impl NegationSupport {
 /// names is pushed onto `references`. A `$ref` to no definition is
 /// unsupported.
 fn negation_keywords_supported(
-    schema: &Value,
-    defs: &Object,
-    references: &mut Vec<String>,
+    schema: &Value, defs: &Object, references: &mut Vec<String>,
 ) -> bool {
     let Value::Object(object) = schema else {
         return schema.is_boolean();
@@ -2294,8 +2261,7 @@ fn render_about(version: &PydanticVersionStamp) -> String {
 }
 
 fn rewrite_references(
-    value: &Value,
-    names: &BTreeMap<String, String>,
+    value: &Value, names: &BTreeMap<String, String>,
 ) -> Result<Value, PydanticError> {
     let Value::Object(object) = value else {
         return Ok(value.clone());
@@ -2637,11 +2603,8 @@ mod tests {
     }
 
     fn routed_config_with(
-        people_module_docstring: &str,
-        person_docstring: &str,
-        person_digest: &str,
-        version: Option<(&str, &str)>,
-        swap_routes: bool,
+        people_module_docstring: &str, person_docstring: &str, person_digest: &str,
+        version: Option<(&str, &str)>, swap_routes: bool,
     ) -> PydanticConfig {
         let person_module = if swap_routes {
             "vocab"

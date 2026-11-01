@@ -75,8 +75,7 @@ where
     /// Returns disabled recording, original storage refusal or counter overflow.
     /// Failed construction drops its locals before refunding their grant.
     pub fn of_with_memory<A: Admission + ?Sized>(
-        evaluation: &'a Evaluation<TermInterner, N>,
-        memory: &mut Memory<'_, A>,
+        evaluation: &'a Evaluation<TermInterner, N>, memory: &mut Memory<'_, A>,
     ) -> Result<Self, ProofError<N>> {
         Self::from_derivations(
             evaluation
@@ -87,8 +86,7 @@ where
     }
 
     fn from_derivations<A: Admission + ?Sized>(
-        derivations: &'a [Derivation<N>],
-        memory: &mut Memory<'_, A>,
+        derivations: &'a [Derivation<N>], memory: &mut Memory<'_, A>,
     ) -> Result<Self, ProofError<N>> {
         memory
             .scope(|memory| {
@@ -145,8 +143,7 @@ where
     /// # Errors
     /// Preserves the original memory owner's release refusal.
     pub fn release_with_memory<A: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, A>,
+        self, memory: &mut Memory<'_, A>,
     ) -> Result<(), StorageError> {
         memory.release_vec(self.entries)
     }
@@ -158,8 +155,7 @@ where
     /// # Errors
     /// Returns original arena/scratch allocation failure or work-counter overflow.
     pub fn extract(
-        &self,
-        goal: &ShapeFact<N>,
+        &self, goal: &ShapeFact<N>,
     ) -> Result<Option<(ProofArena<N>, ProofId)>, ProofError<N>> {
         self.extract_counted(goal, &mut ProofIndexWork::default())
     }
@@ -170,9 +166,7 @@ where
     /// # Errors
     /// Preserves the same original failures as [`Self::extract`].
     pub fn extract_counted(
-        &self,
-        goal: &ShapeFact<N>,
-        work: &mut ProofIndexWork,
+        &self, goal: &ShapeFact<N>, work: &mut ProofIndexWork,
     ) -> Result<Option<(ProofArena<N>, ProofId)>, ProofError<N>> {
         self.extract_with_memory(goal, &mut Memory::new(&mut Resident), work)
     }
@@ -184,10 +178,7 @@ where
     /// # Errors
     /// Preserves native allocation, admission, release and counter-overflow errors.
     pub fn extract_with_memory<A: Admission + ?Sized>(
-        &self,
-        goal: &ShapeFact<N>,
-        memory: &mut Memory<'_, A>,
-        work: &mut ProofIndexWork,
+        &self, goal: &ShapeFact<N>, memory: &mut Memory<'_, A>, work: &mut ProofIndexWork,
     ) -> Result<Option<(ProofArena<N>, ProofId)>, ProofError<N>> {
         *work = ProofIndexWork::default();
         memory
@@ -259,10 +250,7 @@ where
     // Last fact match preceding this exact eager rank. A later derivation must
     // not rescue a missing/incorrect antecedent that the eager checker rejects.
     fn predecessor(
-        &self,
-        goal: &ShapeFact<N>,
-        before: usize,
-        work: &mut ProofIndexWork,
+        &self, goal: &ShapeFact<N>, before: usize, work: &mut ProofIndexWork,
     ) -> Result<Option<usize>, StorageError> {
         let mut low = 0;
         let mut high = self.entries.len();

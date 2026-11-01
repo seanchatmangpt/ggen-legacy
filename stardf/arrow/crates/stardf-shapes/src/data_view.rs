@@ -28,10 +28,7 @@ pub trait ShaclRead: DatasetView<Id = TermId, ReadError = Infallible> + Sync {
     fn term_id_by_blank(&self, label: &str, scope: BlankScope) -> Option<TermId>;
     /// Look up the complete RDF 1.2 literal identity.
     fn term_id_by_literal(
-        &self,
-        lexical: &str,
-        datatype: &str,
-        language: Option<&str>,
+        &self, lexical: &str, datatype: &str, language: Option<&str>,
         direction: Option<RdfTextDirection>,
     ) -> Option<TermId>;
     /// Look up a quoted triple within this view's term namespace.
@@ -49,10 +46,7 @@ impl ShaclRead for RdfDataset {
         self.term_id_by_blank(label, scope)
     }
     fn term_id_by_literal(
-        &self,
-        lexical: &str,
-        datatype: &str,
-        language: Option<&str>,
+        &self, lexical: &str, datatype: &str, language: Option<&str>,
         direction: Option<RdfTextDirection>,
     ) -> Option<TermId> {
         self.term_id_by_literal(lexical, datatype, language, direction)
@@ -73,10 +67,7 @@ impl<T: ShaclRead + Send> ShaclRead for Arc<T> {
         self.as_ref().term_id_by_blank(label, scope)
     }
     fn term_id_by_literal(
-        &self,
-        lexical: &str,
-        datatype: &str,
-        language: Option<&str>,
+        &self, lexical: &str, datatype: &str, language: Option<&str>,
         direction: Option<RdfTextDirection>,
     ) -> Option<TermId> {
         self.as_ref()
@@ -160,9 +151,7 @@ where
     }
 
     fn new(
-        source: Arc<D>,
-        ids: impl FnOnce(&D) -> Box<[D::Id]>,
-        limits: ViewLimits,
+        source: Arc<D>, ids: impl FnOnce(&D) -> Box<[D::Id]>, limits: ViewLimits,
     ) -> Result<Self, String> {
         let auxiliary_bytes = Self::admit(
             usize::try_from(source.term_count()).map_err(|_| "SHACL term mapping size overflow")?,
@@ -185,12 +174,8 @@ where
     /// An adapter numbering the base half of a layered source arithmetically (see
     /// [`Mapping::Layered`]).
     fn layered(
-        source: Arc<D>,
-        base: usize,
-        added: Box<[D::Id]>,
-        lower: fn(D::Id) -> Option<usize>,
-        lift: fn(usize) -> D::Id,
-        limits: ViewLimits,
+        source: Arc<D>, base: usize, added: Box<[D::Id]>, lower: fn(D::Id) -> Option<usize>,
+        lift: fn(usize) -> D::Id, limits: ViewLimits,
     ) -> Result<Self, String> {
         let auxiliary_bytes = Self::admit(
             usize::try_from(source.term_count()).map_err(|_| "SHACL term mapping size overflow")?,
@@ -369,9 +354,7 @@ impl ShaclDatasetView {
     /// # Errors
     /// Refuses a validation-local handle mapping exceeding the supplied limits.
     pub fn composite(
-        source: Arc<CompositeDatasetView>,
-        projected: bool,
-        limits: ViewLimits,
+        source: Arc<CompositeDatasetView>, projected: bool, limits: ViewLimits,
     ) -> Result<Self, String> {
         let dense = Dense::new(source, |source| source.term_ids().collect(), limits)?;
         Ok(Self::new(Source::Composite(dense), projected))
@@ -390,9 +373,7 @@ impl ShaclDatasetView {
     /// # Errors
     /// Refuses a validation-local handle mapping exceeding the supplied limits.
     pub fn delta(
-        source: Arc<DeltaDatasetView>,
-        projected: bool,
-        limits: ViewLimits,
+        source: Arc<DeltaDatasetView>, projected: bool, limits: ViewLimits,
     ) -> Result<Self, String> {
         let base = source.base().as_ref().term_count();
         let added = source.added_term_ids().collect();
@@ -458,9 +439,7 @@ impl ShaclDatasetView {
     /// # Errors
     /// Refuses a composite or handle mapping exceeding `limits`.
     pub(crate) fn with_extra_terms(
-        &self,
-        terms: Arc<RdfDataset>,
-        limits: ViewLimits,
+        &self, terms: Arc<RdfDataset>, limits: ViewLimits,
     ) -> Result<Self, String> {
         debug_assert_eq!(terms.quad_count(), 0, "a term supplement carries no rows");
         let extra = ::purrdf_rdf::ir::CompositeSource::new(terms);
@@ -615,11 +594,7 @@ impl ShaclDatasetView {
     /// pattern, including any graph-union transformation, is planned once and
     /// the supplied plan is forwarded to the retained native indexes.
     pub fn quads_for_pattern_with_plan(
-        &self,
-        plan: &QuadProbePlan,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
+        &self, plan: &QuadProbePlan, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
         g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ + use<'_> {
         let source_graph = self.source_graph(g);
@@ -687,11 +662,7 @@ impl ShaclDatasetView {
     }
 
     fn raw_probe(
-        &self,
-        plan: QuadProbePlan,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
+        &self, plan: QuadProbePlan, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
         g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         match &self.source {
@@ -729,11 +700,7 @@ impl ShaclDatasetView {
         }
     }
     fn raw_overlay_probe(
-        &self,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         match &self.source {
             Source::Native(source) => Either::Left(overlay_probe(source.as_ref(), s, p, o, g)),
@@ -821,11 +788,7 @@ impl ProjectionDedup {
 }
 
 fn overlay_probe<D: DatasetView>(
-    source: &D,
-    s: Option<D::Id>,
-    p: Option<D::Id>,
-    o: Option<D::Id>,
-    g: GraphMatch<D::Id>,
+    source: &D, s: Option<D::Id>, p: Option<D::Id>, o: Option<D::Id>, g: GraphMatch<D::Id>,
 ) -> impl Iterator<Item = QuadIds<D::Id>> + '_ {
     let reifiers = s
         .into_iter()
@@ -869,11 +832,7 @@ fn overlay_probe<D: DatasetView>(
 /// although a call only ever builds one of them.
 #[inline(never)]
 fn dense_overlay_probe<D>(
-    dense: &Dense<D>,
-    s: Option<TermId>,
-    p: Option<TermId>,
-    o: Option<TermId>,
-    g: GraphMatch,
+    dense: &Dense<D>, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
 ) -> Box<dyn Iterator<Item = QuadIds> + '_>
 where
     for<'a> D: DatasetView<ReadError = Infallible, TermGuard<'a> = TermRef<'a, <D as DatasetView>::Id>>
@@ -969,8 +928,7 @@ impl DatasetView for ShaclDatasetView {
         )))
     }
     fn reserve_owned_workspace(
-        &self,
-        bytes: u64,
+        &self, bytes: u64,
     ) -> Option<Result<purrdf_core::OwnedWorkspaceReservation<Self::ReadError>, Self::ReadError>>
     {
         match &self.source {
@@ -986,11 +944,7 @@ impl DatasetView for ShaclDatasetView {
         Ok(self.resolve_term(id))
     }
     fn quads_for_pattern(
-        &self,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         let plan = self.probe_plan(s.is_some(), p.is_some(), o.is_some(), g);
         self.quads_for_pattern_with_plan(&plan, s, p, o, g)
@@ -1023,11 +977,7 @@ impl DatasetView for ShaclDatasetView {
         RdfDataset::probe_plan(s, p, o, self.source_graph(g))
     }
     fn quads_for_pattern_with_plan(
-        &self,
-        plan: &QuadProbePlan,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
+        &self, plan: &QuadProbePlan, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
         g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         Self::quads_for_pattern_with_plan(self, plan, s, p, o, g)
@@ -1045,11 +995,7 @@ impl DatasetView for ShaclDatasetView {
         }
     }
     fn cardinality_estimate(
-        &self,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> u64 {
         if !self.graph_allowed(g) {
             return 0;
@@ -1180,10 +1126,7 @@ impl ShaclRead for ShaclDatasetView {
         .unwrap()
     }
     fn term_id_by_literal(
-        &self,
-        lexical: &str,
-        datatype: &str,
-        language: Option<&str>,
+        &self, lexical: &str, datatype: &str, language: Option<&str>,
         direction: Option<RdfTextDirection>,
     ) -> Option<TermId> {
         if let Source::Native(source) = &self.source {

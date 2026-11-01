@@ -53,10 +53,7 @@ const RULES_HOSTS: [(RulesHost, &str, &str); 4] = [
 ];
 
 fn rules(
-    shapes: bool,
-    host: RulesHost,
-    facts: Option<u64>,
-    steps: Option<u64>,
+    shapes: bool, host: RulesHost, facts: Option<u64>, steps: Option<u64>,
 ) -> Result<String, String> {
     apply_rules_to_ntriples(&RulesRequest {
         data_nt: DATA,

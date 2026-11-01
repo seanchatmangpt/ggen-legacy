@@ -64,10 +64,7 @@ impl<P: CorpusProfile> PhraseOccurrenceRelation<P> {
         self.cache.set_retention(retain);
     }
     fn owned_cursor(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
-        workspace: &WorkspaceCapability,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>, workspace: &WorkspaceCapability,
     ) -> Result<WorkspaceCursor<'static>, EvalError> {
         let needle = phrase(args, workspace)?;
         let entries = [DictionaryEntry {
@@ -109,9 +106,7 @@ impl<P: CorpusProfile> PropertyFunction for PhraseOccurrenceRelation<P> {
         self.rows
     }
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -120,10 +115,7 @@ impl<P: CorpusProfile> PropertyFunction for PhraseOccurrenceRelation<P> {
             .and_then(WorkspaceCursor::into_resident)
     }
     fn open_admitted<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
-        workspace: WorkspaceCapability,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>, workspace: WorkspaceCapability,
     ) -> Result<WorkspaceCursor<'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -139,9 +131,7 @@ impl<P: CorpusProfile> PropertyFunction for PhraseOccurrenceRelation<P> {
         })
     }
     fn prepare_dictionary(
-        &self,
-        inputs: &[BatchInvocation],
-        workspace: &WorkspaceCapability,
+        &self, inputs: &[BatchInvocation], workspace: &WorkspaceCapability,
     ) -> Result<Option<Box<dyn DictionaryBatch>>, EvalError> {
         if inputs.is_empty() {
             return Ok(None);
@@ -221,8 +211,7 @@ struct Results<P: CorpusProfile> {
     _allocation: WorkspaceAllocation,
 }
 fn share<P: CorpusProfile>(
-    matches: DictionaryMatches<P>,
-    workspace: &WorkspaceCapability,
+    matches: DictionaryMatches<P>, workspace: &WorkspaceCapability,
 ) -> Result<Shared<Results<P>>, EvalError> {
     let allocation = workspace.charge(
         u64::try_from(Shared::<Results<P>>::allocation_layout().size())
@@ -251,10 +240,7 @@ impl<P: CorpusProfile> DictionaryBatch for PhraseBatch<P> {
         }
     }
     fn open<'cursor>(
-        &self,
-        ordinal: usize,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
+        &self, ordinal: usize, args: &PfArgs<'_>, ceiling: Option<u64>,
         workspace: &WorkspaceCapability,
     ) -> Result<WorkspaceCursor<'cursor>, EvalError>
     where
@@ -282,13 +268,8 @@ struct PhraseCursor<P: CorpusProfile> {
     workspace: WorkspaceCapability,
 }
 fn cursor<P: CorpusProfile>(
-    results: Shared<Results<P>>,
-    ordinal: usize,
-    args: &PfArgs<'_>,
-    ceiling: Option<u64>,
-    generation: Arc<str>,
-    count_work: bool,
-    workspace: &WorkspaceCapability,
+    results: Shared<Results<P>>, ordinal: usize, args: &PfArgs<'_>, ceiling: Option<u64>,
+    generation: Arc<str>, count_work: bool, workspace: &WorkspaceCapability,
 ) -> Result<WorkspaceCursor<'static>, EvalError> {
     phrase(args, workspace)?;
     let rows = results.matches.rows();
@@ -389,10 +370,7 @@ impl<P: CorpusProfile> PfCursor for PhraseCursor<P> {
 // The literal path is the original positional-call join, not the automaton.
 // Terms are visited in phrase order and occurrences in cursor traversal order.
 fn literal_matches<P: CorpusProfile>(
-    index: Arc<TextIndex<P>>,
-    dictionary: Dictionary,
-    phrase: &str,
-    predicate: Option<u32>,
+    index: Arc<TextIndex<P>>, dictionary: Dictionary, phrase: &str, predicate: Option<u32>,
     workspace: &WorkspaceCapability,
 ) -> Result<DictionaryMatches<P>, EvalError> {
     let terms = index

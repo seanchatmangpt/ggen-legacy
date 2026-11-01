@@ -15,8 +15,7 @@ use purrdf_sparql_eval::{FallibleSparqlError, InProcessServiceResolver};
 
 /// Classify and execute one query through the actual fallible native entry point.
 fn run_triple(
-    case: &manifest::SparqlTestCase,
-    remote: &InProcessServiceResolver,
+    case: &manifest::SparqlTestCase, remote: &InProcessServiceResolver,
 ) -> Result<Option<run::RunOutcome>, String> {
     let text = std::fs::read_to_string(&case.query)
         .map_err(|error| format!("read query {}: {error}", case.query.display()))?;

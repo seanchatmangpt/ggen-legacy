@@ -186,9 +186,7 @@ fn nesting_limit() -> RdfDiagnostic {
 ///   triple-term subject, so admitting one here would let the writers emit a
 ///   document the readers refuse.
 fn require_subject_kind(
-    kind: Kind,
-    ctx: impl FnOnce() -> String,
-    triple_reason: &str,
+    kind: Kind, ctx: impl FnOnce() -> String, triple_reason: &str,
 ) -> Result<(), RdfDiagnostic> {
     resident_validation(require_subject_kind_with_memory(
         kind,
@@ -264,8 +262,7 @@ impl core::fmt::Display for QuadContext<'_> {
 }
 
 pub(crate) fn validate_with_memory<S: Admission + ?Sized>(
-    builder: &RdfDatasetBuilder,
-    memory: &mut Memory<'_, S>,
+    builder: &RdfDatasetBuilder, memory: &mut Memory<'_, S>,
 ) -> Result<(), NativeBuildError> {
     validate_rows_with_memory(
         builder,
@@ -279,8 +276,7 @@ pub(crate) fn validate_with_memory<S: Admission + ?Sized>(
 /// Validate carrier rows through the original positional and lexical rules.
 /// Compact carriers project one row at a time; no quad table is built.
 pub(super) fn validate_rows_with_memory<S: Admission + ?Sized>(
-    builder: &RdfDatasetBuilder,
-    quads: impl IntoIterator<Item = super::dataset::QuadRow>,
+    builder: &RdfDatasetBuilder, quads: impl IntoIterator<Item = super::dataset::QuadRow>,
     reifiers: impl IntoIterator<Item = super::dataset::ReifierRow>,
     annotations: impl IntoIterator<Item = super::dataset::AnnotationRow>,
     memory: &mut Memory<'_, S>,
@@ -444,8 +440,7 @@ pub(super) fn validate_rows_with_memory<S: Admission + ?Sized>(
 /// The diagnostic code comes verbatim from IriError. Its Display already owns
 /// remedy_hint, so adding the same hint as diagnostic detail would print it twice.
 fn require_absolute_iris_with_memory<S: Admission + ?Sized>(
-    builder: &RdfDatasetBuilder,
-    memory: &mut Memory<'_, S>,
+    builder: &RdfDatasetBuilder, memory: &mut Memory<'_, S>,
 ) -> Result<(), NativeBuildError> {
     let Some((iri, err)) = builder.relative_iri() else {
         return Ok(());
@@ -460,9 +455,7 @@ fn require_absolute_iris_with_memory<S: Admission + ?Sized>(
 /// Validate every interned triple term: in-range components, IRI predicate,
 /// IRI-or-blank subject, and global acyclicity (C0.3) bounded by depth.
 fn validate_triple_terms_with_memory<S: Admission + ?Sized>(
-    builder: &RdfDatasetBuilder,
-    term_count: usize,
-    memory: &mut Memory<'_, S>,
+    builder: &RdfDatasetBuilder, term_count: usize, memory: &mut Memory<'_, S>,
 ) -> Result<(), NativeBuildError> {
     // First pass: per-triple positional + id-range checks. A triple term's subject is
     // an IRI or a blank node and its predicate is an IRI, exactly like an asserted
@@ -540,10 +533,7 @@ fn nesting_limit_with_memory<S: Admission + ?Sized>(
 /// DFS from id, depth triple terms below the original root. Detects back edges
 /// and records the subtree's nesting, refusing a depth past MAX_TERM_NESTING_DEPTH.
 fn check_acyclic_with_memory<S: Admission + ?Sized>(
-    builder: &RdfDatasetBuilder,
-    id: TermId,
-    depth: usize,
-    state: &mut [VisitState],
+    builder: &RdfDatasetBuilder, id: TermId, depth: usize, state: &mut [VisitState],
     memory: &mut Memory<'_, S>,
 ) -> Result<usize, NativeBuildError> {
     if depth > MAX_TERM_NESTING_DEPTH {
@@ -590,9 +580,7 @@ fn check_acyclic_with_memory<S: Admission + ?Sized>(
 
 /// Reject an out-of-range term id (orphan reference) with a precise diagnostic.
 fn check_id_in_range_with_memory<S: Admission + ?Sized>(
-    id: TermId,
-    term_count: usize,
-    ctx: &(impl core::fmt::Display + ?Sized),
+    id: TermId, term_count: usize, ctx: &(impl core::fmt::Display + ?Sized),
     memory: &mut Memory<'_, S>,
 ) -> Result<(), NativeBuildError> {
     if id.index() >= term_count {
@@ -610,19 +598,14 @@ fn check_id_in_range_with_memory<S: Admission + ?Sized>(
 }
 
 fn require_subject_with_memory<S: Admission + ?Sized>(
-    builder: &RdfDatasetBuilder,
-    id: TermId,
-    ctx: &(impl core::fmt::Display + ?Sized),
-    triple_reason: &str,
-    memory: &mut Memory<'_, S>,
+    builder: &RdfDatasetBuilder, id: TermId, ctx: &(impl core::fmt::Display + ?Sized),
+    triple_reason: &str, memory: &mut Memory<'_, S>,
 ) -> Result<(), NativeBuildError> {
     require_subject_kind_with_memory(interned_kind(builder.term(id)), ctx, triple_reason, memory)
 }
 
 fn require_subject_kind_with_memory<S: Admission + ?Sized>(
-    kind: Kind,
-    ctx: &(impl core::fmt::Display + ?Sized),
-    triple_reason: &str,
+    kind: Kind, ctx: &(impl core::fmt::Display + ?Sized), triple_reason: &str,
     memory: &mut Memory<'_, S>,
 ) -> Result<(), NativeBuildError> {
     match kind {
@@ -641,18 +624,14 @@ fn require_subject_kind_with_memory<S: Admission + ?Sized>(
 }
 
 fn require_iri_predicate_with_memory<S: Admission + ?Sized>(
-    builder: &RdfDatasetBuilder,
-    id: TermId,
-    ctx: &(impl core::fmt::Display + ?Sized),
+    builder: &RdfDatasetBuilder, id: TermId, ctx: &(impl core::fmt::Display + ?Sized),
     memory: &mut Memory<'_, S>,
 ) -> Result<(), NativeBuildError> {
     require_predicate_kind_with_memory(interned_kind(builder.term(id)), ctx, memory)
 }
 
 fn require_predicate_kind_with_memory<S: Admission + ?Sized>(
-    kind: Kind,
-    ctx: &(impl core::fmt::Display + ?Sized),
-    memory: &mut Memory<'_, S>,
+    kind: Kind, ctx: &(impl core::fmt::Display + ?Sized), memory: &mut Memory<'_, S>,
 ) -> Result<(), NativeBuildError> {
     if !matches!(kind, Kind::Iri) {
         return Err(diag_with_memory(
@@ -669,18 +648,14 @@ fn require_predicate_kind_with_memory<S: Admission + ?Sized>(
 }
 
 fn require_graph_name_with_memory<S: Admission + ?Sized>(
-    builder: &RdfDatasetBuilder,
-    id: TermId,
-    ctx: &(impl core::fmt::Display + ?Sized),
+    builder: &RdfDatasetBuilder, id: TermId, ctx: &(impl core::fmt::Display + ?Sized),
     memory: &mut Memory<'_, S>,
 ) -> Result<(), NativeBuildError> {
     require_graph_kind_with_memory(interned_kind(builder.term(id)), ctx, memory)
 }
 
 fn require_graph_kind_with_memory<S: Admission + ?Sized>(
-    kind: Kind,
-    ctx: &(impl core::fmt::Display + ?Sized),
-    memory: &mut Memory<'_, S>,
+    kind: Kind, ctx: &(impl core::fmt::Display + ?Sized), memory: &mut Memory<'_, S>,
 ) -> Result<(), NativeBuildError> {
     match kind {
         Kind::Iri | Kind::Blank => Ok(()),
@@ -697,9 +672,7 @@ fn require_graph_kind_with_memory<S: Admission + ?Sized>(
 }
 
 fn diag_with_memory<S: Admission + ?Sized>(
-    code: &str,
-    message: impl core::fmt::Display,
-    memory: &mut Memory<'_, S>,
+    code: &str, message: impl core::fmt::Display, memory: &mut Memory<'_, S>,
 ) -> NativeBuildError {
     match RdfDiagnostic::try_error_with_memory(code, &message, memory) {
         Ok(diagnostic) => NativeBuildError::Diagnostic(diagnostic),
@@ -896,8 +869,7 @@ mod tests {
     #[test]
     fn freeze_range_checks_statement_layer_graphs() {
         fn layered(
-            graph: impl FnOnce(&RdfDatasetBuilder, TermId) -> TermId,
-            annotation: bool,
+            graph: impl FnOnce(&RdfDatasetBuilder, TermId) -> TermId, annotation: bool,
         ) -> Result<std::sync::Arc<crate::RdfDataset>, RdfDiagnostic> {
             let mut b = RdfDatasetBuilder::new();
             let (s, p, o) = (iri(&mut b, "s"), iri(&mut b, "p"), iri(&mut b, "o"));

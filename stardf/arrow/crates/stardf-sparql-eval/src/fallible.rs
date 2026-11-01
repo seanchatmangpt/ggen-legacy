@@ -189,8 +189,7 @@ impl<OperationalError, Evidence> FallibleSparqlError<OperationalError, Evidence>
     /// unchanged. The closure consumes only the receipt, so callers can compose
     /// or project governed evidence without mirroring the error variants.
     pub fn map_evidence<V>(
-        self,
-        map: impl FnOnce(Evidence) -> V,
+        self, map: impl FnOnce(Evidence) -> V,
     ) -> FallibleSparqlError<OperationalError, V> {
         match self {
             Self::Query {

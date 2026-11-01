@@ -10,9 +10,7 @@ use super::{ReasonDescription, ReasonError, ReasonId};
 
 /// Fuse a borrowed statement cursor at its own terminal phase after refusal.
 fn next_statement<'a>(
-    statement: Result<Option<LedgerStatement<'a>>, LedgerError>,
-    phase: &mut u8,
-    terminal: u8,
+    statement: Result<Option<LedgerStatement<'a>>, LedgerError>, phase: &mut u8, terminal: u8,
 ) -> Option<Result<LedgerStatement<'a>, LedgerError>> {
     if statement.is_err() {
         *phase = terminal;
@@ -132,8 +130,7 @@ pub(super) fn predicate(term: &TermValue) -> Result<&str, LedgerError> {
 }
 
 pub(super) fn dictionary_node<N: LedgerNodes>(
-    nodes: &N,
-    key: LedgerNodeKey,
+    nodes: &N, key: LedgerNodeKey,
 ) -> Result<&TermValue, LedgerError> {
     let node = nodes.node(key).ok_or(LedgerError::MissingNode(key))?;
     reifier(node)?;
@@ -164,9 +161,7 @@ impl<'a> ReasonStatements<'a> {
     /// # Errors
     /// Refuses invalid reifiers, predicates or original reason construction.
     pub fn new<S: Admission + ?Sized>(
-        node: &'a TermValue,
-        description: ReasonDescription<'a>,
-        vocabulary: ReasonVocabulary<'a>,
+        node: &'a TermValue, description: ReasonDescription<'a>, vocabulary: ReasonVocabulary<'a>,
         memory: &mut Memory<'_, S>,
     ) -> Result<Self, LedgerError> {
         let identity = description.identity(memory).map_err(LedgerError::Reason)?;
@@ -179,17 +174,13 @@ impl<'a> ReasonStatements<'a> {
     /// # Errors
     /// Refuses invalid caller reifiers or annotation predicates.
     pub fn retained<T: core::ops::Deref<Target = TermValue>>(
-        node: &'a TermValue,
-        reason: &'a super::RetainedReason<T>,
-        vocabulary: ReasonVocabulary<'a>,
+        node: &'a TermValue, reason: &'a super::RetainedReason<T>, vocabulary: ReasonVocabulary<'a>,
     ) -> Result<Self, LedgerError> {
         Self::declared(node, reason.description(), vocabulary, reason.identity())
     }
 
     fn declared(
-        node: &'a TermValue,
-        description: ReasonDescription<'a>,
-        vocabulary: ReasonVocabulary<'a>,
+        node: &'a TermValue, description: ReasonDescription<'a>, vocabulary: ReasonVocabulary<'a>,
         identity: ReasonId,
     ) -> Result<Self, LedgerError> {
         reifier(node)?;

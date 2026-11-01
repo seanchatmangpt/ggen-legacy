@@ -427,9 +427,7 @@ impl purrdf_sparql_eval::PropertyFunction for SubjectBoundRelation {
         1
     }
     fn open<'cursor>(
-        &self,
-        args: &purrdf_sparql_eval::PfArgs<'_>,
-        ceiling: Option<u64>,
+        &self, args: &purrdf_sparql_eval::PfArgs<'_>, ceiling: Option<u64>,
     ) -> Result<Box<dyn purrdf_sparql_eval::PfCursor + 'cursor>, purrdf_sparql_eval::EvalError>
     where
         Self: 'cursor,

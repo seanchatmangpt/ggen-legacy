@@ -63,8 +63,7 @@ impl FondDomain {
     /// # Errors
     /// [`ProcessError::UndeclaredStates`].
     pub fn new(
-        states: impl IntoIterator<Item = String>,
-        initial: impl Into<String>,
+        states: impl IntoIterator<Item = String>, initial: impl Into<String>,
         goals: impl IntoIterator<Item = String>,
         transitions: BTreeMap<String, BTreeMap<String, Vec<String>>>,
     ) -> Result<Self, ProcessError> {
@@ -114,8 +113,7 @@ impl FondDomain {
     /// [`ProcessError::MissingPolicyAction`],
     /// [`ProcessError::UnavailablePolicyAction`].
     pub fn reachable_under_policy(
-        &self,
-        policy: &FondPolicy,
+        &self, policy: &FondPolicy,
     ) -> Result<BTreeSet<String>, ProcessError> {
         let mut reachable: BTreeSet<String> = BTreeSet::new();
         let mut queue: Vec<String> = vec![self.initial.clone()];
@@ -160,9 +158,7 @@ impl FondDomain {
     /// [`ProcessError::UnavailablePolicyAction`],
     /// [`ProcessError::NotStrong`], or [`ProcessError::NotStrongCyclic`].
     pub fn validate_policy(
-        &self,
-        policy: &FondPolicy,
-        mode: Mode,
+        &self, policy: &FondPolicy, mode: Mode,
     ) -> Result<BTreeSet<String>, ProcessError> {
         let unknown: Vec<String> = policy
             .keys()
@@ -350,9 +346,7 @@ impl FondDomain {
 /// [`ProcessError::Unsolvable`] when every mode fails inside the horizon,
 /// or [`ProcessError::HorizonExceeded`].
 pub fn policy_switch(
-    domain: &FondDomain,
-    modes: &[Mode],
-    horizon: usize,
+    domain: &FondDomain, modes: &[Mode], horizon: usize,
 ) -> Result<(Mode, FondPolicy), ProcessError> {
     let mut attempts: Vec<(&'static str, &'static str)> = Vec::new();
     for mode in modes {

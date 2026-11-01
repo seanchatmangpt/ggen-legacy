@@ -65,10 +65,7 @@ impl<I: TermIdentity, const N: usize> Frame<I, N> {
     }
 
     pub(super) fn resume<D: TermDictionary<Id = I>, A: Admission + ?Sized>(
-        &mut self,
-        inputs: &mut Inputs<'_, D, N>,
-        memory: &mut Memory<'_, A>,
-        retired: &mut usize,
+        &mut self, inputs: &mut Inputs<'_, D, N>, memory: &mut Memory<'_, A>, retired: &mut usize,
         mut allow: impl FnMut(usize) -> bool,
     ) -> Result<bool, EvalError<D::Error>>
     where

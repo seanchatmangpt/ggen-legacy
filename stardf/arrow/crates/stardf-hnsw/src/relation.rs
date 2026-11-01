@@ -122,9 +122,7 @@ purrdf_lex::error_source!(HnswQueryFailure => { Self { cause, .. } => cause });
 
 /// Native query failures preserve typed storage causes without formatting them.
 fn eval_error_admitted(
-    context: &'static str,
-    error: HnswError,
-    workspace: &purrdf_sparql_eval::WorkspaceCapability,
+    context: &'static str, error: HnswError, workspace: &purrdf_sparql_eval::WorkspaceCapability,
 ) -> EvalError {
     match error {
         HnswError::FloatEnvironment(refusal) => EvalError::FloatEnvironment(refusal),
@@ -192,11 +190,8 @@ impl<A: IndexArithmetic> HnswSpace<A> {
     /// [`EvalError::FloatEnvironment`] when the calling thread's float environment is not
     /// the IEEE one the distance arithmetic defines.
     pub fn from_artifact(
-        artifact: &[u8],
-        target_set: TargetSetId,
-        vector_space: VectorSpaceId,
-        bindings: Vec<(TargetId, TermValue)>,
-        guard: KnnGuard,
+        artifact: &[u8], target_set: TargetSetId, vector_space: VectorSpaceId,
+        bindings: Vec<(TargetId, TermValue)>, guard: KnnGuard,
     ) -> Result<Self, EvalError> {
         // The float environment first: verifying a normalized projection and reading its
         // rows are exact arithmetic, and a refused environment must be reported as one,
@@ -342,9 +337,7 @@ impl<A: Arithmetic> HnswSpace<A> {
     /// which delegates to this function: it is a property of the space, and a space
     /// assembled straight from an index is still a space the guard promised to bound.
     pub fn from_index(
-        index: HnswIndex<A>,
-        terms: Vec<TermValue>,
-        guard: KnnGuard,
+        index: HnswIndex<A>, terms: Vec<TermValue>, guard: KnnGuard,
     ) -> Result<Self, EvalError> {
         if terms.len() != index.rows() {
             return Err(SetupFailure::Terms {
@@ -726,11 +719,7 @@ impl<A: Arithmetic> HnswRelation<A> {
     /// parameter beside it.
     #[must_use]
     pub fn ranked_declaration(
-        &self,
-        stratum: Iri,
-        seed: TermKind,
-        depth_datatype: String,
-        vector_order: OrderFidelity,
+        &self, stratum: Iri, seed: TermKind, depth_datatype: String, vector_order: OrderFidelity,
         domains: CandidateDomains,
     ) -> RankedDeclaration {
         RankedDeclaration {
@@ -933,9 +922,7 @@ impl<A: Arithmetic> PropertyFunction for HnswRelation<A> {
     }
 
     fn open_admitted<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>,
         workspace: purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<purrdf_sparql_eval::WorkspaceCursor<'cursor>, EvalError>
     where
@@ -988,9 +975,7 @@ struct HnswSource<A: Arithmetic> {
 
 impl<A: Arithmetic> RankSource for HnswSource<A> {
     fn candidates_admitted(
-        &self,
-        query_row: usize,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, query_row: usize, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<(purrdf_sparql_eval::AdmittedVec<Ranked>, u64), EvalError> {
         // The native traversal keeps its artifact-bound ef_search. Requesting
         // the entire beam avoids the final invocation-depth truncation without
@@ -1012,9 +997,7 @@ impl<A: Arithmetic> RankSource for HnswSource<A> {
     }
 
     fn search_admitted(
-        &self,
-        query_row: usize,
-        select_k: usize,
+        &self, query_row: usize, select_k: usize,
         workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<(purrdf_sparql_eval::AdmittedVec<Ranked>, u64), EvalError> {
         self.observations.searches.fetch_add(1, Ordering::Relaxed);
@@ -1039,10 +1022,7 @@ impl<A: Arithmetic> RankSource for HnswSource<A> {
     }
 
     fn distance_admitted(
-        &self,
-        query_row: usize,
-        row: usize,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, query_row: usize, row: usize, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<f64, EvalError> {
         self.observations
             .membership_distances
@@ -1183,9 +1163,7 @@ pub struct RankedHnswRegistration {
 /// PurRDF supplies no IRI: the caller's predicate is what a query text names the provider
 /// by, which is the second of the three approximation channels the contract requires.
 pub fn register_ranked_hnsw_relation<A: Arithmetic>(
-    registry: &mut PropertyFunctionRegistry<'_>,
-    iri: impl Into<String>,
-    space: Arc<HnswSpace<A>>,
+    registry: &mut PropertyFunctionRegistry<'_>, iri: impl Into<String>, space: Arc<HnswSpace<A>>,
     declared: RankedHnswRegistration,
 ) {
     let RankedHnswRegistration {
@@ -1221,9 +1199,7 @@ pub fn register_ranked_hnsw_relation<A: Arithmetic>(
 /// kind, depth datatype, vector-order disclosure and domain declaration a
 /// plain-SPARQL host has no reason to invent.
 pub fn register_hnsw_relation<A: Arithmetic>(
-    registry: &mut PropertyFunctionRegistry<'_>,
-    iri: impl Into<String>,
-    space: Arc<HnswSpace<A>>,
+    registry: &mut PropertyFunctionRegistry<'_>, iri: impl Into<String>, space: Arc<HnswSpace<A>>,
 ) {
     registry.register(iri, Arc::new(HnswRelation::new(space)));
 }

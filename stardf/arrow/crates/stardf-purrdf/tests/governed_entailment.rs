@@ -61,9 +61,7 @@ const DERIVED_ANIMALS: &str = "SELECT ?x WHERE { ?x <http://www.w3.org/1999/02/2
 
 /// Run `query` over `dataset` under `entailment` and `governors`.
 fn governed(
-    dataset: &Arc<RdfDataset>,
-    query: &str,
-    entailment: QueryEntailment<'_>,
+    dataset: &Arc<RdfDataset>, query: &str, entailment: QueryEntailment<'_>,
     governors: &QueryGovernors,
 ) -> GovernedEntailment {
     query_with_entailment_governed_(dataset, query, entailment, governors).expect("the run decides")
@@ -71,9 +69,7 @@ fn governed(
 
 /// [`governed`], without the unwrap, for the tests that assert on the `Result`.
 fn query_with_entailment_governed_(
-    dataset: &Arc<RdfDataset>,
-    query: &str,
-    entailment: QueryEntailment<'_>,
+    dataset: &Arc<RdfDataset>, query: &str, entailment: QueryEntailment<'_>,
     governors: &QueryGovernors,
 ) -> Result<GovernedEntailment, purrdf::ReasoningError> {
     purrdf::query_with_entailment_governed(
@@ -840,8 +836,7 @@ fn imported_schema() -> Arc<RdfDataset> {
 
 /// Run [`DERIVED_ANIMALS`] over `dataset`'s imports closure as `imports` resolves it.
 fn over_imports(
-    dataset: &Arc<RdfDataset>,
-    imports: &purrdf::entail::ImportMap,
+    dataset: &Arc<RdfDataset>, imports: &purrdf::entail::ImportMap,
 ) -> Result<GovernedEntailment, purrdf::ReasoningError> {
     purrdf::query_with_entailment_closure_governed(
         &NativeSparqlEngine::new(),

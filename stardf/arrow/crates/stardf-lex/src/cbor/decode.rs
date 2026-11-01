@@ -292,10 +292,7 @@ enum Open {
 
 /// A head's argument: its value, or `None` for an indefinite length.
 fn argument<S: Source>(
-    source: &mut S,
-    initial: u8,
-    at: usize,
-    deterministic: bool,
+    source: &mut S, initial: u8, at: usize, deterministic: bool,
 ) -> Result<Option<u64>, DecodeError> {
     let info = initial & 31;
     let width = match info {
@@ -357,11 +354,7 @@ fn f16_to_f64(half: u16) -> f64 {
 /// A string's bytes: definite, or the concatenation of an indefinite string's
 /// definite chunks of the same major type (RFC 8949 §3.2.3).
 fn string_bytes<S: Source>(
-    source: &mut S,
-    major: u8,
-    length: Option<u64>,
-    deterministic: bool,
-    at: usize,
+    source: &mut S, major: u8, length: Option<u64>, deterministic: bool, at: usize,
 ) -> Result<Vec<u8>, DecodeError> {
     let mut bytes = Vec::new();
     let Some(length) = length else {
@@ -407,9 +400,7 @@ fn string_bytes<S: Source>(
 
 /// Decode one item from `source`.
 fn decode_item<S: Source>(
-    source: &mut S,
-    limits: Limits,
-    deterministic: bool,
+    source: &mut S, limits: Limits, deterministic: bool,
 ) -> Result<Value, DecodeError> {
     let mut open: Vec<Open> = Vec::new();
     loop {
@@ -522,10 +513,7 @@ fn decode_item<S: Source>(
 
 /// A major type 7 item: a simple value or a float.
 fn simple_or_float(
-    initial: u8,
-    argument: u64,
-    at: usize,
-    deterministic: bool,
+    initial: u8, argument: u64, at: usize, deterministic: bool,
 ) -> Result<Value, DecodeError> {
     let value = match initial & 31 {
         20 => Value::Bool(false),
@@ -566,11 +554,7 @@ fn simple_or_float(
 /// closing every item it completes; the whole decoded item once the stack is
 /// empty.
 fn attach<S: Source>(
-    open: &mut Vec<Open>,
-    mut value: Value,
-    mut start: usize,
-    source: &S,
-    deterministic: bool,
+    open: &mut Vec<Open>, mut value: Value, mut start: usize, source: &S, deterministic: bool,
 ) -> Result<Option<Value>, DecodeError> {
     loop {
         let completed = match open.last_mut() {
@@ -711,8 +695,7 @@ pub fn decode_deterministic(bytes: &[u8], limits: Limits) -> Result<Value, Decod
 /// [`DecodeError`] for a malformed or truncated item (the offset counts from
 /// the item's first byte), a [`Limits`] bound, or the reader's failure.
 pub fn read_from<R: Read + ?Sized>(
-    reader: &mut R,
-    limits: Limits,
+    reader: &mut R, limits: Limits,
 ) -> Result<Option<Value>, DecodeError> {
     let mut source = Stream { reader, pos: 0 };
     match decode_item(&mut source, limits, false) {
@@ -786,9 +769,7 @@ pub fn decode_sequence_checked(bytes: &[u8], limits: Limits) -> DecodedSequence 
 }
 
 fn decode_sequence_with<E>(
-    bytes: &[u8],
-    limits: Limits,
-    refuse: impl FnOnce(usize, DecodeError) -> E,
+    bytes: &[u8], limits: Limits, refuse: impl FnOnce(usize, DecodeError) -> E,
 ) -> (Vec<(usize, Value)>, Option<E>) {
     let mut items = Vec::new();
     let mut at = 0;

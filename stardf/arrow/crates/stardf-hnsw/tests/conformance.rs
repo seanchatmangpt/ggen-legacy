@@ -260,12 +260,7 @@ fn run_regime(fixture: &Fixture, index: &HnswIndex, norms: &[f64], ef: usize, k:
 /// `oracle`'s bits. Recall is always counted against the EXACT top-`k`: the approximation
 /// is graded against the exact answer whatever arithmetic the index ranks under.
 fn run_regime_under<A: IndexArithmetic>(
-    fixture: &Fixture,
-    index: &HnswIndex<A>,
-    norms: &[f64],
-    ef: usize,
-    k: usize,
-    oracle: Oracle<'_>,
+    fixture: &Fixture, index: &HnswIndex<A>, norms: &[f64], ef: usize, k: usize, oracle: Oracle<'_>,
 ) -> Run {
     let params = index.params();
     let rows = fixture.matrix.rows();

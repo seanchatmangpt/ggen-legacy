@@ -93,9 +93,7 @@ pub struct EmbeddingTarget {
 impl EmbeddingTarget {
     /// Builds a target from one canonical identity block.
     pub fn from_canonical_identity(
-        kind: TargetKind,
-        canonical_identity: Vec<u8>,
-        retain_identity: bool,
+        kind: TargetKind, canonical_identity: Vec<u8>, retain_identity: bool,
         source_local_ordinal: Option<u64>,
     ) -> Result<Self, EmbeddingError> {
         validate_target_identity(kind, &canonical_identity)?;
@@ -113,9 +111,7 @@ impl EmbeddingTarget {
 
     /// Builds a digest-only target received from a trusted canonical producer.
     pub fn from_digest(
-        kind: TargetKind,
-        identity_digest: TargetIdentityDigest,
-        source_local_ordinal: Option<u64>,
+        kind: TargetKind, identity_digest: TargetIdentityDigest, source_local_ordinal: Option<u64>,
     ) -> Result<Self, EmbeddingError> {
         validate_ordinal(kind, source_local_ordinal)?;
         Ok(Self {
@@ -171,9 +167,7 @@ pub struct DocumentTarget {
 impl DocumentTarget {
     /// Constructs document metadata from exact UTF-8 content.
     pub fn from_content(
-        corpus_id: TargetId,
-        logical_id_digest: ContentDigest,
-        media_type: impl Into<String>,
+        corpus_id: TargetId, logical_id_digest: ContentDigest, media_type: impl Into<String>,
         bytes: &[u8],
     ) -> Result<Self, EmbeddingError> {
         let text = core::str::from_utf8(bytes)
@@ -242,11 +236,8 @@ pub struct TextChunkTarget {
 impl TextChunkTarget {
     /// Creates and verifies a chunk against exact parent UTF-8 bytes.
     pub fn from_document(
-        document_id: TargetId,
-        chunking_id: ChunkingContractId,
-        document_bytes: &[u8],
-        byte_start: u64,
-        byte_end: u64,
+        document_id: TargetId, chunking_id: ChunkingContractId, document_bytes: &[u8],
+        byte_start: u64, byte_end: u64,
     ) -> Result<Self, EmbeddingError> {
         let document = core::str::from_utf8(document_bytes)
             .map_err(|_| EmbeddingError::InvalidUtf8("document content"))?;
@@ -375,9 +366,7 @@ pub enum RdfTermTarget {
 impl RdfTermTarget {
     /// Converts this term to a canonical embedding target.
     pub fn into_target(
-        self,
-        retain_identity: bool,
-        source_local_ordinal: Option<u64>,
+        self, retain_identity: bool, source_local_ordinal: Option<u64>,
     ) -> Result<EmbeddingTarget, EmbeddingError> {
         let borrowed = match &self {
             Self::Iri(iri) => RdfTermTargetRef::Iri(iri),
@@ -435,9 +424,7 @@ pub(crate) enum RdfTermTargetRef<'a> {
 
 impl RdfTermTargetRef<'_> {
     pub(crate) fn into_target(
-        self,
-        retain_identity: bool,
-        source_local_ordinal: Option<u64>,
+        self, retain_identity: bool, source_local_ordinal: Option<u64>,
     ) -> Result<EmbeddingTarget, EmbeddingError> {
         let mut block = Vec::new();
         match self {
@@ -544,9 +531,7 @@ pub struct RdfStatementTarget {
 impl RdfStatementTarget {
     /// Converts this statement to a canonical embedding target.
     pub fn into_target(
-        self,
-        retain_identity: bool,
-        ordinal: Option<u64>,
+        self, retain_identity: bool, ordinal: Option<u64>,
     ) -> Result<EmbeddingTarget, EmbeddingError> {
         let block = four_digest_block(self.graph, self.subject, self.predicate, self.object)?;
         EmbeddingTarget::from_canonical_identity(
@@ -572,9 +557,7 @@ pub struct RdfReifierTarget {
 impl RdfReifierTarget {
     /// Converts this binding to a canonical embedding target.
     pub fn into_target(
-        self,
-        retain_identity: bool,
-        ordinal: Option<u64>,
+        self, retain_identity: bool, ordinal: Option<u64>,
     ) -> Result<EmbeddingTarget, EmbeddingError> {
         let mut block = Vec::new();
         digest_field(&mut block, 1, self.graph.as_bytes())?;
@@ -605,9 +588,7 @@ pub struct RdfAnnotationTarget {
 impl RdfAnnotationTarget {
     /// Converts this annotation to a canonical embedding target.
     pub fn into_target(
-        self,
-        retain_identity: bool,
-        ordinal: Option<u64>,
+        self, retain_identity: bool, ordinal: Option<u64>,
     ) -> Result<EmbeddingTarget, EmbeddingError> {
         let block = four_digest_block(self.graph, self.reifier, self.predicate, self.object)?;
         EmbeddingTarget::from_canonical_identity(
@@ -714,9 +695,7 @@ impl TargetRelation {
 
     /// Constructs a caller-defined relation.
     pub fn extension(
-        subject: TargetId,
-        object: TargetId,
-        role: Vec<u8>,
+        subject: TargetId, object: TargetId, role: Vec<u8>,
     ) -> Result<Self, EmbeddingError> {
         let text = core::str::from_utf8(&role)
             .map_err(|_| EmbeddingError::InvalidUtf8("extension relation role"))?;
@@ -905,8 +884,7 @@ fn validate_target_schema(bytes: &[u8], rules: &[TargetFieldRule]) -> Result<(),
 
 /// Validates the exact semantic schema for one retained target identity.
 pub(crate) fn validate_target_identity(
-    kind: TargetKind,
-    bytes: &[u8],
+    kind: TargetKind, bytes: &[u8],
 ) -> Result<(), EmbeddingError> {
     match kind {
         TargetKind::Corpus => {
@@ -1126,9 +1104,7 @@ fn validate_rdf_term_identity(bytes: &[u8]) -> Result<(), EmbeddingError> {
 }
 
 fn required_target_text<'a>(
-    bytes: &'a [u8],
-    tag: u16,
-    context: &'static str,
+    bytes: &'a [u8], tag: u16, context: &'static str,
 ) -> Result<&'a str, EmbeddingError> {
     let entry = required_tlv(bytes, tag, TlvWireType::Utf8, context)?;
     if entry.value.is_empty() {
@@ -1184,10 +1160,7 @@ fn validate_ordinal(kind: TargetKind, ordinal: Option<u64>) -> Result<(), Embedd
 }
 
 fn four_digest_block(
-    first: TargetId,
-    second: TargetId,
-    third: TargetId,
-    fourth: TargetId,
+    first: TargetId, second: TargetId, third: TargetId, fourth: TargetId,
 ) -> Result<Vec<u8>, EmbeddingError> {
     let mut block = Vec::new();
     digest_field(&mut block, 1, first.as_bytes())?;

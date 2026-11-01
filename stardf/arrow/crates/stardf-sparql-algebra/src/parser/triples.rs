@@ -201,9 +201,7 @@ impl<const RDFLIB: bool> Parser<'_, '_, '_, '_, RDFLIB> {
 
     /// Read a predicate-object list of `subject`, emitting its triples into `sink`.
     pub(super) fn parse_predicate_object_list(
-        &mut self,
-        subject: SubjectArgs,
-        sink: &mut BlockSink,
+        &mut self, subject: SubjectArgs, sink: &mut BlockSink,
     ) -> Result<()> {
         self.run_triples(TGoal::PredicateObjectList(subject), sink)
             .map(drop)
@@ -220,10 +218,7 @@ impl<const RDFLIB: bool> Parser<'_, '_, '_, '_, RDFLIB> {
     }
 
     fn drive_triples(
-        &mut self,
-        goal: TGoal,
-        sink: &mut BlockSink,
-        frames: &mut Vec<TFrame>,
+        &mut self, goal: TGoal, sink: &mut BlockSink, frames: &mut Vec<TFrame>,
     ) -> Result<Option<TermPattern>> {
         let mut step = TStep::Start(goal);
         loop {
@@ -393,10 +388,7 @@ impl<const RDFLIB: bool> Parser<'_, '_, '_, '_, RDFLIB> {
     /// read here, one after another; any other verb's object is a `GraphNode`, handed
     /// over to.
     fn objects(
-        &mut self,
-        mut state: PolState,
-        frames: &mut Vec<TFrame>,
-        sink: &mut BlockSink,
+        &mut self, mut state: PolState, frames: &mut Vec<TFrame>, sink: &mut BlockSink,
     ) -> Result<TStep> {
         loop {
             let Verb::PropertyFn(iri) = &state.verb else {
@@ -467,10 +459,7 @@ impl<const RDFLIB: bool> Parser<'_, '_, '_, '_, RDFLIB> {
 
     /// Continue a predicate-object list after an object.
     fn continue_objects(
-        &mut self,
-        state: PolState,
-        frames: &mut Vec<TFrame>,
-        sink: &mut BlockSink,
+        &mut self, state: PolState, frames: &mut Vec<TFrame>, sink: &mut BlockSink,
     ) -> Result<TStep> {
         match self.next_object(state)? {
             Some(next) => self.objects(next, frames, sink),
@@ -488,12 +477,8 @@ impl<const RDFLIB: bool> Parser<'_, '_, '_, '_, RDFLIB> {
     /// important for DELETE templates, which forbid blank nodes); otherwise it mints a
     /// fresh blank reifier.
     fn annotations(
-        &mut self,
-        state: PolState,
-        base: TriplePattern,
-        mut pending: Option<TermPattern>,
-        frames: &mut Vec<TFrame>,
-        sink: &mut BlockSink,
+        &mut self, state: PolState, base: TriplePattern, mut pending: Option<TermPattern>,
+        frames: &mut Vec<TFrame>, sink: &mut BlockSink,
     ) -> Result<TStep> {
         loop {
             if self.eat(&Token::Tilde) {
@@ -524,10 +509,7 @@ impl<const RDFLIB: bool> Parser<'_, '_, '_, '_, RDFLIB> {
 
     /// Hand `frame` the node (or the finished list) it was waiting for.
     fn resume_triples(
-        &mut self,
-        frame: TFrame,
-        value: Option<TermPattern>,
-        frames: &mut Vec<TFrame>,
+        &mut self, frame: TFrame, value: Option<TermPattern>, frames: &mut Vec<TFrame>,
         sink: &mut BlockSink,
     ) -> Result<TStep> {
         match frame {
@@ -685,10 +667,7 @@ impl<const RDFLIB: bool> Parser<'_, '_, '_, '_, RDFLIB> {
     /// fresh hidden existential per join point. Pattern blanks already implement
     /// those variables and keep them out of `SELECT *`.
     fn push_linear_path(
-        &mut self,
-        subject: TermPattern,
-        edges: &[PathEdge<'_>],
-        object: TermPattern,
+        &mut self, subject: TermPattern, edges: &[PathEdge<'_>], object: TermPattern,
         triples: &mut Vec<TriplePattern>,
     ) -> Result<()> {
         let (last, prefix) = edges.split_last().expect("a linear path has an IRI leaf");
@@ -720,10 +699,7 @@ impl<const RDFLIB: bool> Parser<'_, '_, '_, '_, RDFLIB> {
     /// alternatives share endpoints, retain repeated arms, and are never expanded
     /// into a Cartesian product of branches. All work and drop walks stay iterative.
     fn translate_predicate_path(
-        &mut self,
-        path: &PropertyPathExpression,
-        subject: TermPattern,
-        object: TermPattern,
+        &mut self, path: &PropertyPathExpression, subject: TermPattern, object: TermPattern,
     ) -> Result<GraphPattern> {
         let mut pending =
             WorkList::<_, 16>::with(PathTranslation::Path(path, false, subject, object));
@@ -953,8 +929,7 @@ impl<const RDFLIB: bool> Parser<'_, '_, '_, '_, RDFLIB> {
     /// (no silent degradation) on an empty `{}`, a non-integer bound, or a lower bound
     /// exceeding the upper bound.
     fn parse_path_range(
-        &mut self,
-        primary: PropertyPathExpression,
+        &mut self, primary: PropertyPathExpression,
     ) -> Result<PropertyPathExpression> {
         self.expect(&Token::LBrace)?;
         let lower = self.eat_integer()?;

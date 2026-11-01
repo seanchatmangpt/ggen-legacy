@@ -309,8 +309,7 @@ impl SssomSetComment {
     /// Returns [`SssomCommentError`] for a missing marker, an embedded line
     /// terminator, or a single-marker line placed before the table.
     pub fn from_raw(
-        raw_line: impl Into<String>,
-        placement: SssomCommentPlacement,
+        raw_line: impl Into<String>, placement: SssomCommentPlacement,
     ) -> Result<Self, SssomCommentError> {
         let raw_line = raw_line.into();
         let kind = classify_comment_line(&raw_line)?;
@@ -361,8 +360,7 @@ impl SssomSetComment {
     }
 
     fn provenance_at(
-        content: &str,
-        placement: SssomCommentPlacement,
+        content: &str, placement: SssomCommentPlacement,
     ) -> Result<Self, SssomCommentError> {
         validate_comment_content(content)?;
         let raw_line = if content.is_empty() {
@@ -529,8 +527,7 @@ impl SssomMappingSet {
     ///
     /// Returns [`SssomCommentError`] when `content` contains a line terminator.
     pub fn append_provenance(
-        &mut self,
-        content: impl Into<String>,
+        &mut self, content: impl Into<String>,
     ) -> Result<(), SssomCommentError> {
         let comment = SssomSetComment::provenance(content)?;
         self.set_comments.push(comment);
@@ -546,8 +543,7 @@ impl SssomMappingSet {
     /// Returns [`SssomCommentError`] when `content` contains a line terminator or
     /// begins with `#` after leading whitespace.
     pub fn append_after_table_comment(
-        &mut self,
-        content: impl Into<String>,
+        &mut self, content: impl Into<String>,
     ) -> Result<(), SssomCommentError> {
         let comment = SssomSetComment::ordinary(content)?;
         self.set_comments.push(comment);
@@ -562,8 +558,7 @@ impl SssomMappingSet {
     ///
     /// Returns [`SssomCommentError`] when `content` contains a line terminator.
     pub fn append_after_table_provenance(
-        &mut self,
-        content: impl Into<String>,
+        &mut self, content: impl Into<String>,
     ) -> Result<(), SssomCommentError> {
         let comment = SssomSetComment::provenance_after_table(content)?;
         self.set_comments.push(comment);
@@ -590,9 +585,7 @@ pub struct SssomDiagnostic {
 
 impl SssomDiagnostic {
     fn error(
-        code: impl Into<String>,
-        check: impl Into<String>,
-        message: impl Into<String>,
+        code: impl Into<String>, check: impl Into<String>, message: impl Into<String>,
         instance: Option<String>,
     ) -> Self {
         Self {
@@ -858,8 +851,7 @@ fn split_key_value(scalar: &str) -> Option<(&str, &str)> {
 /// `line_numbers[i + 1]`. This keeps diagnostics anchored to the true source
 /// position regardless of how many `#` comment lines were filtered out upstream.
 fn parse_body(
-    body: &str,
-    line_numbers: &[u64],
+    body: &str, line_numbers: &[u64],
 ) -> Result<(SssomColumnLayout, Vec<SssomMapping>), RdfDiagnostic> {
     if is_blank(body) {
         return Err(RdfDiagnostic::error(
@@ -909,9 +901,7 @@ fn parse_body(
 
 /// Map one TSV record onto a [`SssomMapping`] by column name.
 fn parse_row(
-    columns: &[String],
-    record: &crate::csv::StringRecord,
-    line_no: u64,
+    columns: &[String], record: &crate::csv::StringRecord, line_no: u64,
 ) -> Result<SssomMapping, RdfDiagnostic> {
     let mut mapping = SssomMapping::default();
     for (col, value) in columns.iter().zip(record.iter()) {

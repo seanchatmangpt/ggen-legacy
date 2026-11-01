@@ -152,9 +152,7 @@ impl Row {
     /// transitional columns (toAsciiT) are never read: RFC 5891 has no
     /// transitional processing.
     fn verdict(
-        &self,
-        lane: Lane,
-        gc: &GeneralCategories,
+        &self, lane: Lane, gc: &GeneralCategories,
     ) -> Result<(&str, Option<&str>), Excluded> {
         let (Some(source), Some(to_unicode), Some(to_ascii_n)) =
             (&self.source, &self.to_unicode, &self.to_ascii_n)

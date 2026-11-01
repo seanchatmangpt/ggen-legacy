@@ -324,9 +324,7 @@ impl Fixture {
     /// Validate the first `focus_nodes` conforming ids through one binding,
     /// requiring the report to conform.
     fn validate_conforming(
-        &self,
-        configured: bool,
-        focus_nodes: usize,
+        &self, configured: bool, focus_nodes: usize,
     ) -> (ValidationReport, &'static str) {
         let (validator, ids, label) = self.binding(configured);
         let report = validator

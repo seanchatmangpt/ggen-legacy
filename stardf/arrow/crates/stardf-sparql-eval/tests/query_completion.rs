@@ -260,8 +260,7 @@ impl DatasetView for Source {
     }
     /// Tracks reporting and execution owners and injects direct or sticky refusals.
     fn reserve_workspace(
-        &self,
-        bytes: u64,
+        &self, bytes: u64,
     ) -> Result<impl WorkspaceReservation<Error = RefusedRead> + '_, RefusedRead> {
         self.reservations.fetch_add(1, Ordering::Relaxed);
         assert_eq!(bytes, 0, "unbounded scoped admission has no byte claim");
@@ -299,8 +298,7 @@ impl DatasetView for Source {
     /// Bounded output obtains the actual provider-owned reservation. Native
     /// grow callbacks, not guessed fixed byte amounts, select refusal phases.
     fn reserve_owned_workspace(
-        &self,
-        bytes: u64,
+        &self, bytes: u64,
     ) -> Option<Result<OwnedWorkspaceReservation<RefusedRead>, RefusedRead>> {
         self.storage_live_budget()?;
         Some((|| {
@@ -398,22 +396,13 @@ impl DatasetView for Source {
         Some(1)
     }
     fn cardinality_estimate(
-        &self,
-        _: Option<TermId>,
-        _: Option<TermId>,
-        _: Option<TermId>,
-        _: GraphMatch,
+        &self, _: Option<TermId>, _: Option<TermId>, _: Option<TermId>, _: GraphMatch,
     ) -> u64 {
         1
     }
     fn probe_plan(&self, _: bool, _: bool, _: bool, _: GraphMatch) {}
     fn quads_for_pattern_with_plan(
-        &self,
-        (): &(),
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, (): &(), s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         self.quads_for_pattern(s, p, o, g)
     }
@@ -478,9 +467,7 @@ impl ViewReceipt for GovernedEvidence<Receipt> {
 }
 /// Requires an exact operational cause and checkpoint without a partial answer.
 fn assert_source_refusal<T: std::fmt::Debug, V: std::fmt::Debug + ViewReceipt>(
-    result: Result<T, FallibleSparqlError<RefusedRead, V>>,
-    source: &Source,
-    expected: RefusedRead,
+    result: Result<T, FallibleSparqlError<RefusedRead, V>>, source: &Source, expected: RefusedRead,
 ) -> FallibleSparqlError<RefusedRead, V> {
     let error =
         result.expect_err("an incomplete source cannot publish any answer or budget outcome");
@@ -533,15 +520,13 @@ struct RefusingService(AtomicUsize);
 impl purrdf_sparql_eval::remote::ServiceResolver for RefusingService {
     /// The callback allocates nothing and returns only the static Disabled variant.
     fn workspace_certificate(
-        &self,
-        _: purrdf_sparql_eval::remote::ServiceRequest<'_>,
+        &self, _: purrdf_sparql_eval::remote::ServiceRequest<'_>,
     ) -> Option<purrdf_sparql_eval::remote::ServiceWorkspaceCertificate> {
         Some(purrdf_sparql_eval::remote::ServiceWorkspaceCertificate { peak_bytes: 0 })
     }
     /// Records attempted SERVICE work while respecting a stop before dispatch.
     fn resolve(
-        &self,
-        request: purrdf_sparql_eval::remote::ServiceRequest<'_>,
+        &self, request: purrdf_sparql_eval::remote::ServiceRequest<'_>,
     ) -> Result<purrdf_sparql_eval::remote::ResolvedBindings, purrdf_sparql_eval::remote::RemoteError>
     {
         if let Some(tripped) = request.stop_trip() {
@@ -553,10 +538,7 @@ impl purrdf_sparql_eval::remote::ServiceResolver for RefusingService {
 }
 /// Checks typed refusal across query routes without allowing outbound SERVICE work.
 fn assert_query_refusal(
-    engine: &NativeSparqlEngine,
-    source: &Source,
-    route: QueryRoute,
-    query: &str,
+    engine: &NativeSparqlEngine, source: &Source, route: QueryRoute, query: &str,
     expected: RefusedRead,
 ) {
     let prepared = engine.prepare_query(query, None).expect("prepare fixture");
@@ -935,11 +917,8 @@ fn assert_workspace_receipt(source: &Source, receipt: &Receipt) {
 }
 /// Rejects vacuous success and checks the one-row result's final storage receipt.
 fn assert_complete_query<V: ViewReceipt>(
-    source: &Source,
-    answer: purrdf_sparql_eval::CompleteSparqlResult<V>,
-    engine: NativeSparqlEngine,
-    prepared: Arc<PreparedQuery>,
-    state: Arc<GovernorState>,
+    source: &Source, answer: purrdf_sparql_eval::CompleteSparqlResult<V>,
+    engine: NativeSparqlEngine, prepared: Arc<PreparedQuery>, state: Arc<GovernorState>,
 ) {
     assert_eq!(answer.result.solutions().expect("SELECT shape").1.len(), 1);
     assert_held_receipt(source, answer.evidence.view_receipt());
@@ -1323,10 +1302,7 @@ const EXPLAIN_ROUTES: [ExplainRoute; 4] = [
 )]
 /// Dispatches each checked EXPLAIN entry with equivalent options and an inert stop.
 fn explain(
-    engine: &NativeSparqlEngine,
-    source: &Source,
-    route: ExplainRoute,
-    query: &str,
+    engine: &NativeSparqlEngine, source: &Source, route: ExplainRoute, query: &str,
 ) -> FallibleScopedResult<RetainedQueryExplanation, RefusedRead, Receipt> {
     match route {
         ExplainRoute::Default => engine.explain_query_fallible_view(source, query, None),
@@ -1853,11 +1829,8 @@ fn assert_supplied_coordinates(coordinates: &purrdf_sparql_eval::QueryCoordinate
     reason = "the test drives both public entries through their unchanged typed reporting boundary"
 )]
 fn prepared_governed(
-    engine: &NativeSparqlEngine,
-    source: &Source,
-    prepared: &PreparedQuery,
-    governors: &QueryGovernors,
-    shared: bool,
+    engine: &NativeSparqlEngine, source: &Source, prepared: &PreparedQuery,
+    governors: &QueryGovernors, shared: bool,
 ) -> FallibleSparqlResult<RefusedRead, GovernedEvidence<Receipt>> {
     let now = coordinate_time();
     let options = QueryOptions::EMPTY.with_now(&now).with_entropy_seed(0);
@@ -2163,8 +2136,7 @@ impl DatasetView for ExplainProjection<'_> {
         None
     }
     fn reserve_workspace(
-        &self,
-        bytes: u64,
+        &self, bytes: u64,
     ) -> Result<impl WorkspaceReservation<Error = Self::ReadError> + '_, Self::ReadError> {
         Ok(ProjectionReservation(
             self.source
@@ -2193,22 +2165,13 @@ impl DatasetView for ExplainProjection<'_> {
         Some(1)
     }
     fn cardinality_estimate(
-        &self,
-        _: Option<TermId>,
-        _: Option<TermId>,
-        _: Option<TermId>,
-        _: GraphMatch,
+        &self, _: Option<TermId>, _: Option<TermId>, _: Option<TermId>, _: GraphMatch,
     ) -> u64 {
         1
     }
     fn probe_plan(&self, _: bool, _: bool, _: bool, _: GraphMatch) {}
     fn quads_for_pattern_with_plan(
-        &self,
-        (): &(),
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, (): &(), s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         self.quads_for_pattern(s, p, o, g)
     }
@@ -2285,9 +2248,7 @@ impl purrdf_sparql_eval::PropertyFunction for StoredProducer<'_> {
     }
     purrdf_sparql_eval::resident_property_open!();
     fn open_admitted<'cursor>(
-        &self,
-        args: &purrdf_sparql_eval::PfArgs<'_>,
-        _: Option<u64>,
+        &self, args: &purrdf_sparql_eval::PfArgs<'_>, _: Option<u64>,
         workspace: purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<purrdf_sparql_eval::WorkspaceCursor<'cursor>, purrdf_sparql_eval::EvalError>
     where
@@ -2321,8 +2282,7 @@ struct StoredCursor<'query, I> {
 }
 impl<I: Iterator<Item = QuadIds>> StoredCursor<'_, I> {
     fn pull(
-        &mut self,
-        context: Option<&purrdf_sparql_eval::NativeFnContext<'_>>,
+        &mut self, context: Option<&purrdf_sparql_eval::NativeFnContext<'_>>,
     ) -> Result<Option<purrdf_sparql_eval::AdmittedPfRow>, purrdf_sparql_eval::EvalError> {
         loop {
             for _ in 0..32 {
@@ -2391,8 +2351,7 @@ impl<I: Iterator<Item = QuadIds>> purrdf_sparql_eval::PfCursor for StoredCursor<
             .transpose()
     }
     fn next_metered(
-        &mut self,
-        context: &purrdf_sparql_eval::NativeFnContext<'_>,
+        &mut self, context: &purrdf_sparql_eval::NativeFnContext<'_>,
     ) -> Result<Option<purrdf_sparql_eval::PfRow>, purrdf_sparql_eval::EvalError> {
         self.pull(Some(context))?
             .map(purrdf_sparql_eval::AdmittedPfRow::try_into_resident)
@@ -2404,8 +2363,7 @@ impl<I: Iterator<Item = QuadIds>> purrdf_sparql_eval::PfCursor for StoredCursor<
         self.pull(None)
     }
     fn next_admitted_metered(
-        &mut self,
-        context: &purrdf_sparql_eval::NativeFnContext<'_>,
+        &mut self, context: &purrdf_sparql_eval::NativeFnContext<'_>,
     ) -> Result<Option<purrdf_sparql_eval::AdmittedPfRow>, purrdf_sparql_eval::EvalError> {
         self.pull(Some(context))
     }

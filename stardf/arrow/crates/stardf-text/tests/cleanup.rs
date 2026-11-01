@@ -12,7 +12,7 @@ use purrdf_text::{
 #[test]
 fn every_standardized_emoji_presentation_keeps_its_control() {
     let analyzer = Analyzer::empty_lexicon();
-    let data = include_str!("../../iri/unicode/17.0.0/emoji-variation-sequences.txt");
+    let data = include_str!("../../stardf-iri/unicode/17.0.0/emoji-variation-sequences.txt");
     let mut rows = 0;
     for line in data.lines() {
         let row = line.split('#').next().unwrap().trim();

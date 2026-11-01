@@ -59,10 +59,7 @@ pub(super) trait RdfCodec {
     ///
     /// [`ParseOutcome::document_base`]: super::parse::ParseOutcome::document_base
     fn parse(
-        &self,
-        text: &str,
-        base: &mut BaseScope,
-        mode: LineParseMode,
+        &self, text: &str, base: &mut BaseScope, mode: LineParseMode,
     ) -> Result<Arc<RdfDataset>, RdfDiagnostic>;
 
     /// Append this format's text for `graph` to `out`.
@@ -87,10 +84,7 @@ pub(super) struct LineCodec(pub(super) NativeRdfFormat);
 
 impl RdfCodec for LineCodec {
     fn parse(
-        &self,
-        text: &str,
-        base: &mut BaseScope,
-        mode: LineParseMode,
+        &self, text: &str, base: &mut BaseScope, mode: LineParseMode,
     ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
         // The hot path never records spans; the span-tracking path in
         // `parse_dataset_with` calls `text_parse_without_panicking` with a `SpanTable`
@@ -109,9 +103,7 @@ impl RdfCodec for LineCodec {
     }
 
     fn serialize_into(
-        &self,
-        graph: &SerGraph,
-        out: &mut TextSink<'_>,
+        &self, graph: &SerGraph, out: &mut TextSink<'_>,
     ) -> Result<(), RdfDiagnostic> {
         // The four text formats append directly, so `out` is the only buffer their
         // bytes ever occupy — no per-line `String`, no join, no trailing-newline copy.

@@ -598,12 +598,8 @@ pub(crate) fn class_catalog_digest(catalog: &ClassCatalog) -> ContentDigest {
 /// silently omitted an unfingerprintable registry would be a binding that does not
 /// bind, so this fails closed rather than skipping the component.
 pub(crate) fn build_identity(
-    dataset: &PackDigest,
-    shapes: &Shapes,
-    property_functions: &PropertyFunctionRegistry<'_>,
-    parser_options: &ParserOptions,
-    implementation_identity: &[u8],
-    classes: &ClassCatalog,
+    dataset: &PackDigest, shapes: &Shapes, property_functions: &PropertyFunctionRegistry<'_>,
+    parser_options: &ParserOptions, implementation_identity: &[u8], classes: &ClassCatalog,
     model: &[u8],
 ) -> Result<Identity, ShapesProductError> {
     assemble(
@@ -636,8 +632,7 @@ pub(crate) fn build_identity(
 /// The registry dimension whose fingerprint could not be computed, exactly as
 /// [`build_identity`] reports it.
 pub(crate) fn injected_population_is_empty(
-    shapes: &Shapes,
-    property_functions: &PropertyFunctionRegistry<'_>,
+    shapes: &Shapes, property_functions: &PropertyFunctionRegistry<'_>,
 ) -> Result<bool, ShapesProductError> {
     let wired = host_components(
         &shapes.functions,
@@ -684,12 +679,8 @@ pub(crate) fn injected_population_is_empty(
 /// [`check_identity`], or a registry dimension when a fingerprint cannot be
 /// computed at all.
 pub(crate) fn check_restored_identity(
-    declared: &Identity,
-    shapes: &Shapes,
-    property_functions: &PropertyFunctionRegistry<'_>,
-    parser_options: &ParserOptions,
-    implementation_identity: &[u8],
-    classes: &ClassCatalog,
+    declared: &Identity, shapes: &Shapes, property_functions: &PropertyFunctionRegistry<'_>,
+    parser_options: &ParserOptions, implementation_identity: &[u8], classes: &ClassCatalog,
     model: &[u8],
 ) -> Result<(), ShapesProductError> {
     // An identity whose row 0 carries another label has already failed the format's
@@ -733,11 +724,8 @@ pub(crate) fn check_restored_identity(
 /// the one the product was prepared against, or when a registry cannot state its
 /// own declarations.
 pub(crate) fn check_host_bindings(
-    declared: &Identity,
-    functions: &UserFunctionRegistry,
-    aggregates: &AggregateRegistry,
-    property_functions: &PropertyFunctionRegistry<'_>,
-    implementation_identity: &[u8],
+    declared: &Identity, functions: &UserFunctionRegistry, aggregates: &AggregateRegistry,
+    property_functions: &PropertyFunctionRegistry<'_>, implementation_identity: &[u8],
 ) -> Result<(), ShapesProductError> {
     let host = host_components(
         functions,
@@ -772,10 +760,8 @@ pub(crate) fn check_host_bindings(
 /// [`ProductDimension::PropertyFunctionRegistry`] when the corresponding registry
 /// cannot state its own declarations.
 fn host_components(
-    functions: &UserFunctionRegistry,
-    aggregates: &AggregateRegistry,
-    property_functions: &PropertyFunctionRegistry<'_>,
-    implementation_identity: &[u8],
+    functions: &UserFunctionRegistry, aggregates: &AggregateRegistry,
+    property_functions: &PropertyFunctionRegistry<'_>, implementation_identity: &[u8],
 ) -> Result<[Vec<u8>; 3], ShapesProductError> {
     Ok([
         bind_implementations(
@@ -817,8 +803,7 @@ fn host_components(
 /// [`ProductDimension::DatasetIdentity`] when the certified digest is not the one
 /// the identity records.
 pub(crate) fn certify_dataset_component(
-    declared: &Identity,
-    certified: &PackDigest,
+    declared: &Identity, certified: &PackDigest,
 ) -> Result<(), ShapesProductError> {
     let (label, dimension) = COMPONENTS[0];
     if declared.component(label) == Some(certified.as_bytes().as_slice()) {
@@ -843,12 +828,8 @@ pub(crate) fn certify_dataset_component(
 /// supplies the declared one). Two transcriptions of an ordered tuple is exactly
 /// how a writer and a reader drift into disagreeing about what position 6 means.
 fn assemble(
-    dataset: &[u8],
-    shapes: &Shapes,
-    property_functions: &PropertyFunctionRegistry<'_>,
-    parser_options: &ParserOptions,
-    implementation_identity: &[u8],
-    classes: &ClassCatalog,
+    dataset: &[u8], shapes: &Shapes, property_functions: &PropertyFunctionRegistry<'_>,
+    parser_options: &ParserOptions, implementation_identity: &[u8], classes: &ClassCatalog,
     model: &[u8],
 ) -> Result<Identity, ShapesProductError> {
     let provenance = shapes.provenance();
@@ -892,9 +873,7 @@ fn assemble(
 /// Unwrap a registry content fingerprint into its raw digest bytes, or refuse under
 /// `dimension` naming `what` could not be fingerprinted.
 fn fingerprint(
-    computed: Result<ContentDigest, EvalError>,
-    dimension: ProductDimension,
-    what: &str,
+    computed: Result<ContentDigest, EvalError>, dimension: ProductDimension, what: &str,
 ) -> Result<Vec<u8>, ShapesProductError> {
     computed
         .map(|digest| digest.as_bytes().to_vec())
@@ -935,8 +914,7 @@ fn fingerprint(
 /// from a build that binds more inputs than this one) refuses under
 /// [`ProductDimension::Malformed`], fail-closed.
 pub(crate) fn check_identity(
-    expected: &Identity,
-    actual: &Identity,
+    expected: &Identity, actual: &Identity,
 ) -> Result<(), ShapesProductError> {
     let mismatches = expected.mismatches(actual);
     let Some(first) = mismatches.first() else {
@@ -1176,9 +1154,7 @@ mod tests {
     /// Parse a shapes graph under an explicit configuration — the four inputs the
     /// dataset entry point takes, so a test can move exactly one of them.
     fn shapes_with(
-        ttl: &str,
-        prefixes: &[(String, String)],
-        vocab: Option<BoxRoleVocab>,
+        ttl: &str, prefixes: &[(String, String)], vocab: Option<BoxRoleVocab>,
         shapes_graph: Option<&str>,
     ) -> Shapes {
         from_dataset_with_config_and_graph(
@@ -1252,9 +1228,7 @@ mod tests {
     /// The identity of `shapes` under a caller-supplied property-function registry
     /// and a caller-supplied implementation identity.
     fn identity_identified_by(
-        shapes: &Shapes,
-        relations: &PropertyFunctionRegistry<'_>,
-        implementation_identity: &[u8],
+        shapes: &Shapes, relations: &PropertyFunctionRegistry<'_>, implementation_identity: &[u8],
     ) -> Identity {
         build_identity(
             &digest_of(shapes),
@@ -1429,9 +1403,7 @@ mod tests {
         }
 
         fn open<'cursor>(
-            &self,
-            _args: &PfArgs<'_>,
-            _ceiling: Option<u64>,
+            &self, _args: &PfArgs<'_>, _ceiling: Option<u64>,
         ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
         where
             Self: 'cursor,

@@ -32,9 +32,7 @@ pub(crate) struct Preparation {
 
 impl Preparation {
     pub(crate) fn resume<D: TermDictionary, const N: usize, A: Admission + ?Sized>(
-        &mut self,
-        store: &mut RelationStore<D, N>,
-        memory: &mut Memory<'_, A>,
+        &mut self, store: &mut RelationStore<D, N>, memory: &mut Memory<'_, A>,
         mut allow: impl FnMut(usize) -> bool,
     ) -> Result<bool, DictionaryError<D::Error>>
     where

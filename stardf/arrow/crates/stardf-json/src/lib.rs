@@ -30,8 +30,7 @@ use purrdf_core::{BaseIri, ContentDigest};
 
 /// Validate a source and describe its occurrences without copying source spans.
 pub fn analyze<'a>(
-    source: SourceDocument<'a>,
-    profile: &Profile,
+    source: SourceDocument<'a>, profile: &Profile,
 ) -> Result<Document<'a>, JsonError> {
     BaseIri::parse(source.id).map_err(JsonError::Iri)?;
     if source.bytes.len() as u64 > profile.bounds().max_source_bytes {

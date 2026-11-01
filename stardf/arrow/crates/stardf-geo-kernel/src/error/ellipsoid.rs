@@ -57,9 +57,7 @@ impl purrdf_hash::error::StructuredError for EllipsoidInputError {
 
 impl EllipsoidInputError {
     pub(crate) fn capture(
-        semimajor: &crate::Rat,
-        inverse_flattening: &crate::Rat,
-        requirement: EllipsoidRequirement,
+        semimajor: &crate::Rat, inverse_flattening: &crate::Rat, requirement: EllipsoidRequirement,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         use crate::context::NativeDetached as _;

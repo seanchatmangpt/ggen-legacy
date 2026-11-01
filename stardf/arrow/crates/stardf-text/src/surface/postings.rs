@@ -21,8 +21,7 @@ impl<T> Joined<T> {
 }
 /// The sorted join shared by posting unions and delta validation.
 pub(crate) fn join_by<T>(
-    left: impl IntoIterator<Item = T>,
-    right: impl IntoIterator<Item = T>,
+    left: impl IntoIterator<Item = T>, right: impl IntoIterator<Item = T>,
     mut compare: impl FnMut(&T, &T) -> Ordering,
 ) -> impl Iterator<Item = Joined<T>> {
     let mut left = left.into_iter().peekable();

@@ -28,12 +28,8 @@ pub(crate) struct IndexRecord {
 /// legal accretive tail — boundary info, never a diagnostic. Unknown layout
 /// values impose no check (§5).
 pub(crate) fn layout_check(
-    g: &mut Graph,
-    header: &[(Value, Value)],
-    index_records: &[IndexRecord],
-    blob_events: &[(u64, String, bool)],
-    frame_ids: &[Vec<u8>],
-    index_offset: u64,
+    g: &mut Graph, header: &[(Value, Value)], index_records: &[IndexRecord],
+    blob_events: &[(u64, String, bool)], frame_ids: &[Vec<u8>], index_offset: u64,
     sink: &mut Option<&mut dyn StreamingSink>,
 ) -> StreamableInfo {
     let claimed = matches!(map_get(header, "layout"), Some(Value::Text(t)) if t == "streamable");
@@ -132,10 +128,7 @@ pub(crate) fn layout_check(
 }
 
 pub(crate) fn check_index_mmr(
-    g: &mut Graph,
-    index_records: &[IndexRecord],
-    frame_ids: &[Vec<u8>],
-    index_offset: u64,
+    g: &mut Graph, index_records: &[IndexRecord], frame_ids: &[Vec<u8>], index_offset: u64,
     sink: &mut Option<&mut dyn StreamingSink>,
 ) {
     for record in index_records {

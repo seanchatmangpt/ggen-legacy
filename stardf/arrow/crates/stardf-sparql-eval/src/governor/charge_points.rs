@@ -894,9 +894,7 @@ impl crate::property_fn::PropertyFunction for CountingRelation {
     }
 
     fn open<'cursor>(
-        &self,
-        _args: &crate::property_fn::PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, _args: &crate::property_fn::PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn crate::property_fn::PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -985,10 +983,8 @@ fn pf_dataset(links: usize) -> Arc<RdfDataset> {
 /// The ledger is what makes an "exactly this much invocation fuel" claim checkable at all:
 /// the evidence carries one fuel total, and a total cannot say which point spent it.
 fn run_with_relations(
-    pattern: &GraphPattern,
-    dataset: &RdfDataset,
-    relations: &crate::property_fn::PropertyFunctionRegistry<'_>,
-    governors: &QueryGovernors,
+    pattern: &GraphPattern, dataset: &RdfDataset,
+    relations: &crate::property_fn::PropertyFunctionRegistry<'_>, governors: &QueryGovernors,
 ) -> (Run, Vec<crate::governor::NodeCharges>) {
     let state = Arc::new(GovernorState::new(governors));
     let ledger = Arc::new(crate::governor::ledger::ChargeLedger::for_plan(
@@ -1006,9 +1002,7 @@ fn run_with_relations(
 /// Every fixture verifies the ledger against the original governor receipt,
 /// including finite stops and ordered worker replay.
 fn recorded_run(
-    rows: usize,
-    state: &GovernorState,
-    ledger: &crate::governor::ledger::ChargeLedger,
+    rows: usize, state: &GovernorState, ledger: &crate::governor::ledger::ChargeLedger,
 ) -> (Run, Vec<crate::governor::NodeCharges>) {
     let evidence = state.evidence();
     let ledger = ledger.snapshot();
@@ -1504,9 +1498,7 @@ fn duplicate_value_dataset(rows: i64) -> Arc<RdfDataset> {
 /// `governors`, with `registry` wired if the pattern names a custom aggregate, reporting
 /// what it kept and spent together with the per-node, per-charge-point ledger.
 fn run_with_aggregates(
-    pattern: &GraphPattern,
-    dataset: &RdfDataset,
-    registry: Option<&AggregateRegistry>,
+    pattern: &GraphPattern, dataset: &RdfDataset, registry: Option<&AggregateRegistry>,
     governors: &QueryGovernors,
 ) -> (Run, Vec<crate::governor::NodeCharges>) {
     let state = Arc::new(GovernorState::new(governors));
@@ -1948,11 +1940,8 @@ struct AggregateAnswer {
 }
 
 fn run_aggregate_answer(
-    pattern: &GraphPattern,
-    dataset: &RdfDataset,
-    registry: Option<&AggregateRegistry>,
-    governors: &QueryGovernors,
-    var: &str,
+    pattern: &GraphPattern, dataset: &RdfDataset, registry: Option<&AggregateRegistry>,
+    governors: &QueryGovernors, var: &str,
 ) -> AggregateAnswer {
     let state = Arc::new(GovernorState::new(governors));
     let mut ctx = EvalCtx::new(dataset).with_governors(Arc::clone(&state));

@@ -143,9 +143,7 @@ fn iri(subject: &TermValue, predicate: &str, value: &str) -> Result<(), Box<FnoA
 }
 
 fn text(
-    subject: &TermValue,
-    predicate: &str,
-    value: &TermValue,
+    subject: &TermValue, predicate: &str, value: &TermValue,
 ) -> Result<(), Box<FnoAdmissionReason>> {
     if !matches!(value, TermValue::Literal { .. }) {
         return Err(Box::new(FnoAdmissionReason::ExpectedLiteral {
@@ -173,9 +171,7 @@ fn text(
 }
 
 fn optional_text(
-    subject: &TermValue,
-    predicate: &str,
-    value: Option<&TermValue>,
+    subject: &TermValue, predicate: &str, value: Option<&TermValue>,
 ) -> Result<(), Box<FnoAdmissionReason>> {
     value.map_or(Ok(()), |value| text(subject, predicate, value))
 }
@@ -355,9 +351,7 @@ impl<'a> Node<'a> {
 }
 
 fn insert<'a>(
-    nodes: &mut Nodes<'a>,
-    subject: TermValue,
-    node: Node<'a>,
+    nodes: &mut Nodes<'a>, subject: TermValue, node: Node<'a>,
 ) -> Result<(), Box<FnoAdmissionReason>> {
     let properties = node.properties();
     if let Some(previous) = nodes.get(&subject) {
@@ -376,10 +370,7 @@ fn insert<'a>(
 }
 
 fn reference(
-    subject: &TermValue,
-    predicate: &str,
-    target: &str,
-    valid: bool,
+    subject: &TermValue, predicate: &str, target: &str, valid: bool,
 ) -> Result<(), Box<FnoAdmissionReason>> {
     if valid {
         Ok(())

@@ -87,8 +87,7 @@ pub struct LpgPackageProjection {
 ///
 /// Returns a typed model, CSV, package, or resource-limit failure.
 pub fn write_lpg_csv(
-    graph: &LpgGraph,
-    config: &LpgConfig,
+    graph: &LpgGraph, config: &LpgConfig,
 ) -> Result<ProjectionPackage, ProjectionError> {
     let mut sink = ProjectionPackageSink::new(config.limits());
     write_lpg_csv_to_sink(graph, config, &mut sink, &mut IgnoreProgress)?;
@@ -102,10 +101,7 @@ pub fn write_lpg_csv(
 /// Returns a typed model, sink, observer, CSV, serialization, or resource-limit
 /// failure. The sink transaction is aborted on every failure.
 pub fn write_lpg_csv_to_sink<S, O>(
-    graph: &LpgGraph,
-    config: &LpgConfig,
-    sink: &mut S,
-    observer: &mut O,
+    graph: &LpgGraph, config: &LpgConfig, sink: &mut S, observer: &mut O,
 ) -> Result<(), ProjectionError>
 where
     S: ProjectionArtifactSink,
@@ -120,8 +116,7 @@ where
 ///
 /// Returns any canonical LPG projection or CSV/package encoding failure.
 pub fn project_lpg_csv<D: DatasetView>(
-    view: &D,
-    config: &LpgConfig,
+    view: &D, config: &LpgConfig,
 ) -> Result<LpgPackageProjection, ProjectionError> {
     let LpgProjection {
         graph,
@@ -144,10 +139,7 @@ pub fn project_lpg_csv<D: DatasetView>(
 /// Returns a typed mapping, sink, observer, CSV, serialization, or resource-limit
 /// failure. The sink transaction is aborted on every failure.
 pub fn project_lpg_csv_to_sink<D, S, O>(
-    view: &D,
-    config: &LpgConfig,
-    sink: &mut S,
-    observer: &mut O,
+    view: &D, config: &LpgConfig, sink: &mut S, observer: &mut O,
 ) -> Result<LpgStreamProjection, ProjectionError>
 where
     D: DatasetView,
@@ -167,10 +159,7 @@ where
 }
 
 fn stream_lpg_csv<S, O>(
-    graph: &LpgGraph,
-    config: &LpgConfig,
-    sink: &mut S,
-    observer: &mut O,
+    graph: &LpgGraph, config: &LpgConfig, sink: &mut S, observer: &mut O,
     report: LpgProjectionReport,
 ) -> Result<(), ProjectionError>
 where
@@ -201,8 +190,7 @@ where
 /// duplicate or unsorted records, dangling references, inconsistent sideband, and
 /// all configured resource-limit breaches.
 pub fn read_lpg_csv(
-    package: &ProjectionPackage,
-    config: &LpgConfig,
+    package: &ProjectionPackage, config: &LpgConfig,
 ) -> Result<LpgGraph, ProjectionError> {
     validate_package_bounds(package, config.limits())?;
     let manifest = read_manifest(
@@ -248,8 +236,7 @@ pub fn read_lpg_csv(
 /// Returns a typed model, CSV, package, identifier-collision, or resource-limit
 /// failure.
 pub fn write_neo4j_csv(
-    graph: &LpgGraph,
-    config: &LpgConfig,
+    graph: &LpgGraph, config: &LpgConfig,
 ) -> Result<ProjectionPackage, ProjectionError> {
     let mut sink = ProjectionPackageSink::new(config.limits());
     write_neo4j_csv_to_sink(graph, config, &mut sink, &mut IgnoreProgress)?;
@@ -263,10 +250,7 @@ pub fn write_neo4j_csv(
 /// Returns a typed model, sink, observer, CSV, identifier, serialization, or
 /// resource-limit failure. The sink transaction is aborted on every failure.
 pub fn write_neo4j_csv_to_sink<S, O>(
-    graph: &LpgGraph,
-    config: &LpgConfig,
-    sink: &mut S,
-    observer: &mut O,
+    graph: &LpgGraph, config: &LpgConfig, sink: &mut S, observer: &mut O,
 ) -> Result<(), ProjectionError>
 where
     S: ProjectionArtifactSink,
@@ -276,10 +260,7 @@ where
 }
 
 fn stream_neo4j_csv<S, O>(
-    graph: &LpgGraph,
-    config: &LpgConfig,
-    sink: &mut S,
-    observer: &mut O,
+    graph: &LpgGraph, config: &LpgConfig, sink: &mut S, observer: &mut O,
     report: LpgProjectionReport,
 ) -> Result<(), ProjectionError>
 where
@@ -345,8 +326,7 @@ where
 ///
 /// Returns any canonical LPG projection or Neo4j CSV/package encoding failure.
 pub fn project_neo4j_csv<D: DatasetView>(
-    view: &D,
-    config: &LpgConfig,
+    view: &D, config: &LpgConfig,
 ) -> Result<LpgPackageProjection, ProjectionError> {
     let LpgProjection {
         graph,
@@ -369,10 +349,7 @@ pub fn project_neo4j_csv<D: DatasetView>(
 /// Returns a typed mapping, sink, observer, CSV, identifier, serialization, or
 /// resource-limit failure. The sink transaction is aborted on every failure.
 pub fn project_neo4j_csv_to_sink<D, S, O>(
-    view: &D,
-    config: &LpgConfig,
-    sink: &mut S,
-    observer: &mut O,
+    view: &D, config: &LpgConfig, sink: &mut S, observer: &mut O,
 ) -> Result<LpgStreamProjection, ProjectionError>
 where
     D: DatasetView,
@@ -399,8 +376,7 @@ where
 /// duplicate records, non-canonical JSON/CSV, dangling ids, sideband inconsistency,
 /// and configured resource-limit breaches.
 pub fn read_neo4j_csv(
-    package: &ProjectionPackage,
-    config: &LpgConfig,
+    package: &ProjectionPackage, config: &LpgConfig,
 ) -> Result<LpgGraph, ProjectionError> {
     validate_package_bounds(package, config.limits())?;
     let manifest = read_manifest(
@@ -490,9 +466,7 @@ pub fn read_neo4j_csv(
 }
 
 fn encode_generic_nodes<S, O>(
-    output: &mut LpgArtifactWriter<'_, S, O>,
-    graph: &LpgGraph,
-    config: &LpgConfig,
+    output: &mut LpgArtifactWriter<'_, S, O>, graph: &LpgGraph, config: &LpgConfig,
 ) -> Result<(), ProjectionError>
 where
     S: ProjectionArtifactSink,
@@ -515,9 +489,7 @@ where
 }
 
 fn encode_generic_edges<S, O>(
-    output: &mut LpgArtifactWriter<'_, S, O>,
-    graph: &LpgGraph,
-    config: &LpgConfig,
+    output: &mut LpgArtifactWriter<'_, S, O>, graph: &LpgGraph, config: &LpgConfig,
 ) -> Result<(), ProjectionError>
 where
     S: ProjectionArtifactSink,
@@ -541,9 +513,7 @@ where
 }
 
 fn read_generic_nodes(
-    bytes: &[u8],
-    config: &LpgConfig,
-    budget: &mut RecordBudget,
+    bytes: &[u8], config: &LpgConfig, budget: &mut RecordBudget,
 ) -> Result<Vec<LpgNode>, ProjectionError> {
     let mut reader = csv_reader(bytes, GENERIC_NODE_HEADER, GENERIC_NODES)?;
     let mut nodes = Vec::new();
@@ -567,9 +537,7 @@ fn read_generic_nodes(
 }
 
 fn read_generic_edges(
-    bytes: &[u8],
-    config: &LpgConfig,
-    budget: &mut RecordBudget,
+    bytes: &[u8], config: &LpgConfig, budget: &mut RecordBudget,
 ) -> Result<Vec<LpgEdge>, ProjectionError> {
     let mut reader = csv_reader(bytes, GENERIC_EDGE_HEADER, GENERIC_EDGES)?;
     let mut edges = Vec::new();
@@ -589,10 +557,7 @@ fn read_generic_edges(
 }
 
 fn encode_sideband<S, O>(
-    output: &mut LpgArtifactWriter<'_, S, O>,
-    graph: &LpgGraph,
-    config: &LpgConfig,
-    path: &str,
+    output: &mut LpgArtifactWriter<'_, S, O>, graph: &LpgGraph, config: &LpgConfig, path: &str,
 ) -> Result<(), ProjectionError>
 where
     S: ProjectionArtifactSink,
@@ -644,10 +609,7 @@ where
 type SidebandRows = (Vec<ProjectionTerm>, Vec<LpgReifier>, Vec<LpgAnnotation>);
 
 fn read_sideband(
-    bytes: &[u8],
-    config: &LpgConfig,
-    budget: &mut RecordBudget,
-    path: &str,
+    bytes: &[u8], config: &LpgConfig, budget: &mut RecordBudget, path: &str,
 ) -> Result<SidebandRows, ProjectionError> {
     let mut reader = csv_reader(bytes, SIDEBAND_HEADER, path)?;
     let mut named_graphs = Vec::new();
@@ -729,11 +691,8 @@ fn read_sideband(
 }
 
 fn encode_neo4j_nodes<S, O>(
-    output: &mut LpgArtifactWriter<'_, S, O>,
-    nodes: &[&LpgNode],
-    labels: &[String],
-    config: &LpgConfig,
-    path: &str,
+    output: &mut LpgArtifactWriter<'_, S, O>, nodes: &[&LpgNode], labels: &[String],
+    config: &LpgConfig, path: &str,
 ) -> Result<(), ProjectionError>
 where
     S: ProjectionArtifactSink,
@@ -769,12 +728,8 @@ where
 }
 
 fn read_neo4j_nodes(
-    bytes: &[u8],
-    path: &str,
-    config: &LpgConfig,
-    label_map: &BTreeMap<String, String>,
-    property_map: &BTreeMap<String, String>,
-    budget: &mut RecordBudget,
+    bytes: &[u8], path: &str, config: &LpgConfig, label_map: &BTreeMap<String, String>,
+    property_map: &BTreeMap<String, String>, budget: &mut RecordBudget,
 ) -> Result<Vec<LpgNode>, ProjectionError> {
     let (mut reader, property_tokens) = neo4j_node_reader(bytes, path, property_map)?;
     let mut nodes = Vec::new();
@@ -871,9 +826,7 @@ fn read_neo4j_nodes(
 }
 
 fn neo4j_node_reader<'a>(
-    bytes: &'a [u8],
-    path: &str,
-    property_map: &BTreeMap<String, String>,
+    bytes: &'a [u8], path: &str, property_map: &BTreeMap<String, String>,
 ) -> Result<(Reader<'a>, Vec<String>), ProjectionError> {
     let mut reader = Reader::new(Dialect::LPG_CSV, bytes);
     let actual = reader
@@ -923,9 +876,7 @@ fn group_property_columns(nodes: &[&LpgNode]) -> Result<BTreeMap<String, String>
 }
 
 pub(super) fn native_property_cell(
-    properties: &[LpgProperty],
-    iri: &str,
-    config: &LpgConfig,
+    properties: &[LpgProperty], iri: &str, config: &LpgConfig,
 ) -> Result<String, ProjectionError> {
     let values: Vec<_> = properties
         .iter()
@@ -940,10 +891,7 @@ pub(super) fn native_property_cell(
 }
 
 fn encode_neo4j_relationships<S, O>(
-    output: &mut LpgArtifactWriter<'_, S, O>,
-    edges: &[&LpgEdge],
-    token: &str,
-    config: &LpgConfig,
+    output: &mut LpgArtifactWriter<'_, S, O>, edges: &[&LpgEdge], token: &str, config: &LpgConfig,
     path: &str,
 ) -> Result<(), ProjectionError>
 where
@@ -968,10 +916,7 @@ where
 }
 
 fn read_neo4j_relationships(
-    bytes: &[u8],
-    path: &str,
-    config: &LpgConfig,
-    type_map: &BTreeMap<String, String>,
+    bytes: &[u8], path: &str, config: &LpgConfig, type_map: &BTreeMap<String, String>,
     budget: &mut RecordBudget,
 ) -> Result<Vec<LpgEdge>, ProjectionError> {
     let mut reader = csv_reader(bytes, NEO4J_REL_HEADER, path)?;
@@ -1025,9 +970,7 @@ fn read_neo4j_relationships(
 }
 
 fn encode_token_map<S, O>(
-    output: &mut LpgArtifactWriter<'_, S, O>,
-    map: &BTreeMap<String, String>,
-    path: &str,
+    output: &mut LpgArtifactWriter<'_, S, O>, map: &BTreeMap<String, String>, path: &str,
 ) -> Result<(), ProjectionError>
 where
     S: ProjectionArtifactSink,
@@ -1041,9 +984,7 @@ where
 }
 
 fn read_token_map(
-    bytes: &[u8],
-    path: &str,
-    expected_token: fn(&str) -> Result<String, ProjectionError>,
+    bytes: &[u8], path: &str, expected_token: fn(&str) -> Result<String, ProjectionError>,
     max_rows: usize,
 ) -> Result<BTreeMap<String, String>, ProjectionError> {
     let mut reader = csv_reader(bytes, NEO4J_MAP_HEADER, path)?;
@@ -1105,9 +1046,7 @@ fn relationship_token_map(graph: &LpgGraph) -> Result<BTreeMap<String, String>, 
 }
 
 fn insert_token(
-    map: &mut BTreeMap<String, String>,
-    token: String,
-    iri: &str,
+    map: &mut BTreeMap<String, String>, token: String, iri: &str,
 ) -> Result<(), ProjectionError> {
     if let Some(existing) = map.insert(token, iri.to_owned())
         && existing != iri
@@ -1157,9 +1096,7 @@ fn is_direct_csv_child(path: &str, prefix: &str) -> bool {
 type StreamingCsvWriter<'a, 'b, S, O> = Writer<&'a mut LpgArtifactWriter<'b, S, O>>;
 
 fn streaming_csv_writer<'a, 'b, S, O>(
-    output: &'a mut LpgArtifactWriter<'b, S, O>,
-    header: &[&str],
-    path: &str,
+    output: &'a mut LpgArtifactWriter<'b, S, O>, header: &[&str], path: &str,
 ) -> Result<StreamingCsvWriter<'a, 'b, S, O>, ProjectionError>
 where
     S: ProjectionArtifactSink,
@@ -1173,9 +1110,7 @@ where
 }
 
 fn write_streaming_record<I, T, W>(
-    writer: &mut Writer<W>,
-    record: I,
-    path: &str,
+    writer: &mut Writer<W>, record: I, path: &str,
 ) -> Result<(), ProjectionError>
 where
     I: IntoIterator<Item = T>,
@@ -1188,8 +1123,7 @@ where
 }
 
 fn finish_streaming_csv<W: io::Write>(
-    mut writer: Writer<W>,
-    path: &str,
+    mut writer: Writer<W>, path: &str,
 ) -> Result<(), ProjectionError> {
     writer
         .flush()
@@ -1201,9 +1135,7 @@ fn csv_stream_error(error: &CsvError, action: &str, path: &str) -> ProjectionErr
 }
 
 fn csv_reader<'a>(
-    bytes: &'a [u8],
-    expected_header: &[&str],
-    path: &str,
+    bytes: &'a [u8], expected_header: &[&str], path: &str,
 ) -> Result<Reader<'a>, ProjectionError> {
     let mut reader = Reader::new(Dialect::LPG_CSV, bytes);
     let actual = reader
@@ -1224,10 +1156,7 @@ fn csv_read_error(error: &CsvError, path: &str) -> ProjectionError {
 
 /// A JSON cell's value: [`parse_json`] of the cell text.
 fn parse_json_cell<T: FromJson + ToJson>(
-    value: &str,
-    config: &LpgConfig,
-    description: &str,
-    path: &str,
+    value: &str, config: &LpgConfig, description: &str, path: &str,
 ) -> Result<T, ProjectionError> {
     parse_json(value.as_bytes(), config, description, path)
 }
@@ -1324,9 +1253,7 @@ mod tests {
     }
 
     fn replace_artifact(
-        package: &ProjectionPackage,
-        path: &str,
-        replacement: &[u8],
+        package: &ProjectionPackage, path: &str, replacement: &[u8],
     ) -> ProjectionPackage {
         ProjectionPackage::from_artifacts(
             package.limits(),

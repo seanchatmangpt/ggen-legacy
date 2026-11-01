@@ -96,8 +96,7 @@ impl purrdf_hash::error::StructuredError for WktReason {
 
 impl WktReason<&str> {
     fn into_owned<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<WktReason, StorageError> {
         Ok(match self {
             Self::TrailingText { found } => WktReason::TrailingText {
@@ -178,8 +177,7 @@ impl purrdf_hash::error::StructuredError for WktError {
 }
 impl WktError {
     pub(crate) fn capture(
-        position: usize,
-        reason: WktReason<&str>,
+        position: usize, reason: WktReason<&str>,
         storage: Option<&crate::carrier::CarrierStorage<'_>>,
     ) -> super::GeoError {
         crate::carrier::with_storage(storage, |memory| {

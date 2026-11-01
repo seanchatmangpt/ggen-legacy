@@ -258,8 +258,7 @@ impl ClauseTerm {
 
     /// Render through the original native account without an unadmitted string.
     pub(crate) fn surface_in<A: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, A>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, A>,
     ) -> Result<Option<String>, purrdf_lex::allocation::StorageError> {
         use purrdf_lex::allocation::StorageError;
         memory.scope(|memory| {
@@ -361,10 +360,7 @@ impl ClauseAtom<4> {
     ///
     /// Panics if [`ClauseTerm::DefaultGraph`] appears in subject, predicate or object.
     pub fn quad(
-        subject: ClauseTerm,
-        predicate: ClauseTerm,
-        object: ClauseTerm,
-        graph: ClauseTerm,
+        subject: ClauseTerm, predicate: ClauseTerm, object: ClauseTerm, graph: ClauseTerm,
     ) -> Self {
         Self::from_positions([subject, predicate, object, graph])
     }
@@ -375,10 +371,7 @@ impl ClauseAtom<4> {
     ///
     /// See [`Self::quad`].
     pub fn negated_quad(
-        subject: ClauseTerm,
-        predicate: ClauseTerm,
-        object: ClauseTerm,
-        graph: ClauseTerm,
+        subject: ClauseTerm, predicate: ClauseTerm, object: ClauseTerm, graph: ClauseTerm,
     ) -> Self {
         Self {
             negated: true,
@@ -819,9 +812,7 @@ impl<const N: usize> DlClause<N> {
     ///   universally quantified (it is a frontier variable), so the same name cannot also
     ///   be existential.
     pub fn new(
-        head: Vec<HeadDisjunct<N>>,
-        existentials: Vec<String>,
-        body: Vec<ClauseAtom<N>>,
+        head: Vec<HeadDisjunct<N>>, existentials: Vec<String>, body: Vec<ClauseAtom<N>>,
     ) -> Self {
         let mut head_variables = BTreeSet::new();
         for atom in head.iter().flat_map(HeadDisjunct::atoms) {

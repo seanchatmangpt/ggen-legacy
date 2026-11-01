@@ -358,10 +358,7 @@ mod body {
     )]
     #[inline(always)]
     pub(crate) fn squared_euclidean_bounded<A: Scalar, B: Scalar>(
-        ops: Binary64<'_>,
-        a: &[A],
-        b: &[B],
-        bound: Bound,
+        ops: Binary64<'_>, a: &[A], b: &[B], bound: Bound,
     ) -> Bounded {
         let len = a.len().min(b.len());
         let (blocks_a, tail_a) = a[..len].as_chunks::<BLOCK>();
@@ -473,18 +470,13 @@ trait Compiled {
 
     /// The reassociated squared Euclidean distance, bounded.
     fn squared_euclidean_bounded<Q: Scalar, T: Scalar>(
-        ops: Binary64<'_>,
-        a: &[Q],
-        b: &[T],
-        bound: Bound,
+        ops: Binary64<'_>, a: &[Q], b: &[T], bound: Bound,
     ) -> Bounded;
 
     /// The reassociated squared Euclidean distance, retaining its refusal.
     #[inline]
     fn squared_euclidean<Q: Scalar, T: Scalar>(
-        ops: Binary64<'_>,
-        a: &[Q],
-        b: &[T],
+        ops: Binary64<'_>, a: &[Q], b: &[T],
     ) -> Result<f64, NonFinite> {
         match Self::squared_euclidean_bounded(ops, a, b, Bound::Above(f64::INFINITY)) {
             Bounded::Below(sum) => Ok(sum),
@@ -505,10 +497,7 @@ impl Compiled for Baseline {
 
     #[inline]
     fn squared_euclidean_bounded<Q: Scalar, T: Scalar>(
-        ops: Binary64<'_>,
-        a: &[Q],
-        b: &[T],
-        bound: Bound,
+        ops: Binary64<'_>, a: &[Q], b: &[T], bound: Bound,
     ) -> Bounded {
         by_width!(baseline::squared_euclidean_bounded(ops, a, b, bound))
     }
@@ -532,10 +521,7 @@ impl Compiled for Avx2Fma {
 
     #[inline]
     fn squared_euclidean_bounded<Q: Scalar, T: Scalar>(
-        ops: Binary64<'_>,
-        a: &[Q],
-        b: &[T],
-        bound: Bound,
+        ops: Binary64<'_>, a: &[Q], b: &[T], bound: Bound,
     ) -> Bounded {
         // SAFETY: as in `dot`; a `Path::Avx2Fma` exists only after AVX2 and FMA were
         // detected.
@@ -561,10 +547,7 @@ impl Compiled for Avx512f {
 
     #[inline]
     fn squared_euclidean_bounded<Q: Scalar, T: Scalar>(
-        ops: Binary64<'_>,
-        a: &[Q],
-        b: &[T],
-        bound: Bound,
+        ops: Binary64<'_>, a: &[Q], b: &[T], bound: Bound,
     ) -> Bounded {
         // SAFETY: as in `dot`; a `Path::Avx512f` exists only after AVX-512F was detected.
         unsafe { by_width!(avx512f::squared_euclidean_bounded(ops, a, b, bound)) }
@@ -608,11 +591,7 @@ macro_rules! on_path {
 
 /// Every row of `rows` against `query` under compilation `K`, in row order.
 fn batch<K: Compiled, Q: Scalar, T: Scalar>(
-    ops: Binary64<'_>,
-    measure: Measure,
-    query: &[Q],
-    query_norm: f64,
-    rows: RowsRef<'_, T>,
+    ops: Binary64<'_>, measure: Measure, query: &[Q], query_norm: f64, rows: RowsRef<'_, T>,
     out: &mut [Result<f64, NonFinite>],
 ) {
     assert_eq!(
@@ -656,13 +635,8 @@ fn batch<K: Compiled, Q: Scalar, T: Scalar>(
 
 /// The rows named by `ids` against `query` under compilation `K`, in `ids` order.
 fn batch_indexed<K: Compiled, Q: Scalar, T: Scalar>(
-    ops: Binary64<'_>,
-    measure: Measure,
-    query: &[Q],
-    query_norm: f64,
-    rows: RowsRef<'_, T>,
-    ids: &[usize],
-    out: &mut [Result<f64, NonFinite>],
+    ops: Binary64<'_>, measure: Measure, query: &[Q], query_norm: f64, rows: RowsRef<'_, T>,
+    ids: &[usize], out: &mut [Result<f64, NonFinite>],
 ) {
     assert_eq!(
         query.len(),
@@ -705,12 +679,7 @@ fn batch_indexed<K: Compiled, Q: Scalar, T: Scalar>(
 
 /// One pair under compilation `K`.
 fn pair<K: Compiled, Q: Scalar, T: Scalar>(
-    ops: Binary64<'_>,
-    measure: Measure,
-    a: &[Q],
-    a_norm: f64,
-    b: &[T],
-    b_norm: f64,
+    ops: Binary64<'_>, measure: Measure, a: &[Q], a_norm: f64, b: &[T], b_norm: f64,
 ) -> Result<f64, NonFinite> {
     let value = match measure {
         Measure::SquaredEuclidean => return K::squared_euclidean(ops, a, b),
@@ -722,13 +691,7 @@ fn pair<K: Compiled, Q: Scalar, T: Scalar>(
 
 /// One pair under compilation `K`, permitted to stop once it cannot clear `bound`.
 fn pair_bounded<K: Compiled, Q: Scalar, T: Scalar>(
-    ops: Binary64<'_>,
-    measure: Measure,
-    a: &[Q],
-    a_norm: f64,
-    b: &[T],
-    b_norm: f64,
-    bound: Bound,
+    ops: Binary64<'_>, measure: Measure, a: &[Q], a_norm: f64, b: &[T], b_norm: f64, bound: Bound,
 ) -> Bounded {
     if measure == Measure::SquaredEuclidean {
         return K::squared_euclidean_bounded(ops, a, b, bound);
@@ -742,11 +705,7 @@ fn pair_bounded<K: Compiled, Q: Scalar, T: Scalar>(
 
 /// Every row of `rows` against `query` along `path`.
 pub(crate) fn distances<Q: Scalar, T: Scalar>(
-    path: Path,
-    measure: Measure,
-    query: &[Q],
-    query_norm: f64,
-    rows: RowsRef<'_, T>,
+    path: Path, measure: Measure, query: &[Q], query_norm: f64, rows: RowsRef<'_, T>,
     out: &mut [Result<f64, NonFinite>],
 ) {
     let precision = Precision::enter();
@@ -756,13 +715,8 @@ pub(crate) fn distances<Q: Scalar, T: Scalar>(
 
 /// The rows named by `ids` against `query` along `path`.
 pub(crate) fn distances_indexed<Q: Scalar, T: Scalar>(
-    path: Path,
-    measure: Measure,
-    query: &[Q],
-    query_norm: f64,
-    rows: RowsRef<'_, T>,
-    ids: &[usize],
-    out: &mut [Result<f64, NonFinite>],
+    path: Path, measure: Measure, query: &[Q], query_norm: f64, rows: RowsRef<'_, T>,
+    ids: &[usize], out: &mut [Result<f64, NonFinite>],
 ) {
     let precision = Precision::enter();
     let ops = precision.binary64();
@@ -771,12 +725,7 @@ pub(crate) fn distances_indexed<Q: Scalar, T: Scalar>(
 
 /// One pair along `path`.
 pub(crate) fn distance<Q: Scalar, T: Scalar>(
-    path: Path,
-    measure: Measure,
-    a: &[Q],
-    a_norm: f64,
-    b: &[T],
-    b_norm: f64,
+    path: Path, measure: Measure, a: &[Q], a_norm: f64, b: &[T], b_norm: f64,
 ) -> Result<f64, NonFinite> {
     let precision = Precision::enter();
     let ops = precision.binary64();
@@ -785,13 +734,7 @@ pub(crate) fn distance<Q: Scalar, T: Scalar>(
 
 /// One pair along `path`, permitted to stop once it cannot clear `bound`.
 pub(crate) fn distance_bounded<Q: Scalar, T: Scalar>(
-    path: Path,
-    measure: Measure,
-    a: &[Q],
-    a_norm: f64,
-    b: &[T],
-    b_norm: f64,
-    bound: Bound,
+    path: Path, measure: Measure, a: &[Q], a_norm: f64, b: &[T], b_norm: f64, bound: Bound,
 ) -> Bounded {
     let precision = Precision::enter();
     let ops = precision.binary64();

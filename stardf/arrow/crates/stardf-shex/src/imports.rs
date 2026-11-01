@@ -60,9 +60,7 @@ pub type ImportResolver<'a> = dyn Fn(&str) -> Result<Schema> + 'a;
 /// IRI, or [`ShexError::ImportConflict`] when two schemas declare the same
 /// shape label with different definitions.
 pub fn resolve_imports(
-    root: Schema,
-    root_iri: Option<&str>,
-    resolver: &ImportResolver<'_>,
+    root: Schema, root_iri: Option<&str>, resolver: &ImportResolver<'_>,
 ) -> Result<Schema> {
     let mut merged = Schema {
         imports: Vec::new(),
@@ -106,9 +104,7 @@ pub fn resolve_imports(
 /// Merge one declaration, deduplicating identical labels and rejecting
 /// conflicting ones.
 fn merge_decl(
-    shapes: &mut Vec<ShapeDecl>,
-    seen: &mut FastSet<String>,
-    decl: ShapeDecl,
+    shapes: &mut Vec<ShapeDecl>, seen: &mut FastSet<String>, decl: ShapeDecl,
 ) -> Result<()> {
     if seen.contains(&decl.id) {
         // A label may recur only if the definitions are identical.

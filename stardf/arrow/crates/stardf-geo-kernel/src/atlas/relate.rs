@@ -34,9 +34,7 @@ pub fn topology_law_id() -> SemanticLawId {
 /// Refuses reference mismatch, an unresolved modeled-curve arrangement, and any
 /// incomplete work, memory, cancellation or precision admission.
 pub fn relate(
-    a: &PreparedGeometry,
-    b: &PreparedGeometry,
-    context: &mut MetricContext,
+    a: &PreparedGeometry, b: &PreparedGeometry, context: &mut MetricContext,
 ) -> Result<IntersectionMatrix, GeoError> {
     relate_inner(a, b, None, context, None)
 }
@@ -46,9 +44,7 @@ pub fn relate(
 /// # Errors
 /// Adds the observer's original refusal to [`relate`].
 pub fn relate_metered(
-    a: &PreparedGeometry,
-    b: &PreparedGeometry,
-    context: &mut MetricContext,
+    a: &PreparedGeometry, b: &PreparedGeometry, context: &mut MetricContext,
     observer: &mut dyn MetricWorkObserver,
 ) -> Result<IntersectionMatrix, GeoError> {
     relate_inner(a, b, None, context, Some(observer))
@@ -59,9 +55,7 @@ pub fn relate_metered(
 /// # Errors
 /// Adds a mismatched or absent source receipt to [`relate`]'s failures.
 pub fn relate_prepared(
-    a: &PreparedGeometry,
-    b: &PreparedGeometry,
-    receipts: [&crate::PreparedSourceReceipt; 2],
+    a: &PreparedGeometry, b: &PreparedGeometry, receipts: [&crate::PreparedSourceReceipt; 2],
     context: &mut MetricContext,
 ) -> Result<IntersectionMatrix, GeoError> {
     relate_inner(a, b, Some(receipts), context, None)
@@ -72,11 +66,8 @@ pub fn relate_prepared(
 /// # Errors
 /// Adds observer refusal to [`relate_prepared`].
 pub fn relate_prepared_metered(
-    a: &PreparedGeometry,
-    b: &PreparedGeometry,
-    receipts: [&crate::PreparedSourceReceipt; 2],
-    context: &mut MetricContext,
-    observer: &mut dyn MetricWorkObserver,
+    a: &PreparedGeometry, b: &PreparedGeometry, receipts: [&crate::PreparedSourceReceipt; 2],
+    context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
 ) -> Result<IntersectionMatrix, GeoError> {
     relate_inner(a, b, Some(receipts), context, Some(observer))
 }
@@ -105,8 +96,7 @@ pub fn dimension(source: &PreparedGeometry) -> Option<u8> {
 /// # Errors
 /// Refuses an overflowing sum of the original source receipts.
 pub fn relation_source_admission(
-    a: &PreparedGeometry,
-    b: &PreparedGeometry,
+    a: &PreparedGeometry, b: &PreparedGeometry,
 ) -> Result<(u64, u64), GeoError> {
     let first = (a.preparation_work_items(), a.retained_workspace_bytes());
     if core::ptr::eq(a, b) {
@@ -125,10 +115,8 @@ pub fn relation_source_admission(
 }
 
 fn relate_inner(
-    a: &PreparedGeometry,
-    b: &PreparedGeometry,
-    receipts: Option<[&crate::PreparedSourceReceipt; 2]>,
-    context: &mut MetricContext,
+    a: &PreparedGeometry, b: &PreparedGeometry,
+    receipts: Option<[&crate::PreparedSourceReceipt; 2]>, context: &mut MetricContext,
     observer: Option<&mut dyn MetricWorkObserver>,
 ) -> Result<IntersectionMatrix, GeoError> {
     let (source_work, source_storage) = relation_source_admission(a, b)?;
@@ -213,11 +201,8 @@ fn source_edges(source: &PreparedGeometry) -> impl Iterator<Item = &PreparedEdge
 }
 
 fn written_matrix(
-    a: &PreparedGeometry,
-    b: &PreparedGeometry,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    a: &PreparedGeometry, b: &PreparedGeometry, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<IntersectionMatrix, GeoError> {
     if let Some(matrix) = point_region_matrix(a, b, context, progress)? {
         return Ok(matrix);
@@ -316,9 +301,7 @@ fn written_matrix(
 }
 
 fn original_contact_graph(
-    source: &PreparedGeometry,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    source: &PreparedGeometry, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     context.charge_work(1)?;
     progress.context_poll(context)?;
@@ -351,9 +334,7 @@ fn original_contact_graph(
 }
 
 fn point_region_matrix(
-    a: &PreparedGeometry,
-    b: &PreparedGeometry,
-    context: &mut MetricContext,
+    a: &PreparedGeometry, b: &PreparedGeometry, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<IntersectionMatrix>, GeoError> {
     let (points, region, reverse) = if finite_points(a) && a.symbolic_points().is_empty() {
@@ -414,13 +395,8 @@ fn finite_points(source: &PreparedGeometry) -> bool {
 }
 
 fn record_witness(
-    point: &LonLat,
-    a: &PreparedGeometry,
-    b: &PreparedGeometry,
-    dimension: Dim,
-    matrix: &mut IntersectionMatrix,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    point: &LonLat, a: &PreparedGeometry, b: &PreparedGeometry, dimension: Dim,
+    matrix: &mut IntersectionMatrix, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     let first_finite = finite_points(a);
     let second_finite = finite_points(b);
@@ -459,9 +435,7 @@ fn record_witness(
 }
 
 fn retain_coord(
-    point: &Coord,
-    context: &mut MetricContext,
-    retained: &mut u64,
+    point: &Coord, context: &mut MetricContext, retained: &mut u64,
 ) -> Result<(), GeoError> {
     let bytes = (2 * size_of::<Coord>()) as u64
         + 2 * (point.x().allocated_bytes() + point.y().allocated_bytes()) as u64
@@ -474,9 +448,7 @@ fn retain_coord(
 }
 
 pub(crate) fn copy_point(
-    point: &LonLat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    point: &LonLat, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Coord, GeoError> {
     ExactAdmission::new(context, progress).expression_result(
         ExactOperation::Linear,
@@ -487,9 +459,7 @@ pub(crate) fn copy_point(
 }
 
 fn locate(
-    point: &LonLat,
-    source: &PreparedGeometry,
-    context: &mut MetricContext,
+    point: &LonLat, source: &PreparedGeometry, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Set, GeoError> {
     let region = super::locate_validated_with_progress(point, source.region(), context, progress)?;
@@ -560,9 +530,7 @@ fn locate(
 }
 
 fn sort_unique(
-    values: &mut Vec<Rat>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    values: &mut Vec<Rat>, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     purrdf_lex::walk::try_sort_unstable_by(values, |a, b| {
         ExactAdmission::new(context, progress).expression_result(
@@ -586,13 +554,8 @@ fn sort_unique(
 }
 
 fn scan_faces(
-    a: &PreparedGeometry,
-    b: &PreparedGeometry,
-    events: &[Coord],
-    edges: &[(&Coord, &Coord)],
-    matrix: &mut IntersectionMatrix,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    a: &PreparedGeometry, b: &PreparedGeometry, events: &[Coord], edges: &[(&Coord, &Coord)],
+    matrix: &mut IntersectionMatrix, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     let mut bands = Vec::with_capacity(events.len());
     for event in events {
@@ -700,9 +663,7 @@ pub(crate) mod tests {
     }
 
     fn shortest_curve(
-        start: (i64, i64),
-        end: (i64, i64),
-        context: &mut MetricContext,
+        start: (i64, i64), end: (i64, i64), context: &mut MetricContext,
     ) -> PreparedGeometry {
         let coordinate = |(longitude, latitude)| {
             PreparedCoordinate::new(
@@ -831,10 +792,7 @@ pub(crate) mod tests {
     }
 
     fn transformed_curve(
-        start: (i64, i64),
-        end: (i64, i64),
-        constant: bool,
-        context: &MetricContext,
+        start: (i64, i64), end: (i64, i64), constant: bool, context: &MetricContext,
     ) -> PreparedGeometry {
         use crate::operation::{
             CoordinateOperation, CoordinateUnit, OperationChain, OperationImageCurve,
@@ -894,10 +852,7 @@ pub(crate) mod tests {
     }
 
     fn polynomial_image_curve(
-        start: i64,
-        end: i64,
-        bent: bool,
-        context: &MetricContext,
+        start: i64, end: i64, bent: bool, context: &MetricContext,
     ) -> PreparedGeometry {
         use crate::operation::{Polynomial2d, PolynomialTerm};
         let mut terms = vec![PolynomialTerm {
@@ -925,10 +880,7 @@ pub(crate) mod tests {
     }
 
     fn polynomial_prefix_curve(
-        start: i64,
-        end: i64,
-        polynomial: crate::operation::Polynomial2d,
-        context: &MetricContext,
+        start: i64, end: i64, polynomial: crate::operation::Polynomial2d, context: &MetricContext,
     ) -> PreparedGeometry {
         use crate::operation::{
             CoordinateOperation, CoordinateUnit, OperationChain, OperationImageCurve,
@@ -1407,8 +1359,7 @@ pub(crate) mod tests {
     }
 
     pub(crate) fn closed_intersection(
-        rings: &[&[(i64, i64)]],
-        context: &mut MetricContext,
+        rings: &[&[(i64, i64)]], context: &mut MetricContext,
     ) -> PreparedGeometry {
         let rings = rings
             .iter()
@@ -1432,10 +1383,7 @@ pub(crate) mod tests {
     }
 
     fn assert_equivalent(
-        a: &PreparedGeometry,
-        b: &PreparedGeometry,
-        dimension: Dim,
-        context: &mut MetricContext,
+        a: &PreparedGeometry, b: &PreparedGeometry, dimension: Dim, context: &mut MetricContext,
     ) {
         let matrix = relate(a, b, context).unwrap();
         assert_eq!(matrix.input_dimensions(), [dimension; 2]);

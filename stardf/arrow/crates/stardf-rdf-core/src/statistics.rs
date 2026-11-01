@@ -79,9 +79,7 @@ pub trait SnapshotStatistics<I: ViewTermId>: Sync {
     /// Total rows in one effective stream and graph scope. Unknown providers
     /// retain None; a stored zero certifies absence in that stream.
     fn stream_rows(
-        &self,
-        _graph: GraphMatch<I>,
-        _stream: StatisticsStream,
+        &self, _graph: GraphMatch<I>, _stream: StatisticsStream,
     ) -> Option<StatisticCount> {
         None
     }
@@ -94,12 +92,8 @@ pub trait SnapshotStatistics<I: ViewTermId>: Sync {
     /// Returns an integrity error for a malformed sealed domain. Storage faults
     /// remain latched on the owning view, as on its other metadata paths.
     fn visit_distinct(
-        &self,
-        _predicate: I,
-        _graph: GraphMatch<I>,
-        _stream: StatisticsStream,
-        _position: StatisticsPosition,
-        _visit: &mut dyn FnMut(I) -> std::ops::ControlFlow<()>,
+        &self, _predicate: I, _graph: GraphMatch<I>, _stream: StatisticsStream,
+        _position: StatisticsPosition, _visit: &mut dyn FnMut(I) -> std::ops::ControlFlow<()>,
     ) -> Result<bool, crate::ir::pack::bits::PackBitsError> {
         Ok(false)
     }
@@ -118,53 +112,37 @@ pub trait SnapshotStatistics<I: ViewTermId>: Sync {
     /// residuals, so the result is explicitly an upper bound, never a joint exact
     /// count or an allocation certificate. Missing metadata stays unknown.
     fn structural_pattern(
-        &self,
-        pattern: ProbePattern<I>,
-        components: [Option<I>; 3],
+        &self, pattern: ProbePattern<I>, components: [Option<I>; 3],
     ) -> Option<StatisticCount> {
         structural_count(self, pattern, components)
     }
 
     /// Predicate row and distinct-domain counts in the requested stream/scope.
     fn predicate(
-        &self,
-        predicate: I,
-        graph: GraphMatch<I>,
-        stream: StatisticsStream,
+        &self, predicate: I, graph: GraphMatch<I>, stream: StatisticsStream,
     ) -> Option<PredicateStatistics>;
 
     /// Frequency of an exact predicate/object pair, including rdf:type classes.
     fn predicate_object(
-        &self,
-        predicate: I,
-        object: I,
-        graph: GraphMatch<I>,
-        stream: StatisticsStream,
+        &self, predicate: I, object: I, graph: GraphMatch<I>, stream: StatisticsStream,
     ) -> Option<StatisticCount>;
 
     /// Joint predicate/object-category frequency. A datatype restriction is
     /// meaningful only for Literal; None covers the complete category.
     fn predicate_object_kind(
-        &self,
-        predicate: I,
-        kind: RdfTermKind,
-        datatype: Option<I>,
-        graph: GraphMatch<I>,
+        &self, predicate: I, kind: RdfTermKind, datatype: Option<I>, graph: GraphMatch<I>,
         stream: StatisticsStream,
     ) -> Option<StatisticCount>;
 
     /// Reifier declarations whose target triple has this predicate. These are
     /// target-component statistics, not the virtual rdf:reifies predicate count.
     fn reifier_target_predicate(
-        &self,
-        predicate: I,
-        graph: GraphMatch<I>,
+        &self, predicate: I, graph: GraphMatch<I>,
     ) -> Option<PredicateStatistics>;
 }
 
 pub(crate) fn pattern_count<I: ViewTermId, S: SnapshotStatistics<I> + ?Sized>(
-    provider: &S,
-    pattern: ProbePattern<I>,
+    provider: &S, pattern: ProbePattern<I>,
 ) -> Option<StatisticCount> {
     let predicate = pattern.p;
     let mut total = StatisticCount {
@@ -196,9 +174,7 @@ pub(crate) fn pattern_count<I: ViewTermId, S: SnapshotStatistics<I> + ?Sized>(
 }
 
 pub(crate) fn structural_count<I: ViewTermId, S: SnapshotStatistics<I> + ?Sized>(
-    provider: &S,
-    pattern: ProbePattern<I>,
-    components: [Option<I>; 3],
+    provider: &S, pattern: ProbePattern<I>, components: [Option<I>; 3],
 ) -> Option<StatisticCount> {
     let mut total = 0_u64;
     for stream in [

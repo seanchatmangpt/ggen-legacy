@@ -27,9 +27,7 @@ const MAX_STRICT_DEPTH: usize = 128;
 /// open at once (never more than 128), duplicate member names refused, and every
 /// object's members ordered by name.
 pub(crate) fn parse_strict(
-    bytes: &[u8],
-    values: usize,
-    depth: usize,
+    bytes: &[u8], values: usize, depth: usize,
 ) -> Result<Value, json::Error> {
     let mut value = json::read_slice(
         bytes,

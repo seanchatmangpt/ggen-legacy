@@ -389,11 +389,8 @@ pub(crate) fn seed_kind(text: &str) -> Option<TermKind> {
 ///
 /// A [`PlacementError`] naming the exact rule that refused; see that type.
 pub(crate) fn place(
-    producer: &str,
-    descriptor: &PfDescriptor,
-    decl: &RankedDeclaration,
-    request_terms: &[RequestTerm],
-    bound_indices: &[u32],
+    producer: &str, descriptor: &PfDescriptor, decl: &RankedDeclaration,
+    request_terms: &[RequestTerm], bound_indices: &[u32],
 ) -> Result<Invocation, PlacementError> {
     let total = descriptor.subject_arity + descriptor.object_arity;
     if total > BindingPattern::MAX_ARITY {
@@ -529,10 +526,7 @@ fn occupy(slots: &mut [Slot], position: usize, value: TermValue) -> Result<(), P
 
 /// The constant one placement renders from one request term.
 fn facet_value(
-    producer: &str,
-    term_index: u32,
-    term: &RequestTerm,
-    placement: &TermPlacement,
+    producer: &str, term_index: u32, term: &RequestTerm, placement: &TermPlacement,
     language_placed: bool,
 ) -> Result<TermValue, PlacementError> {
     let facet = placement.facet;
@@ -615,10 +609,7 @@ fn facet_value(
 
 /// The `Value` facet: the needle, the geometry, or the seed itself.
 fn value_facet(
-    producer: &str,
-    term_index: u32,
-    term: &RequestTerm,
-    placement: &TermPlacement,
+    producer: &str, term_index: u32, term: &RequestTerm, placement: &TermPlacement,
     language_placed: bool,
 ) -> Result<TermValue, PlacementError> {
     let facet = RequestFacet::Value;
@@ -727,10 +718,7 @@ enum Endpoint {
 /// would not be a point in time at all. The producer names the datatype its own
 /// relation compares under, or the facet is not renderable.
 fn endpoint_facet(
-    producer: &str,
-    term_index: u32,
-    term: &RequestTerm,
-    placement: &TermPlacement,
+    producer: &str, term_index: u32, term: &RequestTerm, placement: &TermPlacement,
     endpoint: Endpoint,
 ) -> Result<TermValue, PlacementError> {
     let facet = placement.facet;
@@ -788,11 +776,7 @@ fn plain_or_typed(lexical_form: &str, placement: &TermPlacement) -> TermValue {
 /// never does: the producer names the datatype its own encoding uses, or the
 /// facet is not renderable.
 fn required_datatype(
-    producer: &str,
-    term_index: u32,
-    facet: RequestFacet,
-    placement: &TermPlacement,
-    why: &str,
+    producer: &str, term_index: u32, facet: RequestFacet, placement: &TermPlacement, why: &str,
 ) -> Result<String, PlacementError> {
     placement
         .datatype
@@ -807,9 +791,7 @@ fn required_datatype(
 /// Refuse a value that has no SPARQL constant form, naming the facet it came
 /// from.
 fn renderable(
-    term_index: u32,
-    facet: RequestFacet,
-    value: &TermValue,
+    term_index: u32, facet: RequestFacet, value: &TermValue,
 ) -> Result<(), PlacementError> {
     render::sparql_term(value)
         .map(|_| ())
@@ -921,8 +903,7 @@ mod tests {
     }
 
     fn declaration(
-        accepted: Vec<AcceptedTerm>,
-        depth: Option<DepthPlacement>,
+        accepted: Vec<AcceptedTerm>, depth: Option<DepthPlacement>,
     ) -> RankedDeclaration {
         RankedDeclaration {
             stratum: purrdf_core::parse_iri(&ex("stratum/mock")).expect("fixture IRI"),

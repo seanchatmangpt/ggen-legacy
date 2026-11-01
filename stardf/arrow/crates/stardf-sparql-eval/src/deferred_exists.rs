@@ -152,10 +152,7 @@ pub(crate) enum EnvState<'a> {
 impl SubstitutionEnv {
     /// This environment with `row` applied after it, restricted to `vars`.
     pub(crate) fn then(
-        &self,
-        row: &SubstitutionRow,
-        vars: &VarSchema,
-        workspace: &WorkspaceCapability,
+        &self, row: &SubstitutionRow, vars: &VarSchema, workspace: &WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let pruned = restrict(row, vars, workspace)?;
         if pruned.term.is_empty() && pruned.expr.is_empty() {
@@ -189,8 +186,7 @@ impl SubstitutionEnv {
 
     /// Every layer, oldest first.
     pub(crate) fn layers(
-        &self,
-        workspace: &WorkspaceCapability,
+        &self, workspace: &WorkspaceCapability,
     ) -> Result<AdmittedVec<&SubstitutionRow>, EvalError> {
         let mut output = AdmittedVec::new(workspace);
         let mut next = self.layers.as_deref();
@@ -225,9 +221,7 @@ impl SubstitutionEnv {
 
 /// `row` restricted to `vars`, each side in its own order.
 fn restrict(
-    row: &SubstitutionRow,
-    vars: &VarSchema,
-    workspace: &WorkspaceCapability,
+    row: &SubstitutionRow, vars: &VarSchema, workspace: &WorkspaceCapability,
 ) -> Result<SubstitutionRow, EvalError> {
     row.filtered(workspace, |v| vars.contains(v))
 }
@@ -236,9 +230,7 @@ fn restrict(
 /// different terms. Where they agree, the term (and so the expression constant, which is
 /// a function of the term) is the same, so the merged row keeps `base`'s entry.
 fn merge(
-    base: &SubstitutionRow,
-    next: &SubstitutionRow,
-    workspace: &WorkspaceCapability,
+    base: &SubstitutionRow, next: &SubstitutionRow, workspace: &WorkspaceCapability,
 ) -> Result<Option<SubstitutionRow>, EvalError> {
     let mut conflict = false;
     let row = SubstitutionRow::build(workspace, |expr, term, memory| {
@@ -297,10 +289,7 @@ fn merge(
 /// The environment `env` followed by the current row `row`, restricted to `vars`, as one
 /// row — or `None` when some layer disagrees with another.
 pub(crate) fn with_row(
-    env: &SubstitutionRow,
-    row: &SubstitutionRow,
-    vars: &VarSchema,
-    workspace: &WorkspaceCapability,
+    env: &SubstitutionRow, row: &SubstitutionRow, vars: &VarSchema, workspace: &WorkspaceCapability,
 ) -> Result<Option<SubstitutionRow>, EvalError> {
     merge(env, &restrict(row, vars, workspace)?, workspace)
 }
@@ -493,9 +482,7 @@ pub(crate) fn is_lateral_placeholder(pattern: &GraphPattern) -> bool {
 /// later outer row reads them without taking a lock (a preparation's or a site's own) or
 /// with a shared read lock (a plan node's).
 pub(crate) fn nested_sites<'a, D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    source: CorrelatedSource<'a>,
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, source: CorrelatedSource<'a>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<SitesRef<'a>, EvalError> {
     let root = std::ptr::from_ref(pattern) as usize;
     let workspace = ctx.growth.clone();
@@ -562,9 +549,7 @@ pub(crate) fn nested_sites<'a, D: DatasetView + Sync>(
 
 /// Prepare the site of every body and operand [`nested_sites`] names.
 fn prepare_sites<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    source: CorrelatedSource<'_>,
-    ctx: &EvalCtx<'_, D>,
+    pattern: &GraphPattern, source: CorrelatedSource<'_>, ctx: &EvalCtx<'_, D>,
 ) -> Result<NestedSites, EvalError> {
     let mut sites = NestedSites::default();
     let deferrable = Deferrable::of(ctx);
@@ -617,9 +602,7 @@ impl Deferrable {
     /// itself), not already a placeholder, and holding no variable-endpoint `SERVICE` the
     /// endpoint analysis of an enclosing operator must read as written.
     fn operand(
-        self,
-        operand: &GraphPattern,
-        workspace: &WorkspaceCapability,
+        self, operand: &GraphPattern, workspace: &WorkspaceCapability,
     ) -> Result<bool, EvalError> {
         Ok(!matches!(operand, GraphPattern::PropertyFunction(_))
             && !is_lateral_placeholder(operand)
@@ -635,9 +618,7 @@ impl Deferrable {
 /// placeholder of the window being substituted from. A worklist rather than a recursion:
 /// a flat operator spine can be far deeper than the nesting of `EXISTS`.
 fn nested_bodies<'p>(
-    pattern: &'p GraphPattern,
-    placeholders: Option<&DeferredMap>,
-    deferrable: Deferrable,
+    pattern: &'p GraphPattern, placeholders: Option<&DeferredMap>, deferrable: Deferrable,
     workspace: &WorkspaceCapability,
 ) -> Result<(AdmittedVec<&'p GraphPattern>, AdmittedVec<&'p GraphPattern>), EvalError> {
     enum Node<'a> {
@@ -742,9 +723,7 @@ fn visit_lateral_operands_mut(
 /// assembled bottom-up, each once its children are: every step reads only its own
 /// piece, so the whole chain costs its size once, and no step recurses.
 fn build_lateral_site<D: DatasetView + Sync>(
-    operand: &GraphPattern,
-    source: CorrelatedSource<'_>,
-    deferrable: Deferrable,
+    operand: &GraphPattern, source: CorrelatedSource<'_>, deferrable: Deferrable,
     ctx: &EvalCtx<'_, D>,
 ) -> Result<SharedWorkspace<LateralSite>, EvalError> {
     struct Piece {
@@ -904,9 +883,7 @@ fn build_lateral_site<D: DatasetView + Sync>(
 
 /// Prepare the site of `body`, read from `source`.
 fn build_site<D: DatasetView + Sync>(
-    body: &GraphPattern,
-    source: CorrelatedSource<'_>,
-    ctx: &EvalCtx<'_, D>,
+    body: &GraphPattern, source: CorrelatedSource<'_>, ctx: &EvalCtx<'_, D>,
 ) -> Result<ExistsSite, EvalError> {
     let workspace = &ctx.growth;
     let prepared = SharedWorkspace::new_admitted(
@@ -951,8 +928,7 @@ fn build_site<D: DatasetView + Sync>(
 
 /// `map`, each entry's source carried one hop further through `outer` when `outer` maps it.
 fn to_plan(
-    map: &SubstitutionSourceMap,
-    outer: Option<&SubstitutionSourceMap>,
+    map: &SubstitutionSourceMap, outer: Option<&SubstitutionSourceMap>,
     workspace: &WorkspaceCapability,
 ) -> Result<SubstitutionSourceMap, EvalError> {
     let mut output = SubstitutionSourceMap::default();
@@ -976,8 +952,7 @@ fn to_plan(
 /// with its `SILENT` flag. A `SERVICE` body is not entered: it is forwarded as text, and
 /// the analysis it stands in for does not enter it either.
 fn endpoint_uses(
-    body: &GraphPattern,
-    workspace: &WorkspaceCapability,
+    body: &GraphPattern, workspace: &WorkspaceCapability,
 ) -> Result<AdmittedVec<Variable>, EvalError> {
     enum Node<'p> {
         Pattern(&'p GraphPattern, usize),
@@ -1058,9 +1033,7 @@ fn endpoint_uses(
 /// `scope` indexes `scopes`; `scope_of[i]` is the scope enclosing scope `i`, and
 /// `usize::MAX` is the body itself.
 fn visible(
-    scopes: &[purrdf_sparql_algebra::ProjectionNames<'_>],
-    scope_of: &[usize],
-    scope: usize,
+    scopes: &[purrdf_sparql_algebra::ProjectionNames<'_>], scope_of: &[usize], scope: usize,
     variable: &Variable,
 ) -> bool {
     let mut at = scope;
@@ -1126,8 +1099,7 @@ pub(crate) fn placeholder_with_memory(
     )
 }
 pub(crate) fn lateral_placeholder_with_memory(
-    schema: &[Variable],
-    memory: &mut crate::expr::CorrelatedMemory<'_>,
+    schema: &[Variable], memory: &mut crate::expr::CorrelatedMemory<'_>,
 ) -> Result<Box<GraphPattern>, EvalError> {
     let inner = placeholder_with_memory(memory)?;
     let variables = memory

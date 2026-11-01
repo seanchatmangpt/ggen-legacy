@@ -94,8 +94,7 @@ pub(crate) struct Compiled<'a> {
 
 /// Compile a triple expression, inlining `TripleExprRef`s via `te_map`.
 pub(crate) fn compile<'a>(
-    expr: &'a TripleExpr,
-    te_map: &FastMap<&'a str, &'a TripleExpr>,
+    expr: &'a TripleExpr, te_map: &FastMap<&'a str, &'a TripleExpr>,
 ) -> Result<Compiled<'a>, String> {
     let mut slots = Vec::new();
     let mut stack: Vec<&'a str> = Vec::new();
@@ -104,9 +103,7 @@ pub(crate) fn compile<'a>(
 }
 
 fn compile_node<'a>(
-    expr: &'a TripleExpr,
-    te_map: &FastMap<&'a str, &'a TripleExpr>,
-    slots: &mut Vec<Slot<'a>>,
+    expr: &'a TripleExpr, te_map: &FastMap<&'a str, &'a TripleExpr>, slots: &mut Vec<Slot<'a>>,
     stack: &mut Vec<&'a str>,
 ) -> Result<CNode<'a>, String> {
     match expr {
@@ -259,8 +256,7 @@ fn leaf_triple_count(node: &CNode<'_>, counts: &[(u64, u64)]) -> u64 {
 /// triples did not fire, even though the overall choice matched (ShEx 2.1
 /// §5.5.2; contrast the flat, ungated firing this replaces).
 pub(crate) fn participating_group_acts<'a>(
-    compiled: &'a Compiled<'a>,
-    counts: &[(u64, u64)],
+    compiled: &'a Compiled<'a>, counts: &[(u64, u64)],
 ) -> Vec<&'a SemAct> {
     let mut acts = Vec::new();
     collect_participating(&compiled.root, counts, &mut acts);
@@ -268,9 +264,7 @@ pub(crate) fn participating_group_acts<'a>(
 }
 
 fn collect_participating<'a>(
-    node: &'a CNode<'a>,
-    counts: &[(u64, u64)],
-    out: &mut Vec<&'a SemAct>,
+    node: &'a CNode<'a>, counts: &[(u64, u64)], out: &mut Vec<&'a SemAct>,
 ) {
     let (children, group_acts) = match node {
         CNode::Slot(_) => return,
@@ -317,8 +311,7 @@ pub(crate) type Assignment = (Vec<(u64, u64)>, Vec<Option<usize>>);
 /// diverted to `EXTRA`); `Ok(None)` when no assignment matches; `Err` when
 /// the budget is exhausted.
 pub(crate) fn assignment_search(
-    compiled: &Compiled<'_>,
-    arcs: &[ArcOptions],
+    compiled: &Compiled<'_>, arcs: &[ArcOptions],
 ) -> Result<Option<Assignment>, String> {
     let mut counts = vec![(0u64, 0u64); compiled.slots.len()];
     let mut assignment = vec![None; arcs.len()];
@@ -331,11 +324,8 @@ pub(crate) fn assignment_search(
 // loop replaces recursion without erasing this kernel's assembly boundary.
 #[inline(never)]
 fn search(
-    compiled: &Compiled<'_>,
-    arcs: &[ArcOptions],
-    counts: &mut [(u64, u64)],
-    assignment: &mut [Option<usize>],
-    budget: &mut u64,
+    compiled: &Compiled<'_>, arcs: &[ArcOptions], counts: &mut [(u64, u64)],
+    assignment: &mut [Option<usize>], budget: &mut u64,
 ) -> Result<bool, String> {
     enum Frame {
         Enter(usize),

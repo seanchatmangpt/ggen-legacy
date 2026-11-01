@@ -259,10 +259,7 @@ impl purrdf_core::DatasetView for UnobservedSource<'_> {
         std::iter::from_fn(|| panic!("unavailable source evidence must not trigger a source scan"))
     }
     fn quads_for_pattern(
-        &self,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: purrdf_core::GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = purrdf_core::QuadIds<Self::Id>> + '_ {
         purrdf_core::DatasetView::quads_for_pattern(self.inner, s, p, o, g)
@@ -277,21 +274,13 @@ impl purrdf_core::DatasetView for UnobservedSource<'_> {
         Ok(None)
     }
     fn probe_plan(
-        &self,
-        s: bool,
-        p: bool,
-        o: bool,
-        g: purrdf_core::GraphMatch<Self::Id>,
+        &self, s: bool, p: bool, o: bool, g: purrdf_core::GraphMatch<Self::Id>,
     ) -> Self::ProbePlan {
         purrdf_core::DatasetView::probe_plan(self.inner, s, p, o, g)
     }
     fn quads_for_pattern_with_plan(
-        &self,
-        plan: &Self::ProbePlan,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
-        g: purrdf_core::GraphMatch<Self::Id>,
+        &self, plan: &Self::ProbePlan, s: Option<Self::Id>, p: Option<Self::Id>,
+        o: Option<Self::Id>, g: purrdf_core::GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = purrdf_core::QuadIds<Self::Id>> + '_ {
         purrdf_core::DatasetView::quads_for_pattern_with_plan(self.inner, plan, s, p, o, g)
     }
@@ -299,8 +288,7 @@ impl purrdf_core::DatasetView for UnobservedSource<'_> {
         std::iter::from_fn(|| panic!("delta update must not enumerate all annotations"))
     }
     fn annotations_of_with_graph(
-        &self,
-        reifier: Self::Id,
+        &self, reifier: Self::Id,
     ) -> impl Iterator<Item = (Self::Id, Self::Id, Option<Self::Id>)> + '_ {
         self.inner.annotations_of_with_graph(reifier)
     }
@@ -331,9 +319,7 @@ impl purrdf_core::DatasetView for UnobservedSource<'_> {
         }
     }
     fn source_summary(
-        &self,
-        predicate: Self::Id,
-        graph: purrdf_core::GraphMatch<Self::Id>,
+        &self, predicate: Self::Id, graph: purrdf_core::GraphMatch<Self::Id>,
         stream: purrdf_core::StatisticsStream,
     ) -> Result<Option<purrdf_core::source::SourceSummary>, Self::ReadError> {
         purrdf_core::DatasetView::source_summary(self.inner, predicate, graph, stream)
@@ -487,10 +473,8 @@ fn registry_of(index: &Arc<TextIndex>) -> PropertyFunctionRegistry<'static> {
 
 /// Evaluate `query` and hand back the raw result.
 fn evaluate(
-    engine: &NativeSparqlEngine,
-    dataset: &RdfDataset,
-    relations: &PropertyFunctionRegistry<'static>,
-    query: &str,
+    engine: &NativeSparqlEngine, dataset: &RdfDataset,
+    relations: &PropertyFunctionRegistry<'static>, query: &str,
 ) -> SparqlResult {
     engine
         .query_with_options_view(
@@ -511,10 +495,8 @@ fn evaluate(
 /// The SPARQL Results JSON document for `query`, as a string — the artefact a
 /// consumer receives.
 fn srj(
-    engine: &NativeSparqlEngine,
-    dataset: &RdfDataset,
-    relations: &PropertyFunctionRegistry<'static>,
-    query: &str,
+    engine: &NativeSparqlEngine, dataset: &RdfDataset,
+    relations: &PropertyFunctionRegistry<'static>, query: &str,
 ) -> String {
     let result = evaluate(engine, dataset, relations, query);
     let outcome = to_json(&result, &ResultProvenance::default(), None)

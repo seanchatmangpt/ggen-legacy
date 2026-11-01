@@ -24,9 +24,7 @@ pub fn parse_n3(input: &str, base_iri: Option<&str>) -> Result<Document> {
 /// Parse `input` as Notation3, labelling diagnostics with `source_label` when
 /// provided; this is the entry the wasm surface and file loaders call.
 pub fn parse_n3_with_source(
-    input: &str,
-    base_iri: Option<&str>,
-    source_label: Option<&str>,
+    input: &str, base_iri: Option<&str>, source_label: Option<&str>,
 ) -> Result<Document> {
     let tokens = lex(input)?;
     let line_starts = line_starts(input);
@@ -46,9 +44,7 @@ pub fn parse_n3_with_source(
 /// frontends own these syntaxes.
 #[cfg_attr(not(feature = "wasm"), allow(dead_code))]
 pub(crate) fn parse_rdf12_compat(
-    input: &str,
-    base_iri: Option<&str>,
-    format: RdfFormat,
+    input: &str, base_iri: Option<&str>, format: RdfFormat,
 ) -> Result<Document> {
     let tokens = lex(input)?;
     if matches!(format, RdfFormat::NTriples | RdfFormat::NQuads) {
@@ -512,9 +508,7 @@ impl Parser {
     }
 
     fn with_source(
-        mut self,
-        source_label: Option<&str>,
-        line_starts: Vec<usize>,
+        mut self, source_label: Option<&str>, line_starts: Vec<usize>,
         source_digest: Option<String>,
     ) -> Self {
         self.source_label = source_label.map(ToOwned::to_owned);
@@ -1152,9 +1146,7 @@ impl Parser {
     }
 
     fn parse_triples_sequence_from_subject_with_generated(
-        &mut self,
-        subject: Term,
-        mut generated: Vec<Triple>,
+        &mut self, subject: Term, mut generated: Vec<Triple>,
     ) -> Result<Vec<Triple>> {
         let generated_standalone_ok = self.profile.is_rdf12()
             && !generated.is_empty()
@@ -1333,9 +1325,7 @@ impl Parser {
     }
 
     fn parse_rdf12_reifier_suffixes(
-        &mut self,
-        asserted: &Triple,
-        triples: &mut Vec<Triple>,
+        &mut self, asserted: &Triple, triples: &mut Vec<Triple>,
     ) -> Result<()> {
         let mut pending_reifier: Option<Term> = None;
         loop {
@@ -1826,11 +1816,7 @@ impl Parser {
     }
 
     fn push_path_segment(
-        &mut self,
-        current: Term,
-        op: char,
-        raw_pred: &str,
-        offset: usize,
+        &mut self, current: Term, op: char, raw_pred: &str, offset: usize,
         generated: &mut Vec<Triple>,
     ) -> Result<Term> {
         let expanded = self.expand_pname(raw_pred, offset)?;

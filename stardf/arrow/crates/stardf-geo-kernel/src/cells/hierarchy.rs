@@ -42,10 +42,7 @@ impl CellId {
     }
 
     pub(super) fn from_path(
-        profile: GridProfileId,
-        face: u8,
-        path: u64,
-        level: u8,
+        profile: GridProfileId, face: u8, path: u64, level: u8,
     ) -> Result<Self, GeoError> {
         validate_level(level)?;
         if face > 5 || path >= 1_u64 << (2 * level) {

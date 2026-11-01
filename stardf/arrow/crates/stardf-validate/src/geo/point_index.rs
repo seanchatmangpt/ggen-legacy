@@ -48,10 +48,7 @@ impl GeoSession {
     }
 
     pub(super) fn point_index_value(
-        &self,
-        value: &Value,
-        budget: PreparationBudget,
-        invocation: &Invocation,
+        &self, value: &Value, budget: PreparationBudget, invocation: &Invocation,
         decode: &Decode<'_, '_, '_, '_>,
     ) -> Result<(GeoPointIndex, PreparationBudget), GeoCallError> {
         let mut budget = invocation.track_budget(budget);
@@ -132,8 +129,7 @@ impl GeoPointIndex {
     }
 
     pub(super) fn metadata_native(
-        &self,
-        decode: &Decode<'_, '_, '_, '_>,
+        &self, decode: &Decode<'_, '_, '_, '_>,
     ) -> Result<Value, GeoCallError> {
         Ok(Object::new()
             .with_memory_cell(
@@ -180,10 +176,7 @@ impl GeoPointIndex {
     }
 
     pub(super) fn call_value(
-        &self,
-        value: &Value,
-        budget: PreparationBudget,
-        invocation: &Invocation,
+        &self, value: &Value, budget: PreparationBudget, invocation: &Invocation,
         decode: &Decode<'_, '_, '_, '_>,
     ) -> Result<Value, GeoCallError> {
         let mut budget = invocation.track_budget(budget);
@@ -358,8 +351,7 @@ fn limits(value: &Value, decode: &Decode<'_, '_, '_, '_>) -> Result<PointIndexLi
     Ok(limits)
 }
 fn admitted_limits(
-    policy: purrdf_geo_kernel::ExecutionPolicy,
-    mut limits: PointIndexLimits,
+    policy: purrdf_geo_kernel::ExecutionPolicy, mut limits: PointIndexLimits,
 ) -> PointIndexLimits {
     let admitted = policy.limits();
     limits.max_points = limits.max_points.min(admitted.max_output_elements);

@@ -176,8 +176,7 @@ impl<'a> Str<'a> {
     /// # Errors
     /// Returns the original JSON escape or physical refusal.
     pub fn decode_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> Result<Cow<'a, str>, Error> {
         if !self.escaped {
             return Ok(Cow::Borrowed(self.raw));
@@ -426,8 +425,7 @@ impl<'a> Reader<'a> {
     /// # Errors
     /// Returns JSON syntax, limit or native physical refusal.
     pub fn next_event_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
     ) -> Result<Event<'a>, Error> {
         self.step_with_memory(memory)
     }
@@ -436,8 +434,7 @@ impl<'a> Reader<'a> {
     /// # Errors
     /// Returns an unbalanced original admission invariant.
     pub fn release_with_memory<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         memory.release_vec(self.open)
     }
@@ -461,8 +458,7 @@ impl<'a> Reader<'a> {
     /// # Errors
     /// Returns JSON syntax, limit or physical storage refusal.
     fn step_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
     ) -> Result<Event<'a>, Error> {
         loop {
             self.skip_whitespace();
@@ -537,8 +533,7 @@ impl<'a> Reader<'a> {
     )]
     #[inline(always)]
     fn value_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
     ) -> Result<Event<'a>, Error> {
         if self.values >= self.limits.max_values {
             return Err(self.error(ErrorKind::Values {
@@ -771,8 +766,7 @@ impl<'a> Reader<'a> {
     /// # Errors
     /// Returns JSON syntax, limit or physical storage refusal.
     pub fn next_key_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
     ) -> Result<Option<Str<'a>>, Error> {
         if !matches!(
             self.expect,
@@ -835,8 +829,7 @@ impl<'a> Reader<'a> {
     /// # Errors
     /// Returns JSON syntax, limit or physical storage refusal.
     pub fn begin_object_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
     ) -> Result<(), Error> {
         self.skip_whitespace();
         let at = self.pos;
@@ -862,8 +855,7 @@ impl<'a> Reader<'a> {
     /// # Errors
     /// Returns JSON syntax, limit or physical storage refusal.
     pub fn begin_array_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
     ) -> Result<(), Error> {
         self.skip_whitespace();
         let at = self.pos;
@@ -894,8 +886,7 @@ impl<'a> Reader<'a> {
     /// # Errors
     /// Returns JSON syntax, limit or physical storage refusal.
     pub fn skip_value_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
     ) -> Result<Range<usize>, Error> {
         self.skip_whitespace();
         let start = self.pos;
@@ -945,8 +936,7 @@ impl<'a> Reader<'a> {
     /// Returns the original grammar, caller limit or physical storage refusal.
     /// Partial trees die before their original admission is released.
     pub fn read_value_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
     ) -> Result<Value, Error> {
         #[derive(Clone, Copy)]
         struct Open {
@@ -1120,8 +1110,7 @@ impl<'a> Reader<'a> {
     /// # Errors
     /// Returns JSON syntax, limit or physical storage refusal.
     pub fn check_value_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
     ) -> Result<Range<usize>, Error> {
         self.skip_whitespace();
         let start = self.pos;
@@ -1132,9 +1121,7 @@ impl<'a> Reader<'a> {
     /// The loop behind [`Reader::check_value`], for the value that starts at
     /// `start`.
     fn check_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        start: usize,
-        memory: &mut Memory<'_, S>,
+        &mut self, start: usize, memory: &mut Memory<'_, S>,
     ) -> Result<(), Error> {
         // Sorted names borrow unescaped keys and own escaped keys under the
         // same grant. No opaque table allocation bypasses admission.
@@ -1210,9 +1197,7 @@ impl<'a> Reader<'a> {
 
     /// A string or member name, decoded and held to the string bound.
     fn decoded_with_memory<S: Admission + ?Sized>(
-        &self,
-        raw: Str<'a>,
-        memory: &mut Memory<'_, S>,
+        &self, raw: Str<'a>, memory: &mut Memory<'_, S>,
     ) -> Result<Cow<'a, str>, Error> {
         let decoded = raw.decode_with_memory(memory)?;
         if decoded.len() > self.limits.max_string_bytes {
@@ -1244,8 +1229,7 @@ impl<'a> Reader<'a> {
     /// # Errors
     /// Returns JSON syntax, limit or physical storage refusal.
     pub fn finish_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
     ) -> Result<(), Error> {
         match self.step_with_memory(memory)? {
             Event::End => Ok(()),
@@ -1255,8 +1239,7 @@ impl<'a> Reader<'a> {
 }
 
 fn release_text<S: Admission + ?Sized>(
-    text: Cow<'_, str>,
-    memory: &mut Memory<'_, S>,
+    text: Cow<'_, str>, memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     match text {
         Cow::Borrowed(_) => Ok(()),
@@ -1265,8 +1248,7 @@ fn release_text<S: Admission + ?Sized>(
 }
 
 fn release_names<S: Admission + ?Sized>(
-    names: Option<Vec<Cow<'_, str>>>,
-    memory: &mut Memory<'_, S>,
+    names: Option<Vec<Cow<'_, str>>>, memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     if let Some(mut names) = names {
         while let Some(name) = names.pop() {

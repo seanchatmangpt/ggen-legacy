@@ -142,10 +142,7 @@ fn sources_over(remote: Arc<RdfDataset>) -> QuerySources {
 /// Validate under an execution scope over `governors` and `sources`, returning the
 /// validation's own result and whatever the state latched.
 fn validate_in_scope(
-    shapes: &str,
-    data: &str,
-    governors: &QueryGovernors,
-    sources: QuerySources,
+    shapes: &str, data: &str, governors: &QueryGovernors, sources: QuerySources,
 ) -> (
     Result<ValidationReport, ShapesError>,
     Option<TrippedGovernor>,

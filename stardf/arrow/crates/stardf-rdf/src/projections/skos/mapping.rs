@@ -98,8 +98,7 @@ struct Projector<'a> {
 /// failure for malformed role data, a violated SKOS integrity condition, an
 /// invalid backend view, or an exceeded caller bound.
 pub fn project_skos<D: DatasetView>(
-    view: &D,
-    config: &SkosConfig,
+    view: &D, config: &SkosConfig,
 ) -> Result<SkosProjection, ProjectionError> {
     Projector::load(view, config)?.project()
 }
@@ -451,10 +450,7 @@ impl<'a> Projector<'a> {
     }
 
     fn record_relation(
-        &mut self,
-        kind: RelationKind,
-        subject: &str,
-        object: &str,
+        &mut self, kind: RelationKind, subject: &str, object: &str,
     ) -> Result<(), ProjectionError> {
         if object == self.config.scheme_iri() {
             return Err(ProjectionError::integrity(
@@ -729,9 +725,7 @@ impl<'a> Projector<'a> {
     }
 
     fn record_quad_loss(
-        &mut self,
-        index: usize,
-        code: &'static str,
+        &mut self, index: usize, code: &'static str,
     ) -> Result<(), ProjectionError> {
         record_row_loss(
             &mut self.ledger,
@@ -744,9 +738,7 @@ impl<'a> Projector<'a> {
     }
 
     fn record_named_graph_loss(
-        &mut self,
-        index: usize,
-        code: &'static str,
+        &mut self, index: usize, code: &'static str,
     ) -> Result<(), ProjectionError> {
         record_row_loss(
             &mut self.ledger,
@@ -759,9 +751,7 @@ impl<'a> Projector<'a> {
     }
 
     fn record_reifier_loss(
-        &mut self,
-        index: usize,
-        code: &'static str,
+        &mut self, index: usize, code: &'static str,
     ) -> Result<(), ProjectionError> {
         record_row_loss(
             &mut self.ledger,
@@ -774,9 +764,7 @@ impl<'a> Projector<'a> {
     }
 
     fn record_annotation_loss(
-        &mut self,
-        index: usize,
-        code: &'static str,
+        &mut self, index: usize, code: &'static str,
     ) -> Result<(), ProjectionError> {
         record_row_loss(
             &mut self.ledger,
@@ -790,8 +778,7 @@ impl<'a> Projector<'a> {
 }
 
 fn relation_pairs<'a>(
-    source: &'a SkosRelationRoles,
-    target: &'a SkosRelationRoles,
+    source: &'a SkosRelationRoles, target: &'a SkosRelationRoles,
 ) -> [(&'a str, RelationKind, &'a str); 8] {
     [
         (source.broader(), RelationKind::Broader, target.broader()),
@@ -826,8 +813,7 @@ fn relation_pairs<'a>(
 }
 
 fn intern_term(
-    builder: &mut RdfDatasetBuilder,
-    term: &ProjectionTerm,
+    builder: &mut RdfDatasetBuilder, term: &ProjectionTerm,
 ) -> Result<TermId, ProjectionError> {
     Ok(match term {
         ProjectionTerm::Iri { value } => builder.intern_iri(value)?,
@@ -1055,10 +1041,7 @@ mod tests {
     }
 
     fn push_iri_quad(
-        builder: &mut RdfDatasetBuilder,
-        subject: &str,
-        predicate: &str,
-        object: &str,
+        builder: &mut RdfDatasetBuilder, subject: &str, predicate: &str, object: &str,
         graph: Option<TermId>,
     ) {
         let subject = builder.intern_iri(subject).unwrap();
@@ -1070,10 +1053,7 @@ mod tests {
     }
 
     fn push_literal_quad(
-        builder: &mut RdfDatasetBuilder,
-        subject: &str,
-        predicate: &str,
-        literal: RdfLiteral,
+        builder: &mut RdfDatasetBuilder, subject: &str, predicate: &str, literal: RdfLiteral,
         graph: Option<TermId>,
     ) -> (TermId, TermId, TermId) {
         let subject = builder.intern_iri(subject).unwrap();

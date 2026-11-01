@@ -856,11 +856,7 @@ impl Deflater {
     }
 
     fn write_tokens(
-        &mut self,
-        count: usize,
-        litlen_codes: &[u16],
-        litlen_lengths: &[u8],
-        dist_codes: &[u16],
+        &mut self, count: usize, litlen_codes: &[u16], litlen_lengths: &[u8], dist_codes: &[u16],
         dist_lengths: &[u8],
     ) {
         let writer = &mut self.writer;

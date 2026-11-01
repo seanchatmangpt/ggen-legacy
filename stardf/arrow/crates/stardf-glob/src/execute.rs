@@ -43,21 +43,13 @@ pub(super) fn absent(limit: u64) -> Result<MatchReport, MatchError> {
 }
 
 pub(super) fn matches(
-    tokens: &[Token],
-    ranges: &[Range],
-    mode: Mode,
-    input: &str,
-    limit: u64,
+    tokens: &[Token], ranges: &[Range], mode: Mode, input: &str, limit: u64,
 ) -> Result<MatchReport, MatchError> {
     matches_metered(tokens, ranges, mode, input, &mut Meter::new(limit))
 }
 
 pub(super) fn matches_metered(
-    tokens: &[Token],
-    ranges: &[Range],
-    mode: Mode,
-    input: &str,
-    meter: &mut Meter,
+    tokens: &[Token], ranges: &[Range], mode: Mode, input: &str, meter: &mut Meter,
 ) -> Result<MatchReport, MatchError> {
     let mut token = 0;
     let mut at = 0;

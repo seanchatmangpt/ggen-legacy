@@ -453,9 +453,7 @@ impl Sets {
     /// The first call scans backwards from the end of the input to `start`
     /// once, keeping checkpoints; later calls of the same execution read them.
     pub(super) fn first_start(
-        &mut self,
-        ctx: &mut Ctx<'_>,
-        start: usize,
+        &mut self, ctx: &mut Ctx<'_>, start: usize,
     ) -> Result<Option<usize>, Error> {
         if self.marks.floor.is_none_or(|floor| start < floor) {
             self.mark(ctx, start)?;
@@ -500,11 +498,7 @@ impl Sets {
     /// against: the character, and the state after it within the covered
     /// range's [`Self::epoch`].
     pub(super) fn live(
-        &mut self,
-        ctx: &mut Ctx<'_>,
-        node: usize,
-        position: usize,
-        counters: &[u64],
+        &mut self, ctx: &mut Ctx<'_>, node: usize, position: usize, counters: &[u64],
     ) -> Result<bool, Error> {
         let Some(ch) = ctx.input[position..].chars().next() else {
             return Ok(false);
@@ -761,11 +755,7 @@ impl Sets {
     }
 
     fn keep(
-        &mut self,
-        ctx: &mut Ctx<'_>,
-        position: usize,
-        current: u32,
-        lowest: usize,
+        &mut self, ctx: &mut Ctx<'_>, position: usize, current: u32, lowest: usize,
     ) -> Result<(), Error> {
         let (at, len) = self.save(ctx, current)?;
         let marks = &mut self.marks;
@@ -1008,11 +998,7 @@ impl Sets {
     /// The state after `current` consumes `ch` and a match may begin again at
     /// `position`, from the cache when it holds the move.
     fn transition(
-        &mut self,
-        ctx: &mut Ctx<'_>,
-        current: u32,
-        ch: char,
-        position: usize,
+        &mut self, ctx: &mut Ctx<'_>, current: u32, ch: char, position: usize,
     ) -> Result<u32, Error> {
         let anchors = if ctx.program.links.anchors {
             u64::from(ctx.at_start(position)) | u64::from(ctx.at_end(position)) << 1
@@ -1265,11 +1251,7 @@ impl Sets {
     /// `node` whose key was copied to `key` and whose set to the intervals
     /// from `first` on.
     fn whole(
-        &mut self,
-        ctx: &mut Ctx<'_>,
-        node: usize,
-        key: usize,
-        first: usize,
+        &mut self, ctx: &mut Ctx<'_>, node: usize, key: usize, first: usize,
     ) -> Result<(), Error> {
         let links = &ctx.program.links.nodes;
         let set = links[node].set;
@@ -1452,11 +1434,7 @@ impl Sets {
 
     #[allow(clippy::too_many_lines)]
     fn process(
-        &mut self,
-        ctx: &mut Ctx<'_>,
-        item: Item,
-        at_start: bool,
-        at_end: bool,
+        &mut self, ctx: &mut Ctx<'_>, item: Item, at_start: bool, at_end: bool,
     ) -> Result<(), Error> {
         let program = ctx.program;
         let links = &program.links.nodes;
@@ -1601,11 +1579,7 @@ impl Sets {
     /// Complete an iteration of the counted repetition `repeat`, whose body
     /// has just been left.
     fn complete(
-        &mut self,
-        ctx: &mut Ctx<'_>,
-        repeat: usize,
-        item: Item,
-        stalled: bool,
+        &mut self, ctx: &mut Ctx<'_>, repeat: usize, item: Item, stalled: bool,
     ) -> Result<(), Error> {
         let program = ctx.program;
         let links = &program.links.nodes;
@@ -1687,12 +1661,7 @@ impl Sets {
     /// its count from an entry whose key starts at `key` and whose set is
     /// `set`.
     fn leave(
-        &mut self,
-        ctx: &mut Ctx<'_>,
-        repeat: usize,
-        level: u32,
-        key: usize,
-        set: Span,
+        &mut self, ctx: &mut Ctx<'_>, repeat: usize, level: u32, key: usize, set: Span,
     ) -> Result<(), Error> {
         let program = ctx.program;
         let links = &program.links.nodes;
@@ -1726,11 +1695,7 @@ impl Sets {
     /// Write a changed copy of the `len` key values at `from`, returning its
     /// offset.
     fn rekey(
-        &mut self,
-        ctx: &mut Ctx<'_>,
-        from: usize,
-        len: usize,
-        change: Rekey,
+        &mut self, ctx: &mut Ctx<'_>, from: usize, len: usize, change: Rekey,
     ) -> Result<usize, Error> {
         let start = self.keys.len();
         reserve(ctx, &mut self.keys, start + len + 1, 1)?;
@@ -1761,12 +1726,7 @@ impl Sets {
     /// Add `set` to the control state `pc` at `level` with the key at `key`,
     /// exploring only the counts it did not already hold.
     fn merge(
-        &mut self,
-        ctx: &mut Ctx<'_>,
-        pc: Pc,
-        level: u32,
-        key: usize,
-        set: Span,
+        &mut self, ctx: &mut Ctx<'_>, pc: Pc, level: u32, key: usize, set: Span,
     ) -> Result<(), Error> {
         let program = ctx.program;
         let links = &program.links.nodes;
@@ -2001,11 +1961,7 @@ impl Sets {
     /// Append the counts of `set` at most `ceiling`, each stored at most
     /// `cap`.
     fn clip(
-        &mut self,
-        ctx: &mut Ctx<'_>,
-        set: Span,
-        ceiling: u64,
-        cap: u64,
+        &mut self, ctx: &mut Ctx<'_>, set: Span, ceiling: u64, cap: u64,
     ) -> Result<Span, Error> {
         let start = self.intervals.len();
         reserve(ctx, &mut self.intervals, start + set.len, INTERVAL_CELLS)?;
@@ -2313,11 +2269,7 @@ fn grow_states(ctx: &mut Ctx<'_>, marks: &mut Marks) -> Result<(), Error> {
 /// one and those the reverse entry completed after it add up to an admitted
 /// total.
 fn compatible(
-    ctx: &Ctx<'_>,
-    node: usize,
-    set_index: Option<usize>,
-    key: &[u64],
-    intervals: &[u64],
+    ctx: &Ctx<'_>, node: usize, set_index: Option<usize>, key: &[u64], intervals: &[u64],
     counters: &[u64],
 ) -> bool {
     let links = &ctx.program.links.nodes;

@@ -57,9 +57,7 @@ fn formula_of<'a>(t: &'a Term) -> Result<&'a purrdf_n3::ast::Graph, String> {
 }
 
 fn fact<'a>(
-    doc: &'a Document,
-    pred: impl Fn(&Triple) -> bool,
-    what: &str,
+    doc: &'a Document, pred: impl Fn(&Triple) -> bool, what: &str,
 ) -> Result<&'a Triple, String> {
     doc.facts
         .iter()

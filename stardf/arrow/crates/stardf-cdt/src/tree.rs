@@ -159,8 +159,7 @@ impl Drop for CdtTripleTerm {
 
 /// The copy of a term that owns no node.
 fn shallow(
-    leaf: &CdtTerm,
-    memory: &mut crate::memory::Memory<'_>,
+    leaf: &CdtTerm, memory: &mut crate::memory::Memory<'_>,
 ) -> Result<CdtTerm, crate::memory::StorageError> {
     Ok(match leaf {
         CdtTerm::Iri(iri) => CdtTerm::Iri(memory.string(iri)?),
@@ -187,8 +186,7 @@ fn finished(copies: &mut Vec<CdtTerm>) -> CdtTerm {
 
 /// The original bottom-up copy, admitting each native destination before birth.
 fn clone_tree(
-    root: &CdtTerm,
-    memory: &mut crate::memory::Memory<'_>,
+    root: &CdtTerm, memory: &mut crate::memory::Memory<'_>,
 ) -> Result<CdtTerm, crate::memory::StorageError> {
     use crate::memory::CdtMemory as _;
     let mut steps: WorkList<Step<'_>, 8> = WorkList::new();
@@ -302,8 +300,7 @@ pub(crate) use clone_entry;
 
 impl CdtTerm {
     pub(crate) fn clone_with_memory(
-        &self,
-        memory: &mut crate::memory::Memory<'_>,
+        &self, memory: &mut crate::memory::Memory<'_>,
     ) -> Result<Self, crate::memory::StorageError> {
         if owns_nodes(self) {
             clone_tree(self, memory)
@@ -313,8 +310,7 @@ impl CdtTerm {
     }
     /// Release only storage already included in this original Memory account.
     pub(crate) fn release_with_memory(
-        self,
-        memory: &mut crate::memory::Memory<'_>,
+        self, memory: &mut crate::memory::Memory<'_>,
     ) -> Result<(), crate::memory::StorageError> {
         match self {
             Self::Iri(value) | Self::Blank(value) => memory.release_string(value),
@@ -338,8 +334,7 @@ crate::tree::clone_entry! {
 
 impl CdtValue {
     pub(crate) fn clone_with_memory(
-        &self,
-        memory: &mut crate::memory::Memory<'_>,
+        &self, memory: &mut crate::memory::Memory<'_>,
     ) -> Result<Self, crate::memory::StorageError> {
         let extent = self.extent();
         match self.contents() {
@@ -362,8 +357,7 @@ impl CdtValue {
         }
     }
     pub(crate) fn release_with_memory(
-        self,
-        memory: &mut crate::memory::Memory<'_>,
+        self, memory: &mut crate::memory::Memory<'_>,
     ) -> Result<(), crate::memory::StorageError> {
         let bytes = owned_bytes(OwnedRoot::Value(&self), memory)?;
         drop(self);
@@ -385,8 +379,7 @@ enum OwnedRoot<'a> {
     Value(&'a CdtValue),
 }
 fn owned_bytes(
-    root: OwnedRoot<'_>,
-    memory: &mut crate::memory::Memory<'_>,
+    root: OwnedRoot<'_>, memory: &mut crate::memory::Memory<'_>,
 ) -> Result<usize, crate::memory::StorageError> {
     use crate::memory::StorageError;
     use core::alloc::Layout;

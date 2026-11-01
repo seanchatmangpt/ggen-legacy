@@ -898,10 +898,7 @@ pub(crate) fn attempt(q: &Question<'_>) -> Result<Attempt, EntailError> {
 /// against a different question, and each frozen instance is re-checked by lookups against
 /// the closure it carries.
 pub(crate) fn verify_freeze(
-    w: &FreezeWarrant,
-    premise: &RdfDataset,
-    conclusion: &RdfDataset,
-    triples: &[Triple],
+    w: &FreezeWarrant, premise: &RdfDataset, conclusion: &RdfDataset, triples: &[Triple],
     pending: &BTreeSet<usize>,
 ) -> Option<Replay> {
     let reading = read(triples, pending);

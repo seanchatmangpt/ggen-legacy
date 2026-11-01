@@ -76,8 +76,8 @@ const BATCH_ROWS: usize = 64;
 
 #[test]
 fn canon_arrow_streaming_holds_only_one_batch() {
-    let ROWS: usize = 4_096;
-    let result = solutions_result(ROWS);
+    let rows = 4_096_usize;
+    let result = solutions_result(rows);
     let provenance = ResultProvenance::default();
     let format = SparqlResultsFormat::CanonArrow;
 
@@ -147,7 +147,7 @@ fn canon_arrow_streaming_holds_only_one_batch() {
     // Holding the whole document puts the peak at or above `document`, so the
     // gap between one batch's share (plus one staging window) and the document
     // is orders of magnitude wide.
-    let one_batch_estimate = document / ROWS * BATCH_ROWS;
+    let one_batch_estimate = document / rows * BATCH_ROWS;
     let allowance = (one_batch_estimate + DRAIN_BUFFER_BYTES) * 2;
 
     let window = CurrentThreadWindow::open();

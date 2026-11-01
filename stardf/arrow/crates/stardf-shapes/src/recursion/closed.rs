@@ -29,9 +29,7 @@ pub struct ClosedRecursionRefusal {
 
 impl ClosedRecursionRefusal {
     pub(crate) fn new(
-        definition: &Term,
-        parameter: &'static str,
-        model: Option<&Arc<ModelOwner>>,
+        definition: &Term, parameter: &'static str, model: Option<&Arc<ModelOwner>>,
         index: Option<&ShapeIndexRef>,
     ) -> Result<Self, StorageError> {
         let fields = Fields {
@@ -177,9 +175,7 @@ pub(crate) struct WeakDefinition {
 }
 impl WeakDefinition {
     pub(crate) fn new(
-        definition: &Term,
-        model: Option<&Arc<ModelOwner>>,
-        occurrence: usize,
+        definition: &Term, model: Option<&Arc<ModelOwner>>, occurrence: usize,
         kind: RecursionDefinitionKind,
     ) -> Result<Self, StorageError> {
         Ok(Self {

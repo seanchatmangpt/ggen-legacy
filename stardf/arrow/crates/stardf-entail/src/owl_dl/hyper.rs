@@ -553,9 +553,7 @@ pub(crate) fn decide(kb: &Kb, assumptions: &Assumptions<'_>, budget: Budget) -> 
 /// returns is the one [`decide`] returns for the same arguments, which is asserted rather than
 /// stated.
 pub(crate) fn decide_recording(
-    kb: &Kb,
-    assumptions: &Assumptions<'_>,
-    budget: Budget,
+    kb: &Kb, assumptions: &Assumptions<'_>, budget: Budget,
 ) -> (Decision, Recorder) {
     let mut h = Hyper::new_recording(kb, budget);
     #[cfg(test)]
@@ -577,12 +575,8 @@ pub(crate) fn decide_recording(
 }
 
 pub(crate) fn replay_current_support(
-    kb: &Kb,
-    assumptions: &Assumptions<'_>,
-    applications: &[&super::support::Application],
-    clause: usize,
-    frame: &[usize],
-    branches: &[BranchStep],
+    kb: &Kb, assumptions: &Assumptions<'_>, applications: &[&super::support::Application],
+    clause: usize, frame: &[usize], branches: &[BranchStep],
     journal: Option<super::graph::changes::Journal>,
 ) -> Result<ReplaySupport, super::proof::DlProofError> {
     Hyper::replay_support_inner(
@@ -597,12 +591,8 @@ pub(crate) fn replay_current_support(
 
 /// Check a recorded merge's original prefix and closing native inequality.
 pub(crate) fn replay_merge_support(
-    kb: &Kb,
-    assumptions: &Assumptions<'_>,
-    applications: &[&super::support::Application],
-    step: &MergeStep,
-    branches: &[BranchStep],
-    journal: Option<super::graph::changes::Journal>,
+    kb: &Kb, assumptions: &Assumptions<'_>, applications: &[&super::support::Application],
+    step: &MergeStep, branches: &[BranchStep], journal: Option<super::graph::changes::Journal>,
 ) -> Result<ReplaySupport, super::proof::DlProofError> {
     Hyper::replay_support_inner(
         kb,
@@ -617,12 +607,8 @@ pub(crate) fn replay_merge_support(
 /// Exercise the same independent replay with its native observation journal enabled.
 #[cfg(test)]
 pub(crate) fn replay_observing_support(
-    kb: &Kb,
-    assumptions: &Assumptions<'_>,
-    applications: &[&super::support::Application],
-    clause: usize,
-    frame: &[usize],
-    branches: &[BranchStep],
+    kb: &Kb, assumptions: &Assumptions<'_>, applications: &[&super::support::Application],
+    clause: usize, frame: &[usize], branches: &[BranchStep],
     journal: super::graph::changes::Journal,
 ) -> Result<ReplaySupport, super::proof::DlProofError> {
     Hyper::replay_support_inner(
@@ -700,9 +686,7 @@ pub(crate) fn consistent(kb: &Kb, assumptions: &Assumptions<'_>) -> Result<bool,
 }
 
 pub(crate) fn decision_result(
-    kb: &Kb,
-    budget: Budget,
-    decision: Decision,
+    kb: &Kb, budget: Budget, decision: Decision,
 ) -> Result<bool, EntailError> {
     if let Some(original) = decision.storage_refusal {
         return Err(super::roles::RoleHierarchyError::Storage(original).into());
@@ -2102,11 +2086,7 @@ impl<'a> Hyper<'a> {
     /// Non-corner `≤`-clauses gain nothing: `nominal_id` is `None` for anonymous nodes and the
     /// blockable-predecessor set is empty when no inverse edge makes `y` an `R`-neighbour of `x`.
     fn introduction_branch(
-        &self,
-        st: &State,
-        clause_index: usize,
-        x: usize,
-        clause: &DlClause,
+        &self, st: &State, clause_index: usize, x: usize, clause: &DlClause,
     ) -> Option<Branching> {
         if !self.has_nominals {
             return None;
@@ -2186,10 +2166,7 @@ impl<'a> Hyper<'a> {
     }
 
     fn introduction<'s>(
-        &self,
-        st: &'s State,
-        clause: &DlClause,
-        x: usize,
+        &self, st: &'s State, clause: &DlClause, x: usize,
     ) -> Option<Introduction<'s>> {
         // The `≤`-clause names its counted `(role, filler, n+1)` in a `Successors` body atom.
         let (role, filler, count) = clause.body.iter().find_map(|atom| match *atom {
@@ -2215,11 +2192,7 @@ impl<'a> Hyper<'a> {
     }
 
     fn check_introduction(
-        &self,
-        st: &State,
-        clause: &DlClause,
-        x: usize,
-        head: &[Ground<usize>],
+        &self, st: &State, clause: &DlClause, x: usize, head: &[Ground<usize>],
     ) -> bool {
         let [Ground::EqualReserved(predecessor, key)] = head else {
             return false;
@@ -2439,11 +2412,8 @@ impl<'a> Hyper<'a> {
     }
 
     fn replay_support_inner(
-        kb: &'a Kb,
-        assumptions: &Assumptions<'_>,
-        applications: &[&super::support::Application],
-        goal: ReplayGoal<'_>,
-        branches: &[BranchStep],
+        kb: &'a Kb, assumptions: &Assumptions<'_>, applications: &[&super::support::Application],
+        goal: ReplayGoal<'_>, branches: &[BranchStep],
         journal: Option<super::graph::changes::Journal>,
     ) -> Result<ReplaySupport, super::proof::DlProofError> {
         let poll = || {
@@ -2688,11 +2658,7 @@ impl<'a> Hyper<'a> {
     }
 
     fn frame_is_supported_as(
-        driver: &Self,
-        state: &State,
-        index: usize,
-        frame: &[usize],
-        introduction_only: bool,
+        driver: &Self, state: &State, index: usize, frame: &[usize], introduction_only: bool,
     ) -> bool {
         let Some(&root) = frame.first() else {
             return false;
@@ -2823,10 +2789,7 @@ impl<'a> Hyper<'a> {
     /// a `≤300 r.C` clause from allocating three hundred slots at every node in every round to
     /// discover, one successor in, that the node has two.
     fn for_each_match(
-        g: &Graph<'a>,
-        st: &State,
-        clause: &DlClause,
-        x: usize,
+        g: &Graph<'a>, st: &State, clause: &DlClause, x: usize,
         visit: &mut dyn FnMut(&[usize]) -> bool,
     ) -> bool {
         // One unit for the attempt itself, so a clause that matches nothing at a node still
@@ -2846,13 +2809,8 @@ impl<'a> Hyper<'a> {
     /// follows, so each IS one of its neighbours — and the rest of the body is matched as
     /// [`Self::walk`] matches it.
     fn for_each_delta_match(
-        g: &Graph<'a>,
-        st: &State,
-        clause: &DlClause,
-        single: &SingleRead,
-        x: usize,
-        delta: &[usize],
-        visit: &mut dyn FnMut(&[usize]) -> bool,
+        g: &Graph<'a>, st: &State, clause: &DlClause, single: &SingleRead, x: usize,
+        delta: &[usize], visit: &mut dyn FnMut(&[usize]) -> bool,
     ) -> bool {
         g.work().charge(delta.len() as u64 + 1);
         let x = find(st, x);
@@ -2883,11 +2841,7 @@ impl<'a> Hyper<'a> {
     /// A variable is BOUND exactly when it is inside `frame`, so binding one is a push and
     /// undoing it is a pop — the invariant `clause::DlClause::is_matchable` asserts.
     fn walk(
-        g: &Graph<'a>,
-        st: &State,
-        clause: &DlClause,
-        at: usize,
-        frame: &mut Vec<usize>,
+        g: &Graph<'a>, st: &State, clause: &DlClause, at: usize, frame: &mut Vec<usize>,
         visit: &mut dyn FnMut(&[usize]) -> bool,
     ) -> bool {
         // One unit per JOIN STEP — one body atom, at one partial binding. This is the
@@ -2987,15 +2941,8 @@ impl<'a> Hyper<'a> {
     /// `pool[from..]`, continuing the body walk once the selection is complete.
     #[allow(clippy::too_many_arguments)]
     fn walk_subsets(
-        g: &Graph<'a>,
-        st: &State,
-        clause: &DlClause,
-        at: usize,
-        frame: &mut Vec<usize>,
-        pool: &[usize],
-        from: usize,
-        remaining: u32,
-        visit: &mut dyn FnMut(&[usize]) -> bool,
+        g: &Graph<'a>, st: &State, clause: &DlClause, at: usize, frame: &mut Vec<usize>,
+        pool: &[usize], from: usize, remaining: u32, visit: &mut dyn FnMut(&[usize]) -> bool,
     ) -> bool {
         // One unit per selection step. A `≤n` clause enumerates the `count`-element SUBSETS
         // of a node's counted successors, which is `C(k, count)` selections from `k`
@@ -3277,9 +3224,7 @@ struct SingleRead {
 
 /// Each clause's [`SingleRead`] shape, if it has one.
 fn single_reads(
-    kb: &Kb,
-    patterns: &TransitivePatterns,
-    clauses: &ClauseSet,
+    kb: &Kb, patterns: &TransitivePatterns, clauses: &ClauseSet,
 ) -> Vec<Option<SingleRead>> {
     (0..clauses.count())
         .map(|index| {
@@ -3437,11 +3382,7 @@ struct Changes<'a> {
 ///
 /// Charged one unit per edge examined and per node reached, so the meter sees the region.
 fn region(
-    scratch: &mut RegionScratch,
-    g: &Graph<'_>,
-    st: &State,
-    changes: &Changes<'_>,
-    radius: usize,
+    scratch: &mut RegionScratch, g: &Graph<'_>, st: &State, changes: &Changes<'_>, radius: usize,
     patterns: &TransitivePatterns,
 ) -> Vec<Affected> {
     let radius = u32::try_from(radius).unwrap_or(u32::MAX);
@@ -3520,14 +3461,8 @@ fn region(
 /// or a shallower one, at no greater depth — which went on past it, so this walk stops there.
 #[allow(clippy::too_many_arguments)]
 fn reach_back(
-    scratch: &mut RegionScratch,
-    g: &Graph<'_>,
-    st: &State,
-    y: usize,
-    bit: u64,
-    mirror: &[(u32, bool)],
-    depth: u32,
-    inclusive: bool,
+    scratch: &mut RegionScratch, g: &Graph<'_>, st: &State, y: usize, bit: u64,
+    mirror: &[(u32, bool)], depth: u32, inclusive: bool,
 ) {
     scratch.walk.clear();
     if inclusive {

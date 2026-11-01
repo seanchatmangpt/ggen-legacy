@@ -1,6 +1,17 @@
 // SPDX-FileCopyrightText: 2026 Blackcat Informatics Inc. <paudley@blackcatinformatics.ca>
 // SPDX-License-Identifier: MIT OR Apache-2.0 OR MulanPSL-2.0
 
+// LINT-GATE (G03 offline ladder, 2026-10-31, D17): this integration-test crate
+// sits outside the stardf-process lib gate (separate crate), and the G03
+// ladder's `-D warnings` flags court-idiom assertion/iteration styles here.
+// Witnessed-lint gate only; the court bodies stay verbatim.
+#![allow(
+    clippy::assert_is_empty,
+    clippy::iter_on_single_items,
+    clippy::match_wildcard_for_single_variants,
+    clippy::redundant_clone
+)]
+
 //! Chicago-style courts over the process crate's public surface: inline
 //! fixtures, hand-derived final states, exact refusals. Every expected value
 //! is derived from the donors' documented formulas and semantics, never from

@@ -111,10 +111,8 @@ pub(crate) type ConstructedGraph<I> = (DatasetHandle, Option<Truncation<I>>);
 /// term table; the ids are re-interned through [`TermValue`], which is dataset-independent
 /// and carries nested triple terms structurally.
 pub(crate) fn commit_answer_triples<D: DatasetView + Sync>(
-    graph: DatasetHandle,
-    certificate: Option<Truncation<D::Id>>,
-    rows: &crate::solution::SolutionSeq<D::Id>,
-    ctx: &EvalCtx<'_, D>,
+    graph: DatasetHandle, certificate: Option<Truncation<D::Id>>,
+    rows: &crate::solution::SolutionSeq<D::Id>, ctx: &EvalCtx<'_, D>,
 ) -> Result<ConstructedGraph<D::Id>, EvalError> {
     let Some(state) = ctx.governor_state() else {
         return Ok((graph, certificate));
@@ -168,9 +166,7 @@ fn graph_triple_count(graph: &RdfDataset) -> usize {
 /// Rebuild `graph` from its first `admitted` statements, in the frozen canonical order the
 /// count above walks: quads, then reifier bindings, then annotations.
 fn truncate_graph(
-    graph: &RdfDataset,
-    admitted: usize,
-    workspace: &crate::WorkspaceCapability,
+    graph: &RdfDataset, admitted: usize, workspace: &crate::WorkspaceCapability,
 ) -> Result<DatasetHandle, EvalError> {
     let mut frame = crate::workspace::LexicalFrame::new(workspace);
     let mut memory = purrdf_lex::allocation::Memory::new(&mut frame);
@@ -325,9 +321,7 @@ fn truncate_graph(
 }
 
 pub(crate) fn eval_construct<D: DatasetView + Sync>(
-    template: &[QuadPattern],
-    pattern: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    template: &[QuadPattern], pattern: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<ConstructedGraph<D::Id>, EvalError> {
     let StagedConstruct {
         builder,
@@ -365,9 +359,7 @@ pub(crate) struct StagedConstruct<I: purrdf_core::ViewTermId> {
 /// Instantiate and validate a graph while retaining its unfrozen builder.
 /// Publication decides whether it needs an owned dataset or a direct builder append.
 pub(crate) fn eval_construct_staged<D: DatasetView + Sync>(
-    template: &[QuadPattern],
-    pattern: &GraphPattern,
-    ctx: &mut EvalCtx<'_, D>,
+    template: &[QuadPattern], pattern: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<StagedConstruct<D::Id>, EvalError> {
     let (mut seq, mut certificate) = match crate::eval::eval_answer_pattern(pattern, ctx)? {
         Evaluated::Complete(seq) => (seq, None),
@@ -526,9 +518,7 @@ impl<'a> GraphSlot<'a> {
     /// resolving a graph VARIABLE's column ordinal against `schema` now — both
     /// before the row loop starts.
     fn new(
-        graph: Option<&'a NamedNodePattern>,
-        schema: &VarSchema,
-        builder: &mut RdfDatasetBuilder,
+        graph: Option<&'a NamedNodePattern>, schema: &VarSchema, builder: &mut RdfDatasetBuilder,
         memory: &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         Ok(match graph {
@@ -552,10 +542,7 @@ impl<'a> GraphSlot<'a> {
     /// position — a skip, never an error, and never a silent fallback to the
     /// default graph.
     fn resolve<D: DatasetView + Sync>(
-        &self,
-        row: &Solution<D::Id>,
-        builder: &mut RdfDatasetBuilder,
-        ctx: &EvalCtx<'_, D>,
+        &self, row: &Solution<D::Id>, builder: &mut RdfDatasetBuilder, ctx: &EvalCtx<'_, D>,
         memory: &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
     ) -> Result<Option<GraphId>, GraphConstructionError> {
         match self {
@@ -601,9 +588,7 @@ purrdf_lex::variant_from!(GraphConstructionError { Storage(purrdf_lex::allocatio
 purrdf_lex::variant_from!(GraphConstructionError { Build(purrdf_core::NativeBuildError) });
 
 fn build_construct_graph<D: DatasetView + Sync>(
-    plan: &ConstructPlan<'_>,
-    seq: &crate::solution::SolutionSeq<D::Id>,
-    ctx: &mut EvalCtx<'_, D>,
+    plan: &ConstructPlan<'_>, seq: &crate::solution::SolutionSeq<D::Id>, ctx: &mut EvalCtx<'_, D>,
 ) -> Result<(ValidatedRdfDatasetBuilder, crate::workspace::LexicalFrame), EvalError> {
     let mut frame = crate::workspace::LexicalFrame::new(&ctx.growth);
     let result = {
@@ -626,9 +611,7 @@ fn build_construct_graph<D: DatasetView + Sync>(
 }
 
 fn build_construct_graph_with_memory<D: DatasetView + Sync>(
-    plan: &ConstructPlan<'_>,
-    seq: &crate::solution::SolutionSeq<D::Id>,
-    ctx: &mut EvalCtx<'_, D>,
+    plan: &ConstructPlan<'_>, seq: &crate::solution::SolutionSeq<D::Id>, ctx: &mut EvalCtx<'_, D>,
     memory: &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
 ) -> Result<ValidatedRdfDatasetBuilder, GraphConstructionError> {
     let schema = &seq.schema;
@@ -936,9 +919,7 @@ struct DroppedReifier<'a> {
 /// predicate (from [`crate::eval::StandpointPredicates`]); `None` means no table
 /// is configured and no drop can be attributed a standpoint scope.
 fn collect_dropped_reifiers<'a>(
-    template: &[QuadPattern],
-    pattern: &'a GraphPattern,
-    standpoint_according_to: Option<&str>,
+    template: &[QuadPattern], pattern: &'a GraphPattern, standpoint_according_to: Option<&str>,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<crate::AdmittedVec<DroppedReifier<'a>>, EvalError> {
     use purrdf_sparql_algebra::walk::{Flow, NodeRef, Visit, walk_pre_post_with_memory};
@@ -1113,10 +1094,8 @@ fn collect_where_triples<'a>(pattern: &'a GraphPattern, out: &mut Vec<&'a Triple
 /// template quad, so the caller resolves it from the template's uniform graph —
 /// see [`ConstructPlan::uniform_graph`].
 fn emit_dropped_losses<D: DatasetView + Sync>(
-    (dropped, ordinals): (&[DroppedReifier<'_>], &[TermOrdinal]),
-    row: &Solution<D::Id>,
-    builder: &mut RdfDatasetBuilder,
-    ctx: &mut EvalCtx<'_, D>,
+    (dropped, ordinals): (&[DroppedReifier<'_>], &[TermOrdinal]), row: &Solution<D::Id>,
+    builder: &mut RdfDatasetBuilder, ctx: &mut EvalCtx<'_, D>,
     (proj_loss_id, loss_code_id, lost_reifies_id): (TermId, TermId, TermId),
     graph_id: Option<TermId>,
     memory: &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
@@ -1186,10 +1165,7 @@ fn emit_dropped_losses<D: DatasetView + Sync>(
 
 /// Push `<loss_node> <lossCode> "<code>"^^xsd:string .` into `builder`.
 fn push_loss_code(
-    builder: &mut RdfDatasetBuilder,
-    loss_node: TermId,
-    code: &str,
-    loss_code_id: TermId,
+    builder: &mut RdfDatasetBuilder, loss_node: TermId, code: &str, loss_code_id: TermId,
     graph_id: Option<TermId>,
     memory: &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
 ) -> Result<(), purrdf_lex::allocation::StorageError> {
@@ -1216,9 +1192,7 @@ fn loss_node_label(code: &str, inner: &TermValue) -> String {
 }
 
 fn loss_node_label_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-    code: &str,
-    inner: &TermValue,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    code: &str, inner: &TermValue, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<String, purrdf_lex::allocation::StorageError> {
     let mut preimage = Vec::new();
     let required = code
@@ -1237,11 +1211,8 @@ fn loss_node_label_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
 /// `None` if the triple is skipped (an unbound variable or an ill-formed position).
 ///
 fn instantiate<D: DatasetView + Sync>(
-    tp: &TriplePattern,
-    ordinal: &TripleOrdinal,
-    row: &Solution<D::Id>,
-    builder: &mut RdfDatasetBuilder,
-    blanks: &mut crate::template::TemplateBlanks,
+    tp: &TriplePattern, ordinal: &TripleOrdinal, row: &Solution<D::Id>,
+    builder: &mut RdfDatasetBuilder, blanks: &mut crate::template::TemplateBlanks,
     ctx: &mut EvalCtx<'_, D>,
     memory: &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
 ) -> Result<Option<(TermId, TermId, TermId)>, GraphConstructionError> {
@@ -1346,18 +1317,14 @@ mod tests {
     /// these tests assert the graph, and the certificate half is exercised by
     /// the lift's own tests.
     fn eval_construct<D: DatasetView + Sync>(
-        template: &[TriplePattern],
-        pattern: &GraphPattern,
-        ctx: &mut EvalCtx<'_, D>,
+        template: &[TriplePattern], pattern: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<DatasetHandle, EvalError> {
         eval_quad_construct(&unscoped(template), pattern, ctx)
     }
 
     /// The ungoverned quad-producing `CONSTRUCT`, over an explicit quad template.
     fn eval_quad_construct<D: DatasetView + Sync>(
-        template: &[QuadPattern],
-        pattern: &GraphPattern,
-        ctx: &mut EvalCtx<'_, D>,
+        template: &[QuadPattern], pattern: &GraphPattern, ctx: &mut EvalCtx<'_, D>,
     ) -> Result<DatasetHandle, EvalError> {
         let (graph, certificate) = super::eval_construct(template, pattern, ctx)?;
         assert!(
@@ -2524,8 +2491,7 @@ mod tests {
 
     /// The graph term of each entry, resolved to its IRI (`None` = default graph).
     fn graph_names<I: Iterator<Item = Option<TermId>>>(
-        out: &RdfDataset,
-        it: I,
+        out: &RdfDataset, it: I,
     ) -> Vec<Option<String>> {
         it.map(|g| {
             g.map(|g| match out.resolve(g) {

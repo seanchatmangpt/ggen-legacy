@@ -49,10 +49,7 @@ enum Density {
 }
 
 fn fixture(
-    classes: usize,
-    properties: usize,
-    density: Density,
-    shape_every_class: bool,
+    classes: usize, properties: usize, density: Density, shape_every_class: bool,
 ) -> Fixture {
     let mut shapes_turtle = String::from(PREFIXES);
     if shape_every_class {

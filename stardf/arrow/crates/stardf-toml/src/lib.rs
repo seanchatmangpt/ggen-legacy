@@ -130,8 +130,7 @@ purrdf_lex::variant_from!(TomlError {
 
 /// Validate TOML and retain its typed occurrences under an explicit profile.
 pub fn analyze<'a>(
-    source: SourceDocument<'a>,
-    profile: &Profile,
+    source: SourceDocument<'a>, profile: &Profile,
 ) -> Result<Document<'a>, TomlError> {
     BaseIri::parse(source.id)?;
     if source.bytes.len() as u64 > profile.bounds().max_source_bytes {

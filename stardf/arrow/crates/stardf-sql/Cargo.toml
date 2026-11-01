@@ -3,16 +3,18 @@
 
 [package]
 name = "stardf-sql"
-description = "PurRDF declarative SQL-in-RDF AST representation, validation and deterministic compiler"
+# Lane 07-publish-metadata (2026-10-31): v26.11.1 first-class closure —
+# description/keywords/categories normalized to workspace inheritance.
+description.workspace = true
 version.workspace = true
 edition.workspace = true
-publish = false
+publish = true
 license.workspace = true
 repository.workspace = true
 homepage.workspace = true
 rust-version.workspace = true
-keywords = ["sql", "rdf", "ast", "compiler", "relational"]
-categories = ["compilers", "data-structures"]
+keywords.workspace = true
+categories.workspace = true
 
 [lints]
 workspace = true

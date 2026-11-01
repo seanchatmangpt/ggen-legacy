@@ -394,8 +394,7 @@ impl OrderedSource {
     /// The projected `(value, row)` pair at a batch column position.
     #[inline]
     fn batch_row<const COLUMN: u8, I: TermIdentity>(
-        batch: &Batch<(), I>,
-        position: usize,
+        batch: &Batch<(), I>, position: usize,
     ) -> Option<(I, RowId)> {
         batch
             .row_at(position)
@@ -706,8 +705,7 @@ mod tests {
     /// ORDER-INDEPENDENT set: the cursor enumerates batch-then-tail, not sorted, so
     /// tests compare sets — the round commit, not cursor order, fixes output.
     fn resolved_set(
-        s: &RelationStore,
-        rows: &[(TermId, TermId, RowId)],
+        s: &RelationStore, rows: &[(TermId, TermId, RowId)],
     ) -> BTreeSet<(String, String)> {
         rows.iter()
             .map(|&(si, oi, _)| {
@@ -1024,9 +1022,7 @@ mod tests {
     }
 
     fn check_value_position_cuts<const COLUMN: u8>(
-        store: &RelationStore,
-        other: Option<TermId>,
-        initial_seek: Option<TermId>,
+        store: &RelationStore, other: Option<TermId>, initial_seek: Option<TermId>,
         resumed_seek: Option<TermId>,
     ) {
         let rel = select(store, P, Bound::Any).rel;

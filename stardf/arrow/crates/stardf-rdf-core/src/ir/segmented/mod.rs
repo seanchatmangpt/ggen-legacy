@@ -356,8 +356,7 @@ impl SegmentedReceipt {
     /// Refuses failed authentication, unsupported profiles, inconsistent roots,
     /// terminal addresses or malformed persisted lengths before any data is read.
     pub fn from_authenticated_bytes(
-        bytes: &[u8],
-        authority: &impl SegmentedReceiptAuthority,
+        bytes: &[u8], authority: &impl SegmentedReceiptAuthority,
     ) -> Result<Self, SegmentedError> {
         authority.authenticate(bytes)?;
         if bytes.len() != Self::ENCODED_BYTES

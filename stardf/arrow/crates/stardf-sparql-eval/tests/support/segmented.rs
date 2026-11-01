@@ -21,8 +21,7 @@ pub fn fixture() -> (SegmentedImage, Arc<RdfDataset>) {
 
 /// Build the same RDF rows using explicit dictionary/block geometry.
 pub fn fixture_with_layout(
-    block_bytes: u32,
-    records_per_block: u32,
+    block_bytes: u32, records_per_block: u32,
 ) -> (SegmentedImage, Arc<RdfDataset>) {
     let limits = SegmentedBuildLimits::new(4096, 500_000, 4096, block_bytes, records_per_block)
         .unwrap()
@@ -84,9 +83,7 @@ pub fn baseline_ceiling(image: &SegmentedImage) -> u64 {
 
 /// Open a session with explicit cache occupancy for hot/cold benchmark cases.
 pub fn open_with_cache(
-    image: &SegmentedImage,
-    ceiling: u64,
-    cache_blocks: u32,
+    image: &SegmentedImage, ceiling: u64, cache_blocks: u32,
 ) -> SegmentedSession {
     open_with_evidence(image, ceiling, cache_blocks, 2048)
 }
@@ -94,10 +91,7 @@ pub fn open_with_cache(
 /// Explicit evidence capacity for computed-query matrices with many reverse lookups.
 /// This independent dimension does not change the physical live-byte ceiling.
 pub fn open_with_evidence(
-    image: &SegmentedImage,
-    ceiling: u64,
-    cache_blocks: u32,
-    evidence_entries: u32,
+    image: &SegmentedImage, ceiling: u64, cache_blocks: u32, evidence_entries: u32,
 ) -> SegmentedSession {
     SegmentedSession::open(
         Arc::new(image.provider()),

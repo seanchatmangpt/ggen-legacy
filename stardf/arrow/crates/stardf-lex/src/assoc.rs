@@ -79,9 +79,7 @@ pub fn insert<K: PartialEq, V>(pairs: &mut Vec<(K, V)>, key: K, value: V) -> Opt
 /// # Errors
 /// Preserves the original append refusal without changing existing members.
 pub fn try_insert<K: PartialEq, V, E>(
-    pairs: &mut Vec<(K, V)>,
-    key: K,
-    value: V,
+    pairs: &mut Vec<(K, V)>, key: K, value: V,
     append: impl FnOnce(&mut Vec<(K, V)>, (K, V)) -> Result<(), E>,
 ) -> Result<Option<V>, E> {
     match get_mut(pairs, &key) {

@@ -848,11 +848,7 @@ pub fn resident_kib() -> u64 {
 /// `[bench] label: peak_allocated_bytes=… rss_delta_kb=…`, the resident-set change
 /// taken from two [`resident_kib`] readings around the measured region.
 pub fn report_peak(
-    bench: &str,
-    label: &str,
-    peak_allocated_bytes: i64,
-    rss_before_kb: u64,
-    rss_after_kb: u64,
+    bench: &str, label: &str, peak_allocated_bytes: i64, rss_before_kb: u64, rss_after_kb: u64,
 ) {
     println!(
         "[{bench}] {label}: peak_allocated_bytes={peak_allocated_bytes} rss_delta_kb={}",

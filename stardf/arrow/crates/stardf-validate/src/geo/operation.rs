@@ -25,18 +25,14 @@ use super::{
 };
 
 pub(super) fn chain(
-    value: &Value,
-    budget: &mut PreparationBudget,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Value, budget: &mut PreparationBudget, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<OperationChain, GeoCallError> {
     let operations = decode.items(value, |value| operation(value, budget, decode))?;
     OperationChain::compile_in_budget(operations, budget).map_err(Into::into)
 }
 
 fn operation(
-    value: &Value,
-    budget: &mut PreparationBudget,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Value, budget: &mut PreparationBudget, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<CoordinateOperation, GeoCallError> {
     let mut fields = decode.record(value, "explicit coordinate operation")?;
     let source = fields.required_with("source", |value| reference(value, decode))?;
@@ -47,8 +43,7 @@ fn operation(
 }
 
 fn reference(
-    value: &Value,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Value, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<OperationReference, DecodeError> {
     let mut fields = decode.record(value, "coordinate operation reference")?;
     let realization =
@@ -67,8 +62,7 @@ fn reference(
 }
 
 pub(super) fn point(
-    value: &Value,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Value, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<OperationPoint, GeoCallError> {
     let mut fields = decode.record(value, "exact operation point")?;
     let point = OperationPoint {
@@ -82,8 +76,7 @@ pub(super) fn point(
 }
 
 fn exact_array<const N: usize>(
-    value: &Value,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Value, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<[Rat; N], GeoCallError> {
     decode
         .items(value, |value| decode.decimal(value))?
@@ -96,9 +89,7 @@ fn exact_array<const N: usize>(
 }
 
 fn model(
-    value: &Value,
-    budget: &mut PreparationBudget,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Value, budget: &mut PreparationBudget, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<OperationModel, GeoCallError> {
     let mut fields = decode.record(value, "coordinate operation model")?;
     let law = fields.tag(
@@ -253,9 +244,7 @@ fn model(
 }
 
 fn polynomial(
-    fields: &mut Record<'_>,
-    budget: &mut PreparationBudget,
-    decode: &Decode<'_, '_, '_, '_>,
+    fields: &mut Record<'_>, budget: &mut PreparationBudget, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Polynomial2d, GeoCallError> {
     fields.tag("basis", &["monomial"])?;
     fields.tag("order", &["x-power-y-power"])?;
@@ -273,9 +262,7 @@ fn polynomial(
     .map_err(Into::into)
 }
 fn grid(
-    fields: &mut Record<'_>,
-    budget: &mut PreparationBudget,
-    decode: &Decode<'_, '_, '_, '_>,
+    fields: &mut Record<'_>, budget: &mut PreparationBudget, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<BilinearGrid, GeoCallError> {
     BilinearGrid::new_in_budget(
         fields.required_with("origin_metres", |value| exact_array::<2>(value, decode))?,
@@ -290,9 +277,7 @@ fn grid(
     .map_err(Into::into)
 }
 fn source_domain(
-    value: &Value,
-    budget: &mut PreparationBudget,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Value, budget: &mut PreparationBudget, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<MetricSourceDomain, GeoCallError> {
     let mut fields = decode.record(value, "explicit closed metre source rectangle")?;
     let min_x = fields.required_with("min_x_metres", |value| decode.decimal(value))?;
@@ -304,9 +289,7 @@ fn source_domain(
 }
 
 fn applicability(
-    value: &Value,
-    budget: &mut PreparationBudget,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Value, budget: &mut PreparationBudget, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Applicability, GeoCallError> {
     let mut fields = decode.record(value, "explicit exact closed applicability")?;
     let bounds = Applicability::new_in_budget(
@@ -321,9 +304,7 @@ fn applicability(
 }
 
 pub(super) fn ellipsoid(
-    value: &Value,
-    budget: &mut PreparationBudget,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Value, budget: &mut PreparationBudget, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<PreparedEllipsoid, GeoCallError> {
     let mut fields = decode.record(value, "explicit ellipsoid")?;
     let ellipsoid = match fields.tag("profile", &["wgs84", "cgcs2000", "custom"])? {
@@ -365,8 +346,7 @@ fn rates(value: &Value, decode: &Decode<'_, '_, '_, '_>) -> Result<HelmertRates,
 }
 
 fn polynomial_term(
-    value: &Value,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Value, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<PolynomialTerm, GeoCallError> {
     let mut fields = decode.record(value, "explicit polynomial monomial")?;
     let term = PolynomialTerm {
@@ -382,8 +362,7 @@ fn polynomial_term(
 }
 
 fn grid_node(
-    value: &Value,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Value, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Option<GridNode>, GeoCallError> {
     if matches!(value, Value::Null) {
         return Ok(None);
@@ -398,8 +377,7 @@ fn grid_node(
 }
 
 pub(super) fn chain_json(
-    chain: &OperationChain,
-    decode: &Decode<'_, '_, '_, '_>,
+    chain: &OperationChain, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Value, GeoCallError> {
     decode.array(chain.operations().iter(), |operation| {
         operation_json(operation, decode)
@@ -407,8 +385,7 @@ pub(super) fn chain_json(
 }
 
 fn reference_json(
-    reference: OperationReference,
-    decode: &Decode<'_, '_, '_, '_>,
+    reference: OperationReference, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Value, GeoCallError> {
     Ok(Object::new()
         .with_memory_cell(
@@ -433,8 +410,7 @@ fn reference_json(
 }
 
 fn operation_json(
-    operation: &CoordinateOperation,
-    decode: &Decode<'_, '_, '_, '_>,
+    operation: &CoordinateOperation, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Value, GeoCallError> {
     Ok(Object::new()
         .with_memory_cell(
@@ -468,8 +444,7 @@ fn convention_name(value: RotationConvention) -> &'static str {
 }
 
 fn ellipsoid_json(
-    ellipsoid: &PreparedEllipsoid,
-    decode: &Decode<'_, '_, '_, '_>,
+    ellipsoid: &PreparedEllipsoid, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Value, GeoCallError> {
     if ellipsoid == &PreparedEllipsoid::wgs84() {
         return Ok(Object::new()
@@ -497,8 +472,7 @@ fn ellipsoid_json(
 }
 
 fn model_json(
-    model: &OperationModel,
-    decode: &Decode<'_, '_, '_, '_>,
+    model: &OperationModel, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Value, GeoCallError> {
     let fields = match model {
         OperationModel::GcjRationalHarmonicV1(bounds)
@@ -774,8 +748,7 @@ fn model_json(
 }
 
 fn source_domain_json(
-    domain: &MetricSourceDomain,
-    decode: &Decode<'_, '_, '_, '_>,
+    domain: &MetricSourceDomain, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Value, GeoCallError> {
     Ok(Object::new()
         .with_memory_cell(
@@ -801,9 +774,7 @@ fn source_domain_json(
         .into())
 }
 fn polynomial_json(
-    polynomial: &Polynomial2d,
-    law: &str,
-    decode: &Decode<'_, '_, '_, '_>,
+    polynomial: &Polynomial2d, law: &str, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Object, GeoCallError> {
     let terms = decode.array(polynomial.terms().iter(), |term| {
         Ok(Object::new()
@@ -839,9 +810,7 @@ fn polynomial_json(
         .with_memory_cell("terms", terms, decode.storage.memory())?)
 }
 fn grid_json(
-    grid: &BilinearGrid,
-    law: &str,
-    decode: &Decode<'_, '_, '_, '_>,
+    grid: &BilinearGrid, law: &str, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Object, GeoCallError> {
     let nodes = decode.array(grid.nodes().iter(), |node| {
         node.as_ref()

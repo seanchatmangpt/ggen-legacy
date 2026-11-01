@@ -103,8 +103,7 @@ pub fn guard_contract(params: Params, role: IndexUseRole) -> IndexGuardContract 
 /// parameter encoding and payload media type under either arithmetic.
 #[must_use]
 pub fn guard_contract_for<A: IndexArithmetic>(
-    index: &HnswIndex<A>,
-    role: IndexUseRole,
+    index: &HnswIndex<A>, role: IndexUseRole,
 ) -> IndexGuardContract {
     contract(
         profile::implementation_for::<A>(index.arithmetic().path()),
@@ -115,9 +114,7 @@ pub fn guard_contract_for<A: IndexArithmetic>(
 
 /// The guard contract around `implementation`.
 fn contract(
-    implementation: purrdf_core::ArtifactIdentity,
-    params: Params,
-    role: IndexUseRole,
+    implementation: purrdf_core::ArtifactIdentity, params: Params, role: IndexUseRole,
 ) -> IndexGuardContract {
     IndexGuardContract {
         implementation,
@@ -143,9 +140,7 @@ fn contract(
 /// [`HnswError`] wrapping any [`purrdf_core::EmbeddingError`] — an empty payload, a
 /// non-deterministic inline payload, or a guard whose contract is malformed.
 pub fn derived_index<A: IndexArithmetic>(
-    coordinates: IndexCoordinates,
-    index: &HnswIndex<A>,
-    role: IndexUseRole,
+    coordinates: IndexCoordinates, index: &HnswIndex<A>, role: IndexUseRole,
 ) -> Result<DerivedIndex> {
     let guard = guard_contract_for(index, role);
     Ok(DerivedIndex::new(
@@ -384,9 +379,7 @@ fn validate_loss(loss: TlvEntryRef<'_>) -> Result<()> {
 /// [`HnswError::Embedding`] if the artifact declares no such space, target set, or
 /// effective matrix.
 pub fn coordinates(
-    view: &EmbeddingView<'_>,
-    target_set: TargetSetId,
-    vector_space: VectorSpaceId,
+    view: &EmbeddingView<'_>, target_set: TargetSetId, vector_space: VectorSpaceId,
 ) -> Result<IndexCoordinates> {
     let space = view
         .vector_space(vector_space)
@@ -427,9 +420,7 @@ pub fn coordinates(
 ///
 /// [`HnswError::GuardProfile`] naming the first coordinate that disagrees.
 pub fn check_coordinates(
-    guard: &IndexGuardView<'_>,
-    target_set: TargetSetId,
-    vector_space: VectorSpaceId,
+    guard: &IndexGuardView<'_>, target_set: TargetSetId, vector_space: VectorSpaceId,
     effective: &EffectiveMatrixView<'_>,
 ) -> Result<()> {
     let matrix = effective.matrix();
@@ -576,8 +567,7 @@ pub fn verify_payload_commitment(guard: &IndexGuardView<'_>, bytes: &[u8]) -> Re
 /// run and [`HnswError::ArithmeticBuildMismatch`] for one recorded by a build of another
 /// shape among them.
 pub fn load<A: IndexArithmetic>(
-    guard: &IndexGuardView<'_>,
-    matrix: VectorMatrix,
+    guard: &IndexGuardView<'_>, matrix: VectorMatrix,
 ) -> Result<HnswIndex<A>> {
     let (params, row) = validate_profile(guard)?;
     if row.arithmetic != A::ID {
@@ -623,8 +613,7 @@ pub fn load<A: IndexArithmetic>(
 /// [`HnswError::Embedding`] for an unreadable scalar type or row, and
 /// [`HnswError::ParameterValidation`] if the shape is unusable.
 pub fn read_effective_matrix(
-    effective: &EffectiveMatrixView<'_>,
-    arithmetic: Resolved<Exact>,
+    effective: &EffectiveMatrixView<'_>, arithmetic: Resolved<Exact>,
 ) -> Result<VectorMatrix> {
     let dtype = effective.matrix().dtype()?;
     let row_count =
@@ -724,9 +713,7 @@ fn check_row_width(row: usize, decoded: usize, dimension: usize) -> Result<()> {
 /// the reassociated implementation is rebuilt under [`Reassociated`], and anything else
 /// under [`Exact`], whose decoder refuses a header that names another law.
 pub fn verify_rebuild(
-    guard: &IndexGuardView<'_>,
-    source_matrix: &VectorMatrix,
-    params: &Params,
+    guard: &IndexGuardView<'_>, source_matrix: &VectorMatrix, params: &Params,
 ) -> Result<bool> {
     let Ok(bytes) = payload_bytes(guard) else {
         return Ok(false);
@@ -766,9 +753,7 @@ fn guard_entries<'a>(guard: &IndexGuardView<'a>) -> Result<Vec<TlvEntryRef<'a>>>
 
 /// One required entry by tag, with a profile-shaped error on absence.
 fn required<'a>(
-    entries: &[TlvEntryRef<'a>],
-    tag: u16,
-    what: &'static str,
+    entries: &[TlvEntryRef<'a>], tag: u16, what: &'static str,
 ) -> Result<TlvEntryRef<'a>> {
     find(entries, tag)
         .ok_or_else(|| profile_error(ProfileRefusal::MissingField { tag, field: what }))

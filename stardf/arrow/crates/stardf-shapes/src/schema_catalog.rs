@@ -54,15 +54,13 @@ impl CompiledSchemaCatalog {
     }
 
     pub(crate) fn parse_with_limits(
-        compiled: &CompiledSchema,
-        limits: SchemaCatalogLimits,
+        compiled: &CompiledSchema, limits: SchemaCatalogLimits,
     ) -> Result<Self, SchemaCatalogError> {
         Self::parse_inner(compiled, limits)
     }
 
     fn parse_inner(
-        compiled: &CompiledSchema,
-        limits: SchemaCatalogLimits,
+        compiled: &CompiledSchema, limits: SchemaCatalogLimits,
     ) -> Result<Self, SchemaCatalogError> {
         if compiled.schema_json.len() > limits.input_bytes {
             return Err(SchemaCatalogError::new(format!(
@@ -117,8 +115,7 @@ fn invalid_json_error(error: &purrdf_lex::json::Error) -> SchemaCatalogError {
 /// `limits.depth` counts open arrays and objects (the root is one) and is
 /// capped at the shared schema depth ceiling.
 fn parse_bounded_document(
-    input: &str,
-    limits: SchemaCatalogLimits,
+    input: &str, limits: SchemaCatalogLimits,
 ) -> Result<Value, SchemaCatalogError> {
     use purrdf_lex::json::ErrorKind;
 
@@ -158,8 +155,7 @@ fn parse_bounded_document(
 }
 
 fn validate_definition_limit(
-    definitions: usize,
-    limits: SchemaCatalogLimits,
+    definitions: usize, limits: SchemaCatalogLimits,
 ) -> Result<(), SchemaCatalogError> {
     if definitions > limits.definitions {
         return Err(SchemaCatalogError::new(format!(
@@ -217,9 +213,7 @@ pub(crate) const fn schema_single_keywords() -> &'static [&'static str] {
 }
 
 fn validate_schema(
-    value: &Value,
-    definitions: &Object,
-    path: &str,
+    value: &Value, definitions: &Object, path: &str,
 ) -> Result<(), SchemaCatalogError> {
     let Value::Object(object) = value else {
         return if value.is_boolean() {

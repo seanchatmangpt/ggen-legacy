@@ -129,8 +129,7 @@ impl ContentIdScheme {
     /// # Errors
     /// Returns storage refusal before allocating the prefix.
     pub fn clone_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         Ok(Self {
             prefix: memory.string(&self.prefix)?,

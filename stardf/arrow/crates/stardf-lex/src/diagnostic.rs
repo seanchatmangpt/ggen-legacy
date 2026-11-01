@@ -40,8 +40,7 @@ impl DiagnosticValue {
     /// # Errors
     /// Returns the first physical storage refusal before publication.
     pub fn clone_with_memory<S: crate::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut crate::allocation::Memory<'_, S>,
+        &self, memory: &mut crate::allocation::Memory<'_, S>,
     ) -> Result<Self, crate::allocation::StorageError> {
         Ok(match self {
             Self::Text(value) => Self::Text(memory.string(value)?),
@@ -109,8 +108,7 @@ impl DiagnosticParameter {
     /// # Errors
     /// Returns physical refusal, retaining already admitted scratch in the caller.
     pub fn clone_with_memory<S: crate::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut crate::allocation::Memory<'_, S>,
+        &self, memory: &mut crate::allocation::Memory<'_, S>,
     ) -> Result<Self, crate::allocation::StorageError> {
         Ok(Self {
             name: memory.string(&self.name)?,
@@ -131,9 +129,7 @@ impl DiagnosticParameter {
     /// # Errors
     /// Returns checked physical storage refusal.
     pub fn try_new_with_memory<S: crate::allocation::Admission + ?Sized>(
-        name: &str,
-        value: DiagnosticValue,
-        memory: &mut crate::allocation::Memory<'_, S>,
+        name: &str, value: DiagnosticValue, memory: &mut crate::allocation::Memory<'_, S>,
     ) -> Result<Self, crate::allocation::StorageError> {
         Ok(Self {
             name: memory.string(name)?,
@@ -257,8 +253,7 @@ impl DiagnosticPresentation {
     /// # Errors
     /// Returns original physical refusal before publishing any replacement.
     pub fn clone_with_memory<S: crate::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut crate::allocation::Memory<'_, S>,
+        &self, memory: &mut crate::allocation::Memory<'_, S>,
     ) -> Result<Self, crate::allocation::StorageError> {
         let mut parameters = Vec::new();
         memory.reserve(&mut parameters, self.parameters.len())?;
@@ -286,9 +281,7 @@ impl DiagnosticPresentation {
     /// # Errors
     /// Refuses empty identities, invalid/duplicate names and template/argument drift.
     pub fn new(
-        message_id: impl Into<String>,
-        english_template: &str,
-        parameters: Vec<DiagnosticParameter>,
+        message_id: impl Into<String>, english_template: &str, parameters: Vec<DiagnosticParameter>,
     ) -> Result<Self, DiagnosticPresentationError> {
         let message_id = message_id.into();
         let mut resident = crate::allocation::Resident;
@@ -302,9 +295,7 @@ impl DiagnosticPresentation {
     /// # Errors
     /// Returns a template-contract error or a typed physical storage refusal.
     pub fn try_new_with_memory<S: crate::allocation::Admission + ?Sized>(
-        message_id: &str,
-        english_template: &str,
-        parameters: Vec<DiagnosticParameter>,
+        message_id: &str, english_template: &str, parameters: Vec<DiagnosticParameter>,
         memory: &mut crate::allocation::Memory<'_, S>,
     ) -> Result<Self, DiagnosticPresentationError> {
         let message_id = memory.string(message_id)?;
@@ -413,9 +404,7 @@ impl DiagnosticPresentation {
     /// # Errors
     /// Refuses nested detail or physical storage admission/allocation.
     pub fn try_with_detail_with_memory<S: crate::allocation::Admission + ?Sized>(
-        mut self,
-        detail: Self,
-        memory: &mut crate::allocation::Memory<'_, S>,
+        mut self, detail: Self, memory: &mut crate::allocation::Memory<'_, S>,
     ) -> Result<Self, DiagnosticPresentationError> {
         if detail.detail.is_some() {
             return Err(DiagnosticPresentationError::NestedDetail);

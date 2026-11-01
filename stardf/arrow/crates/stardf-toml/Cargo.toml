@@ -3,15 +3,23 @@
 
 [package]
 name = "stardf-toml"
-description = "Lossless TOML 1.1 model and verified RDF 1.2 byte-cover codec"
+# Lane 07-publish-metadata (2026-10-31): v26.11.1 first-class closure —
+# description/keywords/categories join the workspace inheritance.
+description.workspace = true
 version.workspace = true
 edition.workspace = true
-publish = false
+publish = true
 rust-version.workspace = true
 repository.workspace = true
 homepage.workspace = true
 license.workspace = true
 documentation = "https://docs.rs/stardf-toml"
+keywords.workspace = true
+categories.workspace = true
+# Lane 10 (2026-10-31): crates.io 10MB tarball ceiling — the toml-test
+# conformance corpus (tests/suite, 3.7MB) stays in-tree for `cargo test`,
+# excluded from the packaged crate. tests/roundtrip.rs still rides.
+exclude = ["tests/suite"]
 
 [lib]
 # Vendoring law: lib name upstream-verbatim (package renamed, lib unchanged).

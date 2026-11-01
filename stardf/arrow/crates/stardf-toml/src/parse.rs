@@ -353,11 +353,7 @@ impl Reader<'_> {
         }
     }
     fn add(
-        &mut self,
-        parent: Option<usize>,
-        key: Option<Key>,
-        kind: Kind,
-        span: Range<usize>,
+        &mut self, parent: Option<usize>, key: Option<Key>, kind: Kind, span: Range<usize>,
     ) -> Result<usize, TomlError> {
         if self.nodes.len() as u64 >= u64::from(self.bounds.max_nodes) {
             return self.limit("nodes", u64::from(self.bounds.max_nodes));
@@ -421,10 +417,7 @@ impl Reader<'_> {
         self.names.get(&(parent, key.decoded.clone())).copied()
     }
     fn descend(
-        &mut self,
-        mut parent: usize,
-        keys: &[Key],
-        dotted: bool,
+        &mut self, mut parent: usize, keys: &[Key], dotted: bool,
     ) -> Result<usize, TomlError> {
         for key in keys {
             if self.nodes[parent].sealed {
@@ -471,10 +464,7 @@ impl Reader<'_> {
         Ok((parent, key.clone()))
     }
     fn header(
-        &mut self,
-        keys: &[Key],
-        array: bool,
-        span: Range<usize>,
+        &mut self, keys: &[Key], array: bool, span: Range<usize>,
     ) -> Result<usize, TomlError> {
         let (key, prefix) = keys.split_last().expect("header keys are nonempty");
         let parent = self.descend(0, prefix, false)?;

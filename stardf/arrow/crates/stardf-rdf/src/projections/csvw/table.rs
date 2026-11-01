@@ -21,9 +21,7 @@ use super::model::{
 };
 
 pub(crate) fn annotate_tables(
-    group: &mut CsvwTableGroup,
-    input: &CsvwInput,
-    config: &CsvwConfig,
+    group: &mut CsvwTableGroup, input: &CsvwInput, config: &CsvwConfig,
     warnings: &mut Vec<CsvwWarning>,
 ) -> Result<(), ProjectionError> {
     let mut budget = 0usize;
@@ -39,10 +37,7 @@ pub(crate) fn annotate_tables(
 }
 
 fn parse_table(
-    table: &mut CsvwTable,
-    bytes: &[u8],
-    config: &CsvwConfig,
-    warnings: &mut Vec<CsvwWarning>,
+    table: &mut CsvwTable, bytes: &[u8], config: &CsvwConfig, warnings: &mut Vec<CsvwWarning>,
     budget: &mut usize,
 ) -> Result<(), ProjectionError> {
     let encoding = Encoding::from_label(&table.dialect.encoding).ok_or_else(|| {
@@ -190,11 +185,8 @@ fn cell_dialect(table: &CsvwTable) -> Result<Dialect<'static>, ProjectionError> 
 }
 
 fn reconcile_schema(
-    table: &mut CsvwTable,
-    headers: &[(usize, Vec<String>)],
-    first_data_width: usize,
-    config: &CsvwConfig,
-    warnings: &mut Vec<CsvwWarning>,
+    table: &mut CsvwTable, headers: &[(usize, Vec<String>)], first_data_width: usize,
+    config: &CsvwConfig, warnings: &mut Vec<CsvwWarning>,
 ) -> Result<(), ProjectionError> {
     let header_width = headers.iter().map(|(_, row)| row.len()).max().unwrap_or(0);
     let source_width = header_width.max(first_data_width);
@@ -338,9 +330,7 @@ fn reconcile_schema(
 }
 
 fn header_titles(
-    headers: &[(usize, Vec<String>)],
-    index: usize,
-    language: Option<&str>,
+    headers: &[(usize, Vec<String>)], index: usize, language: Option<&str>,
 ) -> CsvwNaturalLanguage {
     let values = headers
         .iter()
@@ -379,10 +369,7 @@ fn languages_compatible(left: &str, right: &str) -> bool {
 }
 
 fn default_column(
-    number: usize,
-    name: String,
-    titles: CsvwNaturalLanguage,
-    inherited: CsvwInheritedProperties,
+    number: usize, name: String, titles: CsvwNaturalLanguage, inherited: CsvwInheritedProperties,
 ) -> CsvwColumn {
     CsvwColumn {
         id: None,
@@ -408,11 +395,7 @@ fn row_titles(names: &[String], columns: &[CsvwColumn], cells: &[CsvwCell]) -> V
 }
 
 fn parse_cell(
-    raw: String,
-    column: &CsvwColumn,
-    table_url: &str,
-    source_number: usize,
-    config: &CsvwConfig,
+    raw: String, column: &CsvwColumn, table_url: &str, source_number: usize, config: &CsvwConfig,
     warnings: &mut Vec<CsvwWarning>,
 ) -> CsvwCell {
     let inherited = &column.inherited;
@@ -479,13 +462,8 @@ fn parse_cell(
 
 #[allow(clippy::too_many_arguments)]
 fn parse_component(
-    source: String,
-    datatype: &CsvwDatatype,
-    language: Option<&str>,
-    direction: Option<CsvwTextDirection>,
-    table_url: &str,
-    location: &str,
-    config: &CsvwConfig,
+    source: String, datatype: &CsvwDatatype, language: Option<&str>,
+    direction: Option<CsvwTextDirection>, table_url: &str, location: &str, config: &CsvwConfig,
     warnings: &mut Vec<CsvwWarning>,
 ) -> CsvwValue {
     let normalized = normalize_lexical(&source, datatype, config);
@@ -522,9 +500,7 @@ fn parse_component(
 }
 
 fn normalize_lexical(
-    source: &str,
-    datatype: &CsvwDatatype,
-    config: &CsvwConfig,
+    source: &str, datatype: &CsvwDatatype, config: &CsvwConfig,
 ) -> Result<String, String> {
     let local = datatype
         .base
@@ -589,9 +565,7 @@ fn normalize_lexical(
 }
 
 fn validate_lexical(
-    lexical: &str,
-    datatype: &CsvwDatatype,
-    config: &CsvwConfig,
+    lexical: &str, datatype: &CsvwDatatype, config: &CsvwConfig,
 ) -> Result<(), String> {
     if let Some(xsd) = xsd_datatype(&datatype.base, config) {
         parse_xsd(lexical, xsd)
@@ -908,9 +882,7 @@ fn valid_xml_name(value: &str, colon: bool) -> bool {
 ///
 /// Returns a term error for an invalid table URL or resolved IRI.
 pub(super) fn table_fragment_iri(
-    table_url: &str,
-    fragment: &str,
-    owner: &str,
+    table_url: &str, fragment: &str, owner: &str,
 ) -> Result<String, ProjectionError> {
     let base = purrdf_iri::parse(table_url)
         .map_err(|error| ProjectionError::term(format!("invalid {owner} table URL: {error}")))?;
@@ -926,11 +898,7 @@ pub(super) fn temporal_datatype(local: &str) -> bool {
 }
 
 fn normalize_number(
-    source: &str,
-    pattern: Option<&str>,
-    decimal_char: char,
-    group_char: Option<char>,
-    local: &str,
+    source: &str, pattern: Option<&str>, decimal_char: char, group_char: Option<char>, local: &str,
 ) -> Result<String, String> {
     if matches!(source, "NaN" | "INF" | "-INF") {
         return if matches!(local, "float" | "double") {
@@ -1192,9 +1160,7 @@ fn shift_decimal_left(value: &str, places: usize) -> Result<String, String> {
 }
 
 fn validate_value_facets(
-    lexical: &str,
-    datatype: &CsvwDatatype,
-    config: &CsvwConfig,
+    lexical: &str, datatype: &CsvwDatatype, config: &CsvwConfig,
 ) -> Result<(), String> {
     let Some(xsd) = xsd_datatype(&datatype.base, config) else {
         return Ok(());
@@ -1243,8 +1209,7 @@ fn validate_value_facets(
 }
 
 fn parse_bound(
-    value: &purrdf_lex::json::Value,
-    datatype: XsdDatatype,
+    value: &purrdf_lex::json::Value, datatype: XsdDatatype,
 ) -> Result<purrdf_xsd::XsdValue, String> {
     let lexical = match value {
         purrdf_lex::json::Value::String(value) => value.clone(),
@@ -1353,10 +1318,7 @@ fn parse_temporal_pattern(source: &str, pattern: &str, local: &str) -> Result<St
 }
 
 fn read_digits(
-    source: &str,
-    cursor: &mut usize,
-    minimum: usize,
-    maximum: usize,
+    source: &str, cursor: &mut usize, minimum: usize, maximum: usize,
 ) -> Result<u32, String> {
     let bytes = source.as_bytes();
     let start = *cursor;
@@ -1412,8 +1374,7 @@ fn read_timezone(source: &str, cursor: &mut usize, width: usize) -> Result<Strin
 }
 
 fn validate_primary_and_foreign_keys(
-    group: &CsvwTableGroup,
-    warnings: &mut Vec<CsvwWarning>,
+    group: &CsvwTableGroup, warnings: &mut Vec<CsvwWarning>,
 ) -> Result<(), ProjectionError> {
     for table in &group.tables {
         let column_indices = table

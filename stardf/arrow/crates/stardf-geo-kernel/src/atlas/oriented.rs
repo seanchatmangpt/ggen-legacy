@@ -40,9 +40,7 @@ impl OrientedRing {
     /// negative. Whole-cell injectivity in the certified nonpolar chart proves
     /// closure and the Jordan property without a second contact solve.
     pub(crate) fn from_operation_cell(
-        curve: PreparedCurve,
-        certificate: &crate::operation::AreaCellCertificate,
-        reversed: bool,
+        curve: PreparedCurve, certificate: &crate::operation::AreaCellCertificate, reversed: bool,
         progress: &mut WorkProgress<'_>,
     ) -> Result<Self, GeoError> {
         if !certificate.physical_chart()
@@ -75,15 +73,12 @@ impl OrientedRing {
     /// # Errors
     /// Adds observer refusal to [`Self::new`].
     pub fn new_metered(
-        curve: PreparedCurve,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        curve: PreparedCurve, context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::prepare(curve, context, Some(observer))
     }
     fn prepare(
-        curve: PreparedCurve,
-        context: &mut MetricContext,
+        curve: PreparedCurve, context: &mut MetricContext,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         context.begin(1)?;
@@ -109,9 +104,7 @@ impl OrientedRing {
     /// # Errors
     /// Refuses an unresolved boundary/sign decision or incomplete admission.
     pub fn locate_left(
-        &self,
-        point: &LonLat,
-        context: &mut MetricContext,
+        &self, point: &LonLat, context: &mut MetricContext,
     ) -> Result<Set, GeoError> {
         self.locate(point, context, None)
     }
@@ -120,17 +113,12 @@ impl OrientedRing {
     /// # Errors
     /// Adds observer refusal to [`Self::locate_left`].
     pub fn locate_left_metered(
-        &self,
-        point: &LonLat,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, point: &LonLat, context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<Set, GeoError> {
         self.locate(point, context, Some(observer))
     }
     fn locate(
-        &self,
-        point: &LonLat,
-        context: &mut MetricContext,
+        &self, point: &LonLat, context: &mut MetricContext,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Set, GeoError> {
         context.begin(1)?;
@@ -144,9 +132,7 @@ impl OrientedRing {
 }
 
 pub(crate) fn validate_ring(
-    curve: &PreparedCurve,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    curve: &PreparedCurve, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     check_curve_binding(curve, context, progress)?;
     let edges = curve.edges();
@@ -290,9 +276,7 @@ fn junction_equal(left: &PreparedEdge, right: &PreparedEdge, same_mapping: bool)
 }
 
 fn check_curve_binding(
-    curve: &PreparedCurve,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    curve: &PreparedCurve, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     let binding = crate::numerical::reference_identity(context, progress, None)?;
     for edge in curve.edges() {
@@ -314,9 +298,7 @@ fn check_curve_binding(
 /// have already been checked by its enclosing public invocation. Repeated
 /// sector/face queries share that admission rather than render the same ID.
 pub(super) fn locate_validated(
-    curve: &PreparedCurve,
-    point: &LonLat,
-    context: &mut MetricContext,
+    curve: &PreparedCurve, point: &LonLat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Set, GeoError> {
     if let Some(location) = parallel_location(curve, point, context, progress)? {
@@ -356,9 +338,7 @@ pub(super) fn locate_validated(
 /// orientation on every nonpolar chart interior, so signed planar orientation
 /// selects Left without selecting the smaller surface region.
 fn linear_chart_location(
-    curve: &PreparedCurve,
-    point: &LonLat,
-    context: &mut MetricContext,
+    curve: &PreparedCurve, point: &LonLat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<Set>, GeoError> {
     use crate::numerical::{ExactAdmission, exact_rational};
@@ -515,9 +495,7 @@ fn linear_chart_location(
 /// traversal has north on its Left, negative traversal has south on its Left.
 /// This tests the original complete curve law before any flux preparation.
 fn parallel_location(
-    curve: &PreparedCurve,
-    point: &LonLat,
-    context: &mut MetricContext,
+    curve: &PreparedCurve, point: &LonLat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<Set>, GeoError> {
     let [PreparedEdge::SourceLinear(line)] = curve.edges() else {
@@ -588,10 +566,7 @@ impl PartialOrd for FluxPanel {
     }
 }
 fn flux_attempt(
-    curve: &PreparedCurve,
-    point: &LonLat,
-    bits: u32,
-    context: &mut MetricContext,
+    curve: &PreparedCurve, point: &LonLat, bits: u32, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Set, GeoError> {
     let policy = context.policy();
@@ -681,10 +656,7 @@ impl FluxIntegrator<'_, '_> {
         }
     }
     fn append(
-        &mut self,
-        edge: usize,
-        parameter: FixedInterval,
-        depth: u32,
+        &mut self, edge: usize, parameter: FixedInterval, depth: u32,
     ) -> Result<(), MathError> {
         let mut pending =
             purrdf_lex::walk::WorkList::<SimplePanel, 8>::with(SimplePanel { parameter, depth });
@@ -755,8 +727,7 @@ impl FluxIntegrator<'_, '_> {
     }
 }
 pub(super) fn split_parameter(
-    parameter: &FixedInterval,
-    math: &mut CoordinateMath,
+    parameter: &FixedInterval, math: &mut CoordinateMath,
 ) -> Result<[FixedInterval; 2], MathError> {
     let midpoint = parameter.midpoint(math)?;
     if midpoint.lower() <= parameter.lower() || midpoint.upper() >= parameter.upper() {
@@ -768,8 +739,7 @@ pub(super) fn split_parameter(
     ])
 }
 pub(super) fn query_normal(
-    point: &LonLat,
-    math: &mut CoordinateMath,
+    point: &LonLat, math: &mut CoordinateMath,
 ) -> Result<[FixedInterval; 3], MathError> {
     if point.is_pole() {
         let zero = FixedInterval::from_i64(0, math)?;
@@ -792,12 +762,8 @@ pub(super) fn query_normal(
     Ok(arcs::normal_from_angles(&longitude, &latitude, None, math)?.0)
 }
 fn panel_flux(
-    line: &ChartLine,
-    parameter: &FixedInterval,
-    q: &[FixedInterval; 3],
-    iterations: u32,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    line: &ChartLine, parameter: &FixedInterval, q: &[FixedInterval; 3], iterations: u32,
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<FixedInterval, MathError> {
     if !matches!(line, ChartLine::Transformed { .. }) {
         let middle = parameter.midpoint(math)?;
@@ -836,10 +802,7 @@ fn panel_flux(
         .mul(&parameter.width(math)?, math)
 }
 fn flux_density<A: NormalArithmetic>(
-    normal: &[A::Value; 3],
-    derivative: &[A::Value; 3],
-    q: &[A::Value; 3],
-    arithmetic: &mut A,
+    normal: &[A::Value; 3], derivative: &[A::Value; 3], q: &[A::Value; 3], arithmetic: &mut A,
 ) -> Result<A::Value, MathError> {
     let dot0 = arithmetic.mul(&q[0], &normal[0])?;
     let dot1 = arithmetic.mul(&q[1], &normal[1])?;
@@ -864,9 +827,7 @@ fn flux_density<A: NormalArithmetic>(
 }
 
 fn certify_numeric_simple(
-    edge: &PreparedEdge,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    edge: &PreparedEdge, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     let bits = 80.min(context.policy().limits().max_precision_bits);
     let line_context = context.remaining_child()?;
@@ -889,10 +850,7 @@ struct SimplePanel {
     depth: u32,
 }
 fn certify_simple_line(
-    line: &ChartLine,
-    parameter: FixedInterval,
-    context: &MetricContext,
-    math: &mut CoordinateMath,
+    line: &ChartLine, parameter: FixedInterval, context: &MetricContext, math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     let policy = context.policy();
@@ -991,10 +949,7 @@ fn certify_simple_line(
     }
 }
 fn monotone(
-    line: &ChartLine,
-    parameter: &FixedInterval,
-    iterations: u32,
-    math: &mut CoordinateMath,
+    line: &ChartLine, parameter: &FixedInterval, iterations: u32, math: &mut CoordinateMath,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, MathError> {
     Ok(line
@@ -1006,12 +961,8 @@ fn monotone(
         }))
 }
 fn split_simple(
-    index: usize,
-    panels: &mut RetainedBuilder<SimplePanel>,
-    depth: u32,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
-    reserved: &mut usize,
+    index: usize, panels: &mut RetainedBuilder<SimplePanel>, depth: u32, math: &mut CoordinateMath,
+    progress: &mut WorkProgress<'_>, reserved: &mut usize,
 ) -> Result<(), MathError> {
     let panel = &panels[index];
     if panel.depth >= depth {

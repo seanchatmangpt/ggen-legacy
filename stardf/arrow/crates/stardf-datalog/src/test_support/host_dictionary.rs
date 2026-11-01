@@ -79,15 +79,12 @@ impl TermDictionary for HostDictionary {
         })
     }
     fn compare_terms(
-        &self,
-        left: DictionaryTerm<'_, u64>,
-        right: DictionaryTerm<'_, u64>,
+        &self, left: DictionaryTerm<'_, u64>, right: DictionaryTerm<'_, u64>,
     ) -> Result<core::cmp::Ordering, SourceLost> {
         super::dictionary::compare_lexical_terms(self, left, right)
     }
     fn with_interned<T, const N: usize>(
-        &mut self,
-        terms: [DictionaryTerm<'_, u64>; N],
+        &mut self, terms: [DictionaryTerm<'_, u64>; N],
         validate: impl FnOnce(&Self, [u64; N]) -> Result<T, DictionaryError<SourceLost>>,
     ) -> Result<T, DictionaryError<SourceLost>> {
         let ids = terms.map(|term| match term {

@@ -110,10 +110,7 @@ impl CodecName {
     ///
     /// A serialize refusal for a character XML 1.0 cannot carry.
     pub(super) fn push_xml<W: TextOut + ?Sized>(
-        self,
-        value: &str,
-        context: Context,
-        out: &mut W,
+        self, value: &str, context: Context, out: &mut W,
     ) -> Result<(), RdfDiagnostic> {
         xml_escape::push_into(value, context, out).map_err(|error| self.serialize_err(error))
     }
@@ -130,8 +127,7 @@ impl CodecName {
 /// A diagnostic carrying [`LanguageTagError::diagnostic_code`], so the user
 /// learns which production refused.
 pub(super) fn check_language_tag(
-    tag: &str,
-    message: impl FnOnce(&LanguageTagError) -> String,
+    tag: &str, message: impl FnOnce(&LanguageTagError) -> String,
 ) -> Result<(), RdfDiagnostic> {
     langtag::parse_with(tag, langtag::Profile::ConcreteSyntaxLangtagBounded)
         .map(drop)
@@ -175,9 +171,7 @@ impl ClassicTerm {
     /// A composite (`cdt:List` / `cdt:Map`) literal whose lexical form does
     /// not parse refuses the document; see [`purrdf_core::cdt_blank`].
     fn intern(
-        &self,
-        builder: &mut RdfDatasetBuilder,
-        alphabet: LabelAlphabet,
+        &self, builder: &mut RdfDatasetBuilder, alphabet: LabelAlphabet,
     ) -> Result<TermId, RdfDiagnostic> {
         Ok(match self {
             Self::Iri(iri) => builder.intern_iri(iri)?,
@@ -197,8 +191,7 @@ impl ClassicTerm {
 ///
 /// A term's interning refusal, or the fold's or the freeze's.
 pub(super) fn freeze_classic_rows(
-    rows: Vec<ClassicRow>,
-    alphabet: LabelAlphabet,
+    rows: Vec<ClassicRow>, alphabet: LabelAlphabet,
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
     freeze_classic_rows_declaring(rows, Vec::new(), alphabet)
 }
@@ -209,9 +202,7 @@ pub(super) fn freeze_classic_rows(
 /// vanishing. The names are interned after the rows, so a document without empty
 /// graphs freezes exactly as it did before.
 pub(super) fn freeze_classic_rows_declaring(
-    rows: Vec<ClassicRow>,
-    declared_graphs: Vec<ClassicTerm>,
-    alphabet: LabelAlphabet,
+    rows: Vec<ClassicRow>, declared_graphs: Vec<ClassicTerm>, alphabet: LabelAlphabet,
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
     let mut builder = RdfDatasetBuilder::new();
     let mut fold_rows: Vec<FoldRow> = Vec::with_capacity(rows.len());

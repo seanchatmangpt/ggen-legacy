@@ -101,10 +101,7 @@ impl UniqueGroups {
     /// that fails to evaluate) or a slot the lowering never handed out is asked
     /// for.
     pub(crate) fn build(
-        data: &ShaclData,
-        spec: &UniqueSpec,
-        binding: &DatasetBinding,
-        classes: &ClassCatalog,
+        data: &ShaclData, spec: &UniqueSpec, binding: &DatasetBinding, classes: &ClassCatalog,
     ) -> Result<Self, crate::error::ShapesError> {
         let predicates = spec
             .properties

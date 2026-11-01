@@ -107,10 +107,7 @@ fn select(body: &str) -> GraphPattern {
 
 /// Evaluate `pattern` under `governors`, parallel paths forced on or off.
 fn run(
-    pattern: &GraphPattern,
-    dataset: &RdfDataset,
-    governors: &QueryGovernors,
-    parallel: bool,
+    pattern: &GraphPattern, dataset: &RdfDataset, governors: &QueryGovernors, parallel: bool,
 ) -> Run {
     let _guard = force_parallel_for_test(parallel);
     let state = Arc::new(GovernorState::new(governors));
@@ -163,9 +160,7 @@ fn budgets(full: u64) -> Vec<u64> {
 /// evaluation. Returns how many budgets truncated inside the row loop — a strict,
 /// non-empty prefix of the full answer — so a caller can prove the sweep was not vacuous.
 fn assert_same_under_every_budget(
-    a: &GraphPattern,
-    b: &GraphPattern,
-    dataset: &RdfDataset,
+    a: &GraphPattern, b: &GraphPattern, dataset: &RdfDataset,
 ) -> usize {
     let full = full_cost(a, dataset);
     assert_eq!(
@@ -307,10 +302,7 @@ struct Spent {
 /// Evaluate `pattern` under `governors` with its row loops forked across a forced
 /// parallel split (`forked`) or held on the direct loop wasm32 runs.
 fn run_spent(
-    pattern: &GraphPattern,
-    dataset: &RdfDataset,
-    governors: &QueryGovernors,
-    forked: bool,
+    pattern: &GraphPattern, dataset: &RdfDataset, governors: &QueryGovernors, forked: bool,
 ) -> Spent {
     let _direct = (!forked).then(crate::parallel::force_direct_row_loops_for_test);
     let state = Arc::new(GovernorState::new(governors));
@@ -467,9 +459,7 @@ fn a_forked_bind_whose_chunks_mint_the_same_terms_resumes_and_answers() {
 /// The smallest ceiling `governors(ceiling)` the in-order loop answers `pattern` under,
 /// by bisection below `above`, a ceiling it answers.
 fn in_order_minimum(
-    pattern: &GraphPattern,
-    dataset: &RdfDataset,
-    above: u64,
+    pattern: &GraphPattern, dataset: &RdfDataset, above: u64,
     governors: impl Fn(u64) -> QueryGovernors,
 ) -> u64 {
     let answers = |ceiling| {
@@ -650,9 +640,7 @@ fn state_with(fuel: u64, log: &Arc<WorkLog>) -> Arc<GovernorState> {
 /// Pass `checkpoint` once per row of `rows`, keeping every admitted row, the way one
 /// forked worker does; returns the rows it kept.
 fn worker(
-    checkpoint: &mut RowCheckpoint,
-    ctx: &EvalCtx<'_, RdfDataset>,
-    rows: std::ops::Range<usize>,
+    checkpoint: &mut RowCheckpoint, ctx: &EvalCtx<'_, RdfDataset>, rows: std::ops::Range<usize>,
 ) -> Vec<usize> {
     let mut kept = Vec::new();
     for row in rows {

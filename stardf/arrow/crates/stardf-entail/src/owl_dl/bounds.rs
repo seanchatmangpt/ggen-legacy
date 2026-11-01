@@ -253,9 +253,7 @@ impl SchemaBoundEvidence {
     }
 
     fn check_with(
-        &self,
-        kb: &Kb,
-        storage: &mut dyn purrdf_xsd::range::Storage,
+        &self, kb: &Kb, storage: &mut dyn purrdf_xsd::range::Storage,
     ) -> Result<bool, purrdf_xsd::range::StorageError> {
         storage.work(1)?;
         if self.class as usize >= kb.table.len() || self.lower as usize >= kb.table.len() {
@@ -319,10 +317,7 @@ impl SchemaBoundEvidence {
 
 /// Step checking is a linear scan of a supplied derivation, not a closure search.
 fn check_steps(
-    kb: &Kb,
-    root: u32,
-    steps: &[SchemaStep],
-    target: u32,
+    kb: &Kb, root: u32, steps: &[SchemaStep], target: u32,
     storage: &mut dyn purrdf_xsd::range::Storage,
 ) -> Result<bool, purrdf_xsd::range::StorageError> {
     let contains =
@@ -372,11 +367,7 @@ fn role_step_valid(kb: &Kb, from: Role, to: Role) -> bool {
 }
 
 fn check_role_path(
-    kb: &Kb,
-    from: Role,
-    to: Role,
-    steps: &[RoleStep],
-    storage: &mut dyn purrdf_xsd::range::Storage,
+    kb: &Kb, from: Role, to: Role, steps: &[RoleStep], storage: &mut dyn purrdf_xsd::range::Storage,
 ) -> Result<bool, purrdf_xsd::range::StorageError> {
     let mut current = from;
     for step in steps {
@@ -435,9 +426,7 @@ impl Preparation {
 
     /// Extend only newly interned class entries. A failed entry stays unprepared.
     pub(crate) fn extend_until<E>(
-        &mut self,
-        kb: &Kb,
-        budget: SchemaPreparationBudget,
+        &mut self, kb: &Kb, budget: SchemaPreparationBudget,
         poll: &mut impl FnMut() -> Result<(), E>,
     ) -> Result<(), E> {
         self.extend_selected(kb, budget, poll, None)
@@ -460,11 +449,8 @@ impl Preparation {
     }
 
     fn extend_selected<E>(
-        &mut self,
-        kb: &Kb,
-        budget: SchemaPreparationBudget,
-        poll: &mut impl FnMut() -> Result<(), E>,
-        selected: Option<u32>,
+        &mut self, kb: &Kb, budget: SchemaPreparationBudget,
+        poll: &mut impl FnMut() -> Result<(), E>, selected: Option<u32>,
     ) -> Result<(), E> {
         if self.stats.obstruction.is_some() {
             return Ok(());
@@ -717,9 +703,7 @@ pub(super) struct Products<'a, E, P: FnMut() -> Result<(), E>> {
 
 impl<'a, E, P: FnMut() -> Result<(), E>> Products<'a, E, P> {
     pub(super) const fn new(
-        budget: SchemaPreparationBudget,
-        stats: SchemaPreparationStats,
-        live: usize,
+        budget: SchemaPreparationBudget, stats: SchemaPreparationStats, live: usize,
         poll: &'a mut P,
     ) -> Self {
         Self {
@@ -898,8 +882,7 @@ struct Implications {
 
 impl Implications {
     fn new<E>(
-        kb: &Kb,
-        memory: &mut Products<'_, E, impl FnMut() -> Result<(), E>>,
+        kb: &Kb, memory: &mut Products<'_, E, impl FnMut() -> Result<(), E>>,
     ) -> Result<Self, Failure<E>> {
         let mut edges = Vec::new();
         memory.reserve(&mut edges, kb.table.len())?;
@@ -932,8 +915,7 @@ struct Closure {
 
 impl Closure {
     fn new<E>(
-        count: usize,
-        memory: &mut Products<'_, E, impl FnMut() -> Result<(), E>>,
+        count: usize, memory: &mut Products<'_, E, impl FnMut() -> Result<(), E>>,
     ) -> Result<Self, Failure<E>> {
         let mut seen = Vec::new();
         memory.reserve(&mut seen, count)?;
@@ -945,9 +927,7 @@ impl Closure {
     }
 
     fn add<E>(
-        &mut self,
-        concept: u32,
-        rule: SchemaRule,
+        &mut self, concept: u32, rule: SchemaRule,
         memory: &mut Products<'_, E, impl FnMut() -> Result<(), E>>,
     ) -> Result<(), Failure<E>> {
         if self.seen[concept as usize].is_none() {
@@ -959,10 +939,7 @@ impl Closure {
     }
 
     fn close<E>(
-        &mut self,
-        kb: &Kb,
-        implications: &Implications,
-        root: u32,
+        &mut self, kb: &Kb, implications: &Implications, root: u32,
         memory: &mut Products<'_, E, impl FnMut() -> Result<(), E>>,
     ) -> Result<(), Failure<E>> {
         self.seen.fill(None);
@@ -1000,10 +977,7 @@ impl Closure {
 
     /// Retain only the source DAG needed for the selected restriction(s).
     fn proof<E>(
-        &self,
-        kb: &Kb,
-        targets: &[u32],
-        needed: &mut Vec<bool>,
+        &self, kb: &Kb, targets: &[u32], needed: &mut Vec<bool>,
         memory: &mut Products<'_, E, impl FnMut() -> Result<(), E>>,
     ) -> Result<Vec<SchemaStep>, Failure<E>> {
         needed.clear();
@@ -1047,12 +1021,8 @@ impl Closure {
 
 /// Source-only role reachability. No transitive edge or successor graph is read.
 fn role_path<E>(
-    kb: &Kb,
-    from: Role,
-    to: Role,
-    queue: &mut Vec<(Role, Option<usize>)>,
-    path: &mut Vec<RoleStep>,
-    memory: &mut Products<'_, E, impl FnMut() -> Result<(), E>>,
+    kb: &Kb, from: Role, to: Role, queue: &mut Vec<(Role, Option<usize>)>,
+    path: &mut Vec<RoleStep>, memory: &mut Products<'_, E, impl FnMut() -> Result<(), E>>,
 ) -> Result<bool, Failure<E>> {
     path.clear();
     if from == to {

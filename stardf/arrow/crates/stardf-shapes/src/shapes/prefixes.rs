@@ -136,10 +136,7 @@ impl PrefixResolver {
     /// a value of `sh:prefixes` or `sh:declare` that cannot be a node, or a
     /// declaration without exactly one `sh:prefix` and one `sh:namespace`.
     pub(crate) fn header(
-        &self,
-        data: &RdfDataset,
-        owners: &[&Term],
-        profile: ShaclProfile,
+        &self, data: &RdfDataset, owners: &[&Term], profile: ShaclProfile,
     ) -> Result<String, String> {
         let mut roots: Vec<Term> = Vec::new();
         for owner in owners {
@@ -334,10 +331,7 @@ fn implicit_collection(data: &RdfDataset) -> Result<Collection, String> {
 /// Add every `sh:declare` value of `holder` to `collection`, refusing a malformed
 /// declaration and a conflicting binding.
 fn collect_declarations(
-    data: &RdfDataset,
-    holder: &Term,
-    origin: &str,
-    collection: &mut Collection,
+    data: &RdfDataset, holder: &Term, origin: &str, collection: &mut Collection,
 ) -> Result<(), String> {
     let mut declarations = objects_of(data, holder, sh::DECLARE);
     crate::term::sort_terms_canonical(&mut declarations);
@@ -366,9 +360,7 @@ fn collect_declarations(
 
 /// The `(prefix, namespace)` mapping of one value of `sh:declare`.
 fn declaration_mapping(
-    data: &RdfDataset,
-    holder: &Term,
-    declaration: &Term,
+    data: &RdfDataset, holder: &Term, declaration: &Term,
 ) -> Result<(String, String), String> {
     let ill_formed = |detail: String, rule: &str| {
         format!(

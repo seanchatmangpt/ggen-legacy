@@ -12,8 +12,7 @@ use crate::term::Term;
 /// Visit every explicitly named possible IRI output. False means some output
 /// still depends on execution; it does not make the visited names optional.
 pub(crate) fn visit<'a, E: From<StorageError>>(
-    expression: &'a NodeExpr,
-    mut named: impl FnMut(&'a Term) -> Result<(), E>,
+    expression: &'a NodeExpr, mut named: impl FnMut(&'a Term) -> Result<(), E>,
 ) -> Result<bool, E> {
     let mut pending = WorkList::<_, 8>::with(expression);
     let mut resident = Resident;

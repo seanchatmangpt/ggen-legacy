@@ -83,11 +83,7 @@ pub trait Strategy {
     /// at 0.9) for the `k`-th level counted from the top, so the expected tree
     /// holds about `desired_size` leaves; the leaf arm is the shrink target.
     fn prop_recursive<R, F>(
-        self,
-        depth: u32,
-        desired_size: u32,
-        expected_branch_size: u32,
-        recurse: F,
+        self, depth: u32, desired_size: u32, expected_branch_size: u32, recurse: F,
     ) -> BoxedStrategy<Self::Value>
     where
         Self: Sized + 'static,

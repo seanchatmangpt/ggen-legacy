@@ -132,10 +132,7 @@ fn transform(words: &mut [u64], inverse: bool) {
 /// Each coefficient is < min(4a,4b)*2^32 <= 2^63, so its field residue is
 /// the actual integer coefficient. Carry reconstruction therefore stays exact.
 pub(super) fn product(
-    a: &[u64],
-    b: &[u64],
-    length: usize,
-    storage: &impl Allocate,
+    a: &[u64], b: &[u64], length: usize, storage: &impl Allocate,
 ) -> Result<Mag, LimbScratchError> {
     let result_length = a
         .len()

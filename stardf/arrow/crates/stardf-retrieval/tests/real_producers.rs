@@ -114,9 +114,7 @@ impl purrdf_sparql_eval::CandidateConstraint for OriginalTimeConstraint {
     }
 
     fn decide(
-        &self,
-        candidate: &TermValue,
-        evidence: &purrdf_sparql_eval::QueryEvidence,
+        &self, candidate: &TermValue, evidence: &purrdf_sparql_eval::QueryEvidence,
         _: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<purrdf_core::query_scope::ConstraintDecision, EvalError> {
         use purrdf_core::query_scope::ConstraintDecision;
@@ -159,11 +157,7 @@ impl purrdf_core::DatasetView for UnpricedOriginalView {
     }
     fn probe_plan(&self, _: bool, _: bool, _: bool, _: purrdf_core::GraphMatch) {}
     fn quads_for_pattern_with_plan(
-        &self,
-        (): &(),
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, (): &(), s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: purrdf_core::GraphMatch,
     ) -> impl Iterator<Item = purrdf_core::QuadIds> + '_ {
         self.0.quads_for_pattern(s, p, o, g)
@@ -242,9 +236,7 @@ impl purrdf_sparql_eval::CandidateConstraint for OriginalAdmissionRefusal {
         purrdf_hash::hex::Digest32::new([9; 32])
     }
     fn decide(
-        &self,
-        _: &TermValue,
-        _: &purrdf_sparql_eval::QueryEvidence,
+        &self, _: &TermValue, _: &purrdf_sparql_eval::QueryEvidence,
         _: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<purrdf_core::query_scope::ConstraintDecision, EvalError> {
         self.0.fetch_add(1, Ordering::Relaxed);
@@ -312,15 +304,13 @@ struct OriginalOpenScope<'a> {
 
 impl<I: purrdf_core::ViewTermId> purrdf_sparql_eval::EvidenceSource<I> for OriginalOpenScope<'_> {
     fn claim(
-        &self,
-        _: &purrdf_core::QuadIds<I>,
+        &self, _: &purrdf_core::QuadIds<I>,
     ) -> Result<Option<&purrdf_core::evidence::EvidenceRecord>, EvalError> {
         Ok(None)
     }
 
     fn scope(
-        &self,
-        _: purrdf_core::GraphMatch<I>,
+        &self, _: purrdf_core::GraphMatch<I>,
     ) -> Result<purrdf_sparql_eval::EvidenceScope, EvalError> {
         Ok(purrdf_sparql_eval::EvidenceScope {
             completeness: purrdf_core::evidence::SearchCompleteness::Undetermined,
@@ -330,8 +320,7 @@ impl<I: purrdf_core::ViewTermId> purrdf_sparql_eval::EvidenceSource<I> for Origi
     }
 
     fn reason(
-        &self,
-        id: purrdf_core::evidence::ReasonId,
+        &self, id: purrdf_core::evidence::ReasonId,
     ) -> Result<Option<purrdf_core::evidence::ReasonDescription<'_>>, EvalError> {
         Ok((id == self.reason).then(|| self.declaration.description()))
     }
@@ -339,15 +328,13 @@ impl<I: purrdf_core::ViewTermId> purrdf_sparql_eval::EvidenceSource<I> for Origi
 
 impl<I: purrdf_core::ViewTermId> purrdf_sparql_eval::EvidenceSource<I> for OriginalClosedScope {
     fn claim(
-        &self,
-        _: &purrdf_core::QuadIds<I>,
+        &self, _: &purrdf_core::QuadIds<I>,
     ) -> Result<Option<&purrdf_core::evidence::EvidenceRecord>, EvalError> {
         Ok(None)
     }
 
     fn scope(
-        &self,
-        _: purrdf_core::GraphMatch<I>,
+        &self, _: purrdf_core::GraphMatch<I>,
     ) -> Result<purrdf_sparql_eval::EvidenceScope, EvalError> {
         Ok(purrdf_sparql_eval::EvidenceScope {
             completeness: purrdf_core::evidence::SearchCompleteness::Complete,
@@ -357,8 +344,7 @@ impl<I: purrdf_core::ViewTermId> purrdf_sparql_eval::EvidenceSource<I> for Origi
     }
 
     fn reason(
-        &self,
-        _: purrdf_core::evidence::ReasonId,
+        &self, _: purrdf_core::evidence::ReasonId,
     ) -> Result<Option<purrdf_core::evidence::ReasonDescription<'_>>, EvalError> {
         Ok(None)
     }
@@ -451,9 +437,7 @@ impl purrdf_sparql_eval::CandidateConstraint for RefusingCandidate<'_> {
         purrdf_sparql_eval::CandidateConstraint::identity(self.original)
     }
     fn decide(
-        &self,
-        candidate: &TermValue,
-        evidence: &purrdf_sparql_eval::QueryEvidence,
+        &self, candidate: &TermValue, evidence: &purrdf_sparql_eval::QueryEvidence,
         workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<purrdf_core::query_scope::ConstraintDecision, EvalError> {
         let result = purrdf_sparql_eval::CandidateConstraint::decide(
@@ -1352,8 +1336,7 @@ fn registry_with<A: Arithmetic>(knn: EmbeddingKnnRelation<A>) -> PropertyFunctio
 }
 
 fn registry_with_text<A: Arithmetic>(
-    knn: EmbeddingKnnRelation<A>,
-    text: TextSearchRelation,
+    knn: EmbeddingKnnRelation<A>, text: TextSearchRelation,
 ) -> PropertyFunctionRegistry<'static> {
     let mut registry = PropertyFunctionRegistry::new();
 
@@ -1777,11 +1760,8 @@ fn the_neighbour_count_stays_inside_the_guard_and_the_ending_says_which_bound_st
 // runtime-agnostic future; see the same allow on `search` itself.
 #[allow(clippy::future_not_send)]
 async fn manual_composition(
-    registry: &PropertyFunctionRegistry<'static>,
-    statistics: &NoStatistics,
-    data: &RdfDataset,
-    env: &AdmissionEnvironment<'_>,
-    profile: &FusionProfile,
+    registry: &PropertyFunctionRegistry<'static>, statistics: &NoStatistics, data: &RdfDataset,
+    env: &AdmissionEnvironment<'_>, profile: &FusionProfile,
 ) -> SearchResult {
     let planned = plan(&request(), registry, statistics).expect("the request plans");
     // The waist is re-formed around the law this composition will fuse under,
@@ -2180,9 +2160,7 @@ fn knn_only_registry(space: EmbeddingSpace) -> PropertyFunctionRegistry<'static>
 /// on the refusal with its own message, so a producer that broke its promise is
 /// reported as having broken its promise rather than as an opaque error.
 fn answer_under_the_declared_contract(
-    request: &RetrievalRequest,
-    registry: &PropertyFunctionRegistry<'static>,
-    data: &RdfDataset,
+    request: &RetrievalRequest, registry: &PropertyFunctionRegistry<'static>, data: &RdfDataset,
     profile: &FusionProfile,
 ) -> SearchResult {
     let statistics = NoStatistics;
@@ -2593,9 +2571,7 @@ impl PropertyFunction for CountingTextRelation {
     }
 
     fn open_admitted<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>,
         workspace: purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<purrdf_sparql_eval::WorkspaceCursor<'cursor>, EvalError>
     where
@@ -2727,9 +2703,7 @@ fn counting_text_registry(index: TextIndex) -> (PropertyFunctionRegistry<'static
 /// the answer. The compiled unit is checked on the way through, because the emitted
 /// bound is the one thing neither of those two can report.
 fn sole_producer_answer(
-    request: &RetrievalRequest,
-    registry: &PropertyFunctionRegistry<'static>,
-    data: &RdfDataset,
+    request: &RetrievalRequest, registry: &PropertyFunctionRegistry<'static>, data: &RdfDataset,
 ) -> (purrdf_retrieval::Plan, SearchResult) {
     let statistics = NoStatistics;
     let planned = plan(request, registry, &statistics)

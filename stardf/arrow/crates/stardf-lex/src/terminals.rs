@@ -281,9 +281,7 @@ const fn range_cardinality(ranges: &[ScalarRange]) -> u32 {
 /// entry: the composed table is a permutation of the concatenation.
 #[inline]
 const fn concat_len(
-    base: &[ScalarRange],
-    ascii: &[ScalarRange],
-    non_ascii: &[ScalarRange],
+    base: &[ScalarRange], ascii: &[ScalarRange], non_ascii: &[ScalarRange],
 ) -> usize {
     base.len() + ascii.len() + non_ascii.len()
 }
@@ -308,9 +306,7 @@ const fn concat_len(
 /// than anything asymptotically better would be.
 #[inline]
 const fn merge<const N: usize>(
-    base: &[ScalarRange],
-    ascii: &[ScalarRange],
-    non_ascii: &[ScalarRange],
+    base: &[ScalarRange], ascii: &[ScalarRange], non_ascii: &[ScalarRange],
 ) -> [ScalarRange; N] {
     let mut out = [(0_u32, 0_u32); N];
     let mut n = 0;
@@ -1507,8 +1503,7 @@ pub fn expand_uchars(text: &str) -> Cow<'_, str> {
 /// Returns native checked-layout, admission or allocator refusal separately
 /// from malformed lexical input; malformed input is never disguised or lost.
 pub fn expand_uchars_with_memory<'a, S: crate::allocation::Admission + ?Sized>(
-    text: &'a str,
-    memory: &mut crate::allocation::Memory<'_, S>,
+    text: &'a str, memory: &mut crate::allocation::Memory<'_, S>,
 ) -> Result<Cow<'a, str>, crate::allocation::StorageError> {
     let bytes = text.as_bytes();
     let Some(first) = bytes.iter().position(|&b| b == b'\\') else {

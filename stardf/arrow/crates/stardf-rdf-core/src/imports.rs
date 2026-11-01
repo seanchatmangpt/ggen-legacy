@@ -292,9 +292,7 @@ impl ImportMap {
     /// assert_eq!(map.len(), 2);
     /// ```
     pub fn try_insert(
-        &mut self,
-        iri: impl Into<String>,
-        document: Arc<RdfDataset>,
+        &mut self, iri: impl Into<String>, document: Arc<RdfDataset>,
     ) -> Result<(), ImportKeyError> {
         let iri = iri.into();
         self.check_key(&iri)?;
@@ -785,9 +783,7 @@ impl ClosureGraphIdentity {
 /// A closure that reached no document is one graph, which cannot conflict with itself, so
 /// the common case costs nothing.
 fn version_conflicts(
-    graph: &RdfDataset,
-    loaded: &[&str],
-    documents: &[(String, Arc<RdfDataset>)],
+    graph: &RdfDataset, loaded: &[&str], documents: &[(String, Arc<RdfDataset>)],
 ) -> Vec<VersionConflict> {
     if documents.is_empty() {
         return Vec::new();
@@ -977,8 +973,7 @@ pub fn unresolved_imports(graph: &RdfDataset, loaded: &[&str]) -> Vec<String> {
 /// ```
 #[must_use]
 pub fn imported_iris<D: DatasetView<ReadError = Infallible>>(
-    graph: &D,
-    loaded: &[&str],
+    graph: &D, loaded: &[&str],
 ) -> Vec<String> {
     try_imported_iris(graph, loaded).unwrap_or_else(|error| match error {})
 }
@@ -988,8 +983,7 @@ pub fn imported_iris<D: DatasetView<ReadError = Infallible>>(
 /// # Errors
 /// Returns the source's typed read or iteration failure.
 pub fn try_imported_iris<D: DatasetView>(
-    graph: &D,
-    loaded: &[&str],
+    graph: &D, loaded: &[&str],
 ) -> Result<Vec<String>, D::ReadError> {
     graph.checked_read(|graph| {
         let Some(imports) = graph.term_id_by_value(&TermValue::iri(OWL_IMPORTS))? else {
@@ -1037,8 +1031,7 @@ pub fn try_imported_iris<D: DatasetView>(
 /// ```
 #[must_use]
 pub fn unanchored_import_triples<D: DatasetView<ReadError = Infallible>>(
-    graph: &D,
-    loaded: &[&str],
+    graph: &D, loaded: &[&str],
 ) -> Vec<(D::Id, D::Id)> {
     try_unanchored_import_triples(graph, loaded).unwrap_or_else(|error| match error {})
 }
@@ -1050,8 +1043,7 @@ type UnanchoredRows<Id> = Vec<(Id, Id)>;
 /// # Errors
 /// Returns the source's typed read or iteration failure.
 pub fn try_unanchored_import_triples<D: DatasetView>(
-    graph: &D,
-    loaded: &[&str],
+    graph: &D, loaded: &[&str],
 ) -> Result<UnanchoredRows<D::Id>, D::ReadError> {
     graph.checked_read(|graph| {
         let Some(imports) = graph.term_id_by_value(&TermValue::iri(OWL_IMPORTS))? else {
@@ -1181,8 +1173,7 @@ enum ScopeMap<'a> {
 impl ScopeMap<'_> {
     /// The scope `scope` is written under.
     fn map(
-        &mut self,
-        scope: BlankScope,
+        &mut self, scope: BlankScope,
     ) -> Result<BlankScope, purrdf_lex::allocation::StorageError> {
         match self {
             Self::Identity => Ok(scope),
@@ -1208,9 +1199,7 @@ impl ScopeMap<'_> {
 
 /// Copy every table of `graph` into `b`, rewriting blank-node scopes through `rescope`.
 fn copy_scoped(
-    b: &mut RdfDatasetBuilder,
-    graph: &RdfDataset,
-    rescope: &mut ScopeMap<'_>,
+    b: &mut RdfDatasetBuilder, graph: &RdfDataset, rescope: &mut ScopeMap<'_>,
 ) -> Result<(), purrdf_lex::allocation::StorageError> {
     let term = |b: &mut RdfDatasetBuilder, id: TermId, rescope: &mut ScopeMap<'_>| {
         intern_scoped(b, &graph.term_value(id), rescope)
@@ -1247,9 +1236,7 @@ fn copy_scoped(
 /// A triple term is interned over [`try_fold_nested`]'s work list: its subject, predicate
 /// and object, each fully before the next, then the triple itself.
 fn intern_scoped(
-    b: &mut RdfDatasetBuilder,
-    value: &TermValue,
-    rescope: &mut ScopeMap<'_>,
+    b: &mut RdfDatasetBuilder, value: &TermValue, rescope: &mut ScopeMap<'_>,
 ) -> Result<TermId, purrdf_lex::allocation::StorageError> {
     try_fold_nested(
         value,
@@ -1267,9 +1254,7 @@ fn intern_scoped(
 /// Intern a term that is not a triple term, rewriting a blank node's scope through
 /// `rescope`.
 fn intern_leaf(
-    b: &mut RdfDatasetBuilder,
-    value: &TermValue,
-    rescope: &mut ScopeMap<'_>,
+    b: &mut RdfDatasetBuilder, value: &TermValue, rescope: &mut ScopeMap<'_>,
 ) -> Result<TermId, purrdf_lex::allocation::StorageError> {
     match value {
         TermValue::Iri(iri) => b.intern_iri(iri),
@@ -2099,9 +2084,7 @@ mod term_walk_tests {
     }
 
     fn reference_intern(
-        b: &mut RdfDatasetBuilder,
-        value: &TermValue,
-        rescope: &mut ScopeMap<'_>,
+        b: &mut RdfDatasetBuilder, value: &TermValue, rescope: &mut ScopeMap<'_>,
     ) -> TermId {
         match value {
             TermValue::Iri(iri) => b.intern_iri(iri).unwrap(),

@@ -8,15 +8,19 @@
 
 [package]
 name = "stardf-stack"
-description = "How much stack the running thread has left — natively from the operating system's thread limit, on wasm32 from the shadow stack against an installable floor — and the margin the SPARQL evaluator refuses at instead of overflowing"
-version = "26.9.29"
+# Lane 07-publish-metadata (2026-10-31): v26.11.1 first-class closure —
+# description/keywords/categories/repository workspace-inherited.
+description.workspace = true
+# Lane 08-dual-key (2026-10-31): closure version inherits the workspace 26.11.1.
+version.workspace = true
 edition = "2024"
-publish = false
-repository = "https://github.com/seanchatmangpt/ggen-legacy"
+publish = true
+repository.workspace = true
+homepage.workspace = true
 license = "MIT OR Apache-2.0 OR MulanPSL-2.0"
 rust-version = "1.98"
-keywords = ["stack", "recursion", "wasm", "sparql", "rdf"]
-categories = ["memory-management", "wasm"]
+keywords.workspace = true
+categories.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -67,7 +71,7 @@ unnecessary_debug_formatting = "allow" # {:?} in diagnostics is deliberate; mess
 float_cmp = "allow"                   # XSD value-space equality is spec-exact by design
 
 [dependencies]
-stardf-hash = { path = "../stardf-hash" }
+stardf-hash = { workspace = true }
 
 [lib]
 # rlib-only leaf: the one place the workspace measures the stack. The SPARQL
@@ -100,4 +104,6 @@ harness = false
 [dev-dependencies]
 # The libtest-compatible runner the `on_stack` target hands its cases to, so the
 # same named cases run on wasm32. Test-only: no normal edge, no layering change.
-stardf-testkit = { path = "../stardf-testkit" }
+# Lane H03 gate-closure (2026-10-31): dual-keyed per the G5 version+path law
+# (the 21:05 ladder receipt named this row).
+stardf-testkit = { version = "=26.11.1", path = "../stardf-testkit" }

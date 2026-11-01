@@ -60,9 +60,7 @@ pub struct CoverRequest {
 }
 
 pub(super) fn decode(
-    fields: &mut Record<'_>,
-    operation: &str,
-    decode: &Decode<'_, '_, '_, '_>,
+    fields: &mut Record<'_>, operation: &str, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<CoverRequest, GeoCallError> {
     let grid = request::grid(fields)?;
     let shape = match operation {
@@ -139,8 +137,7 @@ fn closed_box(value: &Value, decode: &Decode<'_, '_, '_, '_>) -> Result<ClosedBo
     Ok(shape)
 }
 fn fixed_limits(
-    value: &Value,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Value, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<FixedCoverLimits, DecodeError> {
     let mut fields = decode.record(value, "fixed cover admission")?;
     let limits = FixedCoverLimits {
@@ -158,8 +155,7 @@ fn fixed_limits(
     Ok(limits)
 }
 pub(super) fn mixed_limits(
-    value: &Value,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Value, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<MixedCoverLimits, DecodeError> {
     let mut fields = decode.record(value, "mixed cover admission")?;
     let limits = MixedCoverLimits {
@@ -177,8 +173,7 @@ pub(super) fn mixed_limits(
     Ok(limits)
 }
 pub(super) fn admitted_mixed_in_policy(
-    policy: purrdf_geo_kernel::ExecutionPolicy,
-    mut limits: MixedCoverLimits,
+    policy: purrdf_geo_kernel::ExecutionPolicy, mut limits: MixedCoverLimits,
 ) -> MixedCoverLimits {
     let limits_profile = policy.limits();
     limits.max_emitted_cells = limits
@@ -192,11 +187,8 @@ pub(super) fn admitted_mixed_in_policy(
 }
 
 pub(super) fn call(
-    profile: &GeoProfile,
-    request: &CoverRequest,
-    budget: PreparationBudget,
-    invocation: &Invocation,
-    decode: &Decode<'_, '_, '_, '_>,
+    profile: &GeoProfile, request: &CoverRequest, budget: PreparationBudget,
+    invocation: &Invocation, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Value, GeoCallError> {
     let mut budget = invocation.track_budget(budget);
     let grid = CubeHilbertQ62V1::new(request.grid);

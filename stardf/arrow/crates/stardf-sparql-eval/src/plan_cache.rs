@@ -192,11 +192,7 @@ impl<K: Clone + Eq + Hash, V: Clone> BoundedCache<K, V> {
 
     #[cfg(test)]
     pub(crate) fn insert_with_eviction(
-        &mut self,
-        key: K,
-        value: V,
-        bytes: usize,
-        evicted: impl FnMut(&V),
+        &mut self, key: K, value: V, bytes: usize, evicted: impl FnMut(&V),
     ) -> bool {
         self.insert_with_eviction_admitted(
             key,
@@ -209,21 +205,13 @@ impl<K: Clone + Eq + Hash, V: Clone> BoundedCache<K, V> {
     }
 
     pub(crate) fn insert_admitted(
-        &mut self,
-        key: K,
-        value: V,
-        bytes: usize,
-        workspace: &crate::WorkspaceCapability,
+        &mut self, key: K, value: V, bytes: usize, workspace: &crate::WorkspaceCapability,
     ) -> Result<bool, crate::EvalError> {
         self.insert_with_eviction_admitted(key, value, bytes, workspace, |_| {})
     }
 
     pub(crate) fn insert_with_eviction_admitted(
-        &mut self,
-        key: K,
-        value: V,
-        bytes: usize,
-        workspace: &crate::WorkspaceCapability,
+        &mut self, key: K, value: V, bytes: usize, workspace: &crate::WorkspaceCapability,
         mut evicted: impl FnMut(&V),
     ) -> Result<bool, crate::EvalError> {
         if self.limits.entries == 0

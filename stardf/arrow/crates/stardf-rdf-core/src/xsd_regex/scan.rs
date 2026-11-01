@@ -275,9 +275,7 @@ impl<'a> Scanner<'a> {
     /// every possible bracket/parenthesis frame here makes tokenization itself
     /// allocation-free, including deeply nested subtraction and groups.
     pub(super) fn bounded(
-        pattern: &'a str,
-        budget: &mut super::xpath::Budget<'_>,
-        x_state: bool,
+        pattern: &'a str, budget: &mut super::xpath::Budget<'_>, x_state: bool,
     ) -> Result<Self, super::xpath::Error> {
         use super::xpath::Resource;
 
@@ -335,8 +333,7 @@ impl<'a> Scanner<'a> {
 
     /// Destroy every token-cursor buffer before releasing its physical grant.
     pub(super) fn release(
-        self,
-        budget: &mut super::xpath::Budget<'_>,
+        self, budget: &mut super::xpath::Budget<'_>,
     ) -> Result<(), super::xpath::Error> {
         fn bytes<T>(values: &Vec<T>) -> Result<usize, super::xpath::Error> {
             std::alloc::Layout::array::<T>(values.capacity())
@@ -364,8 +361,7 @@ impl<'a> Scanner<'a> {
     /// search the still-open capturing groups. All character scans were
     /// admitted before constructing the bounded cursor.
     pub(super) fn next_bounded(
-        &mut self,
-        budget: &mut super::xpath::Budget<'_>,
+        &mut self, budget: &mut super::xpath::Budget<'_>,
     ) -> Result<Option<Result<Token<'a>, XsdRegexError>>, super::xpath::Error> {
         use super::xpath::Resource;
         budget.charge(Resource::CompileSteps, 1)?;
@@ -472,8 +468,7 @@ impl<'a> Scanner<'a> {
     }
 
     fn scan_next_with_budget(
-        &mut self,
-        budget: Option<&mut super::xpath::Budget<'_>>,
+        &mut self, budget: Option<&mut super::xpath::Budget<'_>>,
     ) -> Option<Result<Token<'a>, XsdRegexError>> {
         if self.pos >= self.chars.len() {
             self.span = 0..0;
@@ -507,8 +502,7 @@ impl<'a> Scanner<'a> {
     }
 
     fn scan_one(
-        &mut self,
-        budget: Option<&mut super::xpath::Budget<'_>>,
+        &mut self, budget: Option<&mut super::xpath::Budget<'_>>,
     ) -> Result<Token<'a>, XsdRegexError> {
         self.negated_wrap_close = false;
         // A `-[…]` subtraction operand is the LAST element of its charGroup
@@ -686,8 +680,7 @@ impl<'a> Scanner<'a> {
     }
 
     fn scan_escape(
-        &mut self,
-        budget: Option<&mut super::xpath::Budget<'_>>,
+        &mut self, budget: Option<&mut super::xpath::Budget<'_>>,
     ) -> Result<Token<'a>, XsdRegexError> {
         let Some(esc) = self.peek(1) else {
             self.pos += 1;
@@ -790,9 +783,7 @@ impl<'a> Scanner<'a> {
     /// precedes this point. NOT a greedy digit run — after one group, `\12` is
     /// `\1` then a literal `2`.
     fn scan_backreference(
-        &mut self,
-        first: char,
-        budget: Option<&mut super::xpath::Budget<'_>>,
+        &mut self, first: char, budget: Option<&mut super::xpath::Budget<'_>>,
     ) -> Result<Token<'a>, XsdRegexError> {
         let start_digit = self.pos + 1;
         let mut number = usize::try_from(first.to_digit(10).expect("matched 1..=9"))
@@ -833,8 +824,7 @@ impl<'a> Scanner<'a> {
 
 /// Every scanner-owned diagnostic spelling is copied through this one boundary.
 fn diagnostic_text(
-    text: &str,
-    budget: Option<&mut super::xpath::Budget<'_>>,
+    text: &str, budget: Option<&mut super::xpath::Budget<'_>>,
 ) -> Result<String, XsdRegexError> {
     match budget {
         Some(budget) => budget.string(text).map_err(|error| match error {

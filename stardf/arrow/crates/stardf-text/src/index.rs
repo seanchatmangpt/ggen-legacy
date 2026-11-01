@@ -149,9 +149,7 @@ impl TextIndexConfig<GraphLanguage> {
     /// # Errors
     /// Refuses empty/duplicate predicates, non-IRI predicates or a non-IRI named graph.
     pub fn new(
-        predicates: Vec<TermValue>,
-        graph: GraphSelector,
-        analyzer: Analyzer,
+        predicates: Vec<TermValue>, graph: GraphSelector, analyzer: Analyzer,
     ) -> Result<Self, TextError> {
         Self::build(predicates, graph, analyzer)
     }
@@ -183,9 +181,7 @@ impl<P: CorpusProfile> TextIndexConfig<P> {
     /// repeat is a caller mistake, and silently deduplicating it would hide the
     /// mistake), or if a [`GraphSelector::Named`] does not hold an IRI.
     fn build(
-        predicates: Vec<TermValue>,
-        graph: P::Selector,
-        analyzer: Analyzer,
+        predicates: Vec<TermValue>, graph: P::Selector, analyzer: Analyzer,
     ) -> Result<Self, TextError> {
         if predicates.is_empty() {
             return Err(TextError::config(
@@ -633,9 +629,7 @@ impl<P: CorpusProfile> DocumentOrder<'_, P> {
         self.entries.len()
     }
     pub(crate) fn get_owned(
-        &self,
-        at: usize,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, at: usize, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<Option<u32>, purrdf_sparql_eval::EvalError> {
         self.entries
             .get(at)
@@ -643,10 +637,7 @@ impl<P: CorpusProfile> DocumentOrder<'_, P> {
             .transpose()
     }
     pub(crate) fn range_owned<'a>(
-        &'a self,
-        start: usize,
-        end: usize,
-        workspace: &'a purrdf_sparql_eval::WorkspaceCapability,
+        &'a self, start: usize, end: usize, workspace: &'a purrdf_sparql_eval::WorkspaceCapability,
     ) -> impl Iterator<Item = Result<u32, purrdf_sparql_eval::EvalError>> + 'a {
         self.entries
             .slice(start, end)
@@ -714,8 +705,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     /// both the digest of the rows walked and that shortfall against the dataset in
     /// hand.
     pub fn from_dataset<D: DatasetView>(
-        dataset: &D,
-        config: &TextIndexConfig<P>,
+        dataset: &D, config: &TextIndexConfig<P>,
     ) -> Result<Self, TextError>
     where
         D::ReadError: purrdf_hash::error::StructuredError,
@@ -745,9 +735,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     /// # Errors
     /// Propagates indexing errors and refuses incomplete routing or field bounds.
     pub fn from_dataset_with_ranking<D: DatasetView>(
-        dataset: &D,
-        config: &TextIndexConfig<P>,
-        profile: RankingProfile,
+        dataset: &D, config: &TextIndexConfig<P>, profile: RankingProfile,
     ) -> Result<Self, TextError>
     where
         D::ReadError: purrdf_hash::error::StructuredError,
@@ -814,9 +802,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     }
 
     pub(crate) fn query_terms_owned(
-        &self,
-        input: &str,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, input: &str, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<purrdf_sparql_eval::AdmittedVec<crate::query_workspace::QueryString>, TextError>
     {
         match self.config.projection {
@@ -853,8 +839,7 @@ impl<P: CorpusProfile> TextIndex<P> {
 
     /// Admit a partition under its selected population law without walking documents.
     pub(crate) fn prepared_corpus(
-        &self,
-        partition: &PartitionKey<P>,
+        &self, partition: &PartitionKey<P>,
     ) -> Result<PreparedCorpus<'_>, TextError> {
         let at = self
             .partition_index(partition)
@@ -875,9 +860,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     }
 
     pub(crate) fn prepared_corpus_owned(
-        &self,
-        partition: &PartitionKey<P>,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, partition: &PartitionKey<P>, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<PreparedCorpus<'_>, TextError> {
         let partition =
             crate::query_workspace::admitted(self.partition_key_owned(partition, workspace))?
@@ -905,8 +888,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     /// Projection consumers must keep these positions. The iterator translates
     /// private stable addresses without copying or rewriting retained buffers.
     pub fn token_occurrences(
-        &self,
-        document: u32,
+        &self, document: u32,
     ) -> Option<impl ExactSizeIterator<Item = TokenOccurrence> + Clone + '_> {
         self.token_streams.get(document as usize).map(|stream| {
             stream
@@ -963,8 +945,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     }
 
     pub(crate) fn han_occurrences(
-        &self,
-        document: u32,
+        &self, document: u32,
     ) -> impl Iterator<Item = &crate::character::HanOccurrence> {
         self.han_occurrences
             .as_ref()
@@ -1011,10 +992,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     }
 
     pub(crate) fn posted_frequencies_owned(
-        &self,
-        document: u32,
-        term: &str,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, document: u32, term: &str, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<Option<&[(u32, u64)]>, purrdf_sparql_eval::EvalError> {
         let Some(document) = self.document(document) else {
             return Ok(None);
@@ -1033,17 +1011,13 @@ impl<P: CorpusProfile> TextIndex<P> {
     /// Assemble field inputs from a posting already located by the query walk.
     /// This avoids a dictionary lookup per candidate and query term.
     pub(crate) fn field_inputs_from_counts(
-        &self,
-        document: u32,
-        frequencies: &[(u32, u64)],
+        &self, document: u32, frequencies: &[(u32, u64)],
     ) -> Result<FieldInputs, TextError> {
         self.field_inputs_from_counts_with(document, frequencies, None)
     }
 
     pub(crate) fn field_inputs_from_counts_owned(
-        &self,
-        document: u32,
-        frequencies: &[(u32, u64)],
+        &self, document: u32, frequencies: &[(u32, u64)],
         workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<FieldInputs, TextError> {
         self.field_inputs_from_counts_with(
@@ -1054,9 +1028,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     }
 
     pub(crate) fn field_inputs_from_counts_with(
-        &self,
-        document: u32,
-        frequencies: &[(u32, u64)],
+        &self, document: u32, frequencies: &[(u32, u64)],
         workspace: Option<&purrdf_sparql_eval::WorkspaceCapability>,
     ) -> Result<FieldInputs, TextError> {
         let lengths = self
@@ -1092,9 +1064,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     /// projection yields each posting's per-predicate frequencies, the BM25F field
     /// statistics input, where `postings` yields its token positions.
     pub(crate) fn field_postings_owned<'a>(
-        &'a self,
-        partition: &PartitionKey<P>,
-        term: &str,
+        &'a self, partition: &PartitionKey<P>, term: &str,
         workspace: &'a purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<
         impl Iterator<Item = Result<FieldPosting<'a>, purrdf_sparql_eval::EvalError>> + use<'a, P>,
@@ -1147,10 +1117,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     }
 
     fn adjust_partition(
-        &mut self,
-        document: &Document<P>,
-        fields: &[u64],
-        added: bool,
+        &mut self, document: &Document<P>, fields: &[u64], added: bool,
     ) -> Result<(), TextError> {
         let position = self.partitions.binary_search_by(|row| {
             (&row.key.graph, &row.key.language).cmp(&(&document.graph, &document.language))
@@ -1299,8 +1266,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     /// rather than a failure: a query may legitimately name a subject that has
     /// no indexed literals.
     pub fn documents_with_subject<'a>(
-        &'a self,
-        subject: &TermValue,
+        &'a self, subject: &TermValue,
     ) -> impl ExactSizeIterator<Item = u32> + Clone + use<'a, P> {
         let compare = |document: &Shared<Document<P>>| document.subject.cmp(subject);
         let start = self
@@ -1319,15 +1285,11 @@ impl<P: CorpusProfile> TextIndex<P> {
     /// ordering. After a comparator failure the partition result is discarded;
     /// the first typed failure is returned before any caller can use the slice.
     pub(crate) fn documents_with_subject_owned(
-        &self,
-        subject: &TermValue,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, subject: &TermValue, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<purrdf_sparql_eval::AdmittedVec<u32>, purrdf_sparql_eval::EvalError> {
         fn partition<P: CorpusProfile>(
-            index: &TextIndex<P>,
-            subject: &TermValue,
-            workspace: &purrdf_sparql_eval::WorkspaceCapability,
-            upper: bool,
+            index: &TextIndex<P>, subject: &TermValue,
+            workspace: &purrdf_sparql_eval::WorkspaceCapability, upper: bool,
         ) -> Result<usize, purrdf_sparql_eval::EvalError> {
             let mut failure = None;
             let result = index.subject_order.partition_point(|document| {
@@ -1364,10 +1326,7 @@ impl<P: CorpusProfile> TextIndex<P> {
 
     /// Borrow one immutable positional posting without copying the caller's index.
     pub(crate) fn posting_at_owned(
-        &self,
-        partition: usize,
-        term: &str,
-        ordinal: usize,
+        &self, partition: usize, term: &str, ordinal: usize,
         workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<Option<(u32, &[u32])>, purrdf_sparql_eval::EvalError> {
         let Some(row) = self.partitions.get(partition) else {
@@ -1424,9 +1383,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     }
 
     pub(crate) fn partition_ordinal_of_owned(
-        &self,
-        document: u32,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, document: u32, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<Option<usize>, purrdf_sparql_eval::EvalError> {
         let Some(document) = self.document(document) else {
             return Ok(None);
@@ -1445,9 +1402,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     }
 
     pub(crate) fn partition_key_of_owned(
-        &self,
-        document: u32,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, document: u32, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<Option<&PartitionKey<P>>, purrdf_sparql_eval::EvalError> {
         Ok(self
             .partition_ordinal_of_owned(document, workspace)?
@@ -1466,9 +1421,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     /// Resolve an external key through fallible native graph-term comparison.
     /// A failed comparator's search result is discarded before publication.
     pub(crate) fn partition_key_owned(
-        &self,
-        partition: &PartitionKey<P>,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, partition: &PartitionKey<P>, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<Option<&PartitionKey<P>>, purrdf_sparql_eval::EvalError> {
         let mut failure = None;
         let result = self.partitions.binary_search_by(|row| {
@@ -1517,9 +1470,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     }
 
     pub(crate) fn document_frequency_owned(
-        &self,
-        partition: &PartitionKey<P>,
-        term: &str,
+        &self, partition: &PartitionKey<P>, term: &str,
         workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<u64, purrdf_sparql_eval::EvalError> {
         Ok(self
@@ -1533,9 +1484,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     /// for the term — everything a phrase or proximity match needs, and the
     /// occurrence rows a property function emits.
     pub fn postings<'a>(
-        &'a self,
-        partition: &PartitionKey<P>,
-        term: &str,
+        &'a self, partition: &PartitionKey<P>, term: &str,
     ) -> impl Iterator<Item = (u32, &'a [u32])> + use<'a, P> {
         self.partition_postings(partition, term)
             .iter()
@@ -1567,10 +1516,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     /// # Errors
     /// Refuses a predicate this index was not configured to carry.
     pub fn term_frequency_in_predicate(
-        &self,
-        id: u32,
-        term: &str,
-        predicate: &TermValue,
+        &self, id: u32, term: &str, predicate: &TermValue,
     ) -> Result<u64, TextError> {
         let ordinal = self.predicate_ordinal(predicate)?;
         Ok(self.document_posting(id, term).map_or(0, |posting| {
@@ -1579,10 +1525,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     }
 
     pub(crate) fn term_frequency_in_predicate_owned(
-        &self,
-        id: u32,
-        term: &str,
-        predicate: &TermValue,
+        &self, id: u32, term: &str, predicate: &TermValue,
         workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<u64, TextError> {
         let ordinal = self.predicate_ordinal(predicate)?;
@@ -1626,9 +1569,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     }
 
     fn document_rank_owned(
-        &self,
-        document: &Document<P>,
-        workspace: &purrdf_sparql_eval::WorkspaceCapability,
+        &self, document: &Document<P>, workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<u32, purrdf_sparql_eval::EvalError> {
         let result = self.documents.try_binary_search_by(|candidate| {
             compare_documents_owned(candidate, document, false, workspace)
@@ -1651,9 +1592,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     }
 
     fn edit_document_orders(
-        &mut self,
-        document: &Shared<Document<P>>,
-        added: bool,
+        &mut self, document: &Shared<Document<P>>, added: bool,
     ) -> Result<(), TextError> {
         for (table, compare) in [
             (
@@ -1755,9 +1694,7 @@ impl<P: CorpusProfile> TextIndex<P> {
 
     /// `term`'s postings restricted to `partition`; empty when either is absent.
     fn partition_postings(
-        &self,
-        partition: &PartitionKey<P>,
-        term: &str,
+        &self, partition: &PartitionKey<P>, term: &str,
     ) -> Slice<'_, Shared<Posting<P>>> {
         let Some(entry) = self.term_entry(term) else {
             return Slice::empty();
@@ -1776,9 +1713,7 @@ impl<P: CorpusProfile> TextIndex<P> {
     }
 
     fn partition_postings_owned(
-        &self,
-        partition: &PartitionKey<P>,
-        term: &str,
+        &self, partition: &PartitionKey<P>, term: &str,
         workspace: &purrdf_sparql_eval::WorkspaceCapability,
     ) -> Result<Slice<'_, Shared<Posting<P>>>, purrdf_sparql_eval::EvalError> {
         let Some(entry) = self.term_entry(term) else {
@@ -1805,12 +1740,8 @@ impl<P: CorpusProfile> TextIndex<P> {
     /// Turn sorted documents and an intern-ordered dictionary into the finished
     /// index: partitions, statistics, postings and the fingerprint.
     fn assemble(
-        config: TextIndexConfig<P>,
-        documents: Vec<AnalyzedDocument<P>>,
-        dictionary: &[String],
-        source: SourceDigest,
-        coverage: SourceCoverage,
-        ranking: RankingProfile,
+        config: TextIndexConfig<P>, documents: Vec<AnalyzedDocument<P>>, dictionary: &[String],
+        source: SourceDigest, coverage: SourceCoverage, ranking: RankingProfile,
     ) -> Result<Self, TextError> {
         check_document_count(documents.len())?;
 
@@ -1977,8 +1908,7 @@ fn compare_occurrence_documents<P: CorpusProfile>(a: &Document<P>, b: &Document<
 }
 
 pub(crate) fn compare_document_keys<P: CorpusProfile>(
-    a: &Document<P>,
-    b: &Document<P>,
+    a: &Document<P>, b: &Document<P>,
 ) -> Ordering {
     (&a.graph, &a.subject, &a.language).cmp(&(&b.graph, &b.subject, &b.language))
 }
@@ -1988,8 +1918,7 @@ fn compare_posting_documents<P: CorpusProfile>(a: &Document<P>, b: &Document<P>)
 }
 
 fn compare_graphs_owned(
-    a: Option<&TermValue>,
-    b: Option<&TermValue>,
+    a: Option<&TermValue>, b: Option<&TermValue>,
     workspace: &purrdf_sparql_eval::WorkspaceCapability,
 ) -> Result<Ordering, purrdf_sparql_eval::EvalError> {
     match (a, b) {
@@ -2001,9 +1930,7 @@ fn compare_graphs_owned(
 }
 
 fn compare_documents_owned<P: CorpusProfile>(
-    a: &Document<P>,
-    b: &Document<P>,
-    posting: bool,
+    a: &Document<P>, b: &Document<P>, posting: bool,
     workspace: &purrdf_sparql_eval::WorkspaceCapability,
 ) -> Result<Ordering, purrdf_sparql_eval::EvalError> {
     let graph = compare_graphs_owned(P::graph(&a.graph), P::graph(&b.graph), workspace)?;
@@ -2153,9 +2080,7 @@ struct AnalyzedDocument<P: CorpusProfile = GraphLanguage> {
 }
 
 fn document_key<P: CorpusProfile>(
-    graph: &P::Graph,
-    subject: &TermValue,
-    language: Option<&str>,
+    graph: &P::Graph, subject: &TermValue, language: Option<&str>,
 ) -> DocumentKey<P> {
     DocumentKey {
         graph: graph.clone(),
@@ -2184,8 +2109,7 @@ fn document_key<P: CorpusProfile>(
 /// and the coverage separates "this dataset holds nothing yet" from "this dataset
 /// holds things, and has none of these".
 fn collect_rows<D: DatasetView, P: CorpusProfile>(
-    dataset: &D,
-    config: &TextIndexConfig<P>,
+    dataset: &D, config: &TextIndexConfig<P>,
 ) -> Result<(Vec<SourceRow<P>>, SourceCoverage), TextError>
 where
     D::ReadError: purrdf_hash::error::StructuredError,
@@ -2202,9 +2126,7 @@ where
 /// physical text-bearing layers. Predicate and graph selection use the same
 /// production collector as a fresh build and a delta operand.
 fn collect_subject_rows<D: DatasetView, P: CorpusProfile>(
-    dataset: &D,
-    config: &TextIndexConfig<P>,
-    subjects: &BTreeSet<&TermValue>,
+    dataset: &D, config: &TextIndexConfig<P>, subjects: &BTreeSet<&TermValue>,
 ) -> Result<Vec<SourceRow<P>>, TextError>
 where
     D::ReadError: purrdf_hash::error::StructuredError,
@@ -2217,9 +2139,7 @@ where
 }
 
 fn collect_selected_rows<D: DatasetView, P: CorpusProfile>(
-    dataset: &D,
-    config: &TextIndexConfig<P>,
-    subjects: Option<&BTreeSet<&TermValue>>,
+    dataset: &D, config: &TextIndexConfig<P>, subjects: Option<&BTreeSet<&TermValue>>,
 ) -> Result<(Vec<SourceRow<P>>, Vec<u128>), TextError>
 where
     D::ReadError: purrdf_hash::error::StructuredError,
@@ -2325,9 +2245,7 @@ impl SourceCoverage {
     /// is nothing to tell apart, and a configuration holds at least one predicate,
     /// so finding them all is itself proof the dataset holds statements.
     fn of_walk<D: DatasetView, P: CorpusProfile>(
-        dataset: &D,
-        config: &TextIndexConfig<P>,
-        represented: Vec<u128>,
+        dataset: &D, config: &TextIndexConfig<P>, represented: Vec<u128>,
     ) -> Self {
         let dataset_holds_statements =
             represented.iter().all(|&count| count != 0) || holds_a_statement(dataset);
@@ -2337,9 +2255,7 @@ impl SourceCoverage {
     /// Coverage from exact counts and an independently observed nonempty bit.
     /// The delta path can reuse that source observation without probing again.
     fn of_counts<P: CorpusProfile>(
-        dataset_holds_statements: bool,
-        config: &TextIndexConfig<P>,
-        represented: Vec<u128>,
+        dataset_holds_statements: bool, config: &TextIndexConfig<P>, represented: Vec<u128>,
     ) -> Self {
         let unrepresented: Vec<TermValue> = config
             .predicates()
@@ -2376,12 +2292,8 @@ fn holds_a_statement<D: DatasetView>(dataset: &D) -> bool {
 
 /// Resolve one row's terms and append it, unless its object is not a literal.
 fn push_row<D: DatasetView, P: CorpusProfile>(
-    dataset: &D,
-    rows: &mut Vec<SourceRow<P>>,
-    graph: Option<D::Id>,
-    subject: D::Id,
-    predicate: &TermValue,
-    object: D::Id,
+    dataset: &D, rows: &mut Vec<SourceRow<P>>, graph: Option<D::Id>, subject: D::Id,
+    predicate: &TermValue, object: D::Id,
 ) -> Result<(), TextError>
 where
     D::ReadError: purrdf_hash::error::StructuredError,
@@ -2442,8 +2354,7 @@ where
 /// Returns the documents and the term dictionary in **intern** order; the
 /// dictionary is re-sorted and the ordinals remapped in [`build_terms`].
 fn analyze_rows<P: CorpusProfile>(
-    rows: &[SourceRow<P>],
-    config: &TextIndexConfig<P>,
+    rows: &[SourceRow<P>], config: &TextIndexConfig<P>,
 ) -> Result<(Vec<AnalyzedDocument<P>>, Vec<String>), TextError> {
     let mut groups: FastMap<DocumentKey<P>, Vec<usize>> = FastMap::default();
     for (index, row) in rows.iter().enumerate() {
@@ -2567,9 +2478,7 @@ fn exact_average(total: u64, count: u64) -> Result<Fixed, TextError> {
 
 /// Sort the dictionary, remap the token ordinals onto it, and build the postings.
 fn build_terms<P: CorpusProfile>(
-    documents: &[AnalyzedDocument<P>],
-    dictionary: &[String],
-    table: &[Shared<Document<P>>],
+    documents: &[AnalyzedDocument<P>], dictionary: &[String], table: &[Shared<Document<P>>],
 ) -> Result<BuiltTerms<P>, TextError> {
     let mut order: Vec<u32> = (0..dictionary.len() as u32).collect();
     order.sort_by(|&left, &right| dictionary[left as usize].cmp(&dictionary[right as usize]));
@@ -2667,8 +2576,7 @@ fn build_terms<P: CorpusProfile>(
 /// coverage beside it is what distinguishes that dataset from one holding
 /// statements under everything but a configured predicate.
 pub(crate) fn source_digest<D: DatasetView, P: CorpusProfile>(
-    dataset: &D,
-    config: &TextIndexConfig<P>,
+    dataset: &D, config: &TextIndexConfig<P>,
 ) -> Result<([u8; FINGERPRINT_BYTES], SourceCoverage), TextError>
 where
     D::ReadError: purrdf_hash::error::StructuredError,

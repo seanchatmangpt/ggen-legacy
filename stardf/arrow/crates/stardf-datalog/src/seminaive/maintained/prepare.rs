@@ -139,9 +139,7 @@ where
     /// A hash-bucket fan-out admits its retained capacity before scanning it;
     /// its complete output is reserved before publishing any work-list member.
     pub(super) fn resume<D: TermDictionary<Id = I>, A: Admission + ?Sized>(
-        &mut self,
-        inputs: &mut Inputs<'_, D, N>,
-        memory: &mut Memory<'_, A>,
+        &mut self, inputs: &mut Inputs<'_, D, N>, memory: &mut Memory<'_, A>,
         mut allow: impl FnMut(usize) -> bool,
     ) -> Result<bool, MaintenanceError<D::Error>> {
         flush_retired_bytes(&mut self.retired_bytes, memory)

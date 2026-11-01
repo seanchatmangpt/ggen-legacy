@@ -8,15 +8,19 @@
 
 [package]
 name = "stardf-cdt"
-description = "Native SPARQL composite datatypes (SEP-0009 cdt:List / cdt:Map): iterative bounded lexical scanner, canonical lexical mapping, spec equality/ordering and a total order, for the RDF 1.2 query stack"
-version = "26.9.29"
+# Lane 07-publish-metadata (2026-10-31): v26.11.1 first-class closure —
+# description/keywords/categories/repository workspace-inherited.
+description.workspace = true
+# Lane 08-dual-key (2026-10-31): closure version inherits the workspace 26.11.1.
+version.workspace = true
 edition = "2024"
-publish = false
-repository = "https://github.com/seanchatmangpt/ggen-legacy"
+publish = true
+repository.workspace = true
+homepage.workspace = true
 license = "MIT OR Apache-2.0 OR MulanPSL-2.0"
 rust-version = "1.98"
-keywords = ["sparql", "rdf", "rdf-12", "cdt", "value-space"]
-categories = ["parser-implementations", "data-structures"]
+keywords.workspace = true
+categories.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -32,27 +36,29 @@ name = "purrdf_cdt"
 
 [dependencies]
 # The uppercase hex digits of the `\uXXXX` / `\UXXXXXXXX` escapes the writer emits.
-stardf-hash = { path = "../stardf-hash" }
-stardf-lex = { path = "../stardf-lex" }
+stardf-hash = { workspace = true }
+stardf-lex = { workspace = true }
 # Absolute-IRI validation for every IRIREF the grammar admits.
-stardf-iri = { path = "../stardf-iri" }
+stardf-iri = { workspace = true }
 # The XSD value space the numeric/boolean shorthands and `parse_literal` resolve into.
-stardf-xsd = { path = "../stardf-xsd" }
+stardf-xsd = { workspace = true }
 # The one RDF 1.2 base-direction type, defined in the event protocol below this
 # crate, so a directional literal's direction is the same type at every layer.
-stardf-events = { path = "../stardf-events" }
+stardf-events = { workspace = true }
 
 [dev-dependencies]
 # Runs the deep-structure tests on a stack of a stated size: a fresh thread
 # natively, the running stack under a fresh floor on wasm32.
-stardf-stack = { path = "../stardf-stack" }
+# Lane H03 gate-closure (2026-10-31): all three dev-deps dual-keyed per the G5
+# version+path law (the 21:05 ladder receipt named these rows); the packaged
+# manifest now carries the version-only keys.
+stardf-stack = { version = "=26.11.1", path = "../stardf-stack" }
 # Round-trip / injectivity property tests (canonical -> value -> canonical) on
-# the shared property harness. Path-only and unpublished, so it is stripped from
-# the packaged manifest.
-stardf-testkit = { path = "../stardf-testkit" }
+# the shared property harness.
+stardf-testkit = { version = "=26.11.1", path = "../stardf-testkit" }
 
 # Real allocator evidence for original native storage admission.
-stardf-alloc-probe = { path = "../stardf-alloc-probe" }
+stardf-alloc-probe = { version = "=26.11.1", path = "../stardf-alloc-probe" }
 
 # The scan (`parse_list`/`parse_map`, GB/s) and the canonical lexical mapping
 # (`canonical_lexical`, ns/op) over seeded composite corpora. Report-only —

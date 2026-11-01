@@ -42,8 +42,7 @@ pub(crate) fn normalize(pattern: &GraphPattern) -> Option<GraphPattern> {
 
 /// Original positive-region factoring; original AST grant before every producer.
 pub(crate) fn normalize_with_memory(
-    pattern: &GraphPattern,
-    memory: &mut Memory<'_, LexicalFrame>,
+    pattern: &GraphPattern, memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<Option<GraphPattern>> {
     let before = memory.admitted_bytes();
     let capability = memory.admission_mut().workspace().clone();
@@ -154,8 +153,7 @@ fn join_key(pattern: &GraphPattern) -> (usize, usize) {
 }
 
 fn flatten(
-    pattern: GraphPattern,
-    factors: &mut AdmittedVec<GraphPattern>,
+    pattern: GraphPattern, factors: &mut AdmittedVec<GraphPattern>,
     memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<()> {
     let mut pending = purrdf_lex::walk::WorkList::<_, 16>::with(pattern);
@@ -177,8 +175,7 @@ fn flatten(
 }
 
 fn join(
-    factors: impl IntoIterator<Item = GraphPattern>,
-    memory: &mut Memory<'_, LexicalFrame>,
+    factors: impl IntoIterator<Item = GraphPattern>, memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<GraphPattern> {
     let mut joined = None;
     for right in factors {
@@ -199,8 +196,7 @@ struct Factor {
 }
 
 fn slot_schema(
-    patterns: &[TriplePattern],
-    capability: &crate::WorkspaceCapability,
+    patterns: &[TriplePattern], capability: &crate::WorkspaceCapability,
 ) -> Result<VarSchema, crate::EvalError> {
     let mut schema = SchemaBuilder::new(capability);
     for pattern in patterns {
@@ -218,8 +214,7 @@ fn slot_schema(
 }
 
 fn compact_components(
-    triples: Vec<TriplePattern>,
-    connectors: AdmittedVec<GraphPattern>,
+    triples: Vec<TriplePattern>, connectors: AdmittedVec<GraphPattern>,
     memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<AdmittedVec<Factor>> {
     let capability = memory.admission_mut().workspace().clone();
@@ -274,8 +269,7 @@ fn compact_components(
 }
 
 fn connected_join(
-    factors: AdmittedVec<Factor>,
-    memory: &mut Memory<'_, LexicalFrame>,
+    factors: AdmittedVec<Factor>, memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<GraphPattern> {
     let capability = memory.admission_mut().workspace().clone();
     let mut slots = AdmittedVec::with_capacity(factors.len(), &capability)?;
@@ -345,8 +339,7 @@ fn connected_join(
 type VariableKey = purrdf_sparql_algebra::Variable;
 
 fn components(
-    mut triples: Vec<TriplePattern>,
-    memory: &mut Memory<'_, LexicalFrame>,
+    mut triples: Vec<TriplePattern>, memory: &mut Memory<'_, LexicalFrame>,
 ) -> PrepResult<AdmittedVec<Vec<TriplePattern>>> {
     let capability = memory.admission_mut().workspace().clone();
     let mut roots = AdmittedVec::with_capacity(triples.len(), &capability)?;

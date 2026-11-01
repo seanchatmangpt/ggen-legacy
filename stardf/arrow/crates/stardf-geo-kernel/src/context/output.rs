@@ -35,9 +35,7 @@ impl MaterializedOutputReceipt {
 
 impl MetricContext {
     fn output_receipt_failure(
-        &self,
-        receipt: &MaterializedOutputReceipt,
-        reason: crate::OutputReceiptReason,
+        &self, receipt: &MaterializedOutputReceipt, reason: crate::OutputReceiptReason,
         live_owners: usize,
     ) -> GeoError {
         GeoError::retained_failure(
@@ -57,9 +55,7 @@ impl MetricContext {
         )
     }
     pub(crate) fn register_materialized_output(
-        &mut self,
-        bytes: u64,
-        progress: &mut WorkProgress<'_>,
+        &mut self, bytes: u64, progress: &mut WorkProgress<'_>,
     ) -> Result<MaterializedOutputReceipt, GeoError> {
         let token_bytes = Retained::<()>::allocation_layout()
             .size()
@@ -147,8 +143,7 @@ impl MetricContext {
     /// Refuses a wrong context, a repeated release, live result/receipt clones,
     /// or accounting inconsistency without changing the registered allowance.
     pub fn release_materialized_output(
-        &mut self,
-        receipt: MaterializedOutputReceipt,
+        &mut self, receipt: MaterializedOutputReceipt,
     ) -> Result<(), GeoError> {
         let index = self
             .materialized_outputs

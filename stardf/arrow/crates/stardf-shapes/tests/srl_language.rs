@@ -85,11 +85,8 @@ impl purrdf_core::StopSignal for PollStop {
 
 /// Exercise the public governed API and retain usage after the physical input drops.
 fn governed_run(
-    document: &srl::RuleSetDocument,
-    source: &str,
-    options: &InferOptions,
-    stop: Option<&dyn purrdf_core::StopSignal>,
-    graph_free: bool,
+    document: &srl::RuleSetDocument, source: &str, options: &InferOptions,
+    stop: Option<&dyn purrdf_core::StopSignal>, graph_free: bool,
 ) -> Result<purrdf_datalog::seminaive::BudgetReport, SrlError> {
     let source = data(source);
     if graph_free {

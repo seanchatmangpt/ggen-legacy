@@ -205,12 +205,8 @@ impl PointCellIndex {
     /// Refuses mismatched reference, duplicate caller keys, unsupported level,
     /// and insufficient complete input/work/workspace admission.
     pub fn new(
-        grid: CubeHilbertQ62V1,
-        level: u8,
-        reference: GeographicReference,
-        conversion: Option<GeoBindingId>,
-        points: Vec<PointIndexPoint>,
-        limits: PointIndexLimits,
+        grid: CubeHilbertQ62V1, level: u8, reference: GeographicReference,
+        conversion: Option<GeoBindingId>, points: Vec<PointIndexPoint>, limits: PointIndexLimits,
     ) -> Result<Self, GeoError> {
         Self::build(grid, level, reference, conversion, points, limits, None)
     }
@@ -218,12 +214,8 @@ impl PointCellIndex {
     /// # Errors
     /// Adds observer refusal to the complete construction contract.
     pub fn new_metered(
-        grid: CubeHilbertQ62V1,
-        level: u8,
-        reference: GeographicReference,
-        conversion: Option<GeoBindingId>,
-        points: Vec<PointIndexPoint>,
-        limits: PointIndexLimits,
+        grid: CubeHilbertQ62V1, level: u8, reference: GeographicReference,
+        conversion: Option<GeoBindingId>, points: Vec<PointIndexPoint>, limits: PointIndexLimits,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::build(
@@ -237,13 +229,9 @@ impl PointCellIndex {
         )
     }
     fn build(
-        grid: CubeHilbertQ62V1,
-        level: u8,
-        reference: GeographicReference,
-        conversion: Option<GeoBindingId>,
-        mut points: Vec<PointIndexPoint>,
-        limits: PointIndexLimits,
-        observer: Option<&mut dyn MetricWorkObserver>,
+        grid: CubeHilbertQ62V1, level: u8, reference: GeographicReference,
+        conversion: Option<GeoBindingId>, mut points: Vec<PointIndexPoint>,
+        limits: PointIndexLimits, observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         validate_level(level)?;
         validate_limits(limits)?;
@@ -406,10 +394,7 @@ impl PointCellIndex {
     /// # Errors
     /// Refuses negative physical radius, incomplete cover/refinement and limits.
     pub fn search_physical(
-        &self,
-        center: &LonLat,
-        radius: &Metres,
-        cover_limits: MixedCoverLimits,
+        &self, center: &LonLat, radius: &Metres, cover_limits: MixedCoverLimits,
         limits: PointIndexLimits,
     ) -> Result<PointIndexMatches, GeoError> {
         self.search(
@@ -426,10 +411,7 @@ impl PointCellIndex {
     /// # Errors
     /// Refuses incomplete cover/refinement and limits. Negative thresholds return empty.
     pub fn search_reported(
-        &self,
-        center: &LonLat,
-        threshold: XsdDoubleMetres,
-        cover_limits: MixedCoverLimits,
+        &self, center: &LonLat, threshold: XsdDoubleMetres, cover_limits: MixedCoverLimits,
         limits: PointIndexLimits,
     ) -> Result<PointIndexMatches, GeoError> {
         self.search(
@@ -444,12 +426,8 @@ impl PointCellIndex {
     /// # Errors
     /// Adds observer refusal to the complete search contract.
     pub fn search_physical_metered(
-        &self,
-        center: &LonLat,
-        radius: &Metres,
-        cover_limits: MixedCoverLimits,
-        limits: PointIndexLimits,
-        observer: &mut dyn MetricWorkObserver,
+        &self, center: &LonLat, radius: &Metres, cover_limits: MixedCoverLimits,
+        limits: PointIndexLimits, observer: &mut dyn MetricWorkObserver,
     ) -> Result<PointIndexMatches, GeoError> {
         self.search(
             center,
@@ -463,12 +441,8 @@ impl PointCellIndex {
     /// # Errors
     /// Adds observer refusal to the complete search contract.
     pub fn search_reported_metered(
-        &self,
-        center: &LonLat,
-        threshold: XsdDoubleMetres,
-        cover_limits: MixedCoverLimits,
-        limits: PointIndexLimits,
-        observer: &mut dyn MetricWorkObserver,
+        &self, center: &LonLat, threshold: XsdDoubleMetres, cover_limits: MixedCoverLimits,
+        limits: PointIndexLimits, observer: &mut dyn MetricWorkObserver,
     ) -> Result<PointIndexMatches, GeoError> {
         self.search(
             center,
@@ -479,12 +453,8 @@ impl PointCellIndex {
         )
     }
     fn search(
-        &self,
-        center: &LonLat,
-        threshold: SearchThreshold<'_>,
-        mut cover_limits: MixedCoverLimits,
-        limits: PointIndexLimits,
-        observer: Option<&mut dyn MetricWorkObserver>,
+        &self, center: &LonLat, threshold: SearchThreshold<'_>, mut cover_limits: MixedCoverLimits,
+        limits: PointIndexLimits, observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<PointIndexMatches, GeoError> {
         validate_limits(limits)?;
         let metered = observer.is_some();
@@ -589,12 +559,8 @@ impl PointCellIndex {
         self.scan(center, cover.cells(), threshold, limits, &mut budget)
     }
     fn scan(
-        &self,
-        center: &LonLat,
-        cells: &[CellId],
-        threshold: SearchThreshold<'_>,
-        limits: PointIndexLimits,
-        budget: &mut CoverBudget<'_>,
+        &self, center: &LonLat, cells: &[CellId], threshold: SearchThreshold<'_>,
+        limits: PointIndexLimits, budget: &mut CoverBudget<'_>,
     ) -> Result<PointIndexMatches, GeoError> {
         let mut result = RetainedBuilder::default();
         let prepared_center = if threshold.is_physical_zero() {
@@ -714,12 +680,8 @@ fn point_bytes(point: &LonLat) -> Result<u64, GeoError> {
         })
 }
 fn index_identity(
-    grid: CubeHilbertQ62V1,
-    level: u8,
-    reference: &GeographicReference,
-    conversion: Option<GeoBindingId>,
-    points: &[PointIndexPoint],
-    budget: &mut CoverBudget<'_>,
+    grid: CubeHilbertQ62V1, level: u8, reference: &GeographicReference,
+    conversion: Option<GeoBindingId>, points: &[PointIndexPoint], budget: &mut CoverBudget<'_>,
 ) -> Result<PointCellIndexId, GeoError> {
     let mut hash = Hasher::new();
     for field in [
@@ -759,8 +721,7 @@ fn index_identity(
 }
 
 fn hash_coefficient(
-    digits: &purrdf_xsd::bigint::PreparedDecimalDigits,
-    hash: &mut Hasher,
+    digits: &purrdf_xsd::bigint::PreparedDecimalDigits, hash: &mut Hasher,
     budget: &mut CoverBudget<'_>,
 ) -> Result<(), GeoError> {
     let bytes = u64::try_from(digits.len())
@@ -802,10 +763,7 @@ impl SearchThreshold<'_> {
     }
 }
 fn lower_bound(
-    entries: &[Entry],
-    key: u64,
-    closed: bool,
-    budget: &mut CoverBudget<'_>,
+    entries: &[Entry], key: u64, closed: bool, budget: &mut CoverBudget<'_>,
 ) -> Result<usize, GeoError> {
     let (mut low, mut high) = (0, entries.len());
     while low < high {

@@ -494,10 +494,8 @@ impl LimitKnobs {
     /// Knobs named `rounds`, `generated_terms`, `stored_facts` and `join_steps`.
     #[must_use]
     pub fn new(
-        rounds: impl Into<String>,
-        generated_terms: impl Into<String>,
-        stored_facts: impl Into<String>,
-        join_steps: impl Into<String>,
+        rounds: impl Into<String>, generated_terms: impl Into<String>,
+        stored_facts: impl Into<String>, join_steps: impl Into<String>,
     ) -> Self {
         Self {
             rounds: rounds.into(),
@@ -795,10 +793,8 @@ pub enum RulesError {
 impl RulesError {
     /// A passed limit, from the datalog report of the refused run.
     pub(crate) fn limit_exceeded(
-        limit: RuleLimit,
-        rules: Vec<(usize, String)>,
-        report: purrdf_datalog::seminaive::BudgetReport,
-        knobs: &LimitKnobs,
+        limit: RuleLimit, rules: Vec<(usize, String)>,
+        report: purrdf_datalog::seminaive::BudgetReport, knobs: &LimitKnobs,
     ) -> Self {
         let (indices, rules) = rules.into_iter().unzip();
         let (observed, permitted, stated, knob) = match limit {
@@ -891,8 +887,7 @@ impl From<RulesError> for String {
 ///
 /// See [`infer`].
 pub fn apply_rules(
-    data: &ShaclData,
-    shapes: &Shapes,
+    data: &ShaclData, shapes: &Shapes,
 ) -> Result<Arc<RdfDataset>, crate::error::ShapesError> {
     infer(data, shapes, &RuleOptions::default()).map(|inference| Arc::clone(inference.dataset()))
 }
@@ -907,9 +902,7 @@ pub fn apply_rules(
 /// inferring new terms past a rule-evaluation limit, or that holds or enumerates more than
 /// the selected stored-fact or join-step limit permits ([`RuleLimitExceeded`]).
 pub fn infer(
-    data: &ShaclData,
-    shapes: &Shapes,
-    options: &RuleOptions,
+    data: &ShaclData, shapes: &Shapes, options: &RuleOptions,
 ) -> Result<Inference, crate::error::ShapesError> {
     infer_complete(data, shapes, options)
         .map_err(crate::report::CompleteValidationError::into_shapes)
@@ -920,9 +913,7 @@ pub fn infer(
 /// # Errors
 /// Returns the actual current profile, source, governor or rule-execution refusal.
 pub fn infer_complete(
-    data: &ShaclData,
-    shapes: &Shapes,
-    options: &RuleOptions,
+    data: &ShaclData, shapes: &Shapes, options: &RuleOptions,
 ) -> Result<Inference, crate::report::CompleteValidationError> {
     let execute = || {
         infer_with(data, shapes, options, srl::eval::Reexecution::Incremental)
@@ -1024,10 +1015,7 @@ pub enum RuleSource<'a> {
 /// The refusal's text: as [`infer`] for a shapes graph, and the [`srl::SrlError`] for a
 /// rule set that fails during execution or passes a limit; `knobs` names what to change.
 pub fn run_rules(
-    source: RuleSource<'_>,
-    data: &RdfDataset,
-    limits: &RuleLimits,
-    knobs: LimitKnobs,
+    source: RuleSource<'_>, data: &RdfDataset, limits: &RuleLimits, knobs: LimitKnobs,
 ) -> Result<Inference, crate::error::ShapesError> {
     run_rules_with_options(source, data, &limits.rule_options(knobs))
 }
@@ -1041,9 +1029,7 @@ pub fn run_rules(
 /// # Errors
 /// The errors of [`run_rules`], under the limits and knob names in `options`.
 pub fn run_rules_with_options(
-    source: RuleSource<'_>,
-    data: &RdfDataset,
-    options: &RuleOptions,
+    source: RuleSource<'_>, data: &RdfDataset, options: &RuleOptions,
 ) -> Result<Inference, crate::error::ShapesError> {
     match source {
         RuleSource::Shapes(shapes) => {
@@ -1066,10 +1052,7 @@ pub fn run_rules_with_options(
 
 /// [`infer`], re-executing iterating shape rules as `reexecution` says.
 pub(crate) fn infer_with(
-    data: &ShaclData,
-    shapes: &Shapes,
-    options: &RuleOptions,
-    reexecution: srl::eval::Reexecution,
+    data: &ShaclData, shapes: &Shapes, options: &RuleOptions, reexecution: srl::eval::Reexecution,
 ) -> Result<Inference, crate::error::ShapesError> {
     // Declared SHACL-AF functions, and any caller-injected custom aggregates, are in
     // scope for node expressions and CONSTRUCT bodies for the whole run; the guards
@@ -1098,8 +1081,7 @@ pub(crate) fn infer_with(
 /// Returns `Err(String)` when the SHACL projection cannot be frozen or when rule
 /// application fails (see [`infer`]).
 pub fn entail_dataset(
-    data: &RdfDataset,
-    shapes: &Shapes,
+    data: &RdfDataset, shapes: &Shapes,
 ) -> Result<Arc<RdfDataset>, crate::error::ShapesError> {
     let projected = crate::engine::project_dataset(data)?;
     // Core lookups and the SHACL-SPARQL / CONSTRUCT paths run over the same
@@ -1124,8 +1106,7 @@ pub fn entail_dataset(
 ///
 /// An unregistered rule processor, or a requested rule set that is not declared.
 pub fn shacl_rule_set<'a>(
-    shapes: &'a Shapes,
-    options: &RuleOptions,
+    shapes: &'a Shapes, options: &RuleOptions,
 ) -> Result<srl::ir::RuleSet<'a>, String> {
     for set in &shapes.rules.rule_sets {
         for value in &set.processors {
@@ -1385,10 +1366,7 @@ fn affected_focus_nodes(reads: &[ReadPattern], gained: &[[Term; 3]]) -> Option<F
 /// `rdf:type` that is now a SHACL instance of a target class, the subject (object) of a
 /// gained triple with a `sh:targetSubjectsOf` (`sh:targetObjectsOf`) predicate.
 fn discover(
-    data: &ShaclData,
-    rule: &Rule,
-    shape: &Shape,
-    gained: &[[Term; 3]],
+    data: &ShaclData, rule: &Rule, shape: &Shape, gained: &[[Term; 3]],
 ) -> Result<Option<Vec<Term>>, crate::error::ShapesError> {
     // Which focus nodes a node-expression `sh:deactivated` leaves is decided over the
     // graph as it stands, not from the triples gained.
@@ -1449,10 +1427,7 @@ impl FocusRecord {
 /// The focus nodes of `shape` that conform to every condition of `rule`, in canonical
 /// order: the target nodes the rule is executed for.
 fn eligible_focus_nodes(
-    data: &ShaclData,
-    rule: &Rule,
-    shape: &Shape,
-    request: &crate::engine::ValidationRequest,
+    data: &ShaclData, rule: &Rule, shape: &Shape, request: &crate::engine::ValidationRequest,
 ) -> Result<Vec<Term>, crate::error::ShapesError> {
     let plan = RulePlan::of(data, shape, &rule.conditions, request)?;
     // Read once per resolution, polled per focus node: a governed rule application stops
@@ -1495,12 +1470,8 @@ fn eligible_focus_nodes(
 ///
 /// When a condition, a node expression or the CONSTRUCT query fails to evaluate.
 pub(crate) fn execute_rule(
-    data: &ShaclData,
-    rule: &Rule,
-    shapes: &[&Shape],
-    request: &crate::engine::ValidationRequest,
-    shapes_graph_iri: Option<&str>,
-    mint: &mut dyn FnMut() -> u64,
+    data: &ShaclData, rule: &Rule, shapes: &[&Shape], request: &crate::engine::ValidationRequest,
+    shapes_graph_iri: Option<&str>, mint: &mut dyn FnMut() -> u64,
     mut selection: FocusSelection<'_>,
 ) -> Result<Vec<[Term; 3]>, crate::error::ShapesError> {
     let mut out: Vec<[Term; 3]> = Vec::new();
@@ -1659,11 +1630,8 @@ fn well_formed(subject: &Term, predicate: &Term) -> bool {
 
 /// A shape rule's `sh:TripleRule` execution over its focus nodes.
 fn triple_rule_execution(
-    data: &ShaclData,
-    request: &crate::engine::ValidationRequest,
-    expressions: [&Option<NodeExpr>; 3],
-    focus_nodes: &[Term],
-    out: &mut Vec<[Term; 3]>,
+    data: &ShaclData, request: &crate::engine::ValidationRequest,
+    expressions: [&Option<NodeExpr>; 3], focus_nodes: &[Term], out: &mut Vec<[Term; 3]>,
 ) -> Result<(), crate::error::ShapesError> {
     // The head's node expressions are rule constants: lowered and bound ONCE per
     // execution rather than once per focus node.
@@ -1707,12 +1675,8 @@ fn triple_rule_execution(
 /// and a path from the focus yields nothing, while a constant or a node-independent
 /// expression yields exactly its value.
 fn global_triple_rule(
-    data: &ShaclData,
-    request: &crate::engine::ValidationRequest,
-    subject: Option<&NodeExpr>,
-    predicate: Option<&NodeExpr>,
-    object: Option<&NodeExpr>,
-    execution: u64,
+    data: &ShaclData, request: &crate::engine::ValidationRequest, subject: Option<&NodeExpr>,
+    predicate: Option<&NodeExpr>, object: Option<&NodeExpr>, execution: u64,
     out: &mut Vec<[Term; 3]>,
 ) -> Result<(), crate::error::ShapesError> {
     let (Some(subject), Some(predicate), Some(object)) = (subject, predicate, object) else {
@@ -1767,8 +1731,7 @@ struct SparqlExecution<'q> {
 
 impl SparqlExecution<'_> {
     fn invocation<'a>(
-        &self,
-        law: Option<&'a crate::query_law::Runtime>,
+        &self, law: Option<&'a crate::query_law::Runtime>,
     ) -> Result<crate::query_law::Invocation<'a>, String> {
         match law {
             Some(law) => law.rule_invocation(self.rule, self.shape),
@@ -1786,9 +1749,7 @@ impl SparqlExecution<'_> {
 /// A `sh:SPARQLRule` (or template instance) execution: the CONSTRUCT query once per
 /// focus node with `$this` pre-bound, or once without it for a global rule.
 fn sparql_rule_execution(
-    data: &ShaclData,
-    run: &SparqlExecution<'_>,
-    mint: &mut dyn FnMut() -> u64,
+    data: &ShaclData, run: &SparqlExecution<'_>, mint: &mut dyn FnMut() -> u64,
     out: &mut Vec<[Term; 3]>,
 ) -> Result<(), crate::error::ShapesError> {
     let query_law = crate::query_law::current();
@@ -1915,9 +1876,7 @@ fn derives_expected(view: crate::shapes::PropertyView<'_>, expected: &FastSet<&s
 ///
 /// Returns an error when target resolution or an expression evaluation fails.
 pub(crate) fn expected_derived_triples(
-    data: &ShaclData,
-    shapes: &Shapes,
-    expected: &FastSet<&str>,
+    data: &ShaclData, shapes: &Shapes, expected: &FastSet<&str>,
 ) -> Result<Vec<[Term; 3]>, crate::error::ShapesError> {
     let mut out: Vec<[Term; 3]> = Vec::new();
     for shape in &shapes.node_shapes {
@@ -2030,9 +1989,7 @@ impl<'a> RulePlan<'a> {
     /// once per execution. One lowering rather than several is what fixes the plan
     /// positions the rest of this type relies on.
     fn of(
-        data: &ShaclData,
-        shape: &'a Shape,
-        conditions: &'a [Shape],
+        data: &ShaclData, shape: &'a Shape, conditions: &'a [Shape],
         request: &crate::engine::ValidationRequest,
     ) -> Result<Self, crate::error::ShapesError> {
         let lowered = crate::plan::lower_shapes(std::iter::once(shape).chain(conditions))?;
@@ -2068,9 +2025,7 @@ impl<'a> RulePlan<'a> {
 
     /// The plan of `shape`, the `position`-th shape this rule lowered.
     fn plan_at<'b>(
-        &'b self,
-        shape: &'b Shape,
-        position: usize,
+        &'b self, shape: &'b Shape, position: usize,
     ) -> Result<crate::plan::ShapePlan<'b>, crate::error::ShapesError> {
         self.lowered.untargeted_plan(shape, position, &self.binding)
     }
@@ -2082,8 +2037,7 @@ impl<'a> RulePlan<'a> {
 
     /// The plan of the `position`-th `sh:condition` shape.
     fn condition(
-        &self,
-        position: usize,
+        &self, position: usize,
     ) -> Result<crate::plan::ShapePlan<'_>, crate::error::ShapesError> {
         self.plan_at(&self.conditions[position], position + 1)
     }
@@ -2099,9 +2053,7 @@ struct ExprPlan<'a> {
 impl<'a> ExprPlan<'a> {
     /// Lower `expr` standalone and resolve every identity it names against `data`.
     fn of(
-        data: &ShaclData,
-        expr: &'a NodeExpr,
-        request: &crate::engine::ValidationRequest,
+        data: &ShaclData, expr: &'a NodeExpr, request: &crate::engine::ValidationRequest,
     ) -> Result<Self, crate::error::ShapesError> {
         let lowering = crate::plan::lower_standalone_expression(expr, None)?;
         let mut binding = lowering.bind(data.core_view());
@@ -2116,10 +2068,7 @@ impl<'a> ExprPlan<'a> {
     /// Evaluate the expression at `focus`. `guard` is supplied rather than created here
     /// because the three head expressions of one execution share a single budget.
     fn eval(
-        &self,
-        data: &ShaclData,
-        focus: &Term,
-        guard: &mut RecursionGuard,
+        &self, data: &ShaclData, focus: &Term, guard: &mut RecursionGuard,
     ) -> Result<Vec<Term>, crate::error::ShapesError> {
         eval_planned_node_expr(
             data,
@@ -2138,9 +2087,7 @@ impl<'a> ExprPlan<'a> {
 /// condition did not hold" — a rule must never fire, or decline to fire, on a verdict
 /// that was not computed.
 fn conditions_hold(
-    data: &ShaclData,
-    focus: &Term,
-    plan: &RulePlan<'_>,
+    data: &ShaclData, focus: &Term, plan: &RulePlan<'_>,
 ) -> Result<bool, crate::error::ShapesError> {
     for position in 0..plan.conditions.len() {
         if !conforms_with_plan(data, focus, plan.condition(position)?)? {
@@ -2198,8 +2145,7 @@ fn focus_tag(focus: &Term) -> String {
 /// blank's label ([`push_fact`] pushes owned terms at the DEFAULT scope). Re-scoping
 /// the base would sever exactly that co-reference.
 pub(crate) fn push_projection(
-    builder: &mut RdfDatasetBuilder,
-    base: &RdfDataset,
+    builder: &mut RdfDatasetBuilder, base: &RdfDataset,
 ) -> Result<(), crate::error::ShapesError> {
     for quad in base.owned_quads() {
         builder.push_owned_quad(&quad)?;
@@ -2264,20 +2210,13 @@ pub(crate) trait RuleFactSink {
     fn finish_rules(self) -> Result<Arc<Self::Dataset>, crate::error::ShapesError>;
     /// Publish at the carrier's original owned-term and row insertion homes.
     fn publish_rule_row(
-        &mut self,
-        role: RuleRow,
-        subject: &Term,
-        predicate: &str,
-        object: &Term,
+        &mut self, role: RuleRow, subject: &Term, predicate: &str, object: &Term,
     ) -> Result<(), crate::error::ShapesError>;
 }
 
 /// Publish inferred and source-rule triples through their one physical classifier.
 pub(crate) fn publish_inference<B: RuleFactSink>(
-    mut builder: B,
-    inferred: &[[Term; 3]],
-    sources: &[[Term; 3]],
-    reifiers: &FastSet<Term>,
+    mut builder: B, inferred: &[[Term; 3]], sources: &[[Term; 3]], reifiers: &FastSet<Term>,
 ) -> Result<Arc<B::Dataset>, crate::error::ShapesError> {
     for triple in inferred.iter().chain(sources) {
         push_fact(&mut builder, triple, reifiers)?;
@@ -2291,11 +2230,7 @@ impl RuleFactSink for RdfDatasetBuilder {
         self.freeze().map_err(crate::error::ShapesError::from)
     }
     fn publish_rule_row(
-        &mut self,
-        role: RuleRow,
-        subject: &Term,
-        predicate: &str,
-        object: &Term,
+        &mut self, role: RuleRow, subject: &Term, predicate: &str, object: &Term,
     ) -> Result<(), crate::error::ShapesError> {
         match role {
             RuleRow::Triple => self.push_owned_quad(&RdfQuad::new(
@@ -2337,11 +2272,7 @@ impl RuleFactSink for purrdf_core::TripleDatasetBuilder {
             .map_err(crate::error::ShapesError::from)
     }
     fn publish_rule_row(
-        &mut self,
-        role: RuleRow,
-        subject: &Term,
-        predicate: &str,
-        object: &Term,
+        &mut self, role: RuleRow, subject: &Term, predicate: &str, object: &Term,
     ) -> Result<(), crate::error::ShapesError> {
         let s = self.intern_owned_term(&subject.to_rdf_term())?;
         let p = self.intern_iri(predicate)?;
@@ -2357,9 +2288,7 @@ impl RuleFactSink for purrdf_core::TripleDatasetBuilder {
 
 /// Publish one already-classified RDF triple through its actual carrier's builder.
 pub(crate) fn push_rule_row(
-    builder: &mut impl RuleFactSink,
-    triple: &[Term; 3],
-    role: RuleRow,
+    builder: &mut impl RuleFactSink, triple: &[Term; 3], role: RuleRow,
 ) -> Result<(), crate::error::ShapesError> {
     let [s, p, o] = triple;
     let Term::NamedNode(predicate) = p else {
@@ -2378,9 +2307,7 @@ pub(crate) fn push_rule_row(
 ///
 /// An internal-invariant breach: a non-IRI predicate, which the producers never emit.
 pub(crate) fn push_fact(
-    builder: &mut impl RuleFactSink,
-    triple: &[Term; 3],
-    reifiers: &FastSet<Term>,
+    builder: &mut impl RuleFactSink, triple: &[Term; 3], reifiers: &FastSet<Term>,
 ) -> Result<(), crate::error::ShapesError> {
     let [s, p, o] = triple;
     let role = if matches!(p, Term::NamedNode(predicate) if predicate.as_str() == rdf::REIFIES)
@@ -2400,9 +2327,7 @@ pub(crate) fn push_fact(
 /// rule's CONSTRUCT sees the shapes graph under `$shapesGraph`. SHACL 1.2 Inference
 /// Rules: "At no time are inferred triples visible to the shapes graph".
 pub(crate) fn build_round_base(
-    base: &Arc<RdfDataset>,
-    shapes: &Shapes,
-    graph_iri: Option<&str>,
+    base: &Arc<RdfDataset>, shapes: &Shapes, graph_iri: Option<&str>,
 ) -> Result<Arc<RdfDataset>, crate::error::ShapesError> {
     let Some(graph_iri) = graph_iri else {
         return Ok(Arc::clone(base));
@@ -2441,10 +2366,7 @@ pub(crate) fn build_round_base(
 ///
 /// A message naming the rule and the defect.
 pub(crate) fn check_construct(
-    parser: &crate::shapes::Parser<'_>,
-    rule_node: &Term,
-    construct: &str,
-    prebound: &[&str],
+    parser: &crate::shapes::Parser<'_>, rule_node: &Term, construct: &str, prebound: &[&str],
     has_focus: bool,
 ) -> Result<(), String> {
     // The names the rule's evaluation pre-binds are constants to the grouping check
@@ -2547,9 +2469,7 @@ mod tests {
 
     /// Entail under explicit `options`.
     fn entail_with(
-        data_ttl: &str,
-        shapes_body: &str,
-        options: &RuleOptions,
+        data_ttl: &str, shapes_body: &str, options: &RuleOptions,
     ) -> Result<Arc<RdfDataset>, String> {
         let data =
             crate::text_ingest::parse_turtle_to_dataset(&format!("{PREFIXES}\n{data_ttl}"), None)
@@ -3021,10 +2941,7 @@ mod tests {
     /// triple. `extra` injects auxiliary shapes-graph declarations (e.g. a
     /// `sh:SPARQLFunction`).
     fn entail_rule(
-        subject: &str,
-        predicate: &str,
-        object: &str,
-        extra: &str,
+        subject: &str, predicate: &str, object: &str, extra: &str,
     ) -> Vec<(String, String, String)> {
         let out = entail(
             AUDIT_DATA,

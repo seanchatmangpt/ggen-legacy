@@ -47,12 +47,8 @@ pub(crate) const STRUCTURE_KIND: Domain = Domain::new(b"structure");
 /// under.
 #[must_use]
 pub fn unit_iri(
-    vocabulary: &Vocabulary,
-    source_id: &str,
-    contract: &ChunkingContractId,
-    byte_start: u64,
-    byte_end: u64,
-    span: &[u8],
+    vocabulary: &Vocabulary, source_id: &str, contract: &ChunkingContractId, byte_start: u64,
+    byte_end: u64, span: &[u8],
 ) -> String {
     node_iri(
         vocabulary, UNIT_KIND, source_id, contract, byte_start, byte_end, span,
@@ -80,12 +76,8 @@ pub fn unit_iri(
 /// claim a real document emits.
 #[must_use]
 pub fn section_iri(
-    vocabulary: &Vocabulary,
-    source_id: &str,
-    contract: &ChunkingContractId,
-    byte_start: u64,
-    byte_end: u64,
-    heading_line: &[u8],
+    vocabulary: &Vocabulary, source_id: &str, contract: &ChunkingContractId, byte_start: u64,
+    byte_end: u64, heading_line: &[u8],
 ) -> String {
     node_iri(
         vocabulary,
@@ -152,14 +144,8 @@ pub fn section_iri(
 #[allow(clippy::too_many_arguments)]
 #[must_use]
 pub fn citation_iri(
-    vocabulary: &Vocabulary,
-    source_id: &str,
-    contract: &ChunkingContractId,
-    row_start: u64,
-    row_end: u64,
-    row_line: &[u8],
-    unit_node: &str,
-    reified: &[String],
+    vocabulary: &Vocabulary, source_id: &str, contract: &ChunkingContractId, row_start: u64,
+    row_end: u64, row_line: &[u8], unit_node: &str, reified: &[String],
 ) -> String {
     let mut content = Vec::new();
     frame_le(&mut content, row_line);
@@ -191,12 +177,8 @@ pub fn citation_iri(
 /// no structure node.
 #[must_use]
 pub fn structure_iri(
-    vocabulary: &Vocabulary,
-    source_id: &str,
-    contract: &ChunkingContractId,
-    byte_start: u64,
-    byte_end: u64,
-    span: &[u8],
+    vocabulary: &Vocabulary, source_id: &str, contract: &ChunkingContractId, byte_start: u64,
+    byte_end: u64, span: &[u8],
 ) -> String {
     node_iri(
         vocabulary,
@@ -210,13 +192,8 @@ pub fn structure_iri(
 }
 
 fn node_iri(
-    vocabulary: &Vocabulary,
-    kind: Domain,
-    source_id: &str,
-    contract: &ChunkingContractId,
-    byte_start: u64,
-    byte_end: u64,
-    bytes: &[u8],
+    vocabulary: &Vocabulary, kind: Domain, source_id: &str, contract: &ChunkingContractId,
+    byte_start: u64, byte_end: u64, bytes: &[u8],
 ) -> String {
     node_iri_of_digest(
         vocabulary,
@@ -236,13 +213,8 @@ fn node_iri(
 /// from that rather than hashing the same span twice. The preimage is
 /// the one [`unit_iri`] builds, byte for byte.
 pub(crate) fn node_iri_of_digest(
-    vocabulary: &Vocabulary,
-    kind: Domain,
-    source_id: &str,
-    contract: &ChunkingContractId,
-    byte_start: u64,
-    byte_end: u64,
-    digest: &ContentDigest,
+    vocabulary: &Vocabulary, kind: Domain, source_id: &str, contract: &ChunkingContractId,
+    byte_start: u64, byte_end: u64, digest: &ContentDigest,
 ) -> String {
     let mut preimage = Vec::new();
     frame_le(&mut preimage, kind.as_bytes());
@@ -290,11 +262,7 @@ mod tests {
     /// in `tests/slicer.rs`, over the subject of every claim the guide
     /// emits.
     fn by_hand(
-        kind: &str,
-        contract: &ChunkingContractId,
-        byte_start: u64,
-        byte_end: u64,
-        content: &[u8],
+        kind: &str, contract: &ChunkingContractId, byte_start: u64, byte_end: u64, content: &[u8],
     ) -> String {
         let (start, end) = (byte_start.to_le_bytes(), byte_end.to_le_bytes());
         let content_digest = ContentDigest::of(content);

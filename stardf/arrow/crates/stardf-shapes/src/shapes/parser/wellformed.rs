@@ -567,10 +567,7 @@ impl Parser<'_> {
     /// nothing; its `sh:defaultValue` is documentation and never reaches here
     /// (see [`census::CensusRow::class_at`]).
     fn check_computed_values_site(
-        &self,
-        shape: &Term,
-        predicate: &str,
-        is_parameter: bool,
+        &self, shape: &Term, predicate: &str, is_parameter: bool,
     ) -> Result<(), String> {
         if is_parameter {
             return Err(format!(
@@ -620,11 +617,7 @@ impl Parser<'_> {
     /// A non-validating annotation (`sh:formalized` on an `sh:intent`) changes no
     /// answer and loads.
     fn check_statement_annotations(
-        &self,
-        shape: &Term,
-        predicate: &NamedNode,
-        object: &Term,
-        is_parameter: bool,
+        &self, shape: &Term, predicate: &NamedNode, object: &Term, is_parameter: bool,
     ) -> Result<(), String> {
         let p = predicate.as_str();
         let mut constraint_annotation: Option<String> = None;
@@ -695,9 +688,7 @@ impl Parser<'_> {
     /// is also a SHACL instance of rdfs:Class in G and s is not an IRI then s is an
     /// ill-formed shape in G." A SHACL instance of `sh:ShapeClass` is both.
     fn check_implicit_class_shape(
-        &self,
-        shape: &Term,
-        instances: &mut ShaclInstances<'_>,
+        &self, shape: &Term, instances: &mut ShaclInstances<'_>,
     ) -> Result<(), String> {
         if !matches!(shape, Term::BlankNode(_)) {
             return Ok(());
@@ -717,11 +708,7 @@ impl Parser<'_> {
 
     /// A constraint parameter's value against its [`ValueRule`].
     fn check_parameter_value(
-        &self,
-        shape: &Term,
-        predicate: &str,
-        rule: ValueRule,
-        value: &Term,
+        &self, shape: &Term, predicate: &str, rule: ValueRule, value: &Term,
     ) -> Result<(), String> {
         let is_node = |term: &Term| matches!(term, Term::NamedNode(_) | Term::BlankNode(_));
         let is_iri = |term: &Term| matches!(term, Term::NamedNode(_));
@@ -798,10 +785,7 @@ impl Parser<'_> {
     /// The members of the SHACL list `value` of `predicate` on `shape`, refusing a
     /// value that is not a well-formed SHACL list.
     fn list_members(
-        &self,
-        value: &Term,
-        shape: &Term,
-        predicate: &str,
+        &self, value: &Term, shape: &Term, predicate: &str,
     ) -> Result<Vec<Term>, String> {
         self.walk_rdf_list(value, shape)
             .map_err(|error| format!("<{predicate}> on shape {shape}: {error}"))
@@ -809,10 +793,7 @@ impl Parser<'_> {
 
     /// A target predicate's value (SHACL 1.2 Core §2.1.3).
     fn check_target_value(
-        &self,
-        shape: &Term,
-        predicate: &str,
-        value: &Term,
+        &self, shape: &Term, predicate: &str, value: &Term,
     ) -> Result<(), String> {
         let ok = match predicate {
             sh::TARGET_CLASS | sh::TARGET_SUBJECTS_OF | sh::TARGET_OBJECTS_OF => {
@@ -840,10 +821,7 @@ impl Parser<'_> {
     /// a severity IRI this engine honours, `sh:message` a string literal,
     /// `sh:deactivated` an `xsd:boolean`, `sh:prefixes` a node.
     fn check_characteristic_value(
-        &self,
-        shape: &Term,
-        predicate: &str,
-        value: &Term,
+        &self, shape: &Term, predicate: &str, value: &Term,
     ) -> Result<(), String> {
         match predicate {
             sh::PATH => {

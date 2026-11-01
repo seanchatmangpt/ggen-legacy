@@ -93,12 +93,8 @@ impl Journal {
     }
 
     pub(crate) fn record(
-        &mut self,
-        previous: Option<usize>,
-        clause: usize,
-        frame: &[usize],
-        branch: Option<(usize, usize)>,
-        head: &[Ground<usize>],
+        &mut self, previous: Option<usize>, clause: usize, frame: &[usize],
+        branch: Option<(usize, usize)>, head: &[Ground<usize>],
     ) -> Result<usize, SchemaObstruction> {
         if self.links.len() >= MAX_RECORDED_STEPS {
             let error = SchemaObstruction::Work {
@@ -130,10 +126,7 @@ impl Journal {
     }
 
     pub(crate) fn extract(
-        &mut self,
-        bounds: Option<&SchemaBoundEvidence>,
-        latest: Option<usize>,
-        frame: &[usize],
+        &mut self, bounds: Option<&SchemaBoundEvidence>, latest: Option<usize>, frame: &[usize],
     ) -> Result<(Option<SchemaClashEvidence>, CurrentSupportEvidence), SchemaObstruction> {
         self.run(|memory, _| {
             let schema = bounds
@@ -153,8 +146,7 @@ impl Journal {
 }
 
 fn copy_bounds(
-    bounds: &SchemaBoundEvidence,
-    memory: &mut RecordingProducts<'_>,
+    bounds: &SchemaBoundEvidence, memory: &mut RecordingProducts<'_>,
 ) -> Result<SchemaBoundEvidence, Failure<Infallible>> {
     let class_steps = memory.copy(&bounds.class_steps)?;
     let qualifier = match &bounds.qualifier {
@@ -176,9 +168,7 @@ fn copy_bounds(
 
 /// Borrow the selected applications in source order; never copy their frames/heads.
 pub(crate) fn prefix<'a>(
-    links: &'a [Link],
-    latest: Option<usize>,
-    stop: Option<&dyn purrdf_core::StopSignal>,
+    links: &'a [Link], latest: Option<usize>, stop: Option<&dyn purrdf_core::StopSignal>,
 ) -> Result<Vec<&'a Application>, super::proof::DlProofError> {
     use super::proof::{DlProofError, malformed};
     use purrdf_lex::allocation::{Memory, Resident};
@@ -209,8 +199,7 @@ pub(crate) fn prefix<'a>(
 }
 
 fn copy_head<E>(
-    input: &[Ground<usize>],
-    memory: &mut Products<'_, E, impl FnMut() -> Result<(), E>>,
+    input: &[Ground<usize>], memory: &mut Products<'_, E, impl FnMut() -> Result<(), E>>,
 ) -> Result<Vec<Ground<usize>>, Failure<E>> {
     let mut head = Vec::new();
     memory.reserve(&mut head, input.len())?;
@@ -227,8 +216,7 @@ fn copy_head<E>(
 }
 
 fn copy_root<E>(
-    root: &GeneratedRoot,
-    memory: &mut Products<'_, E, impl FnMut() -> Result<(), E>>,
+    root: &GeneratedRoot, memory: &mut Products<'_, E, impl FnMut() -> Result<(), E>>,
 ) -> Result<GeneratedRoot, Failure<E>> {
     let mut chain = Vec::new();
     let mut current = root;

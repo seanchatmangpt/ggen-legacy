@@ -111,8 +111,7 @@ fn removal_carrier(rows: &[purrdf_core::QuadValues]) -> Arc<purrdf_core::RdfData
 }
 
 fn statement_carrier(
-    rows: [&[purrdf_core::QuadValues]; 3],
-    declarations: &[TermValue],
+    rows: [&[purrdf_core::QuadValues]; 3], declarations: &[TermValue],
 ) -> Arc<purrdf_core::RdfDataset> {
     let mut builder = RdfDatasetBuilder::new();
     for (stream, row) in rows
@@ -139,8 +138,7 @@ fn statement_carrier(
 }
 
 fn statement_layer(
-    rows: [&[purrdf_core::QuadValues]; 3],
-    metadata: SegmentedLayerMetadata,
+    rows: [&[purrdf_core::QuadValues]; 3], metadata: SegmentedLayerMetadata,
 ) -> Arc<SegmentedLayer> {
     let image = statement_image(rows);
     Arc::new(

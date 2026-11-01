@@ -290,12 +290,7 @@ impl Walker {
     /// [`crate::dialect`] for the contract and the vector that holds the
     /// two to one answer.
     fn open_section(
-        &mut self,
-        start: usize,
-        end: usize,
-        level: u32,
-        heading: String,
-        movement: bool,
+        &mut self, start: usize, end: usize, level: u32, heading: String, movement: bool,
     ) {
         while self
             .stack
@@ -472,6 +467,10 @@ fn trim_edges(s: &str) -> &str {
 }
 
 /// `s` with leading [`SPACE_OR_TAB`] removed.
+// LANED-EXCLUSION (lane 13, 2026-10-31): dead at the vendored rev upstream too
+// (purrdf rev 0da05783 defines it unused); kept for upstream fidelity, silenced
+// for the `-D warnings` gate.
+#[allow(dead_code)]
 fn trim_leading(s: &str) -> &str {
     s.trim_start_matches(SPACE_OR_TAB)
 }

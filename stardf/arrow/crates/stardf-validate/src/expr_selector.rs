@@ -223,10 +223,7 @@ impl<'a> ExprSelector<'a> {
     /// [`ExprSelectorError::NotOneSelector`] when none or several of the three are given,
     /// and [`ExprSelectorError::ViaWithoutAt`] for predicates with no walk start.
     pub fn from_parts(
-        expr: Option<&'a str>,
-        at: Option<&'a str>,
-        via: &'a [&'a str],
-        turtle: Option<&'a str>,
+        expr: Option<&'a str>, at: Option<&'a str>, via: &'a [&'a str], turtle: Option<&'a str>,
     ) -> Result<Self, ExprSelectorError> {
         if at.is_none() && !via.is_empty() {
             return Err(ExprSelectorError::ViaWithoutAt);
@@ -304,10 +301,7 @@ impl ParsedExprSelector {
     /// [`ExprSelectorError::Turtle`] for an inline expression that does not parse, and
     /// [`ExprSelectorError::NotOneRoot`] for one without exactly one root.
     pub fn select(
-        &self,
-        shapes: &Arc<RdfDataset>,
-        prefixes: &[(String, String)],
-        base: Option<&str>,
+        &self, shapes: &Arc<RdfDataset>, prefixes: &[(String, String)], base: Option<&str>,
     ) -> Result<SelectedExpression, ExprSelectorError> {
         match &self.kind {
             Parsed::Node(root) => Ok(SelectedExpression {
@@ -347,10 +341,7 @@ impl ParsedExprSelector {
 /// Read `text` under the shapes document's prefixes and base, find its one root, and merge
 /// it into `shapes` with its blank nodes standardized apart.
 fn inline(
-    shapes: &Arc<RdfDataset>,
-    prefixes: &[(String, String)],
-    base: Option<&str>,
-    text: &str,
+    shapes: &Arc<RdfDataset>, prefixes: &[(String, String)], base: Option<&str>, text: &str,
 ) -> Result<SelectedExpression, ExprSelectorError> {
     // The shapes document's prefixes, declared ahead of the fragment: a directive the
     // fragment writes redeclares its label from that point on, as in any Turtle document.

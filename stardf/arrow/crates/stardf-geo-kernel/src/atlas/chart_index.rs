@@ -26,9 +26,7 @@ pub(super) struct ChartIndex<'a> {
 }
 impl<'a> ChartIndex<'a> {
     pub(super) fn prepare(
-        region: &'a PreparedRegion,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        region: &'a PreparedRegion, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
         retained: &mut u64,
     ) -> Result<Option<Self>, GeoError> {
         let (PreparedRegion::Polygons(polygons) | PreparedRegion::ComplementOfPolygons(polygons)) =
@@ -114,10 +112,7 @@ impl<'a> ChartIndex<'a> {
     }
 
     pub(super) fn locate(
-        &self,
-        point: &Coord,
-        complementary: bool,
-        context: &mut MetricContext,
+        &self, point: &Coord, complementary: bool, context: &mut MetricContext,
         progress: &mut WorkProgress<'_>,
     ) -> Result<Set, GeoError> {
         let point_keys = {
@@ -184,9 +179,7 @@ impl<'a> ChartIndex<'a> {
 /// exactly two x values and two y values, and traverses their four corners.
 /// This proves equality with its complete bounding box without approximation.
 pub(super) fn is_rectangle(
-    rings: &crate::Rings,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    rings: &crate::Rings, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let [ring] = rings.as_slice() else {
         charge(context, progress, 1)?;
@@ -197,9 +190,7 @@ pub(super) fn is_rectangle(
 
 /// The same original corner proof for a borrowed individual polygon ring.
 pub(super) fn is_rectangle_ring(
-    ring: &[Coord],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    ring: &[Coord], context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     charge(context, progress, 1)?;
     if ring.len() != 5 {
@@ -220,9 +211,7 @@ pub(super) fn is_rectangle_ring(
 /// duplicate closure. The closed-ring and source-cell consumers share the
 /// same alternating, nonzero XY edge proof.
 pub(crate) fn is_rectangle_cycle(
-    vertices: &[Coord],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    vertices: &[Coord], context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     charge(context, progress, 1)?;
     if vertices.len() != 4 {
@@ -232,9 +221,7 @@ pub(crate) fn is_rectangle_cycle(
 }
 
 fn rectangle_cycle(
-    vertices: &[Coord],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    vertices: &[Coord], context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let mut previous_vertical = None;
     for index in 0..4 {

@@ -3479,10 +3479,7 @@ fn first_collision_by_walking(decay: DecayRule, weight: Score, limit: u64) -> Op
 /// every rank of that run inside the tolerance, and reading one rank further
 /// does not — so that is the truth this walk returns.
 fn deepest_rank_within_width_by_walking(
-    decay: DecayRule,
-    weight: Score,
-    max_width: u64,
-    limit: u64,
+    decay: DecayRule, weight: Score, max_width: u64, limit: u64,
 ) -> u64 {
     let ceiling = max_width.max(1);
     let mut run_start = 1_u64;
@@ -6824,11 +6821,8 @@ fn answer_of(row: &FusedRow) -> (Term, Score, Vec<(Iri, u64, Score)>) {
 /// Everything else in a trailer must be identical, and `assert_same_answer`
 /// checks each one by name.
 fn assert_same_answer(
-    declared: &FusionResult<Term>,
-    unrestricted: &FusionResult<Term>,
-    oracle: &[(String, Score, u64)],
-    top_k: TopK,
-    context: &str,
+    declared: &FusionResult<Term>, unrestricted: &FusionResult<Term>,
+    oracle: &[(String, Score, u64)], top_k: TopK, context: &str,
 ) {
     // The rows as answers: entity, score and per-stratum provenance. A
     // declaration that changed any of these would be buying its bound with a
@@ -9695,8 +9689,7 @@ impl Statistics for SilentStatistics {
 /// otherwise fixed. The registry is taken by value so its instance id -- cloned
 /// from one empty registry by every caller -- is carried into the result.
 fn registry_declaring_fidelity(
-    mut base: PropertyFunctionRegistry<'static>,
-    fidelity: RankFidelity,
+    mut base: PropertyFunctionRegistry<'static>, fidelity: RankFidelity,
 ) -> PropertyFunctionRegistry<'static> {
     base.register_ranked(
         "http://example.org/pf/ranked",

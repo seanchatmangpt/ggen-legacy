@@ -290,9 +290,7 @@ impl Arguments {
 /// name: one path component of ASCII letters, digits, `-`, `_` and `.`, not
 /// starting with `.`, and not the latest-run record's name.
 fn baseline_name(
-    name: &str,
-    inline: Option<String>,
-    rest: &mut VecDeque<String>,
+    name: &str, inline: Option<String>, rest: &mut VecDeque<String>,
 ) -> Result<String, ArgumentError> {
     let Some(value) = inline.or_else(|| rest.pop_front()) else {
         return Err(ArgumentError(format!(

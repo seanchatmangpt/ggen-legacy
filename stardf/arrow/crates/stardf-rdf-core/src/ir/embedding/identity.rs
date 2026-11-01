@@ -227,9 +227,7 @@ pub fn derive_chunking_contract_id(stage_bytes: &[u8]) -> ChunkingContractId {
 /// Derives one effective vector-space id.
 #[must_use]
 pub fn derive_vector_space_id(
-    family_id: FamilyId,
-    effective_dimension: u32,
-    prefix_postprocessing: u32,
+    family_id: FamilyId, effective_dimension: u32, prefix_postprocessing: u32,
 ) -> VectorSpaceId {
     VectorSpaceId(hash_fold(
         D_SPACE,
@@ -244,8 +242,7 @@ pub fn derive_vector_space_id(
 /// Derives a target identity digest from its kind and canonical block.
 #[must_use]
 pub fn derive_target_identity_digest(
-    target_kind: u32,
-    canonical_identity: &[u8],
+    target_kind: u32, canonical_identity: &[u8],
 ) -> TargetIdentityDigest {
     TargetIdentityDigest(hash_fold(
         D_TARGET_IDENTITY,
@@ -282,10 +279,7 @@ pub fn derive_relation_role_digest(role_bytes: &[u8]) -> [u8; 32] {
 /// Derives the typed content digest of exact stored matrix bytes.
 #[must_use]
 pub fn derive_matrix_content_digest(
-    dtype: u32,
-    row_count: u64,
-    stored_dimension: u32,
-    matrix_bytes: &[u8],
+    dtype: u32, row_count: u64, stored_dimension: u32, matrix_bytes: &[u8],
 ) -> MatrixContentDigest {
     MatrixContentDigest(hash_fold(
         D_MATRIX_CONTENT,
@@ -301,9 +295,7 @@ pub fn derive_matrix_content_digest(
 /// Derives a stored-matrix id.
 #[must_use]
 pub fn derive_matrix_id(
-    target_set_id: TargetSetId,
-    family_id: FamilyId,
-    content_digest: MatrixContentDigest,
+    target_set_id: TargetSetId, family_id: FamilyId, content_digest: MatrixContentDigest,
 ) -> MatrixId {
     MatrixId(hash_fold(
         D_MATRIX,
@@ -318,10 +310,7 @@ pub fn derive_matrix_id(
 /// Derives the typed content digest of an effective projection byte stream.
 #[must_use]
 pub fn derive_projection_content_digest(
-    dtype: u32,
-    row_count: u64,
-    effective_dimension: u32,
-    prefix_postprocessing: u32,
+    dtype: u32, row_count: u64, effective_dimension: u32, prefix_postprocessing: u32,
     logical_projection_bytes: &[u8],
 ) -> ProjectionContentDigest {
     ProjectionContentDigest(hash_fold(
@@ -339,9 +328,7 @@ pub fn derive_projection_content_digest(
 /// Derives an effective projection id.
 #[must_use]
 pub fn derive_projection_id(
-    matrix_id: MatrixId,
-    vector_space_id: VectorSpaceId,
-    content_digest: ProjectionContentDigest,
+    matrix_id: MatrixId, vector_space_id: VectorSpaceId, content_digest: ProjectionContentDigest,
 ) -> ProjectionId {
     ProjectionId(hash_fold(
         D_PROJECTION,

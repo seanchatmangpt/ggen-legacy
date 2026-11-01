@@ -1139,9 +1139,7 @@ fn double_word_intervals_enclose_fixed_references_to_about_one_hundred_bits() {
         hi.add(&lo, math).unwrap()
     }
     fn contains(
-        enclosure: WordInterval,
-        reference: &FixedInterval,
-        math: &mut CoordinateMath,
+        enclosure: WordInterval, reference: &FixedInterval, math: &mut CoordinateMath,
     ) -> bool {
         let lower = fixed_word(*enclosure.lower(), math);
         let upper = fixed_word(*enclosure.upper(), math);

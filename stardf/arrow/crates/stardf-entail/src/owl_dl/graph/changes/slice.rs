@@ -498,11 +498,8 @@ struct Builder {
 impl Builder {
     /// Follow the native hierarchy walk's retained predecessor, not another closure.
     fn role_rules(
-        &mut self,
-        requested: Role,
-        mut actual: Role,
-        parents: &OrderedTable<(Role, Role), (Role, Input)>,
-        memory: &mut Memory<'_, Resident>,
+        &mut self, requested: Role, mut actual: Role,
+        parents: &OrderedTable<(Role, Role), (Role, Input)>, memory: &mut Memory<'_, Resident>,
     ) -> Result<(), Error> {
         while actual != requested {
             let &(parent, input) = parents
@@ -524,10 +521,7 @@ impl Builder {
     }
 
     fn alias(
-        &mut self,
-        mut node: usize,
-        target: usize,
-        memory: &mut Memory<'_, Resident>,
+        &mut self, mut node: usize, target: usize, memory: &mut Memory<'_, Resident>,
     ) -> Result<(), Error> {
         while node != target {
             let &(keep, cause) = self.aliases.get(&node).ok_or(Error::MissingFact)?;
@@ -538,11 +532,7 @@ impl Builder {
     }
 
     fn edge(
-        &mut self,
-        index: usize,
-        role: Role,
-        from: usize,
-        to: usize,
+        &mut self, index: usize, role: Role, from: usize, to: usize,
         memory: &mut Memory<'_, Resident>,
     ) -> Result<(), Error> {
         let &(raw_from, raw_to, property) = self.edges.get(&index).ok_or(Error::MissingFact)?;
@@ -557,13 +547,8 @@ impl Builder {
     }
 
     fn read(
-        &mut self,
-        fact: ReadFact,
-        events: &[Event],
-        paths: &[PathStep],
-        reach: &[reach::Path],
-        rules: &OrderedTable<(Role, Role), (Role, Input)>,
-        memory: &mut Memory<'_, Resident>,
+        &mut self, fact: ReadFact, events: &[Event], paths: &[PathStep], reach: &[reach::Path],
+        rules: &OrderedTable<(Role, Role), (Role, Input)>, memory: &mut Memory<'_, Resident>,
     ) -> Result<(), Error> {
         match fact {
             ReadFact::RoleConstraint(input) => {
@@ -733,11 +718,7 @@ impl Builder {
     }
 
     fn event(
-        &mut self,
-        ordinal: usize,
-        event: Event,
-        kb: &Kb,
-        memory: &mut Memory<'_, Resident>,
+        &mut self, ordinal: usize, event: Event, kb: &Kb, memory: &mut Memory<'_, Resident>,
     ) -> Result<(), Error> {
         let start = self.parents.len();
         let cause = event.cause;
@@ -910,11 +891,7 @@ impl Builder {
     }
 
     fn transfer(
-        &mut self,
-        old: Fact,
-        new: Fact,
-        discard: usize,
-        id: usize,
+        &mut self, old: Fact, new: Fact, discard: usize, id: usize,
         memory: &mut Memory<'_, Resident>,
     ) -> Result<(), Error> {
         self.parent(old, memory)?;
@@ -942,9 +919,7 @@ impl Journal {
     }
 
     pub(crate) fn normalized_slice_with_schema<'a>(
-        &self,
-        kb: &'a Kb,
-        schema: Option<crate::owl_dl::proof::CheckedSchema<'a>>,
+        &self, kb: &'a Kb, schema: Option<crate::owl_dl::proof::CheckedSchema<'a>>,
     ) -> Result<Slice<'a>, Error> {
         let mut storage = Resident;
         let mut memory = Memory::new(&mut storage);

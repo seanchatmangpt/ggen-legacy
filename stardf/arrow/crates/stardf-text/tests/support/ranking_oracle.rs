@@ -46,12 +46,8 @@ fn logarithm(raw: &Natural) -> Natural {
 
 /// One term's exact raw contribution, with all intermediate integers unbounded.
 pub(crate) fn contribution(
-    documents: u64,
-    frequency: u64,
-    populations: &[u64],
-    totals: &[u128],
-    parameters: &[(i128, i128)],
-    inputs: &[FieldInput],
+    documents: u64, frequency: u64, populations: &[u64], totals: &[u128],
+    parameters: &[(i128, i128)], inputs: &[FieldInput],
 ) -> i128 {
     assert_eq!(populations.len(), totals.len());
     assert_eq!(parameters.len(), totals.len());

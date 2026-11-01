@@ -48,9 +48,7 @@ ex:Address2 ex:city \"Paris\" ; ex:zip \"75001\" .
 /// (its path and constraints), under `ex:S` targeting `ex:Alice` and `ex:Bob`.
 #[track_caller]
 fn validate_property_shape(
-    property_shape: &str,
-    shapes_extra: &str,
-    data: &str,
+    property_shape: &str, shapes_extra: &str, data: &str,
 ) -> ValidationReport {
     let shapes = parse_shapes(
         &format!(

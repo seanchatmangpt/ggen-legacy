@@ -149,8 +149,7 @@ impl ClassMembershipView {
     /// derive a membership through, a class the data graph cannot name — the caller
     /// interns every IRI of the pairs into the data view before building this one.
     pub(crate) fn from_view_with_supplement(
-        base: Arc<ShaclDatasetView>,
-        supplement: &[(String, String)],
+        base: Arc<ShaclDatasetView>, supplement: &[(String, String)],
     ) -> Self {
         let rdf_type = base.term_id_by_iri(rdf::TYPE);
         let subclass_of = base.term_id_by_iri(rdfs::SUB_CLASS_OF);
@@ -386,11 +385,7 @@ impl ClassMembershipView {
     }
 
     fn derived_for_pattern(
-        &self,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> DerivedPattern<'_> {
         let Some(rdf_type) = self.rdf_type else {
             return DerivedPattern::Empty;
@@ -480,8 +475,7 @@ impl ClassMembershipView {
 /// Bind the asserted-subclass law and its supplementary IRI edges once, without
 /// building or scanning the lazy membership index.
 fn class_snapshot(
-    base: &ShaclDatasetView,
-    edges: &[(TermId, TermId)],
+    base: &ShaclDatasetView, edges: &[(TermId, TermId)],
 ) -> Option<purrdf_hash::hex::Digest32> {
     const DOMAIN: purrdf_hash::Domain =
         purrdf_hash::Domain::new(b"purrdf-shapes/class-membership-snapshot/v1");
@@ -745,8 +739,7 @@ impl DatasetView for ClassMembershipView {
     }
 
     fn reserve_owned_workspace(
-        &self,
-        bytes: u64,
+        &self, bytes: u64,
     ) -> Option<Result<purrdf_core::OwnedWorkspaceReservation<Self::ReadError>, Self::ReadError>>
     {
         self.base.reserve_owned_workspace(bytes)
@@ -764,11 +757,7 @@ impl DatasetView for ClassMembershipView {
     }
 
     fn quads_for_pattern(
-        &self,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         self.base
             .quads_for_pattern(s, p, o, g)
@@ -795,21 +784,13 @@ impl DatasetView for ClassMembershipView {
 
     #[inline]
     fn probe_plan(
-        &self,
-        s_bound: bool,
-        p_bound: bool,
-        o_bound: bool,
-        g: GraphMatch,
+        &self, s_bound: bool, p_bound: bool, o_bound: bool, g: GraphMatch,
     ) -> QuadProbePlan {
         self.base.probe_plan(s_bound, p_bound, o_bound, g)
     }
 
     fn quads_for_pattern_with_plan(
-        &self,
-        plan: &QuadProbePlan,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
+        &self, plan: &QuadProbePlan, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
         g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         self.base
@@ -818,11 +799,7 @@ impl DatasetView for ClassMembershipView {
     }
 
     fn cardinality_estimate(
-        &self,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> u64 {
         {
             let asserted = self.base.cardinality_estimate(s, p, o, g);
@@ -871,8 +848,7 @@ impl DatasetView for ClassMembershipView {
 
     #[inline]
     fn annotations_of_with_graph(
-        &self,
-        reifier: TermId,
+        &self, reifier: TermId,
     ) -> impl Iterator<Item = (TermId, TermId, Option<TermId>)> + '_ {
         self.base.annotations_of_with_graph(reifier)
     }
@@ -889,9 +865,7 @@ impl DatasetView for ClassMembershipView {
 }
 
 fn build_index(
-    dataset: &impl ShaclRead,
-    rdf_type: TermId,
-    subclass_of: Option<TermId>,
+    dataset: &impl ShaclRead, rdf_type: TermId, subclass_of: Option<TermId>,
     supplement: &[(TermId, TermId)],
 ) -> Option<ClassMembershipIndex> {
     let mut parents: FastMap<TermId, Vec<TermId>> = FastMap::default();
@@ -1587,11 +1561,7 @@ mod tests {
     }
 
     fn matches_pattern(
-        quad: QuadIds,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        quad: QuadIds, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> bool {
         s.is_none_or(|bound| quad.s == bound)
             && p.is_none_or(|bound| quad.p == bound)

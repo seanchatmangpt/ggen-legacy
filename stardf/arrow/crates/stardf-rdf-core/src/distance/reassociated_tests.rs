@@ -182,11 +182,7 @@ fn error_bound(n: usize, magnitude: f64) -> f64 {
 
 /// One stored-width pair over every host path, every API, against the reference.
 fn check_bound<Q: Store, T: Store>(
-    paths: &[Resolved<Reassociated>],
-    executed: &mut Executed,
-    a: &[f64],
-    b: &[f64],
-    offset: usize,
+    paths: &[Resolved<Reassociated>], executed: &mut Executed, a: &[f64], b: &[f64], offset: usize,
 ) -> usize {
     let a_buffer: Vec<Q> = at_offset(a, offset);
     let b_buffer: Vec<T> = at_offset(b, offset);
@@ -248,11 +244,7 @@ fn reassociated_within_error_bound() {
 
 /// Every API's answer for one pair on one path, as bits.
 fn every_api<Q: Store, T: Store>(
-    path: Resolved<Reassociated>,
-    measure: Measure,
-    a: &[f64],
-    b: &[f64],
-    offset: usize,
+    path: Resolved<Reassociated>, measure: Measure, a: &[f64], b: &[f64], offset: usize,
 ) -> [Result<u64, NonFinite>; 4] {
     let a_buffer: Vec<Q> = at_offset(a, offset);
     let b_buffer: Vec<T> = at_offset(b, offset);

@@ -309,8 +309,7 @@ pub(crate) struct RoleOrder {
 
 impl RoleOrder {
     fn representatives<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> Result<Vec<usize>, StorageError> {
         memory.scope(|memory| {
             let mut roots =
@@ -340,8 +339,7 @@ impl RoleOrder {
     }
 
     pub(crate) fn release<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         self.strict.release(memory)?;
         self.simple.release(memory)?;
@@ -355,11 +353,8 @@ impl Hierarchy {
     /// the completion reader: it checks original inclusions directly, independent
     /// of the language compiler's state graph or traversal.
     pub(crate) fn close_edges<S, E>(
-        &self,
-        edges: &[(usize, usize, u32)],
-        domain: (usize, Option<Role>),
-        is_object: impl Fn(usize) -> bool,
-        mut poll: impl FnMut() -> Result<(), E>,
+        &self, edges: &[(usize, usize, u32)], domain: (usize, Option<Role>),
+        is_object: impl Fn(usize) -> bool, mut poll: impl FnMut() -> Result<(), E>,
         memory: &mut Memory<'_, S>,
     ) -> Result<Vec<(Role, usize, usize)>, E>
     where
@@ -473,10 +468,7 @@ impl Hierarchy {
     /// mixed dependency condition, without constructing potentially much larger
     /// language machines. Profile certification and compilation share this law.
     pub(crate) fn validate<S: Admission + ?Sized>(
-        &self,
-        top: Option<Role>,
-        stop: Option<&dyn StopSignal>,
-        memory: &mut Memory<'_, S>,
+        &self, top: Option<Role>, stop: Option<&dyn StopSignal>, memory: &mut Memory<'_, S>,
     ) -> Result<(), RoleHierarchyError> {
         memory.try_scope(|memory| {
             let order = self.source_order(top, stop, memory)?;
@@ -491,10 +483,7 @@ impl Hierarchy {
     /// under one original memory scope. Witness matrices die before their scratch
     /// admission is released; only the returned program's buffers survive.
     pub(crate) fn compile<S: Admission + ?Sized>(
-        &self,
-        top: Option<Role>,
-        stop: Option<&dyn StopSignal>,
-        memory: &mut Memory<'_, S>,
+        &self, top: Option<Role>, stop: Option<&dyn StopSignal>, memory: &mut Memory<'_, S>,
     ) -> Result<RoleProgram, RoleHierarchyError> {
         let baseline = memory.admitted_bytes();
         memory.try_scope(|memory| {
@@ -512,8 +501,7 @@ impl Hierarchy {
     }
 
     pub(crate) fn release<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         let Self {
             sources,
@@ -535,10 +523,7 @@ impl Hierarchy {
     /// the interaction of simple inclusions and chains is checked separately before
     /// the automaton producer is entered.
     pub(crate) fn source_order<S: Admission + ?Sized>(
-        &self,
-        top: Option<Role>,
-        stop: Option<&dyn StopSignal>,
-        memory: &mut Memory<'_, S>,
+        &self, top: Option<Role>, stop: Option<&dyn StopSignal>, memory: &mut Memory<'_, S>,
     ) -> Result<RoleOrder, RoleHierarchyError> {
         poll(stop)?;
         memory.try_scope(|memory| {
@@ -619,8 +604,7 @@ impl Hierarchy {
 }
 
 fn insert_edge<S: Admission + ?Sized>(
-    relation: &mut Vec<(Role, usize, usize)>,
-    edge: (Role, usize, usize),
+    relation: &mut Vec<(Role, usize, usize)>, edge: (Role, usize, usize),
     memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     if let Err(position) = relation.binary_search(&edge) {
@@ -651,18 +635,14 @@ struct RoleRelation {
 
 impl RoleRelation {
     fn close<S: Admission + ?Sized>(
-        adjacency: Vec<Vec<usize>>,
-        stop: Option<&dyn StopSignal>,
-        memory: &mut Memory<'_, S>,
+        adjacency: Vec<Vec<usize>>, stop: Option<&dyn StopSignal>, memory: &mut Memory<'_, S>,
     ) -> Result<Self, RoleHierarchyError> {
         Self::close_observing(adjacency, None, stop, memory)
     }
 
     fn close_observing<S: Admission + ?Sized>(
-        adjacency: Vec<Vec<usize>>,
-        authored: Option<(&[Role], Option<Role>)>,
-        stop: Option<&dyn StopSignal>,
-        memory: &mut Memory<'_, S>,
+        adjacency: Vec<Vec<usize>>, authored: Option<(&[Role], Option<Role>)>,
+        stop: Option<&dyn StopSignal>, memory: &mut Memory<'_, S>,
     ) -> Result<Self, RoleHierarchyError> {
         poll(stop)?;
         let component = scc_component_index_with_memory(&adjacency, memory)?;
@@ -735,8 +715,7 @@ impl RoleRelation {
     }
 
     fn release<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         if let Some(witnesses) = self.witnesses {
             witnesses.release(memory)?;
@@ -748,8 +727,7 @@ impl RoleRelation {
 }
 
 fn release_rows<S: Admission + ?Sized>(
-    mut rows: Vec<Vec<usize>>,
-    memory: &mut Memory<'_, S>,
+    mut rows: Vec<Vec<usize>>, memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     while let Some(row) = rows.pop() {
         memory.release_vec(row)?;
@@ -815,9 +793,7 @@ impl Automaton {
     }
 
     fn licence<S: Admission + ?Sized>(
-        &mut self,
-        licence: Licence,
-        memory: &mut Memory<'_, S>,
+        &mut self, licence: Licence, memory: &mut Memory<'_, S>,
     ) -> Result<usize, StorageError> {
         let id = self.licences.len();
         memory.push(&mut self.licences, licence)?;
@@ -825,11 +801,7 @@ impl Automaton {
     }
 
     fn transition<S: Admission + ?Sized>(
-        &mut self,
-        from: usize,
-        to: usize,
-        letter: Option<Role>,
-        licence: usize,
+        &mut self, from: usize, to: usize, letter: Option<Role>, licence: usize,
         memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         memory.push(
@@ -846,11 +818,7 @@ impl Automaton {
     /// Add exactly this word between the supplied continuation states. Every
     /// interior state is fresh, so another chain cannot return into this word.
     fn word<S: Admission + ?Sized>(
-        &mut self,
-        from: usize,
-        to: usize,
-        word: &[Role],
-        licence: usize,
+        &mut self, from: usize, to: usize, word: &[Role], licence: usize,
         memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         if word.is_empty() {
@@ -873,11 +841,7 @@ impl Automaton {
     /// among unrelated continuations would accept cross-return words, so the
     /// physical destination includes every copy before any transition is written.
     fn substitute<S: Admission + ?Sized>(
-        &mut self,
-        edge: Transition,
-        lower: &Self,
-        role: Role,
-        stop: Option<&dyn StopSignal>,
+        &mut self, edge: Transition, lower: &Self, role: Role, stop: Option<&dyn StopSignal>,
         memory: &mut Memory<'_, S>,
     ) -> Result<(), RoleHierarchyError> {
         let offset = self.states;
@@ -931,8 +895,7 @@ impl Automaton {
 
     #[cfg(test)]
     fn release<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         memory.release_vec(self.licences)?;
         memory.release_vec(self.transitions)
@@ -1012,9 +975,7 @@ impl RoleProgram {
     /// interning. Every state label is published before its obligation is visible;
     /// a refusal cannot publish a partly initialized state vector.
     pub(crate) fn extend_obligations<S: Admission + ?Sized>(
-        &mut self,
-        table: &mut ConceptTable,
-        stop: Option<&dyn StopSignal>,
+        &mut self, table: &mut ConceptTable, stop: Option<&dyn StopSignal>,
         memory: &mut Memory<'_, S>,
     ) -> Result<(), RoleHierarchyError> {
         while self.scanned_concepts < table.len() {
@@ -1076,8 +1037,7 @@ impl RoleProgram {
 
     #[cfg(test)]
     pub(crate) fn release<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         let Self {
             simple,
@@ -1113,10 +1073,7 @@ impl Hierarchy {
     /// Produce role automata only after a theorem-backed dependency check. The
     /// source-order relation remains separate and available to profile reporting.
     fn automata<S: Admission + ?Sized>(
-        &self,
-        order: &RoleOrder,
-        top: Option<Role>,
-        stop: Option<&dyn StopSignal>,
+        &self, order: &RoleOrder, top: Option<Role>, stop: Option<&dyn StopSignal>,
         memory: &mut Memory<'_, S>,
     ) -> Result<RoleProgram, RoleHierarchyError> {
         memory.try_scope(|memory| {
@@ -1194,11 +1151,7 @@ impl Hierarchy {
     }
 
     fn dependencies_ready(
-        &self,
-        root: usize,
-        representatives: &[usize],
-        program: &RoleProgram,
-        order: &RoleOrder,
+        &self, root: usize, representatives: &[usize], program: &RoleProgram, order: &RoleOrder,
         top: Option<Role>,
     ) -> bool {
         let head = order.roles[root];
@@ -1248,12 +1201,8 @@ impl Hierarchy {
     /// Chapter 12, Theorem 12.4, not a claim that the printed source order alone
     /// guarantees a regular language (Example 12.2 disproves that implication).
     fn check_dependencies<S: Admission + ?Sized>(
-        &self,
-        order: &RoleOrder,
-        representatives: &[usize],
-        top: Option<Role>,
-        stop: Option<&dyn StopSignal>,
-        memory: &mut Memory<'_, S>,
+        &self, order: &RoleOrder, representatives: &[usize], top: Option<Role>,
+        stop: Option<&dyn StopSignal>, memory: &mut Memory<'_, S>,
     ) -> Result<(), RoleHierarchyError> {
         memory.try_scope(|memory| {
             let count = order.roles.len();
@@ -1311,13 +1260,8 @@ impl Hierarchy {
     }
 
     fn component_automaton<S: Admission + ?Sized>(
-        &self,
-        root: usize,
-        lower: &RoleProgram,
-        component: (&RoleOrder, &[usize]),
-        top: Option<Role>,
-        stop: Option<&dyn StopSignal>,
-        memory: &mut Memory<'_, S>,
+        &self, root: usize, lower: &RoleProgram, component: (&RoleOrder, &[usize]),
+        top: Option<Role>, stop: Option<&dyn StopSignal>, memory: &mut Memory<'_, S>,
     ) -> Result<Automaton, RoleHierarchyError> {
         let (order, representatives) = component;
         let head = order.roles[root];
@@ -1448,11 +1392,7 @@ impl Automaton {
     /// recursion loops at the final state; trailing recursion loops at the initial
     /// state. The transitivity loop joins the final and initial states by epsilon.
     fn inclusion<S: Admission + ?Sized>(
-        &mut self,
-        head: Role,
-        body: &[Role],
-        licence: usize,
-        memory: &mut Memory<'_, S>,
+        &mut self, head: Role, body: &[Role], licence: usize, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         if body == [head, head] {
             self.transition(self.accepting, self.initial, None, licence, memory)
@@ -1498,9 +1438,7 @@ impl RoleReader<'_> {
     /// The exact two object-property-expression forms of the OWL RDF mapping.
     /// The same decoder, retaining only a selected anonymous inverse's real triple.
     pub(crate) fn role_observing(
-        &self,
-        node: u32,
-        mut observe: impl FnMut(u32, u32, u32) -> Result<(), StorageError>,
+        &self, node: u32, mut observe: impl FnMut(u32, u32, u32) -> Result<(), StorageError>,
     ) -> Result<Role, RoleHierarchyError> {
         self.poll()?;
         match self.interner.value(node) {
@@ -1527,8 +1465,7 @@ impl RoleReader<'_> {
 
     /// Read all RBox syntax through the same signed-property and strict-list doors.
     pub(crate) fn hierarchy<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> Result<Hierarchy, RoleHierarchyError> {
         memory.try_scope(|memory| {
             let mut out = Hierarchy::default();
@@ -1659,20 +1596,13 @@ impl RoleReader<'_> {
 
     /// Map the original strict list iterator directly into the admitted role array.
     fn role_reading<S: Admission + ?Sized>(
-        &self,
-        node: u32,
-        reads: &mut Vec<source::Triple>,
-        memory: &mut Memory<'_, S>,
+        &self, node: u32, reads: &mut Vec<source::Triple>, memory: &mut Memory<'_, S>,
     ) -> Result<Role, RoleHierarchyError> {
         self.role_observing(node, |s, p, o| memory.push(reads, (s, p, o)))
     }
 
     fn chain<S: Admission + ?Sized>(
-        &self,
-        head: u32,
-        list: u32,
-        memory: &mut Memory<'_, S>,
-        reads: &mut Vec<source::Triple>,
+        &self, head: u32, list: u32, memory: &mut Memory<'_, S>, reads: &mut Vec<source::Triple>,
     ) -> Result<Chain, RoleHierarchyError> {
         // The hierarchy owns this transaction, including the shared read buffer.
         // Do not refund a child scope while that parent's grown buffer is alive.
@@ -1728,10 +1658,7 @@ impl RoleReader<'_> {
 
 /// Every simple inclusion entails its inverse inclusion; no alias changes orientation.
 fn add_inclusion<S: Admission + ?Sized>(
-    inclusions: &mut Vec<(Role, Role)>,
-    sub: Role,
-    sup: Role,
-    memory: &mut Memory<'_, S>,
+    inclusions: &mut Vec<(Role, Role)>, sub: Role, sup: Role, memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     memory.push(inclusions, (sub, sup))?;
     memory.push(inclusions, (sub.inverse(), sup.inverse()))
@@ -1860,10 +1787,7 @@ mod tests {
     }
 
     fn language(
-        machine: &Automaton,
-        edges: &[(usize, usize, u32)],
-        from: usize,
-        to: usize,
+        machine: &Automaton, edges: &[(usize, usize, u32)], from: usize, to: usize,
     ) -> bool {
         let mut seen = vec![false; 3 * machine.states];
         let mut work = vec![(from, machine.initial)];

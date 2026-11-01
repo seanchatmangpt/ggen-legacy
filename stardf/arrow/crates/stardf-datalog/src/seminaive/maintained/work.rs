@@ -19,10 +19,7 @@ pub(super) struct Meter<'a, 's> {
 
 impl<'a, 's> Meter<'a, 's> {
     pub(super) fn new(
-        used: &'a Cell<u128>,
-        preparation: u128,
-        limit: u128,
-        stop: Option<&'s dyn StopSignal>,
+        used: &'a Cell<u128>, preparation: u128, limit: u128, stop: Option<&'s dyn StopSignal>,
     ) -> Self {
         Self {
             used,
@@ -93,8 +90,7 @@ impl<'a, 's> Meter<'a, 's> {
 
     /// False is an owned work refusal; stops and overflow retain their native error.
     pub(super) fn paused<E>(
-        &self,
-        report: super::super::BudgetReport,
+        &self, report: super::super::BudgetReport,
     ) -> Result<bool, EvalError<E>> {
         if self.overflow.get() {
             Err(EvalError::Storage(StorageError::SizeOverflow))
@@ -130,8 +126,7 @@ impl<'a, 's> Meter<'a, 's> {
     }
 
     pub(super) fn with_memory<A: Admission + ?Sized, T>(
-        &self,
-        memory: &mut Memory<'_, A>,
+        &self, memory: &mut Memory<'_, A>,
         body: impl FnOnce(&mut Memory<'_, FactoryAdmission<'_, '_, '_, '_, A>>) -> T,
     ) -> T {
         memory.with_account(|original, live| {

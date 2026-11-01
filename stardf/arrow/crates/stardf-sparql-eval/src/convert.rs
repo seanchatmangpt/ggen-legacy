@@ -28,8 +28,7 @@ pub fn named_node_to_value(node: &NamedNode) -> TermValue {
 
 /// Copy the lexical key through the same conversion while preserving its grant.
 pub(crate) fn named_node_to_workspace_value(
-    node: &NamedNode,
-    workspace: &crate::WorkspaceCapability,
+    node: &NamedNode, workspace: &crate::WorkspaceCapability,
 ) -> Result<crate::WorkspaceTerm, EvalError> {
     workspace.iri(node.as_str())
 }
@@ -99,8 +98,7 @@ pub fn literal_to_value(lit: &Literal) -> TermValue {
 /// quoted triple term whose components *bind* variables (structural triple-term
 /// matching) is not supported for any caller of this helper, not only BGPs; only fully-ground quoted triples resolve to a single interned id.
 pub fn ground_triple_pattern_to_value(
-    pattern: &TriplePattern,
-    site: &str,
+    pattern: &TriplePattern, site: &str,
 ) -> Result<TermValue, EvalError> {
     convert_ground(
         GroundSource::Triple(pattern),
@@ -128,8 +126,7 @@ pub fn ground_triple_pattern_to_value(
 /// [`EvalError::Unsupported`] naming `site` when a variable stands anywhere in the
 /// pattern: in a quoted triple's subject, predicate or object, or as the whole term.
 pub fn ground_term_pattern_to_value(
-    pattern: &TermPattern,
-    site: &str,
+    pattern: &TermPattern, site: &str,
 ) -> Result<TermValue, EvalError> {
     ground_term_pattern_to_workspace_value(pattern, site, &crate::WorkspaceCapability::resident())
         .map(|value| value.into_parts().0)
@@ -150,8 +147,7 @@ pub fn ground_term_to_value(term: &GroundTerm) -> TermValue {
 
 /// Query-authored literal facets retain the original binding/copy admission.
 pub(crate) fn literal_to_workspace_value(
-    lit: &Literal,
-    workspace: &crate::WorkspaceCapability,
+    lit: &Literal, workspace: &crate::WorkspaceCapability,
 ) -> Result<crate::WorkspaceTerm, EvalError> {
     let mut frame = crate::workspace::LexicalFrame::new(workspace);
     let value = {
@@ -205,17 +201,14 @@ pub(crate) fn literal_to_workspace_value(
 
 /// Convert a ground pattern under its original before-allocation owner.
 pub(crate) fn ground_term_pattern_to_workspace_value(
-    term: &TermPattern,
-    site: &str,
-    workspace: &crate::WorkspaceCapability,
+    term: &TermPattern, site: &str, workspace: &crate::WorkspaceCapability,
 ) -> Result<crate::WorkspaceTerm, EvalError> {
     convert_ground(GroundSource::Pattern(term), site, workspace)
 }
 
 /// Convert a VALUES cell, retaining the original lexical and nested-box owner.
 pub(crate) fn ground_term_to_workspace_value(
-    term: &GroundTerm,
-    workspace: &crate::WorkspaceCapability,
+    term: &GroundTerm, workspace: &crate::WorkspaceCapability,
 ) -> Result<crate::WorkspaceTerm, EvalError> {
     convert_ground(GroundSource::Ground(term), "a ground term", workspace)
 }
@@ -228,9 +221,7 @@ enum GroundSource<'a> {
 }
 
 fn convert_ground(
-    term: GroundSource<'_>,
-    site: &str,
-    workspace: &crate::WorkspaceCapability,
+    term: GroundSource<'_>, site: &str, workspace: &crate::WorkspaceCapability,
 ) -> Result<crate::WorkspaceTerm, EvalError> {
     enum Step<'a> {
         Term(GroundSource<'a>),

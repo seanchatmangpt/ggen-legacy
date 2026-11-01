@@ -68,9 +68,7 @@ impl Dictionary {
     /// # Errors
     /// Preserves analyzer input errors and before-allocation physical refusals.
     pub fn compile<P: CorpusProfile>(
-        index: &TextIndex<P>,
-        entries: &[DictionaryEntry<'_>],
-        workspace: &WorkspaceCapability,
+        index: &TextIndex<P>, entries: &[DictionaryEntry<'_>], workspace: &WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let mut states = AdmittedVec::new(workspace);
         states.push(State::new(0, workspace))?;
@@ -190,9 +188,7 @@ impl Dictionary {
         self.0.lengths[entry]
     }
     fn matches_key<P: CorpusProfile>(
-        &self,
-        index: &TextIndex<P>,
-        entries: &[DictionaryEntry<'_>],
+        &self, index: &TextIndex<P>, entries: &[DictionaryEntry<'_>],
         workspace: &WorkspaceCapability,
     ) -> Result<bool, EvalError> {
         if self.0.analyzer != index.analyzer_fingerprint() || self.len() != entries.len() {
@@ -221,10 +217,7 @@ impl Dictionary {
     /// # Errors
     /// Refuses an analyzer mismatch, overflow or actual storage failure.
     pub fn scan<P: CorpusProfile>(
-        &self,
-        index: Arc<TextIndex<P>>,
-        predicate: Option<u32>,
-        workspace: &WorkspaceCapability,
+        &self, index: Arc<TextIndex<P>>, predicate: Option<u32>, workspace: &WorkspaceCapability,
     ) -> Result<DictionaryMatches<P>, EvalError> {
         if self.0.analyzer != index.analyzer_fingerprint() {
             return Err(purrdf_sparql_eval::NativeDiagnostic::error(
@@ -371,9 +364,7 @@ impl DictionaryCache {
     /// # Errors
     /// Preserves analyzer, allocation and checked-layout failures.
     pub fn get<P: CorpusProfile>(
-        &self,
-        index: &TextIndex<P>,
-        entries: &[DictionaryEntry<'_>],
+        &self, index: &TextIndex<P>, entries: &[DictionaryEntry<'_>],
         workspace: &WorkspaceCapability,
     ) -> Result<Dictionary, EvalError> {
         if !self.retain.load(Ordering::Acquire) {
@@ -448,9 +439,7 @@ pub struct DictionaryMatches<P: CorpusProfile = GraphLanguage> {
 }
 impl<P: CorpusProfile> DictionaryMatches<P> {
     pub(crate) fn from_literal(
-        index: Arc<TextIndex<P>>,
-        dictionary: Dictionary,
-        rows: AdmittedVec<DictionaryMatch>,
+        index: Arc<TextIndex<P>>, dictionary: Dictionary, rows: AdmittedVec<DictionaryMatch>,
     ) -> Self {
         let output_rows = rows.len() as u64;
         Self {
@@ -534,8 +523,7 @@ impl<P: CorpusProfile> DictionaryMatches<P> {
     }
 }
 fn domain<'a, P: CorpusProfile>(
-    index: &'a TextIndex<P>,
-    row: &DictionaryMatch,
+    index: &'a TextIndex<P>, row: &DictionaryMatch,
 ) -> (&'a TermValue, Option<&'a str>) {
     let document = index
         .document(row.path[0].document)
@@ -543,10 +531,7 @@ fn domain<'a, P: CorpusProfile>(
     (document.subject(), document.language())
 }
 fn transition(
-    dictionary: &Dictionary,
-    mut state: usize,
-    token: &str,
-    work: &mut DictionaryWork,
+    dictionary: &Dictionary, mut state: usize, token: &str, work: &mut DictionaryWork,
 ) -> Result<usize, EvalError> {
     work.transitions = work
         .transitions
@@ -566,10 +551,8 @@ fn transition(
         .unwrap_or(0))
 }
 fn append_match(
-    entry: usize,
-    path: impl ExactSizeIterator<Item = Occurrence>,
-    rows: &mut AdmittedVec<DictionaryMatch>,
-    workspace: &WorkspaceCapability,
+    entry: usize, path: impl ExactSizeIterator<Item = Occurrence>,
+    rows: &mut AdmittedVec<DictionaryMatch>, workspace: &WorkspaceCapability,
 ) -> Result<(), EvalError> {
     let mut owned = AdmittedVec::with_capacity(path.len(), workspace)?;
     for occurrence in path {
@@ -590,12 +573,8 @@ fn append_match(
     })
 }
 fn scan_unique<P: CorpusProfile>(
-    dictionary: &Dictionary,
-    occurrences: &[Occurrence],
-    rows: &mut AdmittedVec<DictionaryMatch>,
-    work: &mut DictionaryWork,
-    index: &TextIndex<P>,
-    workspace: &WorkspaceCapability,
+    dictionary: &Dictionary, occurrences: &[Occurrence], rows: &mut AdmittedVec<DictionaryMatch>,
+    work: &mut DictionaryWork, index: &TextIndex<P>, workspace: &WorkspaceCapability,
 ) -> Result<(), EvalError> {
     let mut state = 0;
     let mut previous = None;
@@ -630,12 +609,8 @@ struct Parent {
     parent: Option<usize>,
 }
 fn scan_aliases<P: CorpusProfile>(
-    dictionary: &Dictionary,
-    occurrences: &[Occurrence],
-    rows: &mut AdmittedVec<DictionaryMatch>,
-    work: &mut DictionaryWork,
-    index: &TextIndex<P>,
-    workspace: &WorkspaceCapability,
+    dictionary: &Dictionary, occurrences: &[Occurrence], rows: &mut AdmittedVec<DictionaryMatch>,
+    work: &mut DictionaryWork, index: &TextIndex<P>, workspace: &WorkspaceCapability,
 ) -> Result<(), EvalError> {
     let mut parents = AdmittedVec::new(workspace);
     let mut frontier = AdmittedVec::new(workspace);

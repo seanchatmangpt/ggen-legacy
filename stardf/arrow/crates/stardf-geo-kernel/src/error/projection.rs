@@ -117,10 +117,8 @@ impl purrdf_hash::error::StructuredError for ProjectionInputError {
 }
 impl ProjectionInputError {
     pub(crate) fn gcj(
-        domain: &crate::operation::Applicability,
-        point: Option<&crate::operation::OperationPoint>,
-        reason: GcjInputReason,
-        progress: &mut crate::context::WorkProgress<'_>,
+        domain: &crate::operation::Applicability, point: Option<&crate::operation::OperationPoint>,
+        reason: GcjInputReason, progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         super::GeoError::diagnostic_inputs(
             domain,
@@ -146,11 +144,8 @@ impl ProjectionInputError {
     }
 
     pub(crate) fn mercator_configuration(
-        radius: &crate::Rat,
-        eccentricity_squared: Option<&crate::Rat>,
-        law: &'static [u8],
-        square_domain: Option<bool>,
-        requirement: MercatorRequirement,
+        radius: &crate::Rat, eccentricity_squared: Option<&crate::Rat>, law: &'static [u8],
+        square_domain: Option<bool>, requirement: MercatorRequirement,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         let captured = (|| {
@@ -177,11 +172,8 @@ impl ProjectionInputError {
     }
 
     pub(crate) fn mercator_pole(
-        point: &crate::operation::OperationPoint,
-        law: &'static [u8],
-        radius: Option<&crate::Rat>,
-        eccentricity_squared: Option<&crate::Rat>,
-        progress: &mut crate::context::WorkProgress<'_>,
+        point: &crate::operation::OperationPoint, law: &'static [u8], radius: Option<&crate::Rat>,
+        eccentricity_squared: Option<&crate::Rat>, progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         super::GeoError::diagnostic_inputs(point, None, None, progress, |point, _, _, progress| {
             let captured = (|| {

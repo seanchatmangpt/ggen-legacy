@@ -6,10 +6,7 @@
 use purrdf_core::{DatasetView, GraphMatch, ProbePattern, StatisticsAccuracy, StatisticsStream};
 
 pub(super) fn assert_chronological_counts<D: DatasetView>(
-    view: &D,
-    predicate: D::Id,
-    expected: [usize; 3],
-    layered: bool,
+    view: &D, predicate: D::Id, expected: [usize; 3], layered: bool,
 ) -> u64 {
     let statistics = view.statistics().expect("actual stack exposes statistics");
     let revision = statistics.fingerprint();

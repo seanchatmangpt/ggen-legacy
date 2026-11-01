@@ -24,9 +24,7 @@ use crate::{
 /// in the dataset. No bytes escape until the cover, digest, grammar and complete
 /// structural metadata have all been verified.
 pub fn decode_document(
-    dataset: &RdfDataset,
-    document: &str,
-    profile: &Profile,
+    dataset: &RdfDataset, document: &str, profile: &Profile,
 ) -> Result<String, JsonError> {
     BaseIri::parse(document).map_err(JsonError::Iri)?;
     let root_id = dataset
@@ -124,9 +122,7 @@ fn node<'a, 'n>(nodes: &'n Nodes<'a>, id: &str) -> Result<&'n Node<'a>, JsonErro
 }
 
 fn read_root<'a>(
-    dataset: &'a RdfDataset,
-    id: TermId,
-    profile: &Profile,
+    dataset: &'a RdfDataset, id: TermId, profile: &Profile,
 ) -> Result<Node<'a>, JsonError> {
     let subject = iri_subject(dataset, id, "selected document")?;
     let mut root = Node {
@@ -147,10 +143,7 @@ fn read_root<'a>(
 }
 
 fn collect<'a>(
-    dataset: &'a RdfDataset,
-    root: TermId,
-    root_facts: Node<'a>,
-    profile: &Profile,
+    dataset: &'a RdfDataset, root: TermId, root_facts: Node<'a>, profile: &Profile,
 ) -> Result<Nodes<'a>, JsonError> {
     let document = root_facts.subject;
     let mut selected: FastMap<TermId, &'a str> = FastMap::default();
@@ -216,9 +209,7 @@ fn collect<'a>(
 }
 
 fn iri_subject<'a>(
-    dataset: &'a RdfDataset,
-    id: TermId,
-    document: &str,
+    dataset: &'a RdfDataset, id: TermId, document: &str,
 ) -> Result<&'a str, JsonError> {
     match dataset.resolve(id) {
         TermRef::Iri(iri) => Ok(iri),
@@ -227,9 +218,7 @@ fn iri_subject<'a>(
 }
 
 fn validate_node<'a>(
-    facts: &Node<'a>,
-    document: &str,
-    profile: &Profile,
+    facts: &Node<'a>, document: &str, profile: &Profile,
 ) -> Result<Option<VerbatimSpan<'a>>, JsonError> {
     facts.expect_iri("document", document)?;
     let class = facts.iri("type")?;

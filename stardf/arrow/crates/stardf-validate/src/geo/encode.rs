@@ -18,10 +18,8 @@ pub(super) const IDENTITY_MEMBER_COUNT: u64 = 16;
 /// failures move unchanged to the caller before any envelope allocation; the
 /// explicit resident String adapter may render that same cause separately.
 pub(super) fn response(
-    identity: Option<&GeoQueryIdentity>,
-    index: Option<purrdf_hash::hex::Digest32>,
-    outcome: Result<Value, GeoCallError>,
-    invocation: Option<&super::invocation::Invocation>,
+    identity: Option<&GeoQueryIdentity>, index: Option<purrdf_hash::hex::Digest32>,
+    outcome: Result<Value, GeoCallError>, invocation: Option<&super::invocation::Invocation>,
     decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<(String, bool), GeoCallError> {
     if invocation.is_some()
@@ -58,8 +56,7 @@ pub(super) fn response(
 }
 
 pub(super) fn identity(
-    identity: &GeoQueryIdentity,
-    decode: &Decode<'_, '_, '_, '_>,
+    identity: &GeoQueryIdentity, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Value, GeoCallError> {
     Ok(Object::new()
         .with_memory_cell(
@@ -192,8 +189,7 @@ pub(super) fn geometry_metric(
         .into())
 }
 pub(super) fn metric(
-    estimate: &MetricEstimate,
-    decode: &Decode<'_, '_, '_, '_>,
+    estimate: &MetricEstimate, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Value, GeoCallError> {
     Ok(Object::new()
         .with_memory_cell(
@@ -239,8 +235,7 @@ pub(super) fn metric(
         .into())
 }
 pub(super) fn inverse(
-    answer: &purrdf_geo_kernel::geodesic::InverseResult,
-    decode: &Decode<'_, '_, '_, '_>,
+    answer: &purrdf_geo_kernel::geodesic::InverseResult, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Value, GeoCallError> {
     let cuts = decode.array(answer.pole_cuts().iter(), |(latitude, from, to)| {
         Ok(Object::new()
@@ -344,8 +339,7 @@ pub(super) fn inverse(
         .into())
 }
 pub(super) fn direct(
-    answer: &purrdf_geo_kernel::geodesic::DirectResult,
-    decode: &Decode<'_, '_, '_, '_>,
+    answer: &purrdf_geo_kernel::geodesic::DirectResult, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Value, GeoCallError> {
     let places = answer.output_grid().decimal_places();
     Ok(Object::new()
@@ -396,9 +390,7 @@ pub(super) fn direct(
 }
 
 fn enclosure(
-    lower: &Rat,
-    upper: &Rat,
-    decode: &Decode<'_, '_, '_, '_>,
+    lower: &Rat, upper: &Rat, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Value, GeoCallError> {
     Ok(Object::new()
         .with_memory_cell(
@@ -414,8 +406,7 @@ fn enclosure(
         .into())
 }
 pub(super) fn inverse_proof(
-    receipt: &purrdf_geo_kernel::geodesic::InverseProofReceipt,
-    decode: &Decode<'_, '_, '_, '_>,
+    receipt: &purrdf_geo_kernel::geodesic::InverseProofReceipt, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Value, GeoCallError> {
     Ok(Object::new()
         .with_memory_cell(
@@ -478,8 +469,7 @@ pub(super) fn inverse_proof(
 }
 pub(super) fn transform(
     answer: &purrdf_geo_kernel::TransformResult,
-    unit: purrdf_geo_kernel::operation::CoordinateUnit,
-    decode: &Decode<'_, '_, '_, '_>,
+    unit: purrdf_geo_kernel::operation::CoordinateUnit, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Value, GeoCallError> {
     let point = answer.point();
     let mut result = Object::new()
@@ -551,8 +541,7 @@ pub(super) fn transform(
     Ok(result.into())
 }
 pub(super) fn proof(
-    receipt: &MetricProofReceipt,
-    decode: &Decode<'_, '_, '_, '_>,
+    receipt: &MetricProofReceipt, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Value, GeoCallError> {
     Ok(Object::new()
         .with_memory_cell(
@@ -575,14 +564,12 @@ pub(super) fn proof(
 }
 /// Only proof-display bounds round outward; completed values keep their law's grid.
 pub(super) fn upper_decimal(
-    value: &Rat,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Rat, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<String, GeoCallError> {
     decode.decimal_text(value, Some(36), Rounding::Up)
 }
 pub(super) fn lower_decimal(
-    value: &Rat,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Rat, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<String, GeoCallError> {
     decode.decimal_text(value, Some(36), Rounding::Down)
 }
@@ -590,8 +577,7 @@ pub(super) fn key(key: u64, decode: &Decode<'_, '_, '_, '_>) -> Result<String, G
     decode.hex(&key.to_be_bytes())
 }
 pub(super) fn range(
-    range: purrdf_geo_kernel::cells::CellRange,
-    decode: &Decode<'_, '_, '_, '_>,
+    range: purrdf_geo_kernel::cells::CellRange, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Value, GeoCallError> {
     Ok(Object::new()
         .with_memory_cell(
@@ -646,8 +632,7 @@ pub(super) fn cell(cell: CellId, decode: &Decode<'_, '_, '_, '_>) -> Result<Valu
         .into())
 }
 pub(super) fn term(
-    term: &TermValue,
-    decode: &Decode<'_, '_, '_, '_>,
+    term: &TermValue, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Value, GeoCallError> {
     Ok(match term {
         TermValue::Iri(iri) => Object::new()
@@ -736,8 +721,7 @@ fn environment_evidence(
     })
 }
 fn vocabulary_cause(
-    error: &purrdf_geo_kernel::VocabularyError,
-    decode: &Decode<'_, '_, '_, '_>,
+    error: &purrdf_geo_kernel::VocabularyError, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Value, GeoCallError> {
     use purrdf_geo_kernel::{VocabularyError, VocabularyNamespace};
     let code = match error {
@@ -792,16 +776,14 @@ fn vocabulary_cause(
 }
 
 pub(super) fn refusal_admitted(
-    error: &GeoCallError,
-    invocation: &super::invocation::Invocation,
+    error: &GeoCallError, invocation: &super::invocation::Invocation,
     decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Value, GeoCallError> {
     invocation.admit_refusal(error)?;
     refusal(error, decode)
 }
 pub(super) fn refusal(
-    error: &GeoCallError,
-    decode: &Decode<'_, '_, '_, '_>,
+    error: &GeoCallError, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<Value, GeoCallError> {
     let mut fields = Object::new().with_memory_cell(
         "message",

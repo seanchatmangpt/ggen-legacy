@@ -16,7 +16,7 @@ stardf:SubstrateContract
     stardf:predecessor "purrdf" ;
     stardf:executionModel stardf:BranchlessConstantTime ;
     stardf:memoryModel stardf:ZeroAllocationArena ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     prov:wasDerivedFrom <file:///Users/sac/purrdf/crates/rdf-capi/include/purrdf.h> ;
     stardf:sourceDigestSha256 "6ef9b4a0a9d28036b24cc702bca9113e1ab6a7e6cbb708b74ff5b11cf281ad45" .
 
@@ -176,14 +176,14 @@ stardf:fn_turnstile_admit
 
 stardf:fn_avec_export_stream
     a stardf:AbiFunction, stardf:KernelOperation ;
-    rdfs:label "stardf_avec_export_stream" ;
-    stardf:targetSymbol "stardf_avec_export_stream" ;
+    rdfs:label "stardf_cgap_export_stream" ;
+    stardf:targetSymbol "stardf_cgap_export_stream" ;
     stardf:predecessorSymbol "none" ;
     stardf:subsystem "Arrow" ;
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "dataset" ;
@@ -244,7 +244,7 @@ stardf:fn_quads_for_pattern
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "dataset" ;
@@ -284,7 +284,7 @@ stardf:fn_cursor_next
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "cursor" ;
@@ -320,7 +320,7 @@ stardf:fn_cursor_free
     stardf:returnType "void" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "cursor" ;
@@ -336,7 +336,7 @@ stardf:fn_entail_materialize_to_nquads
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "document" ;
@@ -884,7 +884,7 @@ stardf:fn_entail_graph_entails
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "regime" ;
@@ -1660,7 +1660,7 @@ stardf:fn_query_governors_init
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "out" ;
@@ -1744,7 +1744,7 @@ stardf:fn_graph_from_dataset
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "dataset" ;
@@ -1768,7 +1768,7 @@ stardf:fn_graph_insert
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "graph" ;
@@ -1808,7 +1808,7 @@ stardf:fn_graph_remove
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "graph" ;
@@ -1848,7 +1848,7 @@ stardf:fn_graph_freeze
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "graph" ;
@@ -1872,7 +1872,7 @@ stardf:fn_graph_free
     stardf:returnType "void" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "graph" ;
@@ -1944,7 +1944,7 @@ stardf:fn_dataset_free
     stardf:returnType "void" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "dataset" ;
@@ -1960,7 +1960,7 @@ stardf:fn_dataset_quad_count
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "dataset" ;
@@ -1980,7 +1980,7 @@ stardf:fn_dataset_term_count
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "dataset" ;
@@ -2172,7 +2172,7 @@ stardf:fn_dataset_set_division_policy
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "dataset" ;
@@ -2196,7 +2196,7 @@ stardf:fn_dataset_division_policy
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "dataset" ;
@@ -2220,7 +2220,7 @@ stardf:fn_query
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "dataset" ;
@@ -2276,7 +2276,7 @@ stardf:fn_query_xpath_regex
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "dataset" ;
@@ -2336,7 +2336,7 @@ stardf:fn_query_json
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "dataset" ;
@@ -2388,7 +2388,7 @@ stardf:fn_query_json_xpath_regex
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "dataset" ;
@@ -2444,7 +2444,7 @@ stardf:fn_query_canon_arrow
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "dataset" ;
@@ -2476,7 +2476,7 @@ stardf:fn_query_governed
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "dataset" ;
@@ -2552,7 +2552,7 @@ stardf:fn_query_governed_xpath_regex
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "dataset" ;
@@ -3000,7 +3000,7 @@ stardf:fn_query_with_geo
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "geo" ;
@@ -3064,7 +3064,7 @@ stardf:fn_query_json_with_geo
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "geo" ;
@@ -3124,7 +3124,7 @@ stardf:fn_query_governed_with_geo
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "geo" ;
@@ -3404,7 +3404,7 @@ stardf:fn_rowcursor_variable_count
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "rc" ;
@@ -3424,7 +3424,7 @@ stardf:fn_rowcursor_variable_name
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "rc" ;
@@ -3448,7 +3448,7 @@ stardf:fn_rowcursor_next
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "rc" ;
@@ -3464,7 +3464,7 @@ stardf:fn_rowcursor_term
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "rc" ;
@@ -3492,7 +3492,7 @@ stardf:fn_rowcursor_free
     stardf:returnType "void" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "rc" ;
@@ -3644,7 +3644,7 @@ stardf:fn_serialize_empty_named_graphs_dropped
     stardf:returnType "int32_t" ;
     stardf:hasConditionalBranches false ;
     stardf:dynamicAllocations 0 ;
-    stardf:downstreamSubstrate "avec" ;
+    stardf:downstreamSubstrate "cgap" ;
     stardf:parameter [
         stardf:paramIndex 0 ;
         stardf:paramName "dataset" ;

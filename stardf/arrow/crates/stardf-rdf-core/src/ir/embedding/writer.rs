@@ -57,10 +57,7 @@ pub struct ExtensionSection {
 impl ExtensionSection {
     /// Constructs and validates a caller extension section.
     pub fn new(
-        kind: u32,
-        instance: u32,
-        flags: u32,
-        bytes: Vec<u8>,
+        kind: u32, instance: u32, flags: u32, bytes: Vec<u8>,
     ) -> Result<Self, EmbeddingError> {
         if kind < SECTION_EXTENSION_MIN {
             return Err(EmbeddingError::UnsupportedCode {
@@ -274,9 +271,7 @@ impl ProjectionSpec {
     /// Derives a projection declaration from its owning family.
     #[must_use]
     pub fn derive(
-        family_id: FamilyId,
-        effective_dimension: u32,
-        postprocessing: PrefixPostprocessing,
+        family_id: FamilyId, effective_dimension: u32, postprocessing: PrefixPostprocessing,
     ) -> Self {
         Self {
             vector_space_id: derive_vector_space_id(
@@ -469,9 +464,7 @@ impl<W: Write + Seek> EmbeddingStreamWriter<W> {
     /// Encodes typed metadata against the supplied commitments and creates a
     /// bounded-memory streaming writer.
     pub fn from_typed_metadata(
-        output: W,
-        metadata: CanonicalMetadataInput,
-        matrices: Vec<MatrixCommitment>,
+        output: W, metadata: CanonicalMetadataInput, matrices: Vec<MatrixCommitment>,
     ) -> Result<Self, EmbeddingWriteError> {
         let encoded = metadata.encode_for_matrices(&matrices)?;
         Self::new(output, encoded, matrices)
@@ -480,9 +473,7 @@ impl<W: Write + Seek> EmbeddingStreamWriter<W> {
     /// Plans the complete artifact and writes all canonical metadata and
     /// padding. Matrix bodies remain reserved until their rows are supplied.
     pub fn new(
-        mut output: W,
-        metadata: CanonicalMetadataSections,
-        mut matrices: Vec<MatrixCommitment>,
+        mut output: W, metadata: CanonicalMetadataSections, mut matrices: Vec<MatrixCommitment>,
     ) -> Result<Self, EmbeddingWriteError> {
         metadata.validate()?;
         if matrices.is_empty() {
@@ -755,9 +746,7 @@ fn prepare_matrix<T: MatrixScalar>(
 }
 
 fn canonical_projection_specs(
-    family_id: FamilyId,
-    stored_dimension: u32,
-    mut projections: Vec<ProjectionSpec>,
+    family_id: FamilyId, stored_dimension: u32, mut projections: Vec<ProjectionSpec>,
 ) -> Result<Vec<ProjectionSpec>, EmbeddingError> {
     if projections.is_empty() {
         return Err(EmbeddingError::Missing("matrix projection"));
@@ -1176,9 +1165,7 @@ fn encode_matrices_section(matrices: &[MatrixCommitment]) -> Result<Vec<u8>, Emb
 }
 
 fn write_stream_skeleton<W: Write + Seek>(
-    output: &mut W,
-    layout: &FileLayout,
-    payloads: &[SectionPayload],
+    output: &mut W, layout: &FileLayout, payloads: &[SectionPayload],
 ) -> Result<(), EmbeddingWriteError> {
     output.seek(SeekFrom::Start(0))?;
     output.write_all(&layout.header_zero_root())?;
@@ -1269,17 +1256,13 @@ fn write_at<W: Write + Seek>(output: &mut W, offset: u64, bytes: &[u8]) -> std::
 }
 
 fn checked_matrix_byte_length(
-    row_count: u64,
-    stored_dimension: u32,
-    dtype: VectorDtype,
+    row_count: u64, stored_dimension: u32, dtype: VectorDtype,
 ) -> Result<u64, EmbeddingError> {
     checked_projection_byte_length(row_count, stored_dimension, dtype)
 }
 
 fn checked_projection_byte_length(
-    row_count: u64,
-    dimension: u32,
-    dtype: VectorDtype,
+    row_count: u64, dimension: u32, dtype: VectorDtype,
 ) -> Result<u64, EmbeddingError> {
     row_count
         .checked_mul(u64::from(dimension))
@@ -1344,9 +1327,7 @@ fn projection_hashers(
 }
 
 fn projection_hashers_from_specs<T: MatrixScalar>(
-    row_count: u64,
-    stored_dimension: u32,
-    specs: &[ProjectionSpec],
+    row_count: u64, stored_dimension: u32, specs: &[ProjectionSpec],
 ) -> Result<Vec<ProjectionHashState>, EmbeddingError> {
     let mut states = Vec::with_capacity(specs.len());
     // A normalized projection's digest folds binary64 arithmetic, the §13.2 norm and the
@@ -1386,9 +1367,7 @@ fn projection_hashers_from_specs<T: MatrixScalar>(
 }
 
 fn update_projection_hashers<T: MatrixScalar>(
-    states: &mut [ProjectionHashState],
-    values: &[T],
-    row: u64,
+    states: &mut [ProjectionHashState], values: &[T], row: u64,
 ) -> Result<(), EmbeddingError> {
     for state in states {
         let dimension = usize::try_from(state.spec.effective_dimension)
@@ -1425,9 +1404,7 @@ fn update_projection_hashers<T: MatrixScalar>(
 }
 
 fn verify_projection_hashers(
-    commitment: &MatrixCommitment,
-    states: Vec<ProjectionHashState>,
-    matrix_id: MatrixId,
+    commitment: &MatrixCommitment, states: Vec<ProjectionHashState>, matrix_id: MatrixId,
 ) -> Result<(), EmbeddingError> {
     if states.len() != commitment.projections.len() {
         return Err(EmbeddingError::Malformed(
@@ -1447,10 +1424,7 @@ fn verify_projection_hashers(
 }
 
 fn deterministic_l2_norm<T: MatrixScalar>(
-    arithmetic: Resolved<Exact>,
-    values: &[T],
-    row: u64,
-    dimension: u32,
+    arithmetic: Resolved<Exact>, values: &[T], row: u64, dimension: u32,
 ) -> Result<f64, EmbeddingError> {
     // The one copy of the §13.2 fold, the one readers and the kNN and HNSW norms run.
     let norm = arithmetic.norm(values);
@@ -1464,9 +1438,7 @@ fn deterministic_l2_norm<T: MatrixScalar>(
 }
 
 fn validate_row<T: MatrixScalar>(
-    values: &[T],
-    stored_dimension: u32,
-    row: u64,
+    values: &[T], stored_dimension: u32, row: u64,
 ) -> Result<(), EmbeddingError> {
     if values.len()
         != usize::try_from(stored_dimension)

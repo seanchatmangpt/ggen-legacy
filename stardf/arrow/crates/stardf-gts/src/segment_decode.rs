@@ -88,74 +88,44 @@ pub trait ResolvedSink {
 
     /// Intern a resolved IRI term, returning its target id.
     fn intern_iri(
-        &mut self,
-        segment_index: u64,
-        gts_id: usize,
-        iri: &str,
+        &mut self, segment_index: u64, gts_id: usize, iri: &str,
     ) -> Result<Self::Id, Self::Error>;
 
     /// Intern a resolved blank-node term (already scoped by `segment_index`),
     /// returning its target id.
     fn intern_blank(
-        &mut self,
-        segment_index: u64,
-        gts_id: usize,
-        label: &str,
+        &mut self, segment_index: u64, gts_id: usize, label: &str,
     ) -> Result<Self::Id, Self::Error>;
 
     /// Intern a resolved literal term, returning its target id. The datatype (if
     /// any) is already resolved to a target id; the target performs its own
     /// datatype-must-be-IRI check and base-direction parsing.
     fn intern_literal(
-        &mut self,
-        segment_index: u64,
-        gts_id: usize,
-        lexical: String,
-        datatype: Option<Self::Id>,
-        lang: Option<String>,
-        direction: Option<String>,
+        &mut self, segment_index: u64, gts_id: usize, lexical: String, datatype: Option<Self::Id>,
+        lang: Option<String>, direction: Option<String>,
     ) -> Result<Self::Id, Self::Error>;
 
     /// Intern a resolved quoted-triple term from its resolved components.
     fn intern_triple(
-        &mut self,
-        segment_index: u64,
-        gts_id: usize,
-        s: Self::Id,
-        p: Self::Id,
-        o: Self::Id,
+        &mut self, segment_index: u64, gts_id: usize, s: Self::Id, p: Self::Id, o: Self::Id,
     ) -> Result<Self::Id, Self::Error>;
 
     /// Push a resolved quad row (`g` is `None` for the default graph).
     fn push_quad(
-        &mut self,
-        segment_index: u64,
-        s: Self::Id,
-        p: Self::Id,
-        o: Self::Id,
-        g: Option<Self::Id>,
+        &mut self, segment_index: u64, s: Self::Id, p: Self::Id, o: Self::Id, g: Option<Self::Id>,
     ) -> Result<(), Self::Error>;
 
     /// Push a resolved reifier row binding `reifier` to the triple `(s, p, o)`
     /// in graph `g`.
     fn push_reifier(
-        &mut self,
-        segment_index: u64,
-        reifier: Self::Id,
-        s: Self::Id,
-        p: Self::Id,
-        o: Self::Id,
+        &mut self, segment_index: u64, reifier: Self::Id, s: Self::Id, p: Self::Id, o: Self::Id,
         g: Option<Self::Id>,
     ) -> Result<(), Self::Error>;
 
     /// Push a resolved annotation row `(reifier, predicate, object)` in graph
     /// `g`.
     fn push_annotation(
-        &mut self,
-        segment_index: u64,
-        reifier: Self::Id,
-        p: Self::Id,
-        o: Self::Id,
+        &mut self, segment_index: u64, reifier: Self::Id, p: Self::Id, o: Self::Id,
         g: Option<Self::Id>,
     ) -> Result<(), Self::Error>;
 
@@ -182,10 +152,7 @@ pub trait ResolvedSink {
 
     /// Inline blob digest + declared metadata passthrough (default no-op).
     fn blob(
-        &mut self,
-        _segment_index: u64,
-        _digest: &str,
-        _meta: Option<&Value>,
+        &mut self, _segment_index: u64, _digest: &str, _meta: Option<&Value>,
     ) -> Result<(), Self::Error> {
         Ok(())
     }
@@ -227,9 +194,7 @@ pub trait ResolvedSink {
 
     /// Suppression directive passthrough (default no-op).
     fn suppression(
-        &mut self,
-        _segment_index: u64,
-        _suppression: &Suppression,
+        &mut self, _segment_index: u64, _suppression: &Suppression,
     ) -> Result<(), Self::Error> {
         Ok(())
     }
@@ -241,9 +206,7 @@ pub trait ResolvedSink {
 
     /// Completed streamable-layout passthrough (default no-op).
     fn streamable_layout(
-        &mut self,
-        _segment_index: u64,
-        _info: &StreamableInfo,
+        &mut self, _segment_index: u64, _info: &StreamableInfo,
     ) -> Result<(), Self::Error> {
         Ok(())
     }
@@ -464,11 +427,7 @@ impl<S: ResolvedSink> SegmentResolver<S> {
     /// depth-bounded against cyclic quoted triples. A gts id no `term` event
     /// introduced is a genuinely dangling reference and hence an [`Err`].
     fn resolve_term(
-        &mut self,
-        segment_index: u64,
-        gts_id: usize,
-        role: &str,
-        depth: usize,
+        &mut self, segment_index: u64, gts_id: usize, role: &str, depth: usize,
     ) -> Result<S::Id, S::Error> {
         if let Some(&id) = self.remaps.get(&(segment_index, gts_id)) {
             return Ok(id);
@@ -495,11 +454,7 @@ impl<S: ResolvedSink> SegmentResolver<S> {
     /// triples through their reifier binding. Takes the [`Term`] BY VALUE (it was
     /// just removed from `raw_terms`) and MOVES its owned strings into the target.
     fn intern_raw_term(
-        &mut self,
-        segment_index: u64,
-        gts_id: usize,
-        term: Term,
-        depth: usize,
+        &mut self, segment_index: u64, gts_id: usize, term: Term, depth: usize,
     ) -> Result<S::Id, S::Error> {
         let our_id = match term.kind {
             TermKind::Iri => {
@@ -570,10 +525,7 @@ impl<S: ResolvedSink> SegmentResolver<S> {
     /// binding MUST exist by phase 2; a missing one is a genuine dangling
     /// reference and hence an [`Err`].
     fn resolve_triple_components(
-        &mut self,
-        segment_index: u64,
-        reifier: usize,
-        depth: usize,
+        &mut self, segment_index: u64, reifier: usize, depth: usize,
     ) -> Result<ResolvedComponents<S>, S::Error> {
         if depth > purrdf_events::MAX_TERM_NESTING_DEPTH {
             return Err(self.sink.err_nesting_limit(segment_index, reifier));

@@ -198,8 +198,7 @@ pub fn recipient_kid(blob: &[u8]) -> Option<Vec<u8>> {
 /// Returns an error for a malformed envelope, an unresolved key, or failed
 /// authentication. No unauthenticated plaintext is returned.
 pub fn decrypt0(
-    blob: &[u8],
-    resolve: impl Fn(&[u8]) -> Option<[u8; 32]>,
+    blob: &[u8], resolve: impl Fn(&[u8]) -> Option<[u8; 32]>,
 ) -> Result<Vec<u8>, Encrypt0Error> {
     decrypt0_bounded(blob, resolve, blob.len()).map_err(|error| match error {
         BoundedDecrypt0Error::Crypto(error) => error,
@@ -220,9 +219,7 @@ pub(crate) enum BoundedDecrypt0Error {
 /// only the plaintext-sized ciphertext prefix. Other CBOR forms reuse the full
 /// decoder's buffer. The AES-GCM tag is excluded from the decoded limit.
 pub(crate) fn decrypt0_bounded(
-    blob: &[u8],
-    resolve: impl Fn(&[u8]) -> Option<[u8; 32]>,
-    limit: usize,
+    blob: &[u8], resolve: impl Fn(&[u8]) -> Option<[u8; 32]>, limit: usize,
 ) -> Result<Vec<u8>, BoundedDecrypt0Error> {
     let parts =
         parse_encrypt0(blob).ok_or(BoundedDecrypt0Error::Crypto(Encrypt0Error::Malformed))?;
@@ -230,9 +227,7 @@ pub(crate) fn decrypt0_bounded(
 }
 
 fn decrypt_parts(
-    parts: Encrypt0Parts<'_>,
-    resolve: impl Fn(&[u8]) -> Option<[u8; 32]>,
-    limit: usize,
+    parts: Encrypt0Parts<'_>, resolve: impl Fn(&[u8]) -> Option<[u8; 32]>, limit: usize,
 ) -> Result<Vec<u8>, BoundedDecrypt0Error> {
     use BoundedDecrypt0Error::{Crypto, Limit};
 

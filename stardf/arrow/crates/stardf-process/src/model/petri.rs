@@ -129,10 +129,7 @@ impl PetriNet {
     /// [`ProcessError::OrderIndexOutOfRange`] naming the place count when any
     /// arc cites an unknown place.
     pub fn add_transition(
-        &mut self,
-        label: Option<String>,
-        inputs: &[(usize, u32)],
-        outputs: &[(usize, u32)],
+        &mut self, label: Option<String>, inputs: &[(usize, u32)], outputs: &[(usize, u32)],
     ) -> Result<usize, ProcessError> {
         let places = self.place_names.len();
         for (place, _) in inputs.iter().chain(outputs) {

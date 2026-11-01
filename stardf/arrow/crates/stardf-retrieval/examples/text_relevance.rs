@@ -174,9 +174,7 @@ fn rows(text: &str) -> impl Iterator<Item = &str> {
         .filter(|line| !line.is_empty() && !line.starts_with('#'))
 }
 fn rank(
-    index: &TextIndex,
-    query: &str,
-    names: &BTreeMap<TermValue, String>,
+    index: &TextIndex, query: &str, names: &BTreeMap<TermValue, String>,
     judged: Option<&BTreeMap<String, Grade>>,
 ) -> Result<Vec<String>, Box<dyn Error>> {
     Ok(rank_partition(

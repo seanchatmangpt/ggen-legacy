@@ -46,12 +46,8 @@ impl ConstructViewConfig {
         reason = "all independent resource and query policies are mandatory"
     )]
     pub fn new(
-        query: impl Into<String>,
-        base_iri: Option<String>,
-        limits: ProjectionLimits,
-        max_query_bytes: usize,
-        max_input_records: usize,
-        max_output_records: usize,
+        query: impl Into<String>, base_iri: Option<String>, limits: ProjectionLimits,
+        max_query_bytes: usize, max_input_records: usize, max_output_records: usize,
     ) -> Result<Self, ProjectionError> {
         Self::new_with_parser_options(
             query,
@@ -82,12 +78,8 @@ impl ConstructViewConfig {
         reason = "all independent resource and query policies are mandatory"
     )]
     pub fn new_with_parser_options(
-        query: impl Into<String>,
-        base_iri: Option<String>,
-        limits: ProjectionLimits,
-        max_query_bytes: usize,
-        max_input_records: usize,
-        max_output_records: usize,
+        query: impl Into<String>, base_iri: Option<String>, limits: ProjectionLimits,
+        max_query_bytes: usize, max_input_records: usize, max_output_records: usize,
         parser_options: &ParserOptions,
     ) -> Result<Self, ProjectionError> {
         let query = query.into();
@@ -196,8 +188,7 @@ purrdf_lex::json_record!(impl ToJson for ConstructViewConfig {
 /// registry's [`classify`](crate::native_codecs::classify) accepts, which
 /// includes the stable [`NativeRdfFormat::id`] that [`format_to_json`] writes.
 pub(super) fn format_from_json(
-    fields: &mut Record<'_>,
-    name: &'static str,
+    fields: &mut Record<'_>, name: &'static str,
 ) -> Result<NativeRdfFormat, DecodeError> {
     let value = fields
         .raw(name)?
@@ -232,8 +223,7 @@ pub struct ConstructViewProjection {
 /// exceeded, preparation/evaluation fails, or the engine violates the graph-result
 /// and default-graph CONSTRUCT contract.
 pub fn project_construct_view<D: DatasetView<ReadError = std::convert::Infallible> + Sync>(
-    view: &D,
-    config: &ConstructViewConfig,
+    view: &D, config: &ConstructViewConfig,
 ) -> Result<ConstructViewProjection, ProjectionError> {
     let input_records = view_record_count(view, "CONSTRUCT input")?;
     if input_records > config.max_input_records() {
@@ -287,9 +277,7 @@ pub fn project_construct_view<D: DatasetView<ReadError = std::convert::Infallibl
 }
 
 fn parse_construct(
-    query: &str,
-    base_iri: Option<&str>,
-    parser_options: &ParserOptions,
+    query: &str, base_iri: Option<&str>, parser_options: &ParserOptions,
 ) -> Result<(), ProjectionError> {
     let parser = if let Some(base_iri) = base_iri {
         SparqlParser::new().with_base_iri(base_iri)
@@ -459,8 +447,7 @@ fn first_cause(root: Reach<'_>) -> Option<NonReproducibleCause> {
 
 /// A pattern node's own cause; its operands are queued, in search order, on `pending`.
 fn pattern_cause<'a>(
-    pattern: &'a GraphPattern,
-    pending: &mut Vec<Reach<'a>>,
+    pattern: &'a GraphPattern, pending: &mut Vec<Reach<'a>>,
 ) -> Option<NonReproducibleCause> {
     match pattern {
         GraphPattern::Bgp { .. } | GraphPattern::Path { .. } | GraphPattern::Values { .. } => {}
@@ -546,8 +533,7 @@ fn pattern_cause<'a>(
 /// An aggregate's own cause; its arguments and sort keys are queued, in search order,
 /// on `pending`.
 fn aggregate_cause<'a>(
-    aggregate: &'a purrdf_sparql_algebra::AggregateExpression,
-    pending: &mut Vec<Reach<'a>>,
+    aggregate: &'a purrdf_sparql_algebra::AggregateExpression, pending: &mut Vec<Reach<'a>>,
 ) -> Option<NonReproducibleCause> {
     // A `Custom` aggregate invokes a HOST-supplied reduction, and whether
     // that reduction is reproducible is a property of the registry the
@@ -576,8 +562,7 @@ fn aggregate_cause<'a>(
 /// An expression node's own cause; its operands are queued, in search order, on
 /// `pending`.
 fn expression_cause<'a>(
-    expression: &'a Expression,
-    pending: &mut Vec<Reach<'a>>,
+    expression: &'a Expression, pending: &mut Vec<Reach<'a>>,
 ) -> Option<NonReproducibleCause> {
     match expression {
         Expression::NamedNode(_)
@@ -653,8 +638,7 @@ fn view_record_count<D: DatasetView>(view: &D, label: &str) -> Result<usize, Pro
 }
 
 fn ensure_blank_free<D: DatasetView>(
-    view: &D,
-    limits: ProjectionLimits,
+    view: &D, limits: ProjectionLimits,
 ) -> Result<(), ProjectionError> {
     view.checked_read(|view| {
         for quad in view.quads() {
@@ -689,9 +673,7 @@ fn ensure_blank_free<D: DatasetView>(
     .map_err(ProjectionError::source_read)?
 }
 fn reject_blank_term<D: DatasetView>(
-    view: &D,
-    id: D::Id,
-    limits: ProjectionLimits,
+    view: &D, id: D::Id, limits: ProjectionLimits,
 ) -> Result<(), ProjectionError> {
     if term_contains_blank(view, id, limits, 0)? {
         return Err(ProjectionError::integrity(
@@ -702,10 +684,7 @@ fn reject_blank_term<D: DatasetView>(
 }
 
 fn term_contains_blank<D: DatasetView>(
-    view: &D,
-    id: D::Id,
-    limits: ProjectionLimits,
-    depth: usize,
+    view: &D, id: D::Id, limits: ProjectionLimits, depth: usize,
 ) -> Result<bool, ProjectionError> {
     let guard = view.resolve(id).map_err(ProjectionError::source_read)?;
     match guard.term() {
@@ -756,11 +735,8 @@ pub struct RdfDescriptionProjection {
 /// syntax would lower RDF 1.2 content, the base is not an absolute IRI, serialization
 /// fails, or package bounds are exceeded.
 pub fn serialize_rdf_description(
-    dataset: Arc<RdfDataset>,
-    format: NativeRdfFormat,
-    artifact_stem: &str,
-    document_base_iri: Option<&str>,
-    limits: ProjectionLimits,
+    dataset: Arc<RdfDataset>, format: NativeRdfFormat, artifact_stem: &str,
+    document_base_iri: Option<&str>, limits: ProjectionLimits,
 ) -> Result<RdfDescriptionProjection, ProjectionError> {
     serialize_description(
         dataset,
@@ -783,12 +759,8 @@ pub fn serialize_rdf_description(
 /// syntax can write a base directive). This projection lane deliberately does not
 /// re-decide either half.
 pub(crate) fn serialize_description(
-    dataset: impl Into<DatasetHandle>,
-    loss_ledger: LossLedger,
-    format: NativeRdfFormat,
-    artifact_stem: &str,
-    document_base_iri: Option<&str>,
-    limits: ProjectionLimits,
+    dataset: impl Into<DatasetHandle>, loss_ledger: LossLedger, format: NativeRdfFormat,
+    artifact_stem: &str, document_base_iri: Option<&str>, limits: ProjectionLimits,
 ) -> Result<RdfDescriptionProjection, ProjectionError> {
     let dataset = dataset.into();
     validate_artifact_stem(artifact_stem)?;
@@ -961,8 +933,7 @@ mod tests {
     }
 
     fn construct_config(
-        max_input_records: usize,
-        max_output_records: usize,
+        max_input_records: usize, max_output_records: usize,
     ) -> ConstructViewConfig {
         ConstructViewConfig::new(
             "CONSTRUCT { ?s <https://example.org/copied> ?o } WHERE { GRAPH <https://example.org/source-graph> { ?s <https://example.org/source-predicate> ?o } }",

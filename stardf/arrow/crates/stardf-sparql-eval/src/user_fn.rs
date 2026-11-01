@@ -282,9 +282,7 @@ pub trait UserFunctionAdmission: Send + Sync {
     ///
     /// Return the exact typed cause when the selected law refuses invocation.
     fn admit(
-        &self,
-        function: &UserFunction,
-        query: &purrdf_sparql_algebra::Query,
+        &self, function: &UserFunction, query: &purrdf_sparql_algebra::Query,
     ) -> Result<(), UserFunctionRefusal>;
 
     /// Recover the exact cause selected for the returned engine diagnostic after
@@ -308,8 +306,7 @@ type DeferredAdmission = (
 
 impl RefusalPublication {
     pub(crate) fn admission(
-        &self,
-        owner: &Arc<dyn UserFunctionAdmission>,
+        &self, owner: &Arc<dyn UserFunctionAdmission>,
     ) -> &Arc<dyn UserFunctionAdmission> {
         &self
             .admission
@@ -326,9 +323,7 @@ impl RefusalPublication {
     /// Publish only a returned query error. A discarded pending capsule has no
     /// observer owner, so it cannot retain its decorator in an Arc cycle.
     pub(crate) fn finish<T, E>(
-        &self,
-        result: Result<T, E>,
-        is_query_error: impl FnOnce(&E) -> bool,
+        &self, result: Result<T, E>, is_query_error: impl FnOnce(&E) -> bool,
     ) -> Result<T, E> {
         if let Some((_, admission)) = self.admission.get() {
             let refusal = admission
@@ -353,9 +348,7 @@ struct DeferredFunctionAdmission {
 
 impl UserFunctionAdmission for DeferredFunctionAdmission {
     fn admit(
-        &self,
-        function: &UserFunction,
-        query: &purrdf_sparql_algebra::Query,
+        &self, function: &UserFunction, query: &purrdf_sparql_algebra::Query,
     ) -> Result<(), UserFunctionRefusal> {
         self.owner.admit(function, query)
     }
@@ -526,8 +519,7 @@ impl NativeFnContext<'_> {
 }
 
 pub(crate) fn metered_native_call<D: DatasetView + Sync, T>(
-    ctx: &EvalCtx<'_, D>,
-    work_point: crate::governor::ChargePoint,
+    ctx: &EvalCtx<'_, D>, work_point: crate::governor::ChargePoint,
     body: impl FnOnce(&NativeFnContext<'_>) -> T,
 ) -> (T, Option<purrdf_core::TrippedGovernor>, Option<EvalError>) {
     let charge = |point| match point {
@@ -875,8 +867,7 @@ fn standard_native(iri: &str) -> Option<&'static NativeFunction> {
 
 /// A parser namespace cannot intercept an immutable standard scalar function.
 pub(crate) fn validate_standard_parser(
-    options: &purrdf_sparql_algebra::ParserOptions,
-    workspace: &WorkspaceCapability,
+    options: &purrdf_sparql_algebra::ParserOptions, workspace: &WorkspaceCapability,
 ) -> Result<(), EvalError> {
     let mut conflict: Option<&str> = None;
     for function in crate::geo::functions::GeofFunction::ALL {
@@ -1057,10 +1048,7 @@ impl UserFunctionRegistry {
     /// # Panics
     /// Panics on a cross-kind IRI collision, as [`Self::register_expr`] does.
     pub fn register_expr_admitted(
-        &mut self,
-        iri: impl Into<String>,
-        arity: Arity,
-        body: AdmittedExprFnBody,
+        &mut self, iri: impl Into<String>, arity: Arity, body: AdmittedExprFnBody,
     ) {
         self.register_expr_body(iri.into(), arity, ExprBody::Admitted(body));
     }
@@ -1097,11 +1085,7 @@ impl UserFunctionRegistry {
     /// an [`ExprFunction`] â see [`Self::insert`]'s panic doc for the rationale
     /// (symmetric guard).
     pub fn register_native(
-        &mut self,
-        iri: impl Into<String>,
-        arity: Arity,
-        volatility: Volatility,
-        body: NativeFnBody,
+        &mut self, iri: impl Into<String>, arity: Arity, volatility: Volatility, body: NativeFnBody,
     ) {
         self.register_native_body(iri.into(), arity, volatility, NativeBody::Resident(body));
     }
@@ -1111,10 +1095,7 @@ impl UserFunctionRegistry {
     /// # Panics
     /// Panics on a cross-kind IRI collision, as [`Self::register_native`] does.
     pub fn register_native_admitted(
-        &mut self,
-        iri: impl Into<String>,
-        arity: Arity,
-        volatility: Volatility,
+        &mut self, iri: impl Into<String>, arity: Arity, volatility: Volatility,
         body: AdmittedNativeFnBody,
     ) {
         self.register_native_body(iri.into(), arity, volatility, NativeBody::Admitted(body));
@@ -1122,19 +1103,14 @@ impl UserFunctionRegistry {
 
     /// Register a producer that admits its own allocations and meters native work.
     pub fn register_native_metered(
-        &mut self,
-        iri: impl Into<String>,
-        arity: Arity,
-        volatility: Volatility,
+        &mut self, iri: impl Into<String>, arity: Arity, volatility: Volatility,
         body: MeteredNativeFnBody,
     ) {
         self.register_native_body(iri.into(), arity, volatility, NativeBody::Metered(body));
     }
 
     pub(crate) fn register_standard_geo(
-        &mut self,
-        iri: String,
-        function: crate::geo::functions::GeofFunction,
+        &mut self, iri: String, function: crate::geo::functions::GeofFunction,
     ) {
         self.register_native_body(
             iri,
@@ -1147,8 +1123,7 @@ impl UserFunctionRegistry {
     /// Reject any non-identical shadow of the immutable official scalar set.
     /// The minimum conflicting IRI makes the refusal independent of map order.
     pub(crate) fn validate_standard(
-        &self,
-        workspace: &WorkspaceCapability,
+        &self, workspace: &WorkspaceCapability,
     ) -> Result<(), EvalError> {
         let nonnative = self
             .fns
@@ -1177,11 +1152,7 @@ impl UserFunctionRegistry {
     }
 
     fn register_native_body(
-        &mut self,
-        iri: String,
-        arity: Arity,
-        volatility: Volatility,
-        body: NativeBody,
+        &mut self, iri: String, arity: Arity, volatility: Volatility, body: NativeBody,
     ) {
         assert!(
             !self.fns.contains_key(&iri),
@@ -1381,8 +1352,7 @@ impl BoundFunctionRegistry {
     /// tail of [`crate::engine::NativeSparqlEngine::bind_functions`], which is the
     /// only way to reach it.
     pub(crate) fn from_prepared(
-        inner: UserFunctionRegistry,
-        bodies: DetHashMap<String, Arc<crate::engine::PreparedQuery>>,
+        inner: UserFunctionRegistry, bodies: DetHashMap<String, Arc<crate::engine::PreparedQuery>>,
         env: RegistryId,
     ) -> Self {
         if inner.is_empty() && bodies.is_empty() {
@@ -1402,8 +1372,7 @@ impl BoundFunctionRegistry {
     /// Context is read at invocation time; each query still supplies its focus graph.
     #[must_use]
     pub fn with_invocation_context<T: core::any::Any + Send + Sync>(
-        mut self,
-        build: impl FnOnce(Self) -> T,
+        mut self, build: impl FnOnce(Self) -> T,
     ) -> Self {
         let context = Arc::new_cyclic(|context: &std::sync::Weak<T>| {
             let mut nested = self.clone();
@@ -1432,8 +1401,7 @@ impl BoundFunctionRegistry {
     /// to, and the prepared body is what the call evaluates.
     #[must_use]
     pub fn resolve(
-        &self,
-        iri: &str,
+        &self, iri: &str,
     ) -> Option<(&UserFunction, &Arc<crate::engine::PreparedQuery>)> {
         let func = self.data().inner.resolve(iri)?;
         let body = self.data().bodies.get(iri)?;
@@ -1658,8 +1626,7 @@ const CONTENT_DOMAIN: Domain = Domain::new(b"purrdf-sparql-eval/user-function-re
 /// Returns the original storage refusal if ordering the borrowed declarations or
 /// rendering an arity cannot be admitted. Declaration bytes stream into SHA-256.
 pub fn content_fingerprint(
-    functions: &UserFunctionRegistry,
-    part: FnPopulation,
+    functions: &UserFunctionRegistry, part: FnPopulation,
 ) -> Result<ContentDigest, EvalError> {
     let capability = WorkspaceCapability::resident();
     let mut frame = crate::workspace::LexicalFrame::new(&capability);
@@ -1672,8 +1639,7 @@ pub fn content_fingerprint(
 
 /// Compute the same declaration identity through the original request account.
 pub(crate) fn content_fingerprint_with_memory(
-    functions: &UserFunctionRegistry,
-    part: FnPopulation,
+    functions: &UserFunctionRegistry, part: FnPopulation,
     memory: &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
 ) -> Result<ContentDigest, EvalError> {
     let capability = memory.admission_mut().workspace().clone();
@@ -1729,8 +1695,7 @@ pub(crate) fn content_fingerprint_with_memory(
 }
 
 fn append_arity(
-    out: &mut sha2::Sha256,
-    arity: Arity,
+    out: &mut sha2::Sha256, arity: Arity,
     memory: &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
 ) -> Result<(), EvalError> {
     let result = (|| {
@@ -1751,8 +1716,7 @@ fn append_arity(
 /// does, so the digest is a function of the registry's contents and not of the order
 /// a host happened to register them in.
 fn iri_sorted<'a, V>(
-    map: &'a DetHashMap<String, V>,
-    workspace: &WorkspaceCapability,
+    map: &'a DetHashMap<String, V>, workspace: &WorkspaceCapability,
 ) -> Result<AdmittedVec<(&'a str, &'a V)>, EvalError> {
     let mut out =
         AdmittedVec::from_iter_admitted(map.iter().map(|(k, v)| (k.as_str(), v)), workspace)?;
@@ -1849,11 +1813,8 @@ fn matches_node_kind(value: &TermValue, nk: NodeKind) -> bool {
 /// expression truncation channel and return `Ok(None)` here so they cannot masquerade as a
 /// function failure.
 pub(crate) fn eval_user_function<D: DatasetView + Sync>(
-    func: &UserFunction,
-    body: &crate::engine::PreparedQuery,
-    iri: &str,
-    args: &[Option<TermValue>],
-    ctx: &mut EvalCtx<'_, D>,
+    func: &UserFunction, body: &crate::engine::PreparedQuery, iri: &str,
+    args: &[Option<TermValue>], ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<TermValue>, EvalError> {
     eval_user_function_evidence(func, body, iri, args, ctx, &mut None)
 }
@@ -1861,11 +1822,8 @@ pub(crate) fn eval_user_function<D: DatasetView + Sync>(
 /// Return a body's original evidence beside its value from the same execution.
 /// The caller owns the suspension slot; no context-global last-result is used.
 pub(crate) fn eval_user_function_evidence<D: DatasetView + Sync>(
-    func: &UserFunction,
-    body: &crate::engine::PreparedQuery,
-    iri: &str,
-    args: &[Option<TermValue>],
-    ctx: &mut EvalCtx<'_, D>,
+    func: &UserFunction, body: &crate::engine::PreparedQuery, iri: &str,
+    args: &[Option<TermValue>], ctx: &mut EvalCtx<'_, D>,
     evidence: &mut Option<crate::evidence_exec::RowEvidence>,
 ) -> Result<Option<TermValue>, EvalError> {
     *evidence = None;
@@ -2064,10 +2022,7 @@ pub(crate) fn eval_user_function_evidence<D: DatasetView + Sync>(
 /// as written cannot be evaluated at all, which is a defect in the query text
 /// rather than a value this row happens not to have.
 pub(crate) fn eval_native_function<D: DatasetView + Sync>(
-    native: &NativeFunction,
-    iri: &str,
-    args: &[Option<TermValue>],
-    ctx: &EvalCtx<'_, D>,
+    native: &NativeFunction, iri: &str, args: &[Option<TermValue>], ctx: &EvalCtx<'_, D>,
 ) -> Result<Option<WorkspaceTerm>, EvalError> {
     let workspace = &ctx.growth;
     // Fail-fast: a wrong-count call never reaches the host closure with a short
@@ -2195,10 +2150,7 @@ pub(crate) fn eval_native_function<D: DatasetView + Sync>(
 /// [`EvalError::FunctionOperational`] on a depth-bound breach, a caught panic or an
 /// opaque host-returned failure. More specific typed causes propagate unchanged.
 pub(crate) fn eval_expr_function<D: DatasetView + Sync>(
-    func: &ExprFunction,
-    iri: &str,
-    args: &[Option<TermValue>],
-    ctx: &mut EvalCtx<'_, D>,
+    func: &ExprFunction, iri: &str, args: &[Option<TermValue>], ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<WorkspaceTerm>, EvalError> {
     let workspace = ctx.workspace.capability();
     if !func.arity.accepts(args.len()) {
@@ -2286,8 +2238,7 @@ pub(crate) fn eval_expr_function<D: DatasetView + Sync>(
 }
 
 fn function_body_evidence<D: DatasetView + Sync>(
-    outcome: &Outcome<D::Id>,
-    child: &EvalCtx<'_, D>,
+    outcome: &Outcome<D::Id>, child: &EvalCtx<'_, D>,
 ) -> Result<Option<crate::RowEvidence>, EvalError> {
     let rows = match outcome {
         Outcome::Solutions(rows) => Some(rows),
@@ -2506,9 +2457,7 @@ mod tests {
     /// Run `query` and collect the bound `?s` (sole projected column) IRIs of
     /// every solution row as an unordered set.
     fn run_subject_set(
-        ds: &Arc<RdfDataset>,
-        query: &str,
-        registry: &UserFunctionRegistry,
+        ds: &Arc<RdfDataset>, query: &str, registry: &UserFunctionRegistry,
     ) -> BTreeSet<String> {
         run_subject_rows(ds, query, registry).into_iter().collect()
     }
@@ -2516,9 +2465,7 @@ mod tests {
     /// Run `query` and collect the bound `?s` (sole projected column) IRIs of
     /// every solution row in result order.
     fn run_subject_rows(
-        ds: &Arc<RdfDataset>,
-        query: &str,
-        registry: &UserFunctionRegistry,
+        ds: &Arc<RdfDataset>, query: &str, registry: &UserFunctionRegistry,
     ) -> Vec<String> {
         let result = NativeSparqlEngine::new()
             .query_with_options_view(
@@ -2583,8 +2530,7 @@ mod tests {
 
         impl purrdf_hash::error::StructuredError for InvocationCause {
             fn visit<'error>(
-                &'error self,
-                visitor: &mut dyn purrdf_hash::error::ErrorVisitor<'error>,
+                &'error self, visitor: &mut dyn purrdf_hash::error::ErrorVisitor<'error>,
             ) {
                 let Self(body, _fault_injection) = self;
                 visitor.variant("test-invocation-cause");
@@ -2610,9 +2556,7 @@ mod tests {
 
         impl UserFunctionAdmission for InvocationLaw {
             fn admit(
-                &self,
-                function: &UserFunction,
-                query: &purrdf_sparql_algebra::Query,
+                &self, function: &UserFunction, query: &purrdf_sparql_algebra::Query,
             ) -> Result<(), UserFunctionRefusal> {
                 let parsed = purrdf_sparql_algebra::SparqlParser::new()
                     .parse_query(&function.body)
@@ -2764,8 +2708,7 @@ mod tests {
             }
 
             fn materialize(
-                &self,
-                _: purrdf_core::PageId,
+                &self, _: purrdf_core::PageId,
             ) -> Result<purrdf_core::PageMaterialization, purrdf_core::PageFault> {
                 Ok(purrdf_core::PageMaterialization::new(
                     Arc::clone(&self.page),

@@ -221,9 +221,7 @@ impl GeoRelation {
     /// Admission is explicit and does not change the immutable index identity.
     #[must_use]
     pub fn new_geographic(
-        index: Arc<GeographicGeoIndex>,
-        relation: SpatialRelation,
-        policy: ExecutionPolicy,
+        index: Arc<GeographicGeoIndex>, relation: SpatialRelation, policy: ExecutionPolicy,
     ) -> Self {
         let bounds = RowBounds::of(index.source(), relation);
         let generation = Some(Arc::from(index.id().to_string()));
@@ -252,9 +250,7 @@ impl GeoRelation {
     /// original native allocation owner. A source term is copied only when the
     /// cursor emits its final row through the evaluator's native term factory.
     fn rows(
-        &self,
-        args: &PfArgs<'_>,
-        meter: &crate::NativeFnContext<'_>,
+        &self, args: &PfArgs<'_>, meter: &crate::NativeFnContext<'_>,
         geo: Option<&purrdf_geo_kernel::GeoProfile>,
     ) -> Result<
         (
@@ -314,12 +310,8 @@ impl GeoRelation {
     }
 
     fn open_inner(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
-        meter: &crate::NativeFnContext<'_>,
-        metered: bool,
-        geo: Option<&purrdf_geo_kernel::GeoProfile>,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>, meter: &crate::NativeFnContext<'_>,
+        metered: bool, geo: Option<&purrdf_geo_kernel::GeoProfile>,
     ) -> Result<crate::WorkspaceCursor<'static>, EvalError> {
         let workspace = meter.workspace();
         let supplied = args.arity();
@@ -418,9 +410,7 @@ impl PropertyFunction for GeoRelation {
     ///   skipped: a skipped pair is a missing answer, and a missing answer from a
     ///   spatial relation is indistinguishable from an honest one.
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -430,10 +420,7 @@ impl PropertyFunction for GeoRelation {
     }
 
     fn open_admitted<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
-        workspace: crate::WorkspaceCapability,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>, workspace: crate::WorkspaceCapability,
     ) -> Result<crate::WorkspaceCursor<'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -452,10 +439,7 @@ impl PropertyFunction for GeoRelation {
     }
 
     fn open_metered<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
-        context: &crate::NativeFnContext<'_>,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>, context: &crate::NativeFnContext<'_>,
         geo: &purrdf_geo_kernel::GeoProfile,
     ) -> Result<crate::WorkspaceCursor<'cursor>, EvalError>
     where
@@ -598,9 +582,7 @@ impl PfCursor for GeoCursor {
 /// query whose `geo:sfWithin` was parsed as an ordinary triple pattern and
 /// matched nothing.
 pub fn register(
-    registry: &mut PropertyFunctionRegistry<'_>,
-    vocab: &GeoVocab,
-    index: &Arc<GeoIndex>,
+    registry: &mut PropertyFunctionRegistry<'_>, vocab: &GeoVocab, index: &Arc<GeoIndex>,
     families: &[RelationFamily],
 ) -> Result<(), GeoError> {
     register_with(registry, vocab, families, |relation| {
@@ -612,11 +594,8 @@ pub fn register(
 /// # Errors
 /// Refuses an empty family selection as [`register`] does.
 pub fn register_geographic(
-    registry: &mut PropertyFunctionRegistry<'_>,
-    vocab: &GeoVocab,
-    index: &Arc<GeographicGeoIndex>,
-    policy: ExecutionPolicy,
-    families: &[RelationFamily],
+    registry: &mut PropertyFunctionRegistry<'_>, vocab: &GeoVocab, index: &Arc<GeographicGeoIndex>,
+    policy: ExecutionPolicy, families: &[RelationFamily],
 ) -> Result<(), GeoError> {
     register_with(registry, vocab, families, |relation| {
         GeoRelation::new_geographic(Arc::clone(index), relation, policy)
@@ -624,9 +603,7 @@ pub fn register_geographic(
 }
 
 fn register_with(
-    registry: &mut PropertyFunctionRegistry<'_>,
-    vocab: &GeoVocab,
-    families: &[RelationFamily],
+    registry: &mut PropertyFunctionRegistry<'_>, vocab: &GeoVocab, families: &[RelationFamily],
     mut create: impl FnMut(SpatialRelation) -> GeoRelation,
 ) -> Result<(), GeoError> {
     if families.is_empty() {
@@ -830,9 +807,7 @@ mod tests {
 
     /// Open `relation` with the given per-position bindings and drain it.
     fn invoke(
-        relation: &GeoRelation,
-        bound: &[Option<TermValue>],
-        ceiling: Option<u64>,
+        relation: &GeoRelation, bound: &[Option<TermValue>], ceiling: Option<u64>,
     ) -> Result<Vec<PfRow>, EvalError> {
         let refs: Vec<Option<&TermValue>> = bound.iter().map(Option::as_ref).collect();
         let (subject, object) = refs.split_at(1);

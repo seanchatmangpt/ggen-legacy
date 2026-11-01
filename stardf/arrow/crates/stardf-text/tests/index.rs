@@ -208,11 +208,7 @@ impl DatasetView for TripleSubjectView {
     }
 
     fn quads_for_pattern(
-        &self,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         DatasetView::quads_for_pattern(&*self.inner, s, p, o, g)
     }
@@ -226,21 +222,13 @@ impl DatasetView for TripleSubjectView {
     }
 
     fn probe_plan(
-        &self,
-        s_bound: bool,
-        p_bound: bool,
-        o_bound: bool,
-        g: GraphMatch,
+        &self, s_bound: bool, p_bound: bool, o_bound: bool, g: GraphMatch,
     ) -> Self::ProbePlan {
         DatasetView::probe_plan(&*self.inner, s_bound, p_bound, o_bound, g)
     }
 
     fn quads_for_pattern_with_plan(
-        &self,
-        plan: &Self::ProbePlan,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
+        &self, plan: &Self::ProbePlan, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
         g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         DatasetView::quads_for_pattern_with_plan(&*self.inner, plan, s, p, o, g)

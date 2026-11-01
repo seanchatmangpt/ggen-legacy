@@ -107,8 +107,7 @@ struct Projector<'a> {
 /// an incomplete policy, malformed backend data, ambiguous OWL structure, or a
 /// projection that exceeds the caller's explicit bounds.
 pub fn project_obo_graphs<D: DatasetView>(
-    view: &D,
-    config: &OboGraphsConfig,
+    view: &D, config: &OboGraphsConfig,
 ) -> Result<OboGraphsProjection, ProjectionError> {
     let mut projector = Projector::load(view, config)?;
     projector.project()
@@ -116,8 +115,7 @@ pub fn project_obo_graphs<D: DatasetView>(
 
 impl<'a> Projector<'a> {
     fn load<D: DatasetView>(
-        view: &D,
-        config: &'a OboGraphsConfig,
+        view: &D, config: &'a OboGraphsConfig,
     ) -> Result<Self, ProjectionError> {
         let mut cache = BTreeMap::new();
         let mut quads = Vec::new();
@@ -784,9 +782,7 @@ impl<'a> Projector<'a> {
     }
 
     fn add_metadata_statement(
-        &mut self,
-        meta: &mut OboMeta,
-        index: usize,
+        &mut self, meta: &mut OboMeta, index: usize,
     ) -> Result<(), ProjectionError> {
         let predicate = self.quads[index].predicate.clone();
         let Some(value) = self.scalar_from_quad(index)? else {
@@ -885,9 +881,7 @@ impl<'a> Projector<'a> {
     }
 
     fn add_basic_property(
-        &mut self,
-        meta: &mut OboMeta,
-        index: usize,
+        &mut self, meta: &mut OboMeta, index: usize,
     ) -> Result<(), ProjectionError> {
         let Some(value) = self.scalar_from_quad(index)? else {
             return Ok(());
@@ -904,9 +898,7 @@ impl<'a> Projector<'a> {
     }
 
     fn property_annotations(
-        &mut self,
-        quad_index: usize,
-        extract_synonym_type: bool,
+        &mut self, quad_index: usize, extract_synonym_type: bool,
     ) -> Result<AnnotationBundle, ProjectionError> {
         let annotation_indices: Vec<usize> = self
             .annotation_target
@@ -978,11 +970,7 @@ impl<'a> Projector<'a> {
     }
 
     fn add_annotation_meta(
-        &self,
-        meta: &mut OboMeta,
-        predicate: &str,
-        value: String,
-        annotation_index: usize,
+        &self, meta: &mut OboMeta, predicate: &str, value: String, annotation_index: usize,
     ) -> Result<(), ProjectionError> {
         if predicate == self.config.vocabulary().metadata().subset() {
             meta.subsets.push(value);
@@ -1019,10 +1007,7 @@ impl<'a> Projector<'a> {
     }
 
     fn parse_logical_definition(
-        &self,
-        defined: &str,
-        expression: &ProjectionTerm,
-        graph: Option<&ProjectionTerm>,
+        &self, defined: &str, expression: &ProjectionTerm, graph: Option<&ProjectionTerm>,
     ) -> Result<(OboLogicalDefinitionAxiom, Vec<usize>), ProjectionError> {
         let intersection = self.required_object(
             expression,
@@ -1077,9 +1062,7 @@ impl<'a> Projector<'a> {
     }
 
     fn parse_restriction(
-        &self,
-        restriction: &ProjectionTerm,
-        graph: Option<&ProjectionTerm>,
+        &self, restriction: &ProjectionTerm, graph: Option<&ProjectionTerm>,
     ) -> Result<ParsedRestriction, ProjectionError> {
         if !matches!(restriction, ProjectionTerm::Blank { .. }) {
             return Err(ProjectionError::integrity(
@@ -1159,9 +1142,7 @@ impl<'a> Projector<'a> {
     /// ([`RdfListWalk`]) over the configured list vocabulary. A cell must also
     /// be a blank node: an OWL axiom's collection is never named.
     fn parse_list(
-        &self,
-        head: &ProjectionTerm,
-        graph: Option<&ProjectionTerm>,
+        &self, head: &ProjectionTerm, graph: Option<&ProjectionTerm>,
     ) -> Result<(Vec<ProjectionTerm>, Vec<usize>), ProjectionError> {
         let rdf = self.config.vocabulary().rdf();
         let nil = ProjectionTerm::iri(rdf.rdf_nil());
@@ -1202,10 +1183,7 @@ impl<'a> Projector<'a> {
     /// to two, as the list walker asks it; the index of a sole statement is
     /// recorded in `indices`.
     fn sole_statement<'q>(
-        &'q self,
-        subject: &ProjectionTerm,
-        predicate: &str,
-        graph: Option<&ProjectionTerm>,
+        &'q self, subject: &ProjectionTerm, predicate: &str, graph: Option<&ProjectionTerm>,
         indices: &mut Vec<usize>,
     ) -> SoleObject<&'q ProjectionTerm> {
         let mut matches = self
@@ -1226,10 +1204,7 @@ impl<'a> Projector<'a> {
     }
 
     fn required_object(
-        &self,
-        subject: &ProjectionTerm,
-        predicate: &str,
-        graph: Option<&ProjectionTerm>,
+        &self, subject: &ProjectionTerm, predicate: &str, graph: Option<&ProjectionTerm>,
         description: &str,
     ) -> Result<(usize, ProjectionTerm), ProjectionError> {
         self.optional_object(subject, predicate, graph, description)?
@@ -1237,10 +1212,7 @@ impl<'a> Projector<'a> {
     }
 
     fn optional_object(
-        &self,
-        subject: &ProjectionTerm,
-        predicate: &str,
-        graph: Option<&ProjectionTerm>,
+        &self, subject: &ProjectionTerm, predicate: &str, graph: Option<&ProjectionTerm>,
         description: &str,
     ) -> Result<Option<(usize, ProjectionTerm)>, ProjectionError> {
         let matches: Vec<usize> = self
@@ -1396,9 +1368,7 @@ impl<'a> Projector<'a> {
     /// The `xsd:boolean` a configured `owl:deprecated` statement carries;
     /// `what` names the statement kind in a refusal.
     fn deprecated_boolean(
-        &self,
-        object: &ProjectionTerm,
-        what: &str,
+        &self, object: &ProjectionTerm, what: &str,
     ) -> Result<bool, ProjectionError> {
         let ProjectionTerm::Literal {
             lexical,
@@ -1504,9 +1474,7 @@ impl<'a> Projector<'a> {
     }
 
     fn record_quad_loss(
-        &mut self,
-        index: usize,
-        code: &'static str,
+        &mut self, index: usize, code: &'static str,
     ) -> Result<(), ProjectionError> {
         let subject = self.quad_location(index)?;
         record_logical_loss(
@@ -1520,9 +1488,7 @@ impl<'a> Projector<'a> {
     }
 
     fn record_named_graph_loss(
-        &mut self,
-        index: usize,
-        code: &'static str,
+        &mut self, index: usize, code: &'static str,
     ) -> Result<(), ProjectionError> {
         record_row_loss(
             &mut self.ledger,
@@ -1535,9 +1501,7 @@ impl<'a> Projector<'a> {
     }
 
     fn record_reifier_loss(
-        &mut self,
-        index: usize,
-        code: &'static str,
+        &mut self, index: usize, code: &'static str,
     ) -> Result<(), ProjectionError> {
         record_row_loss(
             &mut self.ledger,
@@ -1550,9 +1514,7 @@ impl<'a> Projector<'a> {
     }
 
     fn record_annotation_loss(
-        &mut self,
-        index: usize,
-        code: &'static str,
+        &mut self, index: usize, code: &'static str,
     ) -> Result<(), ProjectionError> {
         record_row_loss(
             &mut self.ledger,
@@ -1794,10 +1756,7 @@ mod tests {
     }
 
     fn push_iri_quad(
-        builder: &mut RdfDatasetBuilder,
-        subject: &str,
-        predicate: &str,
-        object: &str,
+        builder: &mut RdfDatasetBuilder, subject: &str, predicate: &str, object: &str,
         graph: Option<TermId>,
     ) -> (TermId, TermId, TermId) {
         let subject = iri(builder, subject);
@@ -1810,10 +1769,7 @@ mod tests {
     }
 
     fn push_literal_quad(
-        builder: &mut RdfDatasetBuilder,
-        subject: &str,
-        predicate: &str,
-        literal: RdfLiteral,
+        builder: &mut RdfDatasetBuilder, subject: &str, predicate: &str, literal: RdfLiteral,
         graph: Option<TermId>,
     ) -> (TermId, TermId, TermId) {
         let subject = iri(builder, subject);
@@ -2302,8 +2258,7 @@ mod tests {
     /// at `tail` (`None` for `rdf:nil`), plus `extra` statements on the cells
     /// `_:chain-1`, `_:chain-2` or `rdf:nil`.
     fn chain_dataset(
-        tail: Option<&str>,
-        extra: &[(&str, &str, &str)],
+        tail: Option<&str>, extra: &[(&str, &str, &str)],
     ) -> std::sync::Arc<RdfDataset> {
         let mut builder = RdfDatasetBuilder::new();
         let node = |builder: &mut RdfDatasetBuilder, name: &str| match name {

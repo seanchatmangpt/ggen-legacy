@@ -132,8 +132,7 @@ impl NumericOperationLayout {
     }
 
     pub(crate) fn bytes(
-        peak_bytes: usize,
-        retained_bytes: usize,
+        peak_bytes: usize, retained_bytes: usize,
     ) -> Result<Self, crate::bigint::LimbScratchError> {
         use crate::bigint::LimbScratchError::SizeOverflow;
         std::alloc::Layout::array::<u8>(peak_bytes).map_err(|_| SizeOverflow)?;
@@ -176,11 +175,7 @@ impl NumericOperationLayout {
 /// # Errors
 /// Refuses checked length/byte overflow before creating any native destination.
 pub fn integer_operation_layout(
-    la: u64,
-    lb: u64,
-    negative_a: bool,
-    negative_b: bool,
-    op: IntegerOperation,
+    la: u64, lb: u64, negative_a: bool, negative_b: bool, op: IntegerOperation,
 ) -> Result<NumericOperationLayout, crate::bigint::LimbScratchError> {
     use crate::bigint::LimbScratchError::SizeOverflow;
     match op {
@@ -310,8 +305,7 @@ const fn division_words(la: u64, lb: u64) -> Result<u64, crate::bigint::LimbScra
 /// # Errors
 /// Refuses machine byte overflow before any normalized destination allocation.
 pub fn integer_division_layout(
-    numerator_limbs: u64,
-    denominator_limbs: u64,
+    numerator_limbs: u64, denominator_limbs: u64,
 ) -> Result<NumericOperationLayout, crate::bigint::LimbScratchError> {
     let destinations = division_words(numerator_limbs, denominator_limbs)?;
     NumericOperationLayout::words(destinations, destinations)
@@ -320,8 +314,7 @@ pub fn integer_division_layout(
 /// Initial exact-division storage before the actual reduced factor/exponent
 /// is known. Final coefficient and scale growth are admitted separately.
 pub(crate) fn decimal_exact_initial_layout(
-    la: u64,
-    lb: u64,
+    la: u64, lb: u64,
 ) -> Result<NumericOperationLayout, crate::bigint::LimbScratchError> {
     let (a, b, g) = (owned_words(la), owned_words(lb), owned_words(la.min(lb)));
     let mut gcd = checked_sum_words(&[a, b, a, b, g])?;
@@ -345,9 +338,7 @@ pub(crate) fn decimal_exact_initial_layout(
 
 /// Actual original/shifted coefficient overlap for a native binary shift.
 pub(crate) fn binary_shift_layout(
-    bits: u64,
-    shift: u32,
-    current_bytes: usize,
+    bits: u64, shift: u32, current_bytes: usize,
 ) -> Result<NumericOperationLayout, crate::bigint::LimbScratchError> {
     use crate::bigint::LimbScratchError::SizeOverflow;
     let result = bits
@@ -366,9 +357,7 @@ pub(crate) fn binary_shift_layout(
 /// Pow5 uses the existing word-chunk multiply body. Its original operand and
 /// both old/new exact-capacity destinations coexist; no exponent-size guess.
 pub(crate) fn pow5_layout(
-    bits: u64,
-    exponent: u32,
-    current_bytes: usize,
+    bits: u64, exponent: u32, current_bytes: usize,
 ) -> Result<NumericOperationLayout, crate::bigint::LimbScratchError> {
     use crate::bigint::LimbScratchError::SizeOverflow;
     let added = (u128::from(log2_upper_q16(5)) * u128::from(exponent)).div_ceil(65_536);
@@ -404,8 +393,7 @@ pub(crate) fn power_of_ten_layout(
 /// Native power-of-ten creation and borrowed-coefficient product. The caller
 /// adds every still-live temporary outside this kernel before admitting it.
 pub(crate) fn scale_up_layout(
-    coefficient: &super::Integer,
-    digits: u32,
+    coefficient: &super::Integer, digits: u32,
 ) -> Result<NumericOperationLayout, crate::bigint::LimbScratchError> {
     use crate::bigint::LimbScratchError::SizeOverflow;
     if coefficient.is_zero() {
@@ -450,8 +438,7 @@ pub(crate) fn normalization_extra_words(
 }
 
 pub(crate) fn normalize_layout(
-    coefficient: &super::Integer,
-    scale: u32,
+    coefficient: &super::Integer, scale: u32,
 ) -> Result<NumericOperationLayout, crate::bigint::LimbScratchError> {
     use crate::bigint::LimbScratchError::SizeOverflow;
     let current = usize::try_from(coefficient.heap_bytes()).map_err(|_| SizeOverflow)?;
@@ -503,10 +490,7 @@ impl NumericRenderLayout {
 /// # Errors
 /// Refuses byte/address-space overflow before any parser or render allocation.
 pub fn numeric_render_layout(
-    bits: u64,
-    limbs: usize,
-    scale: u32,
-    negative: bool,
+    bits: u64, limbs: usize, scale: u32, negative: bool,
 ) -> Result<NumericRenderLayout, crate::bigint::LimbScratchError> {
     use crate::bigint::LimbScratchError::SizeOverflow;
     let digits = usize::try_from(digits_for_bits(bits)).map_err(|_| SizeOverflow)?;
@@ -654,9 +638,7 @@ pub(crate) fn decimal_coefficient_digits(
 /// # Errors
 /// Refuses checked layout overflow before the native parser allocates.
 pub fn numeric_parse_layout(
-    lexical: &str,
-    datatype: crate::XsdDatatype,
-    xsd10: bool,
+    lexical: &str, datatype: crate::XsdDatatype, xsd10: bool,
 ) -> Result<Option<NumericParseLayout>, crate::bigint::LimbScratchError> {
     use crate::numeric::NumericReadError;
     use crate::{ErrorCode, XsdDatatype as D};

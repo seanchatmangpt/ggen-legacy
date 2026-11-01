@@ -126,9 +126,7 @@ fn bx(p: GraphPattern) -> Child<GraphPattern> {
 /// outer row, in row order — never unwrapped here, so a caller that expects (and
 /// wants to assert) a hard error on some/every row can.
 fn exists_results(
-    ds: &Arc<RdfDataset>,
-    outer: &GraphPattern,
-    inner: &GraphPattern,
+    ds: &Arc<RdfDataset>, outer: &GraphPattern, inner: &GraphPattern,
     registry: Option<&crate::property_fn::PropertyFunctionRegistry<'_>>,
 ) -> Vec<Result<bool, EvalError>> {
     let mut ctx = EvalCtx::new(ds);
@@ -165,9 +163,7 @@ fn natural_answers(ds: &Arc<RdfDataset>, outer: &GraphPattern, inner: &GraphPatt
 
 /// [`exists_answers`] with the decision site forced to `strategy` for the whole call.
 fn forced_answers(
-    ds: &Arc<RdfDataset>,
-    outer: &GraphPattern,
-    inner: &GraphPattern,
+    ds: &Arc<RdfDataset>, outer: &GraphPattern, inner: &GraphPattern,
     strategy: ForcedExistsStrategy,
 ) -> Vec<bool> {
     let _guard = force_exists_strategy_for_test(strategy);
@@ -177,11 +173,8 @@ fn forced_answers(
 /// [`exists_results`] with the decision site forced to `strategy` for the whole call,
 /// and a property-function `registry` injected.
 fn forced_results_with_registry(
-    ds: &Arc<RdfDataset>,
-    outer: &GraphPattern,
-    inner: &GraphPattern,
-    strategy: ForcedExistsStrategy,
-    registry: &crate::property_fn::PropertyFunctionRegistry<'_>,
+    ds: &Arc<RdfDataset>, outer: &GraphPattern, inner: &GraphPattern,
+    strategy: ForcedExistsStrategy, registry: &crate::property_fn::PropertyFunctionRegistry<'_>,
 ) -> Vec<Result<bool, EvalError>> {
     let _guard = force_exists_strategy_for_test(strategy);
     exists_results(ds, outer, inner, Some(registry))
@@ -190,9 +183,7 @@ fn forced_results_with_registry(
 /// [`exists_results`] under the natural (unforced) gate decision, with a
 /// property-function `registry` injected.
 fn natural_results_with_registry(
-    ds: &Arc<RdfDataset>,
-    outer: &GraphPattern,
-    inner: &GraphPattern,
+    ds: &Arc<RdfDataset>, outer: &GraphPattern, inner: &GraphPattern,
     registry: &crate::property_fn::PropertyFunctionRegistry<'_>,
 ) -> Vec<Result<bool, EvalError>> {
     exists_results(ds, outer, inner, Some(registry))
@@ -287,9 +278,7 @@ fn assert_classified_inadmissible(outer: &GraphPattern, inner: &GraphPattern) {
 /// that the fixture is non-trivial (both `true` and `false` occur). This is
 /// `exists_paths_agree_on_*`'s shared body.
 fn assert_probe_and_definition_agree(
-    ds: &Arc<RdfDataset>,
-    outer: &GraphPattern,
-    inner: &GraphPattern,
+    ds: &Arc<RdfDataset>, outer: &GraphPattern, inner: &GraphPattern,
 ) {
     assert_classified_admissible(outer, inner);
     let natural = natural_answers(ds, outer, inner);
@@ -1070,10 +1059,7 @@ mod tests {
     /// (`purrdf_sparql_algebra::parser::tests`), at the eval boundary that
     /// runs when no parser ever saw this algebra).
     fn assert_hard_errors_on_every_strategy(
-        ds: &Arc<RdfDataset>,
-        outer: &GraphPattern,
-        inner: &GraphPattern,
-        expected_variable: &str,
+        ds: &Arc<RdfDataset>, outer: &GraphPattern, inner: &GraphPattern, expected_variable: &str,
         expected_intro: &str,
     ) {
         let strategies: [Option<ForcedExistsStrategy>; 3] = [
@@ -1234,8 +1220,7 @@ mod tests {
     /// PUBLIC evaluation entry point. Panics if the outer `?x :tag ?w` BGP itself
     /// fails to build (it never should — it is a plain triple pattern).
     fn run_hand_built_select(
-        ds: &Arc<RdfDataset>,
-        exists_inner: GraphPattern,
+        ds: &Arc<RdfDataset>, exists_inner: GraphPattern,
     ) -> Result<purrdf_core::SparqlResult, purrdf_core::RdfDiagnostic> {
         let outer_pattern = GraphPattern::Extend {
             inner: bx(bgp1(tvar("x"), &format!("{EX}tag"), tvar("w"))),
@@ -1566,9 +1551,7 @@ mod tests {
         }
 
         fn open<'cursor>(
-            &self,
-            args: &crate::property_fn::PfArgs<'_>,
-            _ceiling: Option<u64>,
+            &self, args: &crate::property_fn::PfArgs<'_>, _ceiling: Option<u64>,
         ) -> Result<Box<dyn crate::property_fn::PfCursor + 'cursor>, EvalError>
         where
             Self: 'cursor,
@@ -2358,10 +2341,7 @@ mod tests {
     /// [`exists_answers`] with a specific `exists_memo` toggle (rather than under a
     /// forced strategy) — the generator's memo-on-vs-off half of its per-shape check.
     fn exists_answers_with_memo(
-        ds: &Arc<RdfDataset>,
-        outer: &GraphPattern,
-        inner: &GraphPattern,
-        memo: bool,
+        ds: &Arc<RdfDataset>, outer: &GraphPattern, inner: &GraphPattern, memo: bool,
     ) -> Vec<bool> {
         let mut ctx = EvalCtx::new(ds);
         ctx.options.exists_memo = memo;

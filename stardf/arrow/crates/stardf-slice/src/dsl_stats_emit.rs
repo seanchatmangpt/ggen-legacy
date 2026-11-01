@@ -93,10 +93,7 @@ pub fn emit_dsl_stats(root: &Path, vocab: &SliceVocab) -> Result<String, SliceEr
 /// inner keys (the `*.sssom.tsv` file names) are already sorted by the
 /// [`BTreeMap`]. The whole document ends with a trailing newline.
 fn render_stats(
-    cells_by_set: &BTreeMap<String, u64>,
-    equivalences: u64,
-    functions: u64,
-    mapping_sets: u64,
+    cells_by_set: &BTreeMap<String, u64>, equivalences: u64, functions: u64, mapping_sets: u64,
     projections: u64,
 ) -> String {
     use std::fmt::Write as _;

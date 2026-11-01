@@ -264,10 +264,7 @@ pub fn resolve_shape_map(map: &ShapeMap, data: &RdfDataset) -> Vec<(TermValue, S
 /// [`ConformanceStatus::Nonconformant`](crate::validate::ConformanceStatus)
 /// entry, not an `Err`.
 pub fn validate_shape_map(
-    schema: &Schema,
-    data: &RdfDataset,
-    map_src: &str,
-    base: Option<&str>,
+    schema: &Schema, data: &RdfDataset, map_src: &str, base: Option<&str>,
     options: &ValidationOptions<'_>,
 ) -> Result<ResultShapeMap> {
     validate_shape_map_with_bounds(schema, data, map_src, base, options, None)
@@ -276,12 +273,8 @@ pub fn validate_shape_map(
 /// [`validate_shape_map`], comparing numeric facets against an
 /// [`crate::ExactSchema`]'s exact bounds where given.
 pub(crate) fn validate_shape_map_with_bounds(
-    schema: &Schema,
-    data: &RdfDataset,
-    map_src: &str,
-    base: Option<&str>,
-    options: &ValidationOptions<'_>,
-    bounds: Option<&crate::validate::ExactBoundsMap>,
+    schema: &Schema, data: &RdfDataset, map_src: &str, base: Option<&str>,
+    options: &ValidationOptions<'_>, bounds: Option<&crate::validate::ExactBoundsMap>,
 ) -> Result<ResultShapeMap> {
     let map = parse_shape_map(map_src, base)?;
     refuse_undeclared_shapes(schema, &map)?;
@@ -297,12 +290,8 @@ pub(crate) fn validate_shape_map_with_bounds(
 /// Preserves map parse/admission errors and typed native operational refusal.
 /// Pattern-language errors remain nonconformant entries.
 pub fn validate_shape_map_with_xpath(
-    schema: &Schema,
-    data: &RdfDataset,
-    map_src: &str,
-    base: Option<&str>,
-    options: &ValidationOptions<'_>,
-    profile: purrdf_core::xsd_regex::xpath::Profile,
+    schema: &Schema, data: &RdfDataset, map_src: &str, base: Option<&str>,
+    options: &ValidationOptions<'_>, profile: purrdf_core::xsd_regex::xpath::Profile,
     limits: purrdf_core::xsd_regex::xpath::Limits,
 ) -> core::result::Result<ResultShapeMap, crate::error::XPathValidationError> {
     validate_shape_map_with_validator(
@@ -319,13 +308,9 @@ pub fn validate_shape_map_with_xpath(
 /// [`validate_shape_map_with_xpath`] through `validator`, which carries the schema and,
 /// for an [`crate::ExactSchema`], its exact numeric facet bounds.
 pub(crate) fn validate_shape_map_with_validator(
-    validator: &mut crate::validate::XPathValidator<'_>,
-    data: &RdfDataset,
-    map_src: &str,
-    base: Option<&str>,
-    options: &ValidationOptions<'_>,
-    profile: purrdf_core::xsd_regex::xpath::Profile,
-    limits: purrdf_core::xsd_regex::xpath::Limits,
+    validator: &mut crate::validate::XPathValidator<'_>, data: &RdfDataset, map_src: &str,
+    base: Option<&str>, options: &ValidationOptions<'_>,
+    profile: purrdf_core::xsd_regex::xpath::Profile, limits: purrdf_core::xsd_regex::xpath::Limits,
 ) -> core::result::Result<ResultShapeMap, crate::error::XPathValidationError> {
     let map = parse_shape_map(map_src, base)?;
     refuse_undeclared_shapes(validator.schema(), &map)?;
@@ -369,10 +354,7 @@ enum Direction {
 /// The distinct focus terms of `(anchor? , predicate, ?)` (or `(?, predicate,
 /// anchor?)`), sorted by term string.
 fn select_terms(
-    data: &RdfDataset,
-    anchor: Option<&TermValue>,
-    predicate: &str,
-    direction: Direction,
+    data: &RdfDataset, anchor: Option<&TermValue>, predicate: &str, direction: Direction,
 ) -> Vec<TermValue> {
     let Some(pid) = data.term_id_by_value(&TermValue::iri(predicate)) else {
         return Vec::new();

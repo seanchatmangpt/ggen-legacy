@@ -103,8 +103,7 @@ impl SparqlVersion {
     /// # Errors
     /// Returns physical storage refusal for an owned unknown spelling.
     pub fn parse_with_memory<S: Admission + ?Sized>(
-        raw: &str,
-        memory: &mut Memory<'_, S>,
+        raw: &str, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         match raw {
             "1.2" => Ok(Self::V12),
@@ -247,8 +246,7 @@ impl Query {
     /// # Errors
     /// Returns checked layout overflow, admission or allocator refusal.
     pub fn clone_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         self.clone_with_pattern_by(memory, |memory| self.pattern().clone_with_memory(memory))
     }
@@ -258,16 +256,13 @@ impl Query {
     /// # Errors
     /// Returns checked original-account storage refusal before a copied head grows.
     pub fn clone_with_pattern_with_memory<S: Admission + ?Sized>(
-        &self,
-        pattern: GraphPattern,
-        memory: &mut Memory<'_, S>,
+        &self, pattern: GraphPattern, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         self.clone_with_pattern_by(memory, |_| Ok(pattern))
     }
 
     fn clone_with_pattern_by<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
         pattern_copy: impl FnOnce(&mut Memory<'_, S>) -> Result<GraphPattern, StorageError>,
     ) -> Result<Self, StorageError> {
         use crate::owned::{clone_shallow_vec_with_memory, clone_vec_with_memory};
@@ -321,9 +316,7 @@ impl Query {
     /// # Errors
     /// Returns checked native traversal storage refusal.
     pub fn eq_with_memory<S: Admission + ?Sized>(
-        &self,
-        other: &Self,
-        memory: &mut Memory<'_, S>,
+        &self, other: &Self, memory: &mut Memory<'_, S>,
     ) -> Result<bool, StorageError> {
         if core::mem::discriminant(self) != core::mem::discriminant(other)
             || self.dataset() != other.dataset()
@@ -759,8 +752,7 @@ fn fmt_quad_pattern_body(quads: &[QuadPattern]) -> String {
 
 /// The shared checked update carrier, rendering only after identity admission.
 fn checked_update_carrier(
-    value: &impl core::fmt::Display,
-    admission: crate::Result<()>,
+    value: &impl core::fmt::Display, admission: crate::Result<()>,
 ) -> crate::Result<String> {
     admission?;
     Ok(value.to_string())
@@ -1498,9 +1490,7 @@ impl Expression {
     /// # Errors
     /// Returns physical storage refusal before growing an operand buffer.
     pub fn or_with_memory<S: Admission + ?Sized>(
-        left: Self,
-        right: Self,
-        memory: &mut Memory<'_, S>,
+        left: Self, right: Self, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         Ok(Self::Or(append_chain(
             match left {
@@ -1525,9 +1515,7 @@ impl Expression {
     /// # Errors
     /// Returns physical storage refusal before growing an operand buffer.
     pub fn and_with_memory<S: Admission + ?Sized>(
-        left: Self,
-        right: Self,
-        memory: &mut Memory<'_, S>,
+        left: Self, right: Self, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         Ok(Self::And(append_chain(
             match left {
@@ -1555,10 +1543,7 @@ impl Expression {
     /// # Errors
     /// Returns physical refusal before allocating a child or growing steps.
     pub fn arithmetic_with_memory<S: Admission + ?Sized>(
-        left: Self,
-        op: ArithmeticOperator,
-        right: Self,
-        memory: &mut Memory<'_, S>,
+        left: Self, op: ArithmeticOperator, right: Self, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         match left {
             Self::Arithmetic(first, mut steps) => {
@@ -1576,9 +1561,7 @@ impl Expression {
 }
 
 fn append_chain<T: crate::tree::Subtree, S: Admission + ?Sized>(
-    left: Result<Chain<T>, T>,
-    right: T,
-    memory: &mut Memory<'_, S>,
+    left: Result<Chain<T>, T>, right: T, memory: &mut Memory<'_, S>,
 ) -> Result<Chain<T>, StorageError> {
     match left {
         Ok(mut chain) => {
@@ -1612,9 +1595,7 @@ impl PropertyPathExpression {
     /// # Errors
     /// Returns physical refusal before growing path elements.
     pub fn sequence_with_memory<S: Admission + ?Sized>(
-        left: Self,
-        right: Self,
-        memory: &mut Memory<'_, S>,
+        left: Self, right: Self, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         Ok(Self::Sequence(append_chain(
             match left {
@@ -1639,9 +1620,7 @@ impl PropertyPathExpression {
     /// # Errors
     /// Returns physical refusal before growing path elements.
     pub fn alternative_with_memory<S: Admission + ?Sized>(
-        left: Self,
-        right: Self,
-        memory: &mut Memory<'_, S>,
+        left: Self, right: Self, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         Ok(Self::Alternative(append_chain(
             match left {
@@ -1714,9 +1693,7 @@ impl GraphPattern {
     /// # Errors
     /// Returns physical refusal before growing union arms.
     pub fn union_with_memory<S: Admission + ?Sized>(
-        left: Self,
-        right: Self,
-        memory: &mut Memory<'_, S>,
+        left: Self, right: Self, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         Ok(Self::Union {
             arms: append_chain(
@@ -2195,11 +2172,8 @@ impl AggregateExpression {
     /// — unrepresentable, the same way the arity check makes `SUM(*)`
     /// unrepresentable.
     pub fn new(
-        function: AggregateFunction,
-        args: Vec<Expression>,
-        scalarvals: Vec<(String, Literal)>,
-        order_by: Vec<OrderExpression>,
-        distinct: bool,
+        function: AggregateFunction, args: Vec<Expression>, scalarvals: Vec<(String, Literal)>,
+        order_by: Vec<OrderExpression>, distinct: bool,
     ) -> Result<Self, AggregateExpressionError> {
         if !arity_is_admitted(&function, args.len()) {
             return Err(AggregateExpressionError::Arity(AggregateArityError {

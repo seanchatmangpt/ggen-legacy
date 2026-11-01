@@ -110,8 +110,7 @@ impl SchemaBuilder {
     }
 
     pub(crate) fn try_extend(
-        &mut self,
-        values: impl IntoIterator<Item = Variable>,
+        &mut self, values: impl IntoIterator<Item = Variable>,
     ) -> Result<(), crate::EvalError> {
         for value in values {
             let _ = self.push(value)?;
@@ -267,8 +266,7 @@ impl VarSchema {
     }
 
     pub(crate) fn shared_admitted(
-        self,
-        workspace: &crate::WorkspaceCapability,
+        self, workspace: &crate::WorkspaceCapability,
     ) -> Result<SharedSchema, crate::EvalError> {
         // SchemaData already encloses its original array and control grants.
         // Publication preserves a prior refusal without allocating another header.
@@ -285,8 +283,7 @@ impl VarSchema {
     }
 
     pub(crate) fn from_vars_admitted(
-        vars: impl IntoIterator<Item = Variable>,
-        workspace: &crate::WorkspaceCapability,
+        vars: impl IntoIterator<Item = Variable>, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, crate::EvalError> {
         let mut builder = SchemaBuilder::new(workspace);
         for variable in vars {
@@ -302,9 +299,7 @@ impl VarSchema {
     }
 
     pub(crate) fn push_admitted(
-        &mut self,
-        variable: Variable,
-        workspace: &crate::WorkspaceCapability,
+        &mut self, variable: Variable, workspace: &crate::WorkspaceCapability,
     ) -> Result<usize, crate::EvalError> {
         use crate::EvalError;
         if let Some(ordinal) = self.index_of(&variable) {
@@ -434,9 +429,7 @@ impl VarSchema {
     }
 
     pub(crate) fn union_admitted(
-        &self,
-        other: &Self,
-        workspace: &crate::WorkspaceCapability,
+        &self, other: &Self, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, crate::EvalError> {
         if self.is_empty() {
             return Ok(other.clone());
@@ -449,9 +442,7 @@ impl VarSchema {
     /// The shared variables in the left schema's original order, retaining an
     /// unchanged immutable schema when no column is removed.
     pub(crate) fn intersection_admitted(
-        &self,
-        other: &Self,
-        workspace: &crate::WorkspaceCapability,
+        &self, other: &Self, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, crate::EvalError> {
         if self.vars().iter().all(|variable| other.contains(variable)) {
             return Ok(self.clone());
@@ -477,9 +468,7 @@ impl VarSchema {
     }
 
     pub(crate) fn shared_columns_admitted(
-        &self,
-        other: &Self,
-        workspace: &crate::WorkspaceCapability,
+        &self, other: &Self, workspace: &crate::WorkspaceCapability,
     ) -> Result<crate::workspace::AdmittedVec<(usize, usize)>, crate::EvalError> {
         let mut columns = crate::workspace::AdmittedVec::new(workspace);
         for (ordinal, variable) in self.vars().iter().enumerate() {
@@ -589,9 +578,7 @@ impl<I: ViewTermId> RetainedRow<I> {
     /// ordinary rows. Tracked owners keep the original fallible attachment path.
     #[inline]
     pub(crate) fn with_evidence_from(
-        self,
-        source: &Self,
-        workspace: &crate::WorkspaceCapability,
+        self, source: &Self, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, crate::EvalError> {
         if !self.has_evidence_attachment() && !source.has_evidence_attachment() {
             return Ok(self);
@@ -603,9 +590,7 @@ impl<I: ViewTermId> RetainedRow<I> {
     /// Only physically ordinary operands have no attachment to combine.
     #[inline]
     pub(crate) fn combined_evidence(
-        &self,
-        other: &Self,
-        law: purrdf_core::evidence::EvidenceCombination,
+        &self, other: &Self, law: purrdf_core::evidence::EvidenceCombination,
     ) -> Result<Option<crate::evidence_exec::RowEvidence>, crate::EvalError> {
         if !self.has_evidence_attachment() && !other.has_evidence_attachment() {
             return Ok(None);
@@ -631,8 +616,7 @@ impl<I: ViewTermId> RetainedRow<I> {
     /// ownership. Ordinary virtual evidence allocates nothing.
     #[inline]
     pub fn with_evidence(
-        mut self,
-        evidence: crate::evidence_exec::RowEvidence,
+        mut self, evidence: crate::evidence_exec::RowEvidence,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, crate::EvalError> {
         if evidence.is_virtual() && !self.has_evidence_attachment() {
@@ -646,8 +630,7 @@ impl<I: ViewTermId> RetainedRow<I> {
     /// `None` is a caller's proof that the original row needs no replacement.
     #[inline]
     pub(crate) fn with_optional_evidence(
-        self,
-        evidence: Option<crate::evidence_exec::RowEvidence>,
+        self, evidence: Option<crate::evidence_exec::RowEvidence>,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, crate::EvalError> {
         match evidence {
@@ -657,8 +640,7 @@ impl<I: ViewTermId> RetainedRow<I> {
     }
 
     fn attach_evidence(
-        &mut self,
-        evidence: crate::evidence_exec::RowEvidence,
+        &mut self, evidence: crate::evidence_exec::RowEvidence,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<(), crate::EvalError> {
         if self.evidence().same_attachment(&evidence) {
@@ -737,10 +719,8 @@ impl<I: ViewTermId> RetainedRow<I> {
     }
 
     pub(crate) fn combine_evidence(
-        &mut self,
-        evidence: &crate::evidence_exec::RowEvidence,
-        law: purrdf_core::evidence::EvidenceCombination,
-        workspace: &crate::WorkspaceCapability,
+        &mut self, evidence: &crate::evidence_exec::RowEvidence,
+        law: purrdf_core::evidence::EvidenceCombination, workspace: &crate::WorkspaceCapability,
     ) -> Result<(), crate::EvalError> {
         if !self.has_evidence_attachment() && evidence.is_virtual() {
             return Ok(());
@@ -780,8 +760,7 @@ impl<I: ViewTermId> RetainedRow<I> {
     /// Share an admitted cell owner, or admit a fresh exact cell copy before
     /// cloning a resident row. Internal clones must preserve this distinction.
     pub(crate) fn clone_admitted(
-        &self,
-        workspace: &crate::WorkspaceCapability,
+        &self, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, crate::EvalError> {
         match &self.storage {
             RowStorage::Owned(_) => Ok(self.clone()),
@@ -792,8 +771,7 @@ impl<I: ViewTermId> RetainedRow<I> {
     }
 
     pub(crate) fn from_cells(
-        width: usize,
-        cells: impl Iterator<Item = Option<SolutionTerm<I>>>,
+        width: usize, cells: impl Iterator<Item = Option<SolutionTerm<I>>>,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, crate::EvalError> {
         Self::try_from_cells(width, cells.map(Ok), workspace)
@@ -821,8 +799,7 @@ impl<I: ViewTermId> RetainedRow<I> {
     }
 
     pub(crate) fn try_build(
-        width: usize,
-        workspace: &crate::WorkspaceCapability,
+        width: usize, workspace: &crate::WorkspaceCapability,
         fill: impl FnOnce(&mut Solution<I>) -> Result<(), crate::EvalError>,
     ) -> Result<Self, crate::EvalError> {
         let spill = if width > 4 {
@@ -985,8 +962,7 @@ impl<I: ViewTermId> RowBag<I> {
     /// A resident vector is moved in place without cloning its cell spills.
     /// Operational output keeps the immutable row/cell owners in its builder.
     pub(crate) fn ordered_admitted(
-        self,
-        mut order: crate::workspace::AdmittedVec<usize>,
+        self, mut order: crate::workspace::AdmittedVec<usize>,
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, crate::EvalError> {
         assert_eq!(
@@ -1161,9 +1137,7 @@ impl<I: ViewTermId> std::ops::Deref for RowsBuilder<I> {
 impl<I: ViewTermId> RowsBuilder<I> {
     /// Merge an alternative witness in the original admitted survivor payload.
     pub(crate) fn combine_evidence(
-        &mut self,
-        ordinal: usize,
-        evidence: &crate::evidence_exec::RowEvidence,
+        &mut self, ordinal: usize, evidence: &crate::evidence_exec::RowEvidence,
     ) -> Result<(), crate::EvalError> {
         let row = &mut self.rows.as_mut_slice()[ordinal];
         row.combine_evidence(
@@ -1182,8 +1156,7 @@ impl<I: ViewTermId> RowsBuilder<I> {
         }
     }
     pub(crate) fn from_storage(
-        rows: crate::workspace::AdmittedVec<RetainedRow<I>>,
-        workspace: &crate::WorkspaceCapability,
+        rows: crate::workspace::AdmittedVec<RetainedRow<I>>, workspace: &crate::WorkspaceCapability,
     ) -> Self {
         // Transferred buffers may have been arbitrarily edited outside this
         // immutable bag home; recompute the physical proof once at ingress.
@@ -1201,9 +1174,7 @@ impl<I: ViewTermId> RowsBuilder<I> {
         Ok(())
     }
     pub(crate) fn push_cells(
-        &mut self,
-        width: usize,
-        cells: impl Iterator<Item = Option<SolutionTerm<I>>>,
+        &mut self, width: usize, cells: impl Iterator<Item = Option<SolutionTerm<I>>>,
     ) -> Result<(), crate::EvalError> {
         let row = RetainedRow::from_cells(width, cells, &self.workspace)?;
         // This constructor publishes cells only, never evidence attachments.
@@ -1262,9 +1233,7 @@ impl<I: ViewTermId> SolutionSeq<I> {
     /// Restore an observable column layout without adding an algebra scope
     /// barrier. Driver-only columns follow the requested logical columns.
     pub(crate) fn reorder_like_admitted(
-        mut self,
-        target: &VarSchema,
-        workspace: &crate::WorkspaceCapability,
+        mut self, target: &VarSchema, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, crate::EvalError> {
         if self.schema.vars() == target.vars() {
             return Ok(self);
@@ -1469,9 +1438,7 @@ impl<I: ViewTermId> SolutionSeq<I> {
 #[must_use]
 #[inline(never)]
 pub fn compatible<I: ViewTermId>(
-    a: &[Option<SolutionTerm<I>>],
-    b: &[Option<SolutionTerm<I>>],
-    shared: &[(usize, usize)],
+    a: &[Option<SolutionTerm<I>>], b: &[Option<SolutionTerm<I>>], shared: &[(usize, usize)],
 ) -> bool {
     shared.iter().all(|&(ia, ib)| match (a[ia], b[ib]) {
         (Some(x), Some(y)) => x == y,

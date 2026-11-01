@@ -229,9 +229,7 @@ fn atan_reciprocal_integer(q: u32, ctx: &mut CoordinateMath) -> Result<FixedInte
 }
 
 fn divide_integer(
-    value: &FixedInterval,
-    denominator: u64,
-    ctx: &mut CoordinateMath,
+    value: &FixedInterval, denominator: u64, ctx: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     value.admit(None, ctx, 1)?;
     let denominator = Int::from_i128(i128::from(denominator));

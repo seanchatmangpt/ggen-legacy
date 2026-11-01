@@ -140,8 +140,7 @@ impl Extent {
 /// value's whole element count for a nested composite, and the sum over its
 /// components for a triple term. Iterative, with an explicit worklist.
 pub(crate) fn try_term_elements(
-    term: &CdtTerm,
-    memory: &mut Memory<'_>,
+    term: &CdtTerm, memory: &mut Memory<'_>,
 ) -> Result<usize, StorageError> {
     let mut elements = 0usize;
     let mut work = Vec::new();
@@ -170,8 +169,7 @@ pub(crate) fn list_extent<'a>(items: impl IntoIterator<Item = &'a CdtTerm>) -> E
 }
 
 pub(crate) fn try_list_extent<'a>(
-    items: impl IntoIterator<Item = &'a CdtTerm>,
-    memory: &mut Memory<'_>,
+    items: impl IntoIterator<Item = &'a CdtTerm>, memory: &mut Memory<'_>,
 ) -> Result<Extent, StorageError> {
     let mut count = 0usize;
     let mut elements = 0usize;
@@ -198,8 +196,7 @@ pub(crate) fn map_extent<'a>(pairs: impl IntoIterator<Item = (&'a CdtKey, &'a Cd
 }
 
 pub(crate) fn try_map_extent<'a>(
-    pairs: impl IntoIterator<Item = (&'a CdtKey, &'a CdtTerm)>,
-    memory: &mut Memory<'_>,
+    pairs: impl IntoIterator<Item = (&'a CdtKey, &'a CdtTerm)>, memory: &mut Memory<'_>,
 ) -> Result<Extent, StorageError> {
     let mut count = 0usize;
     let mut elements = 0usize;

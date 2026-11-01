@@ -33,9 +33,7 @@ use purrdf_core::small::Shared;
 /// an empty branch. The existing admitted algebra walker includes expressions,
 /// correlated EXISTS and subqueries; it is not a second query interpreter.
 pub(crate) fn require_query_graph_support<D: DatasetView>(
-    query: &purrdf_sparql_algebra::Query,
-    dataset: &D,
-    workspace: &WorkspaceCapability,
+    query: &purrdf_sparql_algebra::Query, dataset: &D, workspace: &WorkspaceCapability,
     source_error: impl Fn(D::ReadError) -> EvalError,
 ) -> Result<(), EvalError> {
     if dataset.supports_named_graphs() {
@@ -49,9 +47,7 @@ pub(crate) fn require_query_graph_support<D: DatasetView>(
 }
 
 pub(crate) fn require_pattern_graph_support<D: DatasetView>(
-    pattern: &purrdf_sparql_algebra::GraphPattern,
-    dataset: &D,
-    workspace: &WorkspaceCapability,
+    pattern: &purrdf_sparql_algebra::GraphPattern, dataset: &D, workspace: &WorkspaceCapability,
     source_error: impl Fn(D::ReadError) -> EvalError,
 ) -> Result<(), EvalError> {
     if dataset.supports_named_graphs() {
@@ -127,8 +123,7 @@ impl<I: Eq> Eq for GraphIds<I> {}
 
 impl<I: Ord> GraphIds<I> {
     fn freeze(
-        mut values: crate::AdmittedVec<I>,
-        workspace: &WorkspaceCapability,
+        mut values: crate::AdmittedVec<I>, workspace: &WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         values.as_mut_slice().sort_unstable();
         let (mut values, allocation) = values.into_parts();
@@ -194,9 +189,7 @@ pub(crate) enum GraphScope<I: ViewTermId = TermId> {
 /// term (an absent graph contributes nothing — never an error), then sort+dedupe for
 /// a deterministic, duplicate-free merge set.
 fn resolve_graphs<D: DatasetView>(
-    graphs: &[purrdf_sparql_algebra::NamedNode],
-    dataset: &D,
-    workspace: &WorkspaceCapability,
+    graphs: &[purrdf_sparql_algebra::NamedNode], dataset: &D, workspace: &WorkspaceCapability,
     source_error: &impl Fn(D::ReadError) -> EvalError,
 ) -> Result<GraphIds<D::Id>, EvalError> {
     let mut ids = crate::AdmittedVec::with_capacity(graphs.len(), workspace)?;
@@ -230,9 +223,7 @@ impl<I: ViewTermId> ActiveDataset<I> {
     /// Build the active dataset from a query's `FROM` / `FROM NAMED` clause. An empty
     /// clause means "use the store's default dataset" (§13.2).
     pub(crate) fn from_query_dataset_admitted<D: DatasetView<Id = I>>(
-        qd: &QueryDataset,
-        dataset: &D,
-        workspace: &WorkspaceCapability,
+        qd: &QueryDataset, dataset: &D, workspace: &WorkspaceCapability,
         source_error: impl Fn(D::ReadError) -> EvalError,
     ) -> Result<Self, EvalError> {
         if qd.default.is_empty() && qd.named.is_empty() {
@@ -324,12 +315,7 @@ impl<I: ViewTermId> GraphScope<I> {
     /// here** (the BGP caller de-dupes by `(s,p,o)`; endpoint-collecting callers do
     /// not need it).
     pub(crate) fn for_each_quad<D: DatasetView<Id = I>>(
-        &self,
-        dataset: &D,
-        s: Option<I>,
-        p: Option<I>,
-        o: Option<I>,
-        mut f: impl FnMut(QuadIds<I>),
+        &self, dataset: &D, s: Option<I>, p: Option<I>, o: Option<I>, mut f: impl FnMut(QuadIds<I>),
     ) {
         match self {
             Self::One(gm) => {

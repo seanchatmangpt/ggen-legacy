@@ -289,12 +289,8 @@ impl purrdf_hash::error::StructuredError for ProfileFinding {
 
 impl ProfileFinding {
     fn new(
-        code: &str,
-        severity: Severity,
-        detail: impl Into<String>,
-        reason: ProfileReason,
-        profile: Option<&str>,
-        segment_index: Option<u64>,
+        code: &str, severity: Severity, detail: impl Into<String>, reason: ProfileReason,
+        profile: Option<&str>, segment_index: Option<u64>,
     ) -> Self {
         Self {
             code: code.to_string(),
@@ -339,9 +335,7 @@ pub fn signature_trust(graph: &Graph, policy: Option<&TrustPolicy>) -> Vec<Signa
 /// unreadable, but profile-aware tools can treat [`Severity::Error`] as a
 /// publication or verification failure.
 pub fn evaluate_profile_policy(
-    graph: &Graph,
-    policy: Option<&TrustPolicy>,
-    segment_index: Option<u64>,
+    graph: &Graph, policy: Option<&TrustPolicy>, segment_index: Option<u64>,
 ) -> Vec<ProfileFinding> {
     let default_policy;
     let policy = match policy {
@@ -380,10 +374,7 @@ pub fn evaluate_profile_policy(
 }
 
 fn signature_policy_findings(
-    graph: &Graph,
-    profile: &str,
-    policy: &TrustPolicy,
-    segment_index: Option<u64>,
+    graph: &Graph, profile: &str, policy: &TrustPolicy, segment_index: Option<u64>,
 ) -> Vec<ProfileFinding> {
     let mut findings = Vec::new();
     if graph.signatures.is_empty() {
@@ -500,9 +491,7 @@ fn has_sealed_source(graph: &Graph) -> bool {
 }
 
 fn opaque_recipient_findings(
-    graph: &Graph,
-    policy: &TrustPolicy,
-    segment_index: Option<u64>,
+    graph: &Graph, policy: &TrustPolicy, segment_index: Option<u64>,
 ) -> Vec<ProfileFinding> {
     let mut findings = Vec::new();
     for node in &graph.opaque {
@@ -573,9 +562,7 @@ fn used_vocabs(graph: &Graph) -> FastSet<&'static str> {
 }
 
 fn profile_vocab_findings(
-    graph: &Graph,
-    declared: &BTreeSet<String>,
-    segment_index: Option<u64>,
+    graph: &Graph, declared: &BTreeSet<String>, segment_index: Option<u64>,
 ) -> Vec<ProfileFinding> {
     let mut findings = Vec::new();
     let used = used_vocabs(graph);

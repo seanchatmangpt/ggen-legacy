@@ -70,8 +70,7 @@ impl OperationModel {
     }
 
     pub(super) fn admit_compile(
-        &self,
-        budget: &mut PreparationBudget,
+        &self, budget: &mut PreparationBudget,
     ) -> Result<(ExactArithmeticCost, u64), GeoError> {
         let count = self
             .original_operand_count()

@@ -44,8 +44,7 @@ use purrdf_lex::walk::{Tok, WorkList, dismantle_vec_tree, write_debug};
 /// Visit non-collection nodes in written order through the original tree walk.
 /// The work list is admitted before growth and destroyed before any refund.
 pub(crate) fn visit_leaves_with_memory<'a, S: Admission + ?Sized, B>(
-    root: &'a Geometry,
-    memory: &mut Memory<'_, S>,
+    root: &'a Geometry, memory: &mut Memory<'_, S>,
     mut visit: impl FnMut(&'a Geometry) -> core::ops::ControlFlow<B>,
 ) -> Result<core::ops::ControlFlow<B>, StorageError> {
     visit_leaves_with_memory_using(root, memory, |node, _| visit(node))
@@ -53,8 +52,7 @@ pub(crate) fn visit_leaves_with_memory<'a, S: Admission + ?Sized, B>(
 
 /// Continue the same native walk while a visitor grows its original metadata.
 pub(crate) fn visit_leaves_with_memory_using<'a, S: Admission + ?Sized, B>(
-    root: &'a Geometry,
-    memory: &mut Memory<'_, S>,
+    root: &'a Geometry, memory: &mut Memory<'_, S>,
     mut visit: impl FnMut(&'a Geometry, &mut Memory<'_, S>) -> core::ops::ControlFlow<B>,
 ) -> Result<core::ops::ControlFlow<B>, StorageError> {
     memory.try_scope(|memory| {
@@ -73,8 +71,7 @@ pub(crate) fn visit_leaves_with_memory_using<'a, S: Admission + ?Sized, B>(
 /// Resume the same leaf iterator between callbacks. The callback can use the
 /// numerical arena after the iterator's original storage borrow has ended.
 pub(crate) fn visit_leaves_with_progress<'a, 'observer>(
-    root: &'a Geometry,
-    progress: &mut crate::context::WorkProgress<'observer>,
+    root: &'a Geometry, progress: &mut crate::context::WorkProgress<'observer>,
     visit: impl FnMut(
         &'a Geometry,
         &mut crate::context::WorkProgress<'observer>,
@@ -151,8 +148,7 @@ impl FoldError<crate::GeoError> {
 /// which is the error the recursive spelling would have raised: leaves are visited in
 /// written order and a collection is assembled after its last member.
 pub(crate) fn try_fold<'a, T, E>(
-    root: &'a Geometry,
-    mut leaf: impl FnMut(&'a Geometry) -> Result<T, E>,
+    root: &'a Geometry, mut leaf: impl FnMut(&'a Geometry) -> Result<T, E>,
     mut collection: impl FnMut(&'a Geometry, Vec<T>) -> Result<T, E>,
 ) -> Result<T, E> {
     let mut resident = Resident;
@@ -173,8 +169,7 @@ pub(crate) fn try_fold<'a, T, E>(
 /// that array in its answer, or destroys it with `Memory::release_vec` before
 /// refund. Visitor failure destroys all partial answers before scope cleanup.
 pub(crate) fn try_fold_with_memory<'a, T, E, S: Admission + ?Sized>(
-    root: &'a Geometry,
-    memory: &mut Memory<'_, S>,
+    root: &'a Geometry, memory: &mut Memory<'_, S>,
     mut leaf: impl FnMut(&'a Geometry, &mut Memory<'_, S>) -> Result<T, E>,
     mut collection: impl FnMut(&'a Geometry, Vec<T>, &mut Memory<'_, S>) -> Result<T, E>,
 ) -> Result<T, FoldError<E>> {
@@ -233,8 +228,7 @@ pub(crate) fn try_fold_with_memory<'a, T, E, S: Admission + ?Sized>(
 
 /// [`try_fold`] for answers that cannot fail.
 pub(crate) fn fold<'a, T>(
-    root: &'a Geometry,
-    mut leaf: impl FnMut(&'a Geometry) -> T,
+    root: &'a Geometry, mut leaf: impl FnMut(&'a Geometry) -> T,
     mut collection: impl FnMut(&'a Geometry, Vec<T>) -> T,
 ) -> T {
     let Ok(answer) = try_fold::<T, Infallible>(
@@ -264,8 +258,7 @@ impl Geometry {
     /// # Errors
     /// Preserves checked layout, traversal and original refund refusal.
     pub fn release_with_memory<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         let bytes = try_fold_with_memory(
             &self,
@@ -298,17 +291,13 @@ impl Geometry {
     /// # Errors
     /// Preserves exact layout, allocator, admission and numeric capacity errors.
     pub fn copy_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
-        scratch: &purrdf_xsd::integer::LimbScratch,
+        &self, memory: &mut Memory<'_, S>, scratch: &purrdf_xsd::integer::LimbScratch,
     ) -> Result<Self, crate::GeoError> {
         self.copy_observed(memory, Some(scratch))
     }
 
     fn copy_observed<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
-        scratch: Option<&purrdf_xsd::integer::LimbScratch>,
+        &self, memory: &mut Memory<'_, S>, scratch: Option<&purrdf_xsd::integer::LimbScratch>,
     ) -> Result<Self, crate::GeoError> {
         self.copy_with_memory_using(memory, &mut |value| match scratch {
             Some(scratch) => value
@@ -320,8 +309,7 @@ impl Geometry {
 
     /// The original tree clone with scalar destinations selected by its caller.
     pub(crate) fn copy_with_memory_using<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
         copy: &mut impl FnMut(&Coord) -> Result<Coord, crate::GeoError>,
     ) -> Result<Self, crate::GeoError> {
         let mut leaf = |node: &Self, memory: &mut Memory<'_, S>| {
@@ -382,8 +370,7 @@ fn leaf_array_bytes(body: &GeometryBody) -> Result<usize, StorageError> {
 }
 
 fn copy_leaf<S: Admission + ?Sized>(
-    body: &GeometryBody,
-    memory: &mut Memory<'_, S>,
+    body: &GeometryBody, memory: &mut Memory<'_, S>,
     copy: &mut impl FnMut(&Coord) -> Result<Coord, crate::GeoError>,
 ) -> Result<GeometryBody, crate::GeoError> {
     Ok(match body {
@@ -417,16 +404,14 @@ fn copy_leaf<S: Admission + ?Sized>(
 }
 
 pub(crate) fn copy_sequence_with_memory<S: Admission + ?Sized>(
-    values: &[Coord],
-    memory: &mut Memory<'_, S>,
+    values: &[Coord], memory: &mut Memory<'_, S>,
     copy: &mut impl FnMut(&Coord) -> Result<Coord, crate::GeoError>,
 ) -> Result<super::CoordSeq, crate::GeoError> {
     memory.try_map(values, |value, _| copy(value))
 }
 
 pub(crate) fn copy_rings_with_memory<S: Admission + ?Sized>(
-    values: &[super::CoordSeq],
-    memory: &mut Memory<'_, S>,
+    values: &[super::CoordSeq], memory: &mut Memory<'_, S>,
     copy: &mut impl FnMut(&Coord) -> Result<Coord, crate::GeoError>,
 ) -> Result<Vec<super::CoordSeq>, crate::GeoError> {
     memory.try_map(values, |value, memory| {
@@ -482,8 +467,7 @@ struct Leaves<'a> {
 
 impl<'a> Leaves<'a> {
     fn new_with_memory<S: Admission + ?Sized>(
-        root: &'a Geometry,
-        memory: &mut Memory<'_, S>,
+        root: &'a Geometry, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         let mut pending = Vec::new();
         memory.push(&mut pending, root)?;
@@ -491,8 +475,7 @@ impl<'a> Leaves<'a> {
     }
 
     fn next_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
     ) -> Result<Option<&'a Geometry>, StorageError> {
         while let Some(geometry) = self.pending.pop() {
             if let GeometryBody::GeometryCollection(members) = &geometry.body {
@@ -556,8 +539,7 @@ impl<'a> Coords<'a> {
     }
 
     fn new_with_memory<S: Admission + ?Sized>(
-        root: &'a Geometry,
-        memory: &mut Memory<'_, S>,
+        root: &'a Geometry, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         Ok(Self {
             leaves: Leaves::new_with_memory(root, memory)?,
@@ -566,8 +548,7 @@ impl<'a> Coords<'a> {
     }
 
     fn next_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
     ) -> Result<Option<&'a Coord>, StorageError> {
         loop {
             if let Some(coord) = self.leaf.as_mut().and_then(Iterator::next) {
@@ -598,8 +579,7 @@ impl<'a> Iterator for Coords<'a> {
 /// Continue the original native iterator between work callbacks, ending its
 /// storage borrow before each callback can poll or use the numerical arena.
 pub(crate) fn visit_coords_with_progress<'a, 'observer>(
-    root: &'a Geometry,
-    progress: &mut crate::context::WorkProgress<'observer>,
+    root: &'a Geometry, progress: &mut crate::context::WorkProgress<'observer>,
     visit: impl FnMut(
         &'a Coord,
         &mut crate::context::WorkProgress<'observer>,
@@ -619,8 +599,7 @@ trait ProgressWalk<'a>: Sized {
     fn pending(&self) -> &Vec<&'a Geometry>;
     fn into_pending(self) -> Vec<&'a Geometry>;
     fn next_admitted<S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
     ) -> Result<Option<Self::Item>, StorageError>;
 }
 
@@ -633,8 +612,7 @@ impl<'a> ProgressWalk<'a> for Leaves<'a> {
         self.pending
     }
     fn next_admitted<S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
     ) -> Result<Option<Self::Item>, StorageError> {
         self.next_with_memory(memory)
     }
@@ -649,16 +627,14 @@ impl<'a> ProgressWalk<'a> for Coords<'a> {
         self.leaves.pending
     }
     fn next_admitted<S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
     ) -> Result<Option<Self::Item>, StorageError> {
         self.next_with_memory(memory)
     }
 }
 
 fn visit_with_progress<'a, 'observer, W: ProgressWalk<'a>>(
-    mut walk: W,
-    progress: &mut crate::context::WorkProgress<'observer>,
+    mut walk: W, progress: &mut crate::context::WorkProgress<'observer>,
     mut visit: impl FnMut(
         W::Item,
         &mut crate::context::WorkProgress<'observer>,
@@ -691,8 +667,7 @@ fn visit_with_progress<'a, 'observer, W: ProgressWalk<'a>>(
 /// by the original caller account. Early break and failure both destroy the
 /// work list before returning its actual array layout.
 pub(crate) fn visit_coords_with_memory<'a, S: Admission + ?Sized, B>(
-    root: &'a Geometry,
-    memory: &mut Memory<'_, S>,
+    root: &'a Geometry, memory: &mut Memory<'_, S>,
     mut visit: impl FnMut(&'a Coord) -> core::ops::ControlFlow<B>,
 ) -> Result<core::ops::ControlFlow<B>, StorageError> {
     visit_coords_with_memory_using(root, memory, |coordinate, _| visit(coordinate))
@@ -701,8 +676,7 @@ pub(crate) fn visit_coords_with_memory<'a, S: Admission + ?Sized, B>(
 /// Let the original coordinate visitor grow its own admitted metadata while
 /// the iterator has ended its transient borrow of the same account.
 pub(crate) fn visit_coords_with_memory_using<'a, S: Admission + ?Sized, B>(
-    root: &'a Geometry,
-    memory: &mut Memory<'_, S>,
+    root: &'a Geometry, memory: &mut Memory<'_, S>,
     mut visit: impl FnMut(&'a Coord, &mut Memory<'_, S>) -> core::ops::ControlFlow<B>,
 ) -> Result<core::ops::ControlFlow<B>, StorageError> {
     memory.try_scope(|memory| {
@@ -878,8 +852,7 @@ mod tests {
     /// The recursive spelling of a fold, the reference the work-list fold is
     /// compared with on shallow generated trees.
     fn reference_fold<T>(
-        node: &Geometry,
-        leaf: &mut impl FnMut(&Geometry) -> T,
+        node: &Geometry, leaf: &mut impl FnMut(&Geometry) -> T,
         collection: &mut impl FnMut(&Geometry, Vec<T>) -> T,
     ) -> T {
         match node.body() {
@@ -938,8 +911,7 @@ mod tests {
     /// The recursive reference for the failing fold: the maximum leaf ordinal, or the
     /// first leaf's refusal.
     fn reference_try_fold(
-        node: &Geometry,
-        leaf: &mut impl FnMut(&Geometry) -> Result<usize, String>,
+        node: &Geometry, leaf: &mut impl FnMut(&Geometry) -> Result<usize, String>,
     ) -> Result<usize, String> {
         match node.body() {
             GeometryBody::GeometryCollection(members) => {

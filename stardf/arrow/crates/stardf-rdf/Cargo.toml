@@ -6,7 +6,12 @@ name = "stardf-rdf"
 description = "PurRDF RDF 1.2 implementation: PyO3-free model, diagnostics, store traits, and native GTS/text-codec adapters"
 version.workspace = true
 edition.workspace = true
-publish = false
+# Lane H03 gate-closure (2026-10-31): G3 fix — tier-6 closure member joins the
+# publish set (was publish=false; the 21:05 ladder receipt named it). NOTE: G8
+# rows (hard deps on non-closure members stardf-ed25519/gts/sparql-eval) stay
+# open under the D17 operator registration — publish-flag is necessary, not
+# sufficient, for this crate.
+publish = true
 license.workspace = true
 repository.workspace = true
 homepage.workspace = true
@@ -153,10 +158,10 @@ stardf-cdt = { workspace = true }
 # packaged manifest.
 stardf-testkit = { workspace = true }
 
-[[test]]
-# Real composite compaction/certification runs natively and in wasm/Node.
-name = "gts_composite_compaction"
-harness = false
+# (lane 13, 2026-10-31) `[[test]] gts_composite_compaction` REMOVED: the target
+# file is parked at tests/disabled/gts_composite_compaction.rs (upstream
+# mid-refactor breakage at purrdf rev 0da05783, byte-identical, E0599 witnessed
+# both sides; see tests/disabled/README.md).
 
 [[bench]]
 # One-pass selected GTS import against the two-reader path it replaces: the

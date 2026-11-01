@@ -90,9 +90,7 @@ fn sarif(pattern: &str, value: &str, law: Option<Profile>) -> Result<String, XPa
 }
 
 fn change(
-    pattern: &str,
-    value: &str,
-    law: Option<Profile>,
+    pattern: &str, value: &str, law: Option<Profile>,
 ) -> Result<(String, purrdf_validate::ChangeScope), XPathValidationError> {
     validate_changes_to_sarif_string_with_xpath_regex(
         &pattern_shapes(pattern),
@@ -304,9 +302,7 @@ fn a_product_refusal_keeps_its_dimension_and_a_law_refusal_is_its_own() {
 }
 
 fn entail(
-    pattern: &str,
-    value: &str,
-    law: Option<Profile>,
+    pattern: &str, value: &str, law: Option<Profile>,
 ) -> Result<String, XPathValidationError> {
     let shapes = rule_shapes(pattern);
     let data = data(value);
@@ -334,10 +330,7 @@ fn entail(
 }
 
 fn rules(
-    pattern: &str,
-    value: &str,
-    srl: bool,
-    law: Option<Profile>,
+    pattern: &str, value: &str, srl: bool, law: Option<Profile>,
 ) -> Result<String, XPathValidationError> {
     let shapes = rule_shapes(pattern);
     let rule_set = rule_set(pattern);
@@ -369,9 +362,7 @@ fn rules(
 }
 
 fn node_expr(
-    pattern: &str,
-    value: &str,
-    law: Option<Profile>,
+    pattern: &str, value: &str, law: Option<Profile>,
 ) -> Result<Vec<String>, XPathValidationError> {
     let shapes = expression_shapes(pattern);
     let focus = format!("{value:?}");

@@ -219,9 +219,7 @@ impl<S: Admission> CompiledGlob<S> {
     /// die before their grant is refunded. Account shrink failures remain with
     /// the original admission owner, including after an earlier refusal.
     pub fn compile_with_storage(
-        pattern: &str,
-        mode: Mode,
-        storage: S,
+        pattern: &str, mode: Mode, storage: S,
     ) -> Result<Self, CompileError> {
         compile::compile(pattern, mode, storage)
     }
@@ -241,10 +239,7 @@ impl<S: Admission> CompiledGlob<S> {
     /// one selection predicate. A present empty component executes normally.
     /// Returns exact work exhaustion.
     pub fn match_iri(
-        &self,
-        iri: &purrdf_iri::Iri,
-        component: IriComponent,
-        max_work: u64,
+        &self, iri: &purrdf_iri::Iri, component: IriComponent, max_work: u64,
     ) -> Result<MatchReport, MatchError> {
         match iri_surface(iri, component) {
             Some(text) => self.match_literal(text, max_work),

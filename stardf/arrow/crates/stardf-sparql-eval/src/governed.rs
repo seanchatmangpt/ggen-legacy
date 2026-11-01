@@ -463,8 +463,7 @@ impl PartialAnswers {
     /// # Errors
     /// Preserves a graph reconstruction's original capacity or storage refusal.
     pub fn withholding_blank_nodes(
-        self,
-        mut withhold: impl FnMut(&str) -> bool,
+        self, mut withhold: impl FnMut(&str) -> bool,
     ) -> Result<Self, purrdf_core::RdfDiagnostic> {
         Ok(match self {
             Self::Certain(partial) => {
@@ -538,8 +537,7 @@ impl PartialSparqlResult {
     /// Apply the structurally-removal-only blank-node filter behind
     /// [`PartialAnswers::withholding_blank_nodes`].
     fn withholding_blank_nodes(
-        mut self,
-        withhold: &mut impl FnMut(&str) -> bool,
+        mut self, withhold: &mut impl FnMut(&str) -> bool,
     ) -> Result<(Self, bool), purrdf_core::RdfDiagnostic> {
         let removed = withhold_blank_nodes_from_result(&mut self.result, withhold)?;
         if removed {
@@ -554,8 +552,7 @@ impl PartialSparqlResult {
 /// The predicate never receives mutable result data. All reconstruction happens here, so
 /// the only possible transformation is a deterministic, order-preserving subset.
 fn withhold_blank_nodes_from_result(
-    result: &mut SparqlResult,
-    withhold: &mut impl FnMut(&str) -> bool,
+    result: &mut SparqlResult, withhold: &mut impl FnMut(&str) -> bool,
 ) -> Result<bool, purrdf_core::RdfDiagnostic> {
     Ok(match result {
         SparqlResult::Solutions { rows, aux, .. } => {
@@ -595,8 +592,7 @@ fn withhold_blank_nodes_from_result(
 /// and the first one selected ends the walk. The walk keeps its own work list, so a
 /// term of any nesting costs no more machine stack.
 fn term_value_mentions_withheld_blank(
-    term: &TermValue,
-    withhold: &mut impl FnMut(&str) -> bool,
+    term: &TermValue, withhold: &mut impl FnMut(&str) -> bool,
 ) -> bool {
     let mut pending: purrdf_core::SmallVec<[&TermValue; 8]> = purrdf_core::smallvec![term];
     while let Some(term) = pending.pop() {
@@ -616,8 +612,7 @@ fn term_value_mentions_withheld_blank(
 /// [`term_value_mentions_withheld_blank`] over an egress [`RdfTerm`], whose triple
 /// term nests through its subject and object (its predicate is an IRI string).
 fn rdf_term_mentions_withheld_blank(
-    term: &RdfTerm,
-    withhold: &mut impl FnMut(&str) -> bool,
+    term: &RdfTerm, withhold: &mut impl FnMut(&str) -> bool,
 ) -> bool {
     let mut pending: Vec<&RdfTerm> = vec![term];
     while let Some(term) = pending.pop() {
@@ -640,8 +635,7 @@ fn rdf_term_mentions_withheld_blank(
 /// so the reported `removed` fact describes the transformation actually applied rather than
 /// the result of a separate preflight scan.
 fn dataset_without_withheld_blank_nodes(
-    dataset: &RdfDataset,
-    withhold: &mut impl FnMut(&str) -> bool,
+    dataset: &RdfDataset, withhold: &mut impl FnMut(&str) -> bool,
 ) -> Result<Option<Arc<RdfDataset>>, purrdf_core::RdfDiagnostic> {
     let mut builder = RdfDatasetBuilder::new();
     let mut removed = false;

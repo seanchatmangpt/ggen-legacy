@@ -59,9 +59,7 @@ impl CsvwTermsIdentityColumn {
     ///
     /// Returns a configuration error for an unsafe name or invalid datatype IRI.
     pub fn new(
-        name: impl Into<String>,
-        titles: CsvwNaturalLanguage,
-        datatype: CsvwDatatype,
+        name: impl Into<String>, titles: CsvwNaturalLanguage, datatype: CsvwDatatype,
     ) -> Result<Self, ProjectionError> {
         let column = Self {
             name: name.into(),
@@ -131,9 +129,7 @@ impl CsvwTermsValueMode {
     ///
     /// Returns a configuration error for invalid datatype/language/direction facets.
     pub fn literal(
-        datatype: CsvwDatatype,
-        language: Option<String>,
-        direction: Option<ProjectionDirection>,
+        datatype: CsvwDatatype, language: Option<String>, direction: Option<ProjectionDirection>,
     ) -> Result<Self, ProjectionError> {
         let mode = Self::Literal {
             datatype,
@@ -229,12 +225,8 @@ impl CsvwTermsColumn {
     /// Returns a configuration error for an unsafe name, relative predicate, invalid
     /// title map, value mode, or cardinality.
     pub fn new(
-        name: impl Into<String>,
-        titles: CsvwNaturalLanguage,
-        predicate: impl Into<String>,
-        value_mode: CsvwTermsValueMode,
-        cardinality: CsvwTermsCardinality,
-        required: bool,
+        name: impl Into<String>, titles: CsvwNaturalLanguage, predicate: impl Into<String>,
+        value_mode: CsvwTermsValueMode, cardinality: CsvwTermsCardinality, required: bool,
     ) -> Result<Self, ProjectionError> {
         let column = Self {
             name: name.into(),
@@ -307,11 +299,8 @@ impl CsvwTermsTable {
     /// Returns a configuration error for invalid identity/path policy, no predicate
     /// columns, or duplicate column names/predicates.
     pub fn new(
-        name: impl Into<String>,
-        table_url: impl Into<String>,
-        artifact_path: impl Into<String>,
-        selector: CsvwTermsSelector,
-        identity: CsvwTermsIdentityColumn,
+        name: impl Into<String>, table_url: impl Into<String>, artifact_path: impl Into<String>,
+        selector: CsvwTermsSelector, identity: CsvwTermsIdentityColumn,
         columns: Vec<CsvwTermsColumn>,
     ) -> Result<Self, ProjectionError> {
         let table = Self {
@@ -403,9 +392,7 @@ impl CsvwTermsLimits {
     ///
     /// Returns a configuration error for zero or values beyond `u32`.
     pub fn new(
-        max_rows: usize,
-        max_values: usize,
-        max_values_per_cell: usize,
+        max_rows: usize, max_values: usize, max_values_per_cell: usize,
     ) -> Result<Self, ProjectionError> {
         for (name, value) in [
             ("max_rows", max_rows),
@@ -459,10 +446,8 @@ impl CsvwTermsConfig {
     /// Returns a configuration error for unsafe/duplicate artifacts, duplicate table
     /// identities/names, invalid nested policies, or an empty table list.
     pub fn new(
-        csvw: CsvwConfig,
-        metadata_path: impl Into<String>,
-        graph_selection: CsvwTermsGraphSelection,
-        tables: Vec<CsvwTermsTable>,
+        csvw: CsvwConfig, metadata_path: impl Into<String>,
+        graph_selection: CsvwTermsGraphSelection, tables: Vec<CsvwTermsTable>,
         execution_limits: CsvwTermsLimits,
     ) -> Result<Self, ProjectionError> {
         let config = Self {
@@ -734,16 +719,14 @@ struct TermsProjector<'a> {
 /// Returns a typed configuration, term, integrity, cardinality, separator,
 /// serialization, package, or resource-limit failure.
 pub fn project_csvw_terms<D: DatasetView>(
-    view: &D,
-    config: &CsvwTermsConfig,
+    view: &D, config: &CsvwTermsConfig,
 ) -> Result<CsvwTermsProjection, ProjectionError> {
     TermsProjector::load(view, config)?.project()
 }
 
 impl<'a> TermsProjector<'a> {
     fn load<D: DatasetView>(
-        view: &D,
-        config: &'a CsvwTermsConfig,
+        view: &D, config: &'a CsvwTermsConfig,
     ) -> Result<Self, ProjectionError> {
         config.validate()?;
         let mut cache = BTreeMap::new();
@@ -925,8 +908,7 @@ impl<'a> TermsProjector<'a> {
     }
 
     fn table_memberships<'index>(
-        &self,
-        index: &'index BTreeMap<String, BTreeMap<String, BTreeSet<ProjectionTerm>>>,
+        &self, index: &'index BTreeMap<String, BTreeMap<String, BTreeSet<ProjectionTerm>>>,
     ) -> Vec<Vec<&'index str>> {
         self.config
             .tables
@@ -944,8 +926,7 @@ impl<'a> TermsProjector<'a> {
     }
 
     fn build_table_group(
-        &self,
-        index: &BTreeMap<String, BTreeMap<String, BTreeSet<ProjectionTerm>>>,
+        &self, index: &BTreeMap<String, BTreeMap<String, BTreeSet<ProjectionTerm>>>,
         memberships: &[Vec<&str>],
     ) -> Result<(CsvwTableGroup, usize, usize), ProjectionError> {
         let mut tables = Vec::with_capacity(self.config.tables.len());
@@ -1046,9 +1027,7 @@ impl<'a> TermsProjector<'a> {
     }
 
     fn record_quad_losses(
-        &mut self,
-        memberships: &[Vec<&str>],
-        emitted_graphs: &mut BTreeSet<ProjectionTerm>,
+        &mut self, memberships: &[Vec<&str>], emitted_graphs: &mut BTreeSet<ProjectionTerm>,
     ) -> Result<(), ProjectionError> {
         for index in 0..self.quads.len() {
             let quad = &self.quads[index];
@@ -1101,8 +1080,7 @@ impl<'a> TermsProjector<'a> {
     }
 
     fn record_structural_losses(
-        &mut self,
-        emitted_graphs: &BTreeSet<ProjectionTerm>,
+        &mut self, emitted_graphs: &BTreeSet<ProjectionTerm>,
     ) -> Result<(), ProjectionError> {
         let non_empty_graphs = emitted_graphs;
         for index in 0..self.named_graphs.len() {
@@ -1148,9 +1126,7 @@ impl<'a> TermsProjector<'a> {
     }
 
     fn record_quad_loss(
-        &mut self,
-        index: usize,
-        code: &'static str,
+        &mut self, index: usize, code: &'static str,
     ) -> Result<(), ProjectionError> {
         record_row_loss(
             &mut self.ledger,
@@ -1163,9 +1139,7 @@ impl<'a> TermsProjector<'a> {
     }
 
     fn record_named_graph_loss(
-        &mut self,
-        index: usize,
-        code: &'static str,
+        &mut self, index: usize, code: &'static str,
     ) -> Result<(), ProjectionError> {
         record_row_loss(
             &mut self.ledger,
@@ -1178,9 +1152,7 @@ impl<'a> TermsProjector<'a> {
     }
 
     fn record_reifier_loss(
-        &mut self,
-        index: usize,
-        code: &'static str,
+        &mut self, index: usize, code: &'static str,
     ) -> Result<(), ProjectionError> {
         record_row_loss(
             &mut self.ledger,
@@ -1193,9 +1165,7 @@ impl<'a> TermsProjector<'a> {
     }
 
     fn record_annotation_loss(
-        &mut self,
-        index: usize,
-        code: &'static str,
+        &mut self, index: usize, code: &'static str,
     ) -> Result<(), ProjectionError> {
         record_row_loss(
             &mut self.ledger,
@@ -1209,8 +1179,7 @@ impl<'a> TermsProjector<'a> {
 }
 
 fn selector_matches(
-    selector: &CsvwTermsSelector,
-    subject: &str,
+    selector: &CsvwTermsSelector, subject: &str,
     predicates: &BTreeMap<String, BTreeSet<ProjectionTerm>>,
 ) -> bool {
     if !selector.iri_prefixes().is_empty()
@@ -1262,9 +1231,7 @@ fn identity_cell(subject: &str, identity: &CsvwTermsIdentityColumn) -> CsvwCell 
 }
 
 fn cell_value(
-    object: &ProjectionTerm,
-    mode: &CsvwTermsValueMode,
-    config: &CsvwConfig,
+    object: &ProjectionTerm, mode: &CsvwTermsValueMode, config: &CsvwConfig,
 ) -> Option<CsvwValue> {
     match (object, mode) {
         (ProjectionTerm::Iri { value }, CsvwTermsValueMode::Iri { datatype }) => Some(CsvwValue {
@@ -1313,8 +1280,7 @@ fn cell_value(
 }
 
 fn predicate_cell(
-    column: &CsvwTermsColumn,
-    values: Vec<CsvwValue>,
+    column: &CsvwTermsColumn, values: Vec<CsvwValue>,
 ) -> Result<CsvwCell, ProjectionError> {
     let string_value = match &column.cardinality {
         CsvwTermsCardinality::One => values
@@ -1343,9 +1309,7 @@ fn predicate_cell(
 }
 
 fn materialize_table(
-    declaration: &CsvwTermsTable,
-    mut rows: Vec<CsvwRow>,
-    config: &CsvwConfig,
+    declaration: &CsvwTermsTable, mut rows: Vec<CsvwRow>, config: &CsvwConfig,
 ) -> CsvwTable {
     let mut columns = Vec::with_capacity(declaration.columns.len() + 1);
     columns.push(CsvwColumn {
@@ -1466,12 +1430,8 @@ impl InheritedSeparator for CsvwInheritedProperties {
 }
 
 fn inherited(
-    datatype: CsvwDatatype,
-    about_url: Option<String>,
-    property_url: Option<String>,
-    value_url: Option<String>,
-    language: Option<String>,
-    text_direction: Option<CsvwTextDirection>,
+    datatype: CsvwDatatype, about_url: Option<String>, property_url: Option<String>,
+    value_url: Option<String>, language: Option<String>, text_direction: Option<CsvwTextDirection>,
     required: bool,
 ) -> CsvwInheritedProperties {
     CsvwInheritedProperties {
@@ -1940,10 +1900,7 @@ mod tests {
     }
 
     fn push_iri_quad(
-        builder: &mut RdfDatasetBuilder,
-        subject: &str,
-        predicate: &str,
-        object: &str,
+        builder: &mut RdfDatasetBuilder, subject: &str, predicate: &str, object: &str,
         graph: Option<purrdf_core::TermId>,
     ) {
         let subject = builder.intern_iri(subject).unwrap();
@@ -1955,10 +1912,7 @@ mod tests {
     }
 
     fn push_literal_quad(
-        builder: &mut RdfDatasetBuilder,
-        subject: &str,
-        predicate: &str,
-        literal: RdfLiteral,
+        builder: &mut RdfDatasetBuilder, subject: &str, predicate: &str, literal: RdfLiteral,
         graph: Option<purrdf_core::TermId>,
     ) {
         let subject = builder.intern_iri(subject).unwrap();

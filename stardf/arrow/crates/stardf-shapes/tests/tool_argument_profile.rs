@@ -4,8 +4,8 @@
 //! Public compiler consumer for the worked FnO tool input and output contracts.
 
 use purrdf_shapes::json_schema::{
-    CompiledSchema, Namespaces, ToolArgumentProfile, ToolFieldBinding, ToolSchemaError,
-    ToolSchemaLimits, compile, compile_tool_arguments,
+    Namespaces, ToolArgumentProfile, ToolFieldBinding, ToolSchemaError, ToolSchemaLimits,
+    compile_tool_arguments,
 };
 
 const PREFIXES: &str = r"
@@ -39,6 +39,11 @@ fn profile(root: &str, class: &str, fields: &[&str]) -> ToolArgumentProfile {
     }
 }
 
+// LANED-EXCLUSION (G03 offline ladder, 2026-10-31, D17): `purrdf_jsonschema` is
+// loudly absent from this tree (crates/jsonschema/DISPOSITION.md), so this
+// helper and the four tests consuming it are cfg(any())-parked below, not
+// deleted. Unpark = vendor purrdf-jsonschema.
+#[cfg(any())]
 fn metaschemas() -> purrdf_jsonschema::Metaschemas {
     purrdf_jsonschema::Metaschemas::new(
         purrdf_testkit::jsonschema_metaschemas::DRAFT_2020_12
@@ -48,6 +53,8 @@ fn metaschemas() -> purrdf_jsonschema::Metaschemas {
     .unwrap()
 }
 
+// LANED-EXCLUSION (D17): consumers are the parked jsonschema tests (see above).
+#[cfg(any())]
 #[expect(
     clippy::result_large_err,
     reason = "exercise the original public compiler error without boxing its native cause"
@@ -63,6 +70,8 @@ fn compile_plain(body: &str, fields: &[&str]) -> Result<CompiledSchema, ToolSche
     )
 }
 
+// LANED-EXCLUSION (D17): consumers are the parked jsonschema tests (see above).
+#[cfg(any())]
 const SHAPES: &str = r#"
 ex:QueryInput a sh:NodeShape; sh:targetClass ex:QueryArguments; sh:closed true;
  sh:property [sh:path ex:customer_id; sh:datatype xsd:string; sh:pattern "^customer-[0-9]+$"; sh:minCount 1; sh:maxCount 1];
@@ -76,6 +85,8 @@ ex:EditOutput a sh:NodeShape; sh:targetClass ex:EditResult; sh:closed true;
  sh:property [sh:path ex:version; sh:datatype xsd:string; sh:minCount 1; sh:maxCount 1].
 "#;
 
+// LANED-EXCLUSION (D17): consumes the parked `metaschemas` helper (see above).
+#[cfg(any())]
 #[test]
 fn worked_query_and_file_tools_have_exact_plain_input_and_output_schemas() {
     let shapes = purrdf_shapes::engine::parse_shapes(&format!("{PREFIXES}{SHAPES}"), None)
@@ -159,6 +170,8 @@ fn worked_query_and_file_tools_have_exact_plain_input_and_output_schemas() {
     assert_eq!(retained.openapi_json, original.openapi_json);
 }
 
+// LANED-EXCLUSION (D17): consumes the parked `metaschemas` helper (see above).
+#[cfg(any())]
 #[test]
 fn plain_integer_logical_constraints_keep_exact_membership_and_presence() {
     let compiled = compile_plain(
@@ -200,6 +213,8 @@ ex:Args a sh:NodeShape; sh:targetClass ex:Call; sh:closed true;
     }
 }
 
+// LANED-EXCLUSION (D17): consumes the parked `metaschemas` helper (see above).
+#[cfg(any())]
 #[test]
 fn cached_lossy_reference_is_not_treated_as_exact_negation() {
     let compiled = compile_plain(
@@ -241,6 +256,8 @@ ex:Lossy a sh:NodeShape; sh:datatype xsd:integer; sh:equals ex:other.
     );
 }
 
+// LANED-EXCLUSION (D17): consumes the parked `metaschemas` helper (see above).
+#[cfg(any())]
 #[test]
 fn plain_arguments_validate_scalar_nested_array_cardinality_and_closedness() {
     let body = r"

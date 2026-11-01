@@ -69,20 +69,14 @@ impl Realization {
     /// for a proof nobody asked for would pay more for the answer binding than for the answer
     /// — which is why the two side matrices it is derived from are not allocated either.
     pub(crate) fn decide(
-        session: &mut Session<'_>,
-        individuals: &[u32],
-        classes: &[(u32, u32)],
-        m: &Subsumptions,
+        session: &mut Session<'_>, individuals: &[u32], classes: &[(u32, u32)], m: &Subsumptions,
     ) -> (Self, Vec<Claim>) {
         Self::decide_until(session, individuals, classes, m, || true)
     }
 
     /// Retain answers and their run bindings before polling the next decision.
     pub(super) fn decide_until(
-        session: &mut Session<'_>,
-        individuals: &[u32],
-        classes: &[(u32, u32)],
-        m: &Subsumptions,
+        session: &mut Session<'_>, individuals: &[u32], classes: &[(u32, u32)], m: &Subsumptions,
         mut poll: impl FnMut() -> bool,
     ) -> (Self, Vec<Claim>) {
         let n = classes.len();

@@ -72,9 +72,7 @@ impl Keyring {
     /// Insert or replace the public key associated with exact opaque id bytes.
     /// Composite keys are supplied in a `Box`, keeping each keyring entry small.
     pub fn insert(
-        &mut self,
-        kid: impl AsRef<[u8]>,
-        key: impl Into<VerificationKey>,
+        &mut self, kid: impl AsRef<[u8]>, key: impl Into<VerificationKey>,
     ) -> Option<VerificationKey> {
         self.keys.insert(kid.as_ref().to_vec(), key.into())
     }
@@ -82,8 +80,7 @@ impl Keyring {
     /// Explicitly configure signatures that have no kid header. This does not
     /// resolve any present identifier, including an empty one.
     pub fn insert_without_id(
-        &mut self,
-        key: impl Into<VerificationKey>,
+        &mut self, key: impl Into<VerificationKey>,
     ) -> Option<VerificationKey> {
         self.without_id.replace(key.into())
     }
@@ -338,17 +335,14 @@ pub fn verify_file_with_options(data: &[u8], options: &VerifyOptions) -> Verific
 /// This is the core [`verify_file_with_options`] also uses internally, folded
 /// down to its single resolved key.
 pub fn verify_file_with_keyring<K: SignatureKeyring + ?Sized>(
-    data: &[u8],
-    keyring: &K,
+    data: &[u8], keyring: &K,
 ) -> VerificationResult {
     let options = VerifyOptions::default();
     verify_graph_with_keyring(read(data, true, None), keyring, &options)
 }
 
 fn verify_graph_with_keyring<K: SignatureKeyring + ?Sized>(
-    mut graph: Graph,
-    keyring: &K,
-    options: &VerifyOptions,
+    mut graph: Graph, keyring: &K, options: &VerifyOptions,
 ) -> VerificationResult {
     let result = verify_against_keyring(&mut graph, keyring, options);
     VerificationResult {
@@ -386,9 +380,7 @@ struct KeyringVerification {
 }
 
 fn verify_against_keyring<K: SignatureKeyring + ?Sized>(
-    graph: &mut Graph,
-    keyring: &K,
-    options: &VerifyOptions,
+    graph: &mut Graph, keyring: &K, options: &VerifyOptions,
 ) -> KeyringVerification {
     verify_signatures_with_resolver(&mut graph.signatures, |candidate, algorithm| {
         keyring.resolve(candidate, algorithm)
@@ -465,8 +457,7 @@ fn integrity_errors(diagnostics: &[Diagnostic]) -> Vec<VerificationError> {
 }
 
 fn provider_from_armor(
-    armored: &str,
-    kid: Option<&str>,
+    armored: &str, kid: Option<&str>,
 ) -> Result<(String, VerifyingKey, [u8; 32], String), TransportKeyError> {
     let parsed = parse_transport_key(armored).map_err(TransportKeyError::OpenPgp)?;
     let public = VerifyingKey::from_bytes(&parsed.raw_public).map_err(|source| {

@@ -696,12 +696,8 @@ pub trait Arithmetic: sealed::Sealed + Copy + fmt::Debug + Send + Sync + 'static
     /// Panics if `query.len()` differs from `rows.dims()` or `out.len()` from
     /// `rows.rows()`.
     fn distances<Q: Scalar, T: Scalar>(
-        resolved: Resolved<Self>,
-        measure: Measure,
-        query: &[Q],
-        query_norm: f64,
-        rows: RowsRef<'_, T>,
-        out: &mut [Result<f64, NonFinite>],
+        resolved: Resolved<Self>, measure: Measure, query: &[Q], query_norm: f64,
+        rows: RowsRef<'_, T>, out: &mut [Result<f64, NonFinite>],
     );
 
     /// Score the rows named by `ids` against `query` into `out`, in `ids` order.
@@ -711,36 +707,21 @@ pub trait Arithmetic: sealed::Sealed + Copy + fmt::Debug + Send + Sync + 'static
     /// Panics if `query.len()` differs from `rows.dims()`, `out.len()` from
     /// `ids.len()`, or an id is not a row of `rows`.
     fn distances_indexed<Q: Scalar, T: Scalar>(
-        resolved: Resolved<Self>,
-        measure: Measure,
-        query: &[Q],
-        query_norm: f64,
-        rows: RowsRef<'_, T>,
-        ids: &[usize],
-        out: &mut [Result<f64, NonFinite>],
+        resolved: Resolved<Self>, measure: Measure, query: &[Q], query_norm: f64,
+        rows: RowsRef<'_, T>, ids: &[usize], out: &mut [Result<f64, NonFinite>],
     );
 
     /// The distance from `a` to `b`, retaining the original checked result on refusal.
     ///
     /// The operands are folded over their common prefix.
     fn distance_on<Q: Scalar, T: Scalar>(
-        resolved: Resolved<Self>,
-        measure: Measure,
-        a: &[Q],
-        a_norm: f64,
-        b: &[T],
-        b_norm: f64,
+        resolved: Resolved<Self>, measure: Measure, a: &[Q], a_norm: f64, b: &[T], b_norm: f64,
     ) -> Result<f64, NonFinite>;
 
     /// [`Arithmetic::distance_on`], permitted to stop once the answer cannot clear
     /// `bound`.
     fn distance_bounded_on<Q: Scalar, T: Scalar>(
-        resolved: Resolved<Self>,
-        measure: Measure,
-        a: &[Q],
-        a_norm: f64,
-        b: &[T],
-        b_norm: f64,
+        resolved: Resolved<Self>, measure: Measure, a: &[Q], a_norm: f64, b: &[T], b_norm: f64,
         bound: Bound,
     ) -> Bounded;
 }
@@ -858,11 +839,7 @@ impl<A: Arithmetic> Resolved<A> {
 
     /// See [`Arithmetic::distances`].
     pub fn distances<Q: Scalar, T: Scalar>(
-        self,
-        measure: Measure,
-        query: &[Q],
-        query_norm: f64,
-        rows: RowsRef<'_, T>,
+        self, measure: Measure, query: &[Q], query_norm: f64, rows: RowsRef<'_, T>,
         out: &mut [Result<f64, NonFinite>],
     ) {
         A::distances(self, measure, query, query_norm, rows, out);
@@ -870,12 +847,7 @@ impl<A: Arithmetic> Resolved<A> {
 
     /// See [`Arithmetic::distances_indexed`].
     pub fn distances_indexed<Q: Scalar, T: Scalar>(
-        self,
-        measure: Measure,
-        query: &[Q],
-        query_norm: f64,
-        rows: RowsRef<'_, T>,
-        ids: &[usize],
+        self, measure: Measure, query: &[Q], query_norm: f64, rows: RowsRef<'_, T>, ids: &[usize],
         out: &mut [Result<f64, NonFinite>],
     ) {
         A::distances_indexed(self, measure, query, query_norm, rows, ids, out);
@@ -883,12 +855,7 @@ impl<A: Arithmetic> Resolved<A> {
 
     /// See [`Arithmetic::distance_on`].
     pub fn distance<Q: Scalar, T: Scalar>(
-        self,
-        measure: Measure,
-        a: &[Q],
-        a_norm: f64,
-        b: &[T],
-        b_norm: f64,
+        self, measure: Measure, a: &[Q], a_norm: f64, b: &[T], b_norm: f64,
     ) -> Result<f64, NonFinite> {
         A::distance_on(self, measure, a, a_norm, b, b_norm)
     }
@@ -896,13 +863,7 @@ impl<A: Arithmetic> Resolved<A> {
     /// See [`Arithmetic::distance_bounded_on`].
     #[must_use]
     pub fn distance_bounded<Q: Scalar, T: Scalar>(
-        self,
-        measure: Measure,
-        a: &[Q],
-        a_norm: f64,
-        b: &[T],
-        b_norm: f64,
-        bound: Bound,
+        self, measure: Measure, a: &[Q], a_norm: f64, b: &[T], b_norm: f64, bound: Bound,
     ) -> Bounded {
         A::distance_bounded_on(self, measure, a, a_norm, b, b_norm, bound)
     }
@@ -1108,46 +1069,27 @@ impl Arithmetic for Exact {
     }
 
     fn distances<Q: Scalar, T: Scalar>(
-        resolved: Resolved<Self>,
-        measure: Measure,
-        query: &[Q],
-        query_norm: f64,
-        rows: RowsRef<'_, T>,
-        out: &mut [Result<f64, NonFinite>],
+        resolved: Resolved<Self>, measure: Measure, query: &[Q], query_norm: f64,
+        rows: RowsRef<'_, T>, out: &mut [Result<f64, NonFinite>],
     ) {
         dispatch::distances(resolved.path, measure, query, query_norm, rows, out);
     }
 
     fn distances_indexed<Q: Scalar, T: Scalar>(
-        resolved: Resolved<Self>,
-        measure: Measure,
-        query: &[Q],
-        query_norm: f64,
-        rows: RowsRef<'_, T>,
-        ids: &[usize],
-        out: &mut [Result<f64, NonFinite>],
+        resolved: Resolved<Self>, measure: Measure, query: &[Q], query_norm: f64,
+        rows: RowsRef<'_, T>, ids: &[usize], out: &mut [Result<f64, NonFinite>],
     ) {
         dispatch::distances_indexed(resolved.path, measure, query, query_norm, rows, ids, out);
     }
 
     fn distance_on<Q: Scalar, T: Scalar>(
-        resolved: Resolved<Self>,
-        measure: Measure,
-        a: &[Q],
-        a_norm: f64,
-        b: &[T],
-        b_norm: f64,
+        resolved: Resolved<Self>, measure: Measure, a: &[Q], a_norm: f64, b: &[T], b_norm: f64,
     ) -> Result<f64, NonFinite> {
         dispatch::distance(resolved.path, measure, a, a_norm, b, b_norm)
     }
 
     fn distance_bounded_on<Q: Scalar, T: Scalar>(
-        resolved: Resolved<Self>,
-        measure: Measure,
-        a: &[Q],
-        a_norm: f64,
-        b: &[T],
-        b_norm: f64,
+        resolved: Resolved<Self>, measure: Measure, a: &[Q], a_norm: f64, b: &[T], b_norm: f64,
         bound: Bound,
     ) -> Bounded {
         dispatch::distance_bounded(resolved.path, measure, a, a_norm, b, b_norm, bound)
@@ -1209,46 +1151,27 @@ impl Arithmetic for Reassociated {
     }
 
     fn distances<Q: Scalar, T: Scalar>(
-        resolved: Resolved<Self>,
-        measure: Measure,
-        query: &[Q],
-        query_norm: f64,
-        rows: RowsRef<'_, T>,
-        out: &mut [Result<f64, NonFinite>],
+        resolved: Resolved<Self>, measure: Measure, query: &[Q], query_norm: f64,
+        rows: RowsRef<'_, T>, out: &mut [Result<f64, NonFinite>],
     ) {
         reassociated::distances(resolved.path, measure, query, query_norm, rows, out);
     }
 
     fn distances_indexed<Q: Scalar, T: Scalar>(
-        resolved: Resolved<Self>,
-        measure: Measure,
-        query: &[Q],
-        query_norm: f64,
-        rows: RowsRef<'_, T>,
-        ids: &[usize],
-        out: &mut [Result<f64, NonFinite>],
+        resolved: Resolved<Self>, measure: Measure, query: &[Q], query_norm: f64,
+        rows: RowsRef<'_, T>, ids: &[usize], out: &mut [Result<f64, NonFinite>],
     ) {
         reassociated::distances_indexed(resolved.path, measure, query, query_norm, rows, ids, out);
     }
 
     fn distance_on<Q: Scalar, T: Scalar>(
-        resolved: Resolved<Self>,
-        measure: Measure,
-        a: &[Q],
-        a_norm: f64,
-        b: &[T],
-        b_norm: f64,
+        resolved: Resolved<Self>, measure: Measure, a: &[Q], a_norm: f64, b: &[T], b_norm: f64,
     ) -> Result<f64, NonFinite> {
         reassociated::distance(resolved.path, measure, a, a_norm, b, b_norm)
     }
 
     fn distance_bounded_on<Q: Scalar, T: Scalar>(
-        resolved: Resolved<Self>,
-        measure: Measure,
-        a: &[Q],
-        a_norm: f64,
-        b: &[T],
-        b_norm: f64,
+        resolved: Resolved<Self>, measure: Measure, a: &[Q], a_norm: f64, b: &[T], b_norm: f64,
         bound: Bound,
     ) -> Bounded {
         reassociated::distance_bounded(resolved.path, measure, a, a_norm, b, b_norm, bound)

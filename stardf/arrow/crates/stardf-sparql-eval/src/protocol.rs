@@ -397,10 +397,7 @@ impl ProtocolRequest {
     ///
     /// A [`ProtocolError`] naming the protocol rule the request breaks.
     pub fn parse(
-        method: &str,
-        content_type: Option<&str>,
-        query_string: Option<&str>,
-        body: &[u8],
+        method: &str, content_type: Option<&str>, query_string: Option<&str>, body: &[u8],
     ) -> Result<Self, ProtocolError> {
         let mut params = Parameters::default();
         params.absorb(decode_form(
@@ -666,9 +663,7 @@ impl ProtocolRequest {
     /// [`ProtocolError::UsingConflictsWithClause`] when an update operation already
     /// writes `USING`, `USING NAMED` or `WITH`.
     pub fn effective_text_with(
-        &self,
-        parser: &SparqlParser,
-        options: &ParserOptions,
+        &self, parser: &SparqlParser, options: &ParserOptions,
     ) -> Result<String, ProtocolError> {
         if !self.has_dataset_parameters() {
             return Ok(self.text.clone());
@@ -680,9 +675,7 @@ impl ProtocolRequest {
     }
 
     fn splice_query_dataset(
-        &self,
-        parser: &SparqlParser,
-        options: &ParserOptions,
+        &self, parser: &SparqlParser, options: &ParserOptions,
     ) -> Result<String, ProtocolError> {
         let slot = parser
             .parse_query_dataset_slot(&self.text, options)
@@ -706,9 +699,7 @@ impl ProtocolRequest {
     }
 
     fn splice_update_dataset(
-        &self,
-        parser: &SparqlParser,
-        options: &ParserOptions,
+        &self, parser: &SparqlParser, options: &ParserOptions,
     ) -> Result<String, ProtocolError> {
         let split = parser
             .parse_update_split(&self.text, options)
@@ -792,8 +783,7 @@ fn push_clause(out: &mut String, keyword: &str, iri: &str) {
 
 /// Exactly one value of an operation parameter, or the protocol error for none or many.
 fn single(
-    mut values: impl ExactSizeIterator<Item = String>,
-    name: &str,
+    mut values: impl ExactSizeIterator<Item = String>, name: &str,
 ) -> Result<String, ProtocolError> {
     match values.len() {
         0 => Err(ProtocolError::MissingOperation),

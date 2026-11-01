@@ -25,10 +25,7 @@ fn iri(builder: &mut RdfDatasetBuilder, value: &str) -> TermId {
 }
 
 fn push_iri(
-    builder: &mut RdfDatasetBuilder,
-    subject: &str,
-    predicate: &str,
-    object: &str,
+    builder: &mut RdfDatasetBuilder, subject: &str, predicate: &str, object: &str,
 ) -> (TermId, TermId, TermId) {
     let subject = iri(builder, subject);
     let predicate = iri(builder, predicate);

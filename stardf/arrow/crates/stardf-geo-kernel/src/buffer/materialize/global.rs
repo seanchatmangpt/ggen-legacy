@@ -41,11 +41,8 @@ pub(super) struct Request<'a> {
 }
 
 pub(super) fn materialize(
-    request: &Request<'_>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    total: &mut u64,
-    storage: &mut MaterializationStorage,
+    request: &Request<'_>, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
+    total: &mut u64, storage: &mut MaterializationStorage,
 ) -> Result<GeometryBody, GeoError> {
     // A cell is only the common angular partition here. The actual reference's
     // axes and metric factors bound its carrier; no datum conversion occurs.
@@ -141,10 +138,7 @@ enum Decision {
 }
 
 fn classify(
-    source: &Source<'_>,
-    radius: &Rat,
-    bounds: &CellCarrierBounds,
-    context: &mut MetricContext,
+    source: &Source<'_>, radius: &Rat, bounds: &CellCarrierBounds, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Decision, GeoError> {
     let h = bounds.bbox_radius.exact();
@@ -171,10 +165,7 @@ fn classify(
 }
 
 fn within(
-    source: &Source<'_>,
-    point: &LonLat,
-    radius: &Metres,
-    context: &mut MetricContext,
+    source: &Source<'_>, point: &LonLat, radius: &Metres, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     if radius.exact().signum() < 0 {
@@ -204,9 +195,7 @@ fn within(
 }
 
 fn narrow(
-    bounds: &CellCarrierBounds,
-    band: &Rat,
-    context: &mut MetricContext,
+    bounds: &CellCarrierBounds, band: &Rat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let two = Rat::from_i64(2);
@@ -223,11 +212,8 @@ fn narrow(
 }
 
 fn append_rectangles(
-    bounds: &CellCarrierBounds,
-    output: &mut RetainedBuilder<crate::Rings>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    total: &mut u64,
+    bounds: &CellCarrierBounds, output: &mut RetainedBuilder<crate::Rings>,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>, total: &mut u64,
     storage: &mut MaterializationStorage,
 ) -> Result<(), GeoError> {
     for (west, east) in &bounds.longitudes {
@@ -278,12 +264,8 @@ fn append_rectangles(
 }
 
 fn union(
-    literal: GeometryLiteral,
-    profile: &GeoProfile,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    total_start: u64,
-    total: &mut u64,
+    literal: GeometryLiteral, profile: &GeoProfile, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, total_start: u64, total: &mut u64,
     storage: &mut MaterializationStorage,
 ) -> Result<GeometryBody, GeoError> {
     let occupied = context

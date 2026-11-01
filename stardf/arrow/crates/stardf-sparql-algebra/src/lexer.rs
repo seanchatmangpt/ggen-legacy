@@ -281,12 +281,10 @@ pub struct Spanned<'a> {
 
 impl Spanned<'_> {
     pub(crate) fn clone_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> core::result::Result<Self, StorageError> {
         fn text<'a, S: Admission + ?Sized>(
-            value: &Cow<'a, str>,
-            memory: &mut Memory<'_, S>,
+            value: &Cow<'a, str>, memory: &mut Memory<'_, S>,
         ) -> core::result::Result<Cow<'a, str>, StorageError> {
             match value {
                 Cow::Borrowed(text) => Ok(Cow::Borrowed(text)),
@@ -356,9 +354,7 @@ pub fn tokenize_with(input: &str, options: LexerOptions) -> Result<Vec<Spanned<'
 /// # Errors
 /// Returns the original lexical failure or a distinct physical storage refusal.
 pub fn tokenize_with_memory<'a, S: Admission + ?Sized>(
-    input: &'a str,
-    options: LexerOptions,
-    memory: &mut Memory<'_, S>,
+    input: &'a str, options: LexerOptions, memory: &mut Memory<'_, S>,
 ) -> Result<Vec<Spanned<'a>>> {
     // Native lexical refusals are inline. On failure, run has destroyed every
     // token and decode buffer; refund this child's delta, preserving caller data.
@@ -367,42 +363,30 @@ pub fn tokenize_with_memory<'a, S: Admission + ?Sized>(
 
 trait LexerStorage {
     fn push_token<'a>(
-        &mut self,
-        values: &mut Vec<Spanned<'a>>,
-        value: Spanned<'a>,
+        &mut self, values: &mut Vec<Spanned<'a>>, value: Spanned<'a>,
     ) -> core::result::Result<(), StorageError>;
     fn push_char(
-        &mut self,
-        value: &mut String,
-        character: char,
+        &mut self, value: &mut String, character: char,
     ) -> core::result::Result<(), StorageError>;
     fn push_str(
-        &mut self,
-        value: &mut String,
-        text: &str,
+        &mut self, value: &mut String, text: &str,
     ) -> core::result::Result<(), StorageError>;
     fn release_string(&mut self, value: String) -> core::result::Result<(), StorageError>;
 }
 
 impl<S: Admission + ?Sized> LexerStorage for Memory<'_, S> {
     fn push_token<'a>(
-        &mut self,
-        values: &mut Vec<Spanned<'a>>,
-        value: Spanned<'a>,
+        &mut self, values: &mut Vec<Spanned<'a>>, value: Spanned<'a>,
     ) -> core::result::Result<(), StorageError> {
         self.push(values, value)
     }
     fn push_char(
-        &mut self,
-        value: &mut String,
-        character: char,
+        &mut self, value: &mut String, character: char,
     ) -> core::result::Result<(), StorageError> {
         self.push_char(value, character)
     }
     fn push_str(
-        &mut self,
-        value: &mut String,
-        text: &str,
+        &mut self, value: &mut String, text: &str,
     ) -> core::result::Result<(), StorageError> {
         self.push_str(value, text)
     }
@@ -440,9 +424,7 @@ impl<'a, 'm> Lexer<'a, 'm> {
     }
 
     fn with_options(
-        src: &'a str,
-        options: LexerOptions,
-        storage: &'m mut dyn LexerStorage,
+        src: &'a str, options: LexerOptions, storage: &'m mut dyn LexerStorage,
     ) -> Self {
         Self {
             src,
@@ -644,12 +626,7 @@ impl<'a, 'm> Lexer<'a, 'm> {
     /// Consume `lead`; if the next char is `two_ch` emit `two`, else if it is
     /// `alt_ch` emit `alt`, else emit `one`.
     fn two_or_one(
-        &mut self,
-        two_ch: char,
-        two: Token<'a>,
-        alt_ch: char,
-        alt: Token<'a>,
-        one: Token<'a>,
+        &mut self, two_ch: char, two: Token<'a>, alt_ch: char, alt: Token<'a>, one: Token<'a>,
     ) -> Token<'a> {
         self.pos += 1; // consume the lead char
         match self.cur() {

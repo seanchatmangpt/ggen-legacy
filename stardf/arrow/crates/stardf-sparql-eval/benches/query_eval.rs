@@ -470,10 +470,7 @@ fn run(engine: &NativeSparqlEngine, ds: &Arc<RdfDataset>, query: &str) -> usize 
 /// [`run`] with a property-function registry injected — the entry case (k) needs, and
 /// the only difference between the two paths.
 fn run_with_relations(
-    engine: &NativeSparqlEngine,
-    ds: &Arc<RdfDataset>,
-    query: &str,
-    env: &ExtensionEnv<'static>,
+    engine: &NativeSparqlEngine, ds: &Arc<RdfDataset>, query: &str, env: &ExtensionEnv<'static>,
 ) -> usize {
     let result = engine
         .query_with_options_view(

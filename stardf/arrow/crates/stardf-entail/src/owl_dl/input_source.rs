@@ -70,10 +70,7 @@ impl<T> Entries<T> {
     }
 
     fn record(
-        &mut self,
-        input: Input,
-        value: T,
-        memory: &mut Memory<'_, Resident>,
+        &mut self, input: Input, value: T, memory: &mut Memory<'_, Resident>,
     ) -> Result<(), StorageError> {
         let Some((family, index)) = input.ordinal() else {
             return self.rules.insert(input, value, memory).map(|_| ());
@@ -237,9 +234,7 @@ impl Inputs {
     /// Admit a complete derived-equality batch before changing semantic rows.
     /// Failed publication or stopping removes only this batch's provenance.
     pub(crate) fn record_key_equalities(
-        &mut self,
-        start: usize,
-        forced: &[(usize, u32, u32)],
+        &mut self, start: usize, forced: &[(usize, u32, u32)],
         mut poll: impl FnMut() -> Result<(), crate::EntailError>,
     ) -> Result<(), crate::EntailError> {
         start

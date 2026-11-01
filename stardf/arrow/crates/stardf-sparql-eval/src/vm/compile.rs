@@ -203,8 +203,7 @@ pub(crate) enum Constant {
 impl Constant {
     /// Copy the authored constant only after its actual facets are admitted.
     pub(crate) fn value_admitted(
-        &self,
-        workspace: &crate::WorkspaceCapability,
+        &self, workspace: &crate::WorkspaceCapability,
     ) -> Result<crate::WorkspaceTerm, crate::EvalError> {
         match self {
             Self::Iri(node) => crate::convert::named_node_to_workspace_value(node, workspace),
@@ -290,8 +289,7 @@ impl ExprProgram {
             .expect("resident expression compilation")
     }
     pub(crate) fn compile_admitted(
-        expr: &Expression,
-        workspace: &crate::WorkspaceCapability,
+        expr: &Expression, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, crate::EvalError> {
         let mut frame = crate::workspace::LexicalFrame::new(workspace);
         let result = Memory::new(&mut frame)
@@ -308,9 +306,7 @@ impl ExprProgram {
             .expect("resident expression recompilation");
     }
     fn compile_with_memory<S: Admission + ?Sized>(
-        mut self,
-        expr: &Expression,
-        memory: &mut Memory<'_, S>,
+        mut self, expr: &Expression, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         self.ops.clear();
         self.vars.clear();
@@ -437,10 +433,7 @@ impl<S: Admission + ?Sized> Compiler<'_, '_, S> {
     /// here, which is where the pre-order visits them; composite nodes become their
     /// operands' tasks followed by their own instruction.
     fn expand<'x>(
-        &mut self,
-        expr: &'x Expression,
-        mode: Mode,
-        out: &mut Tasks<'x>,
+        &mut self, expr: &'x Expression, mode: Mode, out: &mut Tasks<'x>,
     ) -> Result<(), StorageError> {
         match mode {
             Mode::Term => self.expand_term(expr, out)?,
@@ -511,9 +504,7 @@ impl<S: Admission + ?Sized> Compiler<'_, '_, S> {
 
     /// [`Self::expand`] for [`Mode::Term`].
     fn expand_term<'x>(
-        &mut self,
-        expr: &'x Expression,
-        out: &mut Tasks<'x>,
+        &mut self, expr: &'x Expression, out: &mut Tasks<'x>,
     ) -> Result<(), StorageError> {
         match expr {
             Expression::NamedNode(node) => {
@@ -638,10 +629,7 @@ impl<S: Admission + ?Sized> Compiler<'_, '_, S> {
     /// as string arguments and ignore any past the ones they take; every other call
     /// evaluates every argument as a term, then calls.
     fn expand_call<'x>(
-        &mut self,
-        function: &'x Function,
-        args: &'x [Expression],
-        out: &mut Tasks<'x>,
+        &mut self, function: &'x Function, args: &'x [Expression], out: &mut Tasks<'x>,
     ) -> Result<(), StorageError> {
         let string_args = |count: usize,
                            out: &mut Tasks<'x>,
@@ -768,9 +756,7 @@ pub(super) fn is_triple_constructor(expr: &Expression) -> bool {
 /// A triple term constructor's three operands, in order: the subject and predicate as
 /// terms, and the object as a value when it is itself a constructor.
 fn triple_operands<'x, S: Admission + ?Sized>(
-    args: &'x [Expression],
-    out: &mut Tasks<'x>,
-    memory: &mut Memory<'_, S>,
+    args: &'x [Expression], out: &mut Tasks<'x>, memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     out.push_with_memory(Task::Compile(&args[0], Mode::Term), memory)?;
     out.push_with_memory(Task::Compile(&args[1], Mode::Term), memory)?;
@@ -791,8 +777,7 @@ fn triple_operands<'x, S: Admission + ?Sized>(
 /// The string a [`Mode::StringArg`] operand reads without evaluating anything, when it
 /// is one: a string literal, or `STR`/`LANG` of a constant.
 fn constant_string_arg<S: Admission + ?Sized>(
-    expr: Option<&Expression>,
-    memory: &mut Memory<'_, S>,
+    expr: Option<&Expression>, memory: &mut Memory<'_, S>,
 ) -> Result<Option<String>, StorageError> {
     let Some(expr) = expr else {
         return Ok(None);
@@ -828,8 +813,7 @@ fn constant_string_arg<S: Admission + ?Sized>(
 /// absent): the lexical forms its string-argument reading takes from them. A tagged
 /// pattern or flags argument is an error the call reports per row, so it links none.
 fn replace_constant<S: Admission + ?Sized>(
-    args: &[Expression],
-    memory: &mut Memory<'_, S>,
+    args: &[Expression], memory: &mut Memory<'_, S>,
 ) -> Result<Option<(String, String)>, StorageError> {
     fn string_literal(expr: &Expression) -> Option<&str> {
         match expr {
@@ -854,8 +838,7 @@ fn replace_constant<S: Admission + ?Sized>(
 
 /// The `EXISTS` nodes in `exprs`, counted over a work list.
 fn count_exists<S: Admission + ?Sized>(
-    exprs: &[Expression],
-    memory: &mut Memory<'_, S>,
+    exprs: &[Expression], memory: &mut Memory<'_, S>,
 ) -> Result<u32, StorageError> {
     let mut count = 0u32;
     let mut pending = Vec::new();

@@ -297,9 +297,7 @@ fn render<const UPPER: bool>(f: &mut Formatter<'_>, bytes: &[u8]) -> fmt::Result
 
 /// Writes the first `limit` characters of the rendering of `bytes`.
 fn write_chars<const UPPER: bool>(
-    f: &mut impl fmt::Write,
-    bytes: &[u8],
-    mut limit: usize,
+    f: &mut impl fmt::Write, bytes: &[u8], mut limit: usize,
 ) -> fmt::Result {
     let mut buffer = [0u8; 2 * CHUNK];
     for chunk in bytes.chunks(CHUNK) {
@@ -398,8 +396,7 @@ pub fn encode_upper_to_slice<'o>(bytes: &[u8], out: &'o mut [u8]) -> Result<&'o 
 
 #[inline]
 fn encode_slice<'o, const UPPER: bool>(
-    bytes: &[u8],
-    out: &'o mut [u8],
+    bytes: &[u8], out: &'o mut [u8],
 ) -> Result<&'o str, HexError> {
     let needed = bytes.len().saturating_mul(2);
     let available = out.len();
@@ -428,9 +425,7 @@ fn encode_slice<'o, const UPPER: bool>(
 )]
 #[inline(always)]
 fn classify<const ANY_CASE: bool, const N: usize>(
-    digits: &[u8; N],
-    values: &mut [u8; N],
-    rejected: &mut [u8; N],
+    digits: &[u8; N], values: &mut [u8; N], rejected: &mut [u8; N],
 ) {
     for ((value, reject), &b) in values.iter_mut().zip(rejected.iter_mut()).zip(digits) {
         let decimal = b.wrapping_sub(b'0');

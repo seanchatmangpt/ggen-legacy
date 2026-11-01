@@ -52,9 +52,7 @@ pub struct CausalSyntaxNode<'a> {
 
 impl<'a> CausalSyntaxNode<'a> {
     pub(super) const fn checked(
-        scope: CausalClash<'a>,
-        space: syntax::Space,
-        ordinal: usize,
+        scope: CausalClash<'a>, space: syntax::Space, ordinal: usize,
     ) -> Self {
         Self {
             scope,

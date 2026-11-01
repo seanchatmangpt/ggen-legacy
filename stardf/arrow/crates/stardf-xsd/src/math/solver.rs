@@ -193,15 +193,11 @@ pub trait CertifiedInterval: Clone {
     fn upper(&self) -> &Self::Bound;
     /// Build a valid inclusive enclosure from complete ordered bounds.
     fn from_bounds(
-        lower: Self::Bound,
-        upper: Self::Bound,
-        ctx: &mut IntervalContext<'_>,
+        lower: Self::Bound, upper: Self::Bound, ctx: &mut IntervalContext<'_>,
     ) -> Result<Self, MathError>;
     /// Enclose an exact signed ratio.
     fn from_ratio(
-        numerator: &Int,
-        denominator: &Int,
-        ctx: &mut IntervalContext<'_>,
+        numerator: &Int, denominator: &Int, ctx: &mut IntervalContext<'_>,
     ) -> Result<Self, MathError>;
     /// Enclose an exact machine integer.
     fn from_i64(value: i64, ctx: &mut IntervalContext<'_>) -> Result<Self, MathError> {
@@ -248,9 +244,7 @@ pub trait CertifiedInterval: Clone {
     fn atan2(y: &Self, x: &Self, ctx: &mut IntervalContext<'_>) -> Result<Self, MathError>;
     /// Exact half-even decimal rounding of both complete endpoints.
     fn round_decimal(
-        &self,
-        places: u32,
-        ctx: &mut IntervalContext<'_>,
+        &self, places: u32, ctx: &mut IntervalContext<'_>,
     ) -> Result<(Int, Int), MathError>;
     /// Enclose these exact endpoints on the caller's fixed grid.
     fn to_fixed(&self, ctx: &mut IntervalContext<'_>) -> Result<FixedInterval, MathError>;
@@ -271,9 +265,7 @@ impl CertifiedInterval for FixedInterval {
         Self::upper(self)
     }
     fn from_bounds(
-        lower: Int,
-        upper: Int,
-        ctx: &mut IntervalContext<'_>,
+        lower: Int, upper: Int, ctx: &mut IntervalContext<'_>,
     ) -> Result<Self, MathError> {
         Self::from_bounds(lower, upper, ctx.math)
     }
@@ -317,9 +309,7 @@ impl CertifiedInterval for FixedInterval {
         Self::atan2(y, x, ctx.math)
     }
     fn round_decimal(
-        &self,
-        places: u32,
-        ctx: &mut IntervalContext<'_>,
+        &self, places: u32, ctx: &mut IntervalContext<'_>,
     ) -> Result<(Int, Int), MathError> {
         Self::round_decimal(self, places, ctx.math)
     }
@@ -343,9 +333,7 @@ impl CertifiedInterval for FloatEnclosure {
         &self.upper
     }
     fn from_bounds(
-        lower: FloatBound,
-        upper: FloatBound,
-        ctx: &mut IntervalContext<'_>,
+        lower: FloatBound, upper: FloatBound, ctx: &mut IntervalContext<'_>,
     ) -> Result<Self, MathError> {
         ctx.math.charge(1, 64)?;
         Ok(Self::from_float(FloatInterval::from_bounds(
@@ -447,9 +435,7 @@ impl CertifiedInterval for FloatEnclosure {
         )?))
     }
     fn round_decimal(
-        &self,
-        places: u32,
-        ctx: &mut IntervalContext<'_>,
+        &self, places: u32, ctx: &mut IntervalContext<'_>,
     ) -> Result<(Int, Int), MathError> {
         let chunk = ctx.chunk.as_ref().ok_or(MathError::Domain(
             "binary64 operation outside validated chunk",
@@ -487,9 +473,7 @@ impl CertifiedInterval for WordInterval {
         Self::upper(self)
     }
     fn from_bounds(
-        lower: Word,
-        upper: Word,
-        ctx: &mut IntervalContext<'_>,
+        lower: Word, upper: Word, ctx: &mut IntervalContext<'_>,
     ) -> Result<Self, MathError> {
         ctx.math.charge(1, 128)?;
         Self::from_bounds(lower, upper)
@@ -571,9 +555,7 @@ impl CertifiedInterval for WordInterval {
         Self::atan2(*y, *x, ctx.checked()?.ops())
     }
     fn round_decimal(
-        &self,
-        places: u32,
-        ctx: &mut IntervalContext<'_>,
+        &self, places: u32, ctx: &mut IntervalContext<'_>,
     ) -> Result<(Int, Int), MathError> {
         Ok((
             round_word(*Self::lower(self), places, ctx.math)?,

@@ -46,9 +46,7 @@ where
     Arity<N>: StoreShape<N>,
 {
     pub(super) fn new<D: TermDictionary<Id = I>>(
-        exe: &'r Executable<N>,
-        runtimes: &'r [RuleRuntime<N>],
-        stratum: usize,
+        exe: &'r Executable<N>, runtimes: &'r [RuleRuntime<N>], stratum: usize,
         state: &FixpointState<D, N>,
     ) -> Self {
         Self {
@@ -69,9 +67,7 @@ where
 
     /// Resume only governor refusals; source and evidence failures remain hard errors.
     pub(super) fn advance<D: TermDictionary<Id = I>>(
-        &mut self,
-        state: &mut FixpointState<D, N>,
-        run: StratumRun<'_, D, N>,
+        &mut self, state: &mut FixpointState<D, N>, run: StratumRun<'_, D, N>,
         evidence: &mut Option<&mut dyn RuleEvidence<D, N>>,
     ) -> Result<(), EvalError<D::Error>> {
         let before = state.native_bytes;
@@ -83,11 +79,8 @@ where
     }
 
     pub(super) fn advance_in_memory<D: TermDictionary<Id = I>, A: Admission + ?Sized>(
-        &mut self,
-        state: &mut FixpointState<D, N>,
-        run: StratumRun<'_, D, N>,
-        evidence: &mut Option<&mut dyn RuleEvidence<D, N>>,
-        memory: &mut Memory<'_, A>,
+        &mut self, state: &mut FixpointState<D, N>, run: StratumRun<'_, D, N>,
+        evidence: &mut Option<&mut dyn RuleEvidence<D, N>>, memory: &mut Memory<'_, A>,
     ) -> Result<(), EvalError<D::Error>> {
         check_budget(state)?;
         loop {

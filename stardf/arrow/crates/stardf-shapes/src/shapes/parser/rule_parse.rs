@@ -639,10 +639,7 @@ impl Parser<'_> {
     /// ordinary cycle guard would hand back the EMPTY stand-in shape, which conforms to
     /// everything — the condition would silently always hold.
     fn parse_conditions(
-        &mut self,
-        owner: &Term,
-        rule_node: &Term,
-        condition_nodes: Vec<Term>,
+        &mut self, owner: &Term, rule_node: &Term, condition_nodes: Vec<Term>,
     ) -> Result<Vec<crate::shapes::Shape>, String> {
         if condition_nodes.is_empty() {
             return Ok(Vec::new());
@@ -791,10 +788,7 @@ impl Parser<'_> {
     /// declared as sh:optional true have no value in R." An instance with several values
     /// for one parameter has no single pre-binding map, and is refused.
     fn parse_template_instance(
-        &self,
-        rule_node: &Term,
-        template: &Term,
-        declared_parameters: &[(String, String, bool)],
+        &self, rule_node: &Term, template: &Term, declared_parameters: &[(String, String, bool)],
         prebound_this: bool,
     ) -> Result<RuleBody, String> {
         if !matches!(template, Term::NamedNode(_)) {

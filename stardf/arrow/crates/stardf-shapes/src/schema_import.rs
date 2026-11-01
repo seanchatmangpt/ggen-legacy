@@ -71,14 +71,9 @@ impl SchemaDatatypeMap {
         reason = "the eight mandatory scalar roles make missing vocabulary configuration unrepresentable"
     )]
     pub fn new(
-        string: impl Into<String>,
-        boolean: impl Into<String>,
-        integer: impl Into<String>,
-        number: impl Into<String>,
-        date_time: impl Into<String>,
-        date: impl Into<String>,
-        time: impl Into<String>,
-        uri: impl Into<String>,
+        string: impl Into<String>, boolean: impl Into<String>, integer: impl Into<String>,
+        number: impl Into<String>, date_time: impl Into<String>, date: impl Into<String>,
+        time: impl Into<String>, uri: impl Into<String>,
     ) -> Result<Self, SchemaImportError> {
         let values = [
             ("string", string.into()),
@@ -195,8 +190,7 @@ purrdf_lex::message_error! {
 /// [`MAX_SCHEMA_DEPTH`] or a string over 16 MiB. The number of definitions
 /// and of properties is bounded only by the input's own size.
 pub fn import_json_schema(
-    input: &str,
-    config: &SchemaImportConfig,
+    input: &str, config: &SchemaImportConfig,
 ) -> Result<ImportedShapes, SchemaImportError> {
     import_json_schema_from(JSON_SCHEMA_SOURCE, input, config)
 }
@@ -209,16 +203,13 @@ pub fn import_json_schema(
 ///
 /// Returns the same errors as [`import_json_schema`].
 pub fn import_compiled_schema(
-    compiled: &CompiledSchema,
-    config: &SchemaImportConfig,
+    compiled: &CompiledSchema, config: &SchemaImportConfig,
 ) -> Result<ImportedShapes, SchemaImportError> {
     import_json_schema(&compiled.schema_json, config)
 }
 
 pub(crate) fn import_json_schema_from(
-    source: &'static str,
-    input: &str,
-    config: &SchemaImportConfig,
+    source: &'static str, input: &str, config: &SchemaImportConfig,
 ) -> Result<ImportedShapes, SchemaImportError> {
     // The input is already in memory, and the parse and the walks below are
     // linear in it under the depth and string ceilings, so no
@@ -241,9 +232,7 @@ pub(crate) fn import_json_schema_from(
 }
 
 pub(crate) fn import_schema_value_from(
-    source: &'static str,
-    document: &Value,
-    config: &SchemaImportConfig,
+    source: &'static str, document: &Value, config: &SchemaImportConfig,
 ) -> Result<ImportedShapes, SchemaImportError> {
     let mut nodes = 0;
     validate_value_limits(document, 0, &mut nodes, "#")?;
@@ -355,9 +344,7 @@ struct ImportContext<'a> {
 
 impl<'a> ImportContext<'a> {
     fn new(
-        source: &'static str,
-        config: &'a SchemaImportConfig,
-        definitions: &'a DefinitionIndex<'a>,
+        source: &'static str, config: &'a SchemaImportConfig, definitions: &'a DefinitionIndex<'a>,
         generated_envelope: bool,
     ) -> Self {
         Self {
@@ -452,9 +439,7 @@ fn property_shape_id(source: &Term, path: &str) -> Term {
 
 impl ImportContext<'_> {
     fn audit_root(
-        &mut self,
-        root: &Object,
-        generated_envelope: bool,
+        &mut self, root: &Object, generated_envelope: bool,
     ) -> Result<(), SchemaImportError> {
         for (keyword, value) in root {
             let path = format!("#/{}", json_pointer::escape_token(keyword));
@@ -486,10 +471,7 @@ impl ImportContext<'_> {
     }
 
     fn import_definition(
-        &mut self,
-        key: &str,
-        schema: &Value,
-        path: &str,
+        &mut self, key: &str, schema: &Value, path: &str,
     ) -> Result<Option<Shape>, SchemaImportError> {
         if schema.is_boolean() {
             self.record("boolean-schema-dropped", path);
@@ -529,9 +511,7 @@ impl ImportContext<'_> {
     }
 
     fn audit_non_object_definition(
-        &mut self,
-        object: &Object,
-        path: &str,
+        &mut self, object: &Object, path: &str,
     ) -> Result<(), SchemaImportError> {
         for (keyword, value) in object {
             let location = format!("{path}/{}", json_pointer::escape_token(keyword));
@@ -560,11 +540,7 @@ impl ImportContext<'_> {
     }
 
     fn import_object_shape(
-        &mut self,
-        object: &Object,
-        path: &str,
-        id: Term,
-        targets: Vec<Target>,
+        &mut self, object: &Object, path: &str, id: Term, targets: Vec<Target>,
     ) -> Result<Shape, SchemaImportError> {
         validate_object_type(object.get("type"), path)?;
         if let Some(kind) = object.get("type")
@@ -725,10 +701,7 @@ impl ImportContext<'_> {
     }
 
     fn import_object_logic(
-        &mut self,
-        object: &Object,
-        path: &str,
-        constraints: &mut Vec<Constraint>,
+        &mut self, object: &Object, path: &str, constraints: &mut Vec<Constraint>,
     ) -> Result<(), SchemaImportError> {
         if let Some(branches) = object.get("allOf") {
             let branches = branches
@@ -801,10 +774,7 @@ impl ImportContext<'_> {
     /// IRIs), and any other value schema (a literal's projection, a scalar, an
     /// enumeration, a combination of them) as the value constraints it states.
     fn import_value_shape(
-        &mut self,
-        id: Term,
-        schema: &Value,
-        path: &str,
+        &mut self, id: Term, schema: &Value, path: &str,
     ) -> Result<Shape, SchemaImportError> {
         let mut constraints = Vec::new();
         match list_form(schema) {
@@ -837,9 +807,7 @@ impl ImportContext<'_> {
     }
 
     fn import_nested_shape(
-        &mut self,
-        schema: &Value,
-        path: &str,
+        &mut self, schema: &Value, path: &str,
     ) -> Result<Option<Shape>, SchemaImportError> {
         if schema.as_object().is_some_and(|object| object.len() == 1)
             && let Some(id) = schema
@@ -885,9 +853,7 @@ impl ImportContext<'_> {
     }
 
     fn audit_object_keywords(
-        &mut self,
-        object: &Object,
-        path: &str,
+        &mut self, object: &Object, path: &str,
     ) -> Result<(), SchemaImportError> {
         for (keyword, value) in object {
             let location = format!("{path}/{}", json_pointer::escape_token(keyword));
@@ -936,9 +902,7 @@ impl ImportContext<'_> {
     }
 
     fn import_property_schema(
-        &mut self,
-        schema: &Value,
-        path: &str,
+        &mut self, schema: &Value, path: &str,
     ) -> Result<Vec<Constraint>, SchemaImportError> {
         if schema == &Value::Bool(false) {
             return Ok(vec![Constraint::MaxCount(0)]);
@@ -968,9 +932,7 @@ impl ImportContext<'_> {
     /// then states each as `const`, which the per-value schema returned here
     /// omits, since it constrains every value).
     fn split_cardinality(
-        &mut self,
-        schema: &Value,
-        path: &str,
+        &mut self, schema: &Value, path: &str,
     ) -> Result<CardinalitySplit, SchemaImportError> {
         let object = schema.as_object().ok_or_else(|| {
             SchemaImportError::new(format!("{path} must be a boolean or object schema"))
@@ -1005,9 +967,7 @@ impl ImportContext<'_> {
     }
 
     fn array_cardinality(
-        &mut self,
-        object: &Object,
-        path: &str,
+        &mut self, object: &Object, path: &str,
     ) -> Result<CardinalitySplit, SchemaImportError> {
         // Omitting `items` is the draft-2020-12 identity schema. Keep the
         // cardinality carrier without inventing an item constraint.
@@ -1059,10 +1019,7 @@ impl ImportContext<'_> {
     }
 
     fn import_scalar_schema(
-        &mut self,
-        schema: &Value,
-        path: &str,
-        constraints: &mut Vec<Constraint>,
+        &mut self, schema: &Value, path: &str, constraints: &mut Vec<Constraint>,
     ) -> Result<(), SchemaImportError> {
         match schema {
             Value::Bool(true) => return Ok(()),
@@ -1249,10 +1206,7 @@ impl ImportContext<'_> {
     /// Import a value schema's range-bound keywords (`minimum`, `maximum`,
     /// `exclusiveMinimum`, `exclusiveMaximum`) and its `not`, marking each handled.
     fn import_value_bounds(
-        &mut self,
-        object: &Object,
-        path: &str,
-        constraints: &mut Vec<Constraint>,
+        &mut self, object: &Object, path: &str, constraints: &mut Vec<Constraint>,
         handled: &mut BTreeSet<&'static str>,
     ) -> Result<(), SchemaImportError> {
         for (keyword, bound_kind) in [
@@ -1277,9 +1231,7 @@ impl ImportContext<'_> {
     /// The datatype whose value schema `schema` is exactly — the emitter's
     /// projection of one `sh:datatype` value — or `None`.
     fn value_datatype(
-        &self,
-        schema: &Value,
-        path: &str,
+        &self, schema: &Value, path: &str,
     ) -> Result<Option<NamedNode>, SchemaImportError> {
         if let Some(curie) = typed_datatype_constant(schema) {
             return self.expand_datatype(curie, path).map(Some);
@@ -1324,10 +1276,7 @@ impl ImportContext<'_> {
     /// compare). Anything else is a negation SHACL cannot state here, and its loss
     /// is recorded.
     fn import_rejections(
-        &mut self,
-        negand: &Value,
-        path: &str,
-        constraints: &mut Vec<Constraint>,
+        &mut self, negand: &Value, path: &str, constraints: &mut Vec<Constraint>,
     ) -> Result<(), SchemaImportError> {
         let (alternatives, alternative_path) = match negand.get("anyOf").and_then(Value::as_array) {
             Some(branches) if negand.as_object().is_some_and(|object| object.len() == 1) => {
@@ -1480,9 +1429,7 @@ impl ImportContext<'_> {
     /// A claim that fails either check is a negation SHACL cannot state here: its
     /// locations are unread, and the keyword bounds stay as read.
     fn recover_range_bounds(
-        &self,
-        claimed: Vec<BoundClaim<'_>>,
-        constraints: &mut Vec<Constraint>,
+        &self, claimed: Vec<BoundClaim<'_>>, constraints: &mut Vec<Constraint>,
         unread: &mut Vec<String>,
     ) {
         if claimed.is_empty() {
@@ -1578,10 +1525,7 @@ impl ImportContext<'_> {
     }
 
     fn import_reference(
-        &mut self,
-        reference: &str,
-        path: &str,
-        constraints: &mut Vec<Constraint>,
+        &mut self, reference: &str, path: &str, constraints: &mut Vec<Constraint>,
     ) -> Result<(), SchemaImportError> {
         let key = reference_key(reference).ok_or_else(|| {
             SchemaImportError::new(format!(
@@ -1628,10 +1572,7 @@ impl ImportContext<'_> {
     }
 
     fn import_scalar_alternatives(
-        &mut self,
-        branches: &[Value],
-        path: &str,
-        constraints: &mut Vec<Constraint>,
+        &mut self, branches: &[Value], path: &str, constraints: &mut Vec<Constraint>,
     ) -> Result<(), SchemaImportError> {
         // A node-kind union (SHACL 1.2: a list value is a disjunction).
         if let Some(kinds) = node_kind_union(branches) {
@@ -1830,11 +1771,7 @@ impl ImportContext<'_> {
     /// constraints are the items schema's. A list with none of them requires
     /// only that the value be a list, which `sh:uniqueMembers false` states.
     fn import_list_members(
-        &mut self,
-        members: &Object,
-        path: &str,
-        skipped: u64,
-        constraints: &mut Vec<Constraint>,
+        &mut self, members: &Object, path: &str, skipped: u64, constraints: &mut Vec<Constraint>,
     ) -> Result<(), SchemaImportError> {
         let start = constraints.len();
         for (keyword, value) in members {
@@ -1871,9 +1808,7 @@ impl ImportContext<'_> {
 
     /// The member shape whose value schema `schema` is.
     fn import_member_shape(
-        &mut self,
-        schema: &Value,
-        path: &str,
+        &mut self, schema: &Value, path: &str,
     ) -> Result<Shape, SchemaImportError> {
         let mut constraints = Vec::new();
         self.import_scalar_schema(schema, path, &mut constraints)?;
@@ -1897,10 +1832,7 @@ impl ImportContext<'_> {
     /// `ListComponents::node_schema`): `rdf:nil`, and a cell whose `rdf:first`
     /// is one member and whose `rdf:rest` holds the others.
     fn import_node_list(
-        &mut self,
-        branch: &Value,
-        path: &str,
-        constraints: &mut Vec<Constraint>,
+        &mut self, branch: &Value, path: &str, constraints: &mut Vec<Constraint>,
     ) -> Result<bool, SchemaImportError> {
         let Some(alternatives) = branch
             .as_object()
@@ -2024,10 +1956,7 @@ impl ImportContext<'_> {
     }
 
     fn import_scalar_type(
-        &mut self,
-        value: &Value,
-        format: Option<&Value>,
-        path: &str,
+        &mut self, value: &Value, format: Option<&Value>, path: &str,
         constraints: &mut Vec<Constraint>,
     ) -> Result<(), SchemaImportError> {
         // Every kind a lone projected value can be, and no array: the compiler's
@@ -2072,9 +2001,7 @@ impl ImportContext<'_> {
     }
 
     fn import_term(
-        &mut self,
-        value: &Value,
-        path: &str,
+        &mut self, value: &Value, path: &str,
     ) -> Result<Option<Term>, SchemaImportError> {
         match value {
             Value::String(value) => Ok(Some(Term::Literal(Literal::new_typed_literal(
@@ -2098,9 +2025,7 @@ impl ImportContext<'_> {
     }
 
     fn import_term_object(
-        &mut self,
-        object: &Object,
-        path: &str,
+        &mut self, object: &Object, path: &str,
     ) -> Result<Option<Term>, SchemaImportError> {
         if let Some(id) = object.get("@id") {
             if object.len() != 1 {
@@ -2179,9 +2104,7 @@ impl ImportContext<'_> {
     /// The RDF 1.2 triple term a JSON-LD-star embedded node states: its `@id`
     /// is the subject, and its one other member the predicate and object.
     fn import_triple_term(
-        &mut self,
-        embedded: &Object,
-        path: &str,
+        &mut self, embedded: &Object, path: &str,
     ) -> Result<Option<Term>, SchemaImportError> {
         let [(first_key, first), (second_key, second)] = embedded
             .iter()
@@ -2260,10 +2183,7 @@ impl BoundKind {
 }
 
 fn validate_value_limits(
-    value: &Value,
-    depth: usize,
-    nodes: &mut usize,
-    path: &str,
+    value: &Value, depth: usize, nodes: &mut usize, path: &str,
 ) -> Result<(), SchemaImportError> {
     if depth > MAX_SCHEMA_DEPTH {
         return Err(SchemaImportError::new(format!(
@@ -2317,10 +2237,7 @@ fn definition_index(definitions: &Object) -> DefinitionIndex<'_> {
 }
 
 fn validate_references(
-    value: &Value,
-    definitions: &DefinitionIndex<'_>,
-    path: &str,
-    depth: usize,
+    value: &Value, definitions: &DefinitionIndex<'_>, path: &str, depth: usize,
 ) -> Result<(), SchemaImportError> {
     if depth > MAX_SCHEMA_DEPTH {
         return Err(SchemaImportError::new(format!(
@@ -2578,9 +2495,7 @@ fn schema_type_contains(value: Option<&Value>, expected: &str) -> bool {
 }
 
 fn optional_object<'a>(
-    object: &'a Object,
-    keyword: &str,
-    path: &str,
+    object: &'a Object, keyword: &str, path: &str,
 ) -> Result<&'a Object, SchemaImportError> {
     static EMPTY: OnceLock<Object> = OnceLock::new();
     object
@@ -2595,9 +2510,7 @@ fn optional_object<'a>(
 }
 
 fn required_names(
-    object: &Object,
-    _properties: &Object,
-    path: &str,
+    object: &Object, _properties: &Object, path: &str,
 ) -> Result<BTreeSet<String>, SchemaImportError> {
     let Some(required) = object.get("required") else {
         return Ok(BTreeSet::new());
@@ -3331,8 +3244,7 @@ fn is_exact_required(value: Option<&Value>, expected: &[&str]) -> bool {
 }
 
 fn node_ref_class(
-    object: &Object,
-    namespaces: &Namespaces,
+    object: &Object, namespaces: &Namespaces,
 ) -> Result<Option<NamedNode>, SchemaImportError> {
     let Some(comment) = object.get("$comment").and_then(Value::as_str) else {
         return Ok(None);
@@ -3350,8 +3262,7 @@ fn node_ref_class(
 }
 
 fn type_discriminator_class(
-    object: &Object,
-    namespaces: &Namespaces,
+    object: &Object, namespaces: &Namespaces,
 ) -> Result<Option<NamedNode>, SchemaImportError> {
     let required = object.get("required").and_then(Value::as_array);
     if !required.is_some_and(|required| required.iter().any(|value| value == "@type")) {
@@ -3586,9 +3497,7 @@ fn root_loss_code(keyword: &str) -> &'static str {
 }
 
 fn validate_json_keyword_value(
-    keyword: &str,
-    value: &Value,
-    path: &str,
+    keyword: &str, value: &Value, path: &str,
 ) -> Result<(), SchemaImportError> {
     let invalid =
         |expected: &str| Err(SchemaImportError::new(format!("{path} must be {expected}")));
@@ -3691,10 +3600,7 @@ fn validate_json_keyword_value(
 }
 
 fn validate_array(
-    value: &Value,
-    path: &str,
-    require_nonempty: bool,
-    require_unique: bool,
+    value: &Value, path: &str, require_nonempty: bool, require_unique: bool,
 ) -> Result<(), SchemaImportError> {
     let values = value
         .as_array()

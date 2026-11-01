@@ -117,9 +117,7 @@ use purrdf_xsd::datatype::XSD_STRING;
 /// behalf. Every in-repo `DatasetView` satisfies it; a caller supplying a
 /// third-party one owes it directly.
 pub fn serialize_dataset<D: DatasetView>(
-    dataset: &D,
-    media_type: &str,
-    selection: SerializeGraph<'_>,
+    dataset: &D, media_type: &str, selection: SerializeGraph<'_>,
 ) -> Result<Vec<u8>, RdfDiagnostic> {
     serialize_dataset_with(
         dataset,
@@ -222,10 +220,7 @@ pub struct SerializeOptions<'a> {
 /// for a non-JSON-LD format, or when the target codec cannot represent what it was asked
 /// to emit (a triple term for TriX/HexTuples, a named graph for a single-graph syntax).
 pub fn serialize_dataset_with<D: DatasetView>(
-    dataset: &D,
-    format: NativeRdfFormat,
-    base_iri: Option<&str>,
-    options: &SerializeOptions<'_>,
+    dataset: &D, format: NativeRdfFormat, base_iri: Option<&str>, options: &SerializeOptions<'_>,
 ) -> Result<SerializeOutcome, RdfDiagnostic> {
     let mut out = TextSink::in_memory();
     let report = serialize_dataset_into_sink(dataset, format, base_iri, options, &mut out)?;
@@ -264,10 +259,7 @@ pub fn serialize_dataset_with<D: DatasetView>(
 /// projection package sink. Format- and kind-level refusals are all decided before
 /// the first byte.
 pub fn serialize_dataset_to_writer_with<D: DatasetView>(
-    dataset: &D,
-    format: NativeRdfFormat,
-    base_iri: Option<&str>,
-    options: &SerializeOptions<'_>,
+    dataset: &D, format: NativeRdfFormat, base_iri: Option<&str>, options: &SerializeOptions<'_>,
     writer: &mut dyn Write,
 ) -> Result<SerializeReport, RdfDiagnostic> {
     let mut drain = WriterDrain(writer);
@@ -285,10 +277,7 @@ pub fn serialize_dataset_to_writer_with<D: DatasetView>(
 /// [`serialize_dataset_to_writer_with`] at this crate's default options: the whole
 /// dataset, the statement layer carried where the format can express it.
 pub fn serialize_dataset_to_writer<D: DatasetView>(
-    dataset: &D,
-    format: NativeRdfFormat,
-    base_iri: Option<&str>,
-    writer: &mut dyn Write,
+    dataset: &D, format: NativeRdfFormat, base_iri: Option<&str>, writer: &mut dyn Write,
 ) -> Result<SerializeReport, RdfDiagnostic> {
     serialize_dataset_to_writer_with(
         dataset,
@@ -307,10 +296,7 @@ pub fn serialize_dataset_to_writer<D: DatasetView>(
 /// different destination, which is what makes their bytes equal by construction
 /// rather than by test.
 fn serialize_dataset_into_sink<D: DatasetView>(
-    dataset: &D,
-    format: NativeRdfFormat,
-    base_iri: Option<&str>,
-    options: &SerializeOptions<'_>,
+    dataset: &D, format: NativeRdfFormat, base_iri: Option<&str>, options: &SerializeOptions<'_>,
     out: &mut TextSink<'_>,
 ) -> Result<SerializeReport, RdfDiagnostic> {
     dataset
@@ -328,10 +314,7 @@ fn source_read_failure(error: impl std::fmt::Display) -> RdfDiagnostic {
 }
 
 fn serialize_dataset_read_into_sink<D: DatasetView>(
-    dataset: &D,
-    format: NativeRdfFormat,
-    base_iri: Option<&str>,
-    options: &SerializeOptions<'_>,
+    dataset: &D, format: NativeRdfFormat, base_iri: Option<&str>, options: &SerializeOptions<'_>,
     out: &mut TextSink<'_>,
 ) -> Result<SerializeReport, RdfDiagnostic> {
     if options.jsonld_options.is_some()
@@ -450,8 +433,7 @@ fn serialize_dataset_read_into_sink<D: DatasetView>(
 ///    parameter being swallowed — it is the only answer those grammars admit, decided
 ///    once from the registry rather than per codec.
 fn egress_base(
-    format: NativeRdfFormat,
-    base_iri: Option<&str>,
+    format: NativeRdfFormat, base_iri: Option<&str>,
 ) -> Result<Option<BaseIri>, RdfDiagnostic> {
     let base = base_iri
         .map(|base| {
@@ -473,10 +455,7 @@ fn egress_base(
 /// ignoring caller policy. Existing [`serialize_dataset`] calls retain their frozen
 /// expanded compatibility behavior.
 pub fn serialize_dataset_with_jsonld_options<D: DatasetView>(
-    dataset: &D,
-    media_type: &str,
-    selection: SerializeGraph<'_>,
-    options: &JsonLdSerializeOptions,
+    dataset: &D, media_type: &str, selection: SerializeGraph<'_>, options: &JsonLdSerializeOptions,
 ) -> Result<Vec<u8>, RdfDiagnostic> {
     serialize_dataset_with(
         dataset,
@@ -514,10 +493,7 @@ pub fn serialize_dataset_with_jsonld_options<D: DatasetView>(
 /// — the eager spelling discarded the same counts — and it is the reason a caller who
 /// needs the drop counts reaches [`serialize_dataset_to_writer_with`] directly.
 pub(crate) fn serialize_into<D: DatasetView, W: Write>(
-    dataset: &D,
-    media_type: &str,
-    selection: SerializeGraph<'_>,
-    base_iri: Option<&str>,
+    dataset: &D, media_type: &str, selection: SerializeGraph<'_>, base_iri: Option<&str>,
     mut output: W,
 ) -> Result<(), RdfDiagnostic> {
     serialize_dataset_to_writer_with(
@@ -630,9 +606,7 @@ pub struct SerializeOutcome {
 /// nonetheless render it (RDF/XML), calls [`serialize_dataset_with`] directly rather than
 /// trading one for the other here.
 pub fn serialize_dataset_to_format<D: DatasetView>(
-    dataset: &D,
-    format: NativeRdfFormat,
-    base_iri: Option<&str>,
+    dataset: &D, format: NativeRdfFormat, base_iri: Option<&str>,
 ) -> Result<SerializeOutcome, RdfDiagnostic> {
     serialize_dataset_with(
         dataset,
@@ -659,10 +633,7 @@ pub fn serialize_dataset_to_format<D: DatasetView>(
 /// base already declared by the caller's own context WINS, matching the ingress
 /// precedence where an in-document `@context.@base` overrides the caller's.
 pub fn serialize_dataset_to_format_with_jsonld_options<D: DatasetView>(
-    dataset: &D,
-    format: NativeRdfFormat,
-    base_iri: Option<&str>,
-    options: &JsonLdSerializeOptions,
+    dataset: &D, format: NativeRdfFormat, base_iri: Option<&str>, options: &JsonLdSerializeOptions,
 ) -> Result<SerializeOutcome, RdfDiagnostic> {
     serialize_dataset_with(
         dataset,
@@ -748,9 +719,7 @@ fn count_named_graph_rows<D: DatasetView>(dataset: &D) -> usize {
 /// `source-read` when the dataset's read session refuses or a graph name does not
 /// resolve.
 pub fn empty_named_graphs_dropped<D: DatasetView>(
-    dataset: &D,
-    format: NativeRdfFormat,
-    selection: SerializeGraph<'_>,
+    dataset: &D, format: NativeRdfFormat, selection: SerializeGraph<'_>,
 ) -> Result<Vec<purrdf_core::TermValue>, RdfDiagnostic> {
     if !matches!(selection, SerializeGraph::Dataset) || format.carries_empty_named_graphs() {
         return Ok(Vec::new());
@@ -801,11 +770,8 @@ pub fn empty_named_graphs_dropped<D: DatasetView>(
 /// A format with `emits_base: false` therefore reaches its writer with `None` and emits
 /// absolute IRIs, structurally rather than by a per-codec convention.
 pub(crate) fn build_ser_graph<D: DatasetView>(
-    dataset: &D,
-    format: NativeRdfFormat,
-    selection: SerializeGraph<'_>,
-    include_statement_layer: bool,
-    base: Option<BaseIri>,
+    dataset: &D, format: NativeRdfFormat, selection: SerializeGraph<'_>,
+    include_statement_layer: bool, base: Option<BaseIri>,
 ) -> Result<SerGraph, RdfDiagnostic> {
     dataset
         .checked_read(|dataset| {
@@ -815,11 +781,8 @@ pub(crate) fn build_ser_graph<D: DatasetView>(
 }
 
 fn build_ser_graph_read<D: DatasetView>(
-    dataset: &D,
-    format: NativeRdfFormat,
-    selection: SerializeGraph<'_>,
-    include_statement_layer: bool,
-    base: Option<BaseIri>,
+    dataset: &D, format: NativeRdfFormat, selection: SerializeGraph<'_>,
+    include_statement_layer: bool, base: Option<BaseIri>,
 ) -> Result<SerGraph, RdfDiagnostic> {
     let term_capacity = usize::try_from(dataset.term_count()).map_err(|_| {
         RdfDiagnostic::error(
@@ -941,9 +904,7 @@ fn build_ser_graph_read<D: DatasetView>(
 /// interning their terms. The reifier bindings land in `interner.reifiers`; the
 /// annotation triples in `interner.annotations`.
 fn push_statement_rows<D: DatasetView>(
-    interner: &mut SerGraphInterner<D::Id>,
-    dataset: &D,
-    _graph: &mut SerGraph,
+    interner: &mut SerGraphInterner<D::Id>, dataset: &D, _graph: &mut SerGraph,
     default_graph_only: bool,
 ) -> Result<(), RdfDiagnostic> {
     // `reifier_quads()` yields each side-table binding as a virtual quad
@@ -1041,9 +1002,7 @@ impl<I: ViewTermId> SerGraphInterner<I> {
     /// term is recorded in `id_memo` as soon as its index exists, and the first
     /// refusal ends the walk.
     fn intern<D: DatasetView<Id = I>>(
-        &mut self,
-        dataset: &D,
-        id: D::Id,
+        &mut self, dataset: &D, id: D::Id,
     ) -> Result<usize, RdfDiagnostic> {
         try_fold_nested(
             id,
@@ -1063,9 +1022,7 @@ impl<I: ViewTermId> SerGraphInterner<I> {
     /// The index of term `id` if it is memoised or not a quoted triple — interning it
     /// on a miss — or a quoted triple's three component ids.
     fn intern_leaf<D: DatasetView<Id = I>>(
-        &mut self,
-        dataset: &D,
-        id: D::Id,
+        &mut self, dataset: &D, id: D::Id,
     ) -> Result<Nested<D::Id, usize>, RdfDiagnostic> {
         // Repeat occurrences of an id are answered here without materializing the
         // term's value (see `id_memo`).
@@ -1194,9 +1151,7 @@ impl<I: ViewTermId> SerGraphInterner<I> {
     /// Resolve a triple-term id to the `(s, p, o)` term indices of its components
     /// (interning each), for a statement-layer reifier binding.
     fn intern_triple_components<D: DatasetView<Id = I>>(
-        &mut self,
-        dataset: &D,
-        triple: D::Id,
+        &mut self, dataset: &D, triple: D::Id,
     ) -> Result<(usize, usize, usize), RdfDiagnostic> {
         let term = dataset
             .with_term(triple, |term| match term {
@@ -1504,9 +1459,7 @@ mod term_walk_tests {
 
     /// The recursive reference of [`SerGraphInterner::intern`].
     fn reference(
-        interner: &mut SerGraphInterner<TermId>,
-        dataset: &RdfDataset,
-        id: TermId,
+        interner: &mut SerGraphInterner<TermId>, dataset: &RdfDataset, id: TermId,
     ) -> Result<usize, RdfDiagnostic> {
         if let Some(&idx) = interner.id_memo.get(&id) {
             return Ok(idx);

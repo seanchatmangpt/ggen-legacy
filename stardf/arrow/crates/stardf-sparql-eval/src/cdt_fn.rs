@@ -92,9 +92,7 @@ use crate::scratch::SolutionTerm;
 /// The result follows the module's tri-state contract: `Ok(Some)` is a value,
 /// `Ok(None)` is a SPARQL expression error, and `Err` is a hard failure.
 pub(crate) fn dispatch<D: DatasetView + Sync>(
-    func: CdtFn,
-    vals: &[Option<TermValue>],
-    ctx: &mut EvalCtx<'_, D>,
+    func: CdtFn, vals: &[Option<TermValue>], ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     use crate::workspace::{AdmittedVec, LexicalFrame};
     let workspace = ctx.growth.clone();
@@ -278,8 +276,7 @@ pub(crate) fn dispatch<D: DatasetView + Sync>(
 }
 
 fn composite_argument_admitted(
-    value: &TermValue,
-    workspace: &crate::WorkspaceCapability,
+    value: &TermValue, workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<crate::composite_value::CompositeValue>, EvalError> {
     let TermValue::Literal {
         lexical_form,
@@ -440,9 +437,7 @@ pub(crate) fn compare(relation: CdtRelation, left: &TermValue, right: &TermValue
 }
 
 pub(crate) fn compare_admitted(
-    relation: CdtRelation,
-    left: &TermValue,
-    right: &TermValue,
+    relation: CdtRelation, left: &TermValue, right: &TermValue,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<bool>, EvalError> {
     let left = to_cdt_term_admitted(left, false, workspace)?;
@@ -492,8 +487,7 @@ pub(crate) struct CdtStorage<'a> {
 /// refund fails. Only admission errors need the original frame's typed cause;
 /// an explicit allocator/layout error must not become cleanup-only refusal.
 pub(crate) fn storage_error(
-    frame: &mut crate::workspace::LexicalFrame,
-    error: purrdf_cdt::memory::StorageError,
+    frame: &mut crate::workspace::LexicalFrame, error: purrdf_cdt::memory::StorageError,
     construct: &'static str,
 ) -> EvalError {
     if let Some(first) = frame.take_failure() {
@@ -524,9 +518,7 @@ pub(crate) struct OwnedCdtTerm {
 
 /// Construct a bridge operand with its original lexical and child-box owner.
 pub(crate) fn to_cdt_term_admitted(
-    value: &TermValue,
-    lift: bool,
-    workspace: &crate::WorkspaceCapability,
+    value: &TermValue, lift: bool, workspace: &crate::WorkspaceCapability,
 ) -> Result<OwnedCdtTerm, EvalError> {
     use crate::workspace::{AdmittedVec, LexicalFrame};
     let mut frame = LexicalFrame::new(workspace);
@@ -668,8 +660,7 @@ pub(crate) fn to_cdt_term_admitted(
 }
 
 pub(crate) fn bound_admitted(
-    error: &CdtError,
-    workspace: &crate::WorkspaceCapability,
+    error: &CdtError, workspace: &crate::WorkspaceCapability,
 ) -> EvalError {
     crate::error::NativeDiagnostic::error(
         crate::error::NativeDiagnosticKind::CompositeBound,
@@ -683,9 +674,7 @@ impl<'a> CdtStorage<'a> {
         Self { frame, base }
     }
     fn boxed<T>(
-        &mut self,
-        value: T,
-        construct: &'static str,
+        &mut self, value: T, construct: &'static str,
     ) -> Result<Box<T>, purrdf_cdt::memory::StorageError> {
         purrdf_lex::allocation::try_boxed(value).map_err(|_| {
             self.frame
@@ -705,22 +694,19 @@ impl purrdf_cdt::memory::Admission for CdtStorage<'_> {
 }
 impl purrdf_cdt::memory::Storage for CdtStorage<'_> {
     fn boxed_value(
-        &mut self,
-        value: CdtValue,
+        &mut self, value: CdtValue,
     ) -> Result<Box<CdtValue>, purrdf_cdt::memory::StorageError> {
         self.boxed(value, "native composite value box")
     }
     fn boxed_triple(
-        &mut self,
-        value: CdtTripleTerm,
+        &mut self, value: CdtTripleTerm,
     ) -> Result<Box<CdtTripleTerm>, purrdf_cdt::memory::StorageError> {
         self.boxed(value, "native composite triple box")
     }
 }
 
 pub(crate) fn composite_literal_admitted(
-    value: &CdtValue,
-    workspace: &crate::WorkspaceCapability,
+    value: &CdtValue, workspace: &crate::WorkspaceCapability,
 ) -> Result<crate::WorkspaceTerm, EvalError> {
     let mut frame = crate::workspace::LexicalFrame::new(workspace);
     let rendered =
@@ -747,8 +733,7 @@ pub(crate) fn composite_literal_admitted(
 }
 
 pub(crate) fn from_cdt_term_admitted(
-    term: &CdtTerm,
-    workspace: &crate::WorkspaceCapability,
+    term: &CdtTerm, workspace: &crate::WorkspaceCapability,
 ) -> Result<Option<crate::WorkspaceTerm>, EvalError> {
     use crate::workspace::AdmittedVec;
     let mut jobs = AdmittedVec::new(workspace);
@@ -798,8 +783,7 @@ pub(crate) fn from_cdt_term_admitted(
 }
 
 pub(crate) fn cdt_literal_admitted(
-    literal: &CdtLiteral,
-    workspace: &crate::WorkspaceCapability,
+    literal: &CdtLiteral, workspace: &crate::WorkspaceCapability,
 ) -> Result<crate::WorkspaceTerm, EvalError> {
     let mut frame = crate::workspace::LexicalFrame::new(workspace);
     let result = (|| {

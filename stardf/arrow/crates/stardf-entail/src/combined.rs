@@ -263,8 +263,7 @@ pub struct CombinedMaterialization {
 /// (an inconsistent knowledge base, a malformed class-expression graph, or — unreachable in
 /// practice since [`certify_with`] gates every call — a chase budget refusal).
 pub fn materialize_combined<D: DatasetView>(
-    ds: &D,
-    query_bgp: &[QTriple],
+    ds: &D, query_bgp: &[QTriple],
 ) -> Result<Option<CombinedMaterialization>, EntailError<D::ReadError>> {
     materialize_combined_until(ds, query_bgp, None)
 }
@@ -282,9 +281,7 @@ pub fn materialize_combined<D: DatasetView>(
 /// [`EntailError::Stopped`] if the signal fired, plus every error [`materialize_combined`]
 /// returns.
 pub fn materialize_combined_until<D: DatasetView>(
-    ds: &D,
-    query_bgp: &[QTriple],
-    stop: Option<&Arc<dyn StopSignal>>,
+    ds: &D, query_bgp: &[QTriple], stop: Option<&Arc<dyn StopSignal>>,
 ) -> Result<Option<CombinedMaterialization>, EntailError<D::ReadError>> {
     ds.checked_read(|ds| {
         let Some(clauses) = lower_horn_tbox(ds)? else {
@@ -419,9 +416,7 @@ fn witness_label(surface: &str) -> String {
 /// The [`TermValue`] a chase fact's lexical surface denotes: a NAMED term looked up in the
 /// seed dictionary, or a freshly minted (memoized) blank node for a witness surface.
 fn resolve_surface(
-    surface: &str,
-    witnesses: &BTreeSet<&str>,
-    by_surface: &BTreeMap<String, TermValue>,
+    surface: &str, witnesses: &BTreeSet<&str>, by_surface: &BTreeMap<String, TermValue>,
     witness_terms: &mut BTreeMap<String, TermValue>,
 ) -> TermValue {
     if witnesses.contains(surface) {

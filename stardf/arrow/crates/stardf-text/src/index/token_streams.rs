@@ -155,8 +155,7 @@ impl<T: Clone> Table<T> {
         let count = streams.len();
         let mut input = streams.into_iter();
         fn build<T: Clone>(
-            count: usize,
-            input: &mut impl Iterator<Item = T>,
+            count: usize, input: &mut impl Iterator<Item = T>,
         ) -> Result<Link<T>, TextError> {
             if count == 0 {
                 return Ok(None);
@@ -184,17 +183,13 @@ impl<T: Clone> Table<T> {
     }
 
     pub(crate) fn binary_search_by(
-        &self,
-        compare: impl FnMut(&T) -> core::cmp::Ordering,
+        &self, compare: impl FnMut(&T) -> core::cmp::Ordering,
     ) -> Result<usize, usize> {
         self.search_range(0, self.len(), compare)
     }
 
     fn search_range(
-        &self,
-        mut low: usize,
-        mut high: usize,
-        mut compare: impl FnMut(&T) -> core::cmp::Ordering,
+        &self, mut low: usize, mut high: usize, mut compare: impl FnMut(&T) -> core::cmp::Ordering,
     ) -> Result<usize, usize> {
         while low < high {
             let middle = low + (high - low) / 2;
@@ -222,8 +217,7 @@ impl<T: Clone> Table<T> {
     }
 
     pub(crate) fn try_binary_search_by<E>(
-        &self,
-        mut compare: impl FnMut(&T) -> Result<core::cmp::Ordering, E>,
+        &self, mut compare: impl FnMut(&T) -> Result<core::cmp::Ordering, E>,
     ) -> Result<Result<usize, usize>, E> {
         let mut failure = None;
         let found = self.binary_search_by(|item| {
@@ -242,8 +236,7 @@ impl<T: Clone> Table<T> {
     }
 
     pub(crate) fn try_partition_point<E>(
-        &self,
-        mut before: impl FnMut(&T) -> Result<bool, E>,
+        &self, mut before: impl FnMut(&T) -> Result<bool, E>,
     ) -> Result<usize, E> {
         let mut failure = None;
         let found = self.partition_point(|item| {
@@ -263,9 +256,7 @@ impl<T: Clone> Table<T> {
 
     pub(crate) fn replace(&self, index: usize, value: T) -> Result<Self, TextError> {
         fn replace<T: Clone>(
-            node: &Shared<Node<T>>,
-            index: usize,
-            value: T,
+            node: &Shared<Node<T>>, index: usize, value: T,
         ) -> Result<Shared<Node<T>>, TextError> {
             match &**node {
                 Node::Leaf(items) => {
@@ -367,9 +358,7 @@ impl<T: Clone> Table<T> {
         }
         self.len().checked_add(1).ok_or_else(overflow)?;
         fn insert<T: Clone>(
-            node: &Shared<Node<T>>,
-            index: usize,
-            value: T,
+            node: &Shared<Node<T>>, index: usize, value: T,
         ) -> Result<Link<T>, TextError> {
             match &**node {
                 Node::Leaf(items) => {
@@ -464,8 +453,7 @@ impl<T> Clone for Slice<'_, T> {
 
 impl<'a, T: Clone> Slice<'a, T> {
     pub(crate) fn binary_search_by(
-        &self,
-        compare: impl FnMut(&T) -> core::cmp::Ordering,
+        &self, compare: impl FnMut(&T) -> core::cmp::Ordering,
     ) -> Result<usize, usize> {
         self.table.map_or(Err(0), |table| {
             table

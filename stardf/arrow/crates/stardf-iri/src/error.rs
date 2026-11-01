@@ -195,8 +195,7 @@ impl IriError {
     /// # Errors
     /// Returns physical storage refusal before the copied error is published.
     pub fn clone_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> core::result::Result<Self, purrdf_lex::allocation::StorageError> {
         Ok(match self {
             Self::Empty => Self::Empty,
@@ -425,8 +424,7 @@ impl IriError {
         reason = "these templates are interpreted and contract-checked by DiagnosticPresentation"
     )]
     pub fn try_presentation_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> core::result::Result<DiagnosticPresentation, purrdf_lex::allocation::StorageError> {
         use crate::base::{BaseInScope, BaseOrigin};
         use DiagnosticValue::{Character, Text, Unsigned};

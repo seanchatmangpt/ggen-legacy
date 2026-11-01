@@ -118,9 +118,7 @@ impl Digest {
             .expect("resident term digest");
     }
     fn term_with(
-        &mut self,
-        value: &TermValue,
-        work: &mut ProjectionWork<'_, '_>,
+        &mut self, value: &TermValue, work: &mut ProjectionWork<'_, '_>,
     ) -> Result<(), GeoError> {
         work.absorb_term(value, |term| self.term_node(term))
     }
@@ -194,8 +192,7 @@ impl purrdf_hash::error::StructuredError for GeoIndexConfig {
 
 impl GeoIndexConfig {
     pub(crate) fn copy_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, GeoError> {
         memory.try_scope(|memory| {
             let copy = |term: &TermValue, memory: &mut purrdf_lex::allocation::Memory<'_, S>| {
@@ -297,9 +294,7 @@ impl GeoIndexConfig {
 
     /// Absorb this configuration into `digest`.
     fn absorb(
-        &self,
-        digest: &mut Digest,
-        work: &mut ProjectionWork<'_, '_>,
+        &self, digest: &mut Digest, work: &mut ProjectionWork<'_, '_>,
     ) -> Result<(), GeoError> {
         digest.count(self.serializations.len());
         for property in &self.serializations {
@@ -444,9 +439,7 @@ impl GeoIndex {
     ///   [`GeoError::IndexSerialization`] for a nonliteral serialization object;
     ///   native reader and structural causes retain their declared carrier.
     pub fn from_dataset<D: DatasetView<ReadError: purrdf_hash::error::StructuredError>>(
-        dataset: &D,
-        vocab: &GeoVocab,
-        config: &GeoIndexConfig,
+        dataset: &D, vocab: &GeoVocab, config: &GeoIndexConfig,
     ) -> Result<Self, GeoError> {
         let mut work = ProjectionWork::plain();
         let value = Self::project_dataset(dataset, vocab, config, &mut work)?;
@@ -462,10 +455,7 @@ impl GeoIndex {
     pub fn from_dataset_in_context<
         D: DatasetView<ReadError: purrdf_hash::error::StructuredError>,
     >(
-        dataset: &D,
-        vocab: &GeoVocab,
-        config: &GeoIndexConfig,
-        context: &mut crate::MetricContext,
+        dataset: &D, vocab: &GeoVocab, config: &GeoIndexConfig, context: &mut crate::MetricContext,
     ) -> Result<Self, GeoError> {
         Self::project_observed(dataset, vocab, config, context, None)
     }
@@ -474,20 +464,14 @@ impl GeoIndex {
     /// # Errors
     /// Adds observer refusal to [`Self::from_dataset_in_context`].
     pub fn from_dataset_metered<D: DatasetView<ReadError: purrdf_hash::error::StructuredError>>(
-        dataset: &D,
-        vocab: &GeoVocab,
-        config: &GeoIndexConfig,
-        context: &mut crate::MetricContext,
+        dataset: &D, vocab: &GeoVocab, config: &GeoIndexConfig, context: &mut crate::MetricContext,
         observer: &mut dyn crate::MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::project_observed(dataset, vocab, config, context, Some(observer))
     }
 
     fn project_observed<D: DatasetView<ReadError: purrdf_hash::error::StructuredError>>(
-        dataset: &D,
-        vocab: &GeoVocab,
-        config: &GeoIndexConfig,
-        context: &mut crate::MetricContext,
+        dataset: &D, vocab: &GeoVocab, config: &GeoIndexConfig, context: &mut crate::MetricContext,
         observer: Option<&mut dyn crate::MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         context.begin(1)?;
@@ -515,10 +499,7 @@ impl GeoIndex {
     }
 
     fn project_dataset<D: DatasetView<ReadError: purrdf_hash::error::StructuredError>>(
-        dataset: &D,
-        vocab: &GeoVocab,
-        config: &GeoIndexConfig,
-        work: &mut ProjectionWork<'_, '_>,
+        dataset: &D, vocab: &GeoVocab, config: &GeoIndexConfig, work: &mut ProjectionWork<'_, '_>,
     ) -> Result<GeoIndexData, GeoError> {
         let owned_config = work.config(config)?;
         dataset
@@ -693,10 +674,7 @@ impl GeoIndex {
     }
 
     fn holds_relation_with(
-        relation: SpatialRelation,
-        left: &GeoEntry,
-        right: &GeoEntry,
-        work: &mut impl PlanarMetric,
+        relation: SpatialRelation, left: &GeoEntry, right: &GeoEntry, work: &mut impl PlanarMetric,
     ) -> Result<bool, GeoError> {
         let mut undecidable = None;
         for a in &left.geometries {
@@ -737,10 +715,7 @@ impl GeoIndex {
     ///
     /// [`GeoError::Domain`] when no comparable geometry pairing can decide the relation.
     pub fn relation_pairs(
-        &self,
-        relation: SpatialRelation,
-        subject: Option<&TermValue>,
-        object: Option<&TermValue>,
+        &self, relation: SpatialRelation, subject: Option<&TermValue>, object: Option<&TermValue>,
     ) -> Result<Vec<(TermValue, TermValue)>, GeoError> {
         let pairs = self.relation_pair_references(relation, subject, object, None)?;
         self.materialize_pairs(relation, &pairs)
@@ -753,10 +728,7 @@ impl GeoIndex {
     /// # Errors
     /// Preserves relation, comparison, physical and observer refusal.
     pub fn relation_pair_references(
-        &self,
-        relation: SpatialRelation,
-        subject: Option<&TermValue>,
-        object: Option<&TermValue>,
+        &self, relation: SpatialRelation, subject: Option<&TermValue>, object: Option<&TermValue>,
         observer: Option<&mut dyn crate::MetricWorkObserver>,
     ) -> Result<crate::PreparedValues<RelationPair>, GeoError> {
         let mut worker = PlanarPairs {
@@ -777,12 +749,8 @@ impl GeoIndex {
     /// Preserves the first exact-topology, policy, source comparison, allocation
     /// or observer refusal. No skipped CRS pairing can be reported as `false`.
     pub fn relation_pair_references_metered(
-        &self,
-        relation: SpatialRelation,
-        subject: Option<&TermValue>,
-        object: Option<&TermValue>,
-        context: &mut crate::MetricContext,
-        observer: &mut dyn crate::MetricWorkObserver,
+        &self, relation: SpatialRelation, subject: Option<&TermValue>, object: Option<&TermValue>,
+        context: &mut crate::MetricContext, observer: &mut dyn crate::MetricWorkObserver,
     ) -> Result<crate::PreparedValues<RelationPair>, GeoError> {
         context.begin(1)?;
         let mut worker = PlanarPairs {
@@ -799,9 +767,7 @@ impl GeoIndex {
     /// Returns `None` when the source ordinal belongs to a different index.
     #[must_use]
     pub fn pair_terms(
-        &self,
-        relation: SpatialRelation,
-        pair: RelationPair,
+        &self, relation: SpatialRelation, pair: RelationPair,
     ) -> Option<(&TermValue, &TermValue)> {
         match pair.source {
             PairSource::Computed { left, right } => Some((
@@ -816,9 +782,7 @@ impl GeoIndex {
     }
 
     fn materialize_pairs(
-        &self,
-        relation: SpatialRelation,
-        pairs: &[RelationPair],
+        &self, relation: SpatialRelation, pairs: &[RelationPair],
     ) -> Result<Vec<(TermValue, TermValue)>, GeoError> {
         let mut resident = purrdf_lex::allocation::Resident;
         let mut memory = purrdf_lex::allocation::Memory::new(&mut resident);
@@ -837,10 +801,7 @@ impl GeoIndex {
     }
 
     fn relation_pairs_with(
-        &self,
-        relation: SpatialRelation,
-        subject: Option<&TermValue>,
-        object: Option<&TermValue>,
+        &self, relation: SpatialRelation, subject: Option<&TermValue>, object: Option<&TermValue>,
         worker: &mut impl PairWorker,
     ) -> Result<crate::PreparedValues<RelationPair>, GeoError> {
         use crate::context::RetainedBuilder;
@@ -910,9 +871,7 @@ impl GeoIndex {
     }
 
     fn candidate_positions(
-        &self,
-        bound: Option<&TermValue>,
-        worker: &mut impl PairWorker,
+        &self, bound: Option<&TermValue>, worker: &mut impl PairWorker,
     ) -> Result<core::ops::Range<usize>, GeoError> {
         let Some(bound) = bound else {
             return Ok(0..self.data.entries.len());
@@ -962,30 +921,22 @@ enum PairSource {
 
 trait PairWorker {
     fn bindings(
-        &mut self,
-        subject: Option<&TermValue>,
-        object: Option<&TermValue>,
+        &mut self, subject: Option<&TermValue>, object: Option<&TermValue>,
     ) -> Result<(), GeoError>;
     fn reserve(
-        &mut self,
-        pairs: &mut crate::context::RetainedBuilder<RelationPair>,
-        required: usize,
+        &mut self, pairs: &mut crate::context::RetainedBuilder<RelationPair>, required: usize,
     ) -> Result<(), GeoError>;
     fn holds(&mut self, left: usize, right: usize) -> Result<bool, GeoError>;
     fn row(&mut self, subject: &TermValue, object: &TermValue, len: usize) -> Result<(), GeoError>;
     fn finish(&mut self, count: usize) -> Result<(), GeoError>;
     fn compare_terms(
-        &mut self,
-        left: &TermValue,
-        right: &TermValue,
+        &mut self, left: &TermValue, right: &TermValue,
     ) -> Result<core::cmp::Ordering, GeoError>;
 }
 
 trait PlanarMetric {
     fn matrix(
-        &mut self,
-        left: &crate::Geometry,
-        right: &crate::Geometry,
+        &mut self, left: &crate::Geometry, right: &crate::Geometry,
     ) -> Result<crate::IntersectionMatrix, GeoError>;
     fn dimension(&mut self, value: &crate::Geometry) -> Result<i32, GeoError>;
     fn crs_failure(&mut self, left: &GeometryLiteral, right: &GeometryLiteral) -> GeoError;
@@ -1000,9 +951,7 @@ struct PlanarPairs<'index, 'context, 'observer> {
 }
 impl PlanarMetric for PlanarPairs<'_, '_, '_> {
     fn matrix(
-        &mut self,
-        left: &crate::Geometry,
-        right: &crate::Geometry,
+        &mut self, left: &crate::Geometry, right: &crate::Geometry,
     ) -> Result<crate::IntersectionMatrix, GeoError> {
         match self.context.as_deref_mut() {
             Some(context) => {
@@ -1028,9 +977,7 @@ impl PairWorker for PlanarPairs<'_, '_, '_> {
         Ok(())
     }
     fn reserve(
-        &mut self,
-        pairs: &mut crate::context::RetainedBuilder<RelationPair>,
-        required: usize,
+        &mut self, pairs: &mut crate::context::RetainedBuilder<RelationPair>, required: usize,
     ) -> Result<(), GeoError> {
         match self.context.as_deref_mut() {
             Some(context) => {
@@ -1063,9 +1010,7 @@ impl PairWorker for PlanarPairs<'_, '_, '_> {
         Ok(())
     }
     fn compare_terms(
-        &mut self,
-        left: &TermValue,
-        right: &TermValue,
+        &mut self, left: &TermValue, right: &TermValue,
     ) -> Result<core::cmp::Ordering, GeoError> {
         self.progress.with_storage(0, |memory| {
             left.try_cmp_with_memory(right, memory)
@@ -1121,9 +1066,7 @@ struct Keyed {
 impl Keyed {
     /// Render and pair `literal`.
     fn of_with(
-        literal: GeometryLiteral,
-        vocab: &GeoVocab,
-        work: &mut ProjectionWork<'_, '_>,
+        literal: GeometryLiteral, vocab: &GeoVocab, work: &mut ProjectionWork<'_, '_>,
     ) -> Result<Self, GeoError> {
         let mut key = work.write(&literal, vocab.coordinate_scale())?;
         push_exact_ordinates(&mut key, &literal, work)?;
@@ -1143,9 +1086,7 @@ impl Keyed {
 /// distinct ordinate sequences can produce the same suffix. An absent `z` or `m`
 /// is written as `_`, distinguishing "no elevation" from any value.
 fn push_exact_ordinates(
-    key: &mut String,
-    literal: &GeometryLiteral,
-    work: &mut ProjectionWork<'_, '_>,
+    key: &mut String, literal: &GeometryLiteral, work: &mut ProjectionWork<'_, '_>,
 ) -> Result<(), GeoError> {
     // The unit separator keeps the exact suffix out of the rendering's alphabet,
     // so the rendering remains the primary sort key.
@@ -1171,8 +1112,7 @@ fn push_exact_ordinates(
 /// restores every ordinate value, so the identity is complete rather than a
 /// rounding of one.
 fn exact_identity(
-    literal: &GeometryLiteral,
-    work: &mut ProjectionWork<'_, '_>,
+    literal: &GeometryLiteral, work: &mut ProjectionWork<'_, '_>,
 ) -> Result<String, GeoError> {
     let mut key = work.write(literal, 0)?;
     push_exact_ordinates(&mut key, literal, work)?;
@@ -1187,10 +1127,7 @@ fn exact_identity(
 /// See [`GeoIndex::from_dataset`]'s error list: this is where each of those three
 /// refusals is raised.
 fn parse_serialization(
-    object: &TermValue,
-    property: &TermValue,
-    vocab: &GeoVocab,
-    work: &mut ProjectionWork<'_, '_>,
+    object: &TermValue, property: &TermValue, vocab: &GeoVocab, work: &mut ProjectionWork<'_, '_>,
 ) -> Result<GeometryLiteral, GeoError> {
     if !matches!(object, TermValue::Literal { .. }) {
         return Err(work.invalid_serialization(property, object));
@@ -1209,8 +1146,7 @@ fn parse_serialization(
 /// datatype.
 #[cfg(test)]
 fn resolve_value<D: DatasetView<ReadError: purrdf_hash::error::StructuredError>>(
-    dataset: &D,
-    id: D::Id,
+    dataset: &D, id: D::Id,
 ) -> Result<TermValue, GeoError> {
     ProjectionWork::plain().resolve(dataset, id)
 }
@@ -1223,9 +1159,7 @@ fn resolve_value<D: DatasetView<ReadError: purrdf_hash::error::StructuredError>>
 /// resolve to the same value are coalesced, so the table is a strict total order
 /// and `GeoIndex::entry_of`'s binary search is exact.
 fn finish_entries<D: DatasetView<ReadError: purrdf_hash::error::StructuredError>>(
-    dataset: &D,
-    mut by_subject: FastMap<D::Id, Vec<Keyed>>,
-    work: &mut ProjectionWork<'_, '_>,
+    dataset: &D, mut by_subject: FastMap<D::Id, Vec<Keyed>>, work: &mut ProjectionWork<'_, '_>,
 ) -> Result<Vec<GeoEntry>, GeoError> {
     work.output_count(by_subject.len())?;
     let mut rows = Vec::new();
@@ -1288,9 +1222,7 @@ fn finish_entries<D: DatasetView<ReadError: purrdf_hash::error::StructuredError>
 /// pairings, so it can contribute no computed row; keeping it would only inflate
 /// the declared row bound.
 fn push_entry(
-    entries: &mut Vec<GeoEntry>,
-    row: (TermValue, Vec<Keyed>),
-    work: &mut ProjectionWork<'_, '_>,
+    entries: &mut Vec<GeoEntry>, row: (TermValue, Vec<Keyed>), work: &mut ProjectionWork<'_, '_>,
 ) -> Result<(), GeoError> {
     let (subject, geometries) = row;
     let geometries = canonical(geometries, work)?;
@@ -1321,8 +1253,7 @@ fn push_entry(
 /// order for any pair — which is what lets [`GeoIndex::from_dataset`] promise
 /// that no ingestion order reaches a result.
 fn canonical(
-    mut geometries: Vec<Keyed>,
-    work: &mut ProjectionWork<'_, '_>,
+    mut geometries: Vec<Keyed>, work: &mut ProjectionWork<'_, '_>,
 ) -> Result<Vec<GeometryLiteral>, GeoError> {
     purrdf_lex::walk::try_sort_unstable_by(&mut geometries, |left, right| {
         work.compare_keys(left, right)
@@ -1367,10 +1298,7 @@ fn relation_position(relation: SpatialRelation) -> usize {
 /// duplicate asserted triple in the data is still one entailed triple and BGP
 /// matching over a set of triples yields one solution.
 fn collect_asserted<D: DatasetView<ReadError: purrdf_hash::error::StructuredError>>(
-    dataset: &D,
-    vocab: &GeoVocab,
-    graph: GraphMatch<D::Id>,
-    work: &mut ProjectionWork<'_, '_>,
+    dataset: &D, vocab: &GeoVocab, graph: GraphMatch<D::Id>, work: &mut ProjectionWork<'_, '_>,
 ) -> Result<Vec<Vec<(TermValue, TermValue)>>, GeoError> {
     let mut out: Vec<Vec<(TermValue, TermValue)>> = Vec::new();
     work.reserve(&mut out, SpatialRelation::ALL.len())?;
@@ -1412,9 +1340,7 @@ fn collect_asserted<D: DatasetView<ReadError: purrdf_hash::error::StructuredErro
 }
 
 fn compare_pair(
-    a: &(TermValue, TermValue),
-    b: &(TermValue, TermValue),
-    work: &mut ProjectionWork<'_, '_>,
+    a: &(TermValue, TermValue), b: &(TermValue, TermValue), work: &mut ProjectionWork<'_, '_>,
 ) -> Result<core::cmp::Ordering, GeoError> {
     let first = work.compare_terms(&a.0, &b.0)?;
     if first.is_eq() {
@@ -1435,9 +1361,7 @@ fn compare_pair(
 /// built from a different dataset — the precise silent wrong answer it exists to
 /// refuse.
 fn fingerprint(
-    config: &GeoIndexConfig,
-    entries: &[GeoEntry],
-    asserted: &[Vec<(TermValue, TermValue)>],
+    config: &GeoIndexConfig, entries: &[GeoEntry], asserted: &[Vec<(TermValue, TermValue)>],
     work: &mut ProjectionWork<'_, '_>,
 ) -> Result<u64, GeoError> {
     let mut digest = Digest::new();
@@ -1500,10 +1424,7 @@ fn fingerprint(
 /// * [`GeoError::IndexBinding`] if the digests differ, retaining both so a host can see
 ///   which pairing it made.
 pub fn verify_binding<D: DatasetView<ReadError: purrdf_hash::error::StructuredError>>(
-    index: &GeoIndex,
-    dataset: &D,
-    vocab: &GeoVocab,
-    config: &GeoIndexConfig,
+    index: &GeoIndex, dataset: &D, vocab: &GeoVocab, config: &GeoIndexConfig,
 ) -> Result<(), GeoError> {
     if config != index.config() {
         return Err(crate::IndexBindingError::configuration(

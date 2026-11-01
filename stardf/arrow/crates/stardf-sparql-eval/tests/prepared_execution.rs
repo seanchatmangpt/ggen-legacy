@@ -307,10 +307,8 @@ const MINTING_QUERY: &str =
 /// than a difference against an earlier run's. That is what turns a carried-over
 /// `minted_bytes` into a visible number instead of a silent one.
 fn scratch_bytes_of_run(
-    engine: &NativeSparqlEngine,
-    execution: &mut purrdf_sparql_eval::PreparedExecution,
-    ds: &RdfDataset,
-    subject: u32,
+    engine: &NativeSparqlEngine, execution: &mut purrdf_sparql_eval::PreparedExecution,
+    ds: &RdfDataset, subject: u32,
 ) -> u64 {
     use purrdf_sparql_eval::{GovernorState, QueryGovernors, ResourceDimension};
     execution.bind(0, iri(subject)).expect("bind");
@@ -758,8 +756,7 @@ fn subject_id(ds: &RdfDataset, i: u32) -> purrdf_core::TermId {
 
 /// The `?o` values one prepared run answers, as debug strings.
 fn run_answers(
-    engine: &NativeSparqlEngine,
-    execution: &mut purrdf_sparql_eval::PreparedExecution,
+    engine: &NativeSparqlEngine, execution: &mut purrdf_sparql_eval::PreparedExecution,
     ds: &RdfDataset,
 ) -> Vec<String> {
     engine

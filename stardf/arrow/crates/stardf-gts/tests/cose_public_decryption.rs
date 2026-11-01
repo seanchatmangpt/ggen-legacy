@@ -110,7 +110,11 @@ fn a_non_utf8_kid_reaches_the_resolver_verbatim() {
     // RFC 9052 3.1: kid is a bstr. A raw 0xff kid (invalid UTF-8) used to make
     // the whole envelope `Malformed`; now it parses and the resolver sees the
     // exact bytes.
-    let key = bytes("key").try_into().unwrap();
+    // Upstream-defect fix-forward (purrdf rev 0da05783): `bytes("key")`
+    // referenced a helper that only exists inside `frozen_fixture()`; any
+    // 32-byte key satisfies this test's pinned property (a raw 0xff kid must
+    // reach the resolver verbatim), so use the literal from the test above.
+    let key = [37_u8; 32];
     let iv = [0_u8; 12];
     let blob = encrypt0(b"payload", &[0xff, 0x00, 0xfe], &key, &iv);
     let seen = std::cell::RefCell::new(None);

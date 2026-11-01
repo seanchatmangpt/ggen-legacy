@@ -210,9 +210,7 @@ fn capture_corpus(goldens: &Path) -> Tally {
 
 /// Serialize a successful native result into the right golden kind.
 fn write_result_golden(
-    stem: &Path,
-    result: &SparqlResult,
-    tally: &mut Tally,
+    stem: &Path, result: &SparqlResult, tally: &mut Tally,
 ) -> Result<(), purrdf_core::CanonError> {
     let keep = match result {
         SparqlResult::Graph(_) => "nq",
@@ -385,8 +383,7 @@ fn blank_label_for_bn(dataset: &RdfDataset) -> String {
 }
 
 fn expect_solutions<'a>(
-    result: &'a SparqlResult,
-    name: &str,
+    result: &'a SparqlResult, name: &str,
 ) -> (&'a [String], &'a [Vec<Option<TermValue>>]) {
     result
         .solutions()

@@ -66,10 +66,7 @@ impl<I> Default for RowSet<I> {
 
 impl<I: Copy + std::hash::Hash + Eq> RowSet<I> {
     fn reserve_in<A: Admission + ?Sized>(
-        &mut self,
-        additional: usize,
-        memory: &mut Memory<'_, A>,
-        retired: &mut usize,
+        &mut self, additional: usize, memory: &mut Memory<'_, A>, retired: &mut usize,
     ) -> Result<(), StorageError> {
         reserve_index_in(
             &mut self.rows,
@@ -110,10 +107,7 @@ impl<'a, I> IntoIterator for &'a RowSet<I> {
 
 impl<I: TermIdentity> TermUses<I> {
     fn reserve_in<A: Admission + ?Sized>(
-        &mut self,
-        count: usize,
-        memory: &mut Memory<'_, A>,
-        retired: &mut usize,
+        &mut self, count: usize, memory: &mut Memory<'_, A>, retired: &mut usize,
     ) -> Result<(), StorageError> {
         reserve_index_in(
             &mut self.counts,
@@ -221,9 +215,7 @@ where
     }
     /// Reserve every companion before a native row or replacement is published.
     pub(super) fn reserve<A: Admission + ?Sized>(
-        &mut self,
-        candidate: &Candidate<I, N>,
-        memory: &mut Memory<'_, A>,
+        &mut self, candidate: &Candidate<I, N>, memory: &mut Memory<'_, A>,
     ) -> Result<(), StorageError> {
         self.reserve_terms(memory)?;
         reserve_index_in(
@@ -278,8 +270,7 @@ where
     }
 
     fn reserve_terms<A: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, A>,
+        &mut self, memory: &mut Memory<'_, A>,
     ) -> Result<(), StorageError> {
         self.flush_retired(memory)?;
         if let Some(uses) = &mut self.term_uses {
@@ -290,8 +281,7 @@ where
 
     /// Keep a refused shrink outstanding until the next native boundary.
     pub(super) fn flush_retired<A: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, A>,
+        &mut self, memory: &mut Memory<'_, A>,
     ) -> Result<(), StorageError> {
         flush_retired_bytes(&mut self.retired_bytes, memory)
     }
@@ -310,11 +300,7 @@ where
     }
 
     pub(super) fn record(
-        &mut self,
-        row: RowId,
-        terms: [I; N],
-        proof: Candidate<I, N>,
-        inserted: bool,
+        &mut self, row: RowId, terms: [I; N], proof: Candidate<I, N>, inserted: bool,
     ) {
         for source in &proof.sources {
             self.reverse
@@ -390,9 +376,7 @@ where
 }
 
 fn unlink<K: Copy + std::hash::Hash + Eq>(
-    map: &mut FastMap<K, RowSet>,
-    key: K,
-    row: RowId,
+    map: &mut FastMap<K, RowSet>, key: K, row: RowId,
 ) -> usize {
     if let Some(rows) = map.get_mut(&key) {
         rows.remove(&row);
@@ -767,11 +751,8 @@ where
     /// # Errors
     /// Preserves original source, memory and unsupported base-schedule failures.
     pub fn new(
-        exe: &'r Executable<N>,
-        edb: RelationStore<D, N>,
-        guards: &'r dyn GuardEvaluator<D, N>,
-        context: SessionContext,
-        options: EvalOptions,
+        exe: &'r Executable<N>, edb: RelationStore<D, N>, guards: &'r dyn GuardEvaluator<D, N>,
+        context: SessionContext, options: EvalOptions,
     ) -> Result<Self, EvalError<D::Error>> {
         Self::new_in(exe, edb, guards, context, options, Resident)
     }
@@ -783,11 +764,8 @@ where
     /// # Errors
     /// Preserves the original initialization or reference-storage failure.
     pub fn new_reclaiming(
-        exe: &'r Executable<N>,
-        edb: RelationStore<D, N>,
-        guards: &'r dyn GuardEvaluator<D, N>,
-        context: SessionContext,
-        options: EvalOptions,
+        exe: &'r Executable<N>, edb: RelationStore<D, N>, guards: &'r dyn GuardEvaluator<D, N>,
+        context: SessionContext, options: EvalOptions,
     ) -> Result<Self, EvalError<D::Error>>
     where
         D: ReclaimDictionary,
@@ -808,12 +786,8 @@ where
     /// # Errors
     /// Preserves the original source failure and rejects unsupported base reads.
     pub fn new_in(
-        exe: &'r Executable<N>,
-        edb: RelationStore<D, N>,
-        guards: &'r dyn GuardEvaluator<D, N>,
-        context: SessionContext,
-        options: EvalOptions,
-        admission: A,
+        exe: &'r Executable<N>, edb: RelationStore<D, N>, guards: &'r dyn GuardEvaluator<D, N>,
+        context: SessionContext, options: EvalOptions, admission: A,
     ) -> Result<Self, EvalError<D::Error>> {
         let storage = storage::Storage::new(admission);
         let levels = exe.rule_levels.as_ref();
@@ -864,12 +838,8 @@ where
     /// # Errors
     /// Preserves the original initialization or reference-storage failure.
     pub fn new_reclaiming_in(
-        exe: &'r Executable<N>,
-        edb: RelationStore<D, N>,
-        guards: &'r dyn GuardEvaluator<D, N>,
-        context: SessionContext,
-        options: EvalOptions,
-        admission: A,
+        exe: &'r Executable<N>, edb: RelationStore<D, N>, guards: &'r dyn GuardEvaluator<D, N>,
+        context: SessionContext, options: EvalOptions, admission: A,
     ) -> Result<Self, EvalError<D::Error>>
     where
         D: ReclaimDictionary,
@@ -914,8 +884,7 @@ where
     /// # Errors
     /// Preserves poisoned execution and original source failures.
     pub fn relation(
-        &self,
-        predicate: D::Id,
+        &self, predicate: D::Id,
     ) -> Result<RelationProgress<'_, M, D, N>, MaintenanceError<D::Error>> {
         if let Some(error) = &self.failure {
             return Err(MaintenanceError::Failed(error.clone()));
@@ -1032,8 +1001,7 @@ where
     /// # Errors
     /// Refuses pending execution and preserves original dictionary/storage failures.
     pub fn admit_terms(
-        &mut self,
-        terms: [DictionaryTerm<'_, D::Id>; N],
+        &mut self, terms: [DictionaryTerm<'_, D::Id>; N],
     ) -> Result<[D::Id; N], MaintenanceError<D::Error>> {
         self.ready()?;
         let state = self
@@ -1117,8 +1085,7 @@ where
     /// # Errors
     /// Refuses pending work and preserves the original source failure.
     pub fn witness(
-        &self,
-        terms: [D::Id; N],
+        &self, terms: [D::Id; N],
     ) -> Result<Option<probe::HeadWitness<'_, D, N>>, MaintenanceError<D::Error>> {
         let rel = self.facts()?;
         let Some(row) =
@@ -1162,8 +1129,7 @@ where
     /// # Errors
     /// Refuses concurrent work, invalid multiplicity or original source/storage failure.
     pub fn apply(
-        &mut self,
-        batch: ChangeBatch<M, S, D::Id, N>,
+        &mut self, batch: ChangeBatch<M, S, D::Id, N>,
     ) -> Result<(), MaintenanceError<D::Error>> {
         self.begin(batch)?;
         let progress = self.prepare_until(u128::MAX, None)?;
@@ -1181,8 +1147,7 @@ where
     /// # Errors
     /// Refuses concurrent or uninitialized execution before taking the transaction.
     pub fn begin(
-        &mut self,
-        batch: ChangeBatch<M, S, D::Id, N>,
+        &mut self, batch: ChangeBatch<M, S, D::Id, N>,
     ) -> Result<(), MaintenanceError<D::Error>> {
         self.ready()?;
         self.preparing = Some(prepare::Frame::new(batch));
@@ -1220,9 +1185,7 @@ where
     /// Preserves source/storage failures and rejects invalid multiplicity without
     /// changing the preceding model. Storage refusals retain the original frame.
     pub fn prepare_until(
-        &mut self,
-        limit: u128,
-        stop: Option<&dyn StopSignal>,
+        &mut self, limit: u128, stop: Option<&dyn StopSignal>,
     ) -> Result<PreparationProgress, MaintenanceError<D::Error>> {
         if let Some(error) = &self.failure {
             return Err(MaintenanceError::Failed(error.clone()));
@@ -1312,8 +1275,7 @@ where
     /// # Errors
     /// Preserves the original host failure separately from model refusal.
     pub fn apply_next<T>(
-        &mut self,
-        source: &mut T,
+        &mut self, source: &mut T,
     ) -> Result<bool, ChangeApplyError<D::Error, T::Error>>
     where
         T: ChangeSource<N, Id = D::Id, Watermark = M, Admission = S>,
@@ -1337,8 +1299,7 @@ where
     /// # Errors
     /// Refuses busy execution before polling and preserves original source failures.
     pub fn begin_next<T>(
-        &mut self,
-        source: &mut T,
+        &mut self, source: &mut T,
     ) -> Result<bool, ChangeApplyError<D::Error, T::Error>>
     where
         T: ChangeSource<N, Id = D::Id, Watermark = M, Admission = S>,
@@ -1357,9 +1318,7 @@ where
     /// Source and guard failures poison this owner. Resource/stop refusals retain
     /// the pending batch and native frames and return a typed paused result.
     pub fn resume(
-        &mut self,
-        options: EvalOptions,
-        stop: Option<&dyn StopSignal>,
+        &mut self, options: EvalOptions, stop: Option<&dyn StopSignal>,
     ) -> Result<ResumeProgress<D::Error>, MaintenanceError<D::Error>> {
         self.resume_inner(options, u128::MAX, stop)
     }
@@ -1375,19 +1334,13 @@ where
     /// Retryable WorkLimit retains the original transaction and native frames.
     /// Source, storage and stop failures follow `resume`'s original contracts.
     pub fn resume_until(
-        &mut self,
-        options: EvalOptions,
-        limit: u128,
-        stop: Option<&dyn StopSignal>,
+        &mut self, options: EvalOptions, limit: u128, stop: Option<&dyn StopSignal>,
     ) -> Result<ResumeProgress<D::Error>, MaintenanceError<D::Error>> {
         self.resume_inner(options, limit, stop)
     }
 
     fn resume_inner(
-        &mut self,
-        options: EvalOptions,
-        limit: u128,
-        stop: Option<&dyn StopSignal>,
+        &mut self, options: EvalOptions, limit: u128, stop: Option<&dyn StopSignal>,
     ) -> Result<ResumeProgress<D::Error>, MaintenanceError<D::Error>> {
         if let Some(error) = &self.failure {
             return Err(MaintenanceError::Failed(error.clone()));
@@ -1509,8 +1462,7 @@ where
 }
 
 fn row_for<D: TermDictionary, const N: usize>(
-    rel: &RelationStore<D, N>,
-    terms: [D::Id; N],
+    rel: &RelationStore<D, N>, terms: [D::Id; N],
 ) -> Result<Option<RowId>, D::Error>
 where
     Arity<N>: StoreShape<N>,
@@ -1526,10 +1478,7 @@ where
 type Tasks<I, const N: usize> = OrderedTable<usize, WorkList<Task<I, N>, 8>>;
 
 fn task_bucket_in<'a, I: TermIdentity, const N: usize, A: Admission + ?Sized>(
-    tasks: &'a mut Tasks<I, N>,
-    level: usize,
-    memory: &mut Memory<'_, A>,
-    retired: &mut usize,
+    tasks: &'a mut Tasks<I, N>, level: usize, memory: &mut Memory<'_, A>, retired: &mut usize,
 ) -> Result<&'a mut WorkList<Task<I, N>, 8>, StorageError> {
     if tasks.get(&level).is_none() {
         let before = memory.admitted_bytes();
@@ -1552,9 +1501,7 @@ fn task_bucket_in<'a, I: TermIdentity, const N: usize, A: Admission + ?Sized>(
 }
 
 fn reserve_work_in<T, A: Admission + ?Sized>(
-    work: &mut WorkList<T, 8>,
-    memory: &mut Memory<'_, A>,
-    retired: &mut usize,
+    work: &mut WorkList<T, 8>, memory: &mut Memory<'_, A>, retired: &mut usize,
     reserve: impl FnOnce(&mut WorkList<T, 8>, &mut Memory<'_, A>) -> Result<(), StorageError>,
 ) -> Result<(), StorageError> {
     let before = memory.admitted_bytes();
@@ -1574,10 +1521,7 @@ fn reserve_work_in<T, A: Admission + ?Sized>(
 }
 
 fn push_task<I: TermIdentity, E, const N: usize, A: Admission + ?Sized>(
-    tasks: &mut Tasks<I, N>,
-    level: usize,
-    task: Task<I, N>,
-    memory: &mut Memory<'_, A>,
+    tasks: &mut Tasks<I, N>, level: usize, task: Task<I, N>, memory: &mut Memory<'_, A>,
     retired: &mut usize,
 ) -> Result<(), EvalError<E>> {
     let work = task_bucket_in(tasks, level, memory, retired).map_err(EvalError::Storage)?;
@@ -1597,12 +1541,9 @@ where
 }
 
 fn advance<'r, M, S: Admission, D: TermDictionary, const N: usize, A: Admission + ?Sized>(
-    run: &Run<'_, 'r, D, N>,
-    weights: &mut FastMap<[D::Id; N], i64>,
-    pending: &mut Pending<'r, M, S, D, N>,
-    state: &mut FixpointState<D, N>,
-    meter: &work::Meter<'_, '_>,
-    memory: &mut Memory<'_, A>,
+    run: &Run<'_, 'r, D, N>, weights: &mut FastMap<[D::Id; N], i64>,
+    pending: &mut Pending<'r, M, S, D, N>, state: &mut FixpointState<D, N>,
+    meter: &work::Meter<'_, '_>, memory: &mut Memory<'_, A>,
 ) -> Result<bool, EvalError<D::Error>>
 where
     Arity<N>: StoreShape<N>,

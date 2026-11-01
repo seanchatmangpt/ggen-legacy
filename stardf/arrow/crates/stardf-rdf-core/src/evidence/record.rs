@@ -70,9 +70,7 @@ impl EvidenceRecord {
     /// # Errors
     /// Returns undeclared standpoint, native admission or record layout errors.
     pub fn inherited<S: Admission + ?Sized>(
-        &self,
-        order: &StandpointOrder<Digest32>,
-        memory: &mut Memory<'_, S>,
+        &self, order: &StandpointOrder<Digest32>, memory: &mut Memory<'_, S>,
     ) -> Result<Self, EvidenceRecordError> {
         memory.try_scope(|memory| {
             let information =
@@ -148,10 +146,7 @@ impl EvidenceRecord {
     /// # Errors
     /// Returns native storage refusal or physical cardinality overflow.
     pub fn combine<S: Admission + ?Sized>(
-        &self,
-        other: &Self,
-        law: EvidenceCombination,
-        memory: &mut Memory<'_, S>,
+        &self, other: &Self, law: EvidenceCombination, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         memory.scope(|memory| {
             let (information, completeness, frame) = match law {
@@ -210,8 +205,7 @@ impl EvidenceRecord {
     /// # Errors
     /// Returns original native allocation or admission refusal.
     pub fn factorized<S: Admission + ?Sized>(
-        factors: &[&[&Self]],
-        memory: &mut Memory<'_, S>,
+        factors: &[&[&Self]], memory: &mut Memory<'_, S>,
     ) -> Result<Option<Self>, StorageError> {
         if factors.iter().any(|factor| factor.is_empty()) {
             return Ok(None);
@@ -287,11 +281,8 @@ impl EvidenceRecord {
     /// # Errors
     /// Refuses inconsistent column bounds or physical storage failure.
     pub fn from_parts<S: Admission + ?Sized>(
-        information: &InformationMap,
-        completeness: SearchCompleteness,
-        frame: &Frame,
-        reasons: &[ReasonId],
-        aggregate_bounds: &[(Digest32, AggregateBound)],
+        information: &InformationMap, completeness: SearchCompleteness, frame: &Frame,
+        reasons: &[ReasonId], aggregate_bounds: &[(Digest32, AggregateBound)],
         memory: &mut Memory<'_, S>,
     ) -> Result<Self, EvidenceRecordError> {
         Self::construct(
@@ -314,9 +305,7 @@ impl EvidenceRecord {
     /// # Errors
     /// Returns original native storage or malformed aggregate declarations.
     pub fn with_completeness<S: Admission + ?Sized>(
-        &self,
-        completeness: SearchCompleteness,
-        reason: Option<ReasonId>,
+        &self, completeness: SearchCompleteness, reason: Option<ReasonId>,
         memory: &mut Memory<'_, S>,
     ) -> Result<Self, EvidenceRecordError> {
         Self::construct(
@@ -338,8 +327,7 @@ impl EvidenceRecord {
     /// # Errors
     /// Returns original native storage or malformed aggregate declarations.
     pub fn negated<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> Result<Self, EvidenceRecordError> {
         Self::construct(
             &self.information,
@@ -361,9 +349,7 @@ impl EvidenceRecord {
     /// # Errors
     /// Refuses contradictory column declarations or original native refusal.
     pub fn with_aggregate_bounds<S: Admission + ?Sized>(
-        &self,
-        bounds: &[(Digest32, AggregateBound)],
-        memory: &mut Memory<'_, S>,
+        &self, bounds: &[(Digest32, AggregateBound)], memory: &mut Memory<'_, S>,
     ) -> Result<Self, EvidenceRecordError> {
         Self::construct(
             &self.information,
@@ -382,10 +368,7 @@ impl EvidenceRecord {
     /// # Errors
     /// Returns inconsistent declarations or original native storage refusal.
     pub fn with_column_alias<S: Admission + ?Sized>(
-        &self,
-        source: Digest32,
-        target: Digest32,
-        memory: &mut Memory<'_, S>,
+        &self, source: Digest32, target: Digest32, memory: &mut Memory<'_, S>,
     ) -> Result<Self, EvidenceRecordError> {
         let bound = self
             .aggregate_bounds
@@ -401,9 +384,7 @@ impl EvidenceRecord {
     /// # Errors
     /// Returns original native storage refusal.
     pub fn with_selected_bounds<S: Admission + ?Sized>(
-        &self,
-        mut keep: impl FnMut(Digest32) -> bool,
-        memory: &mut Memory<'_, S>,
+        &self, mut keep: impl FnMut(Digest32) -> bool, memory: &mut Memory<'_, S>,
     ) -> Result<Self, EvidenceRecordError> {
         self.with_bound_values(
             self.aggregate_bounds
@@ -415,9 +396,7 @@ impl EvidenceRecord {
     }
 
     fn with_bound_values<S: Admission + ?Sized>(
-        &self,
-        values: impl Iterator<Item = (Digest32, AggregateBound)>,
-        memory: &mut Memory<'_, S>,
+        &self, values: impl Iterator<Item = (Digest32, AggregateBound)>, memory: &mut Memory<'_, S>,
     ) -> Result<Self, EvidenceRecordError> {
         memory.try_scope(|memory| {
             let bounds = memory.collect(values)?;
@@ -428,13 +407,9 @@ impl EvidenceRecord {
     }
 
     fn construct<S: Admission + ?Sized>(
-        information: &InformationMap,
-        negate: bool,
-        completeness: SearchCompleteness,
-        frame: &Frame,
-        reasons: impl Iterator<Item = ReasonId>,
-        aggregate_bounds: &[(Digest32, AggregateBound)],
-        memory: &mut Memory<'_, S>,
+        information: &InformationMap, negate: bool, completeness: SearchCompleteness,
+        frame: &Frame, reasons: impl Iterator<Item = ReasonId>,
+        aggregate_bounds: &[(Digest32, AggregateBound)], memory: &mut Memory<'_, S>,
     ) -> Result<Self, EvidenceRecordError> {
         memory.try_scope(|memory| {
             let information = if negate {
@@ -514,8 +489,7 @@ impl EvidenceRecord {
     /// # Errors
     /// Returns the caller's typed refund refusal marker.
     pub fn release<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         self.information.release(memory)?;
         self.frame.release(memory)?;
@@ -562,9 +536,7 @@ fn conjoin_bound_states(left: u8, right: u8) -> u8 {
 }
 
 fn combine_bound(
-    left: AggregateBound,
-    right: AggregateBound,
-    law: EvidenceCombination,
+    left: AggregateBound, right: AggregateBound, law: EvidenceCombination,
 ) -> AggregateBound {
     if left == right {
         return left;

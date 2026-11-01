@@ -169,9 +169,7 @@ pub fn escape_body(value: &str, escapes: JsonEscapes, mut emit: impl FnMut(&str)
 ///
 /// Returns the sink's original error unchanged.
 pub fn try_escape_body<E>(
-    value: &str,
-    escapes: JsonEscapes,
-    mut emit: impl FnMut(&str) -> Result<(), E>,
+    value: &str, escapes: JsonEscapes, mut emit: impl FnMut(&str) -> Result<(), E>,
 ) -> Result<(), E> {
     let mut rest = value;
     while !rest.is_empty() {
@@ -254,10 +252,7 @@ pub fn push_string(out: &mut String, value: &str, escapes: JsonEscapes) {
 ///
 /// Returns checked layout, allocator or caller admission refusal before growth.
 pub fn push_string_with_memory<S: Admission + ?Sized>(
-    out: &mut String,
-    value: &str,
-    escapes: JsonEscapes,
-    memory: &mut Memory<'_, S>,
+    out: &mut String, value: &str, escapes: JsonEscapes, memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     memory.push_char(out, '"')?;
     try_escape_body(value, escapes, |piece| memory.push_str(out, piece))?;
@@ -498,8 +493,7 @@ pub fn unescape(body: &str) -> Result<Cow<'_, str>, JsonEscapeError> {
 /// # Errors
 /// Returns the original escape defect or typed physical refusal.
 pub fn unescape_with_memory<'a, S: Admission + ?Sized>(
-    body: &'a str,
-    memory: &mut Memory<'_, S>,
+    body: &'a str, memory: &mut Memory<'_, S>,
 ) -> Result<Cow<'a, str>, JsonEscapeError> {
     let bytes = body.as_bytes();
     let Some(first) = bytes.iter().position(|&b| b == b'\\') else {

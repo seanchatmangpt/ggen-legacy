@@ -344,9 +344,7 @@ impl RankedStream for LazyStream {
 /// The profile and its three streams, each `total` rows long, every one of them
 /// declaring the top of the fidelity lattice.
 fn fixture(
-    total: u64,
-    pulls: &Arc<AtomicUsize>,
-    weight: Score,
+    total: u64, pulls: &Arc<AtomicUsize>, weight: Score,
 ) -> (FusionProfile, Vec<(Iri, LazyStream)>) {
     fixture_declaring(
         total,
@@ -362,10 +360,7 @@ fn fixture(
 
 /// The same fixture with each stratum declaring `fidelities[i]` about itself.
 fn fixture_declaring(
-    total: u64,
-    pulls: &Arc<AtomicUsize>,
-    weight: Score,
-    fidelities: &[RankFidelity; STRATA.len()],
+    total: u64, pulls: &Arc<AtomicUsize>, weight: Score, fidelities: &[RankFidelity; STRATA.len()],
 ) -> (FusionProfile, Vec<(Iri, LazyStream)>) {
     let weights: BTreeMap<Iri, Score> = STRATA.iter().map(|name| (stratum(name), weight)).collect();
     let profile =
@@ -549,8 +544,7 @@ const BLOCKS: [&str; 3] = [
 /// The profile and three streams whose candidate sets are disjoint, each
 /// declaring the one block it draws from.
 fn disjoint_fixture(
-    total: u64,
-    pulls: &Arc<AtomicUsize>,
+    total: u64, pulls: &Arc<AtomicUsize>,
 ) -> (FusionProfile, Vec<(Iri, LazyStream)>) {
     let weights: BTreeMap<Iri, Score> = STRATA
         .iter()
@@ -626,10 +620,7 @@ fn disjoint_phase(label: &str, total: u64, rows: usize) -> usize {
 /// The profile and three streams that all declare ONE block while minting
 /// candidates nobody else can name, each answering lookups on `basis`.
 fn shared_block_fixture(
-    total: u64,
-    pulls: &Arc<AtomicUsize>,
-    lookups: &Arc<AtomicUsize>,
-    basis: ExclusionBasis,
+    total: u64, pulls: &Arc<AtomicUsize>, lookups: &Arc<AtomicUsize>, basis: ExclusionBasis,
 ) -> (FusionProfile, Vec<(Iri, LazyStream)>) {
     let weights: BTreeMap<Iri, Score> = STRATA
         .iter()

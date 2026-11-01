@@ -105,9 +105,7 @@ impl PageFault {
     /// Construct a snapshot-generation mismatch.
     #[must_use]
     pub fn stale_generation(
-        page: PageId,
-        expected: PageGeneration,
-        actual: PageGeneration,
+        page: PageId, expected: PageGeneration, actual: PageGeneration,
     ) -> Self {
         Self {
             page,
@@ -228,9 +226,7 @@ pub trait PageProvider: Send + Sync {
     /// Returns typed generation or page-count drift. A successful checkpoint is
     /// required even for an operation that reads no pages.
     fn check_snapshot(
-        &self,
-        expected: PageGeneration,
-        page_count: u64,
+        &self, expected: PageGeneration, page_count: u64,
     ) -> Result<(), super::PagedQueryError> {
         let actual = self.generation();
         if actual != expected {
@@ -287,8 +283,7 @@ impl InMemoryPageProvider {
     /// accounting of an external store. The tuple order defines dense page ids.
     #[must_use]
     pub fn with_byte_lengths(
-        pages: Vec<(Arc<RdfDataset>, u64)>,
-        generation: PageGeneration,
+        pages: Vec<(Arc<RdfDataset>, u64)>, generation: PageGeneration,
     ) -> Self {
         let pages = pages
             .into_iter()
@@ -406,8 +401,7 @@ impl CountingDemandProvider {
     /// Wrap one deterministic rebuild thunk per page at an explicit generation.
     #[must_use]
     pub fn with_generation(
-        thunks: Vec<Box<dyn Fn() -> Arc<RdfDataset> + Send + Sync>>,
-        generation: PageGeneration,
+        thunks: Vec<Box<dyn Fn() -> Arc<RdfDataset> + Send + Sync>>, generation: PageGeneration,
     ) -> Self {
         Self {
             thunks: thunks.into_boxed_slice(),

@@ -67,9 +67,7 @@ impl retrieval::Statistics for NoStatistics {
         None
     }
     fn selectivity_ppm(
-        &self,
-        _subject: &retrieval::Iri,
-        _term: &retrieval::RequestTerm,
+        &self, _subject: &retrieval::Iri, _term: &retrieval::RequestTerm,
     ) -> Option<u64> {
         None
     }

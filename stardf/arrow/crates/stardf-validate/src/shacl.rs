@@ -79,10 +79,7 @@ use crate::{SarifOptions, ShapesImportList, report_to_sarif_string};
 /// assert!(sarif.contains("\"version\": \"2.1.0\""));
 /// ```
 pub fn validate_to_sarif_string(
-    shapes_ttl: &str,
-    shapes_base: Option<&str>,
-    data_nt: &str,
-    options: &SarifOptions,
+    shapes_ttl: &str, shapes_base: Option<&str>, data_nt: &str, options: &SarifOptions,
     imports: &ShapesImportList<'_>,
 ) -> Result<String, ShapesError> {
     validate_to_sarif_string_with_shapes_graph(
@@ -108,12 +105,8 @@ pub fn validate_to_sarif_string(
 /// Everything [`validate_to_sarif_string`] refuses, and [`ShapesError::Invalid`] for a
 /// `shapes_graph` that names no graph.
 pub fn validate_to_sarif_string_with_shapes_graph(
-    shapes_ttl: &str,
-    shapes_base: Option<&str>,
-    shapes_graph: Option<&str>,
-    data_nt: &str,
-    options: &SarifOptions,
-    imports: &ShapesImportList<'_>,
+    shapes_ttl: &str, shapes_base: Option<&str>, shapes_graph: Option<&str>, data_nt: &str,
+    options: &SarifOptions, imports: &ShapesImportList<'_>,
 ) -> Result<String, ShapesError> {
     let report = engine::validate_graphs_with_shapes_graph(
         data_nt,
@@ -201,13 +194,8 @@ pub fn validate_to_sarif_string_with_shapes_graph(
 /// assert!(sarif.contains("DatatypeConstraintComponent"));
 /// ```
 pub fn validate_changes_to_sarif_string(
-    shapes_ttl: &str,
-    shapes_base: Option<&str>,
-    data_nt: &str,
-    added_nt: Option<&str>,
-    removed_nt: Option<&str>,
-    options: &SarifOptions,
-    imports: &ShapesImportList<'_>,
+    shapes_ttl: &str, shapes_base: Option<&str>, data_nt: &str, added_nt: Option<&str>,
+    removed_nt: Option<&str>, options: &SarifOptions, imports: &ShapesImportList<'_>,
 ) -> Result<(String, ChangeScope), ShapesError> {
     validate_changes_to_sarif_string_with_shapes_graph(
         shapes_ttl,
@@ -235,13 +223,8 @@ pub fn validate_changes_to_sarif_string(
               options and the import table are each an independent input"
 )]
 pub fn validate_changes_to_sarif_string_with_shapes_graph(
-    shapes_ttl: &str,
-    shapes_base: Option<&str>,
-    shapes_graph: Option<&str>,
-    data_nt: &str,
-    added_nt: Option<&str>,
-    removed_nt: Option<&str>,
-    options: &SarifOptions,
+    shapes_ttl: &str, shapes_base: Option<&str>, shapes_graph: Option<&str>, data_nt: &str,
+    added_nt: Option<&str>, removed_nt: Option<&str>, options: &SarifOptions,
     imports: &ShapesImportList<'_>,
 ) -> Result<(String, ChangeScope), ShapesError> {
     let (snapshot, shapes) = change_inputs(
@@ -284,13 +267,8 @@ pub fn validate_changes_to_sarif_string_with_shapes_graph(
 /// [`XPathValidationError::Pattern`], and a SHACL-SPARQL query's operational diagnostic
 /// as [`XPathValidationError::Query`].
 pub fn validate_to_sarif_string_with_xpath_regex(
-    shapes_ttl: &str,
-    shapes_base: Option<&str>,
-    shapes_graph: Option<&str>,
-    data_nt: &str,
-    options: &SarifOptions,
-    imports: &ShapesImportList<'_>,
-    xpath_regex: Option<Profile>,
+    shapes_ttl: &str, shapes_base: Option<&str>, shapes_graph: Option<&str>, data_nt: &str,
+    options: &SarifOptions, imports: &ShapesImportList<'_>, xpath_regex: Option<Profile>,
 ) -> Result<String, XPathValidationError> {
     let Some(profile) = xpath_regex else {
         return Ok(validate_to_sarif_string_with_shapes_graph(
@@ -330,15 +308,9 @@ pub fn validate_to_sarif_string_with_xpath_regex(
     reason = "the change path's inputs and the selected law are each an independent input"
 )]
 pub fn validate_changes_to_sarif_string_with_xpath_regex(
-    shapes_ttl: &str,
-    shapes_base: Option<&str>,
-    shapes_graph: Option<&str>,
-    data_nt: &str,
-    added_nt: Option<&str>,
-    removed_nt: Option<&str>,
-    options: &SarifOptions,
-    imports: &ShapesImportList<'_>,
-    xpath_regex: Option<Profile>,
+    shapes_ttl: &str, shapes_base: Option<&str>, shapes_graph: Option<&str>, data_nt: &str,
+    added_nt: Option<&str>, removed_nt: Option<&str>, options: &SarifOptions,
+    imports: &ShapesImportList<'_>, xpath_regex: Option<Profile>,
 ) -> Result<(String, ChangeScope), XPathValidationError> {
     let Some(profile) = xpath_regex else {
         return Ok(validate_changes_to_sarif_string_with_shapes_graph(
@@ -383,13 +355,8 @@ pub fn validate_changes_to_sarif_string_with_xpath_regex(
               options and the import table are each an independent input"
 )]
 fn change_inputs(
-    shapes_ttl: &str,
-    shapes_base: Option<&str>,
-    shapes_graph: Option<&str>,
-    data_nt: &str,
-    added_nt: Option<&str>,
-    removed_nt: Option<&str>,
-    options: &SarifOptions,
+    shapes_ttl: &str, shapes_base: Option<&str>, shapes_graph: Option<&str>, data_nt: &str,
+    added_nt: Option<&str>, removed_nt: Option<&str>, options: &SarifOptions,
     imports: &ShapesImportList<'_>,
 ) -> Result<(Arc<DeltaDatasetView>, Shapes), ShapesError> {
     let mut table = ShapesImports::from_turtle(imports)?;
@@ -639,10 +606,7 @@ mod tests {
     }
 
     fn sarif_result(
-        component: &str,
-        source_shape: &str,
-        path: Option<&str>,
-        message: &str,
+        component: &str, source_shape: &str, path: Option<&str>, message: &str,
     ) -> Value {
         let logical = |name: &str, kind: &str| Object::new().with("name", name).with("kind", kind);
         let mut locations = vec![logical("http://example.org/alice", "focusNode")];

@@ -1,9 +1,11 @@
 // SPDX-FileCopyrightText: 2026 Blackcat Informatics® Inc. <paudley@blackcatinformatics.ca>
 // SPDX-License-Identifier: MIT OR Apache-2.0 OR MulanPSL-2.0
 
+//! Golden-file courts over the SQL-in-RDF compiler surface.
+
 use purrdf_sql::{
-    AggregateFunction, AstError, Operator, RefusalCode, SelectItem, SelectStatement, SqlExpr,
-    SqlLiteral, TableRef, compile_turtle, refusal_arm,
+    AggregateFunction, Operator, RefusalCode, SelectItem, SelectStatement, SqlExpr, SqlLiteral,
+    TableRef, compile_turtle, refusal_arm,
 };
 
 #[test]

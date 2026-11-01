@@ -59,9 +59,7 @@ impl<'a, N: LedgerNodes> FrameStatements<'a, N> {
     /// # Errors
     /// Refuses malformed vocabulary or missing original node carriers.
     pub fn new(
-        frame: &'a Frame,
-        nodes: &'a N,
-        vocabulary: FrameVocabulary<'a>,
+        frame: &'a Frame, nodes: &'a N, vocabulary: FrameVocabulary<'a>,
     ) -> Result<Self, LedgerError> {
         let mut predicates = [""; 7];
         for (slot, term) in predicates.iter_mut().zip(
@@ -111,10 +109,7 @@ impl<'a, N: LedgerNodes> FrameStatements<'a, N> {
     /// # Errors
     /// Refuses an absent alternative or the same declaration failures as `new`.
     pub fn alternative(
-        frame: &'a Frame,
-        index: usize,
-        nodes: &'a N,
-        vocabulary: FrameVocabulary<'a>,
+        frame: &'a Frame, index: usize, nodes: &'a N, vocabulary: FrameVocabulary<'a>,
     ) -> Result<Self, LedgerError> {
         Self::new(frame, nodes, vocabulary)?.branch(index)
     }

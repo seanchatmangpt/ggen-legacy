@@ -96,8 +96,7 @@ pub fn lowercase_len(input: &str) -> Result<usize, StorageError> {
 /// # Errors
 /// Returns checked extent, caller admission or actual allocator refusal.
 pub fn lowercase_with_memory<S: Admission + ?Sized>(
-    input: &str,
-    memory: &mut Memory<'_, S>,
+    input: &str, memory: &mut Memory<'_, S>,
 ) -> Result<String, StorageError> {
     let length = lowercase_len(input)?;
     let mut output = String::new();
@@ -156,7 +155,7 @@ mod tests {
     fn generated_context_range_boundaries_match_the_existing_whole_string_law() {
         // The compiler's std tables can advance independently of the shipped UCD.
         // Always check the pinned source, and also compare std when its version agrees.
-        let source = include_str!("../../../iri/unicode/17.0.0/DerivedCoreProperties.txt");
+        let source = include_str!("../../../stardf-iri/unicode/17.0.0/DerivedCoreProperties.txt");
         let mut ignorable = Vec::new();
         let mut cased = Vec::new();
         for line in source.lines() {

@@ -107,8 +107,7 @@ fn base_scope(base: Option<&str>) -> Result<BaseScope, RifXmlError> {
 ///
 /// Propagates resolver and entailment failures.
 pub fn resolve_rif_imports<F>(
-    parsed: ParsedRifDocument,
-    mut resolver: F,
+    parsed: ParsedRifDocument, mut resolver: F,
 ) -> Result<RuleSet, EntailError>
 where
     F: FnMut(&RifImport) -> Result<Arc<RdfDataset>, EntailError>,
@@ -175,9 +174,7 @@ fn parse_document(text: &str, base: &BaseScope) -> Result<ParsedRifDocument, Rif
 }
 
 fn collect_import(
-    directive: &Node<'_, '_>,
-    imports: &mut Vec<RifImport>,
-    base: &BaseScope,
+    directive: &Node<'_, '_>, imports: &mut Vec<RifImport>, base: &BaseScope,
 ) -> Result<(), RifXmlError> {
     let import = only_element(directive, "Import")?;
     let base = enter(&import, base)?;
@@ -208,9 +205,7 @@ fn collect_import(
 }
 
 fn parse_payload(
-    payload: &Node<'_, '_>,
-    ruleset: &mut RuleSet,
-    base: &BaseScope,
+    payload: &Node<'_, '_>, ruleset: &mut RuleSet, base: &BaseScope,
 ) -> Result<(), RifXmlError> {
     let group = only_element(payload, "Group")?;
     let base = enter(&group, base)?;
@@ -231,9 +226,7 @@ fn parse_payload(
 }
 
 fn parse_sentence(
-    sentence: &Node<'_, '_>,
-    ruleset: &mut RuleSet,
-    base: &BaseScope,
+    sentence: &Node<'_, '_>, ruleset: &mut RuleSet, base: &BaseScope,
 ) -> Result<(), RifXmlError> {
     let inner = single_element(sentence, "sentence")?;
     let base = enter(&inner, base)?;
@@ -435,8 +428,7 @@ fn parse_const(node: &Node<'_, '_>, base: &BaseScope) -> Result<TermValue, RifXm
 /// common element free of an allocation; the rebound copy is what scopes the subtree, and
 /// dropping it on the way back up is the "pop".
 fn enter<'b>(
-    element: &Node<'_, '_>,
-    enclosing: &'b BaseScope,
+    element: &Node<'_, '_>, enclosing: &'b BaseScope,
 ) -> Result<Cow<'b, BaseScope>, RifXmlError> {
     let Some(directive) = element.attribute((XML_NS, "base")) else {
         return Ok(Cow::Borrowed(enclosing));
@@ -530,8 +522,7 @@ fn require(node: &Node<'_, '_>, expected: &'static str) -> Result<(), RifXmlErro
 }
 
 fn single_element<'a, 'input>(
-    node: &Node<'a, 'input>,
-    parent: &'static str,
+    node: &Node<'a, 'input>, parent: &'static str,
 ) -> Result<Node<'a, 'input>, RifXmlError> {
     let mut children = node.element_children();
     let first = children
@@ -548,8 +539,7 @@ fn single_element<'a, 'input>(
 }
 
 fn only_element<'a, 'input>(
-    node: &Node<'a, 'input>,
-    name: &'static str,
+    node: &Node<'a, 'input>, name: &'static str,
 ) -> Result<Node<'a, 'input>, RifXmlError> {
     let child = single_element(node, name)?;
     require(&child, name)?;

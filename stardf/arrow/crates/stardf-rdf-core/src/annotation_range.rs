@@ -100,10 +100,7 @@ impl AnnotationValueRange<'_> {
     /// Whether a certified interval can contain an answer. Incomparable bounds
     /// cannot justify pruning. Inputs belong to one homogeneous total-order group.
     pub(crate) fn may_overlap<S: Admission + ?Sized>(
-        self,
-        minimum: &XsdValue,
-        maximum: &XsdValue,
-        memory: &mut Memory<'_, S>,
+        self, minimum: &XsdValue, maximum: &XsdValue, memory: &mut Memory<'_, S>,
     ) -> Result<bool, StorageError> {
         if let Some(lower) = self.lower {
             let order = compare(maximum, lower.value, memory)?;
@@ -125,9 +122,7 @@ impl AnnotationValueRange<'_> {
 }
 
 fn compare<S: Admission + ?Sized>(
-    left: &XsdValue,
-    right: &XsdValue,
-    memory: &mut Memory<'_, S>,
+    left: &XsdValue, right: &XsdValue, memory: &mut Memory<'_, S>,
 ) -> Result<Option<Ordering>, StorageError> {
     let mut peak = 0;
     let answer = purrdf_xsd::ops::value_cmp_admitted(left, right, &mut |layout| {
@@ -163,9 +158,7 @@ pub(crate) enum RangeReadError<E> {
 }
 
 fn read_value<D: DatasetView, S: Admission + ?Sized>(
-    view: &D,
-    id: D::Id,
-    memory: &mut Memory<'_, S>,
+    view: &D, id: D::Id, memory: &mut Memory<'_, S>,
 ) -> Result<Option<XsdValue>, RangeReadError<D::ReadError>> {
     let guard = view.resolve(id).map_err(RangeReadError::Read)?;
     let TermRef::Literal {
@@ -195,9 +188,7 @@ fn read_value<D: DatasetView, S: Admission + ?Sized>(
 }
 
 pub(crate) fn interval_may_match<D: DatasetView, S: Admission + ?Sized>(
-    view: &D,
-    endpoints: Option<(D::Id, D::Id)>,
-    range: AnnotationValueRange<'_>,
+    view: &D, endpoints: Option<(D::Id, D::Id)>, range: AnnotationValueRange<'_>,
     memory: &mut Memory<'_, S>,
 ) -> Result<bool, RangeReadError<D::ReadError>> {
     if range
@@ -229,15 +220,13 @@ pub(crate) fn interval_may_match<D: DatasetView, S: Admission + ?Sized>(
 /// Derive intervals only from actual resident rows during sealing/certification.
 /// Groups never mix numeric promotion strata or zoned/unzoned temporal values.
 pub(crate) fn seal_intervals(
-    dataset: &RdfDataset,
-    rows: impl Iterator<Item = QuadIds<TermId>>,
+    dataset: &RdfDataset, rows: impl Iterator<Item = QuadIds<TermId>>,
 ) -> Result<Vec<ValueInterval<TermId>>, StorageError> {
     seal_intervals_with(rows, |id| Ok(dataset.resolve(id)))
 }
 
 pub(crate) fn seal_intervals_with<'a, I: crate::ViewTermId + 'a, E: From<StorageError>>(
-    rows: impl Iterator<Item = QuadIds<I>>,
-    resolve: impl Fn(I) -> Result<TermRef<'a, I>, E>,
+    rows: impl Iterator<Item = QuadIds<I>>, resolve: impl Fn(I) -> Result<TermRef<'a, I>, E>,
 ) -> Result<Vec<ValueInterval<I>>, E> {
     let mut resident = purrdf_lex::allocation::Resident;
     let mut memory = Memory::new(&mut resident);

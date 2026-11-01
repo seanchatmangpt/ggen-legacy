@@ -244,9 +244,7 @@ impl std::error::Error for SelectedProductError {
 /// `owl:imports` closure is not in hand; [`ShapesProductRefusal::Admission`] on any
 /// dimension the shapes graph declares something the product format cannot carry.
 pub fn pack_shapes_product(
-    shapes_ttl: &str,
-    shapes_base: Option<&str>,
-    imports: &ShapesImportList<'_>,
+    shapes_ttl: &str, shapes_base: Option<&str>, imports: &ShapesImportList<'_>,
 ) -> Result<Vec<u8>, ShapesProductRefusal> {
     pack_shapes_product_with_shapes_graph(shapes_ttl, shapes_base, None, imports)
 }
@@ -262,9 +260,7 @@ pub fn pack_shapes_product(
 /// Everything [`pack_shapes_product`] refuses, and [`ShapesProductRefusal::Shapes`] for a
 /// `shapes_graph` that names no graph.
 pub fn pack_shapes_product_with_shapes_graph(
-    shapes_ttl: &str,
-    shapes_base: Option<&str>,
-    shapes_graph: Option<&str>,
+    shapes_ttl: &str, shapes_base: Option<&str>, shapes_graph: Option<&str>,
     imports: &ShapesImportList<'_>,
 ) -> Result<Vec<u8>, ShapesProductRefusal> {
     let shapes_graph = shapes_graph
@@ -322,12 +318,8 @@ pub fn pack_shapes_product_with_shapes_graph(
 /// [`ShapesProductRefusal::Admission`] when it declares something the product format
 /// cannot carry.
 pub fn pack_shapes_product_from_dataset(
-    dataset: &Arc<RdfDataset>,
-    doc_prefixes: &[(String, String)],
-    base: Option<&str>,
-    shapes_graph: Option<String>,
-    box_role_vocab: Option<BoxRoleVocab>,
-    imports: &ShapesImports,
+    dataset: &Arc<RdfDataset>, doc_prefixes: &[(String, String)], base: Option<&str>,
+    shapes_graph: Option<String>, box_role_vocab: Option<BoxRoleVocab>, imports: &ShapesImports,
 ) -> Result<Vec<u8>, ShapesProductRefusal> {
     let shapes = purrdf_shapes::shapes::from_dataset_with_base(
         dataset,
@@ -389,8 +381,7 @@ pub fn prepared_to_product(prepared: &PreparedShapes) -> Result<Vec<u8>, ShapesP
 /// nothing, and [`prepared_to_product`] already means it — plus any dimension the
 /// writer refuses on.
 pub fn prepared_to_product_with_implementations(
-    prepared: &PreparedShapes,
-    implementation_identity: &[u8],
+    prepared: &PreparedShapes, implementation_identity: &[u8],
 ) -> Result<Vec<u8>, ShapesProductError> {
     prepared.to_product_with_implementation_identity(&ShapesProfile::CORE, implementation_identity)
 }
@@ -451,11 +442,8 @@ pub fn admit_shapes_product(product: &[u8]) -> Result<PreparedShapes, ShapesProd
 /// product was prepared against; otherwise every dimension
 /// [`admit_shapes_product`] refuses on.
 pub fn admit_shapes_product_with_implementations(
-    product: &[u8],
-    functions: &UserFunctionRegistry,
-    aggregates: &AggregateRegistry,
-    property_functions: &PropertyFunctionRegistry<'_>,
-    implementation_identity: &[u8],
+    product: &[u8], functions: &UserFunctionRegistry, aggregates: &AggregateRegistry,
+    property_functions: &PropertyFunctionRegistry<'_>, implementation_identity: &[u8],
 ) -> Result<PreparedShapes, ShapesProductError> {
     ShapesProduct::open(product)?.admit(
         &ShapesProfile::CORE,
@@ -492,8 +480,7 @@ pub fn admit_shapes_product_with_implementations(
 /// the required one, and otherwise every dimension [`admit_shapes_product`] refuses
 /// on.
 pub fn admit_shapes_product_expecting(
-    product: &[u8],
-    expected_identity: &[u8; 32],
+    product: &[u8], expected_identity: &[u8; 32],
 ) -> Result<PreparedShapes, ShapesProductError> {
     ShapesProduct::open(product)?.admit_expecting(
         &ShapesProfile::CORE,
@@ -567,8 +554,7 @@ pub fn rebuild_shapes_product(product: &[u8]) -> Result<PreparedShapes, ShapesPr
 /// the required one, and otherwise every dimension [`rebuild_shapes_product`]
 /// refuses on.
 pub fn rebuild_shapes_product_expecting(
-    product: &[u8],
-    expected_identity: &[u8; 32],
+    product: &[u8], expected_identity: &[u8; 32],
 ) -> Result<PreparedShapes, ShapesProductError> {
     ShapesProduct::open(product)?.rebuild_expecting(
         &ShapesProfile::CORE,
@@ -818,9 +804,7 @@ pub fn diff_shapes_products(a: &[u8], b: &[u8]) -> Result<ShapesProductDiff, Sha
 /// validation hard-fails — the arm that carries "no product dimension names this",
 /// which is exactly true of a malformed data graph.
 pub fn validate_with_shapes_product(
-    product: &[u8],
-    data_nt: &str,
-    options: &SarifOptions,
+    product: &[u8], data_nt: &str, options: &SarifOptions,
 ) -> Result<String, ShapesProductRefusal> {
     validate_with_product(product, data_nt, None, options)
 }
@@ -843,10 +827,7 @@ pub fn validate_with_shapes_product(
 /// [`ShapesProductRefusal::Shapes`] when the DATA graph does not parse or the
 /// validation hard-fails.
 pub fn validate_with_shapes_product_expecting(
-    product: &[u8],
-    data_nt: &str,
-    expected_identity: &[u8; 32],
-    options: &SarifOptions,
+    product: &[u8], data_nt: &str, expected_identity: &[u8; 32], options: &SarifOptions,
 ) -> Result<String, ShapesProductRefusal> {
     validate_with_product(product, data_nt, Some(expected_identity), options)
 }
@@ -872,9 +853,7 @@ pub fn validate_with_shapes_product_expecting(
 /// re-derive as a shapes graph — and [`ShapesProductRefusal::Shapes`] when the DATA
 /// graph does not parse or the validation hard-fails.
 pub fn validate_with_rebuilt_shapes_product(
-    product: &[u8],
-    data_nt: &str,
-    options: &SarifOptions,
+    product: &[u8], data_nt: &str, options: &SarifOptions,
 ) -> Result<String, ShapesProductRefusal> {
     validate_with_rebuilt_product(product, data_nt, None, options)
 }
@@ -901,10 +880,7 @@ pub fn validate_with_rebuilt_shapes_product(
 /// refuses on, and [`ShapesProductRefusal::Shapes`] when the DATA graph does not
 /// parse or the validation hard-fails.
 pub fn validate_with_rebuilt_shapes_product_expecting(
-    product: &[u8],
-    data_nt: &str,
-    expected_identity: &[u8; 32],
-    options: &SarifOptions,
+    product: &[u8], data_nt: &str, expected_identity: &[u8; 32], options: &SarifOptions,
 ) -> Result<String, ShapesProductRefusal> {
     validate_with_rebuilt_product(product, data_nt, Some(expected_identity), options)
 }
@@ -924,10 +900,7 @@ pub fn validate_with_rebuilt_shapes_product_expecting(
 /// [`SelectedProductError::Law`] for a native pattern resource the law withheld or a
 /// SHACL-SPARQL query's operational diagnostic.
 pub fn validate_with_shapes_product_with_xpath_regex(
-    product: &[u8],
-    data_nt: &str,
-    expected_identity: Option<&[u8; 32]>,
-    options: &SarifOptions,
+    product: &[u8], data_nt: &str, expected_identity: Option<&[u8; 32]>, options: &SarifOptions,
     xpath_regex: Option<Profile>,
 ) -> Result<String, SelectedProductError> {
     let Some(profile) = xpath_regex else {
@@ -955,10 +928,7 @@ pub fn validate_with_shapes_product_with_xpath_regex(
 ///
 /// As [`validate_with_shapes_product_with_xpath_regex`].
 pub fn validate_with_rebuilt_shapes_product_with_xpath_regex(
-    product: &[u8],
-    data_nt: &str,
-    expected_identity: Option<&[u8; 32]>,
-    options: &SarifOptions,
+    product: &[u8], data_nt: &str, expected_identity: Option<&[u8; 32]>, options: &SarifOptions,
     xpath_regex: Option<Profile>,
 ) -> Result<String, SelectedProductError> {
     let Some(profile) = xpath_regex else {
@@ -980,10 +950,7 @@ pub fn validate_with_rebuilt_shapes_product_with_xpath_regex(
 /// [`validate_prepared`] under the dated law `profile`: the same data-graph parse and the
 /// same request options, with the restored preparation bound under the selection.
 fn validate_prepared_with_xpath_regex(
-    prepared: PreparedShapes,
-    data_nt: &str,
-    options: &SarifOptions,
-    profile: Profile,
+    prepared: PreparedShapes, data_nt: &str, options: &SarifOptions, profile: Profile,
 ) -> Result<String, SelectedProductError> {
     let data = parse_data_nt(data_nt)?;
     // The request's options travel with the call, not with the product, exactly as on
@@ -1011,10 +978,7 @@ fn parse_data_nt(data_nt: &str) -> Result<Arc<RdfDataset>, ShapesProductRefusal>
 /// variable — the same arrangement [`validate_with_product`] makes for the
 /// admission path.
 fn validate_with_rebuilt_product(
-    product: &[u8],
-    data_nt: &str,
-    expected_identity: Option<&[u8; 32]>,
-    options: &SarifOptions,
+    product: &[u8], data_nt: &str, expected_identity: Option<&[u8; 32]>, options: &SarifOptions,
 ) -> Result<String, ShapesProductRefusal> {
     let prepared =
         restore_shapes_product_with_options(product, &options.validation, expected_identity, true)
@@ -1030,10 +994,7 @@ fn validate_with_rebuilt_product(
 /// product through a second sequence of steps would be a second answer about one
 /// artifact, and the expectation exists precisely to stop a second answer.
 fn validate_with_product(
-    product: &[u8],
-    data_nt: &str,
-    expected_identity: Option<&[u8; 32]>,
-    options: &SarifOptions,
+    product: &[u8], data_nt: &str, expected_identity: Option<&[u8; 32]>, options: &SarifOptions,
 ) -> Result<String, ShapesProductRefusal> {
     let prepared =
         restore_shapes_product_with_options(product, &options.validation, expected_identity, false)
@@ -1048,9 +1009,7 @@ fn validate_with_product(
 /// rebuilt — so a data-graph parse failure or a validation hard-fail is reported
 /// identically regardless of which door the preparation came through.
 fn validate_prepared(
-    prepared: &PreparedShapes,
-    data_nt: &str,
-    options: &SarifOptions,
+    prepared: &PreparedShapes, data_nt: &str, options: &SarifOptions,
 ) -> Result<String, ShapesProductRefusal> {
     let data = parse_data_nt(data_nt)?;
     // A product was prepared before this data graph existed and cannot take a graph the
@@ -1076,9 +1035,7 @@ fn validate_prepared(
 /// # Errors
 /// Returns actual product dimensions, dated admission or profile conflicts.
 pub fn restore_shapes_product_with_options(
-    product: &[u8],
-    options: &engine::ValidationOptions,
-    expected_identity: Option<&[u8; 32]>,
+    product: &[u8], options: &engine::ValidationOptions, expected_identity: Option<&[u8; 32]>,
     rebuild: bool,
 ) -> Result<PreparedShapes, purrdf_shapes::report::CompleteValidationError> {
     let view = ShapesProduct::open(product)?;
@@ -1394,11 +1351,11 @@ mod tests {
     }
 
     /// The W3C SHACL 1.2 core vocabulary, vendored beside the shapes engine.
-    const SHACL_TTL: &str = include_str!("../../shapes/spec/shacl.ttl");
+    const SHACL_TTL: &str = include_str!("../../stardf-shapes/spec/shacl.ttl");
     /// The W3C SHACL 1.2 node-expression vocabulary; it `owl:imports <sh:>`.
-    const SHNEX_TTL: &str = include_str!("../../shapes/spec/shnex.ttl");
+    const SHNEX_TTL: &str = include_str!("../../stardf-shapes/spec/shnex.ttl");
     /// The W3C SHACL 1.2 SPARQL node-expression vocabulary; it `owl:imports <shnex:>`.
-    const SHNEX_SPARQL_TTL: &str = include_str!("../../shapes/spec/shnex-sparql.ttl");
+    const SHNEX_SPARQL_TTL: &str = include_str!("../../stardf-shapes/spec/shnex-sparql.ttl");
 
     /// The three SHACL 1.2 vocabularies merged into one shapes document beside a user shape:
     /// every `owl:imports` names an ontology the same document declares, so the closure is

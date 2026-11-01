@@ -479,8 +479,7 @@ impl purrdf_hash::error::StructuredError for BindingConfigError {
 impl BindingConfigError {
     /// Publish native inline fields and independently retained operand owners.
     pub(crate) fn into_geo(
-        self,
-        progress: &mut crate::context::WorkProgress<'_>,
+        self, progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         progress.retained_error(|memory| {
             memory
@@ -490,10 +489,8 @@ impl BindingConfigError {
     }
 
     pub(crate) fn geographic_index_admission(
-        target: &crate::Crs,
-        references: [&crate::GeographicReference; 2],
-        policies: [crate::ExecutionPolicy; 2],
-        reason: GeoIndexAdmissionReason,
+        target: &crate::Crs, references: [&crate::GeographicReference; 2],
+        policies: [crate::ExecutionPolicy; 2], reason: GeoIndexAdmissionReason,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         let [declared, actual] = references;
@@ -512,12 +509,8 @@ impl BindingConfigError {
     }
 
     pub(crate) fn applicability(
-        west: &crate::Rat,
-        east: &crate::Rat,
-        south: &crate::Rat,
-        north: &crate::Rat,
-        axis: crate::measure::Ordinate,
-        progress: &mut crate::context::WorkProgress<'_>,
+        west: &crate::Rat, east: &crate::Rat, south: &crate::Rat, north: &crate::Rat,
+        axis: crate::measure::Ordinate, progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         let captured = (|| {
             Ok(Self::Applicability {
@@ -535,10 +528,8 @@ impl BindingConfigError {
     }
 
     pub(crate) fn image_target(
-        target: OperationReference,
-        reference: Option<&crate::GeographicReference>,
-        reason: ImageTargetReason,
-        progress: &mut crate::context::WorkProgress<'_>,
+        target: OperationReference, reference: Option<&crate::GeographicReference>,
+        reason: ImageTargetReason, progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         let reference = match reference
             .map(|reference| {
@@ -571,8 +562,7 @@ impl BindingConfigError {
     /// Retain the policies compared at the source-admission boundary.
     #[must_use]
     pub fn preparation_policy(
-        admitted: crate::ExecutionPolicy,
-        expected: crate::ExecutionPolicy,
+        admitted: crate::ExecutionPolicy, expected: crate::ExecutionPolicy,
         observer: Option<&mut dyn crate::MetricWorkObserver>,
     ) -> super::GeoError {
         let mut progress = crate::context::WorkProgress::new(observer);
@@ -584,10 +574,8 @@ impl BindingConfigError {
     }
 
     pub(crate) fn reference_registration(
-        reference: &crate::Crs,
-        actual: &crate::GeographicReference,
-        expected: &crate::GeographicReference,
-        reason: ReferenceRegistrationReason,
+        reference: &crate::Crs, actual: &crate::GeographicReference,
+        expected: &crate::GeographicReference, reason: ReferenceRegistrationReason,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         capture_references(actual, expected, progress, |actual, expected, progress| {
@@ -608,10 +596,8 @@ impl BindingConfigError {
     }
 
     pub(crate) fn reference_mismatch(
-        actual: &crate::GeographicReference,
-        expected: &crate::GeographicReference,
-        reason: ReferenceMismatchReason,
-        progress: &mut crate::context::WorkProgress<'_>,
+        actual: &crate::GeographicReference, expected: &crate::GeographicReference,
+        reason: ReferenceMismatchReason, progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         capture_references(actual, expected, progress, |actual, expected, progress| {
             Self::ReferenceMismatch {
@@ -624,10 +610,8 @@ impl BindingConfigError {
     }
 
     pub(crate) fn identity_mismatch(
-        actual: crate::GeoBindingId,
-        expected: crate::GeoBindingId,
-        reason: ReferenceMismatchReason,
-        progress: &mut crate::context::WorkProgress<'_>,
+        actual: crate::GeoBindingId, expected: crate::GeoBindingId,
+        reason: ReferenceMismatchReason, progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         Self::ReferenceIdentity {
             reason,
@@ -639,10 +623,8 @@ impl BindingConfigError {
 
     pub(crate) fn cached_arc(
         actual_reference: &crate::GeographicReference,
-        expected_reference: &crate::GeographicReference,
-        expected: crate::GeoBindingId,
-        bindings: [crate::GeoBindingId; 3],
-        progress: &mut crate::context::WorkProgress<'_>,
+        expected_reference: &crate::GeographicReference, expected: crate::GeoBindingId,
+        bindings: [crate::GeoBindingId; 3], progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         capture_references(
             actual_reference,
@@ -664,8 +646,7 @@ impl BindingConfigError {
     }
 
     pub(crate) fn nonnative_reference(
-        actual: &crate::GeographicReference,
-        progress: &mut crate::context::WorkProgress<'_>,
+        actual: &crate::GeographicReference, progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         let actual =
             match crate::context::retained::produce_persistent_numeric_from(actual, progress) {
@@ -676,11 +657,8 @@ impl BindingConfigError {
     }
 
     pub(crate) fn unit_factor(
-        unit: &crate::Crs,
-        actual: &crate::Rat,
-        expected: Option<&crate::Rat>,
-        reason: UnitFactorReason,
-        progress: &mut crate::context::WorkProgress<'_>,
+        unit: &crate::Crs, actual: &crate::Rat, expected: Option<&crate::Rat>,
+        reason: UnitFactorReason, progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         let actual = match super::GeoError::diagnostic_number(actual, progress) {
             Ok(value) => value,
@@ -850,8 +828,7 @@ impl std::error::Error for BindingConfigError {}
 
 /// Keep both independently owned reference publications at the one capture home.
 fn capture_references(
-    actual: &crate::GeographicReference,
-    expected: &crate::GeographicReference,
+    actual: &crate::GeographicReference, expected: &crate::GeographicReference,
     progress: &mut crate::context::WorkProgress<'_>,
     make: impl FnOnce(
         crate::GeographicReference,

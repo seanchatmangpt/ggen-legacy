@@ -414,10 +414,7 @@ pub(crate) fn attempt(q: &Question<'_>) -> Result<Attempt, EntailError> {
 /// [`containment`] — arithmetic over value spaces, not inference — and the residual binding is
 /// replayed.
 pub(crate) fn verify_datarange(
-    w: &DataRangeWarrant,
-    _conclusion: &RdfDataset,
-    triples: &[Triple],
-    pending: &BTreeSet<usize>,
+    w: &DataRangeWarrant, _conclusion: &RdfDataset, triples: &[Triple], pending: &BTreeSet<usize>,
 ) -> Option<Replay> {
     let axioms = read(triples, pending, &w.closure);
     if axioms.len() != w.containments.len() {

@@ -159,8 +159,7 @@ impl DatasetView for PackView<'_> {
     }
 
     fn reserve_owned_workspace(
-        &self,
-        _: u64,
+        &self, _: u64,
     ) -> Option<Result<crate::OwnedWorkspaceReservation<Self::ReadError>, Self::ReadError>> {
         Some(Ok(crate::NoopReservation::owned()))
     }
@@ -184,11 +183,7 @@ impl DatasetView for PackView<'_> {
     }
 
     fn quads_for_pattern(
-        &self,
-        s: Option<PackId>,
-        p: Option<PackId>,
-        o: Option<PackId>,
-        g: GraphMatch<PackId>,
+        &self, s: Option<PackId>, p: Option<PackId>, o: Option<PackId>, g: GraphMatch<PackId>,
     ) -> impl Iterator<Item = QuadIds<PackId>> + '_ {
         self.triples()
             .pattern(
@@ -223,20 +218,12 @@ impl DatasetView for PackView<'_> {
     }
 
     fn probe_plan(
-        &self,
-        _s_bound: bool,
-        _p_bound: bool,
-        _o_bound: bool,
-        _g: GraphMatch<PackId>,
+        &self, _s_bound: bool, _p_bound: bool, _o_bound: bool, _g: GraphMatch<PackId>,
     ) -> Self::ProbePlan {
     }
 
     fn quads_for_pattern_with_plan(
-        &self,
-        _plan: &(),
-        s: Option<PackId>,
-        p: Option<PackId>,
-        o: Option<PackId>,
+        &self, _plan: &(), s: Option<PackId>, p: Option<PackId>, o: Option<PackId>,
         g: GraphMatch<PackId>,
     ) -> impl Iterator<Item = QuadIds<PackId>> + '_ {
         // The unit plan carries nothing; forward to the pattern query, exactly like
@@ -245,11 +232,7 @@ impl DatasetView for PackView<'_> {
     }
 
     fn cardinality_estimate(
-        &self,
-        s: Option<PackId>,
-        p: Option<PackId>,
-        o: Option<PackId>,
-        g: GraphMatch<PackId>,
+        &self, s: Option<PackId>, p: Option<PackId>, o: Option<PackId>, g: GraphMatch<PackId>,
     ) -> u64 {
         u64::try_from({
             self.triples().cardinality_upper_bound(
@@ -306,8 +289,7 @@ impl DatasetView for PackView<'_> {
     }
 
     fn annotations_of_with_graph(
-        &self,
-        reifier: PackId,
+        &self, reifier: PackId,
     ) -> impl Iterator<Item = (PackId, PackId, Option<PackId>)> + '_ {
         self.side()
             .annotations_of_with_graph(reifier.as_unified())

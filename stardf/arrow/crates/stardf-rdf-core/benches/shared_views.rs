@@ -284,9 +284,7 @@ struct Stage(usize);
 /// is reported — which is also what makes "the view path froze nothing" a
 /// statement the line can actually carry.
 fn from_report_with_work_delta(
-    report: &ViewAccountingReport,
-    before: ViewWork,
-    after: ViewWork,
+    report: &ViewAccountingReport, before: ViewWork, after: ViewWork,
 ) -> Observation {
     Observation {
         copies: after.copied_rows.saturating_sub(before.copied_rows),
@@ -385,10 +383,7 @@ struct CarrierShape {
 
 impl CarrierShape {
     fn new(
-        name: &'static str,
-        groups: usize,
-        stages: Vec<(String, Arc<RdfDataset>)>,
-        consumers: usize,
+        name: &'static str, groups: usize, stages: Vec<(String, Arc<RdfDataset>)>, consumers: usize,
     ) -> Self {
         let base = carrier_base(groups);
         let delta = round_trip_delta(&base, "http://example.org/");
@@ -405,9 +400,7 @@ impl CarrierShape {
 /// `stage_count` contributions, each in its own graph. `space` maps a stage
 /// index onto its term space.
 fn stage_plan(
-    stage_count: usize,
-    rows: usize,
-    space: impl Fn(usize) -> usize,
+    stage_count: usize, rows: usize, space: impl Fn(usize) -> usize,
 ) -> Vec<(String, Arc<RdfDataset>)> {
     (0..stage_count)
         .map(|index| {
@@ -908,8 +901,7 @@ fn probe_all(view: &CompositeDatasetView, subjects: &[purrdf_core::CompositeView
 }
 
 fn statement_probes(
-    view: &CompositeDatasetView,
-    subjects: &[purrdf_core::CompositeViewId],
+    view: &CompositeDatasetView, subjects: &[purrdf_core::CompositeViewId],
 ) -> usize {
     subjects
         .iter()

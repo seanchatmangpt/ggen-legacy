@@ -42,8 +42,7 @@ impl<P: CorpusProfile> SurfaceIndex<P> {
     /// # Errors
     /// Refuses allocation failure or inconsistent retained source/index state.
     pub fn without_documents(
-        mut self,
-        documents: impl IntoIterator<Item = u32>,
+        mut self, documents: impl IntoIterator<Item = u32>,
     ) -> Result<Self, TextError> {
         let documents = documents
             .into_iter()
@@ -61,9 +60,7 @@ impl<P: CorpusProfile> SurfaceIndex<P> {
     }
 
     pub(crate) fn with_index_delta(
-        mut self,
-        added: Self,
-        removed: impl IntoIterator<Item = Shared<Document<P>>>,
+        mut self, added: Self, removed: impl IntoIterator<Item = Shared<Document<P>>>,
         order: Table<Shared<Document<P>>>,
     ) -> Result<Self, TextDeltaError> {
         self.check_analyzer(&added)?;
@@ -89,8 +86,7 @@ impl<P: CorpusProfile> SurfaceIndex<P> {
     }
 
     fn remove_document_keys(
-        &mut self,
-        documents: &BTreeSet<SurfaceDocument<P>>,
+        &mut self, documents: &BTreeSet<SurfaceDocument<P>>,
     ) -> Result<bool, TextError> {
         let mut changed = false;
         for document in documents {
@@ -123,10 +119,7 @@ impl<P: CorpusProfile> SurfaceIndex<P> {
     }
 
     fn remove_source_term(
-        &mut self,
-        name: &Spelling,
-        source: &Source<P>,
-        span: bool,
+        &mut self, name: &Spelling, source: &Source<P>, span: bool,
     ) -> Result<(), TextError> {
         let table = if span { &self.spans } else { &self.words };
         let at = table
@@ -281,10 +274,7 @@ impl<P: CorpusProfile> SurfaceIndex<P> {
 }
 
 fn adjust_member<P: CorpusProfile>(
-    members: &Table<Member<P>>,
-    document: &SurfaceDocument<P>,
-    count: usize,
-    added: bool,
+    members: &Table<Member<P>>, document: &SurfaceDocument<P>, count: usize, added: bool,
 ) -> Result<Table<Member<P>>, TextError> {
     let position = members.binary_search_by(|member| member.document.cmp(document));
     let before = position.ok().map_or(0, |at| members[at].count);

@@ -141,8 +141,7 @@ impl Fixed {
     }
 
     pub(crate) fn from_integer_with(
-        value: i64,
-        workspace: Option<&WorkspaceCapability>,
+        value: i64, workspace: Option<&WorkspaceCapability>,
     ) -> Result<Self, TextError> {
         i128::from(value)
             .checked_mul(SCALE)
@@ -168,9 +167,7 @@ impl Fixed {
     }
 
     pub(crate) fn checked_add_with(
-        self,
-        other: Self,
-        workspace: Option<&WorkspaceCapability>,
+        self, other: Self, workspace: Option<&WorkspaceCapability>,
     ) -> Result<Self, TextError> {
         self.0.checked_add(other.0).map(Self).ok_or_else(|| {
             arithmetic_error(
@@ -190,9 +187,7 @@ impl Fixed {
     }
 
     pub(crate) fn checked_sub_with(
-        self,
-        other: Self,
-        workspace: Option<&WorkspaceCapability>,
+        self, other: Self, workspace: Option<&WorkspaceCapability>,
     ) -> Result<Self, TextError> {
         self.0.checked_sub(other.0).map(Self).ok_or_else(|| {
             arithmetic_error(
@@ -217,9 +212,7 @@ impl Fixed {
     }
 
     pub(crate) fn checked_mul_with(
-        self,
-        other: Self,
-        workspace: Option<&WorkspaceCapability>,
+        self, other: Self, workspace: Option<&WorkspaceCapability>,
     ) -> Result<Self, TextError> {
         product_ratio(self.0, other.0, SCALE).ok_or_else(|| {
             arithmetic_error(
@@ -245,9 +238,7 @@ impl Fixed {
     }
 
     pub(crate) fn checked_div_with(
-        self,
-        other: Self,
-        workspace: Option<&WorkspaceCapability>,
+        self, other: Self, workspace: Option<&WorkspaceCapability>,
     ) -> Result<Self, TextError> {
         if other.0 == 0 {
             return Err(arithmetic_error(
@@ -294,8 +285,7 @@ impl Fixed {
     }
 
     pub(crate) fn ln_with(
-        self,
-        workspace: Option<&WorkspaceCapability>,
+        self, workspace: Option<&WorkspaceCapability>,
     ) -> Result<Self, TextError> {
         if self.0 <= 0 {
             return Err(arithmetic_error(
@@ -506,9 +496,7 @@ impl Scaled {
     }
 
     pub(crate) fn add(
-        &self,
-        other: &Self,
-        workspace: Option<&WorkspaceCapability>,
+        &self, other: &Self, workspace: Option<&WorkspaceCapability>,
     ) -> Result<Self, TextError> {
         let allocation = Self::grant(
             self.value
@@ -526,9 +514,7 @@ impl Scaled {
     }
 
     pub(crate) fn mul(
-        &self,
-        other: &Self,
-        workspace: Option<&WorkspaceCapability>,
+        &self, other: &Self, workspace: Option<&WorkspaceCapability>,
     ) -> Result<Self, TextError> {
         Self::quotient_product(
             &self.value,
@@ -539,9 +525,7 @@ impl Scaled {
     }
 
     pub(crate) fn div(
-        &self,
-        other: &Self,
-        workspace: Option<&WorkspaceCapability>,
+        &self, other: &Self, workspace: Option<&WorkspaceCapability>,
     ) -> Result<Self, TextError> {
         if other.value.is_zero() {
             return Err(arithmetic_error(
@@ -564,8 +548,7 @@ impl Scaled {
     }
 
     pub(crate) fn into_fixed(
-        self,
-        workspace: Option<&WorkspaceCapability>,
+        self, workspace: Option<&WorkspaceCapability>,
     ) -> Result<Fixed, TextError> {
         match self.value.as_i128() {
             Some(raw) => Ok(Fixed::from_raw(raw)),
@@ -579,10 +562,7 @@ impl Scaled {
     /// Stay on the existing wide kernel when the rounded result fits, even if
     /// the unscaled product exceeds i128; otherwise use exact Integer once.
     fn quotient_product(
-        left: &Integer,
-        right: &Integer,
-        divisor: &Integer,
-        workspace: Option<&WorkspaceCapability>,
+        left: &Integer, right: &Integer, divisor: &Integer, workspace: Option<&WorkspaceCapability>,
     ) -> Result<Self, TextError> {
         if let (Some(a), Some(b), Some(c)) = (left.as_i128(), right.as_i128(), divisor.as_i128())
             && let Some(value) = product_ratio(a, b, c)

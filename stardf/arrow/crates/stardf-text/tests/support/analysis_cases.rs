@@ -6,7 +6,7 @@ use purrdf_text::{
 };
 
 pub(crate) fn official_grapheme_and_emoji_cases() {
-    let data = include_str!("../../../iri/unicode/17.0.0/GraphemeBreakTest.txt");
+    let data = include_str!("../../../stardf-iri/unicode/17.0.0/GraphemeBreakTest.txt");
     let mut count = 0;
     for line in data.lines() {
         let row = line.split('#').next().unwrap().trim();
@@ -30,7 +30,7 @@ pub(crate) fn official_grapheme_and_emoji_cases() {
         count += 1;
     }
     assert_eq!(count, 766);
-    let emoji = include_str!("../../../iri/unicode/17.0.0/emoji-test.txt");
+    let emoji = include_str!("../../../stardf-iri/unicode/17.0.0/emoji-test.txt");
     let mut count = 0;
     let analyzer = Analyzer::empty_lexicon();
     for line in emoji.lines() {

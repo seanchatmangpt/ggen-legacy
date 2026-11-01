@@ -1,3 +1,18 @@
+// LINT-GATE (G03 offline ladder, 2026-10-31, D17): module sources are verbatim
+// bcinr v26.10.11 kernels (per-module `// from bcinr` headers); the workspace
+// lints table runs clippy all+pedantic+nursery WARN-only upstream, and the G03
+// ladder's `-D warnings` would demand style-level rewrites of the audited
+// kernel shapes. Gating the witnessed GROUPS + named style lints — correctness
+// lints stay live. Un-gate only by rewriting the subject, never by widening.
+#![allow(clippy::pedantic)]
+#![allow(clippy::nursery)]
+#![allow(
+    clippy::unusual_byte_groupings,
+    clippy::manual_contains,
+    clippy::manual_memcpy,
+    clippy::len_zero
+)]
+
 //! Branchless, allocation-free integer primitives.
 //!
 //! Ported from BranchlessCInRust (`bcinr`) v26.10.11 — a `no_std`,

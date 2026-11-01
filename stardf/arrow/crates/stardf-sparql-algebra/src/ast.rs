@@ -277,9 +277,7 @@ pub struct Literal {
 impl Literal {
     /// Assemble originally admitted native facets without lexical copying.
     pub fn from_admitted(
-        value: SharedText,
-        datatype: NamedNode,
-        language: Option<SharedText>,
+        value: SharedText, datatype: NamedNode, language: Option<SharedText>,
         direction: Option<BaseDirection>,
     ) -> Self {
         Self {
@@ -313,9 +311,7 @@ impl Literal {
     /// A language-tagged literal `"value"@lang`, optionally with an RDF 1.2 base
     /// direction (`"value"@lang--ltr`).
     pub fn new_lang(
-        value: impl Into<String>,
-        language: impl Into<String>,
-        direction: Option<BaseDirection>,
+        value: impl Into<String>, language: impl Into<String>, direction: Option<BaseDirection>,
     ) -> Self {
         let datatype = NamedNode::new_unchecked(purrdf_iri::vocab::language_datatype_iri(
             direction.is_some(),

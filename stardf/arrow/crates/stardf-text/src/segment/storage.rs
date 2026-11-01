@@ -85,9 +85,7 @@ pub(super) struct Dag {
 
 impl Storage {
     pub(super) fn build(
-        arena: &str,
-        offsets: &[u32],
-        representation: DictionaryRepresentation,
+        arena: &str, offsets: &[u32], representation: DictionaryRepresentation,
     ) -> Self {
         let radix = Radix::build(arena.as_bytes(), offsets);
         match representation {

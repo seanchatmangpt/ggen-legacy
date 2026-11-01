@@ -186,8 +186,7 @@ fn blob_metadata_index(graph: &Graph) -> BTreeMap<&str, &Value> {
 }
 
 fn blob_metadata(
-    blob_meta: &BTreeMap<&str, &Value>,
-    digest: &str,
+    blob_meta: &BTreeMap<&str, &Value>, digest: &str,
 ) -> BTreeMap<String, RdfMetadataValue> {
     blob_meta
         .get(digest)

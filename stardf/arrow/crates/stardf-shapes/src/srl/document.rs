@@ -409,10 +409,7 @@ impl fmt::Display for CheckLevel {
 /// refused, so a caller can tell a document the grammar refuses from a rule set that is
 /// ill formed from one that cannot be stratified.
 pub fn check(
-    text: &str,
-    base: Option<&str>,
-    imports: &[(&str, &str)],
-    level: CheckLevel,
+    text: &str, base: Option<&str>, imports: &[(&str, &str)], level: CheckLevel,
 ) -> Result<CheckedRuleSet, SrlError> {
     let document = parse(text, base)?;
     if level >= CheckLevel::WellFormed {
@@ -634,9 +631,7 @@ impl InferOptions {
 /// [`SrlError::Import`] for unresolved imports, [`SrlError::WellFormedness`],
 /// [`SrlError::Stratification`], [`SrlError::LimitExceeded`], [`SrlError::Evaluation`].
 pub fn infer(
-    document: &RuleSetDocument,
-    base: &RdfDataset,
-    options: &InferOptions,
+    document: &RuleSetDocument, base: &RdfDataset, options: &InferOptions,
 ) -> Result<Inference, SrlError> {
     infer_until(document, base, options, None)
 }
@@ -650,9 +645,7 @@ pub fn infer(
 ///
 /// The errors of [`infer`], plus [`SrlError::Stopped`].
 pub fn infer_until(
-    document: &RuleSetDocument,
-    base: &RdfDataset,
-    options: &InferOptions,
+    document: &RuleSetDocument, base: &RdfDataset, options: &InferOptions,
     stop: Option<&dyn purrdf_core::StopSignal>,
 ) -> Result<Inference, SrlError> {
     document.check_well_formed()?;
@@ -681,9 +674,7 @@ pub fn infer_until(
 /// stratification, guard and budget errors as [infer]. A fresh read operation is
 /// required to retry after an input failure.
 pub fn infer_triples(
-    document: &RuleSetDocument,
-    base: &purrdf_core::TripleRead<'_>,
-    options: &InferOptions,
+    document: &RuleSetDocument, base: &purrdf_core::TripleRead<'_>, options: &InferOptions,
 ) -> Result<Inference<purrdf_core::TripleDataset>, SrlError> {
     infer_triples_until(document, base, options, None)
 }
@@ -694,9 +685,7 @@ pub fn infer_triples(
 ///
 /// Original input failures and the errors of [`infer_until`].
 pub fn infer_triples_until(
-    document: &RuleSetDocument,
-    base: &purrdf_core::TripleRead<'_>,
-    options: &InferOptions,
+    document: &RuleSetDocument, base: &purrdf_core::TripleRead<'_>, options: &InferOptions,
     stop: Option<&dyn purrdf_core::StopSignal>,
 ) -> Result<Inference<purrdf_core::TripleDataset>, SrlError> {
     use purrdf_core::DatasetView as _;
@@ -857,8 +846,7 @@ impl RuleSetDocument {
     /// [`Self::resolve_imports`], also answering the IRIs of the rule sets it read, in
     /// the order it read them.
     fn resolve_imports_listing(
-        &self,
-        resolver: &mut dyn ImportResolver,
+        &self, resolver: &mut dyn ImportResolver,
     ) -> Result<(Self, Vec<String>), SrlError> {
         let mut visited: Vec<String> = self.location.iter().cloned().collect();
         let preloaded = visited.len();
@@ -911,8 +899,7 @@ impl RuleSetDocument {
 
     /// [`Self::resolve_import_table`], also answering the IRIs of the rule sets it read.
     fn resolve_import_table_listing(
-        &self,
-        table: &[(&str, &str)],
+        &self, table: &[(&str, &str)],
     ) -> Result<(Self, Vec<String>), SrlError> {
         for (index, (iri, _)) in table.iter().enumerate() {
             if !purrdf_iri::is_absolute(iri).unwrap_or(false) {
@@ -956,11 +943,8 @@ impl RuleSetDocument {
 
 /// §A `imports(RS, V)`, merging into `merged`.
 fn resolve_into(
-    imports: &[NamedNode],
-    visited: &mut Vec<String>,
-    resolver: &mut dyn ImportResolver,
-    merged: &mut RuleSetDocument,
-    imported: &mut usize,
+    imports: &[NamedNode], visited: &mut Vec<String>, resolver: &mut dyn ImportResolver,
+    merged: &mut RuleSetDocument, imported: &mut usize,
 ) -> Result<(), SrlError> {
     for import in imports {
         let iri = import.as_str();
@@ -1031,9 +1015,7 @@ fn prefix_blanks(term: &Term, prefix: &str) -> Term {
 
 /// Parse `text` under `base`, naming `document` in errors and rules.
 fn parse_document(
-    text: &str,
-    base: Option<&str>,
-    document: Option<&str>,
+    text: &str, base: Option<&str>, document: Option<&str>,
 ) -> Result<RuleSetDocument, SrlError> {
     let lines = LineIndex::new(text);
     let parsed = syntax::parse(text, base).map_err(|error| {

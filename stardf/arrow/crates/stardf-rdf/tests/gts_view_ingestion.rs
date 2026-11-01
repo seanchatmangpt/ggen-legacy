@@ -918,12 +918,7 @@ impl DatasetView for ProbeView {
     fn probe_plan(&self, _s: bool, _p: bool, _o: bool, _g: GraphMatch) {}
 
     fn quads_for_pattern_with_plan(
-        &self,
-        _plan: &(),
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
-        g: GraphMatch,
+        &self, _plan: &(), s: Option<TermId>, p: Option<TermId>, o: Option<TermId>, g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         self.quads_for_pattern(s, p, o, g)
     }
@@ -1221,9 +1216,7 @@ fn contribution_dataset() -> Arc<RdfDataset> {
 /// construction the measured carrier and its byte-parity reference both use, so
 /// the two composites agree on source order, placement and standardized scopes.
 fn keystone_carrier(
-    base: &Arc<RdfDataset>,
-    contribution: &Arc<RdfDataset>,
-    ledger: &Arc<RetentionLedger>,
+    base: &Arc<RdfDataset>, contribution: &Arc<RdfDataset>, ledger: &Arc<RetentionLedger>,
 ) -> PipelineViewBundle<Note> {
     let (lookaside, blobs, provenance) = keystone_loadout();
     let mut carrier = PipelineViewBundle::from_dataset(
@@ -1243,8 +1236,7 @@ fn keystone_carrier(
 
 /// A carrier over `delta`, composing the delta snapshot without compacting it.
 fn keystone_delta_carrier(
-    delta: &Arc<DeltaDatasetView>,
-    ledger: &Arc<RetentionLedger>,
+    delta: &Arc<DeltaDatasetView>, ledger: &Arc<RetentionLedger>,
 ) -> PipelineViewBundle<Note> {
     let (lookaside, blobs, provenance) = keystone_loadout();
     PipelineViewBundle::from_delta(

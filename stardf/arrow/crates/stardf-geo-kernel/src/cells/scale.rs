@@ -88,8 +88,7 @@ struct ScaleFactors {
 
 impl ScaleFactors {
     fn new(
-        ellipsoid: &PreparedEllipsoid,
-        admission: &mut impl IntegerAdmission,
+        ellipsoid: &PreparedEllipsoid, admission: &mut impl IntegerAdmission,
     ) -> Result<Self, GeoError> {
         let m = ellipsoid.normal_metric_bounds_ref().0.exact();
         // floor(sqrt(2 * 2^192))/2^96 is an outward lower enclosure.
@@ -134,9 +133,7 @@ impl ScaleFactors {
     }
 
     fn bounds(
-        &self,
-        level: u8,
-        admission: &mut impl IntegerAdmission,
+        &self, level: u8, admission: &mut impl IntegerAdmission,
     ) -> Result<CellScaleBounds, GeoError> {
         let divisor = level_divisor(level, admission)?;
         let nominal_lower = rational(
@@ -185,8 +182,7 @@ impl ScaleFactors {
 }
 
 fn upper_factors(
-    ellipsoid: &PreparedEllipsoid,
-    admission: &mut impl IntegerAdmission,
+    ellipsoid: &PreparedEllipsoid, admission: &mut impl IntegerAdmission,
 ) -> Result<(Rat, Rat), GeoError> {
     let r = ellipsoid.normal_metric_bounds_ref().1.exact();
     let upper_factor = fraction(7, 4, admission)?;
@@ -235,10 +231,7 @@ fn level_divisor(level: u8, admission: &mut impl IntegerAdmission) -> Result<Rat
 }
 
 fn upper_at(
-    nominal: &Rat,
-    guard: &Rat,
-    divisor: &Rat,
-    admission: &mut impl IntegerAdmission,
+    nominal: &Rat, guard: &Rat, divisor: &Rat, admission: &mut impl IntegerAdmission,
 ) -> Result<(Rat, Rat), GeoError> {
     let nominal_upper = rational(
         admission,
@@ -262,9 +255,7 @@ fn upper_at(
 }
 
 fn fraction(
-    numerator: i64,
-    denominator: i64,
-    admission: &mut impl IntegerAdmission,
+    numerator: i64, denominator: i64, admission: &mut impl IntegerAdmission,
 ) -> Result<Rat, GeoError> {
     integer(
         admission,
@@ -282,9 +273,7 @@ fn fraction(
 }
 
 fn select_level(
-    ellipsoid: &PreparedEllipsoid,
-    target: &Metres,
-    admission: &mut impl IntegerAdmission,
+    ellipsoid: &PreparedEllipsoid, target: &Metres, admission: &mut impl IntegerAdmission,
 ) -> Result<u8, GeoError> {
     positive_target(target, admission)?;
     let (nominal, guard) = upper_factors(ellipsoid, admission)?;
@@ -316,10 +305,7 @@ fn positive_target(target: &Metres, admission: &mut impl IntegerAdmission) -> Re
 }
 
 fn select_level_with_factors(
-    nominal: &Rat,
-    guard: &Rat,
-    target: &Metres,
-    admission: &mut impl IntegerAdmission,
+    nominal: &Rat, guard: &Rat, target: &Metres, admission: &mut impl IntegerAdmission,
 ) -> Result<u8, GeoError> {
     let comparison = LevelComparison::new(nominal, guard, target, admission)?;
     if comparison.fits(0, admission)? {
@@ -361,10 +347,7 @@ struct LevelComparison {
 
 impl LevelComparison {
     fn new(
-        nominal: &Rat,
-        guard: &Rat,
-        target: &Metres,
-        admission: &mut impl IntegerAdmission,
+        nominal: &Rat, guard: &Rat, target: &Metres, admission: &mut impl IntegerAdmission,
     ) -> Result<Self, GeoError> {
         let gap = rational(
             admission,
@@ -437,9 +420,7 @@ fn live_storage(ellipsoid: &PreparedEllipsoid, target: Option<&Metres>) -> Resul
 }
 
 fn admitted<T>(
-    ellipsoid: &PreparedEllipsoid,
-    target: Option<&Metres>,
-    policy: ExecutionPolicy,
+    ellipsoid: &PreparedEllipsoid, target: Option<&Metres>, policy: ExecutionPolicy,
     observer: Option<&mut dyn MetricWorkObserver>,
     action: impl FnOnce(&mut super::cover::CoverBudget<'_>) -> Result<T, GeoError>,
 ) -> Result<T, GeoError> {
@@ -460,8 +441,7 @@ fn admitted<T>(
 ///
 /// Refuses levels outside zero through thirty.
 pub fn physical_scale_bounds(
-    ellipsoid: &PreparedEllipsoid,
-    level: u8,
+    ellipsoid: &PreparedEllipsoid, level: u8,
 ) -> Result<CellScaleBounds, GeoError> {
     validate_level(level)?;
     ScaleFactors::new(ellipsoid, &mut PureAssignment)?.bounds(level, &mut PureAssignment)
@@ -476,8 +456,7 @@ pub fn physical_scale_bounds(
 ///
 /// Refuses a nonpositive target or a target below the level-thirty upper bound.
 pub fn level_for_max_edge_length(
-    ellipsoid: &PreparedEllipsoid,
-    target: &Metres,
+    ellipsoid: &PreparedEllipsoid, target: &Metres,
 ) -> Result<u8, GeoError> {
     select_level(ellipsoid, target, &mut PureAssignment)
 }
@@ -486,9 +465,7 @@ pub fn level_for_max_edge_length(
 /// # Errors
 /// Adds resource refusal to the exact scale contract.
 pub fn physical_scale_bounds_in_policy(
-    ellipsoid: &PreparedEllipsoid,
-    level: u8,
-    policy: ExecutionPolicy,
+    ellipsoid: &PreparedEllipsoid, level: u8, policy: ExecutionPolicy,
 ) -> Result<CellScaleBounds, GeoError> {
     physical_scale_admission(ellipsoid, level, policy, None)
 }
@@ -497,18 +474,14 @@ pub fn physical_scale_bounds_in_policy(
 /// # Errors
 /// Adds cancellation or observer refusal to policy admission.
 pub fn physical_scale_bounds_in_policy_metered(
-    ellipsoid: &PreparedEllipsoid,
-    level: u8,
-    policy: ExecutionPolicy,
+    ellipsoid: &PreparedEllipsoid, level: u8, policy: ExecutionPolicy,
     observer: &mut dyn MetricWorkObserver,
 ) -> Result<CellScaleBounds, GeoError> {
     physical_scale_admission(ellipsoid, level, policy, Some(observer))
 }
 
 fn physical_scale_admission(
-    ellipsoid: &PreparedEllipsoid,
-    level: u8,
-    policy: ExecutionPolicy,
+    ellipsoid: &PreparedEllipsoid, level: u8, policy: ExecutionPolicy,
     observer: Option<&mut dyn MetricWorkObserver>,
 ) -> Result<CellScaleBounds, GeoError> {
     validate_level(level)?;
@@ -527,9 +500,7 @@ fn physical_scale_admission(
 /// # Errors
 /// Adds complete resource refusal to the physical target contract.
 pub fn level_for_max_edge_length_in_policy(
-    ellipsoid: &PreparedEllipsoid,
-    target: &Metres,
-    policy: ExecutionPolicy,
+    ellipsoid: &PreparedEllipsoid, target: &Metres, policy: ExecutionPolicy,
 ) -> Result<u8, GeoError> {
     level_admission(ellipsoid, target, policy, None)
 }
@@ -538,18 +509,14 @@ pub fn level_for_max_edge_length_in_policy(
 /// # Errors
 /// Adds cancellation or observer refusal to policy admission.
 pub fn level_for_max_edge_length_in_policy_metered(
-    ellipsoid: &PreparedEllipsoid,
-    target: &Metres,
-    policy: ExecutionPolicy,
+    ellipsoid: &PreparedEllipsoid, target: &Metres, policy: ExecutionPolicy,
     observer: &mut dyn MetricWorkObserver,
 ) -> Result<u8, GeoError> {
     level_admission(ellipsoid, target, policy, Some(observer))
 }
 
 fn level_admission(
-    ellipsoid: &PreparedEllipsoid,
-    target: &Metres,
-    policy: ExecutionPolicy,
+    ellipsoid: &PreparedEllipsoid, target: &Metres, policy: ExecutionPolicy,
     observer: Option<&mut dyn MetricWorkObserver>,
 ) -> Result<u8, GeoError> {
     admitted(ellipsoid, Some(target), policy, observer, |admission| {
@@ -562,10 +529,7 @@ fn level_admission(
 /// # Errors
 /// Refuses invalid levels, targets, complete resource exhaustion or observer cancellation.
 pub fn physical_scale_bounds_and_level_in_policy(
-    ellipsoid: &PreparedEllipsoid,
-    level: u8,
-    target: Option<&Metres>,
-    policy: ExecutionPolicy,
+    ellipsoid: &PreparedEllipsoid, level: u8, target: Option<&Metres>, policy: ExecutionPolicy,
 ) -> Result<(CellScaleBounds, Option<u8>), GeoError> {
     bounds_and_level_admission(ellipsoid, level, target, policy, None)
 }
@@ -574,20 +538,14 @@ pub fn physical_scale_bounds_and_level_in_policy(
 /// # Errors
 /// Preserves the complete admitted scale and smallest-level contracts.
 pub fn physical_scale_bounds_and_level_in_policy_metered(
-    ellipsoid: &PreparedEllipsoid,
-    level: u8,
-    target: Option<&Metres>,
-    policy: ExecutionPolicy,
+    ellipsoid: &PreparedEllipsoid, level: u8, target: Option<&Metres>, policy: ExecutionPolicy,
     observer: &mut dyn MetricWorkObserver,
 ) -> Result<(CellScaleBounds, Option<u8>), GeoError> {
     bounds_and_level_admission(ellipsoid, level, target, policy, Some(observer))
 }
 
 fn bounds_and_level_admission(
-    ellipsoid: &PreparedEllipsoid,
-    level: u8,
-    target: Option<&Metres>,
-    policy: ExecutionPolicy,
+    ellipsoid: &PreparedEllipsoid, level: u8, target: Option<&Metres>, policy: ExecutionPolicy,
     observer: Option<&mut dyn MetricWorkObserver>,
 ) -> Result<(CellScaleBounds, Option<u8>), GeoError> {
     validate_level(level)?;

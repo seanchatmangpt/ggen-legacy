@@ -198,9 +198,7 @@ impl PropertyFunction for AskCountingRelation {
     /// One invocation of the relation, which is one evaluation of the constraint
     /// whose body names it.
     fn open<'cursor>(
-        &self,
-        _args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, _args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,

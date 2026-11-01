@@ -234,9 +234,7 @@ impl Totals {
 /// # Errors
 /// Refuses a record set the report structure refuses.
 pub fn earl_report(
-    records: &[Record],
-    base: &str,
-    assertor: AssertorDescription,
+    records: &[Record], base: &str, assertor: AssertorDescription,
     describe: impl Fn(&str, &str) -> Vec<(String, DescriptionTerm)>,
 ) -> Result<Report, GradeError> {
     let mut routes: BTreeMap<(&str, &str), Vec<ReportRecord>> = BTreeMap::new();
@@ -641,10 +639,7 @@ impl Corpus {
     /// # Errors
     /// As [`Self::execute`].
     pub fn execute_selected(
-        &self,
-        case: &Case<'_>,
-        profile: &str,
-        selection: &Selection,
+        &self, case: &Case<'_>, profile: &str, selection: &Selection,
     ) -> Result<Execution, String> {
         let expected = expected_observation(case.case);
         let record = |surface: &str, observed: Observation| {
@@ -778,10 +773,7 @@ impl Corpus {
 
     /// Classify one complete-report outcome; a produced report is graded.
     fn observe(
-        &self,
-        case: &Case<'_>,
-        law: ShaclProfile,
-        shapes: &RdfDataset,
+        &self, case: &Case<'_>, law: ShaclProfile, shapes: &RdfDataset,
         outcome: Result<CompleteValidationReport, CompleteValidationError>,
     ) -> Observation {
         match outcome {
@@ -824,9 +816,7 @@ impl Corpus {
     /// Compare an inference delta with both the reviewed expected graph and the
     /// manifest's inline triple list.
     fn grade_inferences(
-        &self,
-        case: &Case<'_>,
-        inference: &purrdf_shapes::srl::Inference,
+        &self, case: &Case<'_>, inference: &purrdf_shapes::srl::Inference,
     ) -> Observation {
         let graded = (|| {
             let inventory::Expected::Outcome(spec) = &case.case.expected else {
@@ -974,9 +964,7 @@ pub fn expected_observation(case: &inventory::Case) -> Observation {
 /// its SERVICE refusal is a declared processor policy.
 #[must_use]
 pub fn admission_reason(
-    law: ShaclProfile,
-    reason: AdmissionReason,
-    variable: Option<&str>,
+    law: ShaclProfile, reason: AdmissionReason, variable: Option<&str>,
 ) -> &'static str {
     match reason {
         AdmissionReason::Minus => "minus",
@@ -1091,10 +1079,7 @@ fn blank_labels(dataset: &RdfDataset) -> BTreeMap<String, BlankIdentity> {
 /// actual one is the producer's own record of which source blank each emitted
 /// blank is. Report-only isomorphism cannot repair a wrong source identity.
 fn compare_report(
-    case: &Case<'_>,
-    law: ShaclProfile,
-    shapes: &RdfDataset,
-    actual: &CompleteValidationReport,
+    case: &Case<'_>, law: ShaclProfile, shapes: &RdfDataset, actual: &CompleteValidationReport,
 ) -> Result<(), GradeError> {
     let manifest_dataset = &case.document.dataset;
     let reader = Reader {

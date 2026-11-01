@@ -13,8 +13,7 @@ use purrdf_lex::json::{Object, Value, record::DecodeError};
 use super::{GeoCallError, decode::Decode};
 
 pub(super) fn fixed_hex<const N: usize>(
-    value: &Value,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Value, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<[u8; N], DecodeError> {
     let text = value
         .as_str()
@@ -45,8 +44,7 @@ pub fn profile_from_str(text: &str) -> Result<GeoProfile, GeoCallError> {
 /// # Errors
 /// Refuses malformed records and limits before any unadmitted exact/configuration body.
 pub fn profile_from_str_with_policy(
-    text: &str,
-    compile_policy: ExecutionPolicy,
+    text: &str, compile_policy: ExecutionPolicy,
 ) -> Result<GeoProfile, GeoCallError> {
     let (profile, mut budget) = profile_with_budget(text, compile_policy)?;
     profile.query_identity_in_budget(&mut budget)?;
@@ -54,8 +52,7 @@ pub fn profile_from_str_with_policy(
 }
 
 pub(super) fn profile_with_budget(
-    text: &str,
-    compile_policy: ExecutionPolicy,
+    text: &str, compile_policy: ExecutionPolicy,
 ) -> Result<(GeoProfile, PreparationBudget), GeoCallError> {
     let ((profile, budget), _) =
         super::decode::record(text, compile_policy, None, |value, decode| {
@@ -109,9 +106,7 @@ fn linear_unit(value: &Value, decode: &Decode<'_, '_, '_, '_>) -> Result<(Crs, R
 }
 
 fn reference(
-    value: &Value,
-    budget: &mut PreparationBudget,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Value, budget: &mut PreparationBudget, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<(Crs, GeographicReference), GeoCallError> {
     let mut fields = decode.record(value, "explicit geographic reference")?;
     let crs = fields.required_with("crs", |value| decode.crs(value))?;
@@ -188,8 +183,7 @@ pub fn profile_to_string(profile: &GeoProfile) -> Result<String, GeoCallError> {
 /// # Errors
 /// Refuses original graph, exact formatting or complete JSON output limits.
 pub fn profile_to_string_with_policy(
-    profile: &GeoProfile,
-    policy: ExecutionPolicy,
+    profile: &GeoProfile, policy: ExecutionPolicy,
 ) -> Result<String, GeoCallError> {
     let mut budget = PreparationBudget::new(policy);
     profile.retain_configuration_in_budget(&mut budget)?;
@@ -198,8 +192,7 @@ pub fn profile_to_string_with_policy(
 }
 
 fn profile_string(
-    profile: &GeoProfile,
-    decode: &Decode<'_, '_, '_, '_>,
+    profile: &GeoProfile, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<String, GeoCallError> {
     let references = decode.array(profile.references().iter(), |binding| {
         let reference = binding.reference();
@@ -320,16 +313,13 @@ fn profile_string(
 }
 
 pub(super) fn exact_decimal(
-    value: &Rat,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Rat, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<String, GeoCallError> {
     decode.decimal_text(value, None, purrdf_xsd::ieee::ratio::Rounding::NearestEven)
 }
 
 fn operation_binding(
-    value: &Value,
-    budget: &mut PreparationBudget,
-    decode: &Decode<'_, '_, '_, '_>,
+    value: &Value, budget: &mut PreparationBudget, decode: &Decode<'_, '_, '_, '_>,
 ) -> Result<(Crs, Crs, Crs, purrdf_geo_kernel::OperationChain), GeoCallError> {
     let mut fields = decode.record(value, "named explicit operation registration")?;
     let name = fields.required_with("name", |value| decode.crs(value))?;

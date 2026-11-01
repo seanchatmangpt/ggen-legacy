@@ -256,10 +256,7 @@ pub fn encode_blank_label(label: &str, scope: BlankScope, alphabet: LabelAlphabe
 /// # Errors
 /// Returns physical layout, admission, formatting or allocator refusal.
 pub fn encode_blank_label_with_memory<'a, S: Admission + ?Sized>(
-    label: &'a str,
-    scope: BlankScope,
-    alphabet: LabelAlphabet,
-    memory: &mut Memory<'_, S>,
+    label: &'a str, scope: BlankScope, alphabet: LabelAlphabet, memory: &mut Memory<'_, S>,
 ) -> Result<Cow<'a, str>, StorageError> {
     if !needs_envelope(label, scope, alphabet) {
         return Ok(Cow::Borrowed(label));
@@ -354,9 +351,7 @@ pub fn decode_blank_label(token: &str, alphabet: LabelAlphabet) -> (Cow<'_, str>
 /// # Errors
 /// Returns physical refusal instead of treating it as a malformed envelope.
 pub fn decode_blank_label_with_memory<'a, S: Admission + ?Sized>(
-    token: &'a str,
-    alphabet: LabelAlphabet,
-    memory: &mut Memory<'_, S>,
+    token: &'a str, alphabet: LabelAlphabet, memory: &mut Memory<'_, S>,
 ) -> Result<(Cow<'a, str>, BlankScope), StorageError> {
     if !token.starts_with(ESCAPE_MARKER) {
         return Ok((Cow::Borrowed(token), BlankScope::DEFAULT));
@@ -481,8 +476,7 @@ fn envelope_scalar(chars: &mut std::str::Chars<'_>) -> Result<Option<char>, ()> 
 }
 
 fn decode_envelope<'a, S: Admission + ?Sized>(
-    token: &'a str,
-    memory: &mut Memory<'_, S>,
+    token: &'a str, memory: &mut Memory<'_, S>,
 ) -> Result<Option<(Cow<'a, str>, BlankScope)>, StorageError> {
     let Some(envelope) = Envelope::parse(token) else {
         return Ok(None);

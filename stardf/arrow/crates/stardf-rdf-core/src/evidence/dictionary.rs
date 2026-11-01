@@ -93,10 +93,7 @@ impl EvidenceDictionary {
     /// # Errors
     /// Refuses invalid ids, identity collision or physical storage failure.
     pub fn combine<S: Admission + ?Sized>(
-        &mut self,
-        left: EvidenceId,
-        right: EvidenceId,
-        law: EvidenceCombination,
+        &mut self, left: EvidenceId, right: EvidenceId, law: EvidenceCombination,
         memory: &mut Memory<'_, S>,
     ) -> Result<EvidenceId, EvidenceDictionaryError> {
         self.get(left)?;
@@ -141,9 +138,7 @@ impl EvidenceDictionary {
     /// # Errors
     /// Reports identity collision, physical overflow, or native storage refusal.
     pub fn intern<S: Admission + ?Sized>(
-        &mut self,
-        record: EvidenceRecord,
-        memory: &mut Memory<'_, S>,
+        &mut self, record: EvidenceRecord, memory: &mut Memory<'_, S>,
     ) -> Result<EvidenceId, EvidenceDictionaryError> {
         if record.is_default() {
             record.release(memory)?;
@@ -192,8 +187,7 @@ impl EvidenceDictionary {
     /// # Errors
     /// Returns the original admission callback's refund refusal.
     pub fn release<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         let Self {
             default,

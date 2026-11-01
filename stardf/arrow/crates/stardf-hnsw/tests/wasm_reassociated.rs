@@ -156,10 +156,7 @@ fn recorded_shape(image: &[u8]) -> BuildShape {
 /// The brute-force top-`K` of `query` over every row of `matrix`, under the reassociated
 /// kNN kernel along `arithmetic`: the oracle, computed without the graph.
 fn oracle(
-    matrix: &VectorMatrix,
-    kernel: Kernel,
-    arithmetic: Resolved<Reassociated>,
-    query: &[f64],
+    matrix: &VectorMatrix, kernel: Kernel, arithmetic: Resolved<Reassociated>, query: &[f64],
 ) -> Vec<Ranked> {
     let query_norm = arithmetic.exact().norm(query);
     let mut scored: Vec<Ranked> = (0..matrix.rows())
@@ -189,9 +186,7 @@ fn bits(offered: &[Ranked]) -> Vec<(usize, u64)> {
 
 /// Every search `index` answers is the oracle's top-`K`, bit for bit.
 fn assert_searches_match_oracle(
-    index: &HnswIndex<Reassociated>,
-    kernel: Kernel,
-    arithmetic: Resolved<Reassociated>,
+    index: &HnswIndex<Reassociated>, kernel: Kernel, arithmetic: Resolved<Reassociated>,
     label: &str,
 ) {
     let matrix = matrix();

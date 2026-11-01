@@ -273,9 +273,7 @@ impl purrdf_hash::error::StructuredError for ResolveIntoError {
 }
 
 fn visit_resolution(
-    input: &str,
-    mode: Mode,
-    mut scalar: impl FnMut(char, Range<usize>),
+    input: &str, mode: Mode, mut scalar: impl FnMut(char, Range<usize>),
     mut diagnostic: impl FnMut(Diagnostic),
 ) -> bool {
     if mode == Mode::Plain {
@@ -346,12 +344,8 @@ pub fn resolution_layout(input: &str, mode: Mode) -> Result<ResolutionLayout, Re
 /// Fill caller-preallocated storage through the same reference reader.
 /// The result moves those buffers, so their caller keeps the acquired grants.
 pub fn resolve_preallocated(
-    input: &str,
-    mode: Mode,
-    layout: ResolutionLayout,
-    mut text: String,
-    mut sources: Vec<Range<usize>>,
-    mut diagnostics: Vec<Diagnostic>,
+    input: &str, mode: Mode, layout: ResolutionLayout, mut text: String,
+    mut sources: Vec<Range<usize>>, mut diagnostics: Vec<Diagnostic>,
 ) -> Result<Resolution<'_>, ResolveIntoError> {
     if text.capacity() < layout.text_bytes
         || sources.capacity() < layout.sources
@@ -423,10 +417,7 @@ fn append_original(decoded: &mut Decoded<'_>, input: &str, range: Range<usize>) 
 }
 
 fn reference(
-    input: &str,
-    start: usize,
-    mode: Mode,
-    diagnostics: &mut impl FnMut(Diagnostic),
+    input: &str, start: usize, mode: Mode, diagnostics: &mut impl FnMut(Diagnostic),
 ) -> (usize, Option<(char, char)>) {
     let bytes = input.as_bytes();
     let after = start + 1;
@@ -489,9 +480,7 @@ fn named(bytes: &[u8]) -> Option<(usize, &'static Entry)> {
 }
 
 fn numeric(
-    bytes: &[u8],
-    start: usize,
-    diagnostics: &mut impl FnMut(Diagnostic),
+    bytes: &[u8], start: usize, diagnostics: &mut impl FnMut(Diagnostic),
 ) -> (usize, Option<(char, char)>) {
     let mut end = start + 2;
     let hexadecimal = matches!(bytes.get(end), Some(b'x' | b'X'));

@@ -8,8 +8,7 @@ use crate::{ExecutionPolicy, GeoError, MetricWorkObserver, Rat};
 /// Admit the source before reader creation and preserve the original operational
 /// refusal when a scanner reports an interrupted read in its place.
 pub(crate) fn parse_in_policy<T>(
-    source_bytes: usize,
-    policy: ExecutionPolicy,
+    source_bytes: usize, policy: ExecutionPolicy,
     parse: impl FnOnce(&std::cell::RefCell<ParseAdmission<'_, '_, '_>>) -> Result<T, GeoError>,
 ) -> Result<T, GeoError> {
     let admission = std::cell::RefCell::new(ParseAdmission::new(source_bytes, policy, None)?);
@@ -45,8 +44,7 @@ impl<'a> CarrierStorage<'a> {
     /// This allocates and resizes nothing; destruction still precedes refund.
     #[must_use]
     pub fn resume(
-        storage: &'a mut dyn purrdf_lex::allocation::Admission,
-        admitted_bytes: usize,
+        storage: &'a mut dyn purrdf_lex::allocation::Admission, admitted_bytes: usize,
     ) -> Self {
         Self {
             memory: std::cell::RefCell::new(purrdf_lex::allocation::Memory::resume(
@@ -88,8 +86,7 @@ impl<'a> CarrierStorage<'a> {
     /// # Errors
     /// Returns unchanged lexical/element or original storage refusal.
     pub fn items<T, E: purrdf_lex::json::record::Within>(
-        &self,
-        value: &purrdf_lex::json::Value,
+        &self, value: &purrdf_lex::json::Value,
         read: impl FnMut(&purrdf_lex::json::Value) -> Result<T, E>,
     ) -> Result<Vec<T>, E> {
         let allocation = self.record_memory();
@@ -185,9 +182,7 @@ impl<'a, 'storage, 'account> ParseAdmission<'a, 'storage, 'account> {
     /// # Errors
     /// Refuses checked work/storage exhaustion or the observer's cancellation.
     pub fn new(
-        bytes: usize,
-        policy: ExecutionPolicy,
-        observer: Option<&'a mut dyn MetricWorkObserver>,
+        bytes: usize, policy: ExecutionPolicy, observer: Option<&'a mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         let bytes = u64::try_from(bytes)
             .map_err(|_| GeoError::ArithmeticOverflow("carrier source admission"))?;
@@ -334,8 +329,7 @@ impl<'a, 'storage, 'account> ParseAdmission<'a, 'storage, 'account> {
     }
 
     fn diagnostic_number(
-        &mut self,
-        value: &Rat,
+        &mut self, value: &Rat,
     ) -> Result<crate::context::Retained<Rat>, GeoError> {
         self.retained_diagnostic(
             value.detached_required_bytes().map_err(GeoError::Storage)?,
@@ -346,8 +340,7 @@ impl<'a, 'storage, 'account> ParseAdmission<'a, 'storage, 'account> {
     /// Quote a native diagnostic's actual immutable control and payload through
     /// this parser's original policy/observer before the common factory runs.
     fn retained_diagnostic<T>(
-        &mut self,
-        payload: usize,
+        &mut self, payload: usize,
         make: impl FnOnce(
             &mut crate::context::WorkProgress<'_>,
         ) -> Result<crate::context::Retained<T>, GeoError>,
@@ -432,10 +425,7 @@ impl<'a, 'storage, 'account> ParseAdmission<'a, 'storage, 'account> {
     /// # Errors
     /// Preserves work, native storage and nonterminating-value refusals.
     pub fn decimal_text(
-        &mut self,
-        value: &Rat,
-        scale: Option<u32>,
-        rounding: purrdf_xsd::ieee::ratio::Rounding,
+        &mut self, value: &Rat, scale: Option<u32>, rounding: purrdf_xsd::ieee::ratio::Rounding,
     ) -> Result<String, GeoError> {
         use purrdf_xsd::integer::ExactArithmeticCost;
         let denominator_bits = value.denominator().bit_len();
@@ -544,9 +534,7 @@ impl<'a, 'storage, 'account> ParseAdmission<'a, 'storage, 'account> {
     }
 
     pub(crate) fn scaled_integer_text(
-        &self,
-        value: &crate::Int,
-        scale: u32,
+        &self, value: &crate::Int, scale: u32,
     ) -> Result<String, GeoError> {
         with_storage(self.storage, |memory| {
             let mut output = String::new();
@@ -734,11 +722,7 @@ impl<'a, 'storage, 'account> ParseAdmission<'a, 'storage, 'account> {
     /// # Errors
     /// Preserves longitude/latitude range order, inversion and native refusal.
     pub fn closed_box(
-        &mut self,
-        west: Rat,
-        south: Rat,
-        east: Rat,
-        north: Rat,
+        &mut self, west: Rat, south: Rat, east: Rat, north: Rat,
     ) -> Result<crate::cells::ClosedBox, GeoError> {
         let cost = purrdf_xsd::integer::ExactArithmeticCost::for_rational_operands(
             purrdf_xsd::integer::ExactOperation::RationalCompare,
@@ -787,8 +771,7 @@ impl purrdf_lex::json::ReadObserver for JsonProgress<'_, '_, '_, '_> {
 }
 
 pub(crate) fn whitespace_only(
-    lexical: &str,
-    admission: Option<&std::cell::RefCell<ParseAdmission<'_, '_, '_>>>,
+    lexical: &str, admission: Option<&std::cell::RefCell<ParseAdmission<'_, '_, '_>>>,
 ) -> Result<bool, GeoError> {
     for (index, chunk) in lexical.as_bytes().chunks(256).enumerate() {
         if let Some(admission) = admission {

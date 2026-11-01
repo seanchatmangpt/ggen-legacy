@@ -304,15 +304,12 @@ impl TermDictionary for TermInterner {
         Ok(self.resolve(id))
     }
     fn compare_terms(
-        &self,
-        left: DictionaryTerm<'_, TermId>,
-        right: DictionaryTerm<'_, TermId>,
+        &self, left: DictionaryTerm<'_, TermId>, right: DictionaryTerm<'_, TermId>,
     ) -> Result<Ordering, Infallible> {
         crate::dictionary::compare_lexical_terms(self, left, right)
     }
     fn with_interned<T, const N: usize>(
-        &mut self,
-        terms: [DictionaryTerm<'_, TermId>; N],
+        &mut self, terms: [DictionaryTerm<'_, TermId>; N],
         validate: impl FnOnce(&Self, [TermId; N]) -> Result<T, DictionaryError<Infallible>>,
     ) -> Result<T, DictionaryError<Infallible>> {
         terms::intern_transaction(self, terms, validate)
@@ -611,10 +608,7 @@ impl<W: Weight, I: TermIdentity> Batch<W, I> {
     }
 
     fn reserve_in<A: Admission + ?Sized>(
-        &mut self,
-        required: usize,
-        memory: &mut Memory<'_, A>,
-        retired: &mut usize,
+        &mut self, required: usize, memory: &mut Memory<'_, A>, retired: &mut usize,
     ) -> Result<(), StorageError> {
         self.data.reserve_capacity_in(required, memory, retired)?;
         crate::allocation::reserve_array_in(&mut self.weight, memory, retired, |values, memory| {
@@ -719,9 +713,7 @@ impl<W: Weight, I: TermIdentity> Batch<W, I> {
     }
 
     fn object_index_in<A: Admission + ?Sized>(
-        &self,
-        admitted: bool,
-        memory: &mut Memory<'_, A>,
+        &self, admitted: bool, memory: &mut Memory<'_, A>,
     ) -> Result<ObjectIndex, StorageError> {
         memory.scope(|memory| {
             let mut perm = Vec::new();
@@ -752,8 +744,7 @@ impl<W: Weight, I: TermIdentity> Batch<W, I> {
 /// and cannot replace the fresh reinsertion handle.
 #[cfg(test)]
 fn merge_batches<W: Weight, I: TermIdentity>(
-    left: &Batch<W, I>,
-    right: &Batch<W, I>,
+    left: &Batch<W, I>, right: &Batch<W, I>,
 ) -> Result<Batch<W, I>, W::Error> {
     let cap = left
         .len()
@@ -769,9 +760,7 @@ fn merge_batches<W: Weight, I: TermIdentity>(
 
 #[cfg(test)]
 fn merge_batches_into<W: Weight, I: TermIdentity>(
-    left: &Batch<W, I>,
-    right: &Batch<W, I>,
-    merged: &mut Batch<W, I>,
+    left: &Batch<W, I>, right: &Batch<W, I>, merged: &mut Batch<W, I>,
 ) -> Result<(), W::Error> {
     let complete = MergeFrame::default().resume(left, right, merged, |_| true)?;
     assert!(complete, "unrestricted native merge completes");
@@ -788,10 +777,7 @@ struct MergeFrame {
 
 impl MergeFrame {
     fn resume<W: Weight, I: TermIdentity>(
-        &mut self,
-        left: &Batch<W, I>,
-        right: &Batch<W, I>,
-        merged: &mut Batch<W, I>,
+        &mut self, left: &Batch<W, I>, right: &Batch<W, I>, merged: &mut Batch<W, I>,
         mut allow: impl FnMut(usize) -> bool,
     ) -> Result<bool, W::Error> {
         if !self.started {
@@ -910,9 +896,7 @@ impl<I: TermIdentity> Tail<I> {
     }
 
     fn reserve_row_in<A: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, A>,
-        retired: &mut usize,
+        &mut self, memory: &mut Memory<'_, A>, retired: &mut usize,
     ) -> Result<(), StorageError> {
         if self.supplemental {
             // A maintained tail owns one complete publication chunk. Its
@@ -1111,9 +1095,7 @@ impl<I: TermIdentity> Relation<I> {
     }
 
     fn reserve_row_in<A: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, A>,
-        retired: &mut usize,
+        &mut self, memory: &mut Memory<'_, A>, retired: &mut usize,
     ) -> Result<(), StorageError> {
         self.tail.reserve_row_in(memory, retired)?;
         if self
@@ -1129,10 +1111,7 @@ impl<I: TermIdentity> Relation<I> {
     }
 
     fn prepare_seal_in<A: Admission + ?Sized>(
-        &mut self,
-        additional: usize,
-        memory: &mut Memory<'_, A>,
-        retired: &mut usize,
+        &mut self, additional: usize, memory: &mut Memory<'_, A>, retired: &mut usize,
     ) -> Result<(), StorageError> {
         let shape = seal::Shape::of(self, additional)?;
         let required = shape.batch_count(self.batches.len());
@@ -1634,8 +1613,7 @@ where
 {
     /// Resolve a fixed key once; free keys retain their original selection bounds.
     pub(crate) fn new<D: TermDictionary<Id = I>>(
-        store: &RelationStore<D, N>,
-        positions: [Option<I>; N],
+        store: &RelationStore<D, N>, positions: [Option<I>; N],
     ) -> Self {
         let mode = if Arity::<N>::known_key(&positions).is_some() {
             PartitionMode::Single(store.partition_for(&positions).map(PartitionRef::id))
@@ -1655,9 +1633,7 @@ where
 
     /// Continue without replaying previously visited partition keys.
     pub(crate) fn next<'a, D: TermDictionary<Id = I>>(
-        &mut self,
-        store: &'a RelationStore<D, N>,
-        delta: Option<&'a DeltaRun<I>>,
+        &mut self, store: &'a RelationStore<D, N>, delta: Option<&'a DeltaRun<I>>,
     ) -> Option<PartitionRef<'a, I, N>> {
         match &mut self.mode {
             PartitionMode::Single(found) => {
@@ -1828,8 +1804,7 @@ pub(crate) struct DeltaRun<I: TermIdentity> {
 
 impl<I: TermIdentity> DeltaRun<I> {
     pub(crate) fn project<'a, const N: usize>(
-        &'a self,
-        partition: PartitionRef<'a, I, N>,
+        &'a self, partition: PartitionRef<'a, I, N>,
     ) -> Option<PartitionRef<'a, I, N>>
     where
         Arity<N>: StoreShape<N>,
@@ -1936,16 +1911,14 @@ where
     /// Preserves the original dictionary failure or storage refusal. Neither a
     /// source failure nor admission failure publishes a partial row or partition.
     pub fn insert_ids(
-        &mut self,
-        ids: [D::Id; N],
+        &mut self, ids: [D::Id; N],
     ) -> Result<InsertedRow<D::Id>, DictionaryError<D::Error>> {
         self.insert_terms(ids.map(DictionaryTerm::Id))
     }
 
     /// Admit host input terms in the original dictionary without publishing a row.
     pub(crate) fn intern_terms(
-        &mut self,
-        terms: [DictionaryTerm<'_, D::Id>; N],
+        &mut self, terms: [DictionaryTerm<'_, D::Id>; N],
     ) -> Result<[D::Id; N], DictionaryError<D::Error>> {
         self.interner.with_interned(terms, |_, ids| Ok(ids))
     }
@@ -1953,8 +1926,7 @@ where
     /// Construct new native metadata before transferring it to supplemental ownership.
     #[cfg(test)]
     pub(crate) fn admit_native_metadata_in<A: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, A>,
+        &mut self, memory: &mut Memory<'_, A>,
     ) -> Result<(), DictionaryError<D::Error>> {
         assert!(
             !self.row_log.is_supplemental() && !self.metadata_supplemental,
@@ -1999,8 +1971,7 @@ where
 
     #[cfg(test)]
     pub(crate) fn prepare_maintenance_indexes_in<A: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, A>,
+        &mut self, memory: &mut Memory<'_, A>,
     ) -> Result<(), DictionaryError<D::Error>> {
         if !self.metadata_supplemental {
             self.admit_native_metadata_in(memory)?;
@@ -2011,8 +1982,7 @@ where
     }
 
     pub(crate) fn flush_metadata_retirement_in<A: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, A>,
+        &mut self, memory: &mut Memory<'_, A>,
     ) -> Result<(), StorageError> {
         if self.metadata_supplemental {
             crate::allocation::flush_retired_bytes(&mut self.metadata_retired_bytes, memory)?;
@@ -2024,8 +1994,7 @@ where
     /// Retire one emptied key after every native frame has finished using it.
     /// The caller retains its transaction cursor across refusal or suspension.
     pub(crate) fn retire_empty_partition(
-        &mut self,
-        terms: [D::Id; N],
+        &mut self, terms: [D::Id; N],
     ) -> Result<(), DictionaryError<D::Error>> {
         assert!(
             self.order.is_sparse(),
@@ -2067,8 +2036,7 @@ where
     }
 
     pub(crate) fn withdraw_ids(
-        &mut self,
-        ids: [D::Id; N],
+        &mut self, ids: [D::Id; N],
     ) -> Result<Option<WithdrawnRow<D::Id>>, D::Error> {
         self.remove_native(ids)
     }
@@ -2105,9 +2073,7 @@ where
     /// Only the exclusive maintenance owner can request this; public reinsertion
     /// continues to mint a new handle. Original append coordinates are immutable.
     pub(crate) fn admit_restore_in<A: Admission + ?Sized>(
-        &mut self,
-        original: &WithdrawnRow<D::Id>,
-        memory: &mut Memory<'_, A>,
+        &mut self, original: &WithdrawnRow<D::Id>, memory: &mut Memory<'_, A>,
         allow: impl FnMut(usize) -> bool,
     ) -> Result<bool, DictionaryError<D::Error>> {
         self.flush_metadata_retirement_in(memory)?;
@@ -2135,9 +2101,7 @@ where
 
     /// Publish the admitted original token, with no intervening source callback.
     pub(crate) fn restore_row_in<A: Admission + ?Sized>(
-        &mut self,
-        original: WithdrawnRow<D::Id>,
-        memory: &mut Memory<'_, A>,
+        &mut self, original: WithdrawnRow<D::Id>, memory: &mut Memory<'_, A>,
     ) {
         let (row, partition, subject, object) = original.into_parts();
         let slot = self.order.slot(partition);
@@ -2157,8 +2121,7 @@ where
     /// Original dictionary errors and native storage refusals leave the row absent.
     /// New lexical identities are rolled back if their dependent validation refuses.
     pub fn insert_terms(
-        &mut self,
-        terms: [DictionaryTerm<'_, D::Id>; N],
+        &mut self, terms: [DictionaryTerm<'_, D::Id>; N],
     ) -> Result<InsertedRow<D::Id>, DictionaryError<D::Error>> {
         assert!(
             !self.row_log.is_supplemental(),
@@ -2168,9 +2131,7 @@ where
     }
 
     pub(crate) fn insert_terms_in<A: Admission + ?Sized>(
-        &mut self,
-        terms: [DictionaryTerm<'_, D::Id>; N],
-        memory: &mut Memory<'_, A>,
+        &mut self, terms: [DictionaryTerm<'_, D::Id>; N], memory: &mut Memory<'_, A>,
     ) -> Result<InsertedRow<D::Id>, DictionaryError<D::Error>> {
         match self.insert_terms_until_in(terms, memory, |_| true)? {
             core::ops::ControlFlow::Continue(inserted) => Ok(inserted),
@@ -2179,9 +2140,7 @@ where
     }
 
     pub(crate) fn insert_terms_until_in<A: Admission + ?Sized>(
-        &mut self,
-        terms: [DictionaryTerm<'_, D::Id>; N],
-        memory: &mut Memory<'_, A>,
+        &mut self, terms: [DictionaryTerm<'_, D::Id>; N], memory: &mut Memory<'_, A>,
         allow: impl FnMut(usize) -> bool,
     ) -> InsertProgress<D::Id, D::Error> {
         self.interner
@@ -2274,9 +2233,7 @@ where
     }
 
     fn reserve_partition_slots_in<A: Admission + ?Sized>(
-        &mut self,
-        required: usize,
-        memory: &mut Memory<'_, A>,
+        &mut self, required: usize, memory: &mut Memory<'_, A>,
     ) -> Result<(), StorageError> {
         if required <= self.free_partitions.capacity() {
             return Ok(());
@@ -2296,10 +2253,7 @@ where
     }
 
     fn admit_row<A: Admission + ?Sized>(
-        &mut self,
-        existing: Option<usize>,
-        predicate: Option<D::Id>,
-        memory: &mut Memory<'_, A>,
+        &mut self, existing: Option<usize>, predicate: Option<D::Id>, memory: &mut Memory<'_, A>,
     ) -> Result<RowAdmission, StorageError> {
         self.flush_metadata_retirement_in(memory)?;
         // Admit both live cardinality and the never-reused append identity before
@@ -2376,12 +2330,8 @@ where
     }
 
     fn publish_row<A: Admission + ?Sized>(
-        &mut self,
-        ids: [D::Id; N],
-        existing: Option<usize>,
-        position: Option<Position>,
-        admission: RowAdmission,
-        memory: &mut Memory<'_, A>,
+        &mut self, ids: [D::Id; N], existing: Option<usize>, position: Option<Position>,
+        admission: RowAdmission, memory: &mut Memory<'_, A>,
     ) -> (D::Id, D::Id, RowId) {
         let (subject_id, object_id) = (ids[0], ids[2]);
         let key = Arity::<N>::key(&ids);
@@ -2457,10 +2407,7 @@ where
 
 /// Lexical position of an absent partition in the original dictionary order.
 fn partition_position<D: TermDictionary, const N: usize>(
-    dictionary: &D,
-    keys: &[PartitionKey<D::Id, N>],
-    order: &[usize],
-    key: StoreKey<D::Id, N>,
+    dictionary: &D, keys: &[PartitionKey<D::Id, N>], order: &[usize], key: StoreKey<D::Id, N>,
 ) -> Result<usize, D::Error>
 where
     Arity<N>: StoreShape<N>,
@@ -2490,8 +2437,7 @@ where
 
 /// Pin every physical key coordinate before a lexical comparison.
 fn resolve_key<D: TermDictionary, const N: usize>(
-    dictionary: &D,
-    key: StoreKey<D::Id, N>,
+    dictionary: &D, key: StoreKey<D::Id, N>,
 ) -> Result<[Option<D::Lexical<'_>>; 2], D::Error>
 where
     Arity<N>: StoreShape<N>,
@@ -2558,11 +2504,7 @@ impl RelationStore {
     /// id (insertion order across the whole store), which is the identity the semi-naive
     /// delta span is keyed on.
     pub fn insert(
-        &mut self,
-        subject: &str,
-        predicate: &str,
-        object: &str,
-        graph: &str,
+        &mut self, subject: &str, predicate: &str, object: &str, graph: &str,
     ) -> Result<Option<(TermId, TermId, RowId)>, StorageError> {
         self.insert_row([subject, predicate, object, graph])
     }
@@ -2680,8 +2622,7 @@ where
 {
     /// Resolve a fully bound partition key; subject/object coordinates do not select keys.
     pub fn partition_for(
-        &self,
-        positions: &[Option<D::Id>; N],
+        &self, positions: &[Option<D::Id>; N],
     ) -> Option<PartitionRef<'_, D::Id, N>> {
         self.by_key
             .get(&Arity::<N>::known_key(positions)?)
@@ -2695,9 +2636,7 @@ where
 
     /// Select the accumulated arrangements or the round's native indexed run.
     pub(crate) fn select_partitions<'a>(
-        &'a self,
-        positions: [Option<D::Id>; N],
-        delta: Option<&'a DeltaRun<D::Id>>,
+        &'a self, positions: [Option<D::Id>; N], delta: Option<&'a DeltaRun<D::Id>>,
     ) -> Partitions<'a, D, N> {
         Partitions {
             store: self,
@@ -2708,8 +2647,7 @@ where
 
     /// Build one arrangement from the append-log slice, never from old rows.
     pub(crate) fn delta_run(
-        &self,
-        range: core::ops::Range<u64>,
+        &self, range: core::ops::Range<u64>,
     ) -> Result<DeltaRun<D::Id>, DictionaryError<D::Error>> {
         self.interner
             .check_read()
@@ -2768,8 +2706,7 @@ where
     /// Original rows for one predicate, without scanning other predicates or
     /// rendering terms. Partitions are lexical; rows use their arrangement order.
     pub fn rows_for_predicate(
-        &self,
-        predicate: D::Id,
+        &self, predicate: D::Id,
     ) -> impl Iterator<Item = (RowId, [D::Id; N])> + '_ {
         let mut positions = [None; N];
         positions[1] = Some(predicate);
@@ -2952,8 +2889,7 @@ where
     ///
     /// Returns the original typed dictionary or row-storage refusal before publication.
     pub fn insert_row(
-        &mut self,
-        terms: [&str; N],
+        &mut self, terms: [&str; N],
     ) -> Result<Option<(TermId, TermId, RowId)>, StorageError> {
         self.insert_terms(terms.map(DictionaryTerm::Surface))
             .map_err(|error| match error {
@@ -3245,8 +3181,7 @@ mod tests {
     }
 
     fn check_partition_position_cuts<const N: usize>(
-        store: &RelationStore<TermInterner, N>,
-        positions: [Option<TermId>; N],
+        store: &RelationStore<TermInterner, N>, positions: [Option<TermId>; N],
         delta: Option<&DeltaRun<TermId>>,
     ) where
         Arity<N>: StoreShape<N>,
@@ -4154,9 +4089,7 @@ mod tests {
     /// a selection's full sequence (`select` returns a lending cursor, so the production
     /// hot path never collects).
     fn select_rows(
-        s: &RelationStore,
-        predicate: &str,
-        bound: Bound,
+        s: &RelationStore, predicate: &str, bound: Bound,
     ) -> Vec<(TermId, TermId, RowId)> {
         let mut cursor = s.select(predicate, RelationStore::DEFAULT_GRAPH, bound);
         let mut rows = Vec::new();
@@ -4177,8 +4110,7 @@ mod tests {
     /// The arrangement enumerates batch-then-tail — an internal storage order, not an
     /// emission order — so a store test asserts the row SET, never a sequence.
     fn resolved_set(
-        s: &RelationStore,
-        rows: &[(TermId, TermId, RowId)],
+        s: &RelationStore, rows: &[(TermId, TermId, RowId)],
     ) -> BTreeSet<(String, String)> {
         rows.iter()
             .map(|&(si, oi, _row)| {
@@ -5102,9 +5034,7 @@ mod tests {
     /// tuples: a short-circuiting scan that stops at the first matching key.
     /// Kept as the oracle of the column fold.
     fn reference_tail_contains(
-        rows: &[(TermId, TermId, RowId)],
-        subject: TermId,
-        object: TermId,
+        rows: &[(TermId, TermId, RowId)], subject: TermId, object: TermId,
     ) -> bool {
         rows.iter().any(|&(s, o, _)| s == subject && o == object)
     }
@@ -5112,8 +5042,7 @@ mod tests {
     /// A tail of `len` rows over a small id space (so keys collide across rows
     /// in either column), with the tuples it was built from.
     fn random_tail(
-        len: usize,
-        rng: &mut purrdf_testkit::rng::SplitMix64,
+        len: usize, rng: &mut purrdf_testkit::rng::SplitMix64,
     ) -> (Tail, Vec<(TermId, TermId, RowId)>) {
         let mut tail = Tail::default();
         let mut rows = Vec::with_capacity(len);

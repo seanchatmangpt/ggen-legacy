@@ -253,9 +253,7 @@ impl TermDag {
 
     /// Publish a named node atomically with any new dependent symbol identity.
     fn intern_named(
-        &mut self,
-        symbol: &str,
-        node: fn(SymId) -> NodeData,
+        &mut self, symbol: &str, node: fn(SymId) -> NodeData,
     ) -> Result<NodeId, StorageError> {
         let checkpoint = self.symbols.len();
         let sym = self.intern_symbol(symbol)?;
@@ -287,10 +285,7 @@ impl TermDag {
 
     /// Intern a [`NodeData::Binder`] node.
     pub fn intern_binder(
-        &mut self,
-        op: NodeId,
-        sorts: Vec<NodeId>,
-        body: NodeId,
+        &mut self, op: NodeId, sorts: Vec<NodeId>, body: NodeId,
     ) -> Result<NodeId, StorageError> {
         self.intern(NodeData::Binder { op, sorts, body })
     }

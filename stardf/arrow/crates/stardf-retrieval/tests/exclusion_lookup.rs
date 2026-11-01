@@ -101,9 +101,7 @@ impl PropertyFunction for DeclaredRelation {
     }
 
     fn open<'cursor>(
-        &self,
-        _args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, _args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -138,9 +136,7 @@ enum CandidateMode {
 /// Returns the registry, so a caller can read the declaration back, and panics
 /// exactly where [`PropertyFunctionRegistry::register_ranked`] does.
 fn register(
-    basis: ExclusionBasis,
-    completeness: Completeness,
-    mode: CandidateMode,
+    basis: ExclusionBasis, completeness: Completeness, mode: CandidateMode,
 ) -> PropertyFunctionRegistry<'static> {
     let arity = PfArity::new(1, 1);
     let candidate_bound = BindingPattern::from_bound_positions(arity.total(), [0]);
@@ -193,9 +189,7 @@ static HOOK_LOCK: Mutex<()> = Mutex::new(());
 /// The registration is run for real either way, so an "admitted" result below is
 /// a registration that really happened rather than one nobody tried.
 fn refusal(
-    basis: ExclusionBasis,
-    completeness: Completeness,
-    mode: CandidateMode,
+    basis: ExclusionBasis, completeness: Completeness, mode: CandidateMode,
 ) -> Option<String> {
     // The panic hook is process-wide and the test harness runs tests on
     // several threads, so two unsynchronised swaps can interleave — one call
@@ -502,9 +496,7 @@ fn contract(domains: CandidateDomains, basis: ExclusionBasis) -> StreamContract 
 
 /// Fuse the two scripted streams at `top_k`.
 fn fused(
-    left: ScriptedStream,
-    right: ScriptedStream,
-    top_k: TopK,
+    left: ScriptedStream, right: ScriptedStream, top_k: TopK,
 ) -> Result<Vec<(String, Score)>, FusionError> {
     let [left_iri, right_iri] = strata();
     let profile = profile();

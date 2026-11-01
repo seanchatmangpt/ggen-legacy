@@ -54,17 +54,14 @@ fn store(edges: &[(usize, usize)]) -> Store {
     store
 }
 fn surfaces<D: TermDictionary, const N: usize>(
-    dictionary: &D,
-    rows: Vec<[D::Id; N]>,
+    dictionary: &D, rows: Vec<[D::Id; N]>,
 ) -> BTreeSet<[String; N]> {
     rows.into_iter()
         .map(|row| row.map(|id| dictionary.resolve_term(id).unwrap().as_ref().to_owned()))
         .collect()
 }
 fn full<const N: usize>(
-    rules: &[DlClause<N>],
-    goal: &ClauseAtom<N>,
-    input: Store<N>,
+    rules: &[DlClause<N>], goal: &ClauseAtom<N>, input: Store<N>,
 ) -> BTreeSet<[String; N]>
 where
     Arity<N>: StoreShape<N>,
@@ -597,15 +594,12 @@ impl TermDictionary for CheckedDictionary {
         Ok(self.terms.resolve(id))
     }
     fn compare_terms(
-        &self,
-        left: DictionaryTerm<'_, TermId>,
-        right: DictionaryTerm<'_, TermId>,
+        &self, left: DictionaryTerm<'_, TermId>, right: DictionaryTerm<'_, TermId>,
     ) -> Result<std::cmp::Ordering, Lost> {
         purrdf_datalog::dictionary::compare_lexical_terms(self, left, right)
     }
     fn with_interned<T, const N: usize>(
-        &mut self,
-        terms: [DictionaryTerm<'_, TermId>; N],
+        &mut self, terms: [DictionaryTerm<'_, TermId>; N],
         validate: impl FnOnce(&Self, [TermId; N]) -> Result<T, DictionaryError<Lost>>,
     ) -> Result<T, DictionaryError<Lost>> {
         let write = self.control.writes.fetch_add(1, Ordering::Relaxed) + 1;
@@ -737,8 +731,7 @@ fn unsupported_programs_refuse_before_source_access_or_execution() {
 }
 
 fn unsupported_programs<const N: usize>(
-    atom: impl Fn(&str, &str, &str) -> ClauseAtom<N>,
-    extra_rules: Vec<DlClause<N>>,
+    atom: impl Fn(&str, &str, &str) -> ClauseAtom<N>, extra_rules: Vec<DlClause<N>>,
     extra_goals: Vec<ClauseAtom<N>>,
 ) where
     Arity<N>: StoreShape<N>,
@@ -826,9 +819,7 @@ fn budgets_and_cancellation_return_no_partial_answer_owner() {
 }
 
 fn governed<const N: usize>(
-    rules: &[DlClause<N>],
-    goal: &ClauseAtom<N>,
-    input: impl Fn() -> Store<N>,
+    rules: &[DlClause<N>], goal: &ClauseAtom<N>, input: impl Fn() -> Store<N>,
 ) where
     Arity<N>: StoreShape<N>,
 {

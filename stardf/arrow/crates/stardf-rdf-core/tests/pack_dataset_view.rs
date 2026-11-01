@@ -74,11 +74,7 @@ fn opt_id<V: DatasetView>(v: &V, value: Option<&TermValue>) -> Option<V::Id> {
 /// g?]` value rows — the generic pattern-query probe both views are compared
 /// through.
 fn pattern_rows<V: DatasetView>(
-    v: &V,
-    s: Option<&TermValue>,
-    p: Option<&TermValue>,
-    o: Option<&TermValue>,
-    g: &GraphSpec,
+    v: &V, s: Option<&TermValue>, p: Option<&TermValue>, o: Option<&TermValue>, g: &GraphSpec,
 ) -> Vec<Vec<TermValue>> {
     let s_id = opt_id(v, s);
     let p_id = opt_id(v, p);

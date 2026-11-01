@@ -248,8 +248,7 @@ impl RecordingScope {
         })
     }
     pub(crate) fn finish(
-        &self,
-        mut coordinates: RuleCoordinates,
+        &self, mut coordinates: RuleCoordinates,
     ) -> Result<RuleCoordinates, EvalError> {
         let mut entries = self.recorder.entries.lock().map_err(|_| {
             EvalError::Invariant(purrdf_sparql_eval::EvaluatorInvariant::CoordinateObserverPoisoned)

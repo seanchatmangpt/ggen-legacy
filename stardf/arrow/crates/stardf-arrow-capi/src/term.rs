@@ -1,7 +1,7 @@
 //! LANE-OWNED FILE (lane 9: TermId divergence bridge + term/arena internals).
 //!
 //! `StardfTermView` / [`purrdf_view_to_stardf`] bridge the purrdf TermId
-//! encoding to the stardf/avec u32 encoding. The DIVERGENCE register below is
+//! encoding to the stardf/cgap u32 encoding. The DIVERGENCE register below is
 //! the enumerated contract for every semantic difference the bridge must
 //! handle; each row has a named conversion edge and a unit test.
 //!
@@ -117,13 +117,13 @@ impl StardfArena {
 // TermId divergence bridge (lane 9)
 // ---------------------------------------------------------------------------
 
-// DIVERGENCE REGISTER — purrdf TermId <-> stardf/avec TermId
+// DIVERGENCE REGISTER — purrdf TermId <-> stardf/cgap TermId
 //
 // This bridge converts between two INCOMPATIBLE u32 id encodings. Every row
 // below names a semantic difference, the conversion edge that handles it, and
 // the unit test that pins it. If you add a difference, add a row + edge + test.
 //
-// | #  | axis        | purrdf (rdf-core/src/ir/term.rs:44-122)            | stardf/avec (avec-arrow/src/layout.rs:20-31)     | edge + test |
+// | #  | axis        | purrdf (rdf-core/src/ir/term.rs:44-122)            | stardf/cgap (cgap-arrow/src/layout.rs:20-31)     | edge + test |
 // |----|-------------|----------------------------------------------------|--------------------------------------------------|-------------|
 // | D1 | type        | `TermId(NonZeroU32)` `#[repr(transparent)]`        | `pub type TermId = u32`                          | (structural) |
 // | D2 | offset      | inner = `dense_index + 1`; `index()` = inner - 1   | no offset; id IS the arena slot + 1 (ids start at 1) | identity on the RAW word (`purrdf_raw_to_stardf`); `bridge_view_roundtrip_preserves_dense_index` |
@@ -189,10 +189,13 @@ pub enum TermViewError {
 /// - `u32::MAX` -> `Err(WildcardCollision)` (D4).
 /// - any other raw word `w` (= purrdf `dense_index + 1`) -> `Ok(w)`: the
 ///   offsets cancel (D2), so the dense index survives as `w - 1`.
+// LANE 09 (2026-10-31): sentinel constants now come from stardf-arrow-core's
+// spec-fixed layout mirror (value-identical: 0 and 0xFFFF_FFFF, both
+// const-asserted there); the cgap git crate left this file.
 #[inline]
 pub const fn purrdf_raw_to_stardf(raw: u32) -> Result<u32, TermViewError> {
     match raw {
-        0 => Ok(avec_arrow::layout::BOTTOM_TERM_ID),
+        0 => Ok(stardf_arrow_core::layout::BOTTOM_TERM_ID),
         0xFFFF_FFFF => Err(TermViewError::WildcardCollision),
         // D2: purrdf inner (index+1) == stardf 1-based id; identity.
         w => Ok(w),
@@ -213,8 +216,8 @@ pub fn purrdf_view_to_stardf(view: &StardfTermView) -> Result<u32, TermViewError
 #[inline]
 pub const fn stardf_to_purrdf_raw(id: u32) -> Result<u32, TermViewError> {
     match id {
-        avec_arrow::layout::BOTTOM_TERM_ID => Ok(0),
-        avec_arrow::layout::WILDCARD_TERM_ID => Err(TermViewError::WildcardCollision),
+        stardf_arrow_core::layout::BOTTOM_TERM_ID => Ok(0),
+        stardf_arrow_core::layout::WILDCARD_TERM_ID => Err(TermViewError::WildcardCollision),
         w => Ok(w),
     }
 }
@@ -280,9 +283,9 @@ mod tests {
     fn purrdf_raw_zero_maps_to_bottom() {
         assert_eq!(
             purrdf_raw_to_stardf(0),
-            Ok(avec_arrow::layout::BOTTOM_TERM_ID)
+            Ok(stardf_arrow_core::layout::BOTTOM_TERM_ID)
         );
-        assert_eq!(avec_arrow::layout::BOTTOM_TERM_ID, 0x0000_0000);
+        assert_eq!(stardf_arrow_core::layout::BOTTOM_TERM_ID, 0x0000_0000);
         assert_eq!(purrdf_view_to_stardf(&view(0)), Ok(0x0000_0000));
     }
 
@@ -299,10 +302,10 @@ mod tests {
             Err(TermViewError::WildcardCollision)
         );
         assert_eq!(
-            stardf_to_purrdf_raw(avec_arrow::layout::WILDCARD_TERM_ID),
+            stardf_to_purrdf_raw(stardf_arrow_core::layout::WILDCARD_TERM_ID),
             Err(TermViewError::WildcardCollision)
         );
-        assert_eq!(avec_arrow::layout::WILDCARD_TERM_ID, 0xFFFF_FFFF);
+        assert_eq!(stardf_arrow_core::layout::WILDCARD_TERM_ID, 0xFFFF_FFFF);
     }
 
     /// D2: for every mintable purrdf id the raw word (inner = index+1)
@@ -326,7 +329,7 @@ mod tests {
     #[test]
     fn bottom_maps_back_to_purrdf_none() {
         assert_eq!(
-            stardf_to_purrdf_raw(avec_arrow::layout::BOTTOM_TERM_ID),
+            stardf_to_purrdf_raw(stardf_arrow_core::layout::BOTTOM_TERM_ID),
             Ok(0)
         );
     }
@@ -337,14 +340,14 @@ mod tests {
     #[test]
     fn bottom_vs_wildcard_semantics() {
         let matches =
-            |pat: u32, term: u32| pat == avec_arrow::layout::WILDCARD_TERM_ID || pat == term;
+            |pat: u32, term: u32| pat == stardf_arrow_core::layout::WILDCARD_TERM_ID || pat == term;
         assert!(matches(
-            avec_arrow::layout::BOTTOM_TERM_ID,
-            avec_arrow::layout::BOTTOM_TERM_ID
+            stardf_arrow_core::layout::BOTTOM_TERM_ID,
+            stardf_arrow_core::layout::BOTTOM_TERM_ID
         ));
-        assert!(!matches(avec_arrow::layout::BOTTOM_TERM_ID, 7));
+        assert!(!matches(stardf_arrow_core::layout::BOTTOM_TERM_ID, 7));
         for term in [0u32, 1, 7, u32::MAX] {
-            assert!(matches(avec_arrow::layout::WILDCARD_TERM_ID, term));
+            assert!(matches(stardf_arrow_core::layout::WILDCARD_TERM_ID, term));
         }
     }
 

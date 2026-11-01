@@ -293,11 +293,7 @@ use purrdf_xsd::datatype::XSD_NS;
 /// reused across the whole sort, which is the point: this is the comparison a
 /// `Vec<String>` key used to make after allocating one string per position per row.
 fn cmp_terms(
-    g: &SerGraph,
-    ix: &ReifierIndex,
-    a: &[usize],
-    b: &[usize],
-    left: &mut String,
+    g: &SerGraph, ix: &ReifierIndex, a: &[usize], b: &[usize], left: &mut String,
     right: &mut String,
 ) -> std::cmp::Ordering {
     for (&x, &y) in a.iter().zip(b.iter()) {
@@ -320,11 +316,7 @@ fn cmp_terms(
 /// default graph's rows lead. Rendering `None` as anything else would reorder the
 /// document.
 fn cmp_graph(
-    g: &SerGraph,
-    ix: &ReifierIndex,
-    a: Option<usize>,
-    b: Option<usize>,
-    left: &mut String,
+    g: &SerGraph, ix: &ReifierIndex, a: Option<usize>, b: Option<usize>, left: &mut String,
     right: &mut String,
 ) -> std::cmp::Ordering {
     left.clear();
@@ -406,10 +398,7 @@ fn write_term<W: TextOut + ?Sized>(g: &SerGraph, ix: &ReifierIndex, tid: usize, 
 /// whatever base the graph carries. This is the canonical-ordering key (see
 /// [`SerGraph::sort_canonical`]), never an output spelling.
 fn write_term_absolute<W: TextOut + ?Sized>(
-    g: &SerGraph,
-    ix: &ReifierIndex,
-    tid: usize,
-    out: &mut W,
+    g: &SerGraph, ix: &ReifierIndex, tid: usize, out: &mut W,
 ) {
     write_term_in(g, ix, tid, out, None, false);
 }
@@ -430,12 +419,7 @@ fn write_term_absolute<W: TextOut + ?Sized>(
 /// held back in that order until the subject's whole nesting is written. A typed
 /// literal's datatype is written next after its `^^`.
 fn write_term_in<W: TextOut + ?Sized>(
-    g: &SerGraph,
-    ix: &ReifierIndex,
-    tid: usize,
-    out: &mut W,
-    base: Option<&BaseIri>,
-    trig: bool,
+    g: &SerGraph, ix: &ReifierIndex, tid: usize, out: &mut W, base: Option<&BaseIri>, trig: bool,
 ) {
     let mut held: Vec<TermPiece> = Vec::new();
     let mut next = Some(TermPiece::Term(tid));
@@ -576,10 +560,7 @@ pub(crate) fn write_nquads<W: TextOut + ?Sized>(g: &SerGraph, out: &mut W) {
 
 /// Close one N-Quads statement: the optional graph name, the `.`, and the line break.
 fn write_graph_terminator<W: TextOut + ?Sized>(
-    g: &SerGraph,
-    ix: &ReifierIndex,
-    gname: Option<usize>,
-    out: &mut W,
+    g: &SerGraph, ix: &ReifierIndex, gname: Option<usize>, out: &mut W,
 ) {
     if let Some(gv) = gname {
         out.push(' ');
@@ -621,8 +602,7 @@ fn ensure_default_graph_projection(g: &SerGraph, format: &str) -> Result<(), Rdf
 
 /// Serialise a [`SerGraph`] to N-Triples text (default graph only).
 pub(crate) fn write_ntriples<W: TextOut + ?Sized>(
-    g: &SerGraph,
-    out: &mut W,
+    g: &SerGraph, out: &mut W,
 ) -> Result<(), RdfDiagnostic> {
     ensure_default_graph_projection(g, "N-Triples")?;
     write_nquads(g, out);
@@ -640,8 +620,7 @@ pub(crate) fn write_ntriples<W: TextOut + ?Sized>(
 /// say they cannot express a base — so the directive-less syntaxes stay absolute for free
 /// rather than by a check repeated per writer.
 pub(crate) fn write_turtle<W: TextOut + ?Sized>(
-    g: &SerGraph,
-    out: &mut W,
+    g: &SerGraph, out: &mut W,
 ) -> Result<(), RdfDiagnostic> {
     ensure_default_graph_projection(g, "Turtle")?;
 
@@ -712,12 +691,8 @@ fn close_graph<W: TextOut + ?Sized>(out: &mut W, open_graph: &mut Option<String>
 /// and copied out only when a new block opens — one allocation per graph change rather
 /// than one per statement.
 fn begin_statement<W: TextOut + ?Sized>(
-    out: &mut W,
-    open_graph: &mut Option<String>,
-    scratch: &mut String,
-    graph: &SerGraph,
-    ix: &ReifierIndex,
-    graph_name: Option<usize>,
+    out: &mut W, open_graph: &mut Option<String>, scratch: &mut String, graph: &SerGraph,
+    ix: &ReifierIndex, graph_name: Option<usize>,
 ) {
     let Some(gid) = graph_name else {
         close_graph(out, open_graph);
@@ -1513,10 +1488,7 @@ pub(crate) mod term_walk_tests {
 
     /// A literal as both references spell it, its datatype written by `datatype`.
     fn reference_literal(
-        g: &SerGraph,
-        ix: &ReifierIndex,
-        t: &SerTerm,
-        out: &mut String,
+        g: &SerGraph, ix: &ReifierIndex, t: &SerTerm, out: &mut String,
         datatype: fn(&SerGraph, &ReifierIndex, usize, &mut String),
     ) {
         let _ = write!(

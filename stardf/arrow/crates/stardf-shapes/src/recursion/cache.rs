@@ -42,8 +42,7 @@ fn snapshot(owner: &Arc<ModelOwner>) -> Result<Analysis, ShapesError> {
 }
 
 pub(crate) fn admit(
-    owner: &Arc<ModelOwner>,
-    semantics: Option<RecursionSemantics>,
+    owner: &Arc<ModelOwner>, semantics: Option<RecursionSemantics>,
 ) -> Result<(), ShapesError> {
     if semantics.is_none() && super::model::flat_terminals(owner) {
         return Ok(());

@@ -173,9 +173,7 @@ impl PropertyFunction for CountingProducer {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -300,8 +298,7 @@ const INTERSECTING: [&str; 2] = ["shared/", "shared/"];
 /// Both producers, declaring `exclusion`, one shared block and disjoint
 /// candidates, each attesting `generations` where given.
 fn fixture_registry(
-    exclusion: ExclusionBasis,
-    generations: Option<Generations>,
+    exclusion: ExclusionBasis, generations: Option<Generations>,
 ) -> (PropertyFunctionRegistry<'static>, [Arc<Reads>; 2]) {
     shaped_registry(exclusion, generations, DISJOINT, None)
 }
@@ -310,9 +307,7 @@ fn fixture_registry(
 /// under `prefixes`, each attesting `generations` where given and moving its
 /// `"lazy dog"` index when `moves` is set.
 fn shaped_registry(
-    exclusion: ExclusionBasis,
-    generations: Option<Generations>,
-    prefixes: [&'static str; 2],
+    exclusion: ExclusionBasis, generations: Option<Generations>, prefixes: [&'static str; 2],
     moves: Option<&Arc<AtomicBool>>,
 ) -> (PropertyFunctionRegistry<'static>, [Arc<Reads>; 2]) {
     let counters = [Arc::new(Reads::default()), Arc::new(Reads::default())];
@@ -421,8 +416,7 @@ fn compiled(registry: &PropertyFunctionRegistry<'static>) -> CompiledRetrieval {
 /// Replace every unit's rendered text by `text(predicate)`, keeping the unit's own
 /// contract, depth and declaration — so the bundle's attribution still holds.
 fn supplied(
-    mut bundle: CompiledRetrieval,
-    text: impl Fn(&str) -> String,
+    mut bundle: CompiledRetrieval, text: impl Fn(&str) -> String,
 ) -> Result<CompiledRetrieval, UnitError> {
     for (unit, predicate) in bundle.units.iter_mut().zip(PREDICATES) {
         *unit = StratumUnit::new(
@@ -463,8 +457,7 @@ struct Measured {
 
 impl Measured {
     fn per_stratum<T: Clone>(
-        &self,
-        read: impl Fn(&purrdf_retrieval::StratumResolution) -> T,
+        &self, read: impl Fn(&purrdf_retrieval::StratumResolution) -> T,
     ) -> BTreeMap<Iri, T> {
         self.trailer
             .resolution
@@ -495,11 +488,8 @@ fn both<T: Clone>(value: T) -> BTreeMap<Iri, T> {
 
 /// Execute `bundle` on `schedule` and fuse it as `search` does.
 fn run(
-    bundle: &CompiledRetrieval,
-    registry: &PropertyFunctionRegistry<'static>,
-    counters: &[Arc<Reads>; 2],
-    dataset: &RdfDataset,
-    schedule: ReadSchedule,
+    bundle: &CompiledRetrieval, registry: &PropertyFunctionRegistry<'static>,
+    counters: &[Arc<Reads>; 2], dataset: &RdfDataset, schedule: ReadSchedule,
 ) -> Result<Measured, FusionError> {
     run_then(bundle, registry, counters, dataset, schedule, &|| {})
 }
@@ -507,12 +497,8 @@ fn run(
 /// [`run`], calling `between` once every stratum has been executed and before the
 /// fusion asks anything — the instant an index can move under a read that pinned it.
 fn run_then(
-    bundle: &CompiledRetrieval,
-    registry: &PropertyFunctionRegistry<'static>,
-    counters: &[Arc<Reads>; 2],
-    dataset: &RdfDataset,
-    schedule: ReadSchedule,
-    between: &dyn Fn(),
+    bundle: &CompiledRetrieval, registry: &PropertyFunctionRegistry<'static>,
+    counters: &[Arc<Reads>; 2], dataset: &RdfDataset, schedule: ReadSchedule, between: &dyn Fn(),
 ) -> Result<Measured, FusionError> {
     let profile = profile();
     let ExecutionResult { streams, statuses } =
@@ -561,21 +547,16 @@ fn run_then(
 
 /// Build a fresh registry, bundle it with `text` (or rendered, for `None`), and run.
 fn measure(
-    exclusion: ExclusionBasis,
-    generations: Option<Generations>,
-    text: Option<&dyn Fn(&str) -> String>,
-    schedule: ReadSchedule,
+    exclusion: ExclusionBasis, generations: Option<Generations>,
+    text: Option<&dyn Fn(&str) -> String>, schedule: ReadSchedule,
 ) -> Result<Measured, FusionError> {
     measure_shaped(exclusion, generations, text, schedule, DISJOINT)
 }
 
 /// [`measure`], over producers naming candidates under `prefixes`.
 fn measure_shaped(
-    exclusion: ExclusionBasis,
-    generations: Option<Generations>,
-    text: Option<&dyn Fn(&str) -> String>,
-    schedule: ReadSchedule,
-    prefixes: [&'static str; 2],
+    exclusion: ExclusionBasis, generations: Option<Generations>,
+    text: Option<&dyn Fn(&str) -> String>, schedule: ReadSchedule, prefixes: [&'static str; 2],
 ) -> Result<Measured, FusionError> {
     let (registry, counters) = shaped_registry(exclusion, generations, prefixes, None);
     let rendered = compiled(&registry);
@@ -593,9 +574,7 @@ fn measure_shaped(
 }
 
 fn measured(
-    exclusion: ExclusionBasis,
-    text: Option<&dyn Fn(&str) -> String>,
-    schedule: ReadSchedule,
+    exclusion: ExclusionBasis, text: Option<&dyn Fn(&str) -> String>, schedule: ReadSchedule,
 ) -> Measured {
     measure(exclusion, None, text, schedule).expect("the fixture fuses")
 }
@@ -1262,9 +1241,7 @@ fn asked(bundle: &CompiledRetrieval, registry: &PropertyFunctionRegistry<'static
 
 /// [`asked`], over `dataset`.
 fn asked_over(
-    bundle: &CompiledRetrieval,
-    registry: &PropertyFunctionRegistry<'static>,
-    dataset: &RdfDataset,
+    bundle: &CompiledRetrieval, registry: &PropertyFunctionRegistry<'static>, dataset: &RdfDataset,
 ) -> Asked {
     let ExecutionResult {
         mut streams,
@@ -2493,8 +2470,7 @@ mod text_relation {
     /// Both relations registered over `dataset`, each declaring its own ranked
     /// order with `basis` written in, beside each relation's observations.
     pub(super) fn registry(
-        dataset: &RdfDataset,
-        basis: ExclusionBasis,
+        dataset: &RdfDataset, basis: ExclusionBasis,
     ) -> (
         PropertyFunctionRegistry<'static>,
         [Arc<SearchObservations>; 2],
@@ -2575,9 +2551,7 @@ mod text_relation {
     /// Run `text(producer)` for both strata under `basis` and `schedule`, or the
     /// rendered bundle for `None`.
     pub(super) fn run(
-        basis: ExclusionBasis,
-        text: Option<&dyn Fn(&str) -> String>,
-        schedule: ReadSchedule,
+        basis: ExclusionBasis, text: Option<&dyn Fn(&str) -> String>, schedule: ReadSchedule,
     ) -> Result<TextRun, FusionError> {
         run_over(&dataset(), basis, text, schedule)
     }
@@ -2587,9 +2561,7 @@ mod text_relation {
     /// reading it to its end: the verdicts, the candidates it named, and the
     /// membership tests the right relation performed.
     pub(super) fn asked_right(
-        dataset: &Arc<RdfDataset>,
-        text: &dyn Fn(&str) -> String,
-        probes: &[String],
+        dataset: &Arc<RdfDataset>, text: &dyn Fn(&str) -> String, probes: &[String],
     ) -> (Vec<Result<ExclusionVerdict, String>>, Vec<String>, u64) {
         let (registry, observed) = registry(dataset, ExclusionBasis::Membership);
         let mut bundle = compiled(&registry);
@@ -2631,9 +2603,7 @@ mod text_relation {
 
     /// [`run`], over `dataset`.
     pub(super) fn run_over(
-        dataset: &Arc<RdfDataset>,
-        basis: ExclusionBasis,
-        text: Option<&dyn Fn(&str) -> String>,
+        dataset: &Arc<RdfDataset>, basis: ExclusionBasis, text: Option<&dyn Fn(&str) -> String>,
         schedule: ReadSchedule,
     ) -> Result<TextRun, FusionError> {
         let (registry, observed) = registry(dataset, basis);

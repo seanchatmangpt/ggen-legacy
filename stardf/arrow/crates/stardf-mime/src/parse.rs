@@ -58,8 +58,7 @@ struct Job {
 /// Refuses an invalid source IRI, caller-declared resource excess, or a producer
 /// bug rejected by the shared cover emitter. Malformed message bytes are retained.
 pub fn analyze<'a>(
-    source: SourceDocument<'a>,
-    profile: &Profile,
+    source: SourceDocument<'a>, profile: &Profile,
 ) -> Result<Document<'a>, MimeError> {
     BaseIri::parse(source.id)?;
     let limits = profile.limits();
@@ -141,10 +140,7 @@ fn problem(document: &mut Document<'_>, part: usize, span: Range<usize>, kind: P
 }
 
 fn parse_headers(
-    document: &mut Document<'_>,
-    part: usize,
-    range: Range<usize>,
-    limits: Limits,
+    document: &mut Document<'_>, part: usize, range: Range<usize>, limits: Limits,
 ) -> Result<(Vec<usize>, Range<usize>), MimeError> {
     let source = document.source.bytes;
     let mut headers: Vec<usize> = Vec::new();
@@ -230,9 +226,7 @@ fn parse_headers(
 }
 
 fn header_values(
-    document: &Document<'_>,
-    headers: &[usize],
-    name: &[u8],
+    document: &Document<'_>, headers: &[usize], name: &[u8],
 ) -> Vec<(Range<usize>, Vec<u8>)> {
     headers
         .iter()
@@ -246,10 +240,7 @@ fn header_values(
 }
 
 fn declared_type(
-    document: &mut Document<'_>,
-    part: usize,
-    headers: &[usize],
-    default_type: DefaultType,
+    document: &mut Document<'_>, part: usize, headers: &[usize], default_type: DefaultType,
 ) -> Option<MediaType> {
     let values = header_values(document, headers, b"content-type");
     if values.is_empty() {
@@ -308,9 +299,7 @@ fn declared_type(
 }
 
 fn declared_encoding(
-    document: &mut Document<'_>,
-    part: usize,
-    headers: &[usize],
+    document: &mut Document<'_>, part: usize, headers: &[usize],
 ) -> TransferEncoding {
     let values = header_values(document, headers, b"content-transfer-encoding");
     let mut encoding = None;
@@ -506,10 +495,7 @@ fn child_ranges(document: &mut Document<'_>, part: usize) -> Vec<(Range<usize>, 
 }
 
 fn multipart_children(
-    document: &mut Document<'_>,
-    part: usize,
-    body: Range<usize>,
-    boundary: &[u8],
+    document: &mut Document<'_>, part: usize, body: Range<usize>, boundary: &[u8],
     default_type: DefaultType,
 ) -> Vec<(Range<usize>, DefaultType)> {
     let source = document.source.bytes;

@@ -29,8 +29,7 @@ use super::config::{VoidConfig, VoidDatasetPrefix, VoidGraphSelector, VoidRole, 
 /// Returns typed configuration, term, integrity, serialization, package, or
 /// resource-limit errors for ambiguous/malformed inputs or exceeded bounds.
 pub fn project_void<D: DatasetView>(
-    view: &D,
-    config: &VoidConfig,
+    view: &D, config: &VoidConfig,
 ) -> Result<RdfDescriptionProjection, ProjectionError> {
     let records = selected_records(view, config)?;
     let header_version = required_header_literal(
@@ -75,8 +74,7 @@ struct SourceRecord {
 }
 
 fn selected_records<D: DatasetView>(
-    view: &D,
-    config: &VoidConfig,
+    view: &D, config: &VoidConfig,
 ) -> Result<BTreeSet<SourceRecord>, ProjectionError> {
     view.checked_read(|view| {
         let input_records = view
@@ -110,9 +108,7 @@ fn selected_records<D: DatasetView>(
 }
 
 fn selected_graph<D: DatasetView>(
-    view: &D,
-    graph: Option<D::Id>,
-    config: &VoidConfig,
+    view: &D, graph: Option<D::Id>, config: &VoidConfig,
 ) -> Result<Option<VoidGraphSelector>, ProjectionError> {
     let graph_guard = graph
         .map(|id| view.resolve(id))
@@ -147,10 +143,7 @@ fn selected_graph<D: DatasetView>(
 }
 
 fn resolve_record<D: DatasetView>(
-    view: &D,
-    row: QuadIds<D::Id>,
-    graph: VoidGraphSelector,
-    config: &VoidConfig,
+    view: &D, row: QuadIds<D::Id>, graph: VoidGraphSelector, config: &VoidConfig,
 ) -> Result<SourceRecord, ProjectionError> {
     let guard = view.resolve(row.p).map_err(ProjectionError::source_read)?;
     let TermRef::Iri(predicate) = guard.term() else {
@@ -167,10 +160,7 @@ fn resolve_record<D: DatasetView>(
 }
 
 fn required_header_literal(
-    records: &BTreeSet<SourceRecord>,
-    config: &VoidConfig,
-    predicate: &str,
-    label: &str,
+    records: &BTreeSet<SourceRecord>, config: &VoidConfig, predicate: &str, label: &str,
 ) -> Result<ProjectionTerm, ProjectionError> {
     let mut values = BTreeSet::new();
     for record in records {
@@ -225,8 +215,7 @@ impl Aggregate {
 }
 
 fn analyze_data(
-    records: &BTreeSet<SourceRecord>,
-    config: &VoidConfig,
+    records: &BTreeSet<SourceRecord>, config: &VoidConfig,
 ) -> Result<DataAnalysis, ProjectionError> {
     let data_graphs: BTreeSet<&VoidGraphSelector> = config.data_graphs().iter().collect();
     let data: Vec<&SourceRecord> = records
@@ -322,8 +311,7 @@ struct Linkset {
 }
 
 fn analyze_linksets(
-    records: &BTreeSet<SourceRecord>,
-    config: &VoidConfig,
+    records: &BTreeSet<SourceRecord>, config: &VoidConfig,
 ) -> Result<Vec<Linkset>, ProjectionError> {
     let mut buckets = BTreeMap::<(&str, &str, &str), u64>::new();
     for record in records
@@ -394,8 +382,7 @@ struct ClassifiedDataset<'a> {
 }
 
 fn classify_dataset<'a>(
-    iri: &str,
-    config: &'a VoidConfig,
+    iri: &str, config: &'a VoidConfig,
 ) -> Result<ClassifiedDataset<'a>, ProjectionError> {
     let candidates = config
         .local_datasets()
@@ -444,8 +431,7 @@ fn classify_dataset<'a>(
 }
 
 fn collect_external_links<'records, 'config>(
-    records: &'records BTreeSet<SourceRecord>,
-    config: &'config VoidConfig,
+    records: &'records BTreeSet<SourceRecord>, config: &'config VoidConfig,
 ) -> Result<BTreeMap<&'config str, BTreeSet<&'records str>>, ProjectionError> {
     let mut output = BTreeMap::<&str, BTreeSet<&str>>::new();
     for record in records {
@@ -471,12 +457,8 @@ fn collect_external_links<'records, 'config>(
 }
 
 fn emit_void(
-    config: &VoidConfig,
-    version: &ProjectionTerm,
-    abstract_value: &ProjectionTerm,
-    data: &DataAnalysis,
-    linksets: &[Linkset],
-    external_links: &BTreeMap<&str, BTreeSet<&str>>,
+    config: &VoidConfig, version: &ProjectionTerm, abstract_value: &ProjectionTerm,
+    data: &DataAnalysis, linksets: &[Linkset], external_links: &BTreeMap<&str, BTreeSet<&str>>,
 ) -> Result<Arc<RdfDataset>, ProjectionError> {
     let mut emitter = VoidEmitter {
         builder: RdfDatasetBuilder::new(),
@@ -591,10 +573,7 @@ impl VoidEmitter<'_> {
     }
 
     fn push_iri(
-        &mut self,
-        subject: &str,
-        predicate: VoidRole,
-        object: &str,
+        &mut self, subject: &str, predicate: VoidRole, object: &str,
     ) -> Result<(), ProjectionError> {
         let predicate = self.config.vocabulary().iri(predicate).to_owned();
         self.push_iri_predicate(subject, &predicate, object)?;
@@ -603,10 +582,7 @@ impl VoidEmitter<'_> {
     }
 
     fn push_iri_predicate(
-        &mut self,
-        subject: &str,
-        predicate: &str,
-        object: &str,
+        &mut self, subject: &str, predicate: &str, object: &str,
     ) -> Result<(), ProjectionError> {
         push_iri_triple(&mut self.builder, subject, predicate, object)?;
 
@@ -614,10 +590,7 @@ impl VoidEmitter<'_> {
     }
 
     fn push_count(
-        &mut self,
-        subject: &str,
-        predicate: VoidRole,
-        value: u64,
+        &mut self, subject: &str, predicate: VoidRole, value: u64,
     ) -> Result<(), ProjectionError> {
         let datatype = self
             .config
@@ -634,10 +607,7 @@ impl VoidEmitter<'_> {
     }
 
     fn push_term(
-        &mut self,
-        subject: &str,
-        predicate: VoidRole,
-        value: &ProjectionTerm,
+        &mut self, subject: &str, predicate: VoidRole, value: &ProjectionTerm,
     ) -> Result<(), ProjectionError> {
         let ProjectionTerm::Literal {
             lexical,
@@ -661,10 +631,7 @@ impl VoidEmitter<'_> {
     }
 
     fn push_static(
-        &mut self,
-        subject: &str,
-        predicate: &str,
-        value: &VoidStaticValue,
+        &mut self, subject: &str, predicate: &str, value: &VoidStaticValue,
     ) -> Result<(), ProjectionError> {
         match value {
             VoidStaticValue::Iri { value } => {
@@ -693,9 +660,7 @@ impl VoidEmitter<'_> {
     }
 
     fn push_partition_counts(
-        &mut self,
-        partition: &str,
-        aggregate: &Aggregate,
+        &mut self, partition: &str, aggregate: &Aggregate,
     ) -> Result<(), ProjectionError> {
         self.push_count(partition, VoidRole::Triples, aggregate.triples)?;
         let subjects = count_u64(aggregate.subjects.len(), "VoID partition subject")?;
@@ -707,10 +672,7 @@ impl VoidEmitter<'_> {
     }
 
     fn push_literal(
-        &mut self,
-        subject: &str,
-        predicate: &str,
-        literal: RdfLiteral,
+        &mut self, subject: &str, predicate: &str, literal: RdfLiteral,
     ) -> Result<(), ProjectionError> {
         let subject = self.builder.intern_iri(subject)?;
         let predicate = self.builder.intern_iri(predicate)?;

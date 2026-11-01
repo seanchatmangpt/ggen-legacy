@@ -111,8 +111,7 @@ impl RdfLocation {
     /// # Errors
     /// Returns the original physical refusal, preserving the source location.
     pub fn clone_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         Ok(Self {
             path: self
@@ -392,8 +391,7 @@ impl RdfDiagnostic {
     /// # Errors
     /// Returns the first physical refusal before the replacement is published.
     pub fn clone_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         Ok(Self {
             severity: self.severity,
@@ -466,8 +464,7 @@ impl RdfDiagnostic {
     /// # Errors
     /// Returns the physical refusal, allocator failure or formatter failure.
     pub fn try_error_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        code: &str,
-        message: &(impl fmt::Display + ?Sized),
+        code: &str, message: &(impl fmt::Display + ?Sized),
         memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         let mut owned_code = String::new();
@@ -529,9 +526,7 @@ impl RdfDiagnostic {
     /// # Errors
     /// Returns admission or allocation refusal before allocating an attachment.
     pub fn with_native_cause<S: purrdf_lex::allocation::Admission + ?Sized>(
-        mut self,
-        cause: DiagnosticCause,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        mut self, cause: DiagnosticCause, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         match &mut self.attachments {
             Some(attachments) => attachments.cause = Some(cause),

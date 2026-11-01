@@ -23,10 +23,7 @@ impl State {
 
     /// The caller has admitted table capacity before reading the new block.
     pub(super) fn cache_insert(
-        &mut self,
-        key: CacheKey,
-        block: Arc<CachedBlock>,
-        retain_route: bool,
+        &mut self, key: CacheKey, block: Arc<CachedBlock>, retain_route: bool,
     ) {
         debug_assert!(self.cache.len() < self.cache.capacity());
         if retain_route && let Some((first, end)) = block.dictionary_range {

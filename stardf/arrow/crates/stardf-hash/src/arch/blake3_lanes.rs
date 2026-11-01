@@ -68,8 +68,7 @@ macro_rules! blake3_lanes {
         /// A full SIMD batch of parent nodes. Each lane hashes two child CVs.
         #[target_feature(enable=$feature)]
         pub(crate) fn parents(
-            children: &[[u32; 8]; 2 * LANES],
-            mode: crate::blake3::Mode,
+            children: &[[u32; 8]; 2 * LANES], mode: crate::blake3::Mode,
         ) -> [[u32; 8]; LANES] {
             let mut cv = [V::splat(0); 8];
             for i in 0..8 {
@@ -101,9 +100,7 @@ macro_rules! blake3_lanes {
         // Keep this separate so the compiler sees uniform lengths and flags.
         #[target_feature(enable=$feature)]
         fn full_chunk_cvs(
-            bytes: &[u8; 1024 * LANES],
-            counter: u64,
-            mode: crate::blake3::Mode,
+            bytes: &[u8; 1024 * LANES], counter: u64, mode: crate::blake3::Mode,
         ) -> [[u32; 8]; LANES] {
             let mut cv = [V::splat(0); 8];
             for i in 0..8 {
@@ -132,9 +129,7 @@ macro_rules! blake3_lanes {
         /// first valid chunk; all pointer loads stay within the padded buffer.
         #[target_feature(enable=$feature)]
         pub(crate) fn chunk_cvs(
-            bytes: &[u8],
-            counter: u64,
-            mode: crate::blake3::Mode,
+            bytes: &[u8], counter: u64, mode: crate::blake3::Mode,
         ) -> [[u32; 8]; LANES] {
             assert!(!bytes.is_empty() && bytes.len() <= 1024 * LANES);
             if let Ok(full) = <&[u8; 1024 * LANES]>::try_from(bytes) {
@@ -199,11 +194,7 @@ macro_rules! blake3_single4 {
         #[inline(never)]
         #[target_feature(enable=$feature)]
         pub(super) fn single<const OUTPUT: usize>(
-            cv: [u32; 8],
-            words: &[u32; 16],
-            counter: u64,
-            length: u32,
-            flags: u32,
+            cv: [u32; 8], words: &[u32; 16], counter: u64, length: u32, flags: u32,
         ) -> [u32; OUTPUT] {
             const {
                 assert!(OUTPUT == 8 || OUTPUT == 16);

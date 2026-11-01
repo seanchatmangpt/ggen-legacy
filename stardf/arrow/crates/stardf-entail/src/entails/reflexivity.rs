@@ -338,9 +338,7 @@ pub(crate) fn attempt(q: &Question<'_>) -> Result<Attempt, EntailError> {
 /// reasoner: the conclusion is READ again on the spot, the licensing is RECOMPUTED and
 /// compared, every licence is re-looked-up in the closure, and the binding is replayed.
 pub(crate) fn verify_reflexivity(
-    w: &ReflexivityWarrant,
-    _conclusion: &RdfDataset,
-    triples: &[Triple],
+    w: &ReflexivityWarrant, _conclusion: &RdfDataset, triples: &[Triple],
     _pending: &BTreeSet<usize>,
 ) -> Option<Replay> {
     let licensed = license(triples, &w.closure);

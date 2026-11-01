@@ -30,10 +30,7 @@ impl<T> Default for CompactRows<T> {
 
 impl<T: Hash + Eq + Ord> CompactRows<T> {
     fn insert<S: Admission + ?Sized>(
-        &mut self,
-        value: T,
-        space: CapacitySpace,
-        capacity: LocalCapacity,
+        &mut self, value: T, space: CapacitySpace, capacity: LocalCapacity,
         memory: &mut Memory<'_, S>,
         dependency: impl FnOnce(&mut Memory<'_, S>) -> Result<(), StorageError>,
     ) -> Result<(), StorageError> {
@@ -61,8 +58,7 @@ impl<T: Hash + Eq + Ord> CompactRows<T> {
     }
 
     fn freeze<S: Admission + ?Sized>(
-        mut self,
-        memory: &mut Memory<'_, S>,
+        mut self, memory: &mut Memory<'_, S>,
     ) -> Result<Box<[T]>, StorageError> {
         let bytes = crate::hash::hash_table_retained_bound(&self.index)
             .ok_or(StorageError::SizeOverflow)?;
@@ -127,8 +123,7 @@ impl TripleDatasetBuilder {
     /// any term is interned. No vocabulary is selected implicitly.
     #[must_use]
     pub fn with_content_addressing(
-        scheme: ContentIdScheme,
-        derivation_predicate: Option<String>,
+        scheme: ContentIdScheme, derivation_predicate: Option<String>,
     ) -> Self {
         Self {
             lexical: RdfDatasetBuilder::with_content_addressing(scheme, derivation_predicate),
@@ -177,11 +172,7 @@ impl TripleDatasetBuilder {
     /// # Errors
     /// Returns row capacity, admission or allocator refusal.
     pub fn push_triple_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        s: TermId,
-        p: TermId,
-        o: TermId,
-        memory: &mut Memory<'_, S>,
+        &mut self, s: TermId, p: TermId, o: TermId, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         self.triples.insert(
             TripleIds { s, p, o },
@@ -198,10 +189,7 @@ impl TripleDatasetBuilder {
     /// # Errors
     /// Returns the first row, term or physical storage refusal.
     pub fn push_reifier_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        reifier: TermId,
-        triple: TermId,
-        memory: &mut Memory<'_, S>,
+        &mut self, reifier: TermId, triple: TermId, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         let interner = &mut self.lexical.interner;
         let predicate = &mut self.lexical.reifies_predicate;
@@ -219,11 +207,7 @@ impl TripleDatasetBuilder {
     /// # Errors
     /// Returns row capacity, admission or allocator refusal.
     pub fn push_annotation_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        reifier: TermId,
-        p: TermId,
-        o: TermId,
-        memory: &mut Memory<'_, S>,
+        &mut self, reifier: TermId, p: TermId, o: TermId, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         self.annotations.insert(
             TripleIds { s: reifier, p, o },
@@ -267,8 +251,7 @@ impl TripleDatasetBuilder {
     /// # Errors
     /// Returns the first native validation or storage error.
     pub fn freeze_with_memory<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<TripleDataset, NativeBuildError> {
         let bytes = self.native_buffer_bytes()?;
         let valid = crate::ir::validate::validate_rows_with_memory(

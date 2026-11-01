@@ -67,9 +67,7 @@ impl BoundSubjectLookup {
     /// Whatever [`MemoryRelation::from_graph`] raises for a torn list, an absent
     /// head, or a row that is not two values wide.
     pub fn from_graph<D: DatasetView>(
-        dataset: &D,
-        head: &TermValue,
-        graph: GraphMatch<D::Id>,
+        dataset: &D, head: &TermValue, graph: GraphMatch<D::Id>,
     ) -> Result<Self, EvalError> {
         let table = MemoryRelation::from_graph(dataset, head, graph, 1, 1)?;
         Ok(Self::new(table.rows().to_vec()))
@@ -112,9 +110,7 @@ impl PropertyFunction for BoundSubjectLookup {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,

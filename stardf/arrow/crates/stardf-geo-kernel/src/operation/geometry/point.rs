@@ -29,11 +29,8 @@ impl OperationImagePoint {
     /// Refuses incompatible target references, missing height/epoch, invalid
     /// original domains and incomplete preparation admission.
     pub fn new(
-        source: Coord,
-        chain: impl AsRef<OperationChain>,
-        reference: GeographicReference,
-        epoch: Option<Rat>,
-        policy: ExecutionPolicy,
+        source: Coord, chain: impl AsRef<OperationChain>, reference: GeographicReference,
+        epoch: Option<Rat>, policy: ExecutionPolicy,
     ) -> Result<Self, GeoError> {
         Self::prepare(
             source,
@@ -50,12 +47,8 @@ impl OperationImagePoint {
     /// # Errors
     /// Adds observer refusal to [`Self::new`].
     pub fn new_metered(
-        source: Coord,
-        chain: impl AsRef<OperationChain>,
-        reference: GeographicReference,
-        epoch: Option<Rat>,
-        policy: ExecutionPolicy,
-        observer: &mut dyn MetricWorkObserver,
+        source: Coord, chain: impl AsRef<OperationChain>, reference: GeographicReference,
+        epoch: Option<Rat>, policy: ExecutionPolicy, observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::prepare(
             source,
@@ -68,12 +61,8 @@ impl OperationImagePoint {
     }
 
     fn prepare(
-        source: Coord,
-        chain: OperationChain,
-        reference: GeographicReference,
-        epoch: Option<Rat>,
-        policy: ExecutionPolicy,
-        observer: Option<&mut dyn MetricWorkObserver>,
+        source: Coord, chain: OperationChain, reference: GeographicReference, epoch: Option<Rat>,
+        policy: ExecutionPolicy, observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         let mut context = MetricContext::new(reference.clone(), policy)?;
         context.begin(1)?;
@@ -148,8 +137,7 @@ impl OperationImagePoint {
     /// # Errors
     /// Uses the chain's domain, rounding, residual and resource refusal contract.
     pub fn materialize(
-        &self,
-        context: &mut MetricContext,
+        &self, context: &mut MetricContext,
     ) -> Result<super::super::TransformResult, GeoError> {
         self.materialize_inner(context, None)
     }
@@ -159,17 +147,13 @@ impl OperationImagePoint {
     /// # Errors
     /// Adds observer refusal to [`Self::materialize`].
     pub fn materialize_metered(
-        &self,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<super::super::TransformResult, GeoError> {
         self.materialize_inner(context, Some(observer))
     }
 
     fn materialize_inner(
-        &self,
-        context: &mut MetricContext,
-        observer: Option<&mut dyn MetricWorkObserver>,
+        &self, context: &mut MetricContext, observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<super::super::TransformResult, GeoError> {
         let mut progress = WorkProgress::new(observer);
         if context.reference() != self.reference() {
@@ -193,9 +177,7 @@ impl OperationImagePoint {
     /// # Errors
     /// Refuses unresolved domains or insufficient precision/work/memory.
     pub fn enclosure(
-        &self,
-        precision_bits: u32,
-        context: &mut MetricContext,
+        &self, precision_bits: u32, context: &mut MetricContext,
     ) -> Result<OperationImageEnclosure, GeoError> {
         self.image
             .enclosure(&Rat::zero(), &Rat::zero(), precision_bits, context)
@@ -206,9 +188,7 @@ impl OperationImagePoint {
     /// # Errors
     /// Adds observer refusal to [`Self::enclosure`].
     pub fn enclosure_metered(
-        &self,
-        precision_bits: u32,
-        context: &mut MetricContext,
+        &self, precision_bits: u32, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<OperationImageEnclosure, GeoError> {
         self.image.enclosure_metered(

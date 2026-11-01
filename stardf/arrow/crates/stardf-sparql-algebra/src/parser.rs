@@ -60,8 +60,7 @@ pub trait ParserAdmission: Admission {
     /// # Errors
     /// Returns typed physical refusal, preserving the original backing cause.
     fn text(
-        &mut self,
-        text: &dyn core::fmt::Display,
+        &mut self, text: &dyn core::fmt::Display,
     ) -> core::result::Result<SharedText, StorageError>;
 }
 
@@ -73,8 +72,7 @@ impl Admission for ResidentParserAdmission {
 }
 impl ParserAdmission for ResidentParserAdmission {
     fn text(
-        &mut self,
-        text: &dyn core::fmt::Display,
+        &mut self, text: &dyn core::fmt::Display,
     ) -> core::result::Result<SharedText, StorageError> {
         let mut resident = Resident;
         let mut memory = Memory::new(&mut resident);
@@ -482,9 +480,7 @@ impl SparqlParser {
     ///
     /// Exactly [`Self::parse_query_with`]'s.
     pub fn parse_query_dataset_slot(
-        &self,
-        query: &str,
-        options: &ParserOptions,
+        &self, query: &str, options: &ParserOptions,
     ) -> Result<QueryDatasetSlot> {
         let mut resident = ResidentParserAdmission;
         let mut memory = Memory::new(&mut resident as &mut dyn ParserAdmission);
@@ -562,10 +558,7 @@ impl SparqlParser {
     /// # Errors
     /// Returns the original parse error or a physical storage refusal.
     pub fn parse_query_admitted<'s>(
-        text: &str,
-        options: &ParserOptions,
-        base: Option<&str>,
-        prebound_names: &[&str],
+        text: &str, options: &ParserOptions, base: Option<&str>, prebound_names: &[&str],
         memory: &mut Memory<'s, dyn ParserAdmission + 's>,
     ) -> Result<Query> {
         let original_live = memory.admitted_bytes();
@@ -624,9 +617,7 @@ impl SparqlParser {
 
     /// Tokenize `text` and assemble the internal parser state.
     fn parser_for<'a, 'o, 'm, 's, const RDFLIB: bool>(
-        &self,
-        text: &'a str,
-        options: &'o ParserOptions,
+        &self, text: &'a str, options: &'o ParserOptions,
         memory: &'m mut Memory<'s, dyn ParserAdmission + 's>,
     ) -> Result<Parser<'a, 'o, 'm, 's, RDFLIB>> {
         let base = match &self.base {
@@ -646,10 +637,7 @@ impl SparqlParser {
     }
 
     fn parser_from_parts<'a, 'o, 'm, 's, const RDFLIB: bool>(
-        text: &'a str,
-        options: &'o ParserOptions,
-        base: BaseScope,
-        prebound: Vec<Variable>,
+        text: &'a str, options: &'o ParserOptions, base: BaseScope, prebound: Vec<Variable>,
         memory: &'m mut Memory<'s, dyn ParserAdmission + 's>,
     ) -> Result<Parser<'a, 'o, 'm, 's, RDFLIB>> {
         let mut lexemes =
@@ -742,8 +730,7 @@ impl SparqlParser {
 /// be read as one node. Any label is a legal `BLANK_NODE_LABEL`, so no fixed prefix
 /// is out of an author's reach; one chosen against the text in hand is.
 fn anon_label_prefix_with_memory(
-    tokens: &[Option<Spanned<'_>>],
-    memory: &mut Memory<'_, dyn ParserAdmission + '_>,
+    tokens: &[Option<Spanned<'_>>], memory: &mut Memory<'_, dyn ParserAdmission + '_>,
 ) -> Result<String> {
     let mut prefix = memory.string("__purrdf_anon_")?;
     while tokens.iter().flatten().any(|spanned| {
@@ -757,9 +744,7 @@ fn anon_label_prefix_with_memory(
 }
 
 fn iri_error_with_memory<S: Admission + ?Sized>(
-    lexical: &str,
-    error: IriError,
-    memory: &mut Memory<'_, S>,
+    lexical: &str, error: IriError, memory: &mut Memory<'_, S>,
 ) -> Result<ParseError> {
     let lexical = match memory.string(lexical) {
         Ok(lexical) => lexical,
@@ -1598,10 +1583,7 @@ impl<'a, 'o, 's, const RDFLIB: bool> Parser<'a, 'o, '_, 's, RDFLIB> {
     }
 
     fn literal(
-        &mut self,
-        value: &dyn core::fmt::Display,
-        datatype: NamedNode,
-        language: Option<&str>,
+        &mut self, value: &dyn core::fmt::Display, datatype: NamedNode, language: Option<&str>,
         direction: Option<BaseDirection>,
     ) -> Result<Literal> {
         let value = self.memory.admission_mut().text(value)?;
@@ -2301,8 +2283,7 @@ impl<'a, 'o, 's, const RDFLIB: bool> Parser<'a, 'o, '_, 's, RDFLIB> {
     /// (empty, at the token after it, when there is none) beside the `WITH` range the
     /// caller read, if any.
     fn parse_using_clauses_at(
-        &mut self,
-        with_at: Option<Range<usize>>,
+        &mut self, with_at: Option<Range<usize>>,
     ) -> Result<Vec<UsingClause>> {
         let at = self.span();
         let using = self.parse_using_clauses()?;
@@ -2569,10 +2550,7 @@ impl<'a, 'o, 's, const RDFLIB: bool> Parser<'a, 'o, '_, 's, RDFLIB> {
     /// Parse a nested `GRAPH g { triples }` group, scoping each parsed triple to
     /// `graph` and pushing the resulting quad patterns into `quads`.
     fn collect_quad_group(
-        &mut self,
-        graph: Option<&NamedNodePattern>,
-        is_delete: bool,
-        quads: &mut Vec<QuadPattern>,
+        &mut self, graph: Option<&NamedNodePattern>, is_delete: bool, quads: &mut Vec<QuadPattern>,
     ) -> Result<()> {
         self.expect(&Token::LBrace)?;
         let mut triples = Vec::new();
@@ -2951,10 +2929,7 @@ impl<'a, 'o, 's, const RDFLIB: bool> Parser<'a, 'o, '_, 's, RDFLIB> {
 
     /// Emit `reifier rdf:reifies <<( t )>>` for a reification.
     fn emit_reifies(
-        &mut self,
-        reifier: &TermPattern,
-        t: &TriplePattern,
-        triples: &mut Vec<TriplePattern>,
+        &mut self, reifier: &TermPattern, t: &TriplePattern, triples: &mut Vec<TriplePattern>,
     ) -> Result<()> {
         let triple = TriplePattern {
             subject: reifier.clone_with_memory(self.memory)?,
@@ -3504,9 +3479,7 @@ impl SubjectArgs {
     /// only meaningful to a property function, so pairing it with a data
     /// predicate is a hard error.
     fn as_term(
-        &self,
-        at: usize,
-        memory: &mut Memory<'_, dyn ParserAdmission + '_>,
+        &self, at: usize, memory: &mut Memory<'_, dyn ParserAdmission + '_>,
     ) -> Result<&TermPattern> {
         match self {
             Self::Term(t) => Ok(t),
@@ -3519,8 +3492,7 @@ impl SubjectArgs {
 
     /// The subject as an argument vector: a plain term is a ONE-element vector.
     fn as_args(
-        &self,
-        memory: &mut Memory<'_, dyn ParserAdmission + '_>,
+        &self, memory: &mut Memory<'_, dyn ParserAdmission + '_>,
     ) -> Result<Vec<TermPattern>> {
         let mut arguments = Vec::new();
         match self {
@@ -3568,9 +3540,7 @@ impl BlockSink {
 
     /// Record a property-function call at the current position in the block.
     fn push_property_function(
-        &mut self,
-        call: PropertyFunctionCall,
-        memory: &mut Memory<'_, dyn ParserAdmission + '_>,
+        &mut self, call: PropertyFunctionCall, memory: &mut Memory<'_, dyn ParserAdmission + '_>,
     ) -> Result<()> {
         memory.push(&mut self.prop_fns, (self.triples.len(), call))?;
         Ok(())
@@ -3580,8 +3550,7 @@ impl BlockSink {
     /// call laterally joined onto everything written before it, then the
     /// property-path nodes joined on.
     fn into_pattern(
-        mut self,
-        memory: &mut Memory<'_, dyn ParserAdmission + '_>,
+        mut self, memory: &mut Memory<'_, dyn ParserAdmission + '_>,
     ) -> Result<GraphPattern> {
         if self
             .paths
@@ -3642,8 +3611,7 @@ impl BlockSink {
     /// acquire their own scopes. A source UNION has separate BlockSinks, so its
     /// arm-local blanks are never joined by this translation.
     fn promote_path_blanks(
-        &mut self,
-        memory: &mut Memory<'_, dyn ParserAdmission + '_>,
+        &mut self, memory: &mut Memory<'_, dyn ParserAdmission + '_>,
     ) -> Result<()> {
         let mut labels = ScopeTable::default();
         let mut pending = Vec::new();
@@ -3693,10 +3661,8 @@ impl BlockSink {
 
     /// Rename the selected source labels, descending into quoted endpoints too.
     fn promote_terms(
-        mut pending: Vec<&mut TermPattern>,
-        labels: &mut ScopeTable<BlankNode, Variable>,
-        discover: bool,
-        memory: &mut Memory<'_, dyn ParserAdmission + '_>,
+        mut pending: Vec<&mut TermPattern>, labels: &mut ScopeTable<BlankNode, Variable>,
+        discover: bool, memory: &mut Memory<'_, dyn ParserAdmission + '_>,
     ) -> Result<()> {
         while let Some(term) = pending.pop() {
             match term {
@@ -3763,9 +3729,7 @@ impl Modifiers {
 /// identity table `Z`) on either side so a group that opens with a non-triple
 /// element (`UNION`, a property path, …) is not wrapped in a vacuous `Join`.
 fn join_with_memory<S: Admission + ?Sized>(
-    left: GraphPattern,
-    right: GraphPattern,
-    memory: &mut Memory<'_, S>,
+    left: GraphPattern, right: GraphPattern, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<GraphPattern, StorageError> {
     if left.is_empty_bgp() {
         if let GraphPattern::Bgp { patterns } = left {
@@ -3814,9 +3778,7 @@ impl<const RDFLIB: bool> Parser<'_, '_, '_, '_, RDFLIB> {
 /// Lift a run of template triples into quad patterns, all scoped to `graph`
 /// (`None` = the default graph).
 fn scope_triples<S: Admission + ?Sized>(
-    triples: Vec<TriplePattern>,
-    graph: Option<&NamedNodePattern>,
-    memory: &mut Memory<'_, S>,
+    triples: Vec<TriplePattern>, graph: Option<&NamedNodePattern>, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<Vec<QuadPattern>, StorageError> {
     let capacity = triples.capacity();
     let quads = memory.collect(triples.into_iter().map(|triple| QuadPattern {
@@ -3837,8 +3799,7 @@ fn scope_triples<S: Admission + ?Sized>(
 /// (`graph: None`) this is the identity, so a template that never mentions a
 /// graph is returned untouched.
 fn scope_template(
-    mut template: Vec<QuadPattern>,
-    graph: Option<&NamedNodePattern>,
+    mut template: Vec<QuadPattern>, graph: Option<&NamedNodePattern>,
 ) -> Vec<QuadPattern> {
     let Some(graph) = graph else {
         return template;
@@ -3856,8 +3817,7 @@ fn scope_template(
 /// `Join`/`Lateral` spines), which is all the template callers need to tell a
 /// property-function refusal from a property-path one.
 fn block_has_property_function<S: Admission + ?Sized>(
-    p: &GraphPattern,
-    memory: &mut Memory<'_, S>,
+    p: &GraphPattern, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<bool, StorageError> {
     let mut pending = memory.collect([p])?;
     let mut found = false;
@@ -3890,9 +3850,7 @@ fn simple_predicate(path: &PropertyPathExpression) -> Option<NamedNodePattern> {
 /// conjoined in written order (§18.3.2.7–9). Nested groups' filters remain in
 /// the independent right operand, even after an empty-BGP join was simplified.
 fn split_trailing_filters<S: Admission + ?Sized>(
-    mut pattern: GraphPattern,
-    filter_count: usize,
-    memory: &mut Memory<'_, S>,
+    mut pattern: GraphPattern, filter_count: usize, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<(GraphPattern, Option<Expression>), StorageError> {
     let mut filters = Vec::new();
     memory.reserve(&mut filters, filter_count)?;
@@ -3943,9 +3901,7 @@ impl VarScope {
     /// Record one visible variable; repeated mentions preserve the first order.
     /// All destinations are reserved before changing logical scope membership.
     fn note<S: Admission + ?Sized>(
-        &mut self,
-        variable: &Variable,
-        memory: &mut Memory<'_, S>,
+        &mut self, variable: &Variable, memory: &mut Memory<'_, S>,
     ) -> std::result::Result<bool, StorageError> {
         self.note_with_visibility(variable, true, memory)
     }
@@ -3953,18 +3909,13 @@ impl VarScope {
     /// RDFLib's `MINUS` right side contributes to contextual `SELECT *`, but
     /// not to the enclosing group's ordinary binding scope.
     fn note_contextual<S: Admission + ?Sized>(
-        &mut self,
-        variable: &Variable,
-        memory: &mut Memory<'_, S>,
+        &mut self, variable: &Variable, memory: &mut Memory<'_, S>,
     ) -> std::result::Result<bool, StorageError> {
         self.note_with_visibility(variable, false, memory)
     }
 
     fn note_with_visibility<S: Admission + ?Sized>(
-        &mut self,
-        variable: &Variable,
-        visible: bool,
-        memory: &mut Memory<'_, S>,
+        &mut self, variable: &Variable, visible: bool, memory: &mut Memory<'_, S>,
     ) -> std::result::Result<bool, StorageError> {
         #[cfg(test)]
         crate::projection::record_variable_work();
@@ -4026,8 +3977,7 @@ impl VarScope {
     }
 
     fn star_snapshot<S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
     ) -> std::result::Result<crate::ProjectionVars, StorageError> {
         let mut snapshot = self.star_snapshot.clone();
         for variable in &self.order[self.snapshotted..] {
@@ -4042,16 +3992,14 @@ impl VarScope {
 
     /// Publish the already-admitted projection array; the lookup arena dies first.
     fn into_vec<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> std::result::Result<Vec<Variable>, StorageError> {
         self.seen.release(memory)?;
         Ok(self.order)
     }
 
     fn release<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> std::result::Result<(), StorageError> {
         memory.release_vec(self.order)?;
         self.seen.release(memory)
@@ -4091,8 +4039,7 @@ impl ExistsScopes {
     }
 
     fn push_boundary<S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
     ) -> std::result::Result<(), StorageError> {
         let len = self.trail.len();
         memory.push(
@@ -4105,8 +4052,7 @@ impl ExistsScopes {
     }
 
     fn push_isolated<S: Admission + ?Sized>(
-        &mut self,
-        memory: &mut Memory<'_, S>,
+        &mut self, memory: &mut Memory<'_, S>,
     ) -> std::result::Result<(), StorageError> {
         let len = self.trail.len();
         let start = self.frames.last().map_or(len, |frame| frame.start);
@@ -4144,9 +4090,7 @@ impl ExistsScopes {
     }
 
     fn note<S: Admission + ?Sized>(
-        &mut self,
-        variable: &Variable,
-        memory: &mut Memory<'_, S>,
+        &mut self, variable: &Variable, memory: &mut Memory<'_, S>,
     ) -> std::result::Result<(), StorageError> {
         #[cfg(test)]
         crate::projection::record_variable_work();
@@ -4191,8 +4135,7 @@ impl ExistsScopes {
     }
 
     fn release<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> std::result::Result<(), StorageError> {
         memory.release_vec(self.trail)?;
         memory.release_vec(self.previous)?;
@@ -4215,8 +4158,7 @@ pub fn visible_variables(pattern: &GraphPattern) -> Vec<Variable> {
 /// # Errors
 /// Returns the original admission/allocator failure before storage growth.
 pub fn visible_variables_with_memory<S: Admission + ?Sized>(
-    pattern: &GraphPattern,
-    memory: &mut Memory<'_, S>,
+    pattern: &GraphPattern, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<Vec<Variable>, StorageError> {
     let mut scope = VarScope::default();
     collect_vars(pattern, &mut scope, memory)?;
@@ -4224,8 +4166,7 @@ pub fn visible_variables_with_memory<S: Admission + ?Sized>(
 }
 
 pub(crate) fn contextual_visible_variables<S: Admission + ?Sized>(
-    pattern: &GraphPattern,
-    memory: &mut Memory<'_, S>,
+    pattern: &GraphPattern, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<Vec<Variable>, StorageError> {
     let mut scope = VarScope::default();
     let mut pending = Vec::new();
@@ -4242,9 +4183,7 @@ enum VarStep<'a> {
 }
 
 fn push_triple_vars<'a, S: Admission + ?Sized>(
-    triple: &'a TriplePattern,
-    pending: &mut Vec<VarStep<'a>>,
-    memory: &mut Memory<'_, S>,
+    triple: &'a TriplePattern, pending: &mut Vec<VarStep<'a>>, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<(), StorageError> {
     memory.push(pending, VarStep::Term(&triple.object))?;
     if let NamedNodePattern::Variable(variable) = &triple.predicate {
@@ -4254,9 +4193,7 @@ fn push_triple_vars<'a, S: Admission + ?Sized>(
 }
 
 fn collect_vars<S: Admission + ?Sized>(
-    pattern: &GraphPattern,
-    out: &mut VarScope,
-    memory: &mut Memory<'_, S>,
+    pattern: &GraphPattern, out: &mut VarScope, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<(), StorageError> {
     let mut pending = Vec::new();
     memory.push(&mut pending, VarStep::Pattern(pattern))?;
@@ -4267,9 +4204,7 @@ fn collect_vars<S: Admission + ?Sized>(
 /// Drain in written order, pushing subsequent work in reverse. Visibility,
 /// projection/grouping boundaries and contextual MINUS treatment are unchanged.
 fn note_vars<const RDFLIB: bool, S: Admission + ?Sized>(
-    pending: &mut Vec<VarStep<'_>>,
-    out: &mut VarScope,
-    memory: &mut Memory<'_, S>,
+    pending: &mut Vec<VarStep<'_>>, out: &mut VarScope, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<(), StorageError> {
     while let Some(step) = pending.pop() {
         let pattern = match step {
@@ -4543,8 +4478,7 @@ impl ScopeConstruct {
 /// `lateral_left_scope_includes_a_service_endpoint_variable`.
 #[cfg(debug_assertions)]
 fn compute_lateral_left_scope<S: Admission + ?Sized>(
-    pattern: &GraphPattern,
-    memory: &mut Memory<'_, S>,
+    pattern: &GraphPattern, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<Vec<Variable>, StorageError> {
     visible_variables_with_memory(pattern, memory)
 }
@@ -4693,9 +4627,7 @@ fn compute_lateral_left_scope<S: Admission + ?Sized>(
 /// the introducing construct's own declaration order) is reported, so the
 /// variable named in the error is reproducible across runs.
 fn find_scope_conflict<'a, S: Admission + ?Sized>(
-    outer: &[Variable],
-    pattern: &'a GraphPattern,
-    memory: &mut Memory<'_, S>,
+    outer: &[Variable], pattern: &'a GraphPattern, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<Option<(&'a Variable, ScopeIntro)>, StorageError> {
     if outer.is_empty() {
         return Ok(None);
@@ -4850,9 +4782,7 @@ fn find_scope_conflict<'a, S: Admission + ?Sized>(
 /// condition (the innermost `Extend`, closest to the ungrouped pattern),
 /// preserving the walker's left-to-right determinism contract.
 fn find_group_extend_conflict<'a, S: Admission + ?Sized>(
-    mut inner: &'a GraphPattern,
-    variables: &[Variable],
-    lhs_scope: &VarScope,
+    mut inner: &'a GraphPattern, variables: &[Variable], lhs_scope: &VarScope,
     memory: &mut Memory<'_, S>,
 ) -> std::result::Result<Option<(&'a Variable, ScopeIntro)>, StorageError> {
     let mut grouped = VarScope::default();
@@ -4887,9 +4817,7 @@ fn find_group_extend_conflict<'a, S: Admission + ?Sized>(
 /// into RDF-1.2 quoted triples. Used to enforce the §19.6 rule that a blank node
 /// label may not be shared across two operations of one update request.
 fn collect_quad_bnode_labels<S: Admission + ?Sized>(
-    quads: &[QuadPattern],
-    out: &mut ScopeTable<BlankNode, ()>,
-    memory: &mut Memory<'_, S>,
+    quads: &[QuadPattern], out: &mut ScopeTable<BlankNode, ()>, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<(), StorageError> {
     for quad in quads {
         collect_triple_bnode_labels(&quad.triple, out, memory)?;
@@ -4898,9 +4826,7 @@ fn collect_quad_bnode_labels<S: Admission + ?Sized>(
 }
 
 fn collect_triple_bnode_labels<S: Admission + ?Sized>(
-    triple: &TriplePattern,
-    out: &mut ScopeTable<BlankNode, ()>,
-    memory: &mut Memory<'_, S>,
+    triple: &TriplePattern, out: &mut ScopeTable<BlankNode, ()>, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<(), StorageError> {
     let mut pending = Vec::new();
     memory.reserve(&mut pending, 2)?;
@@ -4924,9 +4850,7 @@ fn collect_triple_bnode_labels<S: Admission + ?Sized>(
 /// RDF 1.2 quoted triples) is a blank node. Blank nodes are disallowed in DELETE
 /// templates and `DELETE WHERE` (SPARQL 1.1 Update §3.1.3 / §3.1.3.2).
 fn reject_blank_in_triple_pattern(
-    t: &TriplePattern,
-    at: usize,
-    memory: &mut Memory<'_, dyn ParserAdmission + '_>,
+    t: &TriplePattern, at: usize, memory: &mut Memory<'_, dyn ParserAdmission + '_>,
 ) -> Result<()> {
     let mut pending = Vec::new();
     memory.reserve(&mut pending, 2)?;
@@ -4974,9 +4898,7 @@ const MODIFIER_TERMINATOR_WORDS: [&str; 8] = [
 /// LimitClause?`). `kw` names the clause that repeated, and `at` is the byte
 /// offset of that repeat's keyword.
 fn repeated_bound_clause(
-    kw: &str,
-    at: usize,
-    memory: &mut Memory<'_, dyn ParserAdmission + '_>,
+    kw: &str, at: usize, memory: &mut Memory<'_, dyn ParserAdmission + '_>,
 ) -> ParseError {
     native_syntax(
         &format_args!(
@@ -4994,10 +4916,7 @@ fn repeated_bound_clause(
 /// `condition` the production that must follow, and `at` is the byte offset where
 /// the first condition was expected.
 fn empty_modifier_clause(
-    clause: &str,
-    condition: &str,
-    at: usize,
-    memory: &mut Memory<'_, dyn ParserAdmission + '_>,
+    clause: &str, condition: &str, at: usize, memory: &mut Memory<'_, dyn ParserAdmission + '_>,
 ) -> ParseError {
     native_syntax(
         &format_args!("{clause} needs at least one {condition}"),
@@ -5080,9 +4999,7 @@ fn split_lang_dir(tag: &str, at: usize) -> Result<(String, Option<BaseDirection>
 }
 
 fn split_lang_dir_with_memory<'a>(
-    tag: &'a str,
-    at: usize,
-    memory: &mut Memory<'_, dyn ParserAdmission + '_>,
+    tag: &'a str, at: usize, memory: &mut Memory<'_, dyn ParserAdmission + '_>,
 ) -> Result<(&'a str, Option<BaseDirection>)> {
     let (lang, dir) = match tag.split_once("--") {
         Some((lang, dir)) => match BaseDirection::from_str_token(dir) {
@@ -5145,8 +5062,7 @@ pub(crate) fn is_langtag(lang: &str) -> bool {
 }
 
 fn native_syntax(
-    reason: &(impl std::fmt::Display + ?Sized),
-    at: usize,
+    reason: &(impl std::fmt::Display + ?Sized), at: usize,
     memory: &mut Memory<'_, dyn ParserAdmission + '_>,
 ) -> ParseError {
     match memory.format(reason) {
@@ -5266,10 +5182,7 @@ pub fn builtin_keyword_arity(name: &str) -> Option<(usize, Option<usize>)> {
 /// Refuse a call of `name` whose argument count `range` does not admit: a syntax error
 /// naming the call and the counts it takes. The one place the refusal is worded.
 pub(crate) fn expect_arity_range(
-    name: &str,
-    range: ArityRange,
-    args: &[Expression],
-    at: usize,
+    name: &str, range: ArityRange, args: &[Expression], at: usize,
     memory: &mut Memory<'_, dyn ParserAdmission + '_>,
 ) -> Result<()> {
     let (min, max) = range;
@@ -5291,9 +5204,7 @@ pub(crate) fn expect_arity_range(
 /// Refuse a keyword built-in call whose argument count its grammar production does not
 /// admit. Every keyword call is finished by `finish_call`, which asks here.
 pub(crate) fn expect_builtin_arity(
-    function: &Function,
-    args: &[Expression],
-    at: usize,
+    function: &Function, args: &[Expression], at: usize,
     memory: &mut Memory<'_, dyn ParserAdmission + '_>,
 ) -> Result<()> {
     let Some(range) = builtin_arity(function) else {

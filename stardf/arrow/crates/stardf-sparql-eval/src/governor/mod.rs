@@ -370,8 +370,7 @@ impl HostStopWatch {
     /// absent.
     #[must_use]
     pub const fn new(
-        cancellation: Option<CancellationFlag>,
-        deadline: Option<WallDeadline>,
+        cancellation: Option<CancellationFlag>, deadline: Option<WallDeadline>,
     ) -> Self {
         Self {
             latched: OnceLock::new(),
@@ -887,8 +886,7 @@ impl GovernorState {
     }
 
     pub(crate) fn with_workspace(
-        governors: &QueryGovernors,
-        workspace: crate::WorkspaceCapability,
+        governors: &QueryGovernors, workspace: crate::WorkspaceCapability,
     ) -> Self {
         Self {
             limits: governors.limits(),
@@ -918,9 +916,7 @@ impl GovernorState {
     /// A shared operation state's records may outlive this query. Each admitted
     /// immutable record retains the producing query's original account.
     pub(crate) fn record_silenced_admitted(
-        &self,
-        invocation: SilencedInvocation,
-        workspace: &crate::WorkspaceCapability,
+        &self, invocation: SilencedInvocation, workspace: &crate::WorkspaceCapability,
     ) -> Result<(), crate::EvalError> {
         let workspace = if workspace.is_bounded() {
             workspace
@@ -985,10 +981,7 @@ impl GovernorState {
     /// of the same loop observed — does not refuse it: on the sequential path that row's
     /// charge was made before the stop was.
     fn charge_work(
-        &self,
-        dimension: ResourceDimension,
-        amount: u64,
-        reported: bool,
+        &self, dimension: ResourceDimension, amount: u64, reported: bool,
     ) -> Result<(), TrippedGovernor> {
         self.charge_work_observed(dimension, amount, reported, |_| {})
     }
@@ -996,11 +989,7 @@ impl GovernorState {
     /// Observe the exact increment at its atomic charge, including a crossing charge.
     /// A sticky refusal performs no increment and therefore calls no observer.
     fn charge_work_observed(
-        &self,
-        dimension: ResourceDimension,
-        amount: u64,
-        reported: bool,
-        record: impl FnOnce(u64),
+        &self, dimension: ResourceDimension, amount: u64, reported: bool, record: impl FnOnce(u64),
     ) -> Result<(), TrippedGovernor> {
         if !reported && let Some(&tripped) = self.tripped.get() {
             return Err(tripped);
@@ -1069,9 +1058,7 @@ impl GovernorState {
     /// Whatever the operation leaves behind is minted into the scratch arena and
     /// charged there.
     pub(crate) fn admit_transient(
-        &self,
-        dimension: ResourceDimension,
-        amount: u64,
+        &self, dimension: ResourceDimension, amount: u64,
     ) -> Result<(), TrippedGovernor> {
         if let Some(&tripped) = self.tripped.get() {
             return Err(tripped);
@@ -1095,9 +1082,7 @@ impl GovernorState {
     /// observation, never against a running sum: this dimension bounds how large one
     /// intermediate bag may get, not how many bags a query is allowed to build.
     pub fn observe_peak(
-        &self,
-        dimension: ResourceDimension,
-        observed: u64,
+        &self, dimension: ResourceDimension, observed: u64,
     ) -> Result<(), TrippedGovernor> {
         if let Some(&tripped) = self.tripped.get() {
             return Err(tripped);
@@ -1289,9 +1274,7 @@ impl GovernorState {
     /// The governor that stopped this execution, once one has.
     #[inline]
     pub fn charge_if_engaged(
-        &self,
-        dimension: ResourceDimension,
-        amount: u64,
+        &self, dimension: ResourceDimension, amount: u64,
     ) -> Result<(), TrippedGovernor> {
         if self.is_engaged_in(dimension) {
             self.charge(dimension, amount)
@@ -1309,9 +1292,7 @@ impl GovernorState {
     /// already-latched governor on overflow, preserving first-trip precedence. With no
     /// prior trip it is exactly [`Self::charge`].
     pub(crate) fn charge_final_output(
-        &self,
-        dimension: ResourceDimension,
-        amount: u64,
+        &self, dimension: ResourceDimension, amount: u64,
     ) -> Result<(), TrippedGovernor> {
         let Some(latched) = self.tripped() else {
             return self.charge(dimension, amount);
@@ -1348,10 +1329,7 @@ impl GovernorState {
     /// Charge engaged fuel and attribute exactly what this charge added, without a
     /// racy counter snapshot. `reported` retains ordered worker replay's stop semantics.
     pub(crate) fn charge_fuel_observed(
-        &self,
-        amount: u64,
-        reported: bool,
-        record: impl FnOnce(u64),
+        &self, amount: u64, reported: bool, record: impl FnOnce(u64),
     ) -> Result<(), TrippedGovernor> {
         if self.is_engaged_in(ResourceDimension::Fuel) {
             self.charge_work_observed(ResourceDimension::Fuel, amount, reported, record)
@@ -1368,9 +1346,7 @@ impl GovernorState {
     /// The governor that stopped this execution, once one has.
     #[inline]
     pub fn observe_peak_if_engaged(
-        &self,
-        dimension: ResourceDimension,
-        observed: u64,
+        &self, dimension: ResourceDimension, observed: u64,
     ) -> Result<(), TrippedGovernor> {
         if self.is_engaged_in(dimension) {
             self.observe_peak(dimension, observed)
@@ -1400,17 +1376,14 @@ impl GovernorState {
     /// parallel round, because every chunk already in flight runs to completion before
     /// this fold discovers the crossing. Reported work is exact.
     pub fn commit_ordered_items(
-        &self,
-        per_item: &[ItemCharge],
+        &self, per_item: &[ItemCharge],
     ) -> Option<(usize, u64, TrippedGovernor)> {
         self.fold_ordered_items(per_item, false, |_| {})
     }
 
     /// The ordered fold with exact attribution of each atomic fuel increment.
     pub(crate) fn commit_ordered_items_observed(
-        &self,
-        per_item: &[ItemCharge],
-        record: impl FnMut(u64),
+        &self, per_item: &[ItemCharge], record: impl FnMut(u64),
     ) -> Option<(usize, u64, TrippedGovernor)> {
         self.fold_ordered_items(per_item, false, record)
     }
@@ -1423,8 +1396,7 @@ impl GovernorState {
     /// same work a second time, and a trip latched after the items were admitted does not
     /// refuse them (see `charge_work`).
     pub(crate) fn commit_reported_items(
-        &self,
-        per_item: &[ItemCharge],
+        &self, per_item: &[ItemCharge],
     ) -> Option<(usize, u64, TrippedGovernor)> {
         self.fold_ordered_items(per_item, true, |_| {})
     }
@@ -1432,10 +1404,7 @@ impl GovernorState {
     /// The one ordered fold behind [`Self::commit_ordered_items`] and
     /// [`Self::commit_reported_items`].
     fn fold_ordered_items(
-        &self,
-        per_item: &[ItemCharge],
-        reported: bool,
-        mut record: impl FnMut(u64),
+        &self, per_item: &[ItemCharge], reported: bool, mut record: impl FnMut(u64),
     ) -> Option<(usize, u64, TrippedGovernor)> {
         let mut committed = 0_u64;
         for (index, item) in per_item.iter().enumerate() {
@@ -2218,10 +2187,7 @@ impl GovernorState {
 /// newline cannot occur in a label, so no entry can be encoded two ways and no two
 /// distinct schedules can encode alike.
 fn write_schedule(
-    out: &mut impl std::fmt::Write,
-    id: &str,
-    version: u32,
-    schedule: &[(&str, u64)],
+    out: &mut impl std::fmt::Write, id: &str, version: u32, schedule: &[(&str, u64)],
 ) -> std::fmt::Result {
     writeln!(out, "{id}")?;
     writeln!(out, "{version}")?;

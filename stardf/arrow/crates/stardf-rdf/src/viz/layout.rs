@@ -554,8 +554,7 @@ fn normalize_graph_geometry(nodes: &mut [VizLayoutNode], edges: &mut [VizLayoutE
 }
 
 fn build_work_graph(
-    scene: &VizScene,
-    options: &VizLayoutOptions,
+    scene: &VizScene, options: &VizLayoutOptions,
 ) -> Result<(BTreeMap<String, WorkNode>, Vec<WorkArc>), VizError> {
     let mut nodes = BTreeMap::new();
     for node in &scene.nodes {
@@ -632,8 +631,7 @@ fn anchor_work_id(edge: &str, anchor: &str) -> String {
 }
 
 fn connected_components(
-    nodes: &BTreeMap<String, WorkNode>,
-    arcs: &[WorkArc],
+    nodes: &BTreeMap<String, WorkNode>, arcs: &[WorkArc],
 ) -> Vec<BTreeSet<String>> {
     let mut adjacency: BTreeMap<String, BTreeSet<String>> = nodes
         .keys()
@@ -671,9 +669,7 @@ fn connected_components(
 }
 
 fn layout_component(
-    component: &BTreeSet<String>,
-    all_nodes: &BTreeMap<String, WorkNode>,
-    all_arcs: &[WorkArc],
+    component: &BTreeSet<String>, all_nodes: &BTreeMap<String, WorkNode>, all_arcs: &[WorkArc],
     options: &VizLayoutOptions,
 ) -> Result<ComponentLayout, VizError> {
     let mut nodes = component
@@ -754,9 +750,7 @@ fn orient_acyclic(component: &BTreeSet<String>, arcs: &[WorkArc]) -> Vec<(String
 }
 
 fn dfs_cycle_break(
-    node: &str,
-    outgoing: &BTreeMap<String, Vec<&WorkArc>>,
-    state: &mut BTreeMap<String, u8>,
+    node: &str, outgoing: &BTreeMap<String, Vec<&WorkArc>>, state: &mut BTreeMap<String, u8>,
     reversed: &mut BTreeSet<String>,
 ) {
     state.insert(node.to_owned(), 1);
@@ -775,8 +769,7 @@ fn dfs_cycle_break(
 }
 
 fn assign_ranks(
-    component: &BTreeSet<String>,
-    oriented: &[(String, String, String)],
+    component: &BTreeSet<String>, oriented: &[(String, String, String)],
 ) -> Result<BTreeMap<String, usize>, VizError> {
     let mut indegree = component
         .iter()
@@ -832,8 +825,7 @@ type Layers = Vec<Vec<String>>;
 type EdgeChains = BTreeMap<String, Vec<String>>;
 
 fn normalize_long_edges(
-    nodes: &mut BTreeMap<String, WorkNode>,
-    oriented: &[(String, String, String)],
+    nodes: &mut BTreeMap<String, WorkNode>, oriented: &[(String, String, String)],
     ranks: &BTreeMap<String, usize>,
 ) -> (Layers, Vec<NormalizedEdge>, EdgeChains) {
     let max_rank = ranks.values().copied().max().unwrap_or_default();
@@ -938,10 +930,8 @@ fn refresh_position_map(layer: &[String], map: &mut BTreeMap<String, i64>) {
 }
 
 fn sort_layer(
-    layer: &mut [String],
-    neighbors: &BTreeMap<String, Vec<String>>,
-    adjacent_positions: &BTreeMap<String, i64>,
-    current: &BTreeMap<String, i64>,
+    layer: &mut [String], neighbors: &BTreeMap<String, Vec<String>>,
+    adjacent_positions: &BTreeMap<String, i64>, current: &BTreeMap<String, i64>,
 ) {
     layer.sort_by(|left, right| {
         let (left_sum, left_count) = barycenter(left, neighbors, adjacent_positions, current);
@@ -953,10 +943,8 @@ fn sort_layer(
 }
 
 fn barycenter(
-    node: &str,
-    neighbors: &BTreeMap<String, Vec<String>>,
-    adjacent_positions: &BTreeMap<String, i64>,
-    current: &BTreeMap<String, i64>,
+    node: &str, neighbors: &BTreeMap<String, Vec<String>>,
+    adjacent_positions: &BTreeMap<String, i64>, current: &BTreeMap<String, i64>,
 ) -> (i64, i64) {
     let positions = neighbors
         .get(node)
@@ -975,9 +963,7 @@ fn barycenter(
 }
 
 fn assign_coordinates(
-    layers: &[Vec<String>],
-    nodes: &BTreeMap<String, WorkNode>,
-    options: &VizLayoutOptions,
+    layers: &[Vec<String>], nodes: &BTreeMap<String, WorkNode>, options: &VizLayoutOptions,
 ) -> (BTreeMap<String, VizRect>, i32, i32) {
     let rank_widths = layers
         .iter()
@@ -1052,10 +1038,7 @@ fn pack_components(components: &[ComponentLayout], options: &VizLayoutOptions) -
 }
 
 fn place_scene_node(
-    scene: &VizSceneNode,
-    rect: VizRect,
-    component: usize,
-    rank: usize,
+    scene: &VizSceneNode, rect: VizRect, component: usize, rank: usize,
 ) -> VizLayoutNode {
     let label_width = (rect.width - NODE_PAD_X * 2).max(CHAR_WIDTH);
     let lines = wrap_text(&scene.label.text, chars_for_width(label_width));
@@ -1157,8 +1140,7 @@ fn measure_anchor(anchor: &VizEdgeAnchor) -> (i32, i32) {
 }
 
 fn build_anchor_lookup<'a>(
-    scene: &'a VizScene,
-    rects: &BTreeMap<String, VizRect>,
+    scene: &'a VizScene, rects: &BTreeMap<String, VizRect>,
 ) -> Result<BTreeMap<(&'a str, &'a str), VizRect>, VizError> {
     let mut anchors = BTreeMap::new();
     for edge in &scene.edges {
@@ -1175,8 +1157,7 @@ fn build_anchor_lookup<'a>(
 }
 
 fn endpoint_point(
-    endpoint: &VizEndpoint,
-    nodes: &BTreeMap<&str, &VizLayoutNode>,
+    endpoint: &VizEndpoint, nodes: &BTreeMap<&str, &VizLayoutNode>,
     anchors: &BTreeMap<(&str, &str), VizRect>,
 ) -> Result<VizPoint, VizError> {
     match endpoint {
@@ -1194,9 +1175,7 @@ fn endpoint_point(
 }
 
 fn endpoint_boundary_point(
-    endpoint: &VizEndpoint,
-    center: VizPoint,
-    toward: VizPoint,
+    endpoint: &VizEndpoint, center: VizPoint, toward: VizPoint,
     anchors: &BTreeMap<(&str, &str), VizRect>,
 ) -> VizPoint {
     let VizEndpoint::EdgeAnchor { edge, anchor } = endpoint else {
@@ -1242,10 +1221,7 @@ fn endpoint_offsets(scene: &VizScene) -> BTreeMap<(String, EndpointSide), i32> {
 }
 
 fn spread_endpoint(
-    endpoint: &VizEndpoint,
-    point: VizPoint,
-    center: VizPoint,
-    offset: i32,
+    endpoint: &VizEndpoint, point: VizPoint, center: VizPoint, offset: i32,
 ) -> VizPoint {
     match endpoint {
         VizEndpoint::NodePort { port, .. } if port == "relation" => VizPoint {
@@ -1319,10 +1295,7 @@ fn port_point(kind: VizPortKind, rect: VizRect) -> VizPoint {
 }
 
 fn route_edge(
-    start: VizPoint,
-    end: VizPoint,
-    required: &[VizPoint],
-    parallel_offset: i32,
+    start: VizPoint, end: VizPoint, required: &[VizPoint], parallel_offset: i32,
 ) -> Vec<VizPoint> {
     if start == end {
         return vec![
@@ -1378,10 +1351,7 @@ fn route_reifies_to_relation(start: VizPoint, end: VizPoint, offset: i32) -> Vec
 }
 
 fn append_orthogonal_segment(
-    points: &mut Vec<VizPoint>,
-    start: VizPoint,
-    end: VizPoint,
-    offset: i32,
+    points: &mut Vec<VizPoint>, start: VizPoint, end: VizPoint, offset: i32,
 ) {
     if points.last().copied() != Some(start) {
         points.push(start);
@@ -1512,10 +1482,7 @@ fn parallel_edge_offsets(scene: &VizScene) -> BTreeMap<String, i32> {
 }
 
 fn place_edge_label(
-    points: &[VizPoint],
-    size: (i32, i32),
-    occupied: &[VizRect],
-    kind: VizSceneEdgeKind,
+    points: &[VizPoint], size: (i32, i32), occupied: &[VizRect], kind: VizSceneEdgeKind,
 ) -> VizRect {
     let (start, end) = preferred_label_segment(points, kind).unwrap_or_else(|| {
         (
@@ -1581,8 +1548,7 @@ fn place_edge_label(
 }
 
 fn preferred_label_segment(
-    points: &[VizPoint],
-    kind: VizSceneEdgeKind,
+    points: &[VizPoint], kind: VizSceneEdgeKind,
 ) -> Option<(VizPoint, VizPoint)> {
     let mut horizontal = points.windows(2).filter_map(|pair| {
         let start = pair[0];
@@ -1625,10 +1591,7 @@ fn longest_segment(points: &[VizPoint]) -> Option<(VizPoint, VizPoint)> {
 }
 
 fn place_badges(
-    badges: &[VizBadge],
-    start_x: i32,
-    start_y: i32,
-    max_width: i32,
+    badges: &[VizBadge], start_x: i32, start_y: i32, max_width: i32,
 ) -> Vec<VizLayoutBadge> {
     let mut out = Vec::with_capacity(badges.len());
     let mut x = start_x;

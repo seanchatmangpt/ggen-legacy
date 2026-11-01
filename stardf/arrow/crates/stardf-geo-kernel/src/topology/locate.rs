@@ -125,9 +125,7 @@ fn locate_in_member(point: &Coord, geometry: &Geometry) -> Set {
 /// is XOR. Flattening collection leaves therefore preserves every nesting level's
 /// original result, including an even positive boundary count becoming interior.
 pub(crate) fn locate_admitted(
-    point: &Coord,
-    geometry: &Geometry,
-    context: &mut crate::MetricContext,
+    point: &Coord, geometry: &Geometry, context: &mut crate::MetricContext,
     progress: &mut crate::context::WorkProgress<'_>,
 ) -> Result<Set, GeoError> {
     let mut parts = Locations::default();
@@ -146,9 +144,7 @@ pub(crate) fn locate_admitted(
 }
 
 fn locate_member_inner<A: SurfaceArithmetic>(
-    point: &Coord,
-    geometry: &Geometry,
-    arithmetic: &mut A,
+    point: &Coord, geometry: &Geometry, arithmetic: &mut A,
 ) -> Result<Set, A::Error> {
     match geometry.body() {
         GeometryBody::Point(member) => locate_point_inner(point, member.as_ref(), arithmetic),
@@ -225,9 +221,7 @@ impl Locations {
 /// Location against a single point member. A point's boundary is empty, so the
 /// only two answers are interior and exterior.
 fn locate_point_inner<A: SurfaceArithmetic>(
-    point: &Coord,
-    member: Option<&Coord>,
-    arithmetic: &mut A,
+    point: &Coord, member: Option<&Coord>, arithmetic: &mut A,
 ) -> Result<Set, A::Error> {
     match member {
         Some(member) if same_planar_inner(point, member, arithmetic)? => Ok(Set::Interior),
@@ -236,9 +230,7 @@ fn locate_point_inner<A: SurfaceArithmetic>(
 }
 
 fn same_planar_inner<A: SurfaceArithmetic>(
-    a: &Coord,
-    b: &Coord,
-    arithmetic: &mut A,
+    a: &Coord, b: &Coord, arithmetic: &mut A,
 ) -> Result<bool, A::Error> {
     Ok(arithmetic.compare(a.x(), b.x())?.is_eq() && arithmetic.compare(a.y(), b.y())?.is_eq())
 }
@@ -246,9 +238,7 @@ fn same_planar_inner<A: SurfaceArithmetic>(
 /// Location against a single curve: its two endpoints are its boundary unless it
 /// is closed, and every other position on it is interior.
 fn locate_curve_inner<A: SurfaceArithmetic>(
-    point: &Coord,
-    coords: &CoordSeq,
-    arithmetic: &mut A,
+    point: &Coord, coords: &CoordSeq, arithmetic: &mut A,
 ) -> Result<Set, A::Error> {
     let (Some(first), Some(last)) = (coords.first(), coords.last()) else {
         return Ok(Set::Exterior);
@@ -270,17 +260,13 @@ fn locate_curve_inner<A: SurfaceArithmetic>(
 
 #[cfg(test)]
 pub(crate) fn locate_surface_with<E>(
-    point: &Coord,
-    rings: &Rings,
-    charge: &mut impl FnMut(u64) -> Result<(), E>,
+    point: &Coord, rings: &Rings, charge: &mut impl FnMut(u64) -> Result<(), E>,
 ) -> Result<Set, E> {
     locate_surface_inner(point, rings, None, false, &mut LegacySurface { charge })
 }
 
 pub(crate) fn locate_surface_admitted(
-    point: &Coord,
-    rings: &[impl AsRef<[Coord]>],
-    admission: &mut ExactAdmission<'_, '_>,
+    point: &Coord, rings: &[impl AsRef<[Coord]>], admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<Set, GeoError> {
     locate_surface_inner(
         point,
@@ -291,10 +277,7 @@ pub(crate) fn locate_surface_admitted(
     )
 }
 pub(crate) fn locate_surface_direction_admitted(
-    point: &Coord,
-    direction: &[Rat; 2],
-    rings: &Rings,
-    admission: &mut ExactAdmission<'_, '_>,
+    point: &Coord, direction: &[Rat; 2], rings: &Rings, admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<Set, GeoError> {
     locate_surface_inner(
         point,
@@ -308,10 +291,7 @@ pub(crate) fn locate_surface_direction_admitted(
 /// The caller proves the formal direction cannot lie on any incident ring edge.
 /// Complete noding plus a strict transverse fragment normal supplies that proof.
 pub(crate) fn locate_surface_direction_transverse_admitted(
-    point: &Coord,
-    direction: &[Rat; 2],
-    rings: &Rings,
-    admission: &mut ExactAdmission<'_, '_>,
+    point: &Coord, direction: &[Rat; 2], rings: &Rings, admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<Set, GeoError> {
     locate_surface_inner(
         point,
@@ -330,27 +310,16 @@ trait SurfaceArithmetic {
     fn charge(&mut self, count: u64) -> Result<(), Self::Error>;
     fn compare(&mut self, a: &Rat, b: &Rat) -> Result<Ordering, Self::Error>;
     fn rational<T>(
-        &mut self,
-        operation: ExactOperation,
-        operands: &[&Rat],
-        count: u64,
+        &mut self, operation: ExactOperation, operands: &[&Rat], count: u64,
         evaluate: impl FnOnce(
             &crate::numerical::ExactValues<'_>,
         ) -> Result<T, purrdf_xsd::integer::LimbScratchError>,
     ) -> Result<T, Self::Error>;
     fn incident(
-        &mut self,
-        point: &Coord,
-        direction: Option<&[Rat; 2]>,
-        a: &Coord,
-        b: &Coord,
+        &mut self, point: &Coord, direction: Option<&[Rat; 2]>, a: &Coord, b: &Coord,
     ) -> Result<bool, Self::Error>;
     fn crossing_direction(
-        &mut self,
-        point: &Coord,
-        direction: &[Rat; 2],
-        a: &Coord,
-        b: &Coord,
+        &mut self, point: &Coord, direction: &[Rat; 2], a: &Coord, b: &Coord,
     ) -> Result<bool, Self::Error>;
 }
 struct LegacySurface<'a, F> {
@@ -367,10 +336,7 @@ impl<E, F: FnMut(u64) -> Result<(), E>> SurfaceArithmetic for LegacySurface<'_, 
     /// Preserve the legacy scalar-work callback's error protocol while the
     /// original exact body runs once; the admitted worker separately meters it.
     fn rational<T>(
-        &mut self,
-        _: ExactOperation,
-        _: &[&Rat],
-        _: u64,
+        &mut self, _: ExactOperation, _: &[&Rat], _: u64,
         evaluate: impl FnOnce(
             &crate::numerical::ExactValues<'_>,
         ) -> Result<T, purrdf_xsd::integer::LimbScratchError>,
@@ -379,11 +345,7 @@ impl<E, F: FnMut(u64) -> Result<(), E>> SurfaceArithmetic for LegacySurface<'_, 
             .expect("resident surface arithmetic has its infallible allocation contract"))
     }
     fn incident(
-        &mut self,
-        point: &Coord,
-        direction: Option<&[Rat; 2]>,
-        a: &Coord,
-        b: &Coord,
+        &mut self, point: &Coord, direction: Option<&[Rat; 2]>, a: &Coord, b: &Coord,
     ) -> Result<bool, E> {
         Ok(direction.map_or_else(
             || on_segment(point, a, b),
@@ -391,11 +353,7 @@ impl<E, F: FnMut(u64) -> Result<(), E>> SurfaceArithmetic for LegacySurface<'_, 
         ))
     }
     fn crossing_direction(
-        &mut self,
-        point: &Coord,
-        direction: &[Rat; 2],
-        a: &Coord,
-        b: &Coord,
+        &mut self, point: &Coord, direction: &[Rat; 2], a: &Coord, b: &Coord,
     ) -> Result<bool, E> {
         Ok(super::segment::ray_crosses_direction(
             point, direction, a, b,
@@ -415,10 +373,7 @@ impl SurfaceArithmetic for AdmittedSurface<'_, '_, '_> {
         self.admission.compare(a, b)
     }
     fn rational<T>(
-        &mut self,
-        operation: ExactOperation,
-        operands: &[&Rat],
-        count: u64,
+        &mut self, operation: ExactOperation, operands: &[&Rat], count: u64,
         evaluate: impl FnOnce(
             &crate::numerical::ExactValues<'_>,
         ) -> Result<T, purrdf_xsd::integer::LimbScratchError>,
@@ -427,11 +382,7 @@ impl SurfaceArithmetic for AdmittedSurface<'_, '_, '_> {
             .expression(operation, operands, count, evaluate)
     }
     fn incident(
-        &mut self,
-        point: &Coord,
-        direction: Option<&[Rat; 2]>,
-        a: &Coord,
-        b: &Coord,
+        &mut self, point: &Coord, direction: Option<&[Rat; 2]>, a: &Coord, b: &Coord,
     ) -> Result<bool, GeoError> {
         if let Some(direction) = direction {
             super::segment::on_segment_direction_admitted(point, direction, a, b, self.admission)
@@ -440,20 +391,13 @@ impl SurfaceArithmetic for AdmittedSurface<'_, '_, '_> {
         }
     }
     fn crossing_direction(
-        &mut self,
-        point: &Coord,
-        direction: &[Rat; 2],
-        a: &Coord,
-        b: &Coord,
+        &mut self, point: &Coord, direction: &[Rat; 2], a: &Coord, b: &Coord,
     ) -> Result<bool, GeoError> {
         super::segment::ray_crosses_direction_admitted(point, direction, a, b, self.admission)
     }
 }
 fn locate_surface_inner<A: SurfaceArithmetic>(
-    point: &Coord,
-    rings: &[impl AsRef<[Coord]>],
-    direction: Option<&[Rat; 2]>,
-    transverse: bool,
+    point: &Coord, rings: &[impl AsRef<[Coord]>], direction: Option<&[Rat; 2]>, transverse: bool,
     arithmetic: &mut A,
 ) -> Result<Set, A::Error> {
     arithmetic.charge(1)?;
@@ -480,10 +424,7 @@ fn locate_surface_inner<A: SurfaceArithmetic>(
 
 /// Whether `point` lies on any edge of `ring`.
 fn on_ring<A: SurfaceArithmetic>(
-    point: &Coord,
-    direction: Option<&[Rat; 2]>,
-    ring: &[Coord],
-    arithmetic: &mut A,
+    point: &Coord, direction: Option<&[Rat; 2]>, ring: &[Coord], arithmetic: &mut A,
 ) -> Result<bool, A::Error> {
     for edge in ring.windows(2) {
         arithmetic.charge(1)?;
@@ -506,10 +447,7 @@ fn on_ring<A: SurfaceArithmetic>(
 /// guarantees `y_j != y_i`, so the division below has a non-zero denominator by
 /// construction.
 fn crossing_number_is_odd<A: SurfaceArithmetic>(
-    point: &Coord,
-    direction: Option<&[Rat; 2]>,
-    ring: &[Coord],
-    arithmetic: &mut A,
+    point: &Coord, direction: Option<&[Rat; 2]>, ring: &[Coord], arithmetic: &mut A,
 ) -> Result<bool, A::Error> {
     let mut inside = false;
     for edge in ring.windows(2) {
@@ -562,10 +500,7 @@ fn crossing_number_is_odd<A: SurfaceArithmetic>(
 }
 
 fn crossing_abscissa<A: SurfaceArithmetic>(
-    from: &Coord,
-    to: &Coord,
-    height: &Rat,
-    arithmetic: &mut A,
+    from: &Coord, to: &Coord, height: &Rat, arithmetic: &mut A,
 ) -> Result<Rat, A::Error> {
     if arithmetic.compare(from.x(), to.x())?.is_eq() {
         return arithmetic.rational(ExactOperation::Linear, &[from.x()], 1, |values| {
@@ -634,8 +569,7 @@ pub fn curve_boundary_points(geometry: &Geometry) -> Vec<Coord> {
 }
 
 pub(crate) fn curve_boundary_points_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-    geometry: &Geometry,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    geometry: &Geometry, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     compare: &mut impl FnMut(&Coord, &Coord) -> Result<Ordering, GeoError>,
     copy: &mut impl FnMut(&Coord) -> Result<Coord, GeoError>,
 ) -> Result<Vec<Coord>, GeoError> {
@@ -663,8 +597,7 @@ pub(crate) fn curve_boundary_points_with_memory<S: purrdf_lex::allocation::Admis
 }
 
 fn curve_endpoints_with_memory<'a, S: purrdf_lex::allocation::Admission + ?Sized>(
-    geometry: &'a Geometry,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    geometry: &'a Geometry, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     compare: &mut impl FnMut(&Coord, &Coord) -> Result<Ordering, GeoError>,
 ) -> Result<Vec<&'a Coord>, GeoError> {
     use core::ops::ControlFlow;
@@ -698,8 +631,7 @@ fn curve_endpoints_with_memory<'a, S: purrdf_lex::allocation::Admission + ?Sized
 }
 
 fn append_chain_endpoints<'a, S: purrdf_lex::allocation::Admission + ?Sized>(
-    coords: &'a CoordSeq,
-    out: &mut Vec<&'a Coord>,
+    coords: &'a CoordSeq, out: &mut Vec<&'a Coord>,
     memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     compare: &mut impl FnMut(&Coord, &Coord) -> Result<Ordering, GeoError>,
 ) -> Result<(), GeoError> {
@@ -765,8 +697,7 @@ pub fn has_area(geometry: &Geometry) -> bool {
 /// # Errors
 /// Preserves checked layout, allocator and original admission refusal.
 pub fn has_area_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-    geometry: &Geometry,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    geometry: &Geometry, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<bool, purrdf_lex::allocation::StorageError> {
     let result = crate::geom::visit_leaves_with_memory(geometry, memory, |geometry| {
         let found = match geometry.body() {
@@ -811,8 +742,7 @@ pub fn topological_dimension(geometry: &Geometry) -> i32 {
 /// # Errors
 /// Preserves the first checked layout, allocator or admission refusal.
 pub fn topological_dimension_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-    geometry: &Geometry,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    geometry: &Geometry, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<i32, purrdf_lex::allocation::StorageError> {
     let mut highest = -1;
     let _: core::ops::ControlFlow<()> =
@@ -895,19 +825,13 @@ pub(crate) fn horizontal_crossing(from: &Coord, to: &Coord, height: &Rat) -> Opt
 }
 
 pub(crate) fn horizontal_crossing_admitted(
-    from: &Coord,
-    to: &Coord,
-    height: &Rat,
-    admission: &mut ExactAdmission<'_, '_>,
+    from: &Coord, to: &Coord, height: &Rat, admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<Option<Rat>, GeoError> {
     horizontal_crossing_inner(from, to, height, &mut AdmittedSurface { admission })
 }
 
 fn horizontal_crossing_inner<A: SurfaceArithmetic>(
-    from: &Coord,
-    to: &Coord,
-    height: &Rat,
-    arithmetic: &mut A,
+    from: &Coord, to: &Coord, height: &Rat, arithmetic: &mut A,
 ) -> Result<Option<Rat>, A::Error> {
     let (low, high) = if !arithmetic.compare(from.y(), to.y())?.is_gt() {
         (from.y(), to.y())

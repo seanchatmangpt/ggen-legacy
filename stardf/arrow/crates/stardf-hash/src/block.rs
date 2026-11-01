@@ -28,10 +28,7 @@ impl<const N: usize> BlockBuffer<N> {
     /// order, and keeping the remainder.
     #[inline]
     pub(crate) fn absorb(
-        &mut self,
-        block_len: usize,
-        mut data: &[u8],
-        mut blocks: impl FnMut(&[u8]),
+        &mut self, block_len: usize, mut data: &[u8], mut blocks: impl FnMut(&[u8]),
     ) {
         debug_assert!(block_len <= N && self.filled < block_len);
         if self.filled > 0 {
@@ -93,8 +90,7 @@ impl<const N: usize> BlockBuffer<N> {
 
     #[cfg(test)]
     pub(crate) fn observe_drop(
-        &mut self,
-        observer: std::sync::Arc<crate::secret::Observer<u8, N>>,
+        &mut self, observer: std::sync::Arc<crate::secret::Observer<u8, N>>,
     ) {
         self.bytes.observe_drop(observer);
     }

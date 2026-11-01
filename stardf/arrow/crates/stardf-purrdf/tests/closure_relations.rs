@@ -137,11 +137,8 @@ const GRAMMAR_QUERY: &str =
 /// Answer `query` over `dataset` under `entailment`, with `relations` deciding whether the
 /// registry is re-derived over the closure.
 fn answer(
-    dataset: &Arc<RdfDataset>,
-    query: &str,
-    entailment: QueryEntailment<'_>,
-    registry: &PropertyFunctionRegistry<'static>,
-    relations: &ClosureRelations<'_>,
+    dataset: &Arc<RdfDataset>, query: &str, entailment: QueryEntailment<'_>,
+    registry: &PropertyFunctionRegistry<'static>, relations: &ClosureRelations<'_>,
 ) -> Result<SparqlResult, purrdf::ReasoningError> {
     let outcome = query_with_entailment_governed(
         &NativeSparqlEngine::new(),

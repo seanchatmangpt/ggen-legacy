@@ -44,10 +44,7 @@ std::thread_local! {
 }
 
 fn allocate(
-    first: [u8; 32],
-    summary: Multiset256,
-    kind: Kind,
-    mut storage: QueryStorage,
+    first: [u8; 32], summary: Multiset256, kind: Kind, mut storage: QueryStorage,
 ) -> Result<Shared<Node>, SegmentedError> {
     storage.run(|memory| memory.add_bytes(Shared::<Node>::allocation_layout().size()))?;
     #[cfg(test)]
@@ -80,10 +77,7 @@ fn leaf(keys: &[[u8; 32]], operation: &SegmentedOperation) -> Result<Shared<Node
 }
 
 fn branch(
-    bit: u16,
-    left: Shared<Node>,
-    right: Shared<Node>,
-    operation: &SegmentedOperation,
+    bit: u16, left: Shared<Node>, right: Shared<Node>, operation: &SegmentedOperation,
 ) -> Result<Shared<Node>, SegmentedError> {
     let mut summary = left.summary;
     summary
@@ -116,9 +110,7 @@ impl EffectiveDirectory {
     /// Positive source composition needs only independently certified keys.
     /// Unchanged members neither resolve RDF values nor copy tree paths.
     pub(super) fn with_source_union<D: DirectoryRead>(
-        &self,
-        source: &D,
-        operation: &SegmentedOperation,
+        &self, source: &D, operation: &SegmentedOperation,
     ) -> Result<Self, SegmentedError>
     where
         SegmentedError: From<D::Error>,
@@ -136,8 +128,7 @@ impl EffectiveDirectory {
     /// Initial capture alone copies the sorted keys. Subsequent versions share
     /// this independent storage, never a prior dataset, provider or local ID.
     pub(super) fn from_source<D: DirectoryRead>(
-        source: &D,
-        operation: &SegmentedOperation,
+        source: &D, operation: &SegmentedOperation,
     ) -> Result<Self, SegmentedError>
     where
         SegmentedError: From<D::Error>,
@@ -186,10 +177,7 @@ impl EffectiveDirectory {
     }
 
     pub(super) fn set(
-        &self,
-        key: [u8; 32],
-        present: bool,
-        operation: &SegmentedOperation,
+        &self, key: [u8; 32], present: bool, operation: &SegmentedOperation,
     ) -> Result<Self, SegmentedError> {
         let Some(root) = &self.root else {
             return Ok(Self {
@@ -324,9 +312,7 @@ impl DirectoryRead for EffectiveDirectory {
     }
 
     fn prefix(
-        &self,
-        mut end: usize,
-        work: &mut SourceDifferenceWork,
+        &self, mut end: usize, work: &mut SourceDifferenceWork,
     ) -> Result<Multiset256, Self::Error> {
         if end > self.len()? {
             return Err(SegmentedError::Corrupt(

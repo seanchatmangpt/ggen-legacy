@@ -125,10 +125,7 @@ pub struct ShapeMapLanguageRefusal {
 }
 impl ShapeMapLanguageRefusal {
     pub(crate) fn new(
-        raw: String,
-        tag_bytes: usize,
-        direction: Option<RdfTextDirection>,
-        cause: LanguageTagError,
+        raw: String, tag_bytes: usize, direction: Option<RdfTextDirection>, cause: LanguageTagError,
     ) -> Self {
         Self {
             raw,

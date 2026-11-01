@@ -8,18 +8,22 @@
 
 [package]
 name = "stardf-events"
-description = "Permissive RDF 1.2 ingestion protocol: the object-safe event sink/source seam both the GTS container and the IR engine depend ON"
-version = "26.9.29"
+# Lane 07-publish-metadata (2026-10-31): v26.11.1 first-class closure —
+# description/keywords/categories/repository workspace-inherited.
+description.workspace = true
+# Lane 08-dual-key (2026-10-31): closure version inherits the workspace 26.11.1.
+version.workspace = true
 edition = "2024"
-publish = false
-repository = "https://github.com/seanchatmangpt/ggen-legacy"
+publish = true
+repository.workspace = true
+homepage.workspace = true
 # This crate is the neutral protocol shared by the IR engine and the GTS
 # container. A pure parse->serialize path routed only through these traits stays
 # under the workspace `MIT OR Apache-2.0 OR MulanPSL-2.0` license.
 license = "MIT OR Apache-2.0 OR MulanPSL-2.0"
 rust-version = "1.98"
-keywords = ["rdf", "rdf-12", "events", "ingestion", "protocol"]
-categories = ["data-structures"]
+keywords.workspace = true
+categories.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -78,4 +82,4 @@ path = "src/lib.rs"
 name = "purrdf_events"
 
 [dependencies]
-stardf-hash = { path = "../stardf-hash" }
+stardf-hash = { workspace = true }

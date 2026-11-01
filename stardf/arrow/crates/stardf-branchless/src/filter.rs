@@ -194,7 +194,7 @@ impl<const N: usize> SwarTagFilter<N> {
         let word = self.table[idx & (N - 1)];
         let empty = crate::swar::find_byte_in_word(word, 0);
         let has_space = (empty != 0) as u64;
-        let shift = (empty.trailing_zeros() & 0x38) as u32;
+        let shift = empty.trailing_zeros() & 0x38;
         let ins = ((tag) as u64).wrapping_shl(shift);
         self.table[idx & (N - 1)] = word | (ins & 0u64.wrapping_sub(has_space));
         has_space == 1
@@ -401,7 +401,7 @@ mod tests {
         let wide1 = ((element) as u128) * (GOLDEN) as u128;
         let fnv = ((element ^ FNV_OFFSET) as u128) * (FNV_PRIME) as u128;
         let wide2 = fnv & 0xFFFF_FFFF_FFFF_FFFF; // low half = mod 2^64
-        // MSB-first scan extracting bits 58..=63 of each 128-bit product.
+                                                 // MSB-first scan extracting bits 58..=63 of each 128-bit product.
         let pos = |prod: u128| -> u32 {
             let mut p = 0u32;
             for bit in (58..=63).rev() {

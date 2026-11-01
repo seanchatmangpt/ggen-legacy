@@ -17,8 +17,7 @@ struct Distinct;
 
 impl GuardEvaluator for Distinct {
     fn evaluate(
-        &self,
-        call: &GuardCall<'_>,
+        &self, call: &GuardCall<'_>,
     ) -> Result<GuardRows, purrdf_datalog::guard::CallbackError> {
         assert_eq!(call.inputs.len(), 2);
         Ok(if call.inputs[0] == call.inputs[1] {
@@ -528,8 +527,7 @@ fn public_host_guarded_evidence_fixpoint_retains_ids_and_first_source_error() {
     }
     impl GuardEvaluator<HostDictionary> for Producer {
         fn evaluate(
-            &self,
-            call: &GuardCall<'_, HostDictionary>,
+            &self, call: &GuardCall<'_, HostDictionary>,
         ) -> Result<GuardRows<u64>, CallbackError<SourceLost>> {
             call.evaluate_lexical(|inputs| {
                 self.calls.fetch_add(1, Ordering::Relaxed);
@@ -865,10 +863,7 @@ fn triple_base_authority_survives_data_growth_and_layer_retraction() {
     struct WithdrawOriginal;
     impl LayerHooks<3> for WithdrawOriginal {
         fn retract(
-            &mut self,
-            layer: usize,
-            _: &RelationStore<TermInterner, 3>,
-            _: &[Fact<()>],
+            &mut self, layer: usize, _: &RelationStore<TermInterner, 3>, _: &[Fact<()>],
         ) -> Result<Vec<Fact<()>>, CallbackError> {
             Ok(if layer == 0 {
                 vec![Fact {
@@ -1062,10 +1057,7 @@ fn triple_negated_base_preserves_seminaive_work_and_limits() {
     use purrdf_datalog::store::TermInterner;
 
     fn filtered_rule<const N: usize>(
-        head: ClauseAtom<N>,
-        mut body: Vec<ClauseAtom<N>>,
-        absent: ClauseAtom<N>,
-        grouped: bool,
+        head: ClauseAtom<N>, mut body: Vec<ClauseAtom<N>>, absent: ClauseAtom<N>, grouped: bool,
     ) -> DlClause<N> {
         let negations = if grouped {
             vec![Negation::new(vec![absent], Vec::new())]
@@ -1507,8 +1499,7 @@ fn interrupted_guarded_commit_counts_only_completed_generating_rounds() {
     struct Mint(AtomicUsize);
     impl GuardEvaluator for Mint {
         fn evaluate(
-            &self,
-            call: &GuardCall<'_>,
+            &self, call: &GuardCall<'_>,
         ) -> Result<GuardRows, purrdf_datalog::guard::CallbackError> {
             self.0.fetch_add(1, Ordering::Relaxed);
             call.evaluate_lexical(|inputs| Ok(vec![vec![format!("minted-{}", inputs[0]).into()]]))
@@ -2056,8 +2047,7 @@ fn native_guard_identities_preserve_recursive_cycle_sources_at_every_barrier() {
     struct Choose(TermId);
     impl GuardEvaluator<TermInterner, 3> for Choose {
         fn evaluate(
-            &self,
-            _: &GuardCall<'_, TermInterner, 3>,
+            &self, _: &GuardCall<'_, TermInterner, 3>,
         ) -> Result<GuardRows, purrdf_datalog::guard::CallbackError> {
             Ok(vec![
                 vec![DictionaryValue::Id(self.0)],
@@ -2162,8 +2152,7 @@ fn native_integer_dictionary_runs_recursive_models_without_lexical_projection() 
     struct KeepIdentity;
     impl GuardEvaluator<IntegerDictionary<'_, u64>, 3> for KeepIdentity {
         fn evaluate(
-            &self,
-            call: &GuardCall<'_, IntegerDictionary<'_, u64>, 3>,
+            &self, call: &GuardCall<'_, IntegerDictionary<'_, u64>, 3>,
         ) -> Result<GuardRows<u64>, purrdf_datalog::guard::CallbackError<IntegerDictionaryError>>
         {
             let DictionaryTerm::Id(id) = call.inputs[0] else {
@@ -2334,8 +2323,7 @@ fn ordered_guard_outputs_probe_later_atoms_without_intermediate_relations() {
     }
     impl GuardEvaluator<TermInterner, 3> for Keys {
         fn evaluate(
-            &self,
-            call: &GuardCall<'_, TermInterner, 3>,
+            &self, call: &GuardCall<'_, TermInterner, 3>,
         ) -> Result<GuardRows, purrdf_datalog::guard::CallbackError> {
             call.evaluate_lexical(|inputs| match call.guard.name() {
                 "place" => {
@@ -2426,8 +2414,7 @@ fn ordered_guard_outputs_constrain_certified_cycles_and_unknown_terms() {
     struct Choose;
     impl GuardEvaluator<TermInterner, 3> for Choose {
         fn evaluate(
-            &self,
-            call: &GuardCall<'_, TermInterner, 3>,
+            &self, call: &GuardCall<'_, TermInterner, 3>,
         ) -> Result<GuardRows, purrdf_datalog::guard::CallbackError> {
             use purrdf_datalog::dictionary::{DictionaryTerm, DictionaryValue};
             let DictionaryTerm::Id(id) = call.inputs[0] else {
@@ -3083,8 +3070,7 @@ fn head_probes_preserve_native_targets_and_original_guard_batches() {
     struct Echo(AtomicUsize);
     impl GuardEvaluator<HostDictionary, 3> for Echo {
         fn evaluate(
-            &self,
-            call: &GuardCall<'_, HostDictionary, 3>,
+            &self, call: &GuardCall<'_, HostDictionary, 3>,
         ) -> Result<GuardRows<u64>, purrdf_datalog::guard::CallbackError<SourceLost>> {
             self.0.fetch_add(1, Ordering::Relaxed);
             let DictionaryTerm::Id(value) = call.inputs[0] else {
@@ -3433,8 +3419,7 @@ fn head_probes_retain_returned_guard_batches_at_every_credit_cut() {
     }
     impl GuardEvaluator<TermInterner, 3> for Batch {
         fn evaluate(
-            &self,
-            _: &GuardCall<'_, TermInterner, 3>,
+            &self, _: &GuardCall<'_, TermInterner, 3>,
         ) -> Result<GuardRows, purrdf_datalog::guard::CallbackError> {
             self.calls.fetch_add(1, Ordering::Relaxed);
             Ok(self
@@ -3697,8 +3682,7 @@ fn head_probes_preserve_factor_cycles_negation_and_independent_proofs() {
 }
 
 fn assert_native_grounding<const N: usize>(
-    rules: &[DlClause<N>],
-    input: &RelationStore<purrdf_datalog::store::TermInterner, N>,
+    rules: &[DlClause<N>], input: &RelationStore<purrdf_datalog::store::TermInterner, N>,
     model: &RelationStore<purrdf_datalog::store::TermInterner, N>,
     mut proofs: Vec<seminaive::Derivation<N>>,
 ) where
@@ -5109,8 +5093,7 @@ fn maintained_quad_callbacks_preserve_original_failures_and_poison_the_owner() {
     }
     impl GuardEvaluator<HostDictionary> for Refuse {
         fn evaluate(
-            &self,
-            call: &GuardCall<'_, HostDictionary>,
+            &self, call: &GuardCall<'_, HostDictionary>,
         ) -> Result<GuardRows<u64>, CallbackError<SourceLost>> {
             assert_eq!(
                 call.inputs,

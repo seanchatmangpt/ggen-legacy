@@ -67,10 +67,7 @@ impl CompatibilityPattern {
     /// # Errors
     /// Preserves allocator, layout, explicit resource and capacity refusals.
     pub fn is_match_with_storage<S: Admission>(
-        &self,
-        input: &str,
-        limits: Limits,
-        storage: S,
+        &self, input: &str, limits: Limits, storage: S,
     ) -> Result<OwnedPatternValue<bool, S>, OwnedPatternError<S>> {
         self.pattern.is_match_with_storage(input, limits, storage)
     }
@@ -80,10 +77,7 @@ impl CompatibilityPattern {
     /// # Errors
     /// Preserves the original physical owner and every operational refusal.
     pub fn find_with_storage<S: Admission>(
-        &self,
-        input: &str,
-        limits: Limits,
-        storage: S,
+        &self, input: &str, limits: Limits, storage: S,
     ) -> Result<OwnedCaptures<S>, OwnedPatternError<S>> {
         self.pattern.find_with_storage(input, limits, storage)
     }
@@ -98,12 +92,7 @@ impl CompatibilityPattern {
     /// Preserves both original matcher and output physical owners. Malformed
     /// replacement text remains lexical; no partial replacement is published.
     pub fn replace_all_with_storage<'h, M: Admission, O: Admission>(
-        &self,
-        input: &'h str,
-        replacement: &str,
-        limits: Limits,
-        matcher: M,
-        output: O,
+        &self, input: &'h str, replacement: &str, limits: Limits, matcher: M, output: O,
     ) -> Result<OwnedReplacement<'h, M, O>, OwnedPatternError<(M, O)>> {
         self.pattern
             .replace_all_with_storage(input, replacement, limits, matcher, output)
@@ -124,10 +113,7 @@ pub type OwnedCompatibilityPattern<S> = OwnedPatternValue<CompatibilityPattern, 
 /// Returns the original account alongside grammar, work, layout, allocator and
 /// admission failures. Failed requests are never immutable cached programs.
 pub fn compile_compatibility_with_storage<S: Admission>(
-    pattern: &str,
-    flags: &str,
-    limits: Limits,
-    storage: S,
+    pattern: &str, flags: &str, limits: Limits, storage: S,
 ) -> Result<OwnedCompatibilityPattern<S>, OwnedPatternError<S>> {
     super::compile::compile_owned_law(
         Law::Compatibility,

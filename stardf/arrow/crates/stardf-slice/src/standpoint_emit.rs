@@ -53,8 +53,7 @@ const STANDPOINT_FILES: &[&str] = &[
 /// Returns [`SliceError`] only for forward compatibility (currently infallible);
 /// the constant bodies cannot fail to render.
 pub fn emit_standpoint_sets(
-    _root: &std::path::Path,
-    vocab: &SliceVocab,
+    _root: &std::path::Path, vocab: &SliceVocab,
 ) -> Result<BTreeMap<String, String>, SliceError> {
     let texts = [
         emit_owl2(vocab),

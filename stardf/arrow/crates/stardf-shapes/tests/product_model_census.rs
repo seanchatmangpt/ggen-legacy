@@ -492,8 +492,7 @@ fn opaque_description(ty: &syn::Type) -> String {
 }
 
 fn render_bounds(
-    bounds: &syn::punctuated::Punctuated<syn::TypeParamBound, syn::Token![+]>,
-    out: &mut String,
+    bounds: &syn::punctuated::Punctuated<syn::TypeParamBound, syn::Token![+]>, out: &mut String,
     mentions: &mut Vec<String>,
 ) {
     for bound in bounds {
@@ -1299,9 +1298,7 @@ fn is_doc_attribute(body: &TokenTree) -> bool {
 /// which fact moved, rather than only that some fact did.
 #[must_use]
 pub fn stage_id_preimage(
-    types: &[ModelType],
-    builtins: &[(String, String)],
-    components: &[(String, String)],
+    types: &[ModelType], builtins: &[(String, String)], components: &[(String, String)],
     analysis: &[(String, String)],
 ) -> String {
     let mut out = String::new();
@@ -1351,9 +1348,7 @@ pub fn stage_id_preimage(
 /// or profile has moved.
 #[must_use]
 pub fn stage_id(
-    types: &[ModelType],
-    builtins: &[(String, String)],
-    components: &[(String, String)],
+    types: &[ModelType], builtins: &[(String, String)], components: &[(String, String)],
     analysis: &[(String, String)],
 ) -> String {
     let preimage = stage_id_preimage(types, builtins, components, analysis);

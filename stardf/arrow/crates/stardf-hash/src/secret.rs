@@ -115,8 +115,7 @@ mod tests {
     use std::sync::atomic::AtomicUsize;
 
     pub(crate) fn observe<T: Copy + Default + PartialEq + core::fmt::Debug, const N: usize>(
-        storage: &mut SecretArray<T, N>,
-        seen: &Arc<AtomicUsize>,
+        storage: &mut SecretArray<T, N>, seen: &Arc<AtomicUsize>,
     ) {
         let seen = seen.clone();
         storage.observe_drop(Arc::new(move |live| {

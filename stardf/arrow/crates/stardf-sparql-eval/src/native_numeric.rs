@@ -94,8 +94,7 @@ impl<'a> NumericFrame<'a> {
     /// Only a Copy scalar may leave after this transient frame is released.
     /// An owned magnitude or text result needs its separate retained carrier.
     pub(crate) fn finish_scalar<T: Copy>(
-        mut self,
-        result: Result<T, LimbScratchError>,
+        mut self, result: Result<T, LimbScratchError>,
     ) -> Result<T, EvalError> {
         if let Some(error) = self.failure.take() {
             return Err(error);
@@ -110,8 +109,7 @@ impl<'a> NumericFrame<'a> {
     /// Transfer a computed native payload into the same immutable owner used by
     /// parsed operands/cache entries. No magnitude leaves with a dropped grant.
     pub(crate) fn finish_value(
-        mut self,
-        result: Result<purrdf_xsd::XsdValue, purrdf_xsd::numeric::NumericOperationError>,
+        mut self, result: Result<purrdf_xsd::XsdValue, purrdf_xsd::numeric::NumericOperationError>,
     ) -> Result<Result<crate::parsed_value::ParsedValue, Option<purrdf_xsd::ErrorCode>>, EvalError>
     {
         if self.failure.is_some() {
@@ -138,8 +136,7 @@ impl<'a> NumericFrame<'a> {
 
     /// Prepared native groups are owned until their final lexical write.
     pub(crate) fn finish_text(
-        self,
-        result: Result<Option<purrdf_xsd::numeric::PreparedNumericText>, LimbScratchError>,
+        self, result: Result<Option<purrdf_xsd::numeric::PreparedNumericText>, LimbScratchError>,
     ) -> Result<Option<NumericText>, EvalError> {
         self.finish_prepared(
             result,
@@ -170,8 +167,7 @@ impl<'a> NumericFrame<'a> {
     }
 
     pub(crate) fn finish_duration_text(
-        self,
-        result: Result<purrdf_xsd::temporal::PreparedDurationText<'_>, LimbScratchError>,
+        self, result: Result<purrdf_xsd::temporal::PreparedDurationText<'_>, LimbScratchError>,
     ) -> Result<DurationText<'_>, EvalError> {
         self.finish_prepared(
             result.map(Some),
@@ -187,8 +183,7 @@ impl<'a> NumericFrame<'a> {
     }
 
     fn finish_prepared<T>(
-        mut self,
-        result: Result<Option<T>, LimbScratchError>,
+        mut self, result: Result<Option<T>, LimbScratchError>,
         temporary_bytes: impl Fn(&T) -> usize,
     ) -> Result<Option<(T, Option<WorkspaceAllocation>)>, EvalError> {
         if self.failure.is_some() {
@@ -212,8 +207,7 @@ impl<'a> NumericFrame<'a> {
     }
 
     pub(crate) fn finish_cast(
-        self,
-        result: Result<Option<purrdf_xsd::XsdValue>, LimbScratchError>,
+        self, result: Result<Option<purrdf_xsd::XsdValue>, LimbScratchError>,
     ) -> Result<Option<crate::parsed_value::ParsedValue>, EvalError> {
         match result {
             Ok(None) => self.finish_scalar(Ok(())).map(|()| None),

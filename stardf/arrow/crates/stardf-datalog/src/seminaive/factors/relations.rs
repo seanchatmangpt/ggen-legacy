@@ -74,11 +74,8 @@ where
 
     /// Resume the active native match before probing another factor or anchor.
     pub(super) fn advance<D: TermDictionary<Id = I>>(
-        &mut self,
-        entry: RuleEntry<'_, N>,
-        snapshot: JoinSnapshot<'_, D, N>,
-        governor: &mut StepGovernor<'_>,
-        evidence: &mut Option<&mut dyn RuleEvidence<D, N>>,
+        &mut self, entry: RuleEntry<'_, N>, snapshot: JoinSnapshot<'_, D, N>,
+        governor: &mut StepGovernor<'_>, evidence: &mut Option<&mut dyn RuleEvidence<D, N>>,
     ) -> Result<(), EvalError<D::Error>> {
         snapshot
             .rel

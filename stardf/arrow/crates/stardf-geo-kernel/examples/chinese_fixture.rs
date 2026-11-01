@@ -66,9 +66,7 @@ fn coordinate(record: &Value, key: &str) -> Result<OperationPoint, Box<dyn std::
 }
 
 fn angular_error(
-    predicted: &OperationPoint,
-    expected: &OperationPoint,
-    prepared: &PreparedGeodesic,
+    predicted: &OperationPoint, expected: &OperationPoint, prepared: &PreparedGeodesic,
     context: &mut MetricContext,
 ) -> Result<Rat, Box<dyn std::error::Error>> {
     let a = LonLat::new(predicted.x.clone(), predicted.y.clone())?;
@@ -78,8 +76,7 @@ fn angular_error(
 }
 
 fn projected_error(
-    predicted: &OperationPoint,
-    expected: &OperationPoint,
+    predicted: &OperationPoint, expected: &OperationPoint,
 ) -> Result<Rat, Box<dyn std::error::Error>> {
     let mut math = CoordinateMath::new(MathLimits::DEFAULT)?;
     let fixed = |value: &Rat, math: &mut CoordinateMath| {

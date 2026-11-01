@@ -96,9 +96,7 @@ where
     /// # Errors
     /// Returns an exact final weight overflow or the original storage refusal.
     pub fn new(
-        watermark: M,
-        changes: impl IntoIterator<Item = ([I; N], i64)>,
-        admission: S,
+        watermark: M, changes: impl IntoIterator<Item = ([I; N], i64)>, admission: S,
     ) -> Result<Self, ChangeError> {
         // Establish payload-before-grant destruction even if construction fails.
         let mut batch = Self {

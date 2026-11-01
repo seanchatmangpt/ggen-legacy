@@ -110,8 +110,7 @@ impl Ulid {
 
     /// Construct a ULID from its timestamp and 80-bit randomness fields.
     pub fn from_parts(
-        timestamp_ms: u64,
-        randomness: [u8; RANDOMNESS_BYTES],
+        timestamp_ms: u64, randomness: [u8; RANDOMNESS_BYTES],
     ) -> Result<Self, UlidError> {
         if timestamp_ms > Self::MAX_TIMESTAMP_MS {
             return Err(UlidError {

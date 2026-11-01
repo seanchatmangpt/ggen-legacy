@@ -10,9 +10,7 @@ use purrdf_hash::error::{ErrorValue, ErrorVisitor, StructuredError, visit_list};
 
 impl<'error> TermRef<'error> {
     pub(super) fn visit_error_record(
-        self,
-        name: Option<&'static str>,
-        visitor: &mut dyn ErrorVisitor<'error>,
+        self, name: Option<&'static str>, visitor: &mut dyn ErrorVisitor<'error>,
     ) {
         match self {
             Self::Iri(iri) => {

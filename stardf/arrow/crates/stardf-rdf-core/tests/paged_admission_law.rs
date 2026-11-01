@@ -164,9 +164,7 @@ mod fuzz {
     ///   posting list across the two side streams, admits the wrong pages for these
     ///   two graphs and nothing else in the corpus would notice.
     fn build_pages(
-        rows: &[(u8, u8, u8, Option<u8>)],
-        page_count: usize,
-        empty_graph_page: usize,
+        rows: &[(u8, u8, u8, Option<u8>)], page_count: usize, empty_graph_page: usize,
         side_graph_page: usize,
     ) -> Vec<Arc<RdfDataset>> {
         let mut builders: Vec<RdfDatasetBuilder> =
@@ -291,11 +289,7 @@ mod fuzz {
     /// renumbers `GlobalTermId`s (the pool/graph/triple/side term VALUES survive
     /// every variant below; their ids do not).
     fn resolve_pattern(
-        paged: &PagedDataset,
-        s_sel: Option<u8>,
-        p_sel: Option<u8>,
-        o_sel: Option<u8>,
-        g_sel: u8,
+        paged: &PagedDataset, s_sel: Option<u8>, p_sel: Option<u8>, o_sel: Option<u8>, g_sel: u8,
     ) -> (
         Option<GlobalTermId>,
         Option<GlobalTermId>,
@@ -368,13 +362,8 @@ mod fuzz {
     /// translation) from what it is NOT about (`RdfDataset`'s own index-permutation
     /// choice, already covered elsewhere).
     fn assert_pattern_matches_reference(
-        variant: &PagedDataset,
-        raw_pages: &[Arc<RdfDataset>],
-        page_map: &[usize],
-        s_sel: Option<u8>,
-        p_sel: Option<u8>,
-        o_sel: Option<u8>,
-        g_sel: u8,
+        variant: &PagedDataset, raw_pages: &[Arc<RdfDataset>], page_map: &[usize],
+        s_sel: Option<u8>, p_sel: Option<u8>, o_sel: Option<u8>, g_sel: u8,
     ) {
         let (s, p, o, g) = resolve_pattern(variant, s_sel, p_sel, o_sel, g_sel);
 
@@ -729,14 +718,8 @@ mod fuzz {
     // `law_inputs` draws, named as the property draws them.
     #[allow(clippy::too_many_arguments)]
     fn paged_quads_for_pattern_matches_linear_scan_over_quads(
-        rows: &[Row],
-        s_sel: Option<u8>,
-        p_sel: Option<u8>,
-        o_sel: Option<u8>,
-        g_sel: u8,
-        page_count: usize,
-        empty_graph_page_raw: usize,
-        side_graph_page_raw: usize,
+        rows: &[Row], s_sel: Option<u8>, p_sel: Option<u8>, o_sel: Option<u8>, g_sel: u8,
+        page_count: usize, empty_graph_page_raw: usize, side_graph_page_raw: usize,
     ) -> Result<(), TestCaseError> {
         let empty_graph_page = empty_graph_page_raw % page_count;
         let side_graph_page = side_graph_page_raw % page_count;
@@ -862,14 +845,8 @@ mod fuzz {
     // `law_inputs` draws, named as the property draws them.
     #[allow(clippy::too_many_arguments)]
     fn paged_cardinality_estimate_upper_bounds_count(
-        rows: &[Row],
-        s_sel: Option<u8>,
-        p_sel: Option<u8>,
-        o_sel: Option<u8>,
-        g_sel: u8,
-        page_count: usize,
-        empty_graph_page_raw: usize,
-        side_graph_page_raw: usize,
+        rows: &[Row], s_sel: Option<u8>, p_sel: Option<u8>, o_sel: Option<u8>, g_sel: u8,
+        page_count: usize, empty_graph_page_raw: usize, side_graph_page_raw: usize,
     ) -> Result<(), TestCaseError> {
         let empty_graph_page = empty_graph_page_raw % page_count;
         let side_graph_page = side_graph_page_raw % page_count;
@@ -1254,11 +1231,8 @@ fn a_genuinely_empty_graph_selective_answer_is_a_complete_ready_result_not_an_er
 /// * It never consulted the per-term, per-AXIS row counts, so `(alice, knows, ?)`
 ///   admitted a page whose only mention of `alice` is on the OBJECT axis.
 fn baseline_admitted_pages(
-    paged: &PagedDataset,
-    s: Option<GlobalTermId>,
-    p: Option<GlobalTermId>,
-    o: Option<GlobalTermId>,
-    g: GraphMatch<GlobalTermId>,
+    paged: &PagedDataset, s: Option<GlobalTermId>, p: Option<GlobalTermId>,
+    o: Option<GlobalTermId>, g: GraphMatch<GlobalTermId>,
 ) -> Vec<PageId> {
     let mut admitted = Vec::new();
     for i in 0..paged.page_count() {

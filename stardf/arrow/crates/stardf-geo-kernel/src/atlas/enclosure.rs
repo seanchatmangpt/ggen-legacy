@@ -17,13 +17,8 @@ use purrdf_xsd::{
 };
 
 pub(crate) fn boundary_intersects_rectangle(
-    region: &PreparedRegion,
-    west: &Rat,
-    east: &Rat,
-    south: &Rat,
-    north: &Rat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    region: &PreparedRegion, west: &Rat, east: &Rat, south: &Rat, north: &Rat,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let (PreparedRegion::Polygons(polygons) | PreparedRegion::ComplementOfPolygons(polygons)) =
         region
@@ -41,18 +36,14 @@ pub(crate) fn boundary_intersects_rectangle(
     )
 }
 pub(super) fn ring_intersects_rectangle(
-    curve: &crate::PreparedCurve,
-    rectangle: [&Rat; 4],
-    context: &mut MetricContext,
+    curve: &crate::PreparedCurve, rectangle: [&Rat; 4], context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     edges_intersect_rectangle(curve.edges().iter(), rectangle, context, progress)
 }
 fn edges_intersect_rectangle<'a>(
-    edges: impl IntoIterator<Item = &'a PreparedEdge>,
-    rectangle: [&Rat; 4],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    edges: impl IntoIterator<Item = &'a PreparedEdge>, rectangle: [&Rat; 4],
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     for edge in edges {
         context.charge_work(1)?;
@@ -88,9 +79,7 @@ fn edges_intersect_rectangle<'a>(
 /// Classify a closed rectangle against the selected physical union boundary,
 /// prepared once by the arrangement home, without restoring internal walls.
 pub(crate) fn selected_boundary_intersects_rectangle(
-    boundary: &super::boundary::RegionBoundary,
-    rectangle: [&Rat; 4],
-    context: &mut MetricContext,
+    boundary: &super::boundary::RegionBoundary, rectangle: [&Rat; 4], context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     for [a, b] in &boundary.edges {
@@ -131,9 +120,7 @@ pub(crate) fn selected_boundary_intersects_rectangle(
 }
 
 fn fragment_intersection(
-    fragment: &arcs::NativeBoundaryFragment,
-    rectangle: [&Rat; 4],
-    context: &mut MetricContext,
+    fragment: &arcs::NativeBoundaryFragment, rectangle: [&Rat; 4], context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     parameter_intersection(
@@ -146,11 +133,8 @@ fn fragment_intersection(
 }
 
 fn parameter_intersection(
-    edge: &PreparedEdge,
-    original: [&arcs::SourceParameter; 2],
-    rectangle: [&Rat; 4],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    edge: &PreparedEdge, original: [&arcs::SourceParameter; 2], rectangle: [&Rat; 4],
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let limit = context.policy().limits().max_precision_bits;
     let mut bits = 80.min(limit);
@@ -196,11 +180,8 @@ fn parameter_intersection(
 /// The outer source-linear segment encloses every possible implicit endpoint;
 /// the inner segment consists entirely of points on the actual fragment.
 fn linear_fragment_intersection(
-    line: &crate::SourceLinearEdge,
-    span: [&Rat; 4],
-    rectangle: [&Rat; 4],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    line: &crate::SourceLinearEdge, span: [&Rat; 4], rectangle: [&Rat; 4],
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Option<bool>, GeoError> {
     let operands = [
         line.start().point().longitude(),
@@ -317,9 +298,7 @@ fn linear_fragment_intersection(
 }
 
 fn point_intersection(
-    endpoint: &crate::LonLat,
-    rectangle: [&Rat; 4],
-    admission: &mut ExactAdmission<'_, '_>,
+    endpoint: &crate::LonLat, rectangle: [&Rat; 4], admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<bool, GeoError> {
     let [west, east, south, north] = rectangle;
     if exact_rational(
@@ -364,9 +343,7 @@ fn point_intersection(
 }
 
 fn linear_intersection(
-    start: &crate::LonLat,
-    end: &crate::LonLat,
-    rectangle: [&Rat; 4],
+    start: &crate::LonLat, end: &crate::LonLat, rectangle: [&Rat; 4],
     admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<bool, GeoError> {
     if point_intersection(start, rectangle, admission)?
@@ -412,9 +389,7 @@ fn linear_intersection(
 }
 
 fn exact_intersection(
-    edge: &PreparedEdge,
-    rectangle: &[&Rat; 4],
-    context: &mut MetricContext,
+    edge: &PreparedEdge, rectangle: &[&Rat; 4], context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let mut admission = ExactAdmission::new(context, progress);
@@ -444,10 +419,7 @@ fn exact_intersection(
 }
 
 fn curve_intersection(
-    edge: &PreparedEdge,
-    rectangle: &[&Rat; 4],
-    bits: u32,
-    context: &mut MetricContext,
+    edge: &PreparedEdge, rectangle: &[&Rat; 4], bits: u32, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     curve_intersection_span(edge, rectangle, None, bits, context, progress)
@@ -457,12 +429,8 @@ fn curve_intersection(
 /// interval is an existence witness; uncertain endpoint tails are excluded only
 /// after their complete images have been proved outside.
 fn curve_intersection_span(
-    edge: &PreparedEdge,
-    rectangle: &[&Rat; 4],
-    span: Option<[&Rat; 4]>,
-    bits: u32,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    edge: &PreparedEdge, rectangle: &[&Rat; 4], span: Option<[&Rat; 4]>, bits: u32,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let policy = context.policy();
     let poles = [
@@ -602,12 +570,8 @@ struct AngularRectangle {
 }
 
 fn image_outside(
-    line: &ChartLine,
-    parameter: &FixedInterval,
-    rectangle: &AngularRectangle,
-    iterations: u32,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    line: &ChartLine, parameter: &FixedInterval, rectangle: &AngularRectangle, iterations: u32,
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, MathError> {
     let AngularRectangle { bounds, poles } = rectangle;
     let ([longitude, latitude], _) = line.image(parameter, iterations, math, progress)?;
@@ -624,24 +588,15 @@ fn image_outside(
         .map(|overlap| !overlap)
 }
 fn image_inside(
-    line: &ChartLine,
-    parameter: &FixedInterval,
-    rectangle: &AngularRectangle,
-    iterations: u32,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    line: &ChartLine, parameter: &FixedInterval, rectangle: &AngularRectangle, iterations: u32,
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, MathError> {
     image_inside_with(line, parameter, rectangle, iterations, true, math, progress)
 }
 
 fn image_inside_with(
-    line: &ChartLine,
-    parameter: &FixedInterval,
-    rectangle: &AngularRectangle,
-    iterations: u32,
-    pole_witness: bool,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    line: &ChartLine, parameter: &FixedInterval, rectangle: &AngularRectangle, iterations: u32,
+    pole_witness: bool, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, MathError> {
     let AngularRectangle { bounds, poles } = rectangle;
     if pole_witness
@@ -658,12 +613,8 @@ fn image_inside_with(
 }
 
 fn longitude_relation(
-    longitude: &FixedInterval,
-    west: &FixedInterval,
-    east: &FixedInterval,
-    inside: bool,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    longitude: &FixedInterval, west: &FixedInterval, east: &FixedInterval, inside: bool,
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, MathError> {
     let period = FixedInterval::pi(math)?.mul(&FixedInterval::from_i64(2, math)?, math)?;
     let quotient = longitude.div(&period, math)?;
@@ -707,12 +658,8 @@ fn longitude_relation(
 }
 
 fn pole_contact(
-    line: &ChartLine,
-    parameter: &FixedInterval,
-    poles: [bool; 2],
-    iterations: u32,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    line: &ChartLine, parameter: &FixedInterval, poles: [bool; 2], iterations: u32,
+    math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, MathError> {
     let ChartLine::Geodesic(line) = line else {
         return Ok(false);

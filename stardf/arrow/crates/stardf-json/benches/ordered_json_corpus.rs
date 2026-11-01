@@ -39,9 +39,7 @@ fn scaling() {
 }
 
 fn files(
-    root: &Path,
-    output: &mut Vec<PathBuf>,
-    symlinks: &mut usize,
+    root: &Path, output: &mut Vec<PathBuf>, symlinks: &mut usize,
 ) -> Result<(), Box<dyn Error>> {
     let metadata = fs::symlink_metadata(root)?;
     if metadata.is_symlink() {

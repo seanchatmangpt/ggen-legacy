@@ -39,9 +39,7 @@ pub trait RdfAstGraphReader {
 
     fn get_single_object(&self, subject: &Self::Node, predicate: &str) -> Option<Self::Node>;
     fn get_datatype_literal(
-        &self,
-        subject: &Self::Node,
-        predicate: &str,
+        &self, subject: &Self::Node, predicate: &str,
     ) -> Option<(String, Option<String>)>;
     fn get_iri(&self, node: &Self::Node) -> Option<String>;
 
@@ -74,9 +72,7 @@ pub trait RdfAstGraphReader {
     /// object on a single-cardinality clause predicate is REFUSAL-01; a
     /// duplicate must not win by document order.
     fn single_object_checked(
-        &self,
-        node: &Self::Node,
-        predicate: &str,
+        &self, node: &Self::Node, predicate: &str,
     ) -> Result<Option<Self::Node>, AstError> {
         if self.object_count(node, predicate) > 1 {
             return Err(AstError::new(
@@ -91,9 +87,7 @@ pub trait RdfAstGraphReader {
 
     /// Deterministically unwraps an rdf:List (rdf:first / rdf:rest chain) up to max_items.
     fn unroll_rdf_list(
-        &self,
-        head: &Self::Node,
-        max_items: usize,
+        &self, head: &Self::Node, max_items: usize,
     ) -> Result<Vec<Self::Node>, AstError> {
         let rdf_first = "http://www.w3.org/1999/02/22-rdf-syntax-ns#first";
         let rdf_rest = "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest";
@@ -274,10 +268,7 @@ pub trait RdfAstGraphReader {
     /// more than one expression discriminator is REFUSAL-01 (never silently
     /// extract one term and let the aggregate vanish).
     fn extract_expr_scoped(
-        &self,
-        node: &Self::Node,
-        depth: usize,
-        pos: ScopePos,
+        &self, node: &Self::Node, depth: usize, pos: ScopePos,
     ) -> Result<SqlExpr, AstError> {
         if depth > 32 {
             return Err(AstError::RecursionLimitExceeded(32));
@@ -912,11 +903,7 @@ pub trait RdfAstGraphReader {
     /// ordinary expression-recursion budget handed to non-composite leaf
     /// extraction.
     fn extract_composite(
-        &self,
-        node: &Self::Node,
-        kind: CompositeKind,
-        comp_depth: usize,
-        depth: usize,
+        &self, node: &Self::Node, kind: CompositeKind, comp_depth: usize, depth: usize,
         pos: ScopePos,
     ) -> Result<SqlExpr, AstError> {
         if comp_depth > MAX_COMPOSITE_DEPTH {
@@ -1041,11 +1028,7 @@ pub trait RdfAstGraphReader {
     /// Wraps an extracted expression in an output alias when the node carries
     /// `sql:alias` (section 7 attribute form; not an expression discriminator).
     fn finish_alias(
-        this: &Self,
-        node: &Self::Node,
-        expr: SqlExpr,
-        sql_ns: &str,
-        pos: ScopePos,
+        this: &Self, node: &Self::Node, expr: SqlExpr, sql_ns: &str, pos: ScopePos,
     ) -> Result<SqlExpr, AstError> {
         if let Some((alias, _)) = this.get_datatype_literal(node, &format!("{sql_ns}alias")) {
             if matches!(
@@ -1208,8 +1191,7 @@ pub trait RdfAstGraphReader {
     /// orderBy/groupBy) are read first; the SQLRDF-01 aliases (selectList/
     /// fromTable/whereClause/havingClause) stay legal.
     fn extract_select_statement(
-        &self,
-        query_node: &Self::Node,
+        &self, query_node: &Self::Node,
     ) -> Result<SelectStatement, AstError> {
         // D1/RUST-7 unknown-predicate gate: every sql:-namespaced predicate on
         // the statement node must be in the closed enum the reader knows how
@@ -1578,8 +1560,7 @@ pub trait RdfAstGraphReader {
     ///   `SET_OP_BY_NAME_KIND` (engine-witnessed: `INTERSECT BY NAME` is a
     ///   real frozen-duckdb parser error).
     fn extract_set_operation_statement(
-        &self,
-        query_node: &Self::Node,
+        &self, query_node: &Self::Node,
     ) -> Result<SetOperationStatement, AstError> {
         const SQL_NS: &str = "http://graphlaw.org/sql#";
         const KNOWN_SQL_PREDICATES: &[&str] = &[
@@ -2089,9 +2070,7 @@ fn require_statement_index(reader: &DatasetReader, n: &String) -> Result<(), Ast
 /// (Connect/Disconnect) and REFUSAL-05 (unbounded mutation) fire per member,
 /// unchanged.
 fn compile_statement_arm(
-    reader: &DatasetReader,
-    node: &String,
-    kind: &str,
+    reader: &DatasetReader, node: &String, kind: &str,
 ) -> Result<CompiledQuery, AstError> {
     match kind {
         "SelectStatement" => reader.extract_select_statement(node)?.compile(),
@@ -2222,8 +2201,7 @@ fn compile_pivot_statement(reader: &DatasetReader, node: &str) -> Result<Compile
 }
 
 fn compile_unpivot_statement(
-    reader: &DatasetReader,
-    node: &str,
+    reader: &DatasetReader, node: &str,
 ) -> Result<CompiledQuery, AstError> {
     const NS: &str = "http://graphlaw.org/sql#";
     let (table, _) = reader
@@ -2414,6 +2392,9 @@ struct DatasetReader {
 #[derive(Clone)]
 enum RdfTerm {
     Iri(String),
+    // `language`/`direction` are carried-but-unread by design (see field
+    // comment below) — preserved for the first consumer, not dropped.
+    #[allow(dead_code)]
     Literal {
         lexical: String,
         datatype: Option<String>,
@@ -2686,10 +2667,7 @@ impl DatasetReader {
     /// silently crossed column/value pairs. RDF graphs are unordered sets;
     /// the ordering source is the admitted Turtle text itself.
     fn assign_pairs(
-        &self,
-        node: &str,
-        col: &str,
-        val: &str,
+        &self, node: &str, col: &str, val: &str,
     ) -> Result<(Vec<String>, Vec<String>), AstError> {
         if let Some(pairs) = self.document_order_assigns(node, col, val) {
             let mut cols = Vec::with_capacity(pairs.len());
@@ -2712,10 +2690,7 @@ impl DatasetReader {
     /// textual statement cannot be located (blank-node subjects, exotic
     /// serializations) — the caller falls back to reader order.
     fn document_order_assigns(
-        &self,
-        node: &str,
-        col: &str,
-        val: &str,
+        &self, node: &str, col: &str, val: &str,
     ) -> Option<Vec<((String, Option<String>), (String, Option<String>))>> {
         // Minimal @prefix map over the document.
         let mut prefixes: HashMap<&str, &str> = HashMap::new();
@@ -2933,8 +2908,7 @@ impl DatasetReader {
     /// plain numeric/boolean token (Turtle types bare integers as
     /// xsd:integer and decimals as xsd:decimal — mirror that).
     fn parse_turtle_literal_token(
-        tok: &str,
-        prefixes: &HashMap<&str, &str>,
+        tok: &str, prefixes: &HashMap<&str, &str>,
     ) -> Option<(String, Option<String>)> {
         if !tok.starts_with('"') {
             // Plain token: numeric or boolean keyword.
@@ -3429,10 +3403,7 @@ impl DatasetReader {
     }
 
     fn write_inline_expr(
-        &self,
-        expr: &SqlExpr,
-        sql: &mut String,
-        depth: usize,
+        &self, expr: &SqlExpr, sql: &mut String, depth: usize,
     ) -> Result<(), AstError> {
         if depth > 32 {
             return Err(AstError::RecursionLimitExceeded(32));
@@ -3825,9 +3796,7 @@ impl RdfAstGraphReader for DatasetReader {
     }
 
     fn get_datatype_literal(
-        &self,
-        subject: &Self::Node,
-        predicate: &str,
+        &self, subject: &Self::Node, predicate: &str,
     ) -> Option<(String, Option<String>)> {
         self.outgoing
             .get(subject)?

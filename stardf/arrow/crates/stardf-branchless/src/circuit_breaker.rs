@@ -278,7 +278,11 @@ mod tests {
 
     // Independent reference oracle: plain if/else.
     fn mask_gt_reference(val: u64, threshold: u64) -> u64 {
-        if val > threshold { !0 } else { 0 }
+        if val > threshold {
+            !0
+        } else {
+            0
+        }
     }
 
     #[test]

@@ -696,8 +696,7 @@ impl RecursionRefusal {
         }
     }
     pub(crate) fn component(
-        reason: RecursionRefusalReason,
-        component: RecursionComponent,
+        reason: RecursionRefusalReason, component: RecursionComponent,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         Ok(Self {
             reason,
@@ -959,11 +958,7 @@ pub struct SparqlTargetDisagreement {
 
 impl SparqlTargetDisagreement {
     pub(crate) const fn new(
-        shape: String,
-        ask: String,
-        select: String,
-        node: String,
-        asked: bool,
+        shape: String, ask: String, select: String, node: String, asked: bool,
     ) -> Self {
         Self {
             shape,
@@ -1046,9 +1041,7 @@ pub struct IllFormedDeclaration {
 
 impl IllFormedDeclaration {
     pub(crate) fn new(
-        declaration: impl Into<String>,
-        rule: Option<&'static str>,
-        message: impl Into<String>,
+        declaration: impl Into<String>, rule: Option<&'static str>, message: impl Into<String>,
     ) -> Self {
         Self {
             declaration: declaration.into(),

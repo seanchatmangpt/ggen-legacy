@@ -48,9 +48,7 @@ use purrdf_iri::vocab::rdf::REST as RDF_REST;
 
 /// Evaluate the same six list functions through their original native owners.
 pub(crate) fn dispatch<D: DatasetView + Sync>(
-    func: PurrdfFn,
-    vals: &[Option<TermValue>],
-    ctx: &mut EvalCtx<'_, D>,
+    func: PurrdfFn, vals: &[Option<TermValue>], ctx: &mut EvalCtx<'_, D>,
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     match func {
         PurrdfFn::ListLength => list_length(ctx, vals),
@@ -69,8 +67,7 @@ pub(crate) fn dispatch<D: DatasetView + Sync>(
 
 /// Return the cardinality without narrowing a native usize through i64.
 fn intern_count<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    count: usize,
+    ctx: &mut EvalCtx<'_, D>, count: usize,
 ) -> Result<SolutionTerm<D::Id>, EvalError> {
     let value = i128::try_from(count).map_err(|_| EvalError::WorkspaceBoundOverflow)?;
     xsd_to_term(
@@ -84,8 +81,7 @@ fn intern_count<D: DatasetView + Sync>(
 
 /// A valid list's exact number of members.
 fn list_length<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    vals: &[Option<TermValue>],
+    ctx: &mut EvalCtx<'_, D>, vals: &[Option<TermValue>],
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let Some(head) = arg(vals, 0) else {
         return Ok(None);
@@ -98,8 +94,7 @@ fn list_length<D: DatasetView + Sync>(
 
 /// Move the selected member with its original lexical/box admission.
 fn list_get<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    vals: &[Option<TermValue>],
+    ctx: &mut EvalCtx<'_, D>, vals: &[Option<TermValue>],
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let (Some(head), Some(index)) = (arg(vals, 0), arg(vals, 1)) else {
         return Ok(None);
@@ -121,8 +116,7 @@ fn list_get<D: DatasetView + Sync>(
 
 /// RDF identity comparisons retain the original term comparison work-list.
 fn list_index_of<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    vals: &[Option<TermValue>],
+    ctx: &mut EvalCtx<'_, D>, vals: &[Option<TermValue>],
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let (Some(head), Some(value)) = (arg(vals, 0), arg(vals, 1)) else {
         return Ok(None);
@@ -139,8 +133,7 @@ fn list_index_of<D: DatasetView + Sync>(
 }
 
 fn list_contains<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    vals: &[Option<TermValue>],
+    ctx: &mut EvalCtx<'_, D>, vals: &[Option<TermValue>],
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let (Some(head), Some(value)) = (arg(vals, 0), arg(vals, 1)) else {
         return Ok(None);
@@ -165,8 +158,7 @@ fn clamped_index(index: i64, len: usize) -> usize {
 }
 
 fn list_slice<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    vals: &[Option<TermValue>],
+    ctx: &mut EvalCtx<'_, D>, vals: &[Option<TermValue>],
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let (Some(head), Some(start), Some(end)) = (arg(vals, 0), arg(vals, 1), arg(vals, 2)) else {
         return Ok(None);
@@ -187,8 +179,7 @@ fn list_slice<D: DatasetView + Sync>(
 }
 
 fn list_concat<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    vals: &[Option<TermValue>],
+    ctx: &mut EvalCtx<'_, D>, vals: &[Option<TermValue>],
 ) -> Result<Option<SolutionTerm<D::Id>>, EvalError> {
     let (Some(a), Some(b)) = (arg(vals, 0), arg(vals, 1)) else {
         return Ok(None);
@@ -208,8 +199,7 @@ fn list_concat<D: DatasetView + Sync>(
 /// owners and fallible metadata destinations. Partial cell emission is rolled
 /// back on every stop/refusal, so an incomplete auxiliary list cannot escape.
 fn materialize_list<D: DatasetView + Sync>(
-    ctx: &mut EvalCtx<'_, D>,
-    members: impl IntoIterator<Item = WorkspaceTerm>,
+    ctx: &mut EvalCtx<'_, D>, members: impl IntoIterator<Item = WorkspaceTerm>,
 ) -> Result<Option<WorkspaceTerm>, EvalError> {
     enum Aborted {
         Stopped,
@@ -276,8 +266,7 @@ fn as_index(value: &TermValue, workspace: &WorkspaceCapability) -> Result<Option
 
 /// Read dataset lists first and this query's minted lists second, unchanged.
 fn walk<D: DatasetView + Sync>(
-    ctx: &EvalCtx<'_, D>,
-    head: &TermValue,
+    ctx: &EvalCtx<'_, D>, head: &TermValue,
 ) -> Result<Option<AdmittedVec<WorkspaceTerm>>, EvalError> {
     if is_nil(head) {
         return Ok(Some(AdmittedVec::new(&ctx.growth)));
@@ -291,8 +280,7 @@ fn walk<D: DatasetView + Sync>(
 /// Keep the strict walk's actual native ID vector alive until every stored
 /// member has been copied through the source's before-allocation term door.
 fn walk_dataset<D: DatasetView + Sync>(
-    ctx: &EvalCtx<'_, D>,
-    head: &TermValue,
+    ctx: &EvalCtx<'_, D>, head: &TermValue,
 ) -> Result<Option<AdmittedVec<WorkspaceTerm>>, EvalError> {
     let Some(head_id) = ctx
         .dataset
@@ -380,8 +368,7 @@ fn walk_dataset<D: DatasetView + Sync>(
 /// therefore cannot grow a nested term work-list. Member equality still uses
 /// the independently admitted native term comparator above.
 fn walk_constructed<D: DatasetView + Sync>(
-    ctx: &EvalCtx<'_, D>,
-    head: &TermValue,
+    ctx: &EvalCtx<'_, D>, head: &TermValue,
 ) -> Result<Option<AdmittedVec<WorkspaceTerm>>, EvalError> {
     let [first, rest, nil] = [
         ctx.growth.iri(RDF_FIRST)?,
@@ -442,8 +429,7 @@ fn walk_constructed<D: DatasetView + Sync>(
 /// Missing rdf:first at the head is unbound; every other strict-walk fault
 /// keeps the original malformed-list message and native data classification.
 fn list_members<Id: Copy + Eq>(
-    head: Id,
-    walked: Result<Vec<Id>, ListError<Id>>,
+    head: Id, walked: Result<Vec<Id>, ListError<Id>>,
     diagnostic: impl FnOnce(&ListError<Id>) -> EvalError,
 ) -> Result<Option<Vec<Id>>, EvalError> {
     match walked {
@@ -1009,8 +995,7 @@ mod tests {
 
     /// Run a SELECT/ASK and return its rows plus the auxiliary constructed graph.
     fn run_constructed(
-        ds: &Arc<RdfDataset>,
-        query: &str,
+        ds: &Arc<RdfDataset>, query: &str,
     ) -> (Vec<Vec<Option<TermValue>>>, DatasetHandle) {
         let env = crate::extension_env::ExtensionEnv::over_options(ext_options())
             .expect("environment over declared parser options");
@@ -1241,8 +1226,7 @@ mod tests {
     /// owned door's, plus the auxiliary constructed graph the borrowed result
     /// exposes.
     fn run_constructed_interned(
-        ds: &Arc<RdfDataset>,
-        query: &str,
+        ds: &Arc<RdfDataset>, query: &str,
     ) -> (Vec<String>, crate::RetainedGraph) {
         let env = crate::extension_env::ExtensionEnv::over_options(ext_options())
             .expect("environment over declared parser options");

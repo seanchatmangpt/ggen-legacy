@@ -50,8 +50,7 @@ impl std::fmt::Debug for Witnesses {
 
 impl Witnesses {
     pub(super) fn new<S: Admission + ?Sized>(
-        count: usize,
-        memory: &mut Memory<'_, S>,
+        count: usize, memory: &mut Memory<'_, S>,
     ) -> Result<Self, StorageError> {
         Ok(Self {
             components: memory.collect(std::iter::repeat_n(None, count))?,
@@ -61,9 +60,7 @@ impl Witnesses {
     }
 
     fn step<S: Admission + ?Sized>(
-        &mut self,
-        step: Step,
-        memory: &mut Memory<'_, S>,
+        &mut self, step: Step, memory: &mut Memory<'_, S>,
     ) -> Result<usize, StorageError> {
         let id = self.steps.len();
         memory.push(&mut self.steps, step)?;
@@ -71,10 +68,7 @@ impl Witnesses {
     }
 
     pub(super) fn edge<S: Admission + ?Sized>(
-        &mut self,
-        components: (usize, usize),
-        roles: (Role, Role),
-        top: Option<Role>,
+        &mut self, components: (usize, usize), roles: (Role, Role), top: Option<Role>,
         memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         let (from, to) = components;
@@ -110,11 +104,7 @@ impl Witnesses {
     }
 
     pub(super) fn extend<S: Admission + ?Sized>(
-        &mut self,
-        from: usize,
-        via: usize,
-        to: usize,
-        memory: &mut Memory<'_, S>,
+        &mut self, from: usize, via: usize, to: usize, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         if self.pairs.get(&(from, to)).is_some() {
             return Ok(());
@@ -140,8 +130,7 @@ impl Witnesses {
     }
 
     pub(super) fn release<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         self.pairs.release(memory)?;
         memory.release_vec(self.components)?;

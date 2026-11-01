@@ -60,9 +60,7 @@ pub fn write_term_value_with_memory<
     W: TextOut + ?Sized,
     S: purrdf_lex::allocation::Admission + ?Sized,
 >(
-    term: &TermValue,
-    out: &mut W,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    term: &TermValue, out: &mut W, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<(), purrdf_lex::allocation::StorageError> {
     enum Step<'t> {
         Term(&'t TermValue),

@@ -769,9 +769,7 @@ macro_rules! reader_probe {
 /// immediately after on the same decoder: the first tag past the declared space
 /// is refused as an unsupported capability rather than panicking or being skipped.
 fn roundtrip_tags<T>(
-    label: &str,
-    declared: u8,
-    samples: &[T],
+    label: &str, declared: u8, samples: &[T],
     write: impl Fn(&mut AstWriter, &T) -> Result<(), ShapesProductError>,
     read: impl Fn(&[u8]) -> Result<(T, usize, crate::shapes::link::ShapeIndex), ShapesProductError>,
 ) {

@@ -65,11 +65,7 @@ impl SegmentedReadLimits {
     /// bytes and simultaneously outstanding term guards. Zero is a hard limit.
     #[must_use]
     pub const fn new(
-        live_bytes: u64,
-        cache_blocks: u32,
-        requests: u32,
-        io_bytes: u64,
-        pins: u32,
+        live_bytes: u64, cache_blocks: u32, requests: u32, io_bytes: u64, pins: u32,
     ) -> Self {
         Self {
             live_bytes,
@@ -485,10 +481,7 @@ impl State {
 // pins prevent eviction; iterator-owned rows can leave the cache while their
 // original reservation stays live. Checked addition is a bound, not a heuristic.
 fn make_room(
-    state: &mut State,
-    budget: &Budget,
-    charge: u64,
-    cache_slots: Option<u32>,
+    state: &mut State, budget: &Budget, charge: u64, cache_slots: Option<u32>,
 ) -> Result<(), SegmentedError> {
     loop {
         let requested = lock_read_state(&budget.state)
@@ -531,10 +524,7 @@ impl std::fmt::Debug for State {
 }
 
 fn reserve_workspace(
-    state: &Arc<Mutex<State>>,
-    budget: &Arc<Budget>,
-    base: &Arc<SegmentedReservation>,
-    bytes: u64,
+    state: &Arc<Mutex<State>>, budget: &Arc<Budget>, base: &Arc<SegmentedReservation>, bytes: u64,
 ) -> Result<SegmentedReservation, SegmentedError> {
     make_room(&mut lock_read_state(state), budget, bytes, None)?;
     budget.reserve(bytes).map(|mut reservation| {
@@ -670,10 +660,7 @@ impl<Identity> SegmentedEvidence<Identity> {
 }
 
 fn checkpoint<I>(
-    snapshot: I,
-    owner: &Arc<Mutex<State>>,
-    budget: &Arc<Budget>,
-    base: &Arc<SegmentedReservation>,
+    snapshot: I, owner: &Arc<Mutex<State>>, budget: &Arc<Budget>, base: &Arc<SegmentedReservation>,
 ) -> SegmentedEvidence<I> {
     let state = lock_read_state(owner);
     let residency = lock_read_state(&budget.state);
@@ -699,8 +686,7 @@ fn checkpoint<I>(
 }
 
 fn owned_workspace(
-    bytes: u64,
-    reserve: impl FnOnce(u64) -> Result<SegmentedReservation, SegmentedError>,
+    bytes: u64, reserve: impl FnOnce(u64) -> Result<SegmentedReservation, SegmentedError>,
 ) -> Result<crate::OwnedWorkspaceReservation<SegmentedError>, SegmentedError> {
     let control = u64::try_from(size_of::<SegmentedReservation>())
         .map_err(|_| SegmentedError::AddressExhausted)?;
@@ -801,8 +787,7 @@ impl SegmentedOperation {
     }
 
     pub(super) fn reserve_owned_workspace(
-        &self,
-        bytes: u64,
+        &self, bytes: u64,
     ) -> Result<crate::OwnedWorkspaceReservation<SegmentedError>, SegmentedError> {
         owned_workspace(bytes, |bytes| self.reserve_workspace(bytes))
     }
@@ -814,9 +799,7 @@ impl SegmentedOperation {
     reserve_workspace_method!(pub(super));
 
     pub(super) fn open(
-        &self,
-        provider: Arc<dyn SegmentedProvider>,
-        receipt: &SegmentedReceipt,
+        &self, provider: Arc<dyn SegmentedProvider>, receipt: &SegmentedReceipt,
     ) -> Result<SegmentedSession, SegmentedError> {
         let error = lock_read_state(&self.state).error.clone();
         if let Some(error) = error {
@@ -975,8 +958,7 @@ impl SegmentedSession {
     /// Refuses mismatched authority/provider identity, unauthenticated bytes,
     /// insufficient pre-allocation budget or an exhausted exact request ledger.
     pub fn open(
-        provider: Arc<dyn SegmentedProvider>,
-        receipt: &SegmentedReceipt,
+        provider: Arc<dyn SegmentedProvider>, receipt: &SegmentedReceipt,
         limits: SegmentedReadLimits,
     ) -> Result<Self, SegmentedError> {
         if provider.snapshot() != receipt.snapshot || provider.byte_len() != receipt.byte_len {
@@ -1034,10 +1016,7 @@ impl SegmentedSession {
     }
 
     fn request(
-        &self,
-        state: &mut State,
-        position: u64,
-        output: &mut [u8],
+        &self, state: &mut State, position: u64, output: &mut [u8],
     ) -> Result<(), SegmentedError> {
         if u64::try_from(state.requests.len()).map_err(|_| SegmentedError::AddressExhausted)?
             >= u64::from(self.limits.requests)
@@ -1088,10 +1067,7 @@ impl SegmentedSession {
     }
 
     fn read_authenticated(
-        &self,
-        state: &mut State,
-        slot: u64,
-        output: &mut [u8],
+        &self, state: &mut State, slot: u64, output: &mut [u8],
     ) -> Result<(), SegmentedError> {
         if slot >= self.receipt.block_count
             || output.len() as u64 != u64::from(self.receipt.block_bytes)
@@ -1373,9 +1349,7 @@ impl SegmentedSession {
     }
 
     fn compare_key(
-        &self,
-        id: GlobalTermId,
-        key: &[u8],
+        &self, id: GlobalTermId, key: &[u8],
     ) -> Result<core::cmp::Ordering, SegmentedError> {
         let (block, index) = self.term_page(id)?;
         if let Some(records) = block.records() {
@@ -1555,9 +1529,7 @@ impl SegmentedSession {
     }
 
     fn lookup_value(
-        &self,
-        value: &TermValue,
-        depth: u32,
+        &self, value: &TermValue, depth: u32,
     ) -> Result<Option<GlobalTermId>, SegmentedError> {
         self.ready()?;
         if depth > 16 {
@@ -1622,8 +1594,7 @@ impl SegmentedSession {
         self.lookup_term_ref(TermRef::Iri(iri))
     }
     fn lookup_term_ref(
-        &self,
-        term: TermRef<'_, GlobalTermId>,
+        &self, term: TermRef<'_, GlobalTermId>,
     ) -> Result<Option<GlobalTermId>, SegmentedError> {
         let size = match term {
             TermRef::Iri(iri) => iri.len().checked_add(5),
@@ -1664,9 +1635,7 @@ impl SegmentedSession {
             .ok_or(SegmentedError::Corrupt("missing summary ordinal"))
     }
     fn summary_range(
-        &self,
-        table: usize,
-        subject: Option<GlobalTermId>,
+        &self, table: usize, subject: Option<GlobalTermId>,
     ) -> Result<core::ops::Range<u64>, SegmentedError> {
         let start = self.header.streams[..table]
             .iter()
@@ -1689,17 +1658,13 @@ impl SegmentedSession {
     }
 
     pub(super) fn stream(
-        &self,
-        table: usize,
-        pattern: Pattern,
+        &self, table: usize, pattern: Pattern,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + '_ {
         self.stream_range(table, pattern, None)
     }
 
     pub(super) fn stream_range<'a>(
-        &'a self,
-        table: usize,
-        pattern: Pattern,
+        &'a self, table: usize, pattern: Pattern,
         values: Option<&'a crate::AnnotationValueRange<'a>>,
     ) -> impl Iterator<Item = QuadIds<GlobalTermId>> + 'a {
         QuadIter {
@@ -1714,9 +1679,7 @@ impl SegmentedSession {
     }
 
     fn summary_values_may_match(
-        &self,
-        summary: &[u8],
-        predicate: Option<GlobalTermId>,
+        &self, summary: &[u8], predicate: Option<GlobalTermId>,
         values: crate::AnnotationValueRange<'_>,
     ) -> Result<bool, SegmentedError> {
         let first = crate::bytes::read_u64_le(summary, 88)
@@ -1804,8 +1767,7 @@ impl SegmentedSession {
     /// before allocation. A read or drain failure refuses completion; partial bytes
     /// already handed to the caller's unpublished drain must be discarded.
     pub fn export_trig_lines(
-        &self,
-        drain: &mut dyn crate::sink::ByteDrain,
+        &self, drain: &mut dyn crate::sink::ByteDrain,
     ) -> Result<SegmentedEvidence, super::SegmentedExportError> {
         let scratch = self
             .header
@@ -2058,10 +2020,7 @@ impl DatasetView for SegmentedSession {
         Some(self)
     }
     fn source_summary(
-        &self,
-        predicate: Self::Id,
-        graph: GraphMatch<Self::Id>,
-        stream: crate::StatisticsStream,
+        &self, predicate: Self::Id, graph: GraphMatch<Self::Id>, stream: crate::StatisticsStream,
     ) -> Result<Option<crate::source::SourceSummary>, Self::ReadError> {
         Self::source_summary(self, predicate, graph, stream)
     }
@@ -2069,8 +2028,7 @@ impl DatasetView for SegmentedSession {
         self.ready().err()
     }
     fn reserve_workspace(
-        &self,
-        bytes: u64,
+        &self, bytes: u64,
     ) -> Result<impl crate::WorkspaceReservation<Error = Self::ReadError> + '_, Self::ReadError>
     {
         Self::reserve_workspace(self, bytes)
@@ -2079,8 +2037,7 @@ impl DatasetView for SegmentedSession {
         Some(self.header.max_owned_term_bytes)
     }
     fn reserve_owned_workspace(
-        &self,
-        bytes: u64,
+        &self, bytes: u64,
     ) -> Option<Result<crate::OwnedWorkspaceReservation<Self::ReadError>, Self::ReadError>> {
         Some(owned_workspace(bytes, |bytes| {
             Self::reserve_workspace(self, bytes)
@@ -2122,30 +2079,20 @@ impl DatasetView for SegmentedSession {
         self.stream(0, (None, None, None, GraphMatch::Any))
     }
     fn quads_for_pattern(
-        &self,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         self.stream(0, (s, p, o, g))
     }
     fn probe_plan(&self, _: bool, _: bool, _: bool, _: GraphMatch<Self::Id>) -> Self::ProbePlan {}
     fn quads_for_pattern_with_plan(
-        &self,
-        (): &Self::ProbePlan,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, (): &Self::ProbePlan, s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         self.quads_for_pattern(s, p, o, g)
     }
     fn cardinality_estimate(
-        &self,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: GraphMatch<Self::Id>,
     ) -> u64 {
         let estimate = (|| {
@@ -2201,10 +2148,7 @@ impl DatasetView for SegmentedSession {
         self.header.terms
     }
     fn workspace_candidate_bound(
-        &self,
-        s: Option<Self::Id>,
-        p: Option<Self::Id>,
-        o: Option<Self::Id>,
+        &self, s: Option<Self::Id>, p: Option<Self::Id>, o: Option<Self::Id>,
         g: GraphMatch<Self::Id>,
     ) -> Result<Option<u64>, Self::ReadError> {
         // This implementation's checked summary/range body already includes
@@ -2233,8 +2177,7 @@ impl DatasetView for SegmentedSession {
         self.stream(1, (Some(reifier), None, None, GraphMatch::Any))
     }
     fn annotations_of_with_graph(
-        &self,
-        reifier: Self::Id,
+        &self, reifier: Self::Id,
     ) -> impl Iterator<Item = (Self::Id, Self::Id, Option<Self::Id>)> + '_ {
         self.stream(2, (Some(reifier), None, None, GraphMatch::Any))
             .map(|row| (row.p, row.o, row.g))
@@ -2243,24 +2186,19 @@ impl DatasetView for SegmentedSession {
         self.stream(2, (None, None, None, GraphMatch::Any))
     }
     fn reifier_quads_in_graph(
-        &self,
-        graph: GraphMatch<Self::Id>,
+        &self, graph: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         self.stream(1, (None, None, None, graph))
     }
     fn annotation_quads_in_graph(
-        &self,
-        graph: GraphMatch<Self::Id>,
+        &self, graph: GraphMatch<Self::Id>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + '_ {
         self.stream(2, (None, None, None, graph))
     }
 
     fn annotation_quads_for_range<'a>(
-        &'a self,
-        predicate: Option<Self::Id>,
-        object: Option<Self::Id>,
-        graph: GraphMatch<Self::Id>,
-        range: &'a crate::AnnotationValueRange<'a>,
+        &'a self, predicate: Option<Self::Id>, object: Option<Self::Id>,
+        graph: GraphMatch<Self::Id>, range: &'a crate::AnnotationValueRange<'a>,
     ) -> impl Iterator<Item = QuadIds<Self::Id>> + 'a {
         self.stream_range(2, (None, predicate, object, graph), Some(range))
     }

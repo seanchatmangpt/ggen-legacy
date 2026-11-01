@@ -152,8 +152,7 @@ fn search_args(needle: &str) -> Vec<Option<TermValue>> {
 }
 
 fn invoke(
-    relation: &TextSearchRelation,
-    bound: &[Option<TermValue>],
+    relation: &TextSearchRelation, bound: &[Option<TermValue>],
 ) -> Result<Vec<PfRow>, EvalError> {
     let refs: Vec<Option<&TermValue>> = bound.iter().map(Option::as_ref).collect();
     let (subject, object) = refs.split_at(relation.arity().subject);
@@ -596,9 +595,7 @@ const LOOKUP_UNOBSERVED: [bool; 6] = [false, false, true, true, true, true];
 
 /// Invoke with `unobserved` reported for the positions it marks.
 fn invoke_unobserved(
-    relation: &TextSearchRelation,
-    bound: &[Option<TermValue>],
-    unobserved: &[bool],
+    relation: &TextSearchRelation, bound: &[Option<TermValue>], unobserved: &[bool],
 ) -> Vec<PfRow> {
     let refs: Vec<Option<&TermValue>> = bound.iter().map(Option::as_ref).collect();
     let (subject, object) = refs.split_at(relation.arity().subject);

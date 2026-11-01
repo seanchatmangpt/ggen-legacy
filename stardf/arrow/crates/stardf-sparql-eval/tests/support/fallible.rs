@@ -31,9 +31,7 @@ pub struct FaultingProvider {
 
 impl FaultingProvider {
     pub fn new(
-        pages: Vec<Arc<RdfDataset>>,
-        byte_lengths: Vec<u64>,
-        fail_page: PageId,
+        pages: Vec<Arc<RdfDataset>>, byte_lengths: Vec<u64>, fail_page: PageId,
         fault: ScriptedFault,
     ) -> Self {
         assert_eq!(pages.len(), byte_lengths.len());

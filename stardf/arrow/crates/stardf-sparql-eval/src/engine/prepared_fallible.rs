@@ -32,12 +32,8 @@ impl NativeSparqlEngine {
         reason = "the error carries both operation receipts and certified partial answers"
     )]
     pub fn query_prepared_governed_fallible_view<'d, D: FallibleDatasetView + Sync>(
-        &'d self,
-        dataset: &'d D,
-        prepared: &PreparedQuery,
-        substitutions: &[(String, TermValue)],
-        options: QueryOptions<'d, 'd>,
-        governors: &QueryGovernors,
+        &'d self, dataset: &'d D, prepared: &PreparedQuery, substitutions: &[(String, TermValue)],
+        options: QueryOptions<'d, 'd>, governors: &QueryGovernors,
     ) -> FallibleSparqlResult<D::Error, GovernedEvidence<D::Evidence>> {
         let reporting = super::reserve_governed_reporting(dataset, governors)?;
         let state = crate::workspace::SharedWorkspace::new_admitted(
@@ -80,12 +76,8 @@ impl NativeSparqlEngine {
         reason = "the error carries both operation receipts and certified partial answers"
     )]
     pub fn query_prepared_governed_fallible_in_operation<'d, D: FallibleDatasetView + Sync>(
-        &'d self,
-        dataset: &'d D,
-        prepared: &PreparedQuery,
-        substitutions: &[(String, TermValue)],
-        options: QueryOptions<'d, 'd>,
-        state: &Arc<GovernorState>,
+        &'d self, dataset: &'d D, prepared: &PreparedQuery, substitutions: &[(String, TermValue)],
+        options: QueryOptions<'d, 'd>, state: &Arc<GovernorState>,
     ) -> FallibleSparqlResult<D::Error, GovernedEvidence<D::Evidence>> {
         preflight_governed_fallible_view(dataset, state)?;
         let reporting = super::reserve_fallible_reporting(dataset).map_err(|error| {
@@ -107,11 +99,8 @@ impl NativeSparqlEngine {
         reason = "the shared boundary preserves the public entry's paired receipts and partial answers"
     )]
     pub(super) fn query_prepared_governed_fallible_admitted<'d, D: FallibleDatasetView + Sync>(
-        &'d self,
-        dataset: &'d D,
-        prepared: &PreparedQuery,
-        substitutions: &AdmittedSubstitutions<'_>,
-        options: QueryOptions<'d, 'd>,
+        &'d self, dataset: &'d D, prepared: &PreparedQuery,
+        substitutions: &AdmittedSubstitutions<'_>, options: QueryOptions<'d, 'd>,
         state: &crate::workspace::SharedWorkspace<GovernorState>,
         workspace: &crate::workspace::QueryWorkspace<D::ReadError>,
     ) -> FallibleSparqlResult<D::Error, GovernedEvidence<D::Evidence>> {
@@ -160,12 +149,8 @@ impl NativeSparqlEngine {
         reason = "the error carries both operation receipts and certified partial answers"
     )]
     pub fn query_prepared_governed_fallible_with_source_view<'d, D: FallibleDatasetView + Sync>(
-        &'d self,
-        dataset: &'d D,
-        prepared: &PreparedQuery,
-        substitutions: &[(String, TermValue)],
-        source: &'d (dyn ServiceResolver + Sync),
-        options: QueryOptions<'d, 'd>,
+        &'d self, dataset: &'d D, prepared: &PreparedQuery, substitutions: &[(String, TermValue)],
+        source: &'d (dyn ServiceResolver + Sync), options: QueryOptions<'d, 'd>,
         governors: &QueryGovernors,
     ) -> FallibleSparqlResult<D::Error, GovernedEvidence<D::Evidence>> {
         self.query_prepared_governed_fallible_view(
@@ -199,12 +184,8 @@ impl NativeSparqlEngine {
         'd,
         D: FallibleDatasetView + Sync,
     >(
-        &'d self,
-        dataset: &'d D,
-        prepared: &PreparedQuery,
-        substitutions: &[(String, TermValue)],
-        source: &'d (dyn ServiceResolver + Sync),
-        options: QueryOptions<'d, 'd>,
+        &'d self, dataset: &'d D, prepared: &PreparedQuery, substitutions: &[(String, TermValue)],
+        source: &'d (dyn ServiceResolver + Sync), options: QueryOptions<'d, 'd>,
         state: &Arc<GovernorState>,
     ) -> FallibleSparqlResult<D::Error, GovernedEvidence<D::Evidence>> {
         self.query_prepared_governed_fallible_in_operation(
@@ -226,8 +207,7 @@ impl NativeSparqlEngine {
     reason = "the checkpoint preserves the public entry's typed paired receipts"
 )]
 pub(super) fn preflight_governed_fallible_view<D: FallibleDatasetView + Sync>(
-    dataset: &D,
-    state: &GovernorState,
+    dataset: &D, state: &GovernorState,
 ) -> Result<(), super::GovernedReadFailure<D>> {
     match dataset.operation_status() {
         ViewOperationStatus::Ready { .. } => Ok(()),

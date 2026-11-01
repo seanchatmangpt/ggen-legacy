@@ -19,9 +19,7 @@ use crate::{DatasetView, RdfDatasetBuilder, TermGuard, TermId, TermRef};
 /// found — and the triple is looked up by their answers once all three exist. Every
 /// term's answer is recorded in `memo` as soon as it is known.
 pub(crate) fn lookup_native_term(
-    source: &crate::RdfDataset,
-    target: &crate::RdfDataset,
-    id: TermId,
+    source: &crate::RdfDataset, target: &crate::RdfDataset, id: TermId,
     scope: impl Fn(crate::BlankScope) -> Option<crate::BlankScope> + Copy,
     memo: &mut FastMap<TermId, Option<TermId>>,
 ) -> Option<TermId> {
@@ -109,8 +107,7 @@ pub fn record_values<D: DatasetView<ReadError = Infallible>>(
 
 /// Resolve only the selected physical rows, after indexed pattern admission.
 pub(crate) fn record_values_from<D: DatasetView<ReadError = Infallible>>(
-    view: &D,
-    rows: impl Iterator<Item = (super::mutable::RecordKind, crate::QuadIds<D::Id>)>,
+    view: &D, rows: impl Iterator<Item = (super::mutable::RecordKind, crate::QuadIds<D::Id>)>,
 ) -> Result<Vec<super::mutable::RecordValues>, crate::RdfDiagnostic> {
     rows.map(|(kind, q)| {
         let value = |id| {
@@ -236,8 +233,7 @@ impl<'builder, 'view, D: DatasetView> DatasetImporter<'builder, 'view, D> {
     /// figure still grows normally; the reserve removes the doubling walk, it does
     /// not bound the import.
     pub fn new(
-        builder: &'builder mut RdfDatasetBuilder,
-        view: &'view D,
+        builder: &'builder mut RdfDatasetBuilder, view: &'view D,
     ) -> Result<Self, DatasetImportError<Infallible>>
     where
         D: DatasetView<ReadError = Infallible>,
@@ -252,8 +248,7 @@ impl<'builder, 'view, D: DatasetView> DatasetImporter<'builder, 'view, D> {
     /// capacity is checked on actual new destination entries during replay, after
     /// duplicate lookup; an unusable source upper bound is not an import refusal.
     pub fn try_new(
-        builder: &'builder mut RdfDatasetBuilder,
-        view: &'view D,
+        builder: &'builder mut RdfDatasetBuilder, view: &'view D,
     ) -> Result<Self, DatasetImportError<D::ReadError>> {
         if let Some(error) = view.read_error() {
             return Err(DatasetImportError::Read(error));
@@ -444,9 +439,7 @@ mod term_walk_tests {
     use core::convert::Infallible;
 
     fn reference_lookup(
-        source: &RdfDataset,
-        target: &RdfDataset,
-        id: TermId,
+        source: &RdfDataset, target: &RdfDataset, id: TermId,
         memo: &mut FastMap<TermId, Option<TermId>>,
     ) -> Option<TermId> {
         if let Some(found) = memo.get(&id) {
@@ -472,8 +465,7 @@ mod term_walk_tests {
     }
 
     fn reference_term<D: DatasetView<ReadError = Infallible>>(
-        importer: &mut DatasetImporter<'_, '_, D>,
-        id: D::Id,
+        importer: &mut DatasetImporter<'_, '_, D>, id: D::Id,
     ) -> TermId {
         if let Some(mapped) = importer.terms.get(&id) {
             importer.stats.reused_terms += 1;

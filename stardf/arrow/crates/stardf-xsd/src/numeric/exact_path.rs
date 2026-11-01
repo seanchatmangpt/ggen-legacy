@@ -73,10 +73,7 @@ pub(crate) fn binop(a: &XsdValue, b: &XsdValue, op: Op) -> Result<XsdValue, XsdE
 /// The admitted exact branch borrows input coefficients instead of cloning
 /// magnitudes for numeric promotion.
 pub(crate) fn binary_admitted(
-    a: &XsdValue,
-    b: &XsdValue,
-    op: super::NumericBinaryOperator,
-    policy: DivisionPolicy,
+    a: &XsdValue, b: &XsdValue, op: super::NumericBinaryOperator, policy: DivisionPolicy,
     admit: &mut impl FnMut(cost::NumericOperationLayout) -> Result<(), crate::bigint::LimbScratchError>,
 ) -> Result<XsdValue, super::NumericOperationError> {
     use super::{NumericBinaryOperator as Operator, NumericOperationError as Error};
@@ -139,9 +136,7 @@ pub(crate) fn binary_admitted(
 #[cold]
 #[inline(never)]
 pub(crate) fn div(
-    a: &XsdValue,
-    b: &XsdValue,
-    policy: DivisionPolicy,
+    a: &XsdValue, b: &XsdValue, policy: DivisionPolicy,
 ) -> Result<XsdValue, XsdError> {
     let (x, y) = (decimal_of(a), decimal_of(b));
     x.div(&y, policy)
@@ -159,8 +154,7 @@ pub(crate) fn div(
 }
 
 pub(crate) fn with_coefficient<T>(
-    value: &XsdValue,
-    use_value: impl FnOnce(&exact::Integer, u32) -> T,
+    value: &XsdValue, use_value: impl FnOnce(&exact::Integer, u32) -> T,
 ) -> T {
     match value {
         XsdValue::Integer { value, .. } => use_value(value, 0),
@@ -170,8 +164,7 @@ pub(crate) fn with_coefficient<T>(
 }
 
 pub(crate) fn cmp_admitted(
-    a: &XsdValue,
-    b: &XsdValue,
+    a: &XsdValue, b: &XsdValue,
     admit: &mut impl FnMut(cost::NumericOperationLayout) -> Result<(), crate::bigint::LimbScratchError>,
 ) -> Result<Ordering, crate::bigint::LimbScratchError> {
     with_coefficient(a, |left, ls| {
@@ -182,9 +175,7 @@ pub(crate) fn cmp_admitted(
 }
 
 pub(crate) fn cmp_ieee_admitted_using(
-    exact: &XsdValue,
-    ieee: f64,
-    storage: &impl crate::bigint::scratch::Allocate,
+    exact: &XsdValue, ieee: f64, storage: &impl crate::bigint::scratch::Allocate,
     admit: &mut impl FnMut(cost::NumericOperationLayout) -> Result<(), crate::bigint::LimbScratchError>,
 ) -> Result<Option<Ordering>, crate::bigint::LimbScratchError> {
     with_coefficient(exact, |coefficient, scale| {

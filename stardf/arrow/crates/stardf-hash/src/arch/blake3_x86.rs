@@ -60,11 +60,7 @@ use core::arch::x86_64::{
 #[inline(never)]
 #[target_feature(enable = "ssse3")]
 pub(super) unsafe fn single<const OUTPUT: usize>(
-    cv: [u32; 8],
-    words: &[u32; 16],
-    counter: u64,
-    length: u32,
-    flags: u32,
+    cv: [u32; 8], words: &[u32; 16], counter: u64, length: u32, flags: u32,
 ) -> [u32; OUTPUT] {
     const {
         assert!(OUTPUT == 8 || OUTPUT == 16);
@@ -158,11 +154,7 @@ pub(super) unsafe fn single<const OUTPUT: usize>(
 #[inline(never)]
 #[target_feature(enable = "avx512f,avx512vl")]
 pub(super) unsafe fn single_avx512<const OUTPUT: usize>(
-    cv: [u32; 8],
-    words: &[u32; 16],
-    counter: u64,
-    length: u32,
-    flags: u32,
+    cv: [u32; 8], words: &[u32; 16], counter: u64, length: u32, flags: u32,
 ) -> [u32; OUTPUT] {
     const {
         assert!(OUTPUT == 8 || OUTPUT == 16);
@@ -246,11 +238,7 @@ pub(super) unsafe fn single_avx512<const OUTPUT: usize>(
 #[inline(never)]
 #[target_feature(enable = "avx2")]
 pub(super) unsafe fn single_avx2<const OUTPUT: usize>(
-    cv: [u32; 8],
-    words: &[u32; 16],
-    counter: u64,
-    length: u32,
-    flags: u32,
+    cv: [u32; 8], words: &[u32; 16], counter: u64, length: u32, flags: u32,
 ) -> [u32; OUTPUT] {
     const {
         assert!(OUTPUT == 8 || OUTPUT == 16);
@@ -358,10 +346,7 @@ pub(super) unsafe fn single_avx2<const OUTPUT: usize>(
 }
 
 pub(crate) fn subtree(
-    bytes: &[u8],
-    counter: u64,
-    height: u32,
-    mode: crate::blake3::Mode,
+    bytes: &[u8], counter: u64, height: u32, mode: crate::blake3::Mode,
 ) -> Option<[u32; 8]> {
     if std::is_x86_feature_detected!("avx512f")
         && (1..=4).contains(&height)
@@ -434,10 +419,7 @@ macro_rules! wide {
 #[inline]
 #[target_feature(enable = "avx512f")]
 unsafe fn chunk_columns16(
-    bytes: &[u8],
-    counter: u64,
-    height: u32,
-    mode: crate::blake3::Mode,
+    bytes: &[u8], counter: u64, height: u32, mode: crate::blake3::Mode,
 ) -> [core::arch::x86_64::__m512i; 8] {
     let mut initial = [_mm512_setzero_si512(); 8];
     for i in 0..8 {
@@ -513,10 +495,7 @@ unsafe fn chunk_columns16(
 
 #[target_feature(enable = "avx512f")]
 unsafe fn subtree_16(
-    bytes: &[u8],
-    counter: u64,
-    height: u32,
-    mode: crate::blake3::Mode,
+    bytes: &[u8], counter: u64, height: u32, mode: crate::blake3::Mode,
 ) -> [u32; 8] {
     // SAFETY: caller checked feature support and the complete live chunks.
     let mut cv = unsafe { chunk_columns16(bytes, counter, height, mode) };
@@ -549,9 +528,7 @@ unsafe fn subtree_16(
 
 /// Returns the two final child CVs so the caller can apply ROOT exactly once.
 pub(crate) fn small_output(
-    bytes: &[u8],
-    counter: u64,
-    mode: crate::blake3::Mode,
+    bytes: &[u8], counter: u64, mode: crate::blake3::Mode,
 ) -> Option<[u32; 16]> {
     if std::is_x86_feature_detected!("avx512f") && (1025..=16384).contains(&bytes.len()) {
         // SAFETY: feature and length checked; the kernel pads all SIMD loads.
@@ -689,9 +666,7 @@ use core::arch::x86_64::{
 };
 
 pub(crate) fn chunks16(
-    bytes: &[u8],
-    counter: u64,
-    mode: crate::blake3::Mode,
+    bytes: &[u8], counter: u64, mode: crate::blake3::Mode,
 ) -> Option<[[u32; 8]; 16]> {
     if std::is_x86_feature_detected!("avx512f") && bytes.len() == 16384 {
         // SAFETY: the feature and complete input batch were checked.
@@ -715,8 +690,7 @@ unsafe fn chunk_cvs16(bytes: &[u8], counter: u64, mode: crate::blake3::Mode) -> 
 }
 
 pub(crate) fn parents16(
-    children: &[[u32; 8]; 32],
-    mode: crate::blake3::Mode,
+    children: &[[u32; 8]; 32], mode: crate::blake3::Mode,
 ) -> Option<[[u32; 8]; 16]> {
     if std::is_x86_feature_detected!("avx512f") {
         // SAFETY: feature checked; the array contains all 32 child CVs.

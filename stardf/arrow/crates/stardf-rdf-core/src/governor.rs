@@ -674,8 +674,7 @@ impl SilencedEvidence {
     /// # Errors
     /// Returns the actual shared-control or concrete lease-box allocator refusal.
     pub fn admitted(
-        records: Vec<SilencedInvocation>,
-        lease: impl EvidenceLease + 'static,
+        records: Vec<SilencedInvocation>, lease: impl EvidenceLease + 'static,
     ) -> Result<Self, SilencedEvidenceAllocationError> {
         if records.is_empty() {
             return Ok(Self::empty());
@@ -797,9 +796,7 @@ impl SilencedEvidenceBuilder {
     /// Returns the actual failed record-vector or string-copy allocation, leaving
     /// the previous evidence intact.
     pub fn insert_admitted(
-        &mut self,
-        invocation: SilencedInvocation,
-        lease: impl EvidenceLease + 'static,
+        &mut self, invocation: SilencedInvocation, lease: impl EvidenceLease + 'static,
     ) -> Result<(), SilencedEvidenceAllocationError> {
         let records = self.copy_insert(invocation)?;
         self.evidence = SilencedEvidence::admitted(records, lease)?;
@@ -811,8 +808,7 @@ impl SilencedEvidenceBuilder {
     /// # Errors
     /// Returns an actual allocation refusal without changing the prior receipt.
     pub fn insert_resident(
-        &mut self,
-        invocation: SilencedInvocation,
+        &mut self, invocation: SilencedInvocation,
     ) -> Result<(), SilencedEvidenceAllocationError> {
         let records = self.copy_insert(invocation)?;
         self.evidence = SilencedEvidence {
@@ -825,8 +821,7 @@ impl SilencedEvidenceBuilder {
     }
 
     fn copy_insert(
-        &self,
-        invocation: SilencedInvocation,
+        &self, invocation: SilencedInvocation,
     ) -> Result<Vec<SilencedInvocation>, std::collections::TryReserveError> {
         fn copy(text: &str) -> Result<String, std::collections::TryReserveError> {
             let mut owned = String::new();

@@ -21,9 +21,7 @@ macro_rules! model_evaluation {
     ($type:ty) => {
         impl $type {
             pub(super) fn evaluate(
-                &self,
-                coordinates: &[FixedInterval],
-                math: &mut CoordinateMath,
+                &self, coordinates: &[FixedInterval], math: &mut CoordinateMath,
                 progress: &mut WorkProgress<'_>,
             ) -> Result<OperationCoordinates, MathError> {
                 self.evaluate_parts(coordinates, false, math, progress)
@@ -39,9 +37,7 @@ model_evaluation!(BilinearGrid);
 /// stable sorter keeps two usize index arrays; cells remain in their original
 /// caller buffer while every detached field uses the common native factory.
 fn native_parameter_array_bytes<T: NativeDetached>(
-    values: &Vec<T>,
-    sort: bool,
-    scalars: &[&[Rat; 2]],
+    values: &Vec<T>, sort: bool, scalars: &[&[Rat; 2]],
     observer: Option<&dyn crate::MetricWorkObserver>,
 ) -> Result<u64, GeoError> {
     use core::alloc::Layout;
@@ -146,10 +142,7 @@ impl Polynomial2d {
     /// # Errors
     /// Refuses repeated powers, terms above declared degree and nonpositive normalization.
     pub fn new(
-        degree: u16,
-        origin: [Rat; 2],
-        scale: [Rat; 2],
-        terms: Vec<PolynomialTerm>,
+        degree: u16, origin: [Rat; 2], scale: [Rat; 2], terms: Vec<PolynomialTerm>,
     ) -> Result<Self, GeoError> {
         Self::new_in_budget(
             degree,
@@ -164,10 +157,7 @@ impl Polynomial2d {
     /// # Errors
     /// Refuses normalization, duplicate powers, declared degree and work/storage limits.
     pub fn new_in_budget(
-        degree: u16,
-        origin: [Rat; 2],
-        scale: [Rat; 2],
-        terms: Vec<PolynomialTerm>,
+        degree: u16, origin: [Rat; 2], scale: [Rat; 2], terms: Vec<PolynomialTerm>,
         budget: &mut crate::PreparationBudget,
     ) -> Result<Self, GeoError> {
         Self::new_in_budget_observed(degree, origin, scale, terms, budget, None)
@@ -180,21 +170,14 @@ impl Polynomial2d {
     /// # Errors
     /// Preserves declaration, native work, cancellation and physical refusal.
     pub fn new_in_budget_metered(
-        degree: u16,
-        origin: [Rat; 2],
-        scale: [Rat; 2],
-        terms: Vec<PolynomialTerm>,
-        budget: &mut crate::PreparationBudget,
-        observer: &mut dyn crate::MetricWorkObserver,
+        degree: u16, origin: [Rat; 2], scale: [Rat; 2], terms: Vec<PolynomialTerm>,
+        budget: &mut crate::PreparationBudget, observer: &mut dyn crate::MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::new_in_budget_observed(degree, origin, scale, terms, budget, Some(observer))
     }
 
     fn new_in_budget_observed(
-        degree: u16,
-        origin: [Rat; 2],
-        scale: [Rat; 2],
-        terms: Vec<PolynomialTerm>,
+        degree: u16, origin: [Rat; 2], scale: [Rat; 2], terms: Vec<PolynomialTerm>,
         budget: &mut crate::PreparationBudget,
         observer: Option<&mut dyn crate::MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
@@ -253,12 +236,8 @@ impl Polynomial2d {
     }
 
     fn new_admitted(
-        degree: u16,
-        origin: [Rat; 2],
-        scale: [Rat; 2],
-        terms: Vec<PolynomialTerm>,
-        values: &crate::numerical::ExactValues<'_>,
-        progress: &mut WorkProgress<'_>,
+        degree: u16, origin: [Rat; 2], scale: [Rat; 2], terms: Vec<PolynomialTerm>,
+        values: &crate::numerical::ExactValues<'_>, progress: &mut WorkProgress<'_>,
     ) -> Result<Self, GeoError> {
         for (axis, value) in scale.iter().enumerate() {
             if !values
@@ -358,10 +337,7 @@ impl Polynomial2d {
     /// approximation or an injectivity assertion; every resulting cell still
     /// requires the original whole-panel proof.
     pub(super) fn axis_quadratic_critical(
-        &self,
-        axis: usize,
-        context: &mut crate::MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &self, axis: usize, context: &mut crate::MetricContext, progress: &mut WorkProgress<'_>,
         retained: &mut u64,
     ) -> Result<Option<Rat>, GeoError> {
         context.charge_work(
@@ -446,8 +422,7 @@ impl Polynomial2d {
     }
 
     pub(super) fn parameters(
-        &self,
-        fields: &mut (impl ParameterSink + ?Sized),
+        &self, fields: &mut (impl ParameterSink + ?Sized),
     ) -> Result<(), GeoError> {
         fields.bytes(&self.degree.to_be_bytes())?;
         for value in self.origin.iter().chain(self.scale.iter()) {
@@ -463,19 +438,14 @@ impl Polynomial2d {
     }
 
     pub(super) fn differential(
-        &self,
-        coordinates: &[FixedInterval],
-        math: &mut CoordinateMath,
+        &self, coordinates: &[FixedInterval], math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<(OperationCoordinates, RootJacobian2), MathError> {
         self.evaluate_parts(coordinates, true, math, progress)
     }
 
     fn evaluate_parts(
-        &self,
-        coordinates: &[FixedInterval],
-        derivatives: bool,
-        math: &mut CoordinateMath,
+        &self, coordinates: &[FixedInterval], derivatives: bool, math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<(OperationCoordinates, RootJacobian2), MathError> {
         let scale = [
@@ -529,10 +499,7 @@ impl Polynomial2d {
 }
 
 fn monomial_derivative(
-    value: &FixedInterval,
-    exponent: u16,
-    other: &FixedInterval,
-    scale: &FixedInterval,
+    value: &FixedInterval, exponent: u16, other: &FixedInterval, scale: &FixedInterval,
     math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     if exponent == 0 {
@@ -545,9 +512,7 @@ fn monomial_derivative(
 }
 
 fn power(
-    value: &FixedInterval,
-    mut exponent: u16,
-    math: &mut CoordinateMath,
+    value: &FixedInterval, mut exponent: u16, math: &mut CoordinateMath,
 ) -> Result<FixedInterval, MathError> {
     let mut result = FixedInterval::from_i64(1, math)?;
     let mut factor = value.clone();
@@ -700,10 +665,7 @@ impl std::error::Error for GridLocationFailure {
 }
 impl GridLocationFailure {
     fn into_geo(
-        self,
-        grid: &BilinearGrid,
-        point: [&Rat; 2],
-        progress: &mut WorkProgress<'_>,
+        self, grid: &BilinearGrid, point: [&Rat; 2], progress: &mut WorkProgress<'_>,
     ) -> GeoError {
         match self {
             Self::Domain(cause) => crate::ModelInputError::location(grid, point, &cause, progress),
@@ -750,11 +712,7 @@ impl BilinearGrid {
     /// # Errors
     /// Refuses invalid extents, overflow and a node count inconsistent with dimensions.
     pub fn new(
-        origin: [Rat; 2],
-        spacing: [Rat; 2],
-        columns: u32,
-        rows: u32,
-        nodes: Vec<Option<GridNode>>,
+        origin: [Rat; 2], spacing: [Rat; 2], columns: u32, rows: u32, nodes: Vec<Option<GridNode>>,
     ) -> Result<Self, GeoError> {
         Self::new_in_budget(
             origin,
@@ -770,11 +728,7 @@ impl BilinearGrid {
     /// # Errors
     /// Refuses shape, exact comparisons and arithmetic limits before validation.
     pub fn new_in_budget(
-        origin: [Rat; 2],
-        spacing: [Rat; 2],
-        columns: u32,
-        rows: u32,
-        nodes: Vec<Option<GridNode>>,
+        origin: [Rat; 2], spacing: [Rat; 2], columns: u32, rows: u32, nodes: Vec<Option<GridNode>>,
         budget: &mut crate::PreparationBudget,
     ) -> Result<Self, GeoError> {
         Self::new_in_budget_observed(origin, spacing, columns, rows, nodes, budget, None)
@@ -786,13 +740,8 @@ impl BilinearGrid {
     /// # Errors
     /// Preserves shape, work, cancellation and physical allocation failures.
     pub fn new_in_budget_metered(
-        origin: [Rat; 2],
-        spacing: [Rat; 2],
-        columns: u32,
-        rows: u32,
-        nodes: Vec<Option<GridNode>>,
-        budget: &mut crate::PreparationBudget,
-        observer: &mut dyn crate::MetricWorkObserver,
+        origin: [Rat; 2], spacing: [Rat; 2], columns: u32, rows: u32, nodes: Vec<Option<GridNode>>,
+        budget: &mut crate::PreparationBudget, observer: &mut dyn crate::MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::new_in_budget_observed(
             origin,
@@ -806,11 +755,7 @@ impl BilinearGrid {
     }
 
     fn new_in_budget_observed(
-        origin: [Rat; 2],
-        spacing: [Rat; 2],
-        columns: u32,
-        rows: u32,
-        nodes: Vec<Option<GridNode>>,
+        origin: [Rat; 2], spacing: [Rat; 2], columns: u32, rows: u32, nodes: Vec<Option<GridNode>>,
         budget: &mut crate::PreparationBudget,
         observer: Option<&mut dyn crate::MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
@@ -855,13 +800,8 @@ impl BilinearGrid {
     }
 
     fn new_admitted(
-        origin: [Rat; 2],
-        spacing: [Rat; 2],
-        columns: u32,
-        rows: u32,
-        nodes: Vec<Option<GridNode>>,
-        values: &crate::numerical::ExactValues<'_>,
-        progress: &mut WorkProgress<'_>,
+        origin: [Rat; 2], spacing: [Rat; 2], columns: u32, rows: u32, nodes: Vec<Option<GridNode>>,
+        values: &crate::numerical::ExactValues<'_>, progress: &mut WorkProgress<'_>,
     ) -> Result<Self, GeoError> {
         let mut reason = if columns < 2 {
             Some(crate::GridConfigurationReason::Columns)
@@ -952,8 +892,7 @@ impl BilinearGrid {
     }
 
     pub(super) fn parameters(
-        &self,
-        fields: &mut (impl ParameterSink + ?Sized),
+        &self, fields: &mut (impl ParameterSink + ?Sized),
     ) -> Result<(), GeoError> {
         for value in self.origin.iter().chain(self.spacing.iter()) {
             fields.rational(value)?;
@@ -1009,10 +948,7 @@ impl BilinearGrid {
     /// Admit the original locator's two rational normalizations, comparisons,
     /// integer quotients and optional exact incident-patch boundary checks.
     pub(super) fn location_cost(
-        &self,
-        x: &Rat,
-        y: &Rat,
-        complete: bool,
+        &self, x: &Rat, y: &Rat, complete: bool,
     ) -> Option<ExactArithmeticCost> {
         let extent = Rat::from_i64(i64::from(self.columns.max(self.rows)));
         let operands = [
@@ -1065,11 +1001,7 @@ impl BilinearGrid {
     }
 
     pub(super) fn location_math(
-        &self,
-        x: &Rat,
-        y: &Rat,
-        complete: bool,
-        math: &mut CoordinateMath,
+        &self, x: &Rat, y: &Rat, complete: bool, math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<(u32, u32), MathError> {
         match self.location_result_math(x, y, complete, math, progress)? {
@@ -1083,11 +1015,7 @@ impl BilinearGrid {
     /// Certification may reject a trial point without rejecting the operation.
     /// Cost admission and both polling boundaries are the declared path's.
     pub(super) fn contains_complete_patch_math(
-        &self,
-        x: &Rat,
-        y: &Rat,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, x: &Rat, y: &Rat, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<bool, MathError> {
         match self.location_result_math(x, y, true, math, progress)? {
             Ok(_) => Ok(true),
@@ -1097,11 +1025,7 @@ impl BilinearGrid {
     }
 
     fn location_error_math(
-        &self,
-        error: GridLocationFailure,
-        x: &Rat,
-        y: &Rat,
-        progress: &mut WorkProgress<'_>,
+        &self, error: GridLocationFailure, x: &Rat, y: &Rat, progress: &mut WorkProgress<'_>,
     ) -> MathError {
         let error = error.into_geo(self, [x, y], progress);
         GeoError::math_validation_failure(
@@ -1112,11 +1036,7 @@ impl BilinearGrid {
     }
 
     fn location_result_math(
-        &self,
-        x: &Rat,
-        y: &Rat,
-        complete: bool,
-        math: &mut CoordinateMath,
+        &self, x: &Rat, y: &Rat, complete: bool, math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<Result<(u32, u32), GridLocationFailure>, MathError> {
         let cost = self
@@ -1151,9 +1071,7 @@ impl BilinearGrid {
         ])
     }
     pub(super) fn validate_point(
-        &self,
-        point: &OperationPoint,
-        progress: &mut WorkProgress<'_>,
+        &self, point: &OperationPoint, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         self.complete_patch(&point.x, &point.y)
             .map_err(|error| error.into_geo(self, [&point.x, &point.y], progress))?;
@@ -1167,9 +1085,7 @@ impl BilinearGrid {
         reason = "The original exact normalized coordinate stays inline until its caller admits the retained diagnostic; boxing the trial refusal would allocate outside that admission"
     )]
     pub(super) fn complete_patch(
-        &self,
-        x: &Rat,
-        y: &Rat,
+        &self, x: &Rat, y: &Rat,
     ) -> Result<(u32, u32), GridLocationFailure> {
         let (column, row) = self.cell(x, y)?;
         let previous = |value: &Rat, axis: usize, index: u32| {
@@ -1198,10 +1114,7 @@ impl BilinearGrid {
     }
 
     pub(super) fn patch_bounds_with(
-        &self,
-        column: u32,
-        row: u32,
-        values: &crate::numerical::ExactValues<'_>,
+        &self, column: u32, row: u32, values: &crate::numerical::ExactValues<'_>,
     ) -> Result<([Rat; 2], [Rat; 2]), purrdf_xsd::integer::LimbScratchError> {
         let lower = [
             values.add(
@@ -1221,11 +1134,7 @@ impl BilinearGrid {
     }
 
     pub(super) fn patch_bounds_math(
-        &self,
-        column: u32,
-        row: u32,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, column: u32, row: u32, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<([Rat; 2], [Rat; 2]), MathError> {
         let indices = [
             Rat::from_i64(i64::from(column)),
@@ -1261,12 +1170,8 @@ impl BilinearGrid {
     }
 
     pub(super) fn evaluate_declared(
-        &self,
-        point: &OperationPoint,
-        coordinates: &[FixedInterval],
-        source_is_exact: bool,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, point: &OperationPoint, coordinates: &[FixedInterval], source_is_exact: bool,
+        math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<OperationCoordinates, MathError> {
         if source_is_exact {
             let (column, row) = self.location_math(&point.x, &point.y, true, math, progress)?;
@@ -1277,19 +1182,14 @@ impl BilinearGrid {
     }
 
     pub(super) fn differential(
-        &self,
-        coordinates: &[FixedInterval],
-        math: &mut CoordinateMath,
+        &self, coordinates: &[FixedInterval], math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<(OperationCoordinates, RootJacobian2), MathError> {
         self.evaluate_parts(coordinates, true, math, progress)
     }
 
     fn evaluate_parts(
-        &self,
-        coordinates: &[FixedInterval],
-        derivatives: bool,
-        math: &mut CoordinateMath,
+        &self, coordinates: &[FixedInterval], derivatives: bool, math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<(OperationCoordinates, RootJacobian2), MathError> {
         let (xmin, xmax) = exact_bounds(&coordinates[0]);
@@ -1433,22 +1333,14 @@ impl BilinearGrid {
     }
 
     pub(super) fn patch_differential(
-        &self,
-        coordinates: &[FixedInterval],
-        column: u32,
-        row: u32,
-        math: &mut CoordinateMath,
+        &self, coordinates: &[FixedInterval], column: u32, row: u32, math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<(OperationCoordinates, RootJacobian2), MathError> {
         self.patch_evaluate(coordinates, column, row, true, math, progress)
     }
 
     pub(super) fn patch_image(
-        &self,
-        coordinates: &[FixedInterval],
-        column: u32,
-        row: u32,
-        math: &mut CoordinateMath,
+        &self, coordinates: &[FixedInterval], column: u32, row: u32, math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<OperationCoordinates, MathError> {
         self.patch_evaluate(coordinates, column, row, false, math, progress)
@@ -1456,13 +1348,8 @@ impl BilinearGrid {
     }
 
     fn patch_evaluate(
-        &self,
-        coordinates: &[FixedInterval],
-        column: u32,
-        row: u32,
-        derivatives: bool,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, coordinates: &[FixedInterval], column: u32, row: u32, derivatives: bool,
+        math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<(OperationCoordinates, RootJacobian2), MathError> {
         progress.math_poll(math)?;
         let corners = self.corners(column, row).map_err(|cause| {

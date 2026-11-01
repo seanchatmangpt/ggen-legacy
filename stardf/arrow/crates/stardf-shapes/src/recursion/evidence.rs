@@ -119,9 +119,7 @@ struct StoredCycles {
 }
 impl ReportOutcome {
     pub(crate) fn publish(
-        &self,
-        conforms: bool,
-        cycles: Vec<RecursionCycle>,
+        &self, conforms: bool, cycles: Vec<RecursionCycle>,
     ) -> Result<(), ShapesError> {
         let mut stored = self
             .cycles

@@ -13,9 +13,7 @@ use std::{hint::black_box, time::Instant};
 static GLOBAL: purrdf_alloc_probe::CountingAllocator = purrdf_alloc_probe::CountingAllocator;
 
 fn measure(
-    name: &str,
-    count: usize,
-    mut run: impl FnMut() -> Result<(), GeoError>,
+    name: &str, count: usize, mut run: impl FnMut() -> Result<(), GeoError>,
 ) -> Result<(), GeoError> {
     run()?;
     let allocations = purrdf_alloc_probe::CurrentThreadWindow::open();
@@ -128,8 +126,7 @@ fn main() -> Result<(), GeoError> {
 }
 
 fn measure_adversarial(
-    prepared: &PreparedGeodesic,
-    context: &mut MetricContext,
+    prepared: &PreparedGeodesic, context: &mut MetricContext,
 ) -> Result<(), GeoError> {
     let decimal = |value: &str| Rat::parse_decimal(value).expect("published exact decimal");
     // CC0 GeodTest rows1,450001,457455. Exact source coordinates

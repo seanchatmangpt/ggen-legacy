@@ -422,9 +422,7 @@ pub(crate) type ExistsVerdict<'h> = &'h dyn Fn(&GraphPattern) -> Option<bool>;
 /// substituted copy's placeholder stands for a body the walk cannot see, and `verdict`
 /// answers for it (`crate::eval::EvalCtx::may_fork_row_loop`).
 pub(crate) fn is_parallel_safe_with(
-    expr: &Expression,
-    registries: SafetyRegistries<'_>,
-    verdict: ExistsVerdict<'_>,
+    expr: &Expression, registries: SafetyRegistries<'_>, verdict: ExistsVerdict<'_>,
 ) -> bool {
     !expr_reaches_unsafe_builtin(expr, registries, verdict)
 }
@@ -500,17 +498,14 @@ fn push_expression_parts<'a>(expr: &'a Expression, pending: &mut Vec<ExpressionP
 /// internally for `EXISTS`. `registries` is threaded through exactly as in
 /// [`is_parallel_safe`].
 pub(crate) fn is_parallel_safe_pattern(
-    pattern: &GraphPattern,
-    registries: SafetyRegistries<'_>,
+    pattern: &GraphPattern, registries: SafetyRegistries<'_>,
 ) -> bool {
     !pattern_reaches_unsafe_builtin(pattern, registries, &|_| None)
 }
 
 /// [`is_parallel_safe_pattern`] with [`is_parallel_safe_with`]'s `verdict`.
 pub(crate) fn is_parallel_safe_pattern_with(
-    pattern: &GraphPattern,
-    registries: SafetyRegistries<'_>,
-    verdict: ExistsVerdict<'_>,
+    pattern: &GraphPattern, registries: SafetyRegistries<'_>, verdict: ExistsVerdict<'_>,
 ) -> bool {
     !pattern_reaches_unsafe_builtin(pattern, registries, verdict)
 }
@@ -528,9 +523,7 @@ pub(crate) fn is_parallel_safe_pattern_with(
 /// identical to the `||` chain over the same parts, including for expressions
 /// whose later arms are never read.
 fn expr_reaches_unsafe_builtin(
-    expr: &Expression,
-    registries: SafetyRegistries<'_>,
-    verdict: ExistsVerdict<'_>,
+    expr: &Expression, registries: SafetyRegistries<'_>, verdict: ExistsVerdict<'_>,
 ) -> bool {
     reaches_unsafe_builtin(Reach::Expression(expr), registries, verdict)
 }
@@ -564,9 +557,7 @@ enum Reach<'a> {
 /// part ends the walk, so a tree of any depth is classified without a machine-stack frame
 /// per level, reading exactly the parts a depth-first `||` chain reads.
 fn reaches_unsafe_builtin(
-    root: Reach<'_>,
-    registries: SafetyRegistries<'_>,
-    verdict: ExistsVerdict<'_>,
+    root: Reach<'_>, registries: SafetyRegistries<'_>, verdict: ExistsVerdict<'_>,
 ) -> bool {
     reaches_unsafe_builtin_admitted(
         root,
@@ -774,9 +765,7 @@ fn function_is_unsafe(f: &Function, registry: &UserFunctionRegistry) -> bool {
 /// Rust — exactly the case this gate exists for — so [`reaches_unsafe_builtin`] decides
 /// it by [`property_function_is_unsafe`] wherever it is reached, this root included.
 fn pattern_reaches_unsafe_builtin(
-    pattern: &GraphPattern,
-    registries: SafetyRegistries<'_>,
-    verdict: ExistsVerdict<'_>,
+    pattern: &GraphPattern, registries: SafetyRegistries<'_>, verdict: ExistsVerdict<'_>,
 ) -> bool {
     reaches_unsafe_builtin(Reach::Pattern(pattern), registries, verdict)
 }
@@ -959,12 +948,8 @@ type MeteredRows<R> = (
 /// One ordered driver for semantic caps, inclusive governor caps and an
 /// unbounded chunk. Local failure outranks ledger/partial construction.
 fn sequential_chunk_map_metered<T, R>(
-    items: &[T],
-    metered: bool,
-    ceiling: usize,
-    stop_when_full: bool,
-    workspace: &crate::WorkspaceCapability,
-    push: &impl Fn(&mut RowSink<'_, R>, &mut u64, &T),
+    items: &[T], metered: bool, ceiling: usize, stop_when_full: bool,
+    workspace: &crate::WorkspaceCapability, push: &impl Fn(&mut RowSink<'_, R>, &mut u64, &T),
 ) -> Result<MeteredRows<R>, EvalError> {
     let mut out = crate::workspace::AdmittedVec::new(workspace);
     let mut ledger = crate::workspace::AdmittedVec::new(workspace);
@@ -1013,10 +998,7 @@ fn sequential_chunk_map_metered<T, R>(
 /// [`crate::governor::GovernorState::commit_ordered_items`] charges for the work that was
 /// actually done and no more.
 pub(crate) fn bounded_chunk_map_metered<T, R>(
-    items: &[T],
-    metered: bool,
-    ceiling: usize,
-    workspace: &crate::WorkspaceCapability,
+    items: &[T], metered: bool, ceiling: usize, workspace: &crate::WorkspaceCapability,
     push: impl Fn(&mut RowSink<'_, R>, &mut u64, &T),
 ) -> Result<
     (
@@ -1035,10 +1017,7 @@ pub(crate) fn bounded_chunk_map_metered<T, R>(
 /// further qualifying row; that row is refused before vector growth and `true` is returned
 /// as the overflow flag.
 pub(crate) fn cell_bounded_chunk_map_metered<T, R>(
-    items: &[T],
-    metered: bool,
-    ceiling: usize,
-    workspace: &crate::WorkspaceCapability,
+    items: &[T], metered: bool, ceiling: usize, workspace: &crate::WorkspaceCapability,
     push: impl Fn(&mut RowSink<'_, R>, &mut u64, &T),
 ) -> Result<MeteredRows<R>, EvalError> {
     sequential_chunk_map_metered(items, metered, ceiling, false, workspace, &push)
@@ -1068,10 +1047,7 @@ pub(crate) fn cell_bounded_chunk_map_metered<T, R>(
 /// dedicated compact record rather than a full per-item resource vector — see
 /// [`ItemCharge`] for both halves of that reasoning.
 pub(crate) fn par_chunk_map_metered<T, R>(
-    sequential: bool,
-    items: &[T],
-    metered: bool,
-    workspace: &crate::WorkspaceCapability,
+    sequential: bool, items: &[T], metered: bool, workspace: &crate::WorkspaceCapability,
     push: impl Fn(&mut RowSink<'_, R>, &mut u64, &T) + Sync,
 ) -> Result<
     (
@@ -1189,9 +1165,7 @@ pub(crate) fn index_in<T>(items: &[T], item: &T) -> usize {
 /// a path whose per-focus-node allocation count is pinned exactly by the shapes
 /// crate's test suite, which is how it was found.
 pub(crate) fn par_chunk_try_map_init<T, S, R, H>(
-    sequential: bool,
-    items: &[T],
-    init: impl Fn() -> S + Sync,
+    sequential: bool, items: &[T], init: impl Fn() -> S + Sync,
     push: impl Fn(&mut S, &mut Vec<R>, &T) -> Result<(), EvalError> + Sync,
     harvest: impl Fn(&mut S) -> H + Sync,
 ) -> Result<(Vec<R>, purrdf_core::SmallVec<[H; 1]>), EvalError>
@@ -1372,8 +1346,7 @@ impl<R> WorkerRows<R> for OrderedRows<R> {
 /// checked sizing and successful reservation. Overflow, an unrepresentable layout
 /// or an allocator refusal returns a typed failure.
 pub(crate) fn reserve_concatenated_rows<R>(
-    mut out: Vec<R>,
-    lengths: impl IntoIterator<Item = usize>,
+    mut out: Vec<R>, lengths: impl IntoIterator<Item = usize>,
 ) -> Result<Vec<R>, EvalError> {
     let total = checked_row_count(lengths)?;
     out.try_reserve_exact(total.saturating_sub(out.len()))
@@ -1398,10 +1371,7 @@ fn checked_row_count(lengths: impl IntoIterator<Item = usize>) -> Result<usize, 
 /// chunked fork; their checkpoints and ordered ledgers still observe each item.
 #[cfg(test)]
 pub(crate) fn par_loop_try_map_init<T, S, R, H>(
-    bounded: bool,
-    sequential: bool,
-    items: &[T],
-    init: impl Fn() -> S + Sync,
+    bounded: bool, sequential: bool, items: &[T], init: impl Fn() -> S + Sync,
     push: impl Fn(&mut S, &mut Vec<R>, &T) -> Result<(), EvalError> + Sync,
     harvest: impl Fn(&mut S) -> H + Sync,
 ) -> Result<(Vec<R>, purrdf_core::SmallVec<[H; 1]>), EvalError>
@@ -1485,9 +1455,7 @@ const ORDERED_MIN_BLOCK_LEN: usize = 64;
 /// former's doc comment for why this one primitive needs a chunk plan that is a pure
 /// function of `items.len()` rather than of the live host's thread count.
 pub(crate) fn par_chunk_reduce_init<T, S>(
-    sequential: bool,
-    items: &[T],
-    init: impl Fn() -> Result<S, EvalError> + Sync,
+    sequential: bool, items: &[T], init: impl Fn() -> Result<S, EvalError> + Sync,
     step: impl Fn(&mut S, &T) -> Result<(), EvalError> + Sync,
     combine: impl Fn(&mut S, S) -> Result<(), EvalError>,
 ) -> Result<S, EvalError>
@@ -1509,9 +1477,7 @@ where
 /// The preallocated array is admitted before rayon writes it and remains owned
 /// through ordered reduction, including the first chunk-index error.
 pub(crate) fn par_chunk_reduce_init_admitted<T, S>(
-    sequential: bool,
-    items: &[T],
-    workspace: &crate::WorkspaceCapability,
+    sequential: bool, items: &[T], workspace: &crate::WorkspaceCapability,
     init: impl Fn() -> Result<S, EvalError> + Sync,
     step: impl Fn(&mut S, &T) -> Result<(), EvalError> + Sync,
     combine: impl Fn(&mut S, S) -> Result<(), EvalError>,
@@ -1622,9 +1588,7 @@ pub(crate) enum PortableTerm<I = TermId> {
 /// parent's [`ScratchInterner::computed_count`] captured **at fork time** —
 /// see [`PortableTerm`] for the id rule this relies on.
 pub(crate) fn portable_row<I: ViewTermId>(
-    local: &ScratchInterner,
-    base: usize,
-    row: &Solution<I>,
+    local: &ScratchInterner, base: usize, row: &Solution<I>,
 ) -> Vec<Option<PortableTerm<I>>> {
     row.iter()
         .map(|cell| match cell {
@@ -1650,9 +1614,7 @@ pub(crate) fn portable_row<I: ViewTermId>(
 /// deterministically (whichever reinterns first wins the id; the same value
 /// reinterned again is deduplicated against it, not re-minted).
 pub(crate) fn reintern_portable_row<D: DatasetView>(
-    main: &mut ScratchInterner,
-    dataset: &D,
-    prow: Vec<Option<PortableTerm<D::Id>>>,
+    main: &mut ScratchInterner, dataset: &D, prow: Vec<Option<PortableTerm<D::Id>>>,
 ) -> Result<Solution<D::Id>, EvalError> {
     prow.into_iter()
         .map(|cell| match cell {
@@ -1703,9 +1665,7 @@ enum MintedCells<I = TermId> {
 /// `Portable` (materialized against `local` — the minting child's scratch —
 /// while it is still alive). See [`MintedRow`] for the reasoning.
 pub(crate) fn minted_row<I: ViewTermId>(
-    local: &ScratchInterner,
-    base: usize,
-    row: crate::solution::RetainedRow<I>,
+    local: &ScratchInterner, base: usize, row: crate::solution::RetainedRow<I>,
 ) -> Result<MintedRow<I>, EvalError> {
     let (row, evidence) = row.into_resident_parts().map_err(|_| {
         EvalError::WorkspaceUnpriced("forked worker cell transport requires resident cells")
@@ -1728,9 +1688,7 @@ pub(crate) fn minted_row<I: ViewTermId>(
 /// comment for why that ordering (not anything in this function) is what makes
 /// the result deterministic.
 pub(crate) fn reintern_minted_row<D: DatasetView>(
-    main: &mut ScratchInterner,
-    dataset: &D,
-    row: MintedRow<D::Id>,
+    main: &mut ScratchInterner, dataset: &D, row: MintedRow<D::Id>,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<crate::solution::RetainedRow<D::Id>, EvalError> {
     let cells = match row.cells {
@@ -2106,9 +2064,7 @@ mod tests {
         }
 
         fn open<'cursor>(
-            &self,
-            _args: &crate::property_fn::PfArgs<'_>,
-            _ceiling: Option<u64>,
+            &self, _args: &crate::property_fn::PfArgs<'_>, _ceiling: Option<u64>,
         ) -> Result<Box<dyn crate::property_fn::PfCursor + 'cursor>, EvalError>
         where
             Self: 'cursor,
@@ -2296,8 +2252,7 @@ mod tests {
             Ok(())
         }
         fn combine(
-            &mut self,
-            _other: Box<dyn crate::agg_fn::AggregateAccumulator>,
+            &mut self, _other: Box<dyn crate::agg_fn::AggregateAccumulator>,
         ) -> Result<(), EvalError> {
             Ok(())
         }
@@ -2328,8 +2283,7 @@ mod tests {
             0
         }
         fn init(
-            &self,
-            _scalarvals: &[(String, TermValue)],
+            &self, _scalarvals: &[(String, TermValue)],
         ) -> Box<dyn crate::agg_fn::AggregateAccumulator> {
             Box::new(NoOpAccumulator)
         }
@@ -2869,9 +2823,7 @@ mod walk_tests {
     }
 
     fn reference_expr_reaches(
-        expr: &Expression,
-        registries: SafetyRegistries<'_>,
-        verdict: ExistsVerdict<'_>,
+        expr: &Expression, registries: SafetyRegistries<'_>, verdict: ExistsVerdict<'_>,
     ) -> bool {
         let mut found = false;
         visit_expression_parts(expr, &mut |part| {
@@ -2887,9 +2839,7 @@ mod walk_tests {
     }
 
     fn reference_pattern_reaches(
-        pattern: &GraphPattern,
-        registries: SafetyRegistries<'_>,
-        verdict: ExistsVerdict<'_>,
+        pattern: &GraphPattern, registries: SafetyRegistries<'_>, verdict: ExistsVerdict<'_>,
     ) -> bool {
         if let GraphPattern::PropertyFunction(call) = pattern {
             return property_function_is_unsafe(&call.iri, registries.relations);
@@ -2978,9 +2928,7 @@ mod walk_tests {
         }
 
         fn open<'cursor>(
-            &self,
-            _args: &crate::property_fn::PfArgs<'_>,
-            _ceiling: Option<u64>,
+            &self, _args: &crate::property_fn::PfArgs<'_>, _ceiling: Option<u64>,
         ) -> Result<Box<dyn crate::property_fn::PfCursor + 'cursor>, crate::error::EvalError>
         where
             Self: 'cursor,
@@ -3017,8 +2965,7 @@ mod walk_tests {
 
     /// Both tables configured.
     fn configured<'a>(
-        functions: &'a UserFunctionRegistry,
-        relations: &'a PropertyFunctionRegistry<'_>,
+        functions: &'a UserFunctionRegistry, relations: &'a PropertyFunctionRegistry<'_>,
     ) -> SafetyRegistries<'a> {
         SafetyRegistries {
             functions,
@@ -3277,9 +3224,7 @@ mod walk_tests {
 }
 
 fn reaches_unsafe_builtin_admitted(
-    root: Reach<'_>,
-    registries: SafetyRegistries<'_>,
-    verdict: ExistsVerdict<'_>,
+    root: Reach<'_>, registries: SafetyRegistries<'_>, verdict: ExistsVerdict<'_>,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     let mut frame = crate::workspace::LexicalFrame::new(workspace);
@@ -3383,9 +3328,7 @@ fn reaches_unsafe_builtin_admitted(
 }
 
 pub(crate) fn is_parallel_safe_pattern_with_admitted(
-    pattern: &GraphPattern,
-    registries: SafetyRegistries<'_>,
-    verdict: ExistsVerdict<'_>,
+    pattern: &GraphPattern, registries: SafetyRegistries<'_>, verdict: ExistsVerdict<'_>,
     workspace: &crate::WorkspaceCapability,
 ) -> Result<bool, EvalError> {
     reaches_unsafe_builtin_admitted(Reach::Pattern(pattern), registries, verdict, workspace)
@@ -3394,9 +3337,7 @@ pub(crate) fn is_parallel_safe_pattern_with_admitted(
 
 /// Original ordered worker law with a fallible initial owner.
 fn par_chunk_try_map_owned<T, S, R, H, O: WorkerRows<R>>(
-    sequential: bool,
-    items: &[T],
-    init: impl Fn() -> Result<S, EvalError> + Sync,
+    sequential: bool, items: &[T], init: impl Fn() -> Result<S, EvalError> + Sync,
     push: impl Fn(&mut S, &mut Vec<R>, &T) -> Result<(), EvalError> + Sync,
     harvest: impl Fn(&mut S) -> H + Sync,
 ) -> Result<(O, purrdf_core::SmallVec<[H; 1]>), EvalError>
@@ -3439,9 +3380,7 @@ where
 
 /// Flat output adapter over the original ordered chunk workers.
 pub(crate) fn par_chunk_try_map_init_fallible<T, S, R, H>(
-    sequential: bool,
-    items: &[T],
-    init: impl Fn() -> Result<S, EvalError> + Sync,
+    sequential: bool, items: &[T], init: impl Fn() -> Result<S, EvalError> + Sync,
     push: impl Fn(&mut S, &mut Vec<R>, &T) -> Result<(), EvalError> + Sync,
     harvest: impl Fn(&mut S) -> H + Sync,
 ) -> Result<(Vec<R>, purrdf_core::SmallVec<[H; 1]>), EvalError>
@@ -3455,10 +3394,7 @@ where
 
 /// Original ordered worker law with a fallible initial owner.
 pub(crate) fn par_loop_try_map_init_fallible<T, S, R, H>(
-    bounded: bool,
-    sequential: bool,
-    items: &[T],
-    init: impl Fn() -> Result<S, EvalError> + Sync,
+    bounded: bool, sequential: bool, items: &[T], init: impl Fn() -> Result<S, EvalError> + Sync,
     push: impl Fn(&mut S, &mut Vec<R>, &T) -> Result<(), EvalError> + Sync,
     harvest: impl Fn(&mut S) -> H + Sync,
 ) -> Result<(Vec<R>, purrdf_core::SmallVec<[H; 1]>), EvalError>
@@ -3472,10 +3408,7 @@ where
 
 /// Shared scheduler for flat output or original buffers awaiting ordered conversion.
 pub(crate) fn par_loop_try_map_owned<T, S, R, H, O: WorkerRows<R>>(
-    bounded: bool,
-    sequential: bool,
-    items: &[T],
-    init: impl Fn() -> Result<S, EvalError> + Sync,
+    bounded: bool, sequential: bool, items: &[T], init: impl Fn() -> Result<S, EvalError> + Sync,
     push: impl Fn(&mut S, &mut Vec<R>, &T) -> Result<(), EvalError> + Sync,
     harvest: impl Fn(&mut S) -> H + Sync,
 ) -> Result<(O, purrdf_core::SmallVec<[H; 1]>), EvalError>
@@ -3493,9 +3426,7 @@ where
 
 /// Original ordered worker law with a fallible initial owner.
 fn par_blocks_try_map_owned<T, S, R, H, O: WorkerRows<R>>(
-    sequential: bool,
-    items: &[T],
-    init: impl Fn() -> Result<S, EvalError> + Sync,
+    sequential: bool, items: &[T], init: impl Fn() -> Result<S, EvalError> + Sync,
     push: impl Fn(&mut S, &mut Vec<R>, &T) -> Result<(), EvalError> + Sync,
     harvest: impl Fn(&mut S) -> H + Sync,
 ) -> Result<(O, purrdf_core::SmallVec<[H; 1]>), EvalError>

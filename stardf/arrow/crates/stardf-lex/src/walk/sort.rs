@@ -17,8 +17,7 @@ use core::cmp::Ordering;
 /// Returns the comparator's error immediately. On refusal the slice retains all
 /// its elements in an unspecified order; only success promises sorted output.
 pub fn try_sort_unstable_by<T, E>(
-    values: &mut [T],
-    mut compare: impl FnMut(&T, &T) -> Result<Ordering, E>,
+    values: &mut [T], mut compare: impl FnMut(&T, &T) -> Result<Ordering, E>,
 ) -> Result<(), E> {
     if values.len() < 2 {
         return Ok(());
@@ -90,8 +89,7 @@ struct SortSpan {
 /// Keep the pivot in the last slot while growing disjoint less/equal/greater
 /// runs. Every iteration consumes one unclassified element, including ties.
 fn partition<T, E>(
-    values: &mut [T],
-    compare: &mut impl FnMut(&T, &T) -> Result<Ordering, E>,
+    values: &mut [T], compare: &mut impl FnMut(&T, &T) -> Result<Ordering, E>,
 ) -> Result<(usize, usize), E> {
     let (middle, last) = (values.len() / 2, values.len() - 1);
     if compare(&values[middle], &values[0])?.is_lt() {
@@ -125,8 +123,7 @@ fn partition<T, E>(
 
 /// The original allocation-free worst-case reduction, shared by every fallback.
 fn heap_sort<T, E>(
-    values: &mut [T],
-    compare: &mut impl FnMut(&T, &T) -> Result<Ordering, E>,
+    values: &mut [T], compare: &mut impl FnMut(&T, &T) -> Result<Ordering, E>,
 ) -> Result<(), E> {
     HeapSortFrame::new(values.len())
         .resume(values, compare, || true)
@@ -171,9 +168,7 @@ impl HeapSortFrame {
     /// # Panics
     /// Panics if a caller replaces the retained slice with a different length.
     pub fn resume<T, E>(
-        &mut self,
-        values: &mut [T],
-        mut compare: impl FnMut(&T, &T) -> Result<Ordering, E>,
+        &mut self, values: &mut [T], mut compare: impl FnMut(&T, &T) -> Result<Ordering, E>,
         mut allow: impl FnMut() -> bool,
     ) -> Result<bool, E> {
         assert_eq!(
@@ -214,9 +209,7 @@ impl SiftFrame {
     }
 
     fn resume<T, E>(
-        &mut self,
-        values: &mut [T],
-        compare: &mut impl FnMut(&T, &T) -> Result<Ordering, E>,
+        &mut self, values: &mut [T], compare: &mut impl FnMut(&T, &T) -> Result<Ordering, E>,
         allow: &mut impl FnMut() -> bool,
     ) -> Result<bool, E> {
         // Every internal node is below len/2, bounding 2*root+1 before arithmetic.
@@ -259,8 +252,7 @@ impl SiftFrame {
 /// Returns the first comparator refusal with every element still present. On
 /// refusal only the element inventory, rather than heap order, is promised.
 pub fn try_heap_push_by<T, E>(
-    values: &mut [T],
-    mut compare: impl FnMut(&T, &T) -> Result<Ordering, E>,
+    values: &mut [T], mut compare: impl FnMut(&T, &T) -> Result<Ordering, E>,
 ) -> Result<(), E> {
     let Some(mut child) = values.len().checked_sub(1) else {
         return Ok(());
@@ -286,8 +278,7 @@ pub fn try_heap_push_by<T, E>(
 /// Returns the first comparator refusal with every original element present,
 /// in an unspecified order. Only success promises a heap in the shorter prefix.
 pub fn try_heap_pop_by<T, E>(
-    values: &mut [T],
-    mut compare: impl FnMut(&T, &T) -> Result<Ordering, E>,
+    values: &mut [T], mut compare: impl FnMut(&T, &T) -> Result<Ordering, E>,
 ) -> Result<(), E> {
     let Some(last) = values.len().checked_sub(1) else {
         return Ok(());
@@ -304,8 +295,7 @@ pub fn try_heap_pop_by<T, E>(
 /// # Errors
 /// Returns the comparator's refusal immediately, without changing the slice.
 pub fn try_equal_range_by<T, E>(
-    values: &[T],
-    mut compare: impl FnMut(&T) -> Result<Ordering, E>,
+    values: &[T], mut compare: impl FnMut(&T) -> Result<Ordering, E>,
 ) -> Result<core::ops::Range<usize>, E> {
     let mut ends = [0; 2];
     for (side, end) in ends.iter_mut().enumerate() {
@@ -333,8 +323,7 @@ pub fn try_equal_range_by<T, E>(
 /// Returns the callback error immediately. On refusal no element is removed;
 /// their order may have changed. Only success promises deduplicated output.
 pub fn try_dedup_by<T, E>(
-    values: &mut Vec<T>,
-    same: impl FnMut(&T, &T) -> Result<bool, E>,
+    values: &mut Vec<T>, same: impl FnMut(&T, &T) -> Result<bool, E>,
 ) -> Result<(), E> {
     let kept = try_partition_unique_by(values, same)?;
     values.truncate(kept);
@@ -348,8 +337,7 @@ pub fn try_dedup_by<T, E>(
 /// # Errors
 /// Returns the comparator failure with every original element still present.
 pub fn try_partition_unique_by<T, E>(
-    values: &mut [T],
-    mut same: impl FnMut(&T, &T) -> Result<bool, E>,
+    values: &mut [T], mut same: impl FnMut(&T, &T) -> Result<bool, E>,
 ) -> Result<usize, E> {
     let mut kept = 0;
     for read in 0..values.len() {
@@ -363,9 +351,7 @@ pub fn try_partition_unique_by<T, E>(
 }
 
 fn sift<T, E>(
-    values: &mut [T],
-    root: usize,
-    compare: &mut impl FnMut(&T, &T) -> Result<Ordering, E>,
+    values: &mut [T], root: usize, compare: &mut impl FnMut(&T, &T) -> Result<Ordering, E>,
 ) -> Result<(), E> {
     SiftFrame::new(root)
         .resume(values, compare, &mut || true)

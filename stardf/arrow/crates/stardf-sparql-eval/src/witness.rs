@@ -346,8 +346,7 @@ fn mutable_witness_array<'a, T: Clone>(
 }
 
 fn retained_witness_value<T: Send + Sync + 'static, U: ?Sized>(
-    value: &U,
-    workspace: &crate::workspace::WorkspaceCapability,
+    value: &U, workspace: &crate::workspace::WorkspaceCapability,
     copy: impl FnOnce(
         &U,
         &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
@@ -378,8 +377,7 @@ fn retained_witness_value<T: Send + Sync + 'static, U: ?Sized>(
 
 impl<T: Ord + Send + Sync + 'static> WitnessSet<T> {
     fn insert_owned(
-        &mut self,
-        value: purrdf_lex::allocation::SharedOwned<T>,
+        &mut self, value: purrdf_lex::allocation::SharedOwned<T>,
         workspace: &crate::workspace::WorkspaceCapability,
     ) -> Result<bool, crate::EvalError> {
         let Err(index) = self.values.as_ref().map_or(Err(0), |values| {
@@ -393,9 +391,7 @@ impl<T: Ord + Send + Sync + 'static> WitnessSet<T> {
         Ok(true)
     }
     fn insert_admitted(
-        &mut self,
-        value: &T,
-        workspace: &crate::workspace::WorkspaceCapability,
+        &mut self, value: &T, workspace: &crate::workspace::WorkspaceCapability,
         copy: impl FnOnce(
             &T,
             &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
@@ -407,9 +403,7 @@ impl<T: Ord + Send + Sync + 'static> WitnessSet<T> {
         self.insert_owned(retained_witness_value(value, workspace, copy)?, workspace)
     }
     fn merge_admitted(
-        &mut self,
-        other: &Self,
-        workspace: &crate::workspace::WorkspaceCapability,
+        &mut self, other: &Self, workspace: &crate::workspace::WorkspaceCapability,
     ) -> Result<(), crate::EvalError> {
         if let Some(values) = &other.values {
             for value in values {
@@ -483,9 +477,7 @@ impl Eq for RelationWitness {}
 
 impl RelationAttestations {
     fn record_admitted(
-        &mut self,
-        generation: &IndexGeneration,
-        service: &ServiceLevel,
+        &mut self, generation: &IndexGeneration, service: &ServiceLevel,
         workspace: &crate::workspace::WorkspaceCapability,
     ) -> Result<(), crate::EvalError> {
         self.generations
@@ -498,9 +490,7 @@ impl RelationAttestations {
         Ok(())
     }
     fn merge_admitted(
-        &mut self,
-        other: &Self,
-        workspace: &crate::workspace::WorkspaceCapability,
+        &mut self, other: &Self, workspace: &crate::workspace::WorkspaceCapability,
     ) -> Result<(), crate::EvalError> {
         self.generations
             .merge_admitted(&other.generations, workspace)?;
@@ -519,10 +509,7 @@ impl RelationWitness {
     /// # Errors
     /// Returns physical workspace or allocator refusal while existing owners stay live.
     pub fn try_record(
-        &mut self,
-        iri: &str,
-        generation: &IndexGeneration,
-        service: &ServiceLevel,
+        &mut self, iri: &str, generation: &IndexGeneration, service: &ServiceLevel,
         workspace: &crate::workspace::WorkspaceCapability,
     ) -> Result<(), crate::EvalError> {
         let index = self.entries.as_ref().map_or(Err(0), |entries| {
@@ -554,9 +541,7 @@ impl RelationWitness {
     /// # Errors
     /// Returns physical workspace or allocator refusal.
     pub fn try_merge(
-        &mut self,
-        other: &Self,
-        workspace: &crate::workspace::WorkspaceCapability,
+        &mut self, other: &Self, workspace: &crate::workspace::WorkspaceCapability,
     ) -> Result<(), crate::EvalError> {
         if let Some(source) = &other.entries {
             for (name, attestations) in source {

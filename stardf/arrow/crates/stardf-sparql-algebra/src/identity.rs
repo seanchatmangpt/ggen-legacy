@@ -50,8 +50,7 @@ impl Hasher for StructuralHash {
 /// # Errors
 /// Returns original-account admission, layout or allocation refusal.
 pub fn node_with_memory<S: Admission + ?Sized>(
-    node: NodeRef<'_>,
-    memory: &mut Memory<'_, S>,
+    node: NodeRef<'_>, memory: &mut Memory<'_, S>,
 ) -> Result<Digest32, StorageError> {
     let mut state = StructuralHash(blake3::Streaming::new());
     state.write(NODE.as_bytes());
@@ -64,8 +63,7 @@ pub fn node_with_memory<S: Admission + ?Sized>(
 /// # Errors
 /// Returns original-account admission, layout or allocation refusal.
 pub fn query_with_memory<S: Admission + ?Sized>(
-    query: &Query,
-    memory: &mut Memory<'_, S>,
+    query: &Query, memory: &mut Memory<'_, S>,
 ) -> Result<Digest32, StorageError> {
     let mut state = StructuralHash(blake3::Streaming::new());
     state.write(QUERY.as_bytes());
@@ -92,9 +90,7 @@ pub fn query_with_memory<S: Admission + ?Sized>(
 }
 
 fn quads<S: Admission + ?Sized>(
-    quads: &[crate::QuadPattern],
-    state: &mut StructuralHash,
-    memory: &mut Memory<'_, S>,
+    quads: &[crate::QuadPattern], state: &mut StructuralHash, memory: &mut Memory<'_, S>,
 ) -> Result<(), StorageError> {
     quads.len().hash(state);
     for quad in quads {
@@ -109,8 +105,7 @@ fn quads<S: Admission + ?Sized>(
 /// # Errors
 /// Returns original-account admission, layout or allocation refusal.
 pub fn update_with_memory<S: Admission + ?Sized>(
-    update: &crate::Update,
-    memory: &mut Memory<'_, S>,
+    update: &crate::Update, memory: &mut Memory<'_, S>,
 ) -> Result<Digest32, StorageError> {
     use crate::GraphUpdateOperation;
     let mut state = StructuralHash(blake3::Streaming::new());

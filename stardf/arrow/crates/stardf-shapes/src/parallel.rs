@@ -72,8 +72,7 @@ fn should_parallelize(work_items: usize) -> bool {
 /// The first error by source chunk (and, within it, source item) wins. Successful
 /// outputs concatenate in exact source order.
 pub(crate) fn try_map_chunks<T, S, R, E>(
-    items: &[T],
-    init: impl Fn() -> S + Sync,
+    items: &[T], init: impl Fn() -> S + Sync,
     push: impl Fn(&mut S, &mut Vec<R>, &T) -> Result<(), E> + Sync,
 ) -> Result<Vec<R>, E>
 where

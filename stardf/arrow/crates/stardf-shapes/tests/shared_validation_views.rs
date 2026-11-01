@@ -385,10 +385,7 @@ fn prepared_probe_plans_preserve_graph_patterns_and_union_duplicates() {
 }
 
 fn assert_probe_pattern_matrix(
-    source: &RdfDataset,
-    kind: &str,
-    view: &ShaclDatasetView,
-    projected: bool,
+    source: &RdfDataset, kind: &str, view: &ShaclDatasetView, projected: bool,
 ) {
     use purrdf_rdf::GraphMatch;
     use std::collections::BTreeSet;

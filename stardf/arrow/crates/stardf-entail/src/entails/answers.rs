@@ -99,12 +99,8 @@ impl CertainAnswers {
     /// It is attached to `report` rather than stored beside it, so [`Self::mechanism`] and
     /// [`Self::report`] read one value and cannot disagree.
     pub(crate) fn new(
-        regime: Regime,
-        vars: Vec<String>,
-        rows: Vec<Vec<TermValue>>,
-        limits: Vec<UndecidedReason>,
-        report: ReasoningReport,
-        mechanism: EntailmentMechanism,
+        regime: Regime, vars: Vec<String>, rows: Vec<Vec<TermValue>>, limits: Vec<UndecidedReason>,
+        report: ReasoningReport, mechanism: EntailmentMechanism,
     ) -> Self {
         Self {
             regime,

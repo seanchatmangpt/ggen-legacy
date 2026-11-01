@@ -467,10 +467,7 @@ impl RetentionLedger {
     /// reported total never silently changes underneath a reader either way.
     #[must_use = "retention is released as soon as the guard drops"]
     pub fn retain<T: Any + Send + Sync>(
-        self: &Arc<Self>,
-        owner: &Arc<T>,
-        charge: RetainedCharge,
-        mutability: OwnerMutability,
+        self: &Arc<Self>, owner: &Arc<T>, charge: RetainedCharge, mutability: OwnerMutability,
     ) -> RetentionGuard {
         self.register(
             OwnerKey(Arc::as_ptr(owner).cast::<()>().addr()),
@@ -492,10 +489,7 @@ impl RetentionLedger {
     }
 
     fn register(
-        self: &Arc<Self>,
-        key: OwnerKey,
-        owner: RetentionOwner,
-        charge: RetainedCharge,
+        self: &Arc<Self>, key: OwnerKey, owner: RetentionOwner, charge: RetainedCharge,
         mutability: OwnerMutability,
     ) -> RetentionGuard {
         let mut state = self.state();
@@ -662,9 +656,7 @@ impl RetentionGuard {
     /// # Errors
     /// Exactly what `compute` returns, unchanged.
     pub fn try_memoized_graph_digest<F, E>(
-        &self,
-        graph: &str,
-        compute: F,
+        &self, graph: &str, compute: F,
     ) -> Result<ContentDigest, E>
     where
         F: FnOnce() -> Result<ContentDigest, E>,

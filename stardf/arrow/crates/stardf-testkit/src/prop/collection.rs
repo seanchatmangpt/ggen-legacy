@@ -93,10 +93,7 @@ impl Sizer {
     /// draw below the minimum or at the maximum, a recorded flag between.
     /// `give_up` stops a random-mode collection that cannot grow.
     pub(crate) fn more(
-        &self,
-        choices: &mut Choices,
-        len: usize,
-        give_up: bool,
+        &self, choices: &mut Choices, len: usize, give_up: bool,
     ) -> Result<bool, Invalid> {
         if len < self.size.min {
             return Ok(true);

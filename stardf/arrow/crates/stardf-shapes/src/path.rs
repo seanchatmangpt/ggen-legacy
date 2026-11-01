@@ -72,9 +72,7 @@ use crate::term::{NamedNode, Term, term_id_to_native};
 /// Returns preparation stack refusal or a broken lowered-path invariant. A failure
 /// is never represented by an empty set of reachable nodes.
 pub fn eval(
-    ds: &impl ShaclRead,
-    focus: &Term,
-    path: &Path,
+    ds: &impl ShaclRead, focus: &Term, path: &Path,
 ) -> Result<Vec<Term>, crate::error::ShapesError> {
     let lowering = lower_standalone_path(path)?;
     let binding = lowering.bind(ds);
@@ -98,9 +96,7 @@ pub fn eval(
 /// # Errors
 /// Returns preparation stack refusal or a broken lowered-path invariant.
 pub fn eval_ids(
-    ds: &impl ShaclRead,
-    focus: &Term,
-    path: &Path,
+    ds: &impl ShaclRead, focus: &Term, path: &Path,
 ) -> Result<Option<IdVec>, crate::error::ShapesError> {
     let lowering = lower_standalone_path(path)?;
     let Some(focus_id) = resolve_id(ds, focus) else {
@@ -230,20 +226,14 @@ fn linear_contains(ids: &[TermId], id: TermId) -> bool {
 /// Returns an error when the lowering names a slot the walk never handed out — a
 /// defect in this crate, never in a caller's data.
 pub(crate) fn eval_planned_ids_from_id(
-    ds: &impl ShaclRead,
-    focus_id: TermId,
-    path: &LoweredPath,
-    binding: &DatasetBinding,
+    ds: &impl ShaclRead, focus_id: TermId, path: &LoweredPath, binding: &DatasetBinding,
 ) -> Result<IdVec, crate::error::ShapesError> {
     eval_planned_ids_with_paths(ds, focus_id, path, binding, &[])
 }
 
 /// The same path evaluator over a footprint's shared path arena.
 pub(crate) fn eval_planned_ids_with_paths(
-    ds: &impl ShaclRead,
-    focus_id: TermId,
-    path: &LoweredPath,
-    binding: &DatasetBinding,
+    ds: &impl ShaclRead, focus_id: TermId, path: &LoweredPath, binding: &DatasetBinding,
     paths: &[LoweredPath],
 ) -> Result<IdVec, crate::error::ShapesError> {
     let mut memo = purrdf_core::FastMap::default();
@@ -264,10 +254,7 @@ pub(crate) fn eval_planned_ids_with_paths(
 ///
 /// As [`eval_planned_ids_from_id`].
 pub(crate) fn eval_planned(
-    ds: &impl ShaclRead,
-    focus: &Term,
-    path: &LoweredPath,
-    binding: &DatasetBinding,
+    ds: &impl ShaclRead, focus: &Term, path: &LoweredPath, binding: &DatasetBinding,
 ) -> Result<Vec<Term>, crate::error::ShapesError> {
     let Some(focus_id) = resolve_id(ds, focus) else {
         // Non-interned focus: it has no id and therefore no incoming/outgoing
@@ -320,12 +307,8 @@ fn admits_empty_planned_path(path: &LoweredPath) -> Result<bool, crate::error::S
 
 /// The recursive id-native evaluator for a lowered path and an interned `focus`.
 fn eval_planned_inner_ids(
-    ds: &impl ShaclRead,
-    focus: TermId,
-    path: &LoweredPath,
-    binding: &DatasetBinding,
-    paths: &[LoweredPath],
-    memo: &mut purrdf_core::FastMap<(usize, TermId), IdVec>,
+    ds: &impl ShaclRead, focus: TermId, path: &LoweredPath, binding: &DatasetBinding,
+    paths: &[LoweredPath], memo: &mut purrdf_core::FastMap<(usize, TermId), IdVec>,
 ) -> Result<IdVec, crate::error::ShapesError> {
     if purrdf_stack::is_low() {
         return Err(crate::error::ShapesError::Processor(
@@ -431,12 +414,8 @@ fn eval_planned_inner_ids(
 
 /// [`closure_ids`] over a lowered inner path.
 fn planned_closure_ids(
-    ds: &impl ShaclRead,
-    focus: TermId,
-    inner: &LoweredPath,
-    binding: &DatasetBinding,
-    reflexive: bool,
-    paths: &[LoweredPath],
+    ds: &impl ShaclRead, focus: TermId, inner: &LoweredPath, binding: &DatasetBinding,
+    reflexive: bool, paths: &[LoweredPath],
     memo: &mut purrdf_core::FastMap<(usize, TermId), IdVec>,
 ) -> Result<IdVec, crate::error::ShapesError> {
     // `order` IS the visited set: every id the dedup admits is pushed to it, and
@@ -504,8 +483,7 @@ pub fn path_to_sparql(path: &Path) -> String {
 /// # Errors
 /// Returns the original admission, allocation or size refusal.
 pub fn path_to_sparql_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-    path: &Path,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    path: &Path, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<String, purrdf_lex::allocation::StorageError> {
     enum Part<'a> {
         Path(&'a Path, bool),

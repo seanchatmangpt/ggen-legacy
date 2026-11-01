@@ -55,8 +55,7 @@ impl crate::context::NativeDetached for PreparedCoordinate {
         })
     }
     fn publish(
-        &mut self,
-        original: &purrdf_lex::allocation::SharedOwned<()>,
+        &mut self, original: &purrdf_lex::allocation::SharedOwned<()>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         self.point.publish(original)?;
         self.source.publish(original)
@@ -75,9 +74,7 @@ impl PreparedCoordinate {
     /// # Errors
     /// Refuses range/reference mismatch, limits or cancellation before arithmetic.
     pub fn new_in_context(
-        source: Coord,
-        reference: &GeographicReference,
-        context: &mut MetricContext,
+        source: Coord, reference: &GeographicReference, context: &mut MetricContext,
     ) -> Result<Self, GeoError> {
         Self::prepare_coordinate(source, reference, context, None)
     }
@@ -86,17 +83,13 @@ impl PreparedCoordinate {
     /// # Errors
     /// Adds observer refusal to [`Self::new_in_context`].
     pub fn new_in_context_metered(
-        source: Coord,
-        reference: &GeographicReference,
-        context: &mut MetricContext,
+        source: Coord, reference: &GeographicReference, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::prepare_coordinate(source, reference, context, Some(observer))
     }
     fn prepare_coordinate(
-        source: Coord,
-        reference: &GeographicReference,
-        context: &mut MetricContext,
+        source: Coord, reference: &GeographicReference, context: &mut MetricContext,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         context.begin_integer(1)?;
@@ -105,9 +98,7 @@ impl PreparedCoordinate {
         Self::owned_with_progress(source, reference, context, &mut progress)
     }
     pub(crate) fn owned_with_progress(
-        source: Coord,
-        reference: &GeographicReference,
-        context: &mut MetricContext,
+        source: Coord, reference: &GeographicReference, context: &mut MetricContext,
         progress: &mut WorkProgress<'_>,
     ) -> Result<Self, GeoError> {
         let source_binding =
@@ -139,9 +130,7 @@ impl PreparedCoordinate {
     /// # Errors
     /// Uses [`Self::new_in_context`]'s complete admission contract.
     pub fn from_source_in_context(
-        source: &Coord,
-        reference: &GeographicReference,
-        context: &mut MetricContext,
+        source: &Coord, reference: &GeographicReference, context: &mut MetricContext,
     ) -> Result<Self, GeoError> {
         Self::prepare_borrowed_coordinate(source, reference, context, None)
     }
@@ -150,17 +139,13 @@ impl PreparedCoordinate {
     /// # Errors
     /// Adds observer refusal to [`Self::from_source_in_context`].
     pub fn from_source_in_context_metered(
-        source: &Coord,
-        reference: &GeographicReference,
-        context: &mut MetricContext,
+        source: &Coord, reference: &GeographicReference, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::prepare_borrowed_coordinate(source, reference, context, Some(observer))
     }
     fn prepare_borrowed_coordinate(
-        source: &Coord,
-        reference: &GeographicReference,
-        context: &mut MetricContext,
+        source: &Coord, reference: &GeographicReference, context: &mut MetricContext,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         context.begin_integer(1)?;
@@ -190,9 +175,7 @@ impl PreparedCoordinate {
         progress.settle_result(result, released)
     }
     fn with_binding(
-        source: Coord,
-        reference: &GeographicReference,
-        binding: GeoBindingId,
+        source: Coord, reference: &GeographicReference, binding: GeoBindingId,
     ) -> Result<Self, GeoError> {
         Self::with_binding_with(
             source,
@@ -203,9 +186,7 @@ impl PreparedCoordinate {
     }
 
     fn with_binding_with(
-        source: Coord,
-        reference: &GeographicReference,
-        binding: GeoBindingId,
+        source: Coord, reference: &GeographicReference, binding: GeoBindingId,
         values: &crate::numerical::ExactValues<'_>,
     ) -> Result<Self, GeoError> {
         let (lon, lat) = match reference.axes() {
@@ -220,8 +201,7 @@ impl PreparedCoordinate {
     }
 
     pub(crate) fn copy_with(
-        &self,
-        values: &crate::numerical::ExactValues<'_>,
+        &self, values: &crate::numerical::ExactValues<'_>,
     ) -> Result<Self, purrdf_xsd::integer::LimbScratchError> {
         Ok(Self {
             point: values.point(&self.point)?,
@@ -270,20 +250,14 @@ trait SourcePreparation {
     fn source_step(&mut self) -> Result<(), GeoError>;
     fn retain<T>(&mut self, value: T) -> Result<crate::PreparedValue<T>, GeoError>;
     fn push<T>(
-        &mut self,
-        values: &mut crate::context::RetainedBuilder<T>,
-        value: T,
+        &mut self, values: &mut crate::context::RetainedBuilder<T>, value: T,
     ) -> Result<(), GeoError>;
     fn prepare_coordinate(
-        &mut self,
-        source: &Coord,
-        reference: &GeographicReference,
-        binding: GeoBindingId,
+        &mut self, source: &Coord, reference: &GeographicReference, binding: GeoBindingId,
     ) -> Result<PreparedCoordinate, GeoError>;
     fn chart_coordinate(&mut self, point: &PreparedCoordinate) -> Result<Coord, GeoError>;
     fn chart(
-        &mut self,
-        rings: crate::context::RetainedBuilder<crate::context::RetainedBuilder<Coord>>,
+        &mut self, rings: crate::context::RetainedBuilder<crate::context::RetainedBuilder<Coord>>,
     ) -> Result<crate::PreparedValue<crate::Geometry>, GeoError>;
 }
 struct PureSourcePreparation<'a, F>(&'a mut F);
@@ -295,17 +269,12 @@ impl<F: FnMut() -> Result<(), GeoError>> SourcePreparation for PureSourcePrepara
         crate::PreparedValue::try_new(value)
     }
     fn push<T>(
-        &mut self,
-        values: &mut crate::context::RetainedBuilder<T>,
-        value: T,
+        &mut self, values: &mut crate::context::RetainedBuilder<T>, value: T,
     ) -> Result<(), GeoError> {
         values.push(value, &mut WorkProgress::integer(None))
     }
     fn prepare_coordinate(
-        &mut self,
-        source: &Coord,
-        reference: &GeographicReference,
-        binding: GeoBindingId,
+        &mut self, source: &Coord, reference: &GeographicReference, binding: GeoBindingId,
     ) -> Result<PreparedCoordinate, GeoError> {
         PreparedCoordinate::with_binding(source.clone(), reference, binding)
     }
@@ -316,16 +285,14 @@ impl<F: FnMut() -> Result<(), GeoError>> SourcePreparation for PureSourcePrepara
         ))
     }
     fn chart(
-        &mut self,
-        rings: crate::context::RetainedBuilder<crate::context::RetainedBuilder<Coord>>,
+        &mut self, rings: crate::context::RetainedBuilder<crate::context::RetainedBuilder<Coord>>,
     ) -> Result<crate::PreparedValue<crate::Geometry>, GeoError> {
         produce_source_chart(rings, &mut WorkProgress::integer(None))
     }
 }
 
 fn source_chart_bytes(
-    rings: &[crate::context::RetainedBuilder<Coord>],
-    progress: &WorkProgress<'_>,
+    rings: &[crate::context::RetainedBuilder<Coord>], progress: &WorkProgress<'_>,
 ) -> Result<u64, GeoError> {
     use core::alloc::Layout;
     use purrdf_lex::allocation::StorageError;
@@ -394,17 +361,13 @@ impl SourceLinearEdge {
             .expect("pure exact parameter has no admission refusal")
     }
     pub(crate) fn parameter_on_admitted(
-        start: &LonLat,
-        end: &LonLat,
-        point: &LonLat,
+        start: &LonLat, end: &LonLat, point: &LonLat,
         admission: &mut crate::numerical::ExactAdmission<'_, '_>,
     ) -> Result<Option<Rat>, GeoError> {
         Self::parameter_on_inner(start, end, point, Some(admission))
     }
     fn parameter_on_inner(
-        start: &LonLat,
-        end: &LonLat,
-        point: &LonLat,
+        start: &LonLat, end: &LonLat, point: &LonLat,
         mut admission: Option<&mut crate::numerical::ExactAdmission<'_, '_>>,
     ) -> Result<Option<Rat>, GeoError> {
         Self::parameter_on_xy_inner(
@@ -417,9 +380,7 @@ impl SourceLinearEdge {
     /// Recover an original planar carrier parameter without interpreting its
     /// units, axes, datum or coordinate range as geographic coordinates.
     pub(crate) fn parameter_on_coord_admitted(
-        start: &Coord,
-        end: &Coord,
-        point: &Coord,
+        start: &Coord, end: &Coord, point: &Coord,
         admission: &mut crate::numerical::ExactAdmission<'_, '_>,
     ) -> Result<Option<Rat>, GeoError> {
         Self::parameter_on_xy_inner(
@@ -432,11 +393,8 @@ impl SourceLinearEdge {
     /// The same original parameter equation with each returned arithmetic
     /// owner retained until its enclosing contact proof drops.
     pub(crate) fn parameter_on_coord_retained(
-        start: &Coord,
-        end: &Coord,
-        point: &Coord,
-        admission: &mut crate::numerical::ExactAdmission<'_, '_>,
-        retained: &mut u64,
+        start: &Coord, end: &Coord, point: &Coord,
+        admission: &mut crate::numerical::ExactAdmission<'_, '_>, retained: &mut u64,
     ) -> Result<Option<Rat>, GeoError> {
         Self::parameter_on_xy_inner(
             [start.x(), start.y()],
@@ -449,10 +407,7 @@ impl SourceLinearEdge {
         )
     }
     fn parameter_on_xy_inner<A: CoordinateArithmetic<Error = GeoError>>(
-        start: [&Rat; 2],
-        end: [&Rat; 2],
-        point: [&Rat; 2],
-        arithmetic: &mut A,
+        start: [&Rat; 2], end: [&Rat; 2], point: [&Rat; 2], arithmetic: &mut A,
     ) -> Result<Option<Rat>, GeoError> {
         use purrdf_xsd::integer::ExactOperation::{
             Linear, RationalAdd, RationalCompare, RationalDivide,
@@ -588,19 +543,14 @@ impl SourceLinearEdge {
             .expect("pure interpolation has no admission refusal")
     }
     pub(crate) fn interpolate_coord_admitted(
-        start: &Coord,
-        end: &Coord,
-        parameter: &Rat,
+        start: &Coord, end: &Coord, parameter: &Rat,
         admission: &mut crate::numerical::ExactAdmission<'_, '_>,
     ) -> Result<Coord, GeoError> {
         interpolate_coord_with(start, end, parameter, &mut Some(admission))
     }
     pub(crate) fn interpolate_coord_retained(
-        start: &Coord,
-        end: &Coord,
-        parameter: &Rat,
-        admission: &mut crate::numerical::ExactAdmission<'_, '_>,
-        retained: &mut u64,
+        start: &Coord, end: &Coord, parameter: &Rat,
+        admission: &mut crate::numerical::ExactAdmission<'_, '_>, retained: &mut u64,
     ) -> Result<Coord, GeoError> {
         interpolate_coord_with(
             start,
@@ -613,19 +563,14 @@ impl SourceLinearEdge {
         )
     }
     pub(crate) fn interpolate_ordinate_admitted(
-        start: &Rat,
-        end: &Rat,
-        parameter: &Rat,
+        start: &Rat, end: &Rat, parameter: &Rat,
         admission: &mut crate::numerical::ExactAdmission<'_, '_>,
     ) -> Result<Rat, GeoError> {
         interpolate_ordinate_inner(start, end, parameter, Some(admission))
     }
     pub(crate) fn interpolate_ordinate_retained(
-        start: &Rat,
-        end: &Rat,
-        parameter: &Rat,
-        admission: &mut crate::numerical::ExactAdmission<'_, '_>,
-        retained: &mut u64,
+        start: &Rat, end: &Rat, parameter: &Rat,
+        admission: &mut crate::numerical::ExactAdmission<'_, '_>, retained: &mut u64,
     ) -> Result<Rat, GeoError> {
         interpolate_ordinate_with(
             start,
@@ -638,10 +583,7 @@ impl SourceLinearEdge {
         )
     }
     pub(crate) fn interpolate_ordinate_math(
-        start: &Rat,
-        end: &Rat,
-        parameter: &Rat,
-        math: &mut purrdf_xsd::math::CoordinateMath,
+        start: &Rat, end: &Rat, parameter: &Rat, math: &mut purrdf_xsd::math::CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<Rat, purrdf_xsd::math::MathError> {
         interpolate_ordinate_with(
@@ -652,10 +594,7 @@ impl SourceLinearEdge {
         )
     }
     pub(crate) fn interpolate_coord_math(
-        start: &Coord,
-        end: &Coord,
-        parameter: &Rat,
-        math: &mut purrdf_xsd::math::CoordinateMath,
+        start: &Coord, end: &Coord, parameter: &Rat, math: &mut purrdf_xsd::math::CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<Coord, purrdf_xsd::math::MathError> {
         interpolate_coord_with(
@@ -686,9 +625,7 @@ impl SourceLinearEdge {
             .expect("pure path bound has no admission refusal")
     }
     pub(crate) fn upper_bound_with(
-        start: &LonLat,
-        end: &LonLat,
-        reference: &GeographicReference,
+        start: &LonLat, end: &LonLat, reference: &GeographicReference,
         mut admission: Option<&mut crate::numerical::ExactAdmission<'_, '_>>,
     ) -> Result<Metres, GeoError> {
         use purrdf_xsd::integer::ExactOperation::RationalCompare;
@@ -716,8 +653,7 @@ impl SourceLinearEdge {
     }
 
     pub(crate) fn variation_with(
-        start: &LonLat,
-        end: &LonLat,
+        start: &LonLat, end: &LonLat,
         mut admission: Option<&mut crate::numerical::ExactAdmission<'_, '_>>,
     ) -> Result<Rat, GeoError> {
         use crate::numerical::exact_rational;
@@ -749,8 +685,7 @@ impl SourceLinearEdge {
     /// Enclose the same original path-bound equation without constructing its
     /// compound rational products. Precision changes only this proof enclosure.
     pub(crate) fn enclose_upper_bound(
-        variation: &Rat,
-        reference: &GeographicReference,
+        variation: &Rat, reference: &GeographicReference,
         math: &mut purrdf_xsd::math::CoordinateMath,
     ) -> Result<purrdf_xsd::math::FixedInterval, purrdf_xsd::math::MathError> {
         let (_, maximum) = reference.ellipsoid().normal_metric_bounds_ref();
@@ -766,9 +701,7 @@ trait PathScaleArithmetic {
     fn divide(&mut self, a: &Self::Value, b: &Self::Value) -> Result<Self::Value, Self::Error>;
 }
 fn source_path_bound<A: PathScaleArithmetic>(
-    variation: &Rat,
-    maximum: &Rat,
-    arithmetic: &mut A,
+    variation: &Rat, maximum: &Rat, arithmetic: &mut A,
 ) -> Result<A::Value, A::Error> {
     let maximum = arithmetic.source(maximum)?;
     let variation = arithmetic.source(variation)?;
@@ -833,9 +766,7 @@ fn interpolate_ordinate(start: &Rat, end: &Rat, parameter: &Rat) -> Rat {
         .expect("pure interpolation has no admission refusal")
 }
 fn interpolate_ordinate_inner(
-    start: &Rat,
-    end: &Rat,
-    parameter: &Rat,
+    start: &Rat, end: &Rat, parameter: &Rat,
     mut admission: Option<&mut crate::numerical::ExactAdmission<'_, '_>>,
 ) -> Result<Rat, GeoError> {
     interpolate_ordinate_with(start, end, parameter, &mut admission)
@@ -843,9 +774,7 @@ fn interpolate_ordinate_inner(
 trait CoordinateArithmetic {
     type Error;
     fn exact<T>(
-        &mut self,
-        operation: purrdf_xsd::integer::ExactOperation,
-        operands: &[&Rat],
+        &mut self, operation: purrdf_xsd::integer::ExactOperation, operands: &[&Rat],
         evaluate: impl FnOnce(
             &crate::numerical::ExactValues<'_>,
         ) -> Result<T, purrdf_xsd::integer::LimbScratchError>,
@@ -854,9 +783,7 @@ trait CoordinateArithmetic {
 impl CoordinateArithmetic for Option<&mut crate::numerical::ExactAdmission<'_, '_>> {
     type Error = GeoError;
     fn exact<T>(
-        &mut self,
-        operation: purrdf_xsd::integer::ExactOperation,
-        operands: &[&Rat],
+        &mut self, operation: purrdf_xsd::integer::ExactOperation, operands: &[&Rat],
         evaluate: impl FnOnce(
             &crate::numerical::ExactValues<'_>,
         ) -> Result<T, purrdf_xsd::integer::LimbScratchError>,
@@ -875,9 +802,7 @@ struct RetainedCoordinateArithmetic<'a, 'context, 'observer> {
 impl CoordinateArithmetic for RetainedCoordinateArithmetic<'_, '_, '_> {
     type Error = GeoError;
     fn exact<T>(
-        &mut self,
-        operation: purrdf_xsd::integer::ExactOperation,
-        operands: &[&Rat],
+        &mut self, operation: purrdf_xsd::integer::ExactOperation, operands: &[&Rat],
         evaluate: impl FnOnce(
             &crate::numerical::ExactValues<'_>,
         ) -> Result<T, purrdf_xsd::integer::LimbScratchError>,
@@ -889,9 +814,7 @@ impl CoordinateArithmetic for RetainedCoordinateArithmetic<'_, '_, '_> {
 impl CoordinateArithmetic for MathCoordinateArithmetic<'_, '_> {
     type Error = purrdf_xsd::math::MathError;
     fn exact<T>(
-        &mut self,
-        operation: purrdf_xsd::integer::ExactOperation,
-        operands: &[&Rat],
+        &mut self, operation: purrdf_xsd::integer::ExactOperation, operands: &[&Rat],
         evaluate: impl FnOnce(
             &crate::numerical::ExactValues<'_>,
         ) -> Result<T, purrdf_xsd::integer::LimbScratchError>,
@@ -906,10 +829,7 @@ impl CoordinateArithmetic for MathCoordinateArithmetic<'_, '_> {
     }
 }
 fn interpolate_ordinate_with<A: CoordinateArithmetic>(
-    start: &Rat,
-    end: &Rat,
-    parameter: &Rat,
-    arithmetic: &mut A,
+    start: &Rat, end: &Rat, parameter: &Rat, arithmetic: &mut A,
 ) -> Result<Rat, A::Error> {
     use purrdf_xsd::integer::ExactOperation::{Linear, RationalAdd, RationalMultiply};
     // Endpoint and constant-ordinate identities preserve the original carrier
@@ -938,10 +858,7 @@ fn interpolate_ordinate_with<A: CoordinateArithmetic>(
     })
 }
 fn interpolate_coord_with<A: CoordinateArithmetic>(
-    start: &Coord,
-    end: &Coord,
-    parameter: &Rat,
-    arithmetic: &mut A,
+    start: &Coord, end: &Coord, parameter: &Rat, arithmetic: &mut A,
 ) -> Result<Coord, A::Error> {
     let x = interpolate_ordinate_with(start.x(), end.x(), parameter, arithmetic)?;
     let y = interpolate_ordinate_with(start.y(), end.y(), parameter, arithmetic)?;
@@ -970,10 +887,7 @@ impl AzimuthLengthArc {
     /// # Errors
     /// Propagates the direct solver's reference, domain and operational refusals.
     pub fn new(
-        start: PreparedCoordinate,
-        azimuth: Rat,
-        length: Metres,
-        context: &mut MetricContext,
+        start: PreparedCoordinate, azimuth: Rat, length: Metres, context: &mut MetricContext,
     ) -> Result<Self, GeoError> {
         geodesic_entry(
             context,
@@ -992,10 +906,7 @@ impl AzimuthLengthArc {
     /// Propagates branch/reference failures and refuses resource exhaustion
     /// before copying or evaluating the exact parameters.
     pub fn from_source_in_context(
-        start: PreparedCoordinate,
-        azimuth: &Rat,
-        length: &Metres,
-        context: &mut MetricContext,
+        start: PreparedCoordinate, azimuth: &Rat, length: &Metres, context: &mut MetricContext,
     ) -> Result<Self, GeoError> {
         geodesic_entry(
             context,
@@ -1023,12 +934,8 @@ impl AzimuthLengthArc {
         )
     }
     fn solve(
-        start: PreparedCoordinate,
-        azimuth: Rat,
-        length: Metres,
-        geodesic: &PreparedGeodesic,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        start: PreparedCoordinate, azimuth: Rat, length: Metres, geodesic: &PreparedGeodesic,
+        context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         let endpoint =
             geodesic.direct_metered(start.point(), &azimuth, &length, context, observer)?;
@@ -1064,9 +971,7 @@ impl AzimuthLengthArc {
     /// # Errors
     /// Refuses a parameter outside `[0,1]` or the direct solver's operational failure.
     pub fn at(
-        &self,
-        parameter: &Rat,
-        context: &mut MetricContext,
+        &self, parameter: &Rat, context: &mut MetricContext,
     ) -> Result<DirectResult, GeoError> {
         geodesic_entry(
             context,
@@ -1127,9 +1032,7 @@ impl ShortestGeodesicArc {
     /// solver's numerical or operational failures. Unresolved multiplicity is
     /// a precision failure, not a successful approximate branch selection.
     pub fn new(
-        start: PreparedCoordinate,
-        end: PreparedCoordinate,
-        context: &mut MetricContext,
+        start: PreparedCoordinate, end: PreparedCoordinate, context: &mut MetricContext,
     ) -> Result<Self, GeoError> {
         Self::prepare(start, end, context, None)
     }
@@ -1138,17 +1041,13 @@ impl ShortestGeodesicArc {
     /// # Errors
     /// Adds the observer's typed refusal to [`Self::new`].
     pub fn new_metered(
-        start: PreparedCoordinate,
-        end: PreparedCoordinate,
-        context: &mut MetricContext,
+        start: PreparedCoordinate, end: PreparedCoordinate, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::prepare(start, end, context, Some(observer))
     }
     fn prepare(
-        start: PreparedCoordinate,
-        end: PreparedCoordinate,
-        context: &mut MetricContext,
+        start: PreparedCoordinate, end: PreparedCoordinate, context: &mut MetricContext,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         geodesic_entry(
@@ -1202,9 +1101,7 @@ impl ShortestGeodesicArc {
     /// Refuses reference mismatch, parameters outside `[0,1]`, or incomplete
     /// certified propagation and fixed-grid endpoint rounding.
     pub fn at(
-        &self,
-        parameter: &Rat,
-        context: &mut MetricContext,
+        &self, parameter: &Rat, context: &mut MetricContext,
     ) -> Result<DirectResult, GeoError> {
         self.propagate(parameter, context, None)
     }
@@ -1213,18 +1110,13 @@ impl ShortestGeodesicArc {
     /// # Errors
     /// Adds observer refusal to [`Self::at`].
     pub fn at_metered(
-        &self,
-        parameter: &Rat,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, parameter: &Rat, context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<DirectResult, GeoError> {
         self.propagate(parameter, context, Some(observer))
     }
 
     fn propagate(
-        &self,
-        parameter: &Rat,
-        context: &mut MetricContext,
+        &self, parameter: &Rat, context: &mut MetricContext,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<DirectResult, GeoError> {
         geodesic_entry(
@@ -1294,9 +1186,7 @@ impl PreparedEdge {
     /// Share the complete original immutable edge after its native work poll.
     /// No integer copy or allocation control is created by this clone.
     pub(crate) fn clone_admitted(
-        &self,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &self, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<Self, GeoError> {
         context.charge_work(1)?;
         progress.context_poll(context)?;
@@ -1377,9 +1267,7 @@ impl PreparedEdge {
     /// Refuses a mismatched reference, unresolved unique branch proof, or
     /// incomplete numerical admission.
     pub fn geodesic_view(
-        &self,
-        minimum_bits: u32,
-        context: &mut MetricContext,
+        &self, minimum_bits: u32, context: &mut MetricContext,
     ) -> Result<Option<ArcIntervalView>, GeoError> {
         self.prepare_geodesic_view(minimum_bits, context, None)
     }
@@ -1388,17 +1276,13 @@ impl PreparedEdge {
     /// # Errors
     /// Adds observer refusal to [`Self::geodesic_view`].
     pub fn geodesic_view_metered(
-        &self,
-        minimum_bits: u32,
-        context: &mut MetricContext,
+        &self, minimum_bits: u32, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<Option<ArcIntervalView>, GeoError> {
         self.prepare_geodesic_view(minimum_bits, context, Some(observer))
     }
     fn prepare_geodesic_view(
-        &self,
-        minimum_bits: u32,
-        context: &mut MetricContext,
+        &self, minimum_bits: u32, context: &mut MetricContext,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Option<ArcIntervalView>, GeoError> {
         match self {
@@ -1498,14 +1382,12 @@ impl PreparedCurve {
     /// # Errors
     /// Refuses invalid original geographic coordinates.
     pub fn from_source(
-        coordinates: &[Coord],
-        reference: &GeographicReference,
+        coordinates: &[Coord], reference: &GeographicReference,
     ) -> Result<Self, GeoError> {
         Self::from_source_with_work(coordinates, reference, &mut || Ok(()))
     }
     fn from_source_with_work(
-        coordinates: &[Coord],
-        reference: &GeographicReference,
+        coordinates: &[Coord], reference: &GeographicReference,
         work: &mut impl FnMut() -> Result<(), GeoError>,
     ) -> Result<Self, GeoError> {
         Self::from_source_with_binding(
@@ -1516,9 +1398,7 @@ impl PreparedCurve {
         )
     }
     fn from_source_with_binding(
-        coordinates: &[Coord],
-        reference: &GeographicReference,
-        binding: GeoBindingId,
+        coordinates: &[Coord], reference: &GeographicReference, binding: GeoBindingId,
         preparation: &mut impl SourcePreparation,
     ) -> Result<Self, GeoError> {
         let mut edges = crate::context::RetainedBuilder::default();
@@ -1614,16 +1494,12 @@ impl PreparedPolygon {
     /// # Errors
     /// Refuses malformed rings or invalid original angular coordinates.
     pub fn from_source(
-        rings: &crate::Rings,
-        reference: &GeographicReference,
-        interior: RegionInterior,
+        rings: &crate::Rings, reference: &GeographicReference, interior: RegionInterior,
     ) -> Result<Self, GeoError> {
         Self::from_source_with_work(rings, reference, interior, &mut || Ok(()))
     }
     fn from_source_with_work(
-        rings: &crate::Rings,
-        reference: &GeographicReference,
-        interior: RegionInterior,
+        rings: &crate::Rings, reference: &GeographicReference, interior: RegionInterior,
         work: &mut impl FnMut() -> Result<(), GeoError>,
     ) -> Result<Self, GeoError> {
         Self::from_source_with_binding(
@@ -1635,11 +1511,8 @@ impl PreparedPolygon {
         )
     }
     fn from_source_with_binding(
-        rings: &crate::Rings,
-        reference: &GeographicReference,
-        binding: GeoBindingId,
-        interior: RegionInterior,
-        preparation: &mut impl SourcePreparation,
+        rings: &crate::Rings, reference: &GeographicReference, binding: GeoBindingId,
+        interior: RegionInterior, preparation: &mut impl SourcePreparation,
     ) -> Result<Self, GeoError> {
         let mut prepared = crate::context::RetainedBuilder::default();
         let mut charts = crate::context::RetainedBuilder::default();
@@ -1690,9 +1563,7 @@ impl PreparedPolygon {
     /// Refuses a reference mismatch, non-Jordan ring, uncertain closure or
     /// incomplete work, memory, precision or cancellation admission.
     pub fn from_curves(
-        rings: Vec<PreparedCurve>,
-        interior: OrientedInterior,
-        context: &mut MetricContext,
+        rings: Vec<PreparedCurve>, interior: OrientedInterior, context: &mut MetricContext,
     ) -> Result<Self, GeoError> {
         Self::prepare_curves(rings, interior, context, None)
     }
@@ -1701,17 +1572,13 @@ impl PreparedPolygon {
     /// # Errors
     /// Adds observer refusal to [`Self::from_curves`].
     pub fn from_curves_metered(
-        rings: Vec<PreparedCurve>,
-        interior: OrientedInterior,
-        context: &mut MetricContext,
+        rings: Vec<PreparedCurve>, interior: OrientedInterior, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::prepare_curves(rings, interior, context, Some(observer))
     }
     fn prepare_curves(
-        rings: Vec<PreparedCurve>,
-        interior: OrientedInterior,
-        context: &mut MetricContext,
+        rings: Vec<PreparedCurve>, interior: OrientedInterior, context: &mut MetricContext,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         context.begin(1)?;
@@ -1725,8 +1592,7 @@ impl PreparedPolygon {
     /// # Errors
     /// Preserves the same reference, ring, side, work and native refusal laws.
     pub fn from_prepared_curves(
-        rings: crate::PreparedValues<PreparedCurve>,
-        interior: OrientedInterior,
+        rings: crate::PreparedValues<PreparedCurve>, interior: OrientedInterior,
         context: &mut MetricContext,
     ) -> Result<Self, GeoError> {
         context.begin(1)?;
@@ -1739,10 +1605,8 @@ impl PreparedPolygon {
     }
 
     fn finish_prepared_curves(
-        rings: crate::PreparedValues<PreparedCurve>,
-        interior: OrientedInterior,
-        context: &mut MetricContext,
-        admission: &mut PreparationAdmission<'_, '_>,
+        rings: crate::PreparedValues<PreparedCurve>, interior: OrientedInterior,
+        context: &mut MetricContext, admission: &mut PreparationAdmission<'_, '_>,
     ) -> Result<Self, GeoError> {
         let binding = admission.reference_identity(context.reference())?;
         for ring in &rings {
@@ -1780,8 +1644,7 @@ impl PreparedPolygon {
     /// # Errors
     /// Refuses empty ring lists and mismatched reference bindings.
     pub fn from_oriented_rings(
-        rings: Vec<crate::atlas::oriented::OrientedRing>,
-        interior: OrientedInterior,
+        rings: Vec<crate::atlas::oriented::OrientedRing>, interior: OrientedInterior,
         reference: &GeographicReference,
     ) -> Result<Self, GeoError> {
         let mut progress = WorkProgress::integer(None);
@@ -1793,9 +1656,7 @@ impl PreparedPolygon {
 
     pub(crate) fn from_oriented_rings_admitted(
         rings: crate::context::RetainedBuilder<crate::atlas::oriented::OrientedRing>,
-        interior: OrientedInterior,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        interior: OrientedInterior, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
         retained: &mut u64,
     ) -> Result<Self, GeoError> {
         let previous = u64::try_from(rings.admitted_bytes())
@@ -1816,15 +1677,13 @@ impl PreparedPolygon {
     /// proof-producing caller admits the original source and curve owners.
     #[cfg(test)]
     pub(crate) fn from_selected_support(
-        rings: Vec<PreparedCurve>,
-        reference: &GeographicReference,
+        rings: Vec<PreparedCurve>, reference: &GeographicReference,
     ) -> Result<Self, GeoError> {
         Self::from_native_support(rings, None, true, reference)
     }
 
     pub(crate) fn from_selected_support_admitted(
-        rings: crate::context::RetainedBuilder<PreparedCurve>,
-        reference: &GeographicReference,
+        rings: crate::context::RetainedBuilder<PreparedCurve>, reference: &GeographicReference,
         progress: &mut WorkProgress<'_>,
     ) -> Result<Self, GeoError> {
         Self::from_native_values(
@@ -1837,9 +1696,7 @@ impl PreparedPolygon {
     }
     #[cfg(test)]
     fn from_native_support(
-        rings: Vec<PreparedCurve>,
-        oriented: Option<OrientedInterior>,
-        closed_support: bool,
+        rings: Vec<PreparedCurve>, oriented: Option<OrientedInterior>, closed_support: bool,
         reference: &GeographicReference,
     ) -> Result<Self, GeoError> {
         let mut progress = WorkProgress::integer(None);
@@ -1853,11 +1710,8 @@ impl PreparedPolygon {
     }
 
     fn from_native_values(
-        rings: crate::PreparedValues<PreparedCurve>,
-        oriented: Option<OrientedInterior>,
-        closed_support: bool,
-        reference: &GeographicReference,
-        progress: &mut WorkProgress<'_>,
+        rings: crate::PreparedValues<PreparedCurve>, oriented: Option<OrientedInterior>,
+        closed_support: bool, reference: &GeographicReference, progress: &mut WorkProgress<'_>,
     ) -> Result<Self, GeoError> {
         if rings.is_empty() {
             return Err(GeoError::retained_failure_with_progress(
@@ -1910,10 +1764,8 @@ impl PreparedPolygon {
     /// inner inclusion decides Interior; each possible boundary still uses
     /// the original ring predicate. Both immutable owners are preadmitted.
     pub(crate) fn with_certified_angular_rectangle(
-        mut self,
-        walls: crate::PreparedValue<[Rat; 4]>,
-        inner: Option<crate::PreparedValue<[Rat; 4]>>,
-        retained_bytes: u64,
+        mut self, walls: crate::PreparedValue<[Rat; 4]>,
+        inner: Option<crate::PreparedValue<[Rat; 4]>>, retained_bytes: u64,
     ) -> Self {
         self.angular_bounds = Some(CertifiedAngularBounds {
             walls,
@@ -2022,9 +1874,7 @@ fn matching_binding(source: GeoBindingId, target: GeoBindingId) -> Result<(), Ge
 }
 
 fn matching_binding_with_progress(
-    source: GeoBindingId,
-    target: GeoBindingId,
-    progress: &mut WorkProgress<'_>,
+    source: GeoBindingId, target: GeoBindingId, progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     matching_binding_using(source, target, || {
         crate::numerical::missing_binding_error(source.digest(), target.digest(), progress)
@@ -2032,9 +1882,7 @@ fn matching_binding_with_progress(
 }
 
 fn matching_binding_using(
-    source: GeoBindingId,
-    target: GeoBindingId,
-    failure: impl FnOnce() -> GeoError,
+    source: GeoBindingId, target: GeoBindingId, failure: impl FnOnce() -> GeoError,
 ) -> Result<(), GeoError> {
     if source == target {
         Ok(())
@@ -2047,8 +1895,7 @@ fn matching_binding_using(
 /// The numerical child may reset its own invocation, while original identity
 /// work and retained argument temporaries remain in the parent admission.
 fn geodesic_entry<A, T>(
-    context: &mut MetricContext,
-    observer: Option<&mut dyn MetricWorkObserver>,
+    context: &mut MetricContext, observer: Option<&mut dyn MetricWorkObserver>,
     bindings: &[GeoBindingId],
     prepare: impl FnOnce(&mut MetricContext, &mut WorkProgress<'_>, &mut u64) -> Result<A, GeoError>,
     solve: impl FnOnce(
@@ -2180,17 +2027,13 @@ impl PreparedRegion {
         }
     }
     pub(crate) fn check_reference_with(
-        &self,
-        reference: &GeographicReference,
-        work: &mut impl FnMut(u64) -> Result<(), GeoError>,
+        &self, reference: &GeographicReference, work: &mut impl FnMut(u64) -> Result<(), GeoError>,
     ) -> Result<(), GeoError> {
         self.check_binding_with(reference.id(), work)
     }
 
     pub(crate) fn check_binding_with(
-        &self,
-        binding: GeoBindingId,
-        work: &mut impl FnMut(u64) -> Result<(), GeoError>,
+        &self, binding: GeoBindingId, work: &mut impl FnMut(u64) -> Result<(), GeoError>,
     ) -> Result<(), GeoError> {
         self.visit_bindings(&mut |source| {
             work(1)?;
@@ -2199,10 +2042,7 @@ impl PreparedRegion {
     }
 
     pub(crate) fn check_binding_admitted(
-        &self,
-        binding: GeoBindingId,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &self, binding: GeoBindingId, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         self.visit_bindings(&mut |source| {
             context.charge_work(1)?;
@@ -2217,8 +2057,7 @@ impl PreparedRegion {
     }
 
     fn visit_bindings(
-        &self,
-        visit: &mut impl FnMut(GeoBindingId) -> Result<(), GeoError>,
+        &self, visit: &mut impl FnMut(GeoBindingId) -> Result<(), GeoError>,
     ) -> Result<(), GeoError> {
         if let Self::Polygons(polygons) | Self::ComplementOfPolygons(polygons) = self {
             for polygon in polygons {
@@ -2256,9 +2095,7 @@ impl PreparedGeometry {
     /// # Errors
     /// Adds observer refusal to [`Self::from_literal`].
     pub fn from_literal_metered(
-        literal: &GeometryLiteral,
-        profile: &GeoProfile,
-        observer: &mut dyn MetricWorkObserver,
+        literal: &GeometryLiteral, profile: &GeoProfile, observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::prepare_literal(literal, profile, profile.policy(), Some(observer), None)
     }
@@ -2268,9 +2105,7 @@ impl PreparedGeometry {
     /// # Errors
     /// Uses [`Self::from_literal`]'s contract under the supplied admission.
     pub fn from_literal_in_policy(
-        literal: &GeometryLiteral,
-        profile: &GeoProfile,
-        policy: crate::ExecutionPolicy,
+        literal: &GeometryLiteral, profile: &GeoProfile, policy: crate::ExecutionPolicy,
     ) -> Result<Self, GeoError> {
         Self::prepare_literal(literal, profile, policy, None, None)
     }
@@ -2279,9 +2114,7 @@ impl PreparedGeometry {
     /// # Errors
     /// Adds observer refusal to [`Self::from_literal_in_policy`].
     pub fn from_literal_in_policy_metered(
-        literal: &GeometryLiteral,
-        profile: &GeoProfile,
-        policy: crate::ExecutionPolicy,
+        literal: &GeometryLiteral, profile: &GeoProfile, policy: crate::ExecutionPolicy,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::prepare_literal(literal, profile, policy, Some(observer), None)
@@ -2292,9 +2125,7 @@ impl PreparedGeometry {
     /// # Errors
     /// Refuses a different datum/ellipsoid or incomplete source admission.
     pub fn from_literal_surface_view(
-        literal: &GeometryLiteral,
-        profile: &GeoProfile,
-        target: &GeographicReference,
+        literal: &GeometryLiteral, profile: &GeoProfile, target: &GeographicReference,
         policy: crate::ExecutionPolicy,
     ) -> Result<Self, GeoError> {
         Self::prepare_literal(literal, profile, policy, None, Some(target))
@@ -2304,20 +2135,14 @@ impl PreparedGeometry {
     /// # Errors
     /// Adds observer refusal to [`Self::from_literal_surface_view`].
     pub fn from_literal_surface_view_metered(
-        literal: &GeometryLiteral,
-        profile: &GeoProfile,
-        target: &GeographicReference,
-        policy: crate::ExecutionPolicy,
-        observer: &mut dyn MetricWorkObserver,
+        literal: &GeometryLiteral, profile: &GeoProfile, target: &GeographicReference,
+        policy: crate::ExecutionPolicy, observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::prepare_literal(literal, profile, policy, Some(observer), Some(target))
     }
     fn prepare_literal(
-        literal: &GeometryLiteral,
-        profile: &GeoProfile,
-        limits: crate::ExecutionPolicy,
-        observer: Option<&mut dyn MetricWorkObserver>,
-        target: Option<&GeographicReference>,
+        literal: &GeometryLiteral, profile: &GeoProfile, limits: crate::ExecutionPolicy,
+        observer: Option<&mut dyn MetricWorkObserver>, target: Option<&GeographicReference>,
     ) -> Result<Self, GeoError> {
         let mut progress = WorkProgress::new(observer);
         let source_reference = profile.reference_retained(literal.crs(), &mut progress)?;
@@ -2456,11 +2281,8 @@ impl PreparedGeometry {
     /// # Errors
     /// Refuses reference mismatch and incomplete work/output/workspace admission.
     pub fn from_parts(
-        reference: GeographicReference,
-        points: Vec<PreparedCoordinate>,
-        curves: Vec<PreparedCurve>,
-        region: PreparedRegion,
-        policy: crate::ExecutionPolicy,
+        reference: GeographicReference, points: Vec<PreparedCoordinate>,
+        curves: Vec<PreparedCurve>, region: PreparedRegion, policy: crate::ExecutionPolicy,
     ) -> Result<Self, GeoError> {
         Self::prepare_parts(reference, points, Vec::new(), curves, region, policy, None)
     }
@@ -2469,11 +2291,8 @@ impl PreparedGeometry {
     /// # Errors
     /// Adds observer refusal to [`Self::from_parts`].
     pub fn from_parts_metered(
-        reference: GeographicReference,
-        points: Vec<PreparedCoordinate>,
-        curves: Vec<PreparedCurve>,
-        region: PreparedRegion,
-        policy: crate::ExecutionPolicy,
+        reference: GeographicReference, points: Vec<PreparedCoordinate>,
+        curves: Vec<PreparedCurve>, region: PreparedRegion, policy: crate::ExecutionPolicy,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::prepare_parts(
@@ -2493,12 +2312,9 @@ impl PreparedGeometry {
     /// # Errors
     /// Refuses binding mismatch or incomplete source/storage/work admission.
     pub fn from_parts_with_symbolic(
-        reference: GeographicReference,
-        points: Vec<PreparedCoordinate>,
-        symbolic_points: Vec<OperationImagePoint>,
-        curves: Vec<PreparedCurve>,
-        region: PreparedRegion,
-        policy: crate::ExecutionPolicy,
+        reference: GeographicReference, points: Vec<PreparedCoordinate>,
+        symbolic_points: Vec<OperationImagePoint>, curves: Vec<PreparedCurve>,
+        region: PreparedRegion, policy: crate::ExecutionPolicy,
     ) -> Result<Self, GeoError> {
         Self::prepare_parts(
             reference,
@@ -2515,12 +2331,9 @@ impl PreparedGeometry {
     /// # Errors
     /// Adds observer refusal to [`Self::from_parts_with_symbolic`].
     pub fn from_parts_with_symbolic_metered(
-        reference: GeographicReference,
-        points: Vec<PreparedCoordinate>,
-        symbolic_points: Vec<OperationImagePoint>,
-        curves: Vec<PreparedCurve>,
-        region: PreparedRegion,
-        policy: crate::ExecutionPolicy,
+        reference: GeographicReference, points: Vec<PreparedCoordinate>,
+        symbolic_points: Vec<OperationImagePoint>, curves: Vec<PreparedCurve>,
+        region: PreparedRegion, policy: crate::ExecutionPolicy,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::prepare_parts(
@@ -2534,12 +2347,9 @@ impl PreparedGeometry {
         )
     }
     fn prepare_parts(
-        reference: GeographicReference,
-        points: Vec<PreparedCoordinate>,
-        symbolic_points: Vec<OperationImagePoint>,
-        curves: Vec<PreparedCurve>,
-        region: PreparedRegion,
-        policy: crate::ExecutionPolicy,
+        reference: GeographicReference, points: Vec<PreparedCoordinate>,
+        symbolic_points: Vec<OperationImagePoint>, curves: Vec<PreparedCurve>,
+        region: PreparedRegion, policy: crate::ExecutionPolicy,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         let mut admission = PreparationAdmission::new(policy.limits(), observer)?;
@@ -2561,13 +2371,10 @@ impl PreparedGeometry {
     /// # Errors
     /// Preserves source, work, profile, native storage and observer refusal.
     pub fn from_retained_parts_metered(
-        reference: GeographicReference,
-        points: crate::PreparedValues<PreparedCoordinate>,
+        reference: GeographicReference, points: crate::PreparedValues<PreparedCoordinate>,
         symbolic_points: crate::PreparedValues<OperationImagePoint>,
-        curves: crate::PreparedValues<PreparedCurve>,
-        region: PreparedRegion,
-        policy: crate::ExecutionPolicy,
-        observer: &mut dyn MetricWorkObserver,
+        curves: crate::PreparedValues<PreparedCurve>, region: PreparedRegion,
+        policy: crate::ExecutionPolicy, observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         let mut admission = PreparationAdmission::new(policy.limits(), Some(observer))?;
         for bytes in [
@@ -2596,11 +2403,9 @@ impl PreparedGeometry {
     }
 
     fn finish_parts(
-        reference: GeographicReference,
-        points: crate::PreparedValues<PreparedCoordinate>,
+        reference: GeographicReference, points: crate::PreparedValues<PreparedCoordinate>,
         symbolic_points: crate::PreparedValues<OperationImagePoint>,
-        curves: crate::PreparedValues<PreparedCurve>,
-        region: PreparedRegion,
+        curves: crate::PreparedValues<PreparedCurve>, region: PreparedRegion,
         admission: &mut PreparationAdmission<'_, '_>,
     ) -> Result<Self, GeoError> {
         let binding = admission.reference_identity(&reference)?;
@@ -2748,9 +2553,7 @@ impl SourcePreparation for PreparationAdmission<'_, '_> {
         result
     }
     fn push<T>(
-        &mut self,
-        values: &mut crate::context::RetainedBuilder<T>,
-        value: T,
+        &mut self, values: &mut crate::context::RetainedBuilder<T>, value: T,
     ) -> Result<(), GeoError> {
         let required = values.len().checked_add(1).ok_or(GeoError::Storage(
             purrdf_lex::allocation::StorageError::SizeOverflow,
@@ -2784,10 +2587,7 @@ impl SourcePreparation for PreparationAdmission<'_, '_> {
         Ok(())
     }
     fn prepare_coordinate(
-        &mut self,
-        source: &Coord,
-        reference: &GeographicReference,
-        binding: GeoBindingId,
+        &mut self, source: &Coord, reference: &GeographicReference, binding: GeoBindingId,
     ) -> Result<PreparedCoordinate, GeoError> {
         use purrdf_xsd::integer::ExactOperation::{Linear, RationalCompare};
         let operands = [Some(source.x()), Some(source.y()), source.z(), source.m()]
@@ -2832,8 +2632,7 @@ impl SourcePreparation for PreparationAdmission<'_, '_> {
         self.detach(coordinate)
     }
     fn chart(
-        &mut self,
-        rings: crate::context::RetainedBuilder<crate::context::RetainedBuilder<Coord>>,
+        &mut self, rings: crate::context::RetainedBuilder<crate::context::RetainedBuilder<Coord>>,
     ) -> Result<crate::PreparedValue<crate::Geometry>, GeoError> {
         let bytes = source_chart_bytes(&rings, &self.progress)?;
         let previous_arrays = rings
@@ -2877,15 +2676,13 @@ struct PreparationAdmission<'a, 'observer> {
 }
 impl<'a, 'observer> PreparationAdmission<'a, 'observer> {
     fn new(
-        limits: &'a crate::ExecutionLimits,
-        observer: Option<&'observer mut dyn MetricWorkObserver>,
+        limits: &'a crate::ExecutionLimits, observer: Option<&'observer mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         Self::with_progress(limits, WorkProgress::new(observer))
     }
 
     fn with_progress(
-        limits: &'a crate::ExecutionLimits,
-        mut progress: WorkProgress<'observer>,
+        limits: &'a crate::ExecutionLimits, mut progress: WorkProgress<'observer>,
     ) -> Result<Self, GeoError> {
         progress.initial()?;
         let mut admission = Self {
@@ -2941,8 +2738,7 @@ impl<'a, 'observer> PreparationAdmission<'a, 'observer> {
         result.map(crate::PreparedValues::from_retained)
     }
     fn exact_values<T>(
-        &mut self,
-        cost: purrdf_xsd::integer::ExactArithmeticCost,
+        &mut self, cost: purrdf_xsd::integer::ExactArithmeticCost,
         evaluate: impl FnOnce(&crate::numerical::ExactValues<'_>) -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         self.step(cost.work_items)?;
@@ -3014,8 +2810,7 @@ impl<'a, 'observer> PreparationAdmission<'a, 'observer> {
     }
 
     fn reference_identity(
-        &mut self,
-        reference: &GeographicReference,
+        &mut self, reference: &GeographicReference,
     ) -> Result<GeoBindingId, GeoError> {
         let cost = crate::numerical::reference_identity_cost(reference)?;
         let identity = if let Some(identity) = reference.cached_identity() {
@@ -3162,15 +2957,12 @@ impl crate::carrier::GeometryStorageVisitor for PreparationAdmission<'_, '_> {
         self.step(1)
     }
     fn push_pending<T>(
-        &mut self,
-        pending: &mut crate::context::RetainedBuilder<T>,
-        value: T,
+        &mut self, pending: &mut crate::context::RetainedBuilder<T>, value: T,
     ) -> Result<(), GeoError> {
         SourcePreparation::push(self, pending, value)
     }
     fn release_pending<T>(
-        &mut self,
-        pending: crate::context::RetainedBuilder<T>,
+        &mut self, pending: crate::context::RetainedBuilder<T>,
     ) -> Result<(), GeoError> {
         let bytes = u64::try_from(pending.admitted_bytes())
             .map_err(|_| GeoError::Storage(purrdf_lex::allocation::StorageError::SizeOverflow))?;
@@ -3206,8 +2998,7 @@ impl SourceInventory {
 }
 
 pub(crate) fn source_inventory(
-    geometry: &crate::Geometry,
-    limits: &crate::ExecutionLimits,
+    geometry: &crate::Geometry, limits: &crate::ExecutionLimits,
     observer: Option<&mut dyn MetricWorkObserver>,
 ) -> Result<SourceInventory, GeoError> {
     let mut admission = admit_preparation(geometry, limits, observer)?;
@@ -3231,8 +3022,7 @@ pub(crate) fn source_inventory(
 /// Uses the original coordinate/storage admission; it neither interprets axes
 /// nor manufactures a source identity before the complete curve constructor.
 pub(crate) fn coordinate_source_admission(
-    coordinates: [&Coord; 2],
-    limits: &crate::ExecutionLimits,
+    coordinates: [&Coord; 2], limits: &crate::ExecutionLimits,
     observer: Option<&mut dyn MetricWorkObserver>,
 ) -> Result<(u64, u64), GeoError> {
     let mut admission = PreparationAdmission::new(limits, observer)?;
@@ -3246,8 +3036,7 @@ pub(crate) fn coordinate_source_admission(
 }
 
 fn admit_preparation<'a, 'observer>(
-    geometry: &crate::Geometry,
-    limits: &'a crate::ExecutionLimits,
+    geometry: &crate::Geometry, limits: &'a crate::ExecutionLimits,
     observer: Option<&'observer mut dyn MetricWorkObserver>,
 ) -> Result<PreparationAdmission<'a, 'observer>, GeoError> {
     let mut admission = PreparationAdmission::new(limits, observer)?;
@@ -3256,9 +3045,7 @@ fn admit_preparation<'a, 'observer>(
 }
 
 fn frame_value(
-    hash: &mut Hasher,
-    value: &Rat,
-    admission: &mut PreparationAdmission<'_, '_>,
+    hash: &mut Hasher, value: &Rat, admission: &mut PreparationAdmission<'_, '_>,
 ) -> Result<(), GeoError> {
     let cost = crate::numerical::rational_cost(
         purrdf_xsd::integer::ExactOperation::DecimalRender,
@@ -3286,9 +3073,7 @@ fn frame_value(
     admission.progress.settle_result(result, checkpoint)
 }
 fn frame_coordinate(
-    hash: &mut Hasher,
-    coordinate: &Coord,
-    admission: &mut PreparationAdmission<'_, '_>,
+    hash: &mut Hasher, coordinate: &Coord, admission: &mut PreparationAdmission<'_, '_>,
 ) -> Result<(), GeoError> {
     admission.step(1)?;
     frame_le_into(
@@ -3309,14 +3094,10 @@ fn frame_coordinate(
 }
 
 fn frame_geometry(
-    hash: &mut Hasher,
-    geometry: &crate::Geometry,
-    admission: &mut PreparationAdmission<'_, '_>,
+    hash: &mut Hasher, geometry: &crate::Geometry, admission: &mut PreparationAdmission<'_, '_>,
 ) -> Result<(), GeoError> {
     fn line(
-        hash: &mut Hasher,
-        coordinates: &[Coord],
-        admission: &mut PreparationAdmission<'_, '_>,
+        hash: &mut Hasher, coordinates: &[Coord], admission: &mut PreparationAdmission<'_, '_>,
     ) -> Result<(), GeoError> {
         admission.step(1)?;
         frame_le_into(hash, &(coordinates.len() as u64).to_be_bytes());
@@ -3326,9 +3107,7 @@ fn frame_geometry(
         Ok(())
     }
     fn polygon(
-        hash: &mut Hasher,
-        rings: &crate::Rings,
-        admission: &mut PreparationAdmission<'_, '_>,
+        hash: &mut Hasher, rings: &crate::Rings, admission: &mut PreparationAdmission<'_, '_>,
     ) -> Result<(), GeoError> {
         admission.step(1)?;
         frame_le_into(hash, &(rings.len() as u64).to_be_bytes());
@@ -3387,8 +3166,7 @@ fn frame_geometry(
 }
 
 fn prepared_identity(
-    literal: &GeometryLiteral,
-    reference: &GeographicReference,
+    literal: &GeometryLiteral, reference: &GeographicReference,
     admission: &mut PreparationAdmission<'_, '_>,
 ) -> Result<Digest32, GeoError> {
     let mut hash = Hasher::new();
@@ -3404,9 +3182,7 @@ fn prepared_identity(
 }
 
 fn admit_curve(
-    curve: &PreparedCurve,
-    binding: GeoBindingId,
-    admission: &mut PreparationAdmission<'_, '_>,
+    curve: &PreparedCurve, binding: GeoBindingId, admission: &mut PreparationAdmission<'_, '_>,
 ) -> Result<(), GeoError> {
     admission.structure(1)?;
     admission.bytes =
@@ -3458,17 +3234,12 @@ fn admit_curve(
     Ok(())
 }
 fn parts_identity(
-    reference: &GeographicReference,
-    points: &[PreparedCoordinate],
-    symbolic_points: &[OperationImagePoint],
-    curves: &[PreparedCurve],
-    region: &PreparedRegion,
+    reference: &GeographicReference, points: &[PreparedCoordinate],
+    symbolic_points: &[OperationImagePoint], curves: &[PreparedCurve], region: &PreparedRegion,
     admission: &mut PreparationAdmission<'_, '_>,
 ) -> Result<Digest32, GeoError> {
     fn curve(
-        hash: &mut Hasher,
-        curve: &PreparedCurve,
-        admission: &mut PreparationAdmission<'_, '_>,
+        hash: &mut Hasher, curve: &PreparedCurve, admission: &mut PreparationAdmission<'_, '_>,
     ) -> Result<(), GeoError> {
         admission.step(1)?;
         frame_le_into(hash, &(curve.edges().len() as u64).to_be_bytes());

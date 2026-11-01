@@ -755,8 +755,7 @@ pub struct ConstraintAnnotation {
 /// no constraint, and holds at most one entry per constraint otherwise.
 #[inline]
 pub(crate) fn annotation_for(
-    annotations: &[ConstraintAnnotation],
-    which: AnnotatedConstraint,
+    annotations: &[ConstraintAnnotation], which: AnnotatedConstraint,
 ) -> Option<&ConstraintAnnotation> {
     annotations
         .iter()
@@ -891,8 +890,7 @@ impl Shape {
 
     /// Resolve an identity handle once; a definition keeps its own constraints.
     pub(crate) fn resolved_in<'a>(
-        &'a self,
-        model: Option<&'a ModelOwner>,
+        &'a self, model: Option<&'a ModelOwner>,
     ) -> Result<&'a Self, crate::PreparationRefusal> {
         if let [Constraint::Reference(target)] = self.constraints.as_slice()
             && self.property_shapes.is_empty()
@@ -910,8 +908,7 @@ impl Shape {
     }
 
     pub(crate) fn properties_in<'a>(
-        &'a self,
-        model: Option<&'a ModelOwner>,
+        &'a self, model: Option<&'a ModelOwner>,
     ) -> impl Iterator<Item = Result<PropertyView<'a>, crate::PreparationRefusal>> + use<'a> {
         let domain = self.owner.as_deref().or(model);
         self.property_shapes
@@ -972,8 +969,7 @@ impl ModelOwner {
     }
 
     pub(crate) fn from_declarations(
-        index: link::ShapeIndex,
-        mut functions: Vec<Arc<crate::expression::CustomFunction>>,
+        index: link::ShapeIndex, mut functions: Vec<Arc<crate::expression::CustomFunction>>,
     ) -> Result<Arc<Self>, crate::PreparationRefusal> {
         functions.sort_unstable_by(|left, right| left.iri.as_str().cmp(right.iri.as_str()));
         if let Some(pair) = functions.windows(2).find(|pair| pair[0].iri == pair[1].iri) {
@@ -1026,8 +1022,7 @@ impl ModelOwner {
     /// # Errors
     /// Refuses repeated identities and definitions that already own a domain.
     pub fn from_model(
-        definitions: Vec<Shape>,
-        functions: Vec<Arc<crate::expression::CustomFunction>>,
+        definitions: Vec<Shape>, functions: Vec<Arc<crate::expression::CustomFunction>>,
     ) -> Result<Arc<Self>, crate::PreparationRefusal> {
         let entries = Self::definition_map(definitions)?;
         Self::from_declarations(Arc::new(OnceLock::from(entries)), functions)
@@ -1061,8 +1056,7 @@ impl ModelOwner {
     }
 
     pub(crate) fn install_definitions(
-        index: &link::ShapeIndex,
-        definitions: Vec<Shape>,
+        index: &link::ShapeIndex, definitions: Vec<Shape>,
     ) -> Result<(), crate::PreparationRefusal> {
         if index.get().is_some() {
             return Err(crate::PreparationRefusal::InitializedIndex);
@@ -1079,16 +1073,14 @@ impl ModelOwner {
     }
 
     pub(crate) fn definition_required(
-        &self,
-        id: &Term,
+        &self, id: &Term,
     ) -> Result<&Shape, crate::PreparationRefusal> {
         self.definition(id)
             .ok_or_else(|| crate::PreparationRefusal::UnknownReference(Arc::new(id.clone())))
     }
 
     pub(crate) fn property_definition(
-        &self,
-        id: &Term,
+        &self, id: &Term,
     ) -> Result<&PropertyShape, crate::PreparationRefusal> {
         let definition = self.definition_required(id)?;
         definition
@@ -1123,8 +1115,7 @@ impl ModelOwner {
 
 impl ModelOwner {
     pub(crate) fn admit_recursion(
-        self: &Arc<Self>,
-        semantics: Option<crate::recursion::RecursionSemantics>,
+        self: &Arc<Self>, semantics: Option<crate::recursion::RecursionSemantics>,
     ) -> Result<(), ShapesError> {
         crate::recursion::cache::admit(self, semantics)
     }
@@ -1267,8 +1258,7 @@ impl Shapes {
     /// The source graph and its complete original parse configuration are part of
     /// reuse; a compatibility or other-law cache cannot confer dated admission.
     pub(crate) fn report_sources_with_profile(
-        &self,
-        profile: crate::profile::ShaclProfile,
+        &self, profile: crate::profile::ShaclProfile,
     ) -> Result<Arc<ConstraintSources>, crate::report::CompleteValidationError> {
         if profile == crate::profile::ShaclProfile::LEGACY {
             self.report_sources()
@@ -1498,12 +1488,8 @@ pub fn from_dataset(dataset: &Arc<RdfDataset>) -> Result<Shapes, ShapesError> {
 /// # Errors
 /// Returns typed dated admission, incompatible override, import or model errors.
 pub fn from_dataset_with_options(
-    dataset: &Arc<RdfDataset>,
-    base: Option<&str>,
-    doc_prefixes: &[(String, String)],
-    box_role_vocab: Option<BoxRoleVocab>,
-    shapes_graph: Option<String>,
-    imports: &ShapesImports,
+    dataset: &Arc<RdfDataset>, base: Option<&str>, doc_prefixes: &[(String, String)],
+    box_role_vocab: Option<BoxRoleVocab>, shapes_graph: Option<String>, imports: &ShapesImports,
     options: &crate::engine::ValidationOptions,
 ) -> Result<Shapes, crate::report::CompleteValidationError> {
     options
@@ -1528,9 +1514,7 @@ pub fn from_dataset_with_options(
 /// The source-context reconstruction home used before current-request memo linking.
 /// This walks declarations only; it rebuilds no class catalog or lowered shape model.
 pub(crate) fn source_occurrences(
-    dataset: &Arc<RdfDataset>,
-    provenance: &ParseProvenance,
-    profile: crate::profile::ShaclProfile,
+    dataset: &Arc<RdfDataset>, provenance: &ParseProvenance, profile: crate::profile::ShaclProfile,
     recursion: Option<crate::recursion::RecursionSemantics>,
 ) -> Result<Arc<ConstraintSources>, crate::report::CompleteValidationError> {
     let mut parser = Parser::new(
@@ -1559,11 +1543,8 @@ pub(crate) fn source_occurrences(
 /// Product/source reconstruction uses the same parser and actual requested law;
 /// it never resolves an already retained import closure a second time.
 pub(crate) fn from_resolved_dataset_with_options(
-    dataset: &Arc<RdfDataset>,
-    base: Option<&str>,
-    doc_prefixes: &[(String, String)],
-    box_role_vocab: Option<BoxRoleVocab>,
-    shapes_graph: Option<String>,
+    dataset: &Arc<RdfDataset>, base: Option<&str>, doc_prefixes: &[(String, String)],
+    box_role_vocab: Option<BoxRoleVocab>, shapes_graph: Option<String>,
     options: &crate::engine::ValidationOptions,
 ) -> Result<Shapes, crate::report::CompleteValidationError> {
     options
@@ -1591,9 +1572,7 @@ pub(crate) fn from_resolved_dataset_with_options(
 /// Re-admit declared edges from a product's authenticated dataset against its
 /// decoded original model. This does not rebuild its classes or expression links.
 pub(crate) fn restored_recursion_source(
-    dataset: &Arc<RdfDataset>,
-    provenance: &ParseProvenance,
-    owner: &Arc<ModelOwner>,
+    dataset: &Arc<RdfDataset>, provenance: &ParseProvenance, owner: &Arc<ModelOwner>,
     options: &crate::engine::ValidationOptions,
 ) -> Result<Option<purrdf_lex::allocation::Shared<crate::recursion::graph::Source>>, ShapesError> {
     if let Some(request) = &options.recursion {
@@ -1699,8 +1678,7 @@ pub fn __linked_declarations(dataset: &Arc<RdfDataset>) -> Result<LinkedDeclarat
 ///
 /// The component registry's own refusal, exactly as a parse of `dataset` reports it.
 pub(crate) fn alternative_validators(
-    dataset: &Arc<RdfDataset>,
-    doc_prefixes: &[(String, String)],
+    dataset: &Arc<RdfDataset>, doc_prefixes: &[(String, String)],
 ) -> Result<Vec<crate::validator_alternatives::AlternativeValidator>, String> {
     let parser = Parser::new(
         dataset.as_ref(),
@@ -1728,8 +1706,7 @@ pub(crate) fn alternative_validators(
 ///
 /// Everything [`from_dataset`] refuses.
 pub fn from_dataset_with_prefixes(
-    dataset: &Arc<RdfDataset>,
-    doc_prefixes: &[(String, String)],
+    dataset: &Arc<RdfDataset>, doc_prefixes: &[(String, String)],
 ) -> Result<Shapes, ShapesError> {
     from_dataset_with_config(dataset, doc_prefixes, None)
 }
@@ -1747,8 +1724,7 @@ pub fn from_dataset_with_prefixes(
 ///
 /// Everything [`from_dataset`] refuses.
 pub fn from_dataset_with_config(
-    dataset: &Arc<RdfDataset>,
-    doc_prefixes: &[(String, String)],
+    dataset: &Arc<RdfDataset>, doc_prefixes: &[(String, String)],
     box_role_vocab: Option<BoxRoleVocab>,
 ) -> Result<Shapes, ShapesError> {
     from_dataset_with_config_and_graph(dataset, doc_prefixes, box_role_vocab, None)
@@ -1763,10 +1739,8 @@ pub fn from_dataset_with_config(
 ///
 /// Everything [`from_dataset`] refuses.
 pub fn from_dataset_with_config_and_graph(
-    dataset: &Arc<RdfDataset>,
-    doc_prefixes: &[(String, String)],
-    box_role_vocab: Option<BoxRoleVocab>,
-    shapes_graph: Option<String>,
+    dataset: &Arc<RdfDataset>, doc_prefixes: &[(String, String)],
+    box_role_vocab: Option<BoxRoleVocab>, shapes_graph: Option<String>,
 ) -> Result<Shapes, ShapesError> {
     from_dataset_with_base(
         dataset,
@@ -1814,12 +1788,8 @@ pub fn from_dataset_with_config_and_graph(
 /// [`ShapesError::Imports`] when the closure is not in hand or the table cannot be used;
 /// [`ShapesError::Invalid`] on any unsupported SHACL construct or missing structural data.
 pub fn from_dataset_with_base(
-    dataset: &Arc<RdfDataset>,
-    base: Option<&str>,
-    doc_prefixes: &[(String, String)],
-    box_role_vocab: Option<BoxRoleVocab>,
-    shapes_graph: Option<String>,
-    imports: &ShapesImports,
+    dataset: &Arc<RdfDataset>, base: Option<&str>, doc_prefixes: &[(String, String)],
+    box_role_vocab: Option<BoxRoleVocab>, shapes_graph: Option<String>, imports: &ShapesImports,
 ) -> Result<Shapes, ShapesError> {
     let loaded: Vec<&str> = base.into_iter().collect();
     let resolved = resolve_shapes_imports(dataset, doc_prefixes, &loaded, imports)?;
@@ -1844,11 +1814,8 @@ pub fn from_dataset_with_base(
 /// merged graph a second time would ask for documents that are already in it. Every other
 /// constructor resolves first.
 pub(crate) fn from_resolved_dataset(
-    dataset: &Arc<RdfDataset>,
-    base: Option<&str>,
-    doc_prefixes: &[(String, String)],
-    box_role_vocab: Option<BoxRoleVocab>,
-    shapes_graph: Option<String>,
+    dataset: &Arc<RdfDataset>, base: Option<&str>, doc_prefixes: &[(String, String)],
+    box_role_vocab: Option<BoxRoleVocab>, shapes_graph: Option<String>,
 ) -> Result<Shapes, ShapesError> {
     from_resolved_dataset_with_unexecuted(dataset, base, doc_prefixes, box_role_vocab, shapes_graph)
         .map(|(shapes, _)| shapes)
@@ -1860,11 +1827,8 @@ pub(crate) fn from_resolved_dataset(
 /// component selects, a `sh:SPARQLFunction` nothing calls. `lint` reports them in its
 /// `unexecuted` section.
 pub(crate) fn from_resolved_dataset_with_unexecuted(
-    dataset: &Arc<RdfDataset>,
-    base: Option<&str>,
-    doc_prefixes: &[(String, String)],
-    box_role_vocab: Option<BoxRoleVocab>,
-    shapes_graph: Option<String>,
+    dataset: &Arc<RdfDataset>, base: Option<&str>, doc_prefixes: &[(String, String)],
+    box_role_vocab: Option<BoxRoleVocab>, shapes_graph: Option<String>,
 ) -> Result<(Shapes, Vec<crate::error::PrebindingViolation>), ShapesError> {
     let mut parser = Parser::new(
         dataset.as_ref(),
@@ -1913,11 +1877,8 @@ pub(crate) fn from_resolved_dataset_with_unexecuted(
 /// Anything [`from_dataset_with_base`] refuses, and [`ShapesError::Invalid`] when any root
 /// is not a well-formed node expression.
 pub fn from_dataset_with_node_expressions(
-    dataset: &Arc<RdfDataset>,
-    doc_prefixes: &[(String, String)],
-    shapes_graph: Option<String>,
-    roots: &[Term],
-    imports: &ShapesImports,
+    dataset: &Arc<RdfDataset>, doc_prefixes: &[(String, String)], shapes_graph: Option<String>,
+    roots: &[Term], imports: &ShapesImports,
 ) -> Result<(Shapes, Vec<NodeExpr>), ShapesError> {
     from_dataset_with_scoped_node_expressions(
         dataset,
@@ -1933,12 +1894,8 @@ pub fn from_dataset_with_node_expressions(
 /// that binds `scope`'s names: the load-time grouping check of their SPARQL queries
 /// reads those names as bound.
 pub(crate) fn from_dataset_with_scoped_node_expressions(
-    dataset: &Arc<RdfDataset>,
-    doc_prefixes: &[(String, String)],
-    shapes_graph: Option<String>,
-    roots: &[Term],
-    scope: &[&str],
-    imports: &ShapesImports,
+    dataset: &Arc<RdfDataset>, doc_prefixes: &[(String, String)], shapes_graph: Option<String>,
+    roots: &[Term], scope: &[&str], imports: &ShapesImports,
 ) -> Result<(Shapes, Vec<NodeExpr>), ShapesError> {
     let resolved = resolve_shapes_imports(dataset, doc_prefixes, &[], imports)?;
     let mut parser = Parser::new(
@@ -2164,9 +2121,7 @@ pub(crate) struct Parser<'s> {
 
 /// Record a SHACL-JS refusal in `slot` unless one is already recorded.
 pub(crate) fn record_shacl_js(
-    slot: &std::cell::RefCell<Option<crate::error::ShaclJsRefusal>>,
-    node: &Term,
-    term: &str,
+    slot: &std::cell::RefCell<Option<crate::error::ShaclJsRefusal>>, node: &Term, term: &str,
     message: &str,
 ) {
     // Only the SHACL-JS reason types a refusal; the census refuses no other terms,
@@ -2188,8 +2143,7 @@ pub(crate) fn record_shacl_js(
 /// `slot`, else as [`ShapesError::Invalid`]. A recorded refusal the parse recovered
 /// from, and so did not return, does not type an unrelated error.
 fn shacl_js_or_invalid(
-    slot: &std::cell::RefCell<Option<crate::error::ShaclJsRefusal>>,
-    message: String,
+    slot: &std::cell::RefCell<Option<crate::error::ShaclJsRefusal>>, message: String,
 ) -> ShapesError {
     match slot.borrow_mut().take() {
         Some(refusal) if message.contains(refusal.message()) => {
@@ -2205,13 +2159,9 @@ fn shacl_js_or_invalid(
 
 impl<'s> Parser<'s> {
     pub(crate) fn new(
-        data: &'s RdfDataset,
-        base: Option<String>,
-        doc_prefixes: &[(String, String)],
-        box_role_vocab: Option<BoxRoleVocab>,
-        shapes_dataset: Arc<RdfDataset>,
-        shapes_graph: Option<String>,
-        profile: crate::profile::ShaclProfile,
+        data: &'s RdfDataset, base: Option<String>, doc_prefixes: &[(String, String)],
+        box_role_vocab: Option<BoxRoleVocab>, shapes_dataset: Arc<RdfDataset>,
+        shapes_graph: Option<String>, profile: crate::profile::ShaclProfile,
     ) -> Self {
         Self {
             data,
@@ -2314,18 +2264,13 @@ impl<'s> Parser<'s> {
     /// shapes and before the linking pass so their call sites and shape handles
     /// are the ones that pass installs.
     fn parse_with_expressions(
-        &mut self,
-        roots: &[Term],
-        scope: &[&str],
+        &mut self, roots: &[Term], scope: &[&str],
     ) -> Result<(Shapes, Vec<NodeExpr>), String> {
         self.prepare_with_expressions(roots, scope, Preparation::LinkedModel)
     }
 
     fn prepare_with_expressions(
-        &mut self,
-        roots: &[Term],
-        scope: &[&str],
-        preparation: Preparation,
+        &mut self, roots: &[Term], scope: &[&str], preparation: Preparation,
     ) -> Result<(Shapes, Vec<NodeExpr>), String> {
         self.check_builtin_cardinalities()?;
 
@@ -2867,10 +2812,7 @@ impl<'s> Parser<'s> {
     /// Pattern-query the shapes dataset over ALL graphs. `subject`/`object` are IRI
     /// constants or `None` wildcards; `predicate` is an IRI constant or `None`.
     fn quads_with(
-        &self,
-        subject: Option<&str>,
-        predicate: Option<&str>,
-        object: Option<&str>,
+        &self, subject: Option<&str>, predicate: Option<&str>, object: Option<&str>,
     ) -> Vec<(Term, NamedNode, Term)> {
         let s = subject.map(|iri| Term::NamedNode(NamedNode::from(iri)));
         let p = predicate.map(|iri| Term::NamedNode(NamedNode::from(iri)));
@@ -3065,10 +3007,7 @@ impl<'s> Parser<'s> {
     /// whose constant output is not `true` or `false`, or a node expression under
     /// the 2017 Recommendation, or at a constraint under the working draft.
     pub(crate) fn deactivation_of(
-        &mut self,
-        node: &Term,
-        owner: &Term,
-        site: DeactivationSite,
+        &mut self, node: &Term, owner: &Term, site: DeactivationSite,
     ) -> Result<(bool, Vec<NodeExpr>), String> {
         let Some(value) = self.first_object_of(node, sh::DEACTIVATED) else {
             return Ok((false, Vec::new()));
@@ -3123,9 +3062,7 @@ impl<'s> Parser<'s> {
     ///
     /// When `node` is not a well-formed node expression.
     pub(crate) fn parse_deactivation_expression(
-        &mut self,
-        owner: &Term,
-        node: &Term,
+        &mut self, owner: &Term, node: &Term,
     ) -> Result<NodeExpr, String> {
         let saved_shape = self.current_shape.replace(owner.clone());
         let parsed = self.parse_node_expr(node);
@@ -3146,9 +3083,7 @@ impl<'s> Parser<'s> {
 
     /// Admit one parser expansion and release its in-flight key on every result.
     fn with_expansion<T>(
-        &mut self,
-        key: InFlight,
-        parse: impl FnOnce(&mut Self) -> Result<T, String>,
+        &mut self, key: InFlight, parse: impl FnOnce(&mut Self) -> Result<T, String>,
     ) -> Result<T, String> {
         if purrdf_stack::is_low() {
             return Err("SHACL parsing exhausted its stack margin".to_owned());
@@ -3559,10 +3494,7 @@ impl<'s> Parser<'s> {
     /// restrictions (SHACL 1.2 SPARQL Extensions, Appendix A) for `this`, SERVICE
     /// included.
     fn parse_sparql_target_ask(
-        &self,
-        id: &Term,
-        t_node: &Term,
-        header: &str,
+        &self, id: &Term, t_node: &Term, header: &str,
     ) -> Result<Option<String>, String> {
         let Some(value) = self.first_object_of(t_node, sh::ASK) else {
             return Ok(None);
@@ -3751,10 +3683,7 @@ impl<'s> Parser<'s> {
     /// empty expression; any other blank node is a structured expression, parsed
     /// with the property shape as its prefix owner, as a constraint's is.
     fn computed_values_expr(
-        &mut self,
-        ps_node: &Term,
-        path: &Path,
-        predicate: &str,
+        &mut self, ps_node: &Term, path: &Path, predicate: &str,
     ) -> Result<Option<NodeExpr>, String> {
         let mut values: Vec<Term> = self.objects_of(ps_node, predicate);
         let local = if predicate == sh::VALUES {
@@ -3805,10 +3734,7 @@ impl<'s> Parser<'s> {
     /// cyclic path structure (a blank node reachable from itself) hard-fails
     /// instead of recursing forever.
     fn parse_path(
-        &self,
-        path_node: &Term,
-        shape_id: &Term,
-        in_flight: &mut FastSet<String>,
+        &self, path_node: &Term, shape_id: &Term, in_flight: &mut FastSet<String>,
     ) -> Result<Path, String> {
         if purrdf_stack::is_low() {
             return Err(format!(
@@ -3834,10 +3760,7 @@ impl<'s> Parser<'s> {
     /// Parse the blank-node forms of an `sh:path` value: sequence (RDF list),
     /// inverse, alternative, and the three closure paths.
     fn parse_blank_path(
-        &self,
-        path_node: &Term,
-        shape_id: &Term,
-        in_flight: &mut FastSet<String>,
+        &self, path_node: &Term, shape_id: &Term, in_flight: &mut FastSet<String>,
     ) -> Result<Path, String> {
         // RDF list in path position = sequence path (at least two members).
         if self.first_object_of(path_node, rdf::FIRST).is_some() {
@@ -4093,8 +4016,7 @@ mod tests {
     }
 
     fn properties_of<'a>(
-        shapes: &'a Shapes,
-        shape: &'a Shape,
+        shapes: &'a Shapes, shape: &'a Shape,
     ) -> impl Iterator<Item = &'a PropertyShape> {
         body_of(shapes, shape)
             .properties_in(Some(&shapes.owner))

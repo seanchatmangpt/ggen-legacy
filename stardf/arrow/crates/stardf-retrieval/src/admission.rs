@@ -1027,8 +1027,7 @@ impl fmt::Display for BoundMode {
 /// then the lowest [`BindingPattern`] in its own total order. The number is the same
 /// either way; the tie-break decides only which mode the diagnostic names.
 pub(crate) fn declared_row_bound(
-    descriptor: &PfDescriptor,
-    invoked: Option<BindingPattern>,
+    descriptor: &PfDescriptor, invoked: Option<BindingPattern>,
 ) -> RowBound {
     let declared = descriptor.modes.iter().map(|declared| {
         (
@@ -1172,8 +1171,7 @@ struct ReadPlan<'a> {
 }
 
 pub(crate) fn admit_plan<'a>(
-    plan: &'a Plan,
-    env: &AdmissionEnvironment<'_>,
+    plan: &'a Plan, env: &AdmissionEnvironment<'_>,
 ) -> Result<AdmittedRegistry<'a>, AdmissionError> {
     admit_read(
         ReadPlan {
@@ -1200,8 +1198,7 @@ pub(crate) fn admit_plan<'a>(
 /// A self-bounding producer can stop before the requested prefix; its ending
 /// then remains RowBoundReached rather than a certified exhaustion.
 pub(crate) fn admit_candidates<'a>(
-    plan: &'a crate::candidate::CandidatePlan,
-    env: &AdmissionEnvironment<'_>,
+    plan: &'a crate::candidate::CandidatePlan, env: &AdmissionEnvironment<'_>,
 ) -> Result<AdmittedRegistry<'a>, AdmissionError> {
     let parts = &plan.parts;
     let admitted = admit_read(
@@ -1240,8 +1237,7 @@ pub(crate) fn admit_candidates<'a>(
 }
 
 fn admit_read<'a>(
-    plan: ReadPlan<'a>,
-    env: &AdmissionEnvironment<'_>,
+    plan: ReadPlan<'a>, env: &AdmissionEnvironment<'_>,
 ) -> Result<AdmittedRegistry<'a>, AdmissionError> {
     for constraint in plan.constraints {
         crate::planner::validate_term(constraint).map_err(|error| {

@@ -609,10 +609,7 @@ pub fn find_byte_pair(bytes: &[u8], lead: [u8; 2], trail: [u8; 2], gap: usize) -
 /// ```
 #[must_use]
 pub fn find_range_pair(
-    bytes: &[u8],
-    lead: [ByteRun; 2],
-    trail: [ByteRun; 2],
-    gap: usize,
+    bytes: &[u8], lead: [ByteRun; 2], trail: [ByteRun; 2], gap: usize,
 ) -> Option<usize> {
     let run = |(lo, hi): ByteRun| Run(lo, hi.wrapping_sub(lo));
     let ([a, b], [c, d]) = (lead, trail);
@@ -700,10 +697,7 @@ impl PositionTest for Runs2 {
 )]
 #[inline(always)]
 fn test_lanes<L: PositionTest, T: PositionTest>(
-    leads: &[u8; CHUNK],
-    trails: &[u8; CHUNK],
-    lead: L,
-    trail: T,
+    leads: &[u8; CHUNK], trails: &[u8; CHUNK], lead: L, trail: T,
 ) -> [u8; CHUNK] {
     let mut lanes = [0_u8; CHUNK];
     for ((lane, &x), &y) in lanes.iter_mut().zip(leads).zip(trails) {
@@ -721,10 +715,7 @@ fn test_lanes<L: PositionTest, T: PositionTest>(
 )]
 #[inline(always)]
 fn find_pair_by<L: PositionTest, T: PositionTest>(
-    bytes: &[u8],
-    gap: usize,
-    lead: L,
-    trail: T,
+    bytes: &[u8], gap: usize, lead: L, trail: T,
 ) -> Option<usize> {
     // `p` ranges over `0..positions`, so that `p + gap` stays in bounds; the
     // two views have that length, so they split into the same chunks.

@@ -51,8 +51,7 @@ fn triple_term_nesting<T: TripleTermSlot>(root: &T) -> usize {
 }
 
 fn triple_term_nesting_with_memory<T: TripleTermSlot, S: Admission + ?Sized>(
-    root: &T,
-    memory: &mut Memory<'_, S>,
+    root: &T, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<usize, StorageError> {
     let mut deepest = 0_usize;
     let mut pending = purrdf_lex::walk::WorkList::<(&T, usize), 8>::new();
@@ -87,8 +86,7 @@ impl TermPattern {
     /// # Errors
     /// Returns checked depth overflow, admission refusal or native allocator failure.
     pub fn triple_term_nesting_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> std::result::Result<usize, StorageError> {
         triple_term_nesting_with_memory(self, memory)
     }
@@ -117,8 +115,7 @@ impl TermPattern {
     /// # Errors
     /// Returns the original visitor error or physical work-list failure.
     pub fn for_each_variable_with_memory<'a, S, E>(
-        &'a self,
-        memory: &mut Memory<'_, S>,
+        &'a self, memory: &mut Memory<'_, S>,
         mut visit: impl FnMut(&'a Variable, &mut Memory<'_, S>) -> std::result::Result<(), E>,
     ) -> std::result::Result<(), crate::walk::MutationError<E>>
     where
@@ -194,8 +191,7 @@ impl GroundTerm {
     /// # Errors
     /// Returns checked depth overflow, admission refusal or native allocator failure.
     pub fn triple_term_nesting_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> std::result::Result<usize, StorageError> {
         triple_term_nesting_with_memory(self, memory)
     }
@@ -280,8 +276,7 @@ impl Query {
     /// # Errors
     /// Returns original structural/observer errors or physical storage refusal.
     pub fn validate_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> std::result::Result<(), ValidationError> {
         let mut calls = ScopeTable::default();
         self.walk_with_memory::<true, S>(&mut calls, memory)?;
@@ -293,8 +288,7 @@ impl Query {
     /// # Errors
     /// Returns original semantic refusal or native working-storage failure.
     pub fn validate_ordinary_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> std::result::Result<(), ValidationError> {
         let mut calls = ScopeTable::default();
         self.walk_with_memory::<false, S>(&mut calls, memory)?;
@@ -315,8 +309,7 @@ impl Query {
     /// # Errors
     /// Returns original validation or physical storage refusal.
     pub fn custom_function_calls_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> std::result::Result<Vec<String>, ValidationError> {
         let mut calls = ScopeTable::default();
         self.walk_with_memory::<true, S>(&mut calls, memory)?;
@@ -331,9 +324,7 @@ impl Query {
     }
 
     fn walk_with_memory<'a, const APPLICATION: bool, S: Admission + ?Sized>(
-        &'a self,
-        calls: &mut ScopeTable<&'a str, ()>,
-        memory: &mut Memory<'_, S>,
+        &'a self, calls: &mut ScopeTable<&'a str, ()>, memory: &mut Memory<'_, S>,
     ) -> std::result::Result<(), ValidationError> {
         let (pattern, dataset, base) = match self {
             Self::Select {
@@ -437,8 +428,7 @@ pub(crate) fn check_quad_output(quad: &crate::QuadPattern) -> Result<()> {
 }
 
 fn invalid<S: Admission + ?Sized>(
-    message: impl core::fmt::Display,
-    memory: &mut Memory<'_, S>,
+    message: impl core::fmt::Display, memory: &mut Memory<'_, S>,
 ) -> ValidationError {
     match memory.format(&message) {
         Ok(message) => ValidationError::Invalid(message),
@@ -458,8 +448,7 @@ fn invalid<S: Admission + ?Sized>(
 /// `tests::absolute_iris_are_still_accepted_and_relative_ones_still_refused` pins
 /// from both sides.
 fn iri<S: Admission + ?Sized>(
-    value: &str,
-    memory: &mut Memory<'_, S>,
+    value: &str, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<(), ValidationError> {
     let absolute = match purrdf_iri::is_absolute_with_memory(value, memory) {
         Ok(value) => value,
@@ -480,8 +469,7 @@ fn iri<S: Admission + ?Sized>(
 }
 
 fn variable<S: Admission + ?Sized>(
-    value: &Variable,
-    memory: &mut Memory<'_, S>,
+    value: &Variable, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<(), ValidationError> {
     // `VARNAME` is position-dependent, so this is a whole-string test and not a
     // per-character one: a name may CONTINUE with a combining mark but may not
@@ -493,8 +481,7 @@ fn variable<S: Admission + ?Sized>(
 }
 
 fn distinct_variables<'a, S: Admission + ?Sized>(
-    values: impl IntoIterator<Item = &'a Variable>,
-    memory: &mut Memory<'_, S>,
+    values: impl IntoIterator<Item = &'a Variable>, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<(), ValidationError> {
     let mut seen = ScopeTable::default();
     for value in values {
@@ -511,8 +498,7 @@ fn distinct_variables<'a, S: Admission + ?Sized>(
 }
 
 fn named<S: Admission + ?Sized>(
-    value: &NamedNodePattern,
-    memory: &mut Memory<'_, S>,
+    value: &NamedNodePattern, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<(), ValidationError> {
     match value {
         NamedNodePattern::NamedNode(n) => iri(n.as_str(), memory),
@@ -521,8 +507,7 @@ fn named<S: Admission + ?Sized>(
 }
 
 fn literal<S: Admission + ?Sized>(
-    value: &Literal,
-    memory: &mut Memory<'_, S>,
+    value: &Literal, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<(), ValidationError> {
     iri(value.datatype().as_str(), memory)?;
     match value.language() {
@@ -560,9 +545,7 @@ fn literal<S: Admission + ?Sized>(
 /// The checks of `node` itself; its children are checked when they are reached.
 /// Every [`Function::Custom`] IRI `node` calls is recorded in `calls`.
 fn check<'a, const APPLICATION: bool, S: Admission + ?Sized>(
-    node: NodeRef<'a>,
-    calls: &mut ScopeTable<&'a str, ()>,
-    memory: &mut Memory<'_, S>,
+    node: NodeRef<'a>, calls: &mut ScopeTable<&'a str, ()>, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<(), ValidationError> {
     match node {
         NodeRef::Pattern(pattern) => check_pattern::<APPLICATION, S>(pattern, memory),
@@ -595,8 +578,7 @@ fn check<'a, const APPLICATION: bool, S: Admission + ?Sized>(
 }
 
 fn check_aggregate<S: Admission + ?Sized>(
-    value: &AggregateExpression,
-    memory: &mut Memory<'_, S>,
+    value: &AggregateExpression, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<(), ValidationError> {
     if let crate::AggregateFunction::Custom(name) = value.function() {
         iri(name.as_str(), memory)?;
@@ -608,8 +590,7 @@ fn check_aggregate<S: Admission + ?Sized>(
 }
 
 fn check_pattern<const APPLICATION: bool, S: Admission + ?Sized>(
-    pattern: &GraphPattern,
-    memory: &mut Memory<'_, S>,
+    pattern: &GraphPattern, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<(), ValidationError> {
     use GraphPattern as G;
     match pattern {
@@ -803,9 +784,7 @@ fn check_pattern<const APPLICATION: bool, S: Admission + ?Sized>(
 }
 
 fn check_expression<'a, S: Admission + ?Sized>(
-    expr: &'a Expression,
-    calls: &mut ScopeTable<&'a str, ()>,
-    memory: &mut Memory<'_, S>,
+    expr: &'a Expression, calls: &mut ScopeTable<&'a str, ()>, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<(), ValidationError> {
     use Expression as E;
     match expr {
@@ -862,8 +841,7 @@ fn check_expression<'a, S: Admission + ?Sized>(
 }
 
 fn check_path<S: Admission + ?Sized>(
-    path: &PropertyPathExpression,
-    memory: &mut Memory<'_, S>,
+    path: &PropertyPathExpression, memory: &mut Memory<'_, S>,
 ) -> std::result::Result<(), ValidationError> {
     use PropertyPathExpression as P;
     match path {

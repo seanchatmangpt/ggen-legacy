@@ -62,13 +62,8 @@ pub(super) struct PreparedWindow<I: ViewTermId> {
 
 impl<I: ViewTermId> PreparedWindow<I> {
     pub(super) fn new<D: DatasetView<Id = I> + Sync>(
-        compiled: &[CompiledPattern<I>],
-        working: &VarSchema,
-        order: &BgpOrder,
-        scope: &GraphScope<I>,
-        spec: &WindowSpec,
-        reifies: Option<I>,
-        ctx: &EvalCtx<'_, D>,
+        compiled: &[CompiledPattern<I>], working: &VarSchema, order: &BgpOrder,
+        scope: &GraphScope<I>, spec: &WindowSpec, reifies: Option<I>, ctx: &EvalCtx<'_, D>,
     ) -> Result<Self, EvalError> {
         let left = working
             .index_of(&spec.left)
@@ -391,11 +386,7 @@ impl<I: ViewTermId> PreparedWindow<I> {
     /// Prepare one ordered sweep over every distinct driving ordinal. Equal
     /// driver cells share a range, but their original rows are never coalesced.
     pub(super) fn prepare_stage<D: DatasetView<Id = I> + Sync>(
-        &self,
-        index: usize,
-        cp: &CompiledPattern<I>,
-        rows: &[RetainedRow<I>],
-        ctx: &EvalCtx<'_, D>,
+        &self, index: usize, cp: &CompiledPattern<I>, rows: &[RetainedRow<I>], ctx: &EvalCtx<'_, D>,
     ) -> Result<StageWindow<I>, EvalError> {
         let pattern = &self.patterns[index];
         let mut result = StageWindow {
@@ -519,10 +510,7 @@ impl<I: ViewTermId> PreparedWindow<I> {
     }
 
     fn compare(
-        &self,
-        a: &purrdf_xsd::XsdValue,
-        b: &purrdf_xsd::XsdValue,
-        workspace: &WorkspaceCapability,
+        &self, a: &purrdf_xsd::XsdValue, b: &purrdf_xsd::XsdValue, workspace: &WorkspaceCapability,
     ) -> Result<Ordering, EvalError> {
         let order = compare(a, b, workspace)?;
         self.comparisons
@@ -535,11 +523,7 @@ impl<I: ViewTermId> PreparedWindow<I> {
 
     /// Original per-row probe order, restricted by the stage's completed sweep.
     pub(super) fn candidates<D: DatasetView<Id = I> + Sync>(
-        &self,
-        stage: &StageWindow<I>,
-        index: usize,
-        cp: &CompiledPattern<I>,
-        row: &RetainedRow<I>,
+        &self, stage: &StageWindow<I>, index: usize, cp: &CompiledPattern<I>, row: &RetainedRow<I>,
         ctx: &EvalCtx<'_, D>,
     ) -> Result<AdmittedVec<QuadIds<I>>, EvalError> {
         let pattern = &self.patterns[index];

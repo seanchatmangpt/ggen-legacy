@@ -188,9 +188,7 @@ impl ExactArithmeticCost {
     /// shifts and overflowing complete bounds return `None` before execution.
     #[must_use]
     pub fn integer_ratio_square_root(
-        numerator_bits: u64,
-        denominator_bits: u64,
-        fractional_bits: u32,
+        numerator_bits: u64, denominator_bits: u64, fractional_bits: u32,
     ) -> Option<Self> {
         let shift = fractional_bits.checked_mul(2)?;
         let shifted = numerator_bits.checked_add(u64::from(shift))?;
@@ -224,9 +222,7 @@ impl ExactArithmeticCost {
     /// Returns `None` before arithmetic if a complete bound overflows.
     #[must_use]
     pub fn rational_difference_integer_interval(
-        left: (u64, u64),
-        right: (u64, u64),
-        integer_bound_bits: u64,
+        left: (u64, u64), right: (u64, u64), integer_bound_bits: u64,
     ) -> Option<Self> {
         let original_bits = left.0.max(left.1).max(right.0).max(right.1).max(1);
         let denominator_bits = left.1.checked_add(right.1)?;
@@ -392,9 +388,7 @@ impl ExactArithmeticCost {
     /// this estimator. `None` refuses bound overflow before any arithmetic.
     #[must_use]
     pub fn rational_decimal(
-        numerator_bits: u64,
-        denominator_bits: u64,
-        places: u32,
+        numerator_bits: u64, denominator_bits: u64, places: u32,
     ) -> Option<Self> {
         let rounding = Self::rational_round(numerator_bits, denominator_bits, places)?;
         let scaled_bits = rounding.output_bits;
@@ -536,9 +530,7 @@ impl ExactArithmeticCost {
     /// output reduction nor checked-profile canonicality scans are omitted.
     #[must_use]
     pub fn for_rational_operands(
-        operation: ExactOperation,
-        operands: impl IntoIterator<Item = (u64, u64)>,
-        count: u64,
+        operation: ExactOperation, operands: impl IntoIterator<Item = (u64, u64)>, count: u64,
     ) -> Option<Self> {
         let mut bits = 1_u64;
         let mut numerator_bits = 0_u64;

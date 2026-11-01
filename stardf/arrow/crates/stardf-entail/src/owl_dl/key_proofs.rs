@@ -212,11 +212,7 @@ impl Evidence {
 
     /// Observe the original negative membership query, then check all its branches.
     pub(crate) fn entails(
-        &mut self,
-        key: usize,
-        individual: u32,
-        class: u32,
-        ctx: &DlProofContext<'_>,
+        &mut self, key: usize, individual: u32, class: u32, ctx: &DlProofContext<'_>,
     ) -> Result<bool, EntailError> {
         let kb = &ctx.kb;
         let actual = KeyMembershipPhase::of(ctx);

@@ -229,9 +229,7 @@ struct CitationEdge<'d> {
 /// its own anchors and a consumer reading the triples back can put the
 /// row together again.
 fn citation_edges<'d>(
-    document: &'d Document<'_>,
-    profile: &Profile,
-    contract: &ChunkingContractId,
+    document: &'d Document<'_>, profile: &Profile, contract: &ChunkingContractId,
     unit_iris: &[String],
 ) -> BTreeMap<usize, Vec<CitationEdge<'d>>> {
     let source = document.source().as_bytes();
@@ -317,12 +315,7 @@ fn document_claim(document: &Document<'_>) -> Claim {
 }
 
 fn section_claim(
-    document_id: &str,
-    v: &Vocabulary,
-    source: &str,
-    s: &Section,
-    iris: &[String],
-    i: usize,
+    document_id: &str, v: &Vocabulary, source: &str, s: &Section, iris: &[String], i: usize,
 ) -> Claim {
     let me = &iris[i];
     let class = if s.is_movement() {
@@ -393,13 +386,8 @@ fn structure_claim(document_id: &str, v: &Vocabulary, me: &str, span: Span, text
 }
 
 fn unit_claim(
-    document_id: &str,
-    profile: &Profile,
-    u: &Unit<'_>,
-    unit_iris: &[String],
-    section_iris: &[String],
-    i: usize,
-    cites: &[CitationEdge<'_>],
+    document_id: &str, profile: &Profile, u: &Unit<'_>, unit_iris: &[String],
+    section_iris: &[String], i: usize, cites: &[CitationEdge<'_>],
 ) -> Claim {
     let v = &profile.vocabulary;
     let me = &unit_iris[i];
@@ -467,10 +455,7 @@ fn unit_claim(
 }
 
 fn claim(
-    mut lines: Vec<String>,
-    subject: String,
-    kind: ClaimKind,
-    span: Option<(u64, u64)>,
+    mut lines: Vec<String>, subject: String, kind: ClaimKind, span: Option<(u64, u64)>,
 ) -> Claim {
     lines.sort_unstable();
     lines.dedup();

@@ -119,9 +119,7 @@ impl DataRangeTable {
 
     /// Exact finite extent; every new native product is admitted at the range home.
     pub(crate) fn try_exact_cardinality(
-        &self,
-        id: u32,
-        storage: &mut dyn purrdf_xsd::range::Storage,
+        &self, id: u32, storage: &mut dyn purrdf_xsd::range::Storage,
     ) -> Result<Option<u64>, purrdf_xsd::range::StorageError> {
         let Some(decided) = self.ranges.get(id as usize).filter(|range| range.exact) else {
             return Ok(None);
@@ -136,10 +134,7 @@ impl DataRangeTable {
 
     /// Exact containment only; an opaque approximation cannot license a transfer.
     pub(crate) fn try_exactly_contains(
-        &self,
-        sub: u32,
-        sup: u32,
-        storage: &mut dyn purrdf_xsd::range::Storage,
+        &self, sub: u32, sup: u32, storage: &mut dyn purrdf_xsd::range::Storage,
     ) -> Result<bool, purrdf_xsd::range::StorageError> {
         let (Some(sub), Some(sup)) = (self.ranges.get(sub as usize), self.ranges.get(sup as usize))
         else {
@@ -339,8 +334,7 @@ pub(crate) struct LiteralClasses {
 /// two literals that should share a class. The buckets are an insertion-ordered `Vec` rather
 /// than a map because there are at most as many of them as there are value spaces.
 pub(crate) fn literal_classes_until<E>(
-    literals: &[(u32, LiteralValue)],
-    mut poll: impl FnMut() -> Result<(), E>,
+    literals: &[(u32, LiteralValue)], mut poll: impl FnMut() -> Result<(), E>,
 ) -> Result<LiteralClasses, E> {
     let mut out = LiteralClasses {
         class_of: BTreeMap::new(),

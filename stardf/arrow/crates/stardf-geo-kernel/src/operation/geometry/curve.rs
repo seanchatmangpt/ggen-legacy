@@ -57,20 +57,14 @@ impl OperationImageCurve {
     /// A pointwise-equal original-parameter image obtained from a certified
     /// polynomial source reflection. This alias is private topology proof data.
     pub(crate) fn reflected_source_towards_in(
-        &self,
-        other: &Self,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &self, other: &Self, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
         retained: &mut u64,
     ) -> Result<Option<Self>, GeoError> {
         selected::reflected_source_towards(self, other, context, progress, retained)
     }
 
     pub(crate) fn joined_source_in(
-        &self,
-        other: &Self,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &self, other: &Self, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
         retained: &mut u64,
     ) -> Result<Option<Self>, GeoError> {
         selected::joined_source(self, other, context, progress, retained)
@@ -78,10 +72,7 @@ impl OperationImageCurve {
     /// A complete exact original-source restriction for topology branch
     /// partitioning. The retained public image and scalar metric are untouched.
     pub(crate) fn restricted_in(
-        &self,
-        bounds: [&Rat; 2],
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &self, bounds: [&Rat; 2], context: &mut MetricContext, progress: &mut WorkProgress<'_>,
         retained: &mut u64,
     ) -> Result<Self, GeoError> {
         selected::restricted(self, bounds[0], bounds[1], context, progress, retained)
@@ -91,9 +82,7 @@ impl OperationImageCurve {
     /// not an injectivity claim: a component still needs a whole-panel weak
     /// derivative sign and an independently certified nonconstant derivative.
     pub(crate) fn analytic_in_parameter(
-        &self,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &self, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<bool, GeoError> {
         for operation in self.chain.operations() {
             context.charge_work(1)?;
@@ -116,10 +105,7 @@ impl OperationImageCurve {
     /// used by topology only; the public original parameter and metric inputs
     /// remain retained by `self`.
     pub(crate) fn selected_set_in(
-        &self,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
-        retained: &mut u64,
+        &self, context: &mut MetricContext, progress: &mut WorkProgress<'_>, retained: &mut u64,
     ) -> Result<Option<Self>, GeoError> {
         if let Some(image) = selected::selected_range(self, context, progress, retained)? {
             Ok(Some(image))
@@ -134,12 +120,8 @@ impl OperationImageCurve {
     /// Refuses inconsistent endpoint dimensions, target realization/axes/units,
     /// missing required metadata, or complete preparation admission.
     pub fn new(
-        start: Coord,
-        end: Coord,
-        chain: impl AsRef<OperationChain>,
-        reference: GeographicReference,
-        epoch: Option<Rat>,
-        policy: ExecutionPolicy,
+        start: Coord, end: Coord, chain: impl AsRef<OperationChain>,
+        reference: GeographicReference, epoch: Option<Rat>, policy: ExecutionPolicy,
     ) -> Result<Self, GeoError> {
         Self::prepare(
             ImageSource {
@@ -158,12 +140,8 @@ impl OperationImageCurve {
     /// # Errors
     /// Adds observer refusal to [`Self::new`].
     pub fn new_metered(
-        start: Coord,
-        end: Coord,
-        chain: impl AsRef<OperationChain>,
-        reference: GeographicReference,
-        epoch: Option<Rat>,
-        policy: ExecutionPolicy,
+        start: Coord, end: Coord, chain: impl AsRef<OperationChain>,
+        reference: GeographicReference, epoch: Option<Rat>, policy: ExecutionPolicy,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::prepare(
@@ -179,12 +157,8 @@ impl OperationImageCurve {
         )
     }
     pub(super) fn from_point_metered(
-        source: Coord,
-        chain: OperationChain,
-        reference: GeographicReference,
-        epoch: Option<Rat>,
-        policy: ExecutionPolicy,
-        observer: &mut dyn MetricWorkObserver,
+        source: Coord, chain: OperationChain, reference: GeographicReference, epoch: Option<Rat>,
+        policy: ExecutionPolicy, observer: &mut dyn MetricWorkObserver,
     ) -> Result<Self, GeoError> {
         Self::prepare(
             ImageSource {
@@ -199,12 +173,8 @@ impl OperationImageCurve {
         )
     }
     fn prepare(
-        source: ImageSource,
-        chain: OperationChain,
-        reference: GeographicReference,
-        epoch: Option<Rat>,
-        policy: ExecutionPolicy,
-        observer: Option<&mut dyn MetricWorkObserver>,
+        source: ImageSource, chain: OperationChain, reference: GeographicReference,
+        epoch: Option<Rat>, policy: ExecutionPolicy, observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<Self, GeoError> {
         let mut progress = WorkProgress::new(observer);
         let target = chain
@@ -386,10 +356,7 @@ impl OperationImageCurve {
     /// Admit the original declaration and epoch scans before comparing the
     /// retained mappings. The immutable chain identity is a fixed-size key.
     pub(crate) fn same_mapping_admitted(
-        &self,
-        other: &Self,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &self, other: &Self, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<bool, GeoError> {
         context.charge_work(1)?;
         progress.context_poll(context)?;
@@ -436,10 +403,7 @@ impl OperationImageCurve {
     /// completely admitted nonpolar source rectangle. The operation IDs remain
     /// part of provenance; no exported or rounded projected chord is reused.
     pub(crate) fn exact_linear_endpoints_in(
-        &self,
-        range: Option<[&Rat; 2]>,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, range: Option<[&Rat; 2]>, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<Option<[crate::LonLat; 2]>, MathError> {
         if !self.exact_source_linear {
             return Ok(None);
@@ -503,9 +467,7 @@ impl OperationImageCurve {
         self.retained_bytes
     }
     pub(super) fn materialize_source_point(
-        &self,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &self, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<super::super::TransformResult, GeoError> {
         self.chain.apply_source_coordinate_admitted(
             self.source_endpoints().0,
@@ -521,11 +483,7 @@ impl OperationImageCurve {
     /// Refuses an invalid parameter panel, mismatched reference, domain crossing,
     /// precision/work/memory admission, or unresolved inverse families.
     pub fn enclosure(
-        &self,
-        lower: &Rat,
-        upper: &Rat,
-        precision_bits: u32,
-        context: &mut MetricContext,
+        &self, lower: &Rat, upper: &Rat, precision_bits: u32, context: &mut MetricContext,
     ) -> Result<OperationImageEnclosure, GeoError> {
         self.enclosure_inner(lower, upper, precision_bits, context, None)
     }
@@ -534,21 +492,13 @@ impl OperationImageCurve {
     /// # Errors
     /// Preserves an observer refusal without a partial image.
     pub fn enclosure_metered(
-        &self,
-        lower: &Rat,
-        upper: &Rat,
-        precision_bits: u32,
-        context: &mut MetricContext,
+        &self, lower: &Rat, upper: &Rat, precision_bits: u32, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<OperationImageEnclosure, GeoError> {
         self.enclosure_inner(lower, upper, precision_bits, context, Some(observer))
     }
     fn enclosure_inner(
-        &self,
-        lower: &Rat,
-        upper: &Rat,
-        bits: u32,
-        context: &mut MetricContext,
+        &self, lower: &Rat, upper: &Rat, bits: u32, context: &mut MetricContext,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<OperationImageEnclosure, GeoError> {
         let mut progress = WorkProgress::new(observer);
@@ -590,11 +540,7 @@ impl OperationImageCurve {
         result
     }
     pub(crate) fn enclosure_in(
-        &self,
-        lower: &Rat,
-        upper: &Rat,
-        solver: OperationSolverLimits,
-        math: &mut CoordinateMath,
+        &self, lower: &Rat, upper: &Rat, solver: OperationSolverLimits, math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<OperationImageEnclosure, MathError> {
         let panel = self.panel_in(lower, upper, solver, PanelKind::Directional, math, progress)?;
@@ -615,11 +561,7 @@ impl OperationImageCurve {
     /// chooses angular coordinates. Other chain families retain their original
     /// angular evaluator; they do not synthesize a different mapping here.
     pub(crate) fn geocentric_normal_in(
-        &self,
-        lower: &Rat,
-        upper: &Rat,
-        solver: OperationSolverLimits,
-        math: &mut CoordinateMath,
+        &self, lower: &Rat, upper: &Rat, solver: OperationSolverLimits, math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<Option<super::OperationNormalEnclosure>, MathError> {
         if !matches!(
@@ -637,13 +579,8 @@ impl OperationImageCurve {
     }
 
     fn panel_in(
-        &self,
-        lower: &Rat,
-        upper: &Rat,
-        solver: OperationSolverLimits,
-        kind: PanelKind,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, lower: &Rat, upper: &Rat, solver: OperationSolverLimits, kind: PanelKind,
+        math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<super::PanelEnclosure, MathError> {
         self.panel_through_in(
             lower,
@@ -655,12 +592,8 @@ impl OperationImageCurve {
     }
 
     pub(super) fn panel_through_in(
-        &self,
-        lower: &Rat,
-        upper: &Rat,
-        request: (OperationSolverLimits, PanelKind, usize),
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, lower: &Rat, upper: &Rat, request: (OperationSolverLimits, PanelKind, usize),
+        math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<super::PanelEnclosure, MathError> {
         let outside = crate::numerical::math_exact_rationals(
             purrdf_xsd::integer::ExactOperation::RationalCompare,
@@ -692,11 +625,7 @@ impl OperationImageCurve {
         )
     }
     pub(crate) fn speed_in(
-        &self,
-        lower: &Rat,
-        upper: &Rat,
-        solver: OperationSolverLimits,
-        math: &mut CoordinateMath,
+        &self, lower: &Rat, upper: &Rat, solver: OperationSolverLimits, math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<FixedInterval, MathError> {
         let image = self.enclosure_in(lower, upper, solver, math, progress)?;

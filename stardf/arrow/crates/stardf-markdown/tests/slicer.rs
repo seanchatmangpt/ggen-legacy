@@ -5453,10 +5453,7 @@ fn spec_preimage(fields: &[&[u8]]) -> Vec<u8> {
 /// **chunking** id, the span's two endpoints as eight bytes
 /// little-endian each, the digest algorithm tag, and the content digest.
 fn spec_node_iri(
-    kind: &str,
-    contract: &ChunkingContractId,
-    span: Span,
-    content: &ContentDigest,
+    kind: &str, contract: &ChunkingContractId, span: Span, content: &ContentDigest,
 ) -> String {
     let preimage = spec_preimage(&[
         kind.as_bytes(),

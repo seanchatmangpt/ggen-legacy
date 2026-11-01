@@ -263,8 +263,7 @@ fn registry_over(dataset: &RdfDataset) -> PropertyFunctionRegistry<'static> {
 /// registry's keys are exact IRIs, and that is exactly what
 /// [`ParserOptions::property_fn_iris`] matches on.
 fn parser_options(
-    registry: &PropertyFunctionRegistry<'static>,
-    extra_iris: &[String],
+    registry: &PropertyFunctionRegistry<'static>, extra_iris: &[String],
 ) -> ParserOptions {
     let mut property_fn_iris: Vec<String> = registry
         .describe()
@@ -305,9 +304,7 @@ fn query_text(body: &str) -> String {
 /// pattern, and `QueryOptions::property_functions` is the registry the plan is
 /// admitted against and evaluated with.
 fn run(
-    dataset: &RdfDataset,
-    registry: &PropertyFunctionRegistry<'static>,
-    options: ParserOptions,
+    dataset: &RdfDataset, registry: &PropertyFunctionRegistry<'static>, options: ParserOptions,
     query: &str,
 ) -> Result<Answer, String> {
     let result = NativeSparqlEngine::new()
@@ -339,9 +336,7 @@ fn run(
 
 /// [`run`], asserting the query succeeds.
 fn answer(
-    dataset: &RdfDataset,
-    registry: &PropertyFunctionRegistry<'static>,
-    options: ParserOptions,
+    dataset: &RdfDataset, registry: &PropertyFunctionRegistry<'static>, options: ParserOptions,
     query: &str,
 ) -> Answer {
     run(dataset, registry, options, query).unwrap_or_else(|error| {

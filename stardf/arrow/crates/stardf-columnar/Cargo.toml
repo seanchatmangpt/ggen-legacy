@@ -4,13 +4,22 @@
 [package]
 # Lane 9 vendor of purrdf rev 0da05783 `crates/columnar` (see PROVENANCE.md).
 name = "stardf-columnar"
-description = "Byte-deterministic, bidirectional five-table Parquet codec for RDF 1.2 datasets (vendored from PurRDF columnar, u32 term-id seam)"
-version = "26.9.29"
+# Lane 07-publish-metadata (2026-10-31): v26.11.1 first-class closure —
+# description/keywords/categories/repository/homepage now workspace-inherited
+# (upstream per-crate description retired; unified closure metadata).
+description.workspace = true
+# Lane 08-dual-key (2026-10-31): closure version inherits the workspace 26.11.1.
+version.workspace = true
 edition = "2021"
-publish = false
+publish = true
 license = "MIT OR Apache-2.0 OR MulanPSL-2.0"
-repository = "https://github.com/seanchatmangpt/ggen-legacy"
-rust-version = "1.88"
+repository.workspace = true
+homepage.workspace = true
+# Lane 06-msrv (2026-10-31): upstream 1.88 claim superseded by the
+# operator-ratified v26.11.1 deviation (workspace MSRV 1.98 = true member max).
+rust-version.workspace = true
+keywords.workspace = true
+categories.workspace = true
 
 [lib]
 crate-type = ["rlib"]
@@ -29,11 +38,13 @@ upstream-tests = []
 [dev-dependencies]
 # LANE-11 UNBLOCK (disclosed in tests/seam_courts.rs header): the seam courts
 # are an integration test of this crate over stardf-arrow-core's arena.
-stardf-arrow-core = { path = "../stardf-arrow-core" }
+# Lane H03 gate-closure (2026-10-31): dual-keyed per the G5 version+path law
+# (the 21:05 ladder receipt named this row).
+stardf-arrow-core = { version = "=26.11.1", path = "../stardf-arrow-core" }
 
 [dependencies]
 structured-zstd.workspace = true
-blake3 = { version = "1.8.5", default-features = false }
+blake3 = { version = "1.8.7", default-features = false }
 
 [lints.rust]
 # Source parity diverged (lane 1, 2026-10-31): `deny` rather than `forbid` so

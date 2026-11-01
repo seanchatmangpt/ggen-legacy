@@ -208,10 +208,7 @@ fn graded_expectation(id: &str, listed: bool, tc: &W3cCase) -> Result<Expected, 
 /// [`graded_expectation`] over an explicit delta `table`, so the refusal of a
 /// listed entry is proven against a table that names one.
 fn graded_expectation_in(
-    table: &[DeltaRow],
-    id: &str,
-    listed: bool,
-    tc: &W3cCase,
+    table: &[DeltaRow], id: &str, listed: bool, tc: &W3cCase,
 ) -> Result<Expected, String> {
     let entry = table.iter().find(|(entry, ..)| *entry == id);
     if listed && entry.is_some() {
@@ -250,12 +247,8 @@ fn run_validate(id: &str, listed: bool, tc: &W3cCase) -> Result<(), String> {
 
 /// Evaluate `expr` with `bindings` pushed as scope frames on top of `scope`.
 fn eval_in_scope(
-    data: &ShaclData,
-    focus: &Term,
-    expr: &NodeExpr,
-    guard: &mut RecursionGuard,
-    bindings: &[(String, Term)],
-    scope: Scope<'_>,
+    data: &ShaclData, focus: &Term, expr: &NodeExpr, guard: &mut RecursionGuard,
+    bindings: &[(String, Term)], scope: Scope<'_>,
 ) -> Result<Vec<Term>, String> {
     match bindings.split_first() {
         None => eval_node_expr_in_scope(data, focus, expr, guard, scope)

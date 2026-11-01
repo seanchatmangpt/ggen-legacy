@@ -117,10 +117,7 @@ impl Backend for FloatProductBackend {
 }
 
 pub(super) fn product_bounds4(
-    a: [f64; 4],
-    b: [f64; 4],
-    backend: FloatProductBackend,
-    ops: Binary64<'_>,
+    a: [f64; 4], b: [f64; 4], backend: FloatProductBackend, ops: Binary64<'_>,
 ) -> Result<[(f64, f64); 4], MathError> {
     // In this range every nonzero split subproduct is normal (>=2^-1004)
     // and the splitter cannot overflow (<=2^478). Zero, extreme, and subnormal

@@ -47,11 +47,7 @@ struct Walker {
 
 impl Walker {
     fn term(
-        &mut self,
-        expr: &Expression,
-        row: &[Option<Term>],
-        schema: &VarSchema,
-        ctx: &mut Ctx<'_>,
+        &mut self, expr: &Expression, row: &[Option<Term>], schema: &VarSchema, ctx: &mut Ctx<'_>,
     ) -> Result<Option<Term>, EvalError> {
         use crate::cdt_fn::CdtRelation;
         use std::cmp::Ordering;
@@ -208,11 +204,7 @@ impl Walker {
     }
 
     fn ebv(
-        &mut self,
-        expr: &Expression,
-        row: &[Option<Term>],
-        schema: &VarSchema,
-        ctx: &mut Ctx<'_>,
+        &mut self, expr: &Expression, row: &[Option<Term>], schema: &VarSchema, ctx: &mut Ctx<'_>,
     ) -> Result<Option<bool>, EvalError> {
         match self.term(expr, row, schema, ctx)? {
             Some(term) => Ok(helpers::ebv_term(ctx, term).unwrap()),
@@ -221,10 +213,7 @@ impl Walker {
     }
 
     fn constant(
-        &mut self,
-        ctx: &mut Ctx<'_>,
-        expr: &Expression,
-        build: impl FnOnce() -> TermValue,
+        &mut self, ctx: &mut Ctx<'_>, expr: &Expression, build: impl FnOnce() -> TermValue,
     ) -> Option<Term> {
         if ctx.in_substituted_exists {
             return helpers::intern_leaf(ctx, build()).unwrap();
@@ -239,12 +228,8 @@ impl Walker {
     }
 
     fn function(
-        &mut self,
-        function: &Function,
-        args: &[Expression],
-        row: &[Option<Term>],
-        schema: &VarSchema,
-        ctx: &mut Ctx<'_>,
+        &mut self, function: &Function, args: &[Expression], row: &[Option<Term>],
+        schema: &VarSchema, ctx: &mut Ctx<'_>,
     ) -> Result<Option<Term>, EvalError> {
         match function {
             Function::Contains | Function::StrStarts | Function::StrEnds => {
@@ -312,11 +297,7 @@ impl Walker {
     /// The triple term a constructor over `args` builds, uninterned, its object built
     /// the same way when it is a constructor too.
     fn triple_value(
-        &mut self,
-        args: &[Expression],
-        row: &[Option<Term>],
-        schema: &VarSchema,
-        ctx: &mut Ctx<'_>,
+        &mut self, args: &[Expression], row: &[Option<Term>], schema: &VarSchema, ctx: &mut Ctx<'_>,
     ) -> Result<Option<TermValue>, EvalError> {
         let subject = self
             .term(&args[0], row, schema, ctx)?
@@ -338,10 +319,7 @@ impl Walker {
     }
 
     fn string_arg(
-        &mut self,
-        expr: Option<&Expression>,
-        row: &[Option<Term>],
-        schema: &VarSchema,
+        &mut self, expr: Option<&Expression>, row: &[Option<Term>], schema: &VarSchema,
         ctx: &mut Ctx<'_>,
     ) -> Result<Option<helpers::StringArg>, EvalError> {
         let Some(expr) = expr else {
@@ -567,10 +545,7 @@ fn run_vm(expr: &Expression, ebv: bool, ds: &Arc<RdfDataset>, now: &purrdf_xsd::
 }
 
 fn run_walker(
-    expr: &Expression,
-    ebv: bool,
-    ds: &Arc<RdfDataset>,
-    now: &purrdf_xsd::XsdValue,
+    expr: &Expression, ebv: bool, ds: &Arc<RdfDataset>, now: &purrdf_xsd::XsdValue,
 ) -> Run {
     let (mut ctx, terms) = twin(ds, now);
     let (schema, rows) = rows_for(expr, &terms);

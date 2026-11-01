@@ -212,10 +212,7 @@ impl PurRdfDuckDB {
 
     /// Registers a single Parquet file as a virtual table view.
     pub fn register_parquet_view(
-        &self,
-        table_name: &str,
-        parquet_path: &str,
-        glob: bool,
+        &self, table_name: &str, parquet_path: &str, glob: bool,
     ) -> Result<(), EvaluatorError> {
         let sql = if glob {
             format!(
@@ -246,10 +243,7 @@ impl PurRdfDuckDB {
 
     /// Evaluates a compiled AST query with the default candidate envelope (<= 64 rows).
     pub fn eval_ast_query(
-        &self,
-        query_iri: &str,
-        compiled: &CompiledQuery,
-        subject_iri_prefix: &str,
+        &self, query_iri: &str, compiled: &CompiledQuery, subject_iri_prefix: &str,
         predicate_iri_prefix: &str,
     ) -> Result<ExecutionResult, EvaluatorError> {
         self.eval_ast_query_bounded(
@@ -263,12 +257,8 @@ impl PurRdfDuckDB {
 
     /// Evaluates a compiled AST query with a caller-specified row envelope.
     pub fn eval_ast_query_bounded(
-        &self,
-        _query_iri: &str,
-        compiled: &CompiledQuery,
-        subject_iri_prefix: &str,
-        predicate_iri_prefix: &str,
-        max_rows: usize,
+        &self, _query_iri: &str, compiled: &CompiledQuery, subject_iri_prefix: &str,
+        predicate_iri_prefix: &str, max_rows: usize,
     ) -> Result<ExecutionResult, EvaluatorError> {
         let start = Instant::now();
 

@@ -58,8 +58,7 @@ impl fmt::Debug for DebugScalar<'_> {
 ///
 /// When the script is unbalanced, as for [`super::write_debug`].
 pub fn write_debug_scalars<'a, N, const K: usize>(
-    f: &mut fmt::Formatter<'_>,
-    root: N,
+    f: &mut fmt::Formatter<'_>, root: N,
     mut script: impl FnMut(N, &mut WorkList<Tok<N, DebugScalar<'a>>, K>),
 ) -> fmt::Result {
     let mut resident = crate::allocation::Resident;

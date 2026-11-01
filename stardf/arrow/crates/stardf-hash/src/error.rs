@@ -329,8 +329,7 @@ impl<T: StructuredError + ?Sized> StructuredError for &T {
 /// The iterator's exact length includes absent entries. A consumer receives an
 /// empty begin/end pair for an empty list, rather than losing the field.
 pub fn visit_list<'error>(
-    visitor: &mut dyn ErrorVisitor<'error>,
-    name: Option<&'static str>,
+    visitor: &mut dyn ErrorVisitor<'error>, name: Option<&'static str>,
     values: impl ExactSizeIterator<Item = ErrorValue<'error>>,
 ) {
     visitor.begin_list(name, values.len());

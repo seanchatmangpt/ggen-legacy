@@ -26,8 +26,7 @@ impl ProjectionWork<'_, '_> {
     }
 
     fn memory<T>(
-        &mut self,
-        body: impl FnOnce(&mut Memory<'_, dyn Admission + '_>) -> Result<T, GeoError>,
+        &mut self, body: impl FnOnce(&mut Memory<'_, dyn Admission + '_>) -> Result<T, GeoError>,
     ) -> Result<T, GeoError> {
         match self.admission.as_mut() {
             Some((context, progress)) => native_memory(context, progress, &mut self.resident, body),
@@ -101,9 +100,7 @@ impl ProjectionWork<'_, '_> {
         )
     }
     pub(super) fn map_entry<'map, Id: Eq + core::hash::Hash>(
-        &mut self,
-        map: &'map mut FastMap<Id, Vec<Keyed>>,
-        id: Id,
+        &mut self, map: &'map mut FastMap<Id, Vec<Keyed>>, id: Id,
     ) -> Result<&'map mut Vec<Keyed>, GeoError> {
         self.map_lookup(map.len())?;
         if !map.contains_key(&id) {
@@ -137,9 +134,7 @@ impl ProjectionWork<'_, '_> {
         })
     }
     pub(super) fn relation_iri(
-        &mut self,
-        vocab: &GeoVocab,
-        relation: super::SpatialRelation,
+        &mut self, vocab: &GeoVocab, relation: super::SpatialRelation,
     ) -> Result<TermValue, GeoError> {
         self.memory(|memory| {
             memory
@@ -153,8 +148,7 @@ impl ProjectionWork<'_, '_> {
         })
     }
     pub(super) fn source_error(
-        &mut self,
-        error: impl purrdf_hash::error::NativeError + 'static,
+        &mut self, error: impl purrdf_hash::error::NativeError + 'static,
     ) -> GeoError {
         match self.admission.as_mut() {
             Some((_, progress)) => GeoError::native_source_with_progress(error, progress),
@@ -176,9 +170,7 @@ impl ProjectionWork<'_, '_> {
         }
     }
     pub(super) fn invalid_serialization(
-        &mut self,
-        property: &TermValue,
-        object: &TermValue,
+        &mut self, property: &TermValue, object: &TermValue,
     ) -> GeoError {
         match self.admission.as_mut() {
             None => {
@@ -218,9 +210,7 @@ impl ProjectionWork<'_, '_> {
         }
     }
     pub(super) fn resolve<D: DatasetView<ReadError: purrdf_hash::error::StructuredError>>(
-        &mut self,
-        dataset: &D,
-        id: D::Id,
+        &mut self, dataset: &D, id: D::Id,
     ) -> Result<TermValue, GeoError> {
         enum Failure<E> {
             Lookup(TermLookupError<E>),
@@ -249,9 +239,7 @@ impl ProjectionWork<'_, '_> {
         }
     }
     pub(super) fn geometry_arg(
-        &mut self,
-        vocab: &GeoVocab,
-        value: &TermValue,
+        &mut self, vocab: &GeoVocab, value: &TermValue,
     ) -> Result<GeometryLiteral, GeoError> {
         match self.admission.as_mut() {
             None => crate::carrier::geometry_arg(vocab, value),
@@ -284,9 +272,7 @@ impl ProjectionWork<'_, '_> {
         }
     }
     pub(super) fn write(
-        &mut self,
-        literal: &GeometryLiteral,
-        scale: u32,
+        &mut self, literal: &GeometryLiteral, scale: u32,
     ) -> Result<String, GeoError> {
         match self.admission.as_mut() {
             None => {
@@ -381,9 +367,7 @@ impl ProjectionWork<'_, '_> {
         self.absorb_term(value, |_| {})
     }
     pub(super) fn absorb_term(
-        &mut self,
-        value: &TermValue,
-        mut absorb: impl FnMut(&TermValue),
+        &mut self, value: &TermValue, mut absorb: impl FnMut(&TermValue),
     ) -> Result<(), GeoError> {
         match self.admission.as_mut() {
             None => {
@@ -426,9 +410,7 @@ impl ProjectionWork<'_, '_> {
         }
     }
     pub(super) fn compare_terms(
-        &mut self,
-        a: &TermValue,
-        b: &TermValue,
+        &mut self, a: &TermValue, b: &TermValue,
     ) -> Result<Ordering, GeoError> {
         self.scan_term(a)?;
         self.scan_term(b)?;
@@ -468,8 +450,7 @@ impl ProjectionWork<'_, '_> {
 }
 impl<'a, 'observer> ProjectionWork<'a, 'observer> {
     pub(super) fn admitted(
-        context: &'a mut MetricContext,
-        observer: Option<&'observer mut dyn MetricWorkObserver>,
+        context: &'a mut MetricContext, observer: Option<&'observer mut dyn MetricWorkObserver>,
     ) -> Self {
         Self {
             admission: Some((context, WorkProgress::new(observer))),
@@ -487,15 +468,13 @@ impl MetricWorkObserver for SourceObserver<'_, '_> {
         self.progress.retain_failure(error)
     }
     fn native_storage(
-        &mut self,
-        producer: &mut dyn crate::NativeStorageProducer,
+        &mut self, producer: &mut dyn crate::NativeStorageProducer,
     ) -> Result<(), GeoError> {
         self.progress
             .with_native_storage(|memory, observer| producer.produce(memory, observer))
     }
     fn retain_current(
-        &mut self,
-        control: core::alloc::Layout,
+        &mut self, control: core::alloc::Layout,
     ) -> Result<(purrdf_lex::allocation::SharedOwned<()>, usize), GeoError> {
         self.progress.retain_current(control)
     }
@@ -504,8 +483,7 @@ impl MetricWorkObserver for SourceObserver<'_, '_> {
     }
 
     fn retain_produced(
-        &mut self,
-        control: core::alloc::Layout,
+        &mut self, control: core::alloc::Layout,
         producer: &mut dyn crate::context::RetainedAllocationProducer,
     ) -> Result<purrdf_lex::allocation::SharedOwned<()>, GeoError> {
         self.progress.retain_produced(control, producer)
@@ -530,9 +508,7 @@ impl MetricWorkObserver for SourceObserver<'_, '_> {
     }
 
     fn prepare_integer_scratch(
-        &mut self,
-        buffers: usize,
-        limbs: usize,
+        &mut self, buffers: usize, limbs: usize,
     ) -> Result<purrdf_xsd::integer::LimbScratch, GeoError> {
         self.progress.prepare_integer_scratch(buffers, limbs)
     }
@@ -542,8 +518,7 @@ impl MetricWorkObserver for SourceObserver<'_, '_> {
     }
 
     fn prepare_binary64(
-        &mut self,
-        math: &mut purrdf_xsd::math::CoordinateMath,
+        &mut self, math: &mut purrdf_xsd::math::CoordinateMath,
     ) -> Result<purrdf_xsd::math::PreparedBinary64, purrdf_xsd::math::MathError> {
         self.progress.forward_binary64(math)
     }
@@ -553,10 +528,7 @@ impl MetricWorkObserver for SourceObserver<'_, '_> {
     }
 
     fn prepare_taylor_scratch(
-        &mut self,
-        coefficients: usize,
-        jets: usize,
-        zero: purrdf_xsd::math::FixedInterval,
+        &mut self, coefficients: usize, jets: usize, zero: purrdf_xsd::math::FixedInterval,
     ) -> Result<purrdf_xsd::math::TaylorScratch, GeoError> {
         self.progress
             .prepare_taylor_scratch(coefficients, jets, zero)

@@ -174,9 +174,7 @@ impl GraphInterner {
     /// Intern a literal datatype term (which MUST resolve to an IRI) and return its
     /// IRI string for the literal interner.
     fn resolve_datatype_iri(
-        &mut self,
-        dt_id: usize,
-        depth: usize,
+        &mut self, dt_id: usize, depth: usize,
     ) -> Result<String, RdfDiagnostic> {
         let id = self.intern(dt_id, depth)?;
         match self.builder.resolve(id) {
@@ -192,10 +190,7 @@ impl GraphInterner {
     /// Resolve an already-(or just-)interned term id, hard-failing on a dangling
     /// reference from a quad / reifier / annotation row.
     fn resolve_row_term(
-        &mut self,
-        gts_id: usize,
-        role: &str,
-        location: &RdfLocation,
+        &mut self, gts_id: usize, role: &str, location: &RdfLocation,
     ) -> Result<TermId, RdfDiagnostic> {
         if gts_id >= self.terms.len() {
             return Err(RdfDiagnostic::error(

@@ -16,9 +16,7 @@ use std::collections::{BTreeMap, BTreeSet, VecDeque};
 /// of the graph rather than of a traversal accident. `from == to` yields the one-node path
 /// `[from]`; an unreachable `to` yields `None`.
 pub(crate) fn shortest_path<K: Ord + Clone>(
-    depends: &BTreeMap<K, BTreeSet<K>>,
-    from: &K,
-    to: &K,
+    depends: &BTreeMap<K, BTreeSet<K>>, from: &K, to: &K,
 ) -> Option<Vec<K>> {
     let mut parent: BTreeMap<K, K> = BTreeMap::new();
     let mut queue: VecDeque<K> = VecDeque::from([from.clone()]);
@@ -55,11 +53,8 @@ pub(crate) fn shortest_path<K: Ord + Clone>(
 /// gives up after `n` passes that still moved something. Returns whether it reached the
 /// fixpoint, so `false` means a closed edge sits inside a cycle.
 pub(crate) fn relax_strata<S, K, I>(
-    state: &mut S,
-    edges: impl Fn() -> I,
-    get: impl Fn(&S, &K) -> usize,
-    mut set: impl FnMut(&mut S, &K, usize),
-    max_passes: Option<usize>,
+    state: &mut S, edges: impl Fn() -> I, get: impl Fn(&S, &K) -> usize,
+    mut set: impl FnMut(&mut S, &K, usize), max_passes: Option<usize>,
 ) -> bool
 where
     I: IntoIterator<Item = (K, K, bool)>,

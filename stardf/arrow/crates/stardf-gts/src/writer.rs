@@ -309,9 +309,7 @@ impl From<CodecError> for WriterError {
 
 /// Choose `zstd-rsyncable` for large payloads when the base chain is exactly `["zstd"]`.
 pub fn choose_snapshot_transform(
-    base_chain: &[String],
-    payload_len: usize,
-    threshold: usize,
+    base_chain: &[String], payload_len: usize, threshold: usize,
 ) -> Vec<String> {
     if base_chain.len() == 1 && base_chain[0] == "zstd" && payload_len > threshold {
         vec!["zstd-rsyncable".to_string()]
@@ -325,9 +323,7 @@ pub fn choose_snapshot_transform(
 /// The writer emits, in order: optional signed transport-key metadata, sorted
 /// content-addressed blob frames, then the canonical single `snapshot` frame.
 pub fn snapshot_from_graph(
-    graph: &Graph,
-    profile: &str,
-    options: SnapshotOptions,
+    graph: &Graph, profile: &str, options: SnapshotOptions,
 ) -> Result<Vec<u8>, WriterError> {
     let mut writer = Writer::new(profile);
     let SnapshotOptions {
@@ -457,9 +453,7 @@ pub(crate) use self::quads_payload as annot_payload;
 
 /// The canonical `suppress`-frame payload.
 pub(crate) fn suppress_payload(
-    targets: Vec<Value>,
-    reason: Option<&str>,
-    by: Option<usize>,
+    targets: Vec<Value>, reason: Option<&str>, by: Option<usize>,
 ) -> Value {
     let mut payload: Vec<(Value, Value)> = vec![("targets".into(), Value::Array(targets))];
     if let Some(r) = reason {
@@ -641,8 +635,7 @@ type CatalogKey = (String, Option<String>);
 /// same `(catalog, dicts)` inputs always yield the same catalog — and therefore
 /// the same header bytes.
 fn assign_catalog_ids(
-    base: &[(i64, Codec)],
-    dict_names: &BTreeSet<&str>,
+    base: &[(i64, Codec)], dict_names: &BTreeSet<&str>,
 ) -> Result<BTreeMap<CatalogKey, i64>, WriterError> {
     let mut ids: BTreeMap<CatalogKey, i64> = BTreeMap::new();
     let mut seen_names: BTreeSet<&str> = BTreeSet::new();
@@ -1063,10 +1056,7 @@ impl<M: FrameMode> Writer<M> {
     /// let writer = writer.with_composite_signer(key, b"key");
     /// ```
     pub fn with_composite_signer<P: RandomnessProvider>(
-        self,
-        key: crate::cose::composite::SigningKey,
-        kid: impl AsRef<[u8]>,
-        provider: P,
+        self, key: crate::cose::composite::SigningKey, kid: impl AsRef<[u8]>, provider: P,
     ) -> Writer<Hedged<P>> {
         Writer {
             catalog_ids: self.catalog_ids,
@@ -1097,9 +1087,7 @@ impl<M: FrameMode> Writer<M> {
     /// When `kid_override` is `None`, the COSE key id defaults to the key's
     /// OpenPGP v4 fingerprint.
     pub fn sign_with_openpgp_secret_key(
-        &mut self,
-        armored: &str,
-        kid_override: Option<&str>,
+        &mut self, armored: &str, kid_override: Option<&str>,
     ) -> Result<(), crate::openpgp::OpenPgpError> {
         let signer = crate::openpgp::parse_secret_signing_key(armored, kid_override)?;
         let (key, kid) = signer.into_parts();
@@ -1145,12 +1133,8 @@ impl<M: FrameMode> Writer<M> {
 
     /// Append one frame and return its `"id"`.
     pub fn add_frame(
-        &mut self,
-        frame_type: &str,
-        payload: Option<Value>,
-        raw: Option<Vec<u8>>,
-        transform: Option<&[String]>,
-        pub_meta: Option<Value>,
+        &mut self, frame_type: &str, payload: Option<Value>, raw: Option<Vec<u8>>,
+        transform: Option<&[String]>, pub_meta: Option<Value>,
     ) -> M::FrameResult {
         let mut options = FrameOptions {
             payload,
@@ -1171,9 +1155,7 @@ impl<M: FrameMode> Writer<M> {
     /// `prev` link always names the prior head in this writer, maintaining a
     /// single append-only segment chain.
     pub fn add_frame_with_options(
-        &mut self,
-        frame_type: &str,
-        options: FrameOptions,
+        &mut self, frame_type: &str, options: FrameOptions,
     ) -> Result<Vec<u8>, WriterError> {
         let FrameOptions {
             payload,
@@ -1371,10 +1353,7 @@ impl<M: FrameMode> Writer<M> {
 
     /// Append an owned inline `blob` frame without cloning the payload first.
     pub fn add_blob_owned(
-        &mut self,
-        data: Vec<u8>,
-        mt: Option<&str>,
-        rep: Option<&str>,
+        &mut self, data: Vec<u8>, mt: Option<&str>, rep: Option<&str>,
     ) -> M::FrameResult {
         let pub_meta = Self::blob_pub_meta(&data, mt, rep);
         self.add_frame("blob", None, Some(data), None, pub_meta)
@@ -1391,11 +1370,7 @@ impl<M: FrameMode> Writer<M> {
     /// Returns [`WriterError`] when `dict` names a dictionary this pack does not
     /// pin, or the transform chain cannot be resolved or applied.
     pub fn add_blob_transformed(
-        &mut self,
-        data: Vec<u8>,
-        mt: Option<&str>,
-        rep: Option<&str>,
-        transform: &[String],
+        &mut self, data: Vec<u8>, mt: Option<&str>, rep: Option<&str>, transform: &[String],
         dict: Option<&str>,
     ) -> Result<Vec<u8>, WriterError> {
         let pub_meta = Self::blob_pub_meta(&data, mt, rep);
@@ -1418,10 +1393,7 @@ impl<M: FrameMode> Writer<M> {
 
     /// Append a `suppress` frame.
     pub fn add_suppress(
-        &mut self,
-        targets: Vec<Value>,
-        reason: Option<&str>,
-        by: Option<usize>,
+        &mut self, targets: Vec<Value>, reason: Option<&str>, by: Option<usize>,
     ) -> M::FrameResult {
         let payload = suppress_payload(targets, reason, by);
         self.add_frame("suppress", Some(payload), None, None, None)
@@ -1535,10 +1507,7 @@ fn term_nesting_depth(graph: &Graph, tid: usize, stack: &mut Vec<usize>) -> usiz
 }
 
 fn term_nesting_depth_marked(
-    graph: &Graph,
-    tid: usize,
-    stack: &mut Vec<usize>,
-    active: &mut [bool],
+    graph: &Graph, tid: usize, stack: &mut Vec<usize>, active: &mut [bool],
 ) -> usize {
     /// The depth of `tid` if it has no components to walk, or its components.
     fn enter(graph: &Graph, tid: usize, active: &[bool]) -> Result<usize, [usize; 3]> {
@@ -1753,10 +1722,7 @@ fn acyclic_term_depths(graph: &Graph, work: &mut IdentityWork) -> Option<Vec<usi
 /// tokens only: canonical CBOR byte ordering remains in the comparator below.
 /// Borrowing flat keys avoids a second retained copy of every lexical value.
 fn acyclic_identity_classes(
-    graph: &Graph,
-    depths: &[usize],
-    flat_keys: &[Option<Vec<u8>>],
-    work: &mut IdentityWork,
+    graph: &Graph, depths: &[usize], flat_keys: &[Option<Vec<u8>>], work: &mut IdentityWork,
 ) -> Vec<usize> {
     let mut flat_classes: FastMap<&[u8], usize> = FastMap::default();
     let mut missing_classes: FastMap<usize, usize> = FastMap::default();
@@ -1819,12 +1785,8 @@ fn acyclic_identity_classes(
 /// native stack. Equal structural classes need no repeated walk, and bounded
 /// pair-order memory avoids revisiting unequal child chains at each ancestor.
 fn compare_acyclic_identity(
-    graph: &Graph,
-    flat_keys: &[Option<Vec<u8>>],
-    classes: &[usize],
-    compared_pairs: &mut FastMap<(usize, usize), Ordering>,
-    left: usize,
-    right: usize,
+    graph: &Graph, flat_keys: &[Option<Vec<u8>>], classes: &[usize],
+    compared_pairs: &mut FastMap<(usize, usize), Ordering>, left: usize, right: usize,
     work: &mut IdentityWork,
 ) -> Ordering {
     fn flat(flat_keys: &[Option<Vec<u8>>], tid: usize) -> Option<Cow<'_, [u8]>> {
@@ -2057,10 +2019,7 @@ fn term_identity_key(graph: &Graph, tid: usize, stack: &mut Vec<usize>) -> Vec<u
 }
 
 fn term_identity_key_marked(
-    graph: &Graph,
-    tid: usize,
-    stack: &mut Vec<usize>,
-    active: &mut [bool],
+    graph: &Graph, tid: usize, stack: &mut Vec<usize>, active: &mut [bool],
 ) -> Vec<u8> {
     /// A quoted triple being written: its components and how many have begun.
     struct Frame {

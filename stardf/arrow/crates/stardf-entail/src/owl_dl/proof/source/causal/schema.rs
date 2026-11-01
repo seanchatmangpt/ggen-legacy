@@ -25,8 +25,7 @@ impl<'a> CausalSchema<'a> {
     }
 
     fn derivation(
-        &self,
-        qualifier: bool,
+        &self, qualifier: bool,
     ) -> impl Iterator<Item = ResolvedSchemaStep<'a>> + 'a + use<'a> {
         let scope = self.scope;
         let bounds = &self.evidence.bounds;

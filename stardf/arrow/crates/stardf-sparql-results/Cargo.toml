@@ -6,7 +6,9 @@ name = "stardf-sparql-results"
 description = "Native, wasm-clean serializer for the SPARQL result model (SELECT/ASK/CONSTRUCT) to SPARQL Results JSON/XML/CSV/TSV plus a provenance-carrying purrdf extension — the canonical results-serialization authority"
 version.workspace = true
 edition.workspace = true
-publish = false
+# Lane H03 gate-closure (2026-10-31): G3 fix — tier-5 closure member joins the
+# publish set (was publish=false; the 21:05 ladder receipt named it).
+publish = true
 repository.workspace = true
 license.workspace = true
 homepage.workspace = true

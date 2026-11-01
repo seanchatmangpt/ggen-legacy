@@ -438,8 +438,7 @@ impl CountingResolver {
 
 impl GraphResolver for CountingResolver {
     fn resolve(
-        &self,
-        _request: purrdf_sparql_eval::GraphResolveRequest<'_>,
+        &self, _request: purrdf_sparql_eval::GraphResolveRequest<'_>,
     ) -> Result<Arc<RdfDataset>, purrdf_sparql_eval::LoadError> {
         self.calls.fetch_add(1, Ordering::Relaxed);
         Ok(Arc::clone(&self.document))
@@ -466,8 +465,7 @@ impl CancellingResolver {
 
 impl GraphResolver for CancellingResolver {
     fn resolve(
-        &self,
-        request: purrdf_sparql_eval::GraphResolveRequest<'_>,
+        &self, request: purrdf_sparql_eval::GraphResolveRequest<'_>,
     ) -> Result<Arc<RdfDataset>, purrdf_sparql_eval::LoadError> {
         self.calls.fetch_add(1, Ordering::Relaxed);
         assert!(request.stop.is_some(), "LOAD must carry the stop signal");

@@ -44,9 +44,7 @@ struct ScopedRowsData {
 
 impl ScopedRows {
     pub(crate) fn new(
-        rows: AdmittedVec<ScopedRow>,
-        complete: bool,
-        workspace: &WorkspaceCapability,
+        rows: AdmittedVec<ScopedRow>, complete: bool, workspace: &WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         Ok(Self {
             state: purrdf_sparql_eval::SharedWorkspace::new_admitted(
@@ -100,8 +98,7 @@ impl ScopedRows {
     }
 
     pub(crate) fn retain_search(
-        &self,
-        search: &purrdf_sparql_eval::RowEvidence,
+        &self, search: &purrdf_sparql_eval::RowEvidence,
     ) -> Result<(), EvalError> {
         let writer = self
             .state
@@ -159,8 +156,7 @@ impl ScopedSearch {
     /// # Errors
     /// Preserves poisoned-owner and original query evidence failures.
     pub fn with_record<R>(
-        &self,
-        read: impl FnOnce(&purrdf_core::evidence::EvidenceRecord) -> R,
+        &self, read: impl FnOnce(&purrdf_core::evidence::EvidenceRecord) -> R,
     ) -> Result<R, EvalError> {
         self.retained()?.with_record(read)
     }
@@ -187,11 +183,8 @@ pub struct ScopedStratum {
 
 impl ScopedStratum {
     pub(crate) fn opened(
-        stratum: &str,
-        cursor: &purrdf_sparql_eval::CallCursor<'_>,
-        scope: &NativeCandidateScope<'_>,
-        exclusions: ScopedRows,
-        workspace: &WorkspaceCapability,
+        stratum: &str, cursor: &purrdf_sparql_eval::CallCursor<'_>,
+        scope: &NativeCandidateScope<'_>, exclusions: ScopedRows, workspace: &WorkspaceCapability,
     ) -> Result<Self, EvalError> {
         let mut variables = AdmittedVec::with_capacity(cursor.variables().len(), workspace)?;
         for variable in cursor.variables() {
@@ -211,8 +204,7 @@ impl ScopedStratum {
 }
 
 pub(crate) fn retain_counts(
-    scope: &NativeCandidateScope<'_>,
-    workspace: &WorkspaceCapability,
+    scope: &NativeCandidateScope<'_>, workspace: &WorkspaceCapability,
 ) -> Result<AdmittedVec<purrdf_core::query_scope::ConstraintCounts>, EvalError> {
     scope.with_counts(|counts| {
         let mut retained = AdmittedVec::with_capacity(counts.len(), workspace)?;
@@ -255,8 +247,7 @@ impl ScopedFusedRow {
     }
 
     pub(crate) fn new(
-        row: crate::FusedRow,
-        evidence: purrdf_sparql_eval::RowEvidence,
+        row: crate::FusedRow, evidence: purrdf_sparql_eval::RowEvidence,
     ) -> Result<Self, EvalError> {
         use purrdf_hash::{Domain, blake3::RecordHasher, frame::frame_le_into, hex::Digest32};
         let mut hash = RecordHasher::new();
@@ -301,8 +292,7 @@ impl ScopedFusedAnswer {
     /// # Errors
     /// Refuses noncanonical/unknown reasons and original native owner failures.
     pub fn with_accepted_rows<R>(
-        &self,
-        accepted: &[purrdf_core::evidence::ReasonId],
+        &self, accepted: &[purrdf_core::evidence::ReasonId],
         visit: impl FnOnce(purrdf_sparql_eval::AcceptedPayloadRows<'_, ScopedFusedRow>) -> R,
     ) -> Result<R, EvalError> {
         self.owner
@@ -346,9 +336,7 @@ impl<'a> ConstraintBindings<'a> {
     /// Refuses mismatched/duplicate bindings and preserves native admission
     /// errors. No constraint callback runs during this structural binding.
     pub fn bind(
-        &self,
-        compiled: &impl CompiledRead,
-        workspace: &WorkspaceCapability,
+        &self, compiled: &impl CompiledRead, workspace: &WorkspaceCapability,
     ) -> Result<NativeCandidateScope<'a>, EvalError> {
         let requests = compiled.constraints();
         if self.bindings.len() != requests.len() {

@@ -102,9 +102,7 @@ impl DigestKind {
     /// through this one comparison, so a mismatch always names its kind and both
     /// values.
     pub(super) fn verify(
-        self,
-        expected: &[u8; 32],
-        actual: &[u8; 32],
+        self, expected: &[u8; 32], actual: &[u8; 32],
     ) -> Result<(), EmbeddingError> {
         if expected != actual {
             return Err(EmbeddingError::DigestMismatch {

@@ -75,8 +75,7 @@ impl CarrierInputError {
     }
 
     pub(crate) fn capture(
-        value: &TermValue,
-        reason: CarrierInputReason,
+        value: &TermValue, reason: CarrierInputReason,
         storage: Option<&crate::carrier::CarrierStorage<'_>>,
     ) -> super::GeoError {
         crate::carrier::with_storage(storage, |memory| {
@@ -86,8 +85,7 @@ impl CarrierInputError {
     }
 
     pub(crate) fn capture_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        value: &TermValue,
-        reason: CarrierInputReason,
+        value: &TermValue, reason: CarrierInputReason,
         memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<super::GeoError, StorageError> {
         memory.try_scope(|memory| {

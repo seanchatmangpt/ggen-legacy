@@ -56,9 +56,7 @@ impl RdfCodec for TriXCodec {
     }
 
     fn serialize_into(
-        &self,
-        graph: &SerGraph,
-        out: &mut TextSink<'_>,
+        &self, graph: &SerGraph, out: &mut TextSink<'_>,
     ) -> Result<(), RdfDiagnostic> {
         // Emitted element by element after a grouping pre-pass. TriX's own shape is
         // flat — `<graph>` blocks of `<triple>` elements — so the writer never needs
@@ -79,8 +77,7 @@ const TRIX_NS: &str = "http://www.w3.org/2004/03/trix/trix-1/";
 
 /// Parse TriX `text` into a frozen [`RdfDataset`].
 pub(super) fn parse_trix_to_dataset(
-    text: &str,
-    base: &purrdf_iri::BaseScope,
+    text: &str, base: &purrdf_iri::BaseScope,
 ) -> Result<Arc<RdfDataset>, RdfDiagnostic> {
     let document = parse_xml(text).map_err(|error| match error {
         XmlReadError::TooDeep(depth) => TRIX.parse_err(format!(
@@ -137,8 +134,7 @@ pub(super) fn parse_trix_to_dataset(
 
 /// Parse a `<triple>` element's three term children.
 fn parse_triple(
-    element: Node<'_, '_>,
-    base: &purrdf_iri::BaseScope,
+    element: Node<'_, '_>, base: &purrdf_iri::BaseScope,
 ) -> Result<(ClassicTerm, String, ClassicTerm), RdfDiagnostic> {
     let terms: Vec<Node<'_, '_>> = element.element_children().collect();
     if terms.len() != 3 {
@@ -157,8 +153,7 @@ fn parse_triple(
 
 /// A subject / graph-name node term: only `<uri>` or `<id>` are valid here.
 fn node_term(
-    element: Node<'_, '_>,
-    base: &purrdf_iri::BaseScope,
+    element: Node<'_, '_>, base: &purrdf_iri::BaseScope,
 ) -> Result<ClassicTerm, RdfDiagnostic> {
     match term_element(element, base)? {
         term @ (ClassicTerm::Iri(_) | ClassicTerm::Blank(_)) => Ok(term),
@@ -170,8 +165,7 @@ fn node_term(
 
 /// Map a TriX term element to a [`ClassicTerm`].
 fn term_element(
-    element: Node<'_, '_>,
-    base: &purrdf_iri::BaseScope,
+    element: Node<'_, '_>, base: &purrdf_iri::BaseScope,
 ) -> Result<ClassicTerm, RdfDiagnostic> {
     match local_of(element) {
         Some("uri") => {
@@ -430,9 +424,7 @@ fn write_trix<W: TextOut + ?Sized>(graph: &SerGraph, out: &mut W) -> Result<(), 
 
 /// Write a graph-name element (`<uri>` / `<id>`).
 fn write_graph_name<W: TextOut + ?Sized>(
-    out: &mut W,
-    graph: &SerGraph,
-    tid: usize,
+    out: &mut W, graph: &SerGraph, tid: usize,
 ) -> Result<(), RdfDiagnostic> {
     let term = TRIX.term(graph, tid)?;
     match term.kind {
@@ -457,9 +449,7 @@ fn write_graph_name<W: TextOut + ?Sized>(
 
 /// Write a single term as a `<uri>` / `<id>` / `<plainLiteral>` / `<typedLiteral>`.
 fn write_term<W: TextOut + ?Sized>(
-    out: &mut W,
-    graph: &SerGraph,
-    tid: usize,
+    out: &mut W, graph: &SerGraph, tid: usize,
 ) -> Result<(), RdfDiagnostic> {
     let term = TRIX.term(graph, tid)?;
     match term.kind {
@@ -484,9 +474,7 @@ fn write_term<W: TextOut + ?Sized>(
 }
 
 fn write_literal<W: TextOut + ?Sized>(
-    out: &mut W,
-    graph: &SerGraph,
-    term: &SerTerm,
+    out: &mut W, graph: &SerGraph, term: &SerTerm,
 ) -> Result<(), RdfDiagnostic> {
     let lexical = TRIX.value(term)?;
     if let Some(language) = &term.lang {

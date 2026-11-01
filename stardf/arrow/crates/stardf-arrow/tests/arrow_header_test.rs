@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Blackcat Informatics® Inc. <paudley@blackcatinformatics.ca>
 // SPDX-License-Identifier: MIT OR Apache-2.0 OR MulanPSL-2.0
 
-//! Unit tests for CanonArrow 128-byte header wire format and domain null digest.
+//! Unit tests for `CanonArrow` 128-byte header wire format and domain null digest.
 
 use purrdf_arrow::{ArrowEgressHeader, ArrowEgressHeaderError, canon_arrow_empty_v1};
 use std::mem::{align_of, size_of};
@@ -102,9 +102,9 @@ fn header_refuses_invalid_inputs() {
     );
 }
 
-/// Regression: a hostile wire header with payload_byte_len near u64::MAX
+/// Regression: a hostile wire header with `payload_byte_len` near `u64::MAX`
 /// must be refused, not admitted by addition wrapping in release builds
-/// (payload = u64::MAX made the old `total != payload + 192` check wrap
+/// (payload = `u64::MAX` made the old `total != payload + 192` check wrap
 /// the right side down to 191, passing validation for total = 191).
 #[test]
 fn header_refuses_overflowing_lengths() {
@@ -126,6 +126,9 @@ fn header_refuses_overflowing_lengths() {
 /// systematic byte swap that is mirrored in both `to_bytes` and
 /// `from_bytes`; this pins the exact little-endian layout byte by byte.
 #[test]
+// Fixture byte values are all < 256 and the shifted u64 constants are exact
+// byte extractions; the narrowing casts cannot truncate.
+#[allow(clippy::cast_possible_truncation)]
 fn header_wire_image_is_exact() {
     let triples_digest: [u8; 32] = core::array::from_fn(|i| i as u8);
     let columnar_digest: [u8; 32] = core::array::from_fn(|i| (255 - i) as u8);
@@ -195,8 +198,8 @@ fn header_default_is_a_parseable_wire_image() {
     assert_eq!(parsed, header);
 }
 
-/// A-2: batch_count must be consistent with payload_byte_len.
-/// Refusals: (batch_count=0, payload>0) and (batch_count>1, payload=0).
+/// A-2: `batch_count` must be consistent with `payload_byte_len`.
+/// Refusals: (`batch_count=0`, `payload>0`) and (`batch_count>1`, `payload=0`).
 #[test]
 fn header_refuses_inconsistent_batch_count() {
     let base = ArrowEgressHeader {
@@ -232,8 +235,8 @@ fn header_refuses_inconsistent_batch_count() {
 }
 
 /// Valid neighbours for the batch-count refusals (over-refusal law):
-/// (batch_count=1, payload=0) — the canon empty path — and
-/// (batch_count=4, large payload) must both still be accepted.
+/// (`batch_count=1`, `payload=0`) — the canon empty path — and
+/// (`batch_count=4`, large payload) must both still be accepted.
 #[test]
 fn header_accepts_consistent_batch_count_neighbours() {
     let base = ArrowEgressHeader {
@@ -294,6 +297,9 @@ fn fits_in_zero_available_with_nonempty_header_is_false() {
 }
 
 #[test]
+// The header length fields are fixture-controlled small constants; the
+// usize/u64 narrowings cannot truncate.
+#[allow(clippy::cast_possible_truncation)]
 fn fits_in_matches_caller_slice_bounds_pattern() {
     // Documented caller pattern (see `ArrowEgressHeader::fits_in` docs): gate
     // the payload slice on fits_in before slicing, so

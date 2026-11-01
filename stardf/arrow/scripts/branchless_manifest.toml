@@ -1,11 +1,11 @@
 # branchless_manifest.toml — kernel inventory for the branchless ABI audit gate
-# (stardf-arrow instance; modeled on avec/scripts/branchless_manifest.toml)
+# (stardf-arrow instance; modeled on cgap/scripts/branchless_manifest.toml)
 #
 # Scope law: every hot-path kernel of stardf-arrow-core must appear here; a
 # kernel present in hot paths but absent from this manifest is a gate
 # violation on the inventory check.
 #
-# Schema (per [[kernel]]) — see the avec manifest for the full field spec:
+# Schema (per [[kernel]]) — see the cgap manifest for the full field spec:
 #   scope_pattern     : unanchored regex matched against the symbol name as
 #                       rendered by homebrew llvm-objdump 21.1.7
 #                       (/opt/homebrew/opt/llvm/bin)
@@ -41,7 +41,7 @@
 
 [meta]
 spec = "stardf/docs/jira (branchless kernel ABI, stardf-arrow instance)"
-gate = "scripts/audit_branchless.sh (TO BE LANDED: stardf-arrow port of avec scripts/audit_branchless.sh; until then this manifest is the inventory of record)"
+gate = "scripts/audit_branchless.sh (TO BE LANDED: stardf-arrow port of cgap scripts/audit_branchless.sh; until then this manifest is the inventory of record)"
 updated = "2026-10-31 lane-13 completion re-witness on the settled as-built release binary: unchanged — 1 observed kernel + 3 documented inlining blind spots; intern 78 branch sites (ceiling 80 holds), same region/mnemonics; only materialized FrozenArena-matching symbol remains drop_slow @ 0x18028 (narrowed pattern 11FrozenArenaE(4get|4term) 0-hit); layout/stream blind-spot rows 0-hit"
 
 # ---------------------------------------------------------------------------

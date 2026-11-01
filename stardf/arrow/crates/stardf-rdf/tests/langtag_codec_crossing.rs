@@ -93,8 +93,7 @@ fn expected_token(tag: &str) -> String {
 /// well as on what came back, which is the difference between "the tag
 /// survived" and "the tag survived and was written the way it was read".
 fn cross(
-    dataset: &std::sync::Arc<purrdf_rdf::RdfDataset>,
-    format: NativeRdfFormat,
+    dataset: &std::sync::Arc<purrdf_rdf::RdfDataset>, format: NativeRdfFormat,
 ) -> (Vec<u8>, std::sync::Arc<purrdf_rdf::RdfDataset>) {
     let bytes = serialize_dataset(dataset, format.media_type(), SerializeGraph::Dataset)
         .unwrap_or_else(|error| panic!("{format:?}: serialize must succeed, got {error}"));

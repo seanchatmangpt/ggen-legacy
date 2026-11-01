@@ -94,9 +94,7 @@ impl EvidenceColumn {
     /// # Errors
     /// Reports physical cardinality overflow or admission/allocation refusal.
     pub fn push<S: Admission + ?Sized>(
-        &mut self,
-        id: EvidenceId,
-        memory: &mut Memory<'_, S>,
+        &mut self, id: EvidenceId, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         let next = self.len.checked_add(1).ok_or(StorageError::SizeOverflow)?;
         if self.ids.is_empty() {
@@ -126,9 +124,7 @@ impl EvidenceColumn {
     /// # Errors
     /// Refuses invalid row indices before allocation, or physical storage refusal.
     pub fn select<S: Admission + ?Sized>(
-        &self,
-        indices: &[usize],
-        memory: &mut Memory<'_, S>,
+        &self, indices: &[usize], memory: &mut Memory<'_, S>,
     ) -> Result<Self, EvidenceColumnError> {
         self.select_indices(indices.iter().copied(), memory)
     }
@@ -141,16 +137,13 @@ impl EvidenceColumn {
     /// # Errors
     /// Returns the original physical refusal before publishing a copied column.
     pub fn copy<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> Result<Self, EvidenceColumnError> {
         self.select_indices(0..self.len, memory)
     }
 
     fn select_indices<S: Admission + ?Sized>(
-        &self,
-        indices: impl ExactSizeIterator<Item = usize> + Clone,
-        memory: &mut Memory<'_, S>,
+        &self, indices: impl ExactSizeIterator<Item = usize> + Clone, memory: &mut Memory<'_, S>,
     ) -> Result<Self, EvidenceColumnError> {
         if indices.clone().any(|index| index >= self.len) {
             return Err(EvidenceColumnError::RowOutOfBounds);
@@ -172,10 +165,7 @@ impl EvidenceColumn {
     /// # Errors
     /// Refuses an invalid row or original physical admission/allocation failure.
     pub fn set<S: Admission + ?Sized>(
-        &mut self,
-        index: usize,
-        id: EvidenceId,
-        memory: &mut Memory<'_, S>,
+        &mut self, index: usize, id: EvidenceId, memory: &mut Memory<'_, S>,
     ) -> Result<(), EvidenceColumnError> {
         if index >= self.len {
             return Err(EvidenceColumnError::RowOutOfBounds);
@@ -207,8 +197,7 @@ impl EvidenceColumn {
     /// # Errors
     /// Propagates the original admission callback's refund failure.
     pub fn release<S: Admission + ?Sized>(
-        self,
-        memory: &mut Memory<'_, S>,
+        self, memory: &mut Memory<'_, S>,
     ) -> Result<(), StorageError> {
         memory.release_vec(self.ids)
     }

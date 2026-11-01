@@ -102,10 +102,7 @@ impl OwnedTerm {
 }
 
 fn render_literal(
-    lexical: &str,
-    datatype: &str,
-    language: Option<&str>,
-    direction: Option<TextDirection>,
+    lexical: &str, datatype: &str, language: Option<&str>, direction: Option<TextDirection>,
 ) -> String {
     let lang = language.map_or_else(String::new, |l| format!("@{l}"));
     let dir = match direction {
@@ -175,9 +172,7 @@ impl CollectSink {
 
 impl RdfEventSink for CollectSink {
     fn term(
-        &mut self,
-        id: EventTermId,
-        term: EventTerm<'_>,
+        &mut self, id: EventTermId, term: EventTerm<'_>,
     ) -> Result<ControlFlow<()>, EventError> {
         if let Some(error) = self.term_refusal.take() {
             return Err(error);
@@ -197,19 +192,14 @@ impl RdfEventSink for CollectSink {
     }
 
     fn reifier(
-        &mut self,
-        reifier: EventTermId,
-        triple: EventTriple,
+        &mut self, reifier: EventTermId, triple: EventTriple,
     ) -> Result<ControlFlow<()>, EventError> {
         self.reifiers.push((reifier, triple));
         Ok(ControlFlow::Continue(()))
     }
 
     fn annotation(
-        &mut self,
-        reifier: EventTermId,
-        p: EventTermId,
-        o: EventTermId,
+        &mut self, reifier: EventTermId, p: EventTermId, o: EventTermId,
     ) -> Result<ControlFlow<()>, EventError> {
         self.annotations.push((reifier, p, o));
         Ok(ControlFlow::Continue(()))
@@ -366,9 +356,7 @@ struct IndexSink {
 
 impl RdfEventSink for IndexSink {
     fn term(
-        &mut self,
-        _id: EventTermId,
-        _term: EventTerm<'_>,
+        &mut self, _id: EventTermId, _term: EventTerm<'_>,
     ) -> Result<ControlFlow<()>, EventError> {
         Ok(ControlFlow::Continue(()))
     }
@@ -376,17 +364,12 @@ impl RdfEventSink for IndexSink {
         Ok(ControlFlow::Continue(()))
     }
     fn reifier(
-        &mut self,
-        _reifier: EventTermId,
-        _triple: EventTriple,
+        &mut self, _reifier: EventTermId, _triple: EventTriple,
     ) -> Result<ControlFlow<()>, EventError> {
         Ok(ControlFlow::Continue(()))
     }
     fn annotation(
-        &mut self,
-        _reifier: EventTermId,
-        _p: EventTermId,
-        _o: EventTermId,
+        &mut self, _reifier: EventTermId, _p: EventTermId, _o: EventTermId,
     ) -> Result<ControlFlow<()>, EventError> {
         Ok(ControlFlow::Continue(()))
     }
@@ -411,9 +394,7 @@ impl GtsEventSink for IndexSink {
     }
 
     fn gts_diagnostic(
-        &mut self,
-        _ctx: Option<FrameContext<'_>>,
-        _diagnostic: &purrdf_gts::model::Diagnostic,
+        &mut self, _ctx: Option<FrameContext<'_>>, _diagnostic: &purrdf_gts::model::Diagnostic,
     ) -> Result<ControlFlow<()>, EventError> {
         self.diagnostics += 1;
         Ok(ControlFlow::Continue(()))

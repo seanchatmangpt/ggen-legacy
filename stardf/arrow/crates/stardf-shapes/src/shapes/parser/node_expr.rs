@@ -29,9 +29,7 @@ impl Parser<'_> {
     /// binds when it runs ([`Parser::node_expr_scope`]), and remove them after,
     /// whatever `parse` returns.
     pub(crate) fn with_node_expr_scope<T>(
-        &mut self,
-        names: Vec<String>,
-        parse: impl FnOnce(&mut Self) -> T,
+        &mut self, names: Vec<String>, parse: impl FnOnce(&mut Self) -> T,
     ) -> T {
         self.with_node_expr_scopes(names, Vec::new(), parse)
     }
@@ -39,10 +37,7 @@ impl Parser<'_> {
     /// [`Self::with_node_expr_scope`], also adding `optional` — names the context may
     /// leave unbound ([`Parser::node_expr_optional`]).
     pub(crate) fn with_node_expr_scopes<T>(
-        &mut self,
-        names: Vec<String>,
-        optional: Vec<String>,
-        parse: impl FnOnce(&mut Self) -> T,
+        &mut self, names: Vec<String>, optional: Vec<String>, parse: impl FnOnce(&mut Self) -> T,
     ) -> T {
         let depth = self.node_expr_scope.len();
         let optional_depth = self.node_expr_optional.len();
@@ -62,8 +57,7 @@ impl Parser<'_> {
     /// 1.2 Node Expressions §6.3), so it binds nothing of the call site's scope: a
     /// query inside it may read `$this` alone, exactly what that evaluation binds.
     pub(crate) fn with_empty_node_expr_scope<T>(
-        &mut self,
-        parse: impl FnOnce(&mut Self) -> T,
+        &mut self, parse: impl FnOnce(&mut Self) -> T,
     ) -> T {
         let scope = std::mem::take(&mut self.node_expr_scope);
         let optional = std::mem::take(&mut self.node_expr_optional);
@@ -80,9 +74,7 @@ impl Parser<'_> {
     /// (`sh:propertyValidator` vs `sh:nodeValidator`) and is passed down from
     /// both node shapes and property shapes.
     pub(crate) fn parse_constraints(
-        &mut self,
-        id: &Term,
-        is_property_shape: bool,
+        &mut self, id: &Term, is_property_shape: bool,
     ) -> Result<ParsedConstraints, String> {
         // Remember which shape these constraints belong to, so a `sh:select` node
         // expression resolves shape-level `sh:prefixes` exactly as `sh:sparql`
@@ -96,9 +88,7 @@ impl Parser<'_> {
     }
 
     fn parse_constraints_inner(
-        &mut self,
-        id: &Term,
-        is_property_shape: bool,
+        &mut self, id: &Term, is_property_shape: bool,
     ) -> Result<ParsedConstraints, String> {
         // Every constraint is pushed with the reifier annotations of the
         // statements that represent it (its T), so a deactivated one is never
@@ -895,9 +885,7 @@ impl Parser<'_> {
     /// bounds; when they differ, each bound becomes its own constraint carrying
     /// its own annotation, and a deactivated bound is dropped alone.
     fn parse_qualified_value_shapes(
-        &mut self,
-        id: &Term,
-        out: &mut ParsedConstraints,
+        &mut self, id: &Term, out: &mut ParsedConstraints,
     ) -> Result<(), String> {
         let mut qvs_nodes: Vec<Term> = self.objects_of(id, sh::QUALIFIED_VALUE_SHAPE);
         crate::term::sort_terms_canonical(&mut qvs_nodes);
@@ -999,9 +987,7 @@ impl Parser<'_> {
     /// all values of `sh:property/sh:qualifiedValueShape` reachable from the
     /// parents of the property shape `ps_id`, minus `own_qvs` itself.
     fn parse_sibling_qualified_shapes(
-        &mut self,
-        ps_id: &Term,
-        own_qvs: &Term,
+        &mut self, ps_id: &Term, own_qvs: &Term,
     ) -> Result<Vec<Shape>, String> {
         self.sibling_qualified_shape_nodes(ps_id, own_qvs)
             .into_iter()
@@ -1235,9 +1221,7 @@ impl Parser<'_> {
     /// It is deliberately a RECORDING pass and not a check: the index it resolves
     /// against is filled at the very end of the parse, after every shape exists.
     fn record_node_by_expr_constants(
-        &mut self,
-        shape_id: &Term,
-        expr: &NodeExpr,
+        &mut self, shape_id: &Term, expr: &NodeExpr,
     ) -> Result<(), String> {
         crate::expression::named_outputs::visit(expr, |term| {
             purrdf_lex::allocation::Memory::new(&mut purrdf_lex::allocation::Resident).push(
@@ -1280,10 +1264,7 @@ impl Parser<'_> {
     /// declarations are all still accepted — only a node the shapes graph never
     /// described as a shape at all is refused.
     fn parse_shape_operand(
-        &mut self,
-        shape_ref: Term,
-        owner: &str,
-        node: &Term,
+        &mut self, shape_ref: Term, owner: &str, node: &Term,
     ) -> Result<Shape, String> {
         // The one node that is a shape without saying anything: a blank node that
         // is the subject of no triple — the authored empty shape `[]`. A blank node
@@ -1503,10 +1484,7 @@ impl Parser<'_> {
                   exhaustive kind-to-IR correspondence this match exists to show"
     )]
     fn parse_structural_node_expr(
-        &mut self,
-        node: &Term,
-        iri: &str,
-        kind: ExprKind,
+        &mut self, node: &Term, iri: &str, kind: ExprKind,
     ) -> Result<NodeExpr, String> {
         // Every structural key has an object — `parse_node_expr_core` only reaches
         // here for a key it just observed — so a missing object is an internal
@@ -1939,9 +1917,7 @@ impl Parser<'_> {
     /// of the identified function's declared parameters — a mis-spelled parameter
     /// would otherwise bind nothing and evaluate to the empty list at every call.
     fn parse_named_parameter_call(
-        &mut self,
-        node: &Term,
-        candidates: &[(NamedNode, Term)],
+        &mut self, node: &Term, candidates: &[(NamedNode, Term)],
     ) -> Result<Option<NodeExpr>, String> {
         // Nothing declared: skip the whole question without touching the index.
         if self.custom_fns.is_empty() {
@@ -1992,9 +1968,7 @@ impl Parser<'_> {
 
     /// Parse the RDF list at `(node, predicate)` into a vector of node expressions.
     fn parse_node_expr_list(
-        &mut self,
-        node: &Term,
-        predicate: &str,
+        &mut self, node: &Term, predicate: &str,
     ) -> Result<Vec<NodeExpr>, String> {
         let list_head = self
             .first_object_of(node, predicate)
@@ -2362,10 +2336,7 @@ impl Parser<'_> {
     /// IRIs (SHACL 1.2 Core §4.1.1 / §4.1.2 / §7.9.4). Anything else is refused,
     /// naming the value.
     fn iri_or_iri_list(
-        &self,
-        value: &Term,
-        id: &Term,
-        predicate: &str,
+        &self, value: &Term, id: &Term, predicate: &str,
     ) -> Result<Vec<NamedNode>, String> {
         match value {
             Term::NamedNode(n) => Ok(vec![n.clone()]),

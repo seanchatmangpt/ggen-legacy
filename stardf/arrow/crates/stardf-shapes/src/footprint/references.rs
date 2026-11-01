@@ -47,8 +47,7 @@ impl Paths {
     }
 
     fn references(
-        paths: &mut [LoweredPath],
-        triggers: &mut [Trigger],
+        paths: &mut [LoweredPath], triggers: &mut [Trigger],
         mut visit: impl FnMut(&mut LoweredPath),
     ) {
         for path in paths.iter_mut().chain(
@@ -120,8 +119,7 @@ impl Paths {
 
 /// Resolve reference edges, including cycles, without revisiting any AST body.
 pub(crate) fn resolve(
-    main: &mut FootprintWalk,
-    definitions: &mut [FootprintWalk],
+    main: &mut FootprintWalk, definitions: &mut [FootprintWalk],
     mut lower_reverse: impl FnMut(&Path) -> Result<LoweredPath, PreparationRefusal>,
 ) -> Result<Footprint, PreparationRefusal> {
     let mut main = std::mem::take(main);

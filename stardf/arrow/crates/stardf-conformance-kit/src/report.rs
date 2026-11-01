@@ -78,8 +78,7 @@ pub struct ReportContext<'a> {
 /// # Errors
 /// Refuses missing source evidence or one report identity naming distinct origins.
 pub fn expected_source_correspondence(
-    report: &RdfDataset,
-    sources: &[SourceContext<'_>],
+    report: &RdfDataset, sources: &[SourceContext<'_>],
 ) -> Result<Vec<BlankCorrespondence>, GradeError> {
     let mut links = std::collections::BTreeMap::new();
     let source_blanks = admit_sources(sources)?;
@@ -199,8 +198,7 @@ fn canonical_equality(expected: &RdfDataset, actual: &RdfDataset) -> Result<(), 
 /// context or kernel limits. Deliberate same-domain data/shapes egress aliases
 /// resolve to the same original source identity across the two roles.
 pub fn compare_contextual(
-    expected: ReportContext<'_>,
-    actual: ReportContext<'_>,
+    expected: ReportContext<'_>, actual: ReportContext<'_>,
 ) -> Result<(), GradeError> {
     let expected = encode_context(expected)?;
     let actual = encode_context(actual)?;
@@ -335,10 +333,7 @@ fn encode_context(context: ReportContext<'_>) -> Result<std::sync::Arc<RdfDatase
 }
 
 fn encode_dataset(
-    builder: &mut RdfDatasetBuilder,
-    identities: &mut Identities,
-    domain: &str,
-    role: &str,
+    builder: &mut RdfDatasetBuilder, identities: &mut Identities, domain: &str, role: &str,
     dataset: &RdfDataset,
 ) -> Result<(), GradeError> {
     let default_graph =

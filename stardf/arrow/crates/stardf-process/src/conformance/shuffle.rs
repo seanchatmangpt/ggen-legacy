@@ -70,8 +70,7 @@ impl ShuffleSpec {
     /// The order-pair refusals ([`ProcessError::OrderNotIrreflexive`] and
     /// siblings).
     pub fn new(
-        child_sequences: Vec<Vec<String>>,
-        precedence: Vec<(usize, usize)>,
+        child_sequences: Vec<Vec<String>>, precedence: Vec<(usize, usize)>,
     ) -> Result<Self, ProcessError> {
         crate::model::powl::validate_order(child_sequences.len(), &precedence)?;
         Ok(Self {
@@ -109,14 +108,8 @@ impl ShuffleSpec {
     /// DFS over trace positions with deterministic backtracking.
     #[allow(clippy::too_many_arguments)]
     fn search(
-        &self,
-        position: usize,
-        trace: &[&str],
-        cursors: &mut [usize],
-        done: &mut [u64],
-        pred_masks: &[Vec<u64>],
-        nodes: &mut u64,
-        budget: u64,
+        &self, position: usize, trace: &[&str], cursors: &mut [usize], done: &mut [u64],
+        pred_masks: &[Vec<u64>], nodes: &mut u64, budget: u64,
     ) -> Result<ShuffleVerdict, ProcessError> {
         if position == trace.len() {
             return Ok(ShuffleVerdict::Accepted);

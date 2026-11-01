@@ -236,9 +236,7 @@ fn rows(result: &SparqlResult) -> String {
 }
 
 fn observe(
-    dataset: &Arc<RdfDataset>,
-    query: &str,
-    options: QueryOptions<'_, '_>,
+    dataset: &Arc<RdfDataset>, query: &str, options: QueryOptions<'_, '_>,
     governors: &QueryGovernors,
 ) -> Observation {
     let outcome = NativeSparqlEngine::new()

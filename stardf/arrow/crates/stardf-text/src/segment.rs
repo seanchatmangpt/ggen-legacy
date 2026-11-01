@@ -188,10 +188,7 @@ impl Dictionary {
     /// Segment through reusable heap storage. The analyzer isolates protected emoji
     /// before this call; every dictionary endpoint still respects EGC boundaries.
     pub fn segment_each_with_scratch<'a>(
-        &self,
-        normalized: &'a str,
-        scratch: &mut SegmentationScratch,
-        sink: impl FnMut(&'a str),
+        &self, normalized: &'a str, scratch: &mut SegmentationScratch, sink: impl FnMut(&'a str),
     ) {
         self.segment_with_tailoring(normalized, scratch, true, sink);
     }
@@ -200,19 +197,13 @@ impl Dictionary {
     /// Dictionary and fallback endpoints remain grapheme-safe, and transparent
     /// controls retain their original coverage as in lexical segmentation.
     pub fn segment_surface_each_with_scratch<'a>(
-        &self,
-        normalized: &'a str,
-        scratch: &mut SegmentationScratch,
-        sink: impl FnMut(&'a str),
+        &self, normalized: &'a str, scratch: &mut SegmentationScratch, sink: impl FnMut(&'a str),
     ) {
         self.segment_with_tailoring(normalized, scratch, false, sink);
     }
 
     fn segment_with_tailoring<'a>(
-        &self,
-        normalized: &'a str,
-        scratch: &mut SegmentationScratch,
-        tailor: bool,
+        &self, normalized: &'a str, scratch: &mut SegmentationScratch, tailor: bool,
         mut sink: impl FnMut(&'a str),
     ) {
         for chunk in normalized
@@ -253,10 +244,7 @@ impl Dictionary {
         }
     }
     fn segment_chunk<'a>(
-        &self,
-        chunk: &'a str,
-        scratch: &mut SegmentationScratch,
-        tailor: bool,
+        &self, chunk: &'a str, scratch: &mut SegmentationScratch, tailor: bool,
         sink: &mut impl FnMut(&'a str),
     ) {
         scratch.prepare(chunk, tailor);
@@ -362,9 +350,7 @@ impl SegmentationScratch {
     /// body fills any chunk. Each chunk has at most this many input scalars;
     /// `chars().count()` is a certified bound on graphemes, not a guessed factor.
     pub(crate) fn reserve_for_query(
-        &mut self,
-        input: &str,
-        workspace: &WorkspaceCapability,
+        &mut self, input: &str, workspace: &WorkspaceCapability,
     ) -> Result<(), TextError> {
         let units = input.chars().count();
         let endpoints = units.checked_add(1).ok_or_else(overflow)?;

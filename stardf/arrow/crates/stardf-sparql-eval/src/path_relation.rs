@@ -516,10 +516,7 @@ impl PathLimits {
     ///   to zero fails on the first unit of work, so it can only ever produce an error;
     ///   a caller who wants no rows should not register the relation.
     pub fn new(
-        min_hops: u32,
-        max_hops: u32,
-        max_paths_per_seed: u64,
-        max_expansions_per_invocation: u64,
+        min_hops: u32, max_hops: u32, max_paths_per_seed: u64, max_expansions_per_invocation: u64,
     ) -> Result<Self, EvalError> {
         if min_hops == 0 {
             return Err(EvalError::config(
@@ -796,9 +793,7 @@ impl PathGraph {
     /// [`EvalError::Data`] if the step's edges span more than [`u32::MAX`] distinct nodes
     /// or statements, which the dense index space cannot address.
     pub fn from_dataset<D: DatasetView>(
-        dataset: &D,
-        step: &PathStep,
-        graph: GraphMatch<D::Id>,
+        dataset: &D, step: &PathStep, graph: GraphMatch<D::Id>,
     ) -> Result<Self, EvalError> {
         // The canonical edge set, and the digest that identifies it. Both come from the
         // one walk [`Self::assert_matches`] re-runs, so a snapshot and a later check of
@@ -956,9 +951,7 @@ impl PathGraph {
     /// The message names both digests and both edge counts, because "these do not match" is
     /// not actionable and "expected X, observed Y" is.
     pub fn assert_matches<D: DatasetView>(
-        &self,
-        dataset: &D,
-        graph: GraphMatch<D::Id>,
+        &self, dataset: &D, graph: GraphMatch<D::Id>,
     ) -> Result<(), EvalError> {
         let observed_edges = canonical_edges(dataset, &self.step, graph)?;
         let observed_digest = edge_set_digest(&observed_edges);
@@ -1074,9 +1067,7 @@ impl PathGraph {
 /// rather than of the order the backend happened to yield rows in, or of the order the
 /// caller happened to list the step's alternatives in.
 fn canonical_edges<D: DatasetView>(
-    dataset: &D,
-    step: &PathStep,
-    graph: GraphMatch<D::Id>,
+    dataset: &D, step: &PathStep, graph: GraphMatch<D::Id>,
 ) -> Result<Vec<(TermValue, TermValue, TermValue)>, EvalError> {
     dataset
         .checked_read(|dataset| {
@@ -1434,10 +1425,7 @@ impl Prepared {
     /// Returning `None` rather than an empty `seeds` list keeps the "this invocation
     /// cannot match" decision in ONE place, so a cursor never has to re-derive it.
     fn new(
-        graph: &PathGraph,
-        kind: &'static str,
-        limits: PathLimits,
-        args: &PfArgs<'_>,
+        graph: &PathGraph, kind: &'static str, limits: PathLimits, args: &PfArgs<'_>,
         ceiling: Option<u64>,
     ) -> Option<Self> {
         let bound: [Option<TermValue>; ROW_WIDTH] =
@@ -1710,10 +1698,7 @@ impl Prepared {
 /// Every product is `saturating`. A bound that WRAPPED would be reported as a small
 /// number, which is the under-statement case above wearing the over-statement's clothes.
 fn row_bound(
-    mode: BindingPattern,
-    shape: GraphShape,
-    limits: PathLimits,
-    walks_per_seed_cap: u64,
+    mode: BindingPattern, shape: GraphShape, limits: PathLimits, walks_per_seed_cap: u64,
 ) -> u64 {
     let seeds = if mode.is_bound(POS_START) {
         1
@@ -1887,9 +1872,7 @@ impl PropertyFunction for PathWitnessRelation {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -2219,9 +2202,7 @@ impl PropertyFunction for ShortestPathWitnessRelation {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -2628,8 +2609,7 @@ mod tests {
     /// Drive `relation` directly through the contained entry points, exactly as the
     /// engine does.
     fn invoke(
-        relation: &dyn PropertyFunction,
-        bound: &[Option<TermValue>; ROW_WIDTH],
+        relation: &dyn PropertyFunction, bound: &[Option<TermValue>; ROW_WIDTH],
         ceiling: Option<u64>,
     ) -> Result<Vec<PfRow>, EvalError> {
         let refs: Vec<Option<&TermValue>> = bound.iter().map(Option::as_ref).collect();
@@ -2644,8 +2624,7 @@ mod tests {
     }
 
     fn drained(
-        relation: &dyn PropertyFunction,
-        bound: &[Option<TermValue>; ROW_WIDTH],
+        relation: &dyn PropertyFunction, bound: &[Option<TermValue>; ROW_WIDTH],
     ) -> Vec<PfRow> {
         invoke(relation, bound, None).expect("no guard breach")
     }

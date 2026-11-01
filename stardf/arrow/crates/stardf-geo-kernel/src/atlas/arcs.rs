@@ -35,9 +35,7 @@ mod subset;
 pub(super) type ContactList = RetainedBuilder<CurveIntersection>;
 
 pub(super) fn contact_list<const N: usize>(
-    contacts: [CurveIntersection; N],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    contacts: [CurveIntersection; N], context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<ContactList, GeoError> {
     context.with_metadata(progress, |context, progress, retained| {
         let mut output = ContactList::default();
@@ -217,9 +215,7 @@ crate::context::retained::native_detached_enum!(CurveIntersection {
 });
 
 fn overlap_parameters(
-    parameters: [(Rat, Rat); 2],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    parameters: [(Rat, Rat); 2], context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<crate::PreparedValue<[(Rat, Rat); 2]>, GeoError> {
     context.with_metadata(progress, |context, progress, retained| {
         let parameters =
@@ -235,9 +231,7 @@ fn overlap_parameters(
 /// work, memory, precision, subdivision and convergence admission. No partial
 /// contact list is returned after an unresolved chart or root decision.
 pub fn intersections(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    context: &mut MetricContext,
+    left: &PreparedEdge, right: &PreparedEdge, context: &mut MetricContext,
 ) -> Result<crate::PreparedValues<CurveIntersection>, GeoError> {
     intersect(left, right, context, None).map(crate::PreparedValues::from_admitted)
 }
@@ -247,9 +241,7 @@ pub fn intersections(
 /// # Errors
 /// Adds observer refusal to [`intersections`].
 pub fn intersections_metered(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    context: &mut MetricContext,
+    left: &PreparedEdge, right: &PreparedEdge, context: &mut MetricContext,
     observer: &mut dyn MetricWorkObserver,
 ) -> Result<crate::PreparedValues<CurveIntersection>, GeoError> {
     intersect(left, right, context, Some(observer)).map(crate::PreparedValues::from_admitted)
@@ -263,9 +255,7 @@ pub fn intersections_metered(
 /// # Errors
 /// Refuses insufficient precision or any incomplete contact/resource proof.
 pub fn intersections_refined(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    minimum_parameter_bits: u32,
+    left: &PreparedEdge, right: &PreparedEdge, minimum_parameter_bits: u32,
     context: &mut MetricContext,
 ) -> Result<crate::PreparedValues<CurveIntersection>, GeoError> {
     intersect_with_goal(left, right, minimum_parameter_bits, context, None)
@@ -277,11 +267,8 @@ pub fn intersections_refined(
 /// # Errors
 /// Adds observer refusal to [`intersections_refined`].
 pub fn intersections_refined_metered(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    minimum_parameter_bits: u32,
-    context: &mut MetricContext,
-    observer: &mut dyn MetricWorkObserver,
+    left: &PreparedEdge, right: &PreparedEdge, minimum_parameter_bits: u32,
+    context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
 ) -> Result<crate::PreparedValues<CurveIntersection>, GeoError> {
     intersect_with_goal(left, right, minimum_parameter_bits, context, Some(observer))
         .map(crate::PreparedValues::from_admitted)
@@ -291,9 +278,7 @@ pub fn intersections_refined_metered(
 /// validates its immutable inventory once; local injectivity excludes the
 /// diagonal and every remaining pair uses the same all-root solver.
 pub(super) fn self_intersections_refined_in(
-    edge: &PreparedEdge,
-    minimum_parameter_bits: u32,
-    context: &mut MetricContext,
+    edge: &PreparedEdge, minimum_parameter_bits: u32, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<ContactList, GeoError> {
     let policy = context.policy();
@@ -346,20 +331,15 @@ pub(super) fn self_intersections_refined_in(
 }
 
 fn intersect(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    context: &mut MetricContext,
+    left: &PreparedEdge, right: &PreparedEdge, context: &mut MetricContext,
     observer: Option<&mut dyn MetricWorkObserver>,
 ) -> Result<ContactList, GeoError> {
     intersect_with_goal(left, right, 32, context, observer)
 }
 
 fn intersect_with_goal(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    minimum_parameter_bits: u32,
-    context: &mut MetricContext,
-    observer: Option<&mut dyn MetricWorkObserver>,
+    left: &PreparedEdge, right: &PreparedEdge, minimum_parameter_bits: u32,
+    context: &mut MetricContext, observer: Option<&mut dyn MetricWorkObserver>,
 ) -> Result<ContactList, GeoError> {
     context.begin(1)?;
     let mut progress = WorkProgress::new(observer);
@@ -372,19 +352,14 @@ fn intersect_with_goal(
 /// context once. Private contact-graph pairs reuse that admission without
 /// rendering the same reference again for every pair or local face.
 pub(super) fn intersections_refined_in(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    minimum_parameter_bits: u32,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    left: &PreparedEdge, right: &PreparedEdge, minimum_parameter_bits: u32,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<ContactList, GeoError> {
     intersect_admitted(left, right, minimum_parameter_bits, context, progress)
 }
 
 pub(super) fn check_bindings(
-    edges: &[&PreparedEdge],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    edges: &[&PreparedEdge], context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     let binding = crate::numerical::reference_identity(context, progress, None)?;
     for edge in edges {
@@ -402,11 +377,8 @@ pub(super) fn check_bindings(
     Ok(())
 }
 fn intersect_admitted(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    minimum_parameter_bits: u32,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    left: &PreparedEdge, right: &PreparedEdge, minimum_parameter_bits: u32,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<ContactList, GeoError> {
     if minimum_parameter_bits == 0
         || minimum_parameter_bits > context.policy().limits().max_precision_bits
@@ -437,9 +409,7 @@ fn intersect_admitted(
 }
 
 pub(super) fn coincident_admitted(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    context: &mut MetricContext,
+    left: &PreparedEdge, right: &PreparedEdge, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<bool>, GeoError> {
     let same_mapping = match (left, right) {
@@ -462,11 +432,8 @@ pub(super) fn coincident_admitted(
 }
 
 fn intersect_noncoincident(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    minimum_parameter_bits: u32,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    left: &PreparedEdge, right: &PreparedEdge, minimum_parameter_bits: u32,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<ContactList, GeoError> {
     if let Some(contacts) = symbolic_constant_contacts(left, right, context, progress)? {
         return Ok(contacts);
@@ -555,9 +522,7 @@ fn intersect_noncoincident(
 }
 
 fn linear_contacts(
-    a: &SourceLinearEdge,
-    b: &SourceLinearEdge,
-    context: &mut MetricContext,
+    a: &SourceLinearEdge, b: &SourceLinearEdge, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<ContactList, GeoError> {
     context.with_metadata(progress, |context, progress, retained| {
@@ -694,10 +659,7 @@ fn linear_contacts(
 }
 
 fn refine_overlaps(
-    mut contacts: ContactList,
-    edges: [&PreparedEdge; 2],
-    goal: u32,
-    context: &mut MetricContext,
+    mut contacts: ContactList, edges: [&PreparedEdge; 2], goal: u32, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<ContactList, GeoError> {
     if goal <= 32 {
@@ -757,12 +719,8 @@ fn refine_overlaps(
 }
 
 fn refined_axis_parameters(
-    edge: &PreparedEdge,
-    endpoints: [&LonLat; 2],
-    retained: &[(Rat, Rat); 2],
-    bits: u32,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    edge: &PreparedEdge, endpoints: [&LonLat; 2], retained: &[(Rat, Rat); 2], bits: u32,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<[(Rat, Rat); 2], GeoError> {
     if let PreparedEdge::ShortestGeodesic(arc) = edge {
         let values = endpoints.map(|point| {
@@ -818,9 +776,7 @@ fn exact_contact_operands(contact: &CurveIntersection) -> [Option<&Rat>; 8] {
     }
 }
 fn chart_coordinate(
-    point: &LonLat,
-    shift: i64,
-    admission: &mut ExactAdmission<'_, '_>,
+    point: &LonLat, shift: i64, admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<Coord, GeoError> {
     let shift = Rat::from_i64(shift);
     let longitude = crate::numerical::exact_rational(
@@ -838,10 +794,7 @@ fn chart_coordinate(
     Ok(Coord::xy(longitude, latitude))
 }
 fn linear_parameters(
-    point: &Coord,
-    shift: i64,
-    a: &SourceLinearEdge,
-    b: &SourceLinearEdge,
+    point: &Coord, shift: i64, a: &SourceLinearEdge, b: &SourceLinearEdge,
     admission: &mut ExactAdmission<'_, '_>,
 ) -> Result<(Rat, Rat, LonLat), GeoError> {
     let left = admission.expression_result(
@@ -910,9 +863,7 @@ fn admit_contact_count(count: u64, context: &MetricContext) -> Result<(), GeoErr
 }
 
 fn symbolic_constant_contacts(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    context: &mut MetricContext,
+    left: &PreparedEdge, right: &PreparedEdge, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<ContactList>, GeoError> {
     let (PreparedEdge::Transformed(a), PreparedEdge::Transformed(b)) = (left, right) else {
@@ -995,9 +946,7 @@ fn endpoints(edge: &PreparedEdge) -> [Option<&LonLat>; 2] {
     ]
 }
 fn endpoint_contacts(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    context: &mut MetricContext,
+    left: &PreparedEdge, right: &PreparedEdge, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<ContactList, GeoError> {
     let same_mapping = match (left, right) {
@@ -1030,11 +979,8 @@ fn endpoint_contacts(
 }
 
 fn endpoint_contacts_with(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    same_mapping: bool,
-    reflected: Option<&crate::operation::OperationImageCurve>,
-    context: &mut MetricContext,
+    left: &PreparedEdge, right: &PreparedEdge, same_mapping: bool,
+    reflected: Option<&crate::operation::OperationImageCurve>, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<ContactList, GeoError> {
     context.with_metadata(progress, |context, progress, retained| {
@@ -1278,11 +1224,8 @@ fn endpoint_contacts_with(
 /// only the two explicitly constructed intersection candidates; testing every
 /// candidate through the shared original point law excludes all other contacts.
 fn exact_axis_contacts(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    endpoints: &[CurveIntersection],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    left: &PreparedEdge, right: &PreparedEdge, endpoints: &[CurveIntersection],
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let (PreparedEdge::ShortestGeodesic(a), PreparedEdge::ShortestGeodesic(b)) = (left, right)
     else {
@@ -1403,9 +1346,7 @@ fn exact_axis_contacts(
     Ok(true)
 }
 fn selected_branch_overlap(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    context: &mut MetricContext,
+    left: &PreparedEdge, right: &PreparedEdge, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<CurveIntersection>, GeoError> {
     let (PreparedEdge::AzimuthLength(left), PreparedEdge::AzimuthLength(right)) = (left, right)
@@ -1562,10 +1503,7 @@ type AngularNormalImage<T> = ([T; 3], Option<[T; 3]>);
 pub(crate) type NormalImage = AngularNormalImage<FixedInterval>;
 impl ChartLine {
     pub(crate) fn normal(
-        &self,
-        parameter: &FixedInterval,
-        iterations: u32,
-        math: &mut CoordinateMath,
+        &self, parameter: &FixedInterval, iterations: u32, math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<NormalImage, MathError> {
         if let Self::Geodesic(line) = self {
@@ -1597,12 +1535,9 @@ impl ChartLine {
         normal_from_angles(&longitude, &latitude, derivative, math)
     }
     pub(super) fn prepare(
-        edge: &PreparedEdge,
-        view: Option<&ArcIntervalView>,
+        edge: &PreparedEdge, view: Option<&ArcIntervalView>,
         image: Option<&crate::PreparedValue<crate::operation::OperationImageCurve>>,
-        context: &MetricContext,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        context: &MetricContext, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
         retained: &mut usize,
     ) -> Result<Self, GeoError> {
         if matches!(edge, PreparedEdge::Transformed(_)) {
@@ -1676,12 +1611,8 @@ impl ChartLine {
             .map(Self::Geodesic)
     }
     pub(super) fn normal_taylor_in<'scope>(
-        &self,
-        parameter: &FixedInterval,
-        iterations: u32,
-        workspace: &mut TaylorWorkspace<'scope>,
-        math: &mut CoordinateMath,
-        progress: &mut WorkProgress<'_>,
+        &self, parameter: &FixedInterval, iterations: u32, workspace: &mut TaylorWorkspace<'scope>,
+        math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     ) -> Result<Option<crate::geodesic::normal::NormalImage<TaylorJet<'scope>>>, MathError> {
         if let Self::Geodesic(line) = self {
             return line
@@ -1710,10 +1641,7 @@ impl ChartLine {
         Ok(None)
     }
     pub(crate) fn image(
-        &self,
-        parameter: &FixedInterval,
-        iterations: u32,
-        math: &mut CoordinateMath,
+        &self, parameter: &FixedInterval, iterations: u32, math: &mut CoordinateMath,
         progress: &mut WorkProgress<'_>,
     ) -> Result<([FixedInterval; 2], Option<[FixedInterval; 2]>), MathError> {
         match self {
@@ -1769,17 +1697,13 @@ impl ChartLine {
 }
 
 pub(super) fn normal_from_angles(
-    longitude: &FixedInterval,
-    latitude: &FixedInterval,
-    derivative: Option<[FixedInterval; 2]>,
+    longitude: &FixedInterval, latitude: &FixedInterval, derivative: Option<[FixedInterval; 2]>,
     math: &mut CoordinateMath,
 ) -> Result<NormalImage, MathError> {
     normal_from_angles_with(longitude, latitude, derivative, &mut FixedArithmetic(math))
 }
 fn normal_from_angles_with<A: NormalArithmetic>(
-    longitude: &A::Value,
-    latitude: &A::Value,
-    derivative: Option<[A::Value; 2]>,
+    longitude: &A::Value, latitude: &A::Value, derivative: Option<[A::Value; 2]>,
     arithmetic: &mut A,
 ) -> Result<AngularNormalImage<A::Value>, MathError> {
     let (sl, cl) = arithmetic.sin_cos(longitude)?;
@@ -1810,12 +1734,8 @@ fn normal_from_angles_with<A: NormalArithmetic>(
 }
 
 fn prepare_view_with_precision(
-    edge: &PreparedEdge,
-    bits: u32,
-    strict: bool,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    edge: &PreparedEdge, bits: u32, strict: bool, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<Option<ArcIntervalView>, GeoError> {
     let mut child = context.remaining_child()?;
     let result = {
@@ -1860,9 +1780,7 @@ fn prepare_view_with_precision(
 /// Prepare original images once and account both view and line storage while
 /// one shared numerical phase evaluates the complete borrowed line inventory.
 pub(crate) fn with_lines<T>(
-    edges: &[PreparedEdge],
-    bits: u32,
-    context: &mut MetricContext,
+    edges: &[PreparedEdge], bits: u32, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
     mut evaluate: impl FnMut(
         &[ChartLine],
@@ -1879,9 +1797,7 @@ pub(crate) fn with_lines<T>(
 /// Run the same original line producer while transferring its native result's
 /// already admitted storage. No source/curve copy or census follows execution.
 pub(crate) fn with_lines_retained<T>(
-    edges: &[PreparedEdge],
-    bits: u32,
-    context: &mut MetricContext,
+    edges: &[PreparedEdge], bits: u32, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
     evaluate: impl FnMut(
         &[ChartLine],
@@ -1899,9 +1815,7 @@ pub(crate) fn with_lines_retained<T>(
     })
 }
 pub(crate) fn with_line_refs<T>(
-    edges: &[&PreparedEdge],
-    bits: u32,
-    context: &mut MetricContext,
+    edges: &[&PreparedEdge], bits: u32, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
     evaluate: impl FnMut(
         &[ChartLine],
@@ -1913,10 +1827,7 @@ pub(crate) fn with_line_refs<T>(
 }
 
 pub(super) fn with_line_refs_with_precision<T>(
-    edges: &[&PreparedEdge],
-    bits: u32,
-    strict: bool,
-    context: &mut MetricContext,
+    edges: &[&PreparedEdge], bits: u32, strict: bool, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
     mut evaluate: impl FnMut(
         &[ChartLine],
@@ -1936,10 +1847,7 @@ pub(super) fn with_line_refs_with_precision<T>(
 }
 
 pub(super) fn with_line_refs_retained<T>(
-    edges: &[&PreparedEdge],
-    bits: u32,
-    strict: bool,
-    context: &mut MetricContext,
+    edges: &[&PreparedEdge], bits: u32, strict: bool, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
     mut evaluate: impl FnMut(
         &[ChartLine],
@@ -2033,9 +1941,7 @@ struct ContactSystem<'a, 'progress, 'observer> {
 impl RootSystem2 for ContactSystem<'_, '_, '_> {
     crate::numerical::native_root_storage!(cell);
     fn exact_root(
-        &mut self,
-        domain: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, domain: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<Option<RootBox2>, MathError> {
         for endpoint in self.endpoints {
             let (CurveIntersection::Endpoint { left, right, .. }
@@ -2058,9 +1964,7 @@ impl RootSystem2 for ContactSystem<'_, '_, '_> {
         Ok(None)
     }
     fn image(
-        &mut self,
-        domain: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, domain: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<RootBox2, MathError> {
         let mut progress = self.progress.borrow_mut();
         let (a, _) = self
@@ -2075,9 +1979,7 @@ impl RootSystem2 for ContactSystem<'_, '_, '_> {
         ])
     }
     fn jacobian(
-        &mut self,
-        domain: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, domain: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<RootJacobian2, MathError> {
         let mut progress = self.progress.borrow_mut();
         let (_, a) = self
@@ -2100,9 +2002,7 @@ impl RootSystem2 for ContactSystem<'_, '_, '_> {
         ])
     }
     fn complete(
-        &mut self,
-        enclosure: &RootBox2,
-        math: &mut CoordinateMath,
+        &mut self, enclosure: &RootBox2, math: &mut CoordinateMath,
     ) -> Result<bool, MathError> {
         let bits = self
             .minimum_parameter_bits
@@ -2130,12 +2030,8 @@ struct ContactAttempt<'a> {
 }
 
 fn attempt(
-    left: &PreparedEdge,
-    right: &PreparedEdge,
-    endpoints: &[CurveIntersection],
-    request: ContactAttempt<'_>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    left: &PreparedEdge, right: &PreparedEdge, endpoints: &[CurveIntersection],
+    request: ContactAttempt<'_>, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<ContactList, GeoError> {
     let ContactAttempt {
         bits,
@@ -2200,13 +2096,8 @@ struct ContactGoal<'a> {
 }
 
 pub(super) fn search_contacts(
-    a: &ChartLine,
-    b: &ChartLine,
-    original: &RootBox2,
-    endpoints: &[CurveIntersection],
-    policy: crate::ExecutionPolicy,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    a: &ChartLine, b: &ChartLine, original: &RootBox2, endpoints: &[CurveIntersection],
+    policy: crate::ExecutionPolicy, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<ContactList, GeoError> {
     search_contacts_refined(
         a,
@@ -2225,13 +2116,8 @@ pub(super) fn search_contacts(
 }
 
 fn search_contacts_refined(
-    a: &ChartLine,
-    b: &ChartLine,
-    original: &RootBox2,
-    endpoints: &[CurveIntersection],
-    goal: ContactGoal<'_>,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    a: &ChartLine, b: &ChartLine, original: &RootBox2, endpoints: &[CurveIntersection],
+    goal: ContactGoal<'_>, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
 ) -> Result<ContactList, GeoError> {
     let ContactGoal {
         minimum_parameter_bits,
@@ -2475,13 +2361,9 @@ fn subset(a: &RootBox2, b: &RootBox2) -> bool {
         .all(|(a, b)| b.lower() <= a.lower() && a.upper() <= b.upper())
 }
 fn split_contact_panel(
-    panel: ContactPanel,
-    original: &RootBox2,
-    max_depth: u32,
-    pending: &mut purrdf_lex::walk::WorkList<ContactPanel, 8>,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut usize,
+    panel: ContactPanel, original: &RootBox2, max_depth: u32,
+    pending: &mut purrdf_lex::walk::WorkList<ContactPanel, 8>, math: &mut CoordinateMath,
+    progress: &mut WorkProgress<'_>, retained: &mut usize,
 ) -> Result<(), MathError> {
     if panel.depth >= max_depth {
         return Err(MathError::PrecisionExhausted);
@@ -2535,12 +2417,8 @@ fn split_contact_panel(
 }
 
 fn materialize_contacts(
-    lines: [&ChartLine; 2],
-    proofs: RetainedBuilder<ContactProof>,
-    endpoints: &[CurveIntersection],
-    goal: ContactGoal<'_>,
-    math: &mut CoordinateMath,
-    progress: &mut WorkProgress<'_>,
+    lines: [&ChartLine; 2], proofs: RetainedBuilder<ContactProof>, endpoints: &[CurveIntersection],
+    goal: ContactGoal<'_>, math: &mut CoordinateMath, progress: &mut WorkProgress<'_>,
     reserved: &mut usize,
 ) -> Result<ContactList, GeoError> {
     let ContactGoal {
@@ -2702,9 +2580,7 @@ mod tests {
         ))
     }
     pub(super) fn shortest(
-        a: (i64, i64),
-        b: (i64, i64),
-        context: &mut MetricContext,
+        a: (i64, i64), b: (i64, i64), context: &mut MetricContext,
     ) -> PreparedEdge {
         PreparedEdge::ShortestGeodesic(crate::PreparedValue::resident(
             ShortestGeodesicArc::new(coordinate(a.0, a.1), coordinate(b.0, b.1), context)

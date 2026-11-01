@@ -43,8 +43,7 @@ impl Encoder {
         }
     }
     fn expression(
-        &mut self,
-        expression: &purrdf_sparql_algebra::Expression,
+        &mut self, expression: &purrdf_sparql_algebra::Expression,
     ) -> Result<(), crate::error::ShapesError> {
         let identity = purrdf_sparql_algebra::identity::node_with_memory(
             purrdf_sparql_algebra::NodeRef::Expr(expression),
@@ -87,8 +86,7 @@ impl Encoder {
 }
 
 pub(super) fn program(
-    set: &RuleSet<'_>,
-    shapes: &crate::shapes::Shapes,
+    set: &RuleSet<'_>, shapes: &crate::shapes::Shapes,
 ) -> Result<Digest32, crate::error::ShapesError> {
     let mut encoder = Encoder(Hasher::new());
     encoder.field(PROGRAM.as_bytes());

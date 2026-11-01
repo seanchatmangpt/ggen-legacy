@@ -342,10 +342,7 @@ const fn t_lit(s: &'static str, p: &'static str, lexical: &'static str) -> Quad 
 /// [`t_lit`] is the `xsd:string` case; this one is what the `dt-*` family and OWL 2
 /// Profiles Table 6's cardinality literals need, where the datatype IS the premise.
 const fn t_lit_dt(
-    s: &'static str,
-    p: &'static str,
-    lexical: &'static str,
-    datatype: &'static str,
+    s: &'static str, p: &'static str, lexical: &'static str, datatype: &'static str,
 ) -> Quad {
     Quad {
         s,
@@ -357,11 +354,7 @@ const fn t_lit_dt(
 
 /// A default-graph triple whose object is an RDF 1.2 triple term.
 const fn t_quoted(
-    s: &'static str,
-    p: &'static str,
-    qs: &'static str,
-    qp: &'static str,
-    qo: &'static str,
+    s: &'static str, p: &'static str, qs: &'static str, qp: &'static str, qo: &'static str,
 ) -> Quad {
     Quad {
         s,

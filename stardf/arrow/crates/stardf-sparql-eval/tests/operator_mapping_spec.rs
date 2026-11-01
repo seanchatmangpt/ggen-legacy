@@ -53,8 +53,7 @@ fn dataset_with(with_nan: bool) -> Arc<RdfDataset> {
 }
 
 fn evaluate_over(
-    dataset: &RdfDataset,
-    query: &str,
+    dataset: &RdfDataset, query: &str,
 ) -> Result<SparqlResult, purrdf_core::RdfDiagnostic> {
     NativeSparqlEngine::new().query_with_options_view(
         dataset,
@@ -72,8 +71,7 @@ fn evaluate(query: &str) -> Result<SparqlResult, purrdf_core::RdfDiagnostic> {
 }
 
 fn solutions(
-    result: Result<SparqlResult, purrdf_core::RdfDiagnostic>,
-    query: &str,
+    result: Result<SparqlResult, purrdf_core::RdfDiagnostic>, query: &str,
 ) -> Vec<Vec<Option<TermValue>>> {
     match result.unwrap_or_else(|e| panic!("evaluate `{query}`: {e:?}")) {
         SparqlResult::Solutions { rows, .. } => rows,

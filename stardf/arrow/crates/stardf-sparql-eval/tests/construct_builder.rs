@@ -195,11 +195,7 @@ impl DatasetView for FinalFailure {
         RdfDataset::probe_plan(s, p, o, g)
     }
     fn quads_for_pattern_with_plan(
-        &self,
-        plan: &QuadProbePlan,
-        s: Option<TermId>,
-        p: Option<TermId>,
-        o: Option<TermId>,
+        &self, plan: &QuadProbePlan, s: Option<TermId>, p: Option<TermId>, o: Option<TermId>,
         g: GraphMatch,
     ) -> impl Iterator<Item = QuadIds> + '_ {
         self.data.quads_for_pattern_with_plan(plan, s, p, o, g)

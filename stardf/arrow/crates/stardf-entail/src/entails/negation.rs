@@ -354,9 +354,7 @@ fn show_triple(triple: &Triple) -> String {
 /// * NO typing at all leaves the complement class asserted of nobody, so the triples would
 ///   be consumed and prove nothing — the silent drop the whitelist exists to prevent.
 fn complement(
-    indexed: &Indexed,
-    node: &TermValue,
-    consumed: &mut BTreeSet<usize>,
+    indexed: &Indexed, node: &TermValue, consumed: &mut BTreeSet<usize>,
     facts: &mut Vec<NegativeFact>,
 ) -> Result<(), String> {
     let refuse = |why: &str| Err(format!("{} owl:complementOf …: {why}", show(node)));
@@ -437,9 +435,7 @@ fn complement(
 /// would be an answer this module reached without testing anything, and a mechanism that can
 /// say yes without running is one whose yes carries no information.
 fn all_different(
-    indexed: &Indexed,
-    node: &TermValue,
-    consumed: &mut BTreeSet<usize>,
+    indexed: &Indexed, node: &TermValue, consumed: &mut BTreeSet<usize>,
     facts: &mut Vec<NegativeFact>,
 ) -> Result<(), String> {
     let refuse = |why: &str| Err(format!("{} a owl:AllDifferent: {why}", show(node)));

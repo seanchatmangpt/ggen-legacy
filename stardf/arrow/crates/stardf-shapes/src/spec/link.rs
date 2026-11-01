@@ -75,10 +75,7 @@ struct StatedParam {
 
 /// Refuse a declaration of a built-in that carries implementation material.
 fn refuse_material(
-    data: &RdfDataset,
-    iri: &str,
-    what: &str,
-    material: &[&str],
+    data: &RdfDataset, iri: &str, what: &str, material: &[&str],
 ) -> Result<(), String> {
     let id = Term::NamedNode(NamedNode::from(iri));
     for &predicate in material {
@@ -146,10 +143,7 @@ fn stated_params(data: &RdfDataset, iri: &str) -> Result<Vec<StatedParam>, Strin
 /// built-in's parameter does not have. Optionality is not compared — the
 /// specification text decides it (see [`super::SPEC_TEXT_OPTIONALITY`]).
 fn check_signature(
-    data: &RdfDataset,
-    iri: &str,
-    what: &str,
-    native: &[(&'static str, bool)],
+    data: &RdfDataset, iri: &str, what: &str, native: &[(&'static str, bool)],
 ) -> Result<(), String> {
     for stated in stated_params(data, iri)? {
         match native.iter().find(|(path, _)| *path == stated.path) {
@@ -182,10 +176,7 @@ fn check_signature(
 /// definition, a declaring-class mismatch, and a signature mismatch. `Ok` means the
 /// declaration binds natively and adds nothing to any custom index.
 pub(crate) fn bind_native_function(
-    data: &RdfDataset,
-    iri: &str,
-    class: FunctionClass,
-    native: NativeFunction,
+    data: &RdfDataset, iri: &str, class: FunctionClass, native: NativeFunction,
 ) -> Result<(), String> {
     if native.class() != class {
         return Err(format!(
@@ -277,8 +268,7 @@ pub(crate) fn refuse_component_declared_function(iri: &str) -> Result<(), String
 
 /// Refuse a function declaration of an IRI the table knows as a COMPONENT.
 pub(crate) fn refuse_function_declared_component(
-    iri: &str,
-    class: FunctionClass,
+    iri: &str, class: FunctionClass,
 ) -> Result<(), String> {
     match super::component(iri) {
         Some(_) => Err(format!(

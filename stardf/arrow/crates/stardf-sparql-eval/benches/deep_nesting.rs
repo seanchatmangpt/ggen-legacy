@@ -270,11 +270,8 @@ fn deepest(data: &Arc<RdfDataset>, construct: &Construct) -> usize {
 
 /// Measure `construct` at `depth`, parse alone and whole cold request.
 fn bench_at(
-    group: &mut purrdf_testkit::bench::BenchmarkGroup<'_>,
-    data: &Arc<RdfDataset>,
-    construct: &Construct,
-    depth: usize,
-    id: &str,
+    group: &mut purrdf_testkit::bench::BenchmarkGroup<'_>, data: &Arc<RdfDataset>,
+    construct: &Construct, depth: usize, id: &str,
 ) {
     let query = (construct.text)(depth);
     assert!(

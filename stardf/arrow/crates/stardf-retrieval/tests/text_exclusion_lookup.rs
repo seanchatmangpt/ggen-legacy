@@ -368,9 +368,7 @@ impl PropertyFunction for Recorder {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -495,8 +493,7 @@ fn fixture_profile() -> FusionProfile {
 /// function touches is `exclusion`, which is what makes the two runs below a
 /// differential pair rather than two different registrations.
 fn registry(
-    dataset: &RdfDataset,
-    basis: ExclusionBasis,
+    dataset: &RdfDataset, basis: ExclusionBasis,
 ) -> (PropertyFunctionRegistry<'static>, [Arc<Recorder>; 2]) {
     registry_rebuilding(dataset, basis, None)
 }
@@ -505,9 +502,7 @@ fn registry(
 /// stands after a rebuild ([`rebuilt_index`]) while its ranked read is answered by
 /// the index the dataset was built into.
 fn registry_rebuilding(
-    dataset: &RdfDataset,
-    basis: ExclusionBasis,
-    rebuilt: Option<Side>,
+    dataset: &RdfDataset, basis: ExclusionBasis, rebuilt: Option<Side>,
 ) -> (PropertyFunctionRegistry<'static>, [Arc<Recorder>; 2]) {
     let mut registry = PropertyFunctionRegistry::new();
     let recorders = SIDES.map(|side| {
@@ -606,9 +601,7 @@ impl Measured {
 /// Run the request once under `basis`, with `rebuilt`'s lookups answered by that
 /// side's rebuilt index, and hand back what `search` answered beside the recorders.
 fn searched(
-    dataset: &RdfDataset,
-    basis: ExclusionBasis,
-    rebuilt: Option<Side>,
+    dataset: &RdfDataset, basis: ExclusionBasis, rebuilt: Option<Side>,
 ) -> (Result<SearchResult, SearchError>, [Arc<Recorder>; 2]) {
     let (registry, recorders) = registry_rebuilding(dataset, basis, rebuilt);
     let statistics = fixture_statistics();
@@ -1075,8 +1068,7 @@ fn a_fused_read_over_blank_node_candidates_is_answered_by_its_lookups() {
 
 /// The stream `execute` produced for `side`'s stratum.
 fn stream_for<'s, 'd>(
-    streams: &'s mut [StratumStream<'d>],
-    side: Side,
+    streams: &'s mut [StratumStream<'d>], side: Side,
 ) -> &'s mut StratumStream<'d> {
     let stratum = iri(&side.stratum());
     streams

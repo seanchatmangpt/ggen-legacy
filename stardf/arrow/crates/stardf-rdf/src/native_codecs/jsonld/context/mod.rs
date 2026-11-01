@@ -378,8 +378,7 @@ impl JsonLdContextRegistry {
     }
 
     fn new_with_limits<I, K, B>(
-        documents: I,
-        limits: JsonLdContextLimits,
+        documents: I, limits: JsonLdContextLimits,
     ) -> Result<Self, RdfDiagnostic>
     where
         I: IntoIterator<Item = (K, B)>,
@@ -468,9 +467,7 @@ impl CompiledJsonLdContext {
 
     /// Compile a context value with immutable offline context-IRI and `@import` lookup.
     pub fn compile_with_registry(
-        context: &Value,
-        document_iri: Option<&str>,
-        registry: &JsonLdContextRegistry,
+        context: &Value, document_iri: Option<&str>, registry: &JsonLdContextRegistry,
     ) -> Result<Self, RdfDiagnostic> {
         compiler::compile(
             context,
@@ -482,9 +479,7 @@ impl CompiledJsonLdContext {
 
     /// Strictly decode and compile context JSON with immutable offline lookup.
     pub fn compile_json_with_registry(
-        bytes: &[u8],
-        document_iri: Option<&str>,
-        registry: &JsonLdContextRegistry,
+        bytes: &[u8], document_iri: Option<&str>, registry: &JsonLdContextRegistry,
     ) -> Result<Self, RdfDiagnostic> {
         let limits = JsonLdContextLimits::default();
         let context = parse_strict_json(bytes, limits.strict_json(), "JSON-LD context")?;
@@ -493,8 +488,7 @@ impl CompiledJsonLdContext {
 
     /// Compile a context IRI resolved solely through an immutable offline registry.
     pub fn compile_registry_context(
-        context_iri: &str,
-        registry: &JsonLdContextRegistry,
+        context_iri: &str, registry: &JsonLdContextRegistry,
     ) -> Result<Self, RdfDiagnostic> {
         Self::compile_with_registry(&Value::String(context_iri.to_owned()), None, registry)
     }
@@ -619,10 +613,7 @@ impl CompiledJsonLdContext {
     /// selects resolution against the active `@base`. A null term mapping returns
     /// `Ok(None)`.
     pub fn expand_iri(
-        &self,
-        value: &str,
-        vocab: bool,
-        document_relative: bool,
+        &self, value: &str, vocab: bool, document_relative: bool,
     ) -> Result<Option<String>, RdfDiagnostic> {
         compiler::expand_iri(&self.active, value, vocab, document_relative)
     }
@@ -642,10 +633,7 @@ impl CompiledJsonLdContext {
     /// A present selection represents an associated non-null value. `None` has the
     /// same `value = null` semantics as [`Self::compact_iri`].
     pub fn compact_iri_with_selection(
-        &self,
-        iri: &str,
-        vocab: bool,
-        selection: Option<&JsonLdTermSelection>,
+        &self, iri: &str, vocab: bool, selection: Option<&JsonLdTermSelection>,
     ) -> Result<String, RdfDiagnostic> {
         compiler::compact_iri(&self.active, &self.inverse, iri, vocab, selection)
     }
@@ -677,9 +665,7 @@ impl JsonLdTermSelection {
     /// sets and preference values retain caller order; members inside each set are
     /// canonicalized lexically.
     pub fn new<I, C, P, S>(
-        containers: I,
-        kind: JsonLdTermSelectionKind,
-        preferred_values: P,
+        containers: I, kind: JsonLdTermSelectionKind, preferred_values: P,
     ) -> Self
     where
         I: IntoIterator<Item = C>,

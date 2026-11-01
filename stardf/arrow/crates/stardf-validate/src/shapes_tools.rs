@@ -238,8 +238,7 @@ pub fn apply_rules_to_ntriples(request: &RulesRequest<'_>) -> Result<RulesOutcom
 /// native pattern refusal as [`XPathValidationError::Pattern`], and a rule query's
 /// operational diagnostic as [`XPathValidationError::Query`]. No inference is returned.
 pub fn apply_rules_to_ntriples_with_xpath_regex(
-    request: &RulesRequest<'_>,
-    xpath_regex: Option<Profile>,
+    request: &RulesRequest<'_>, xpath_regex: Option<Profile>,
 ) -> Result<RulesOutcome, XPathValidationError> {
     apply_rules_to_ntriples_with_coordinates(request, xpath_regex, CoordinateInputs::default())
 }
@@ -251,9 +250,7 @@ pub fn apply_rules_to_ntriples_with_xpath_regex(
 /// The same parse, import, execution and pattern refusals as
 /// [`apply_rules_to_ntriples_with_xpath_regex`].
 pub fn apply_rules_to_ntriples_with_coordinates(
-    request: &RulesRequest<'_>,
-    xpath_regex: Option<Profile>,
-    coordinates: CoordinateInputs,
+    request: &RulesRequest<'_>, xpath_regex: Option<Profile>, coordinates: CoordinateInputs,
 ) -> Result<RulesOutcome, XPathValidationError> {
     apply_rules_with(request, coordinates, |source, data, options| {
         run_configured_rules(source, data, options, xpath_regex)
@@ -262,8 +259,7 @@ pub fn apply_rules_to_ntriples_with_coordinates(
 
 /// The one rules body under either law: `run` is the rules dispatch it runs.
 fn apply_rules_with<E: From<ShapesError>>(
-    request: &RulesRequest<'_>,
-    coordinates: CoordinateInputs,
+    request: &RulesRequest<'_>, coordinates: CoordinateInputs,
     run: impl FnOnce(
         RuleSource<'_>,
         &purrdf_core::RdfDataset,
@@ -298,9 +294,7 @@ fn apply_rules_with<E: From<ShapesError>>(
 
 /// The configured rule dispatch shared by entailment and inference boundaries.
 pub(crate) fn run_configured_rules(
-    source: RuleSource<'_>,
-    data: &purrdf_core::RdfDataset,
-    options: &RuleOptions,
+    source: RuleSource<'_>, data: &purrdf_core::RdfDataset, options: &RuleOptions,
     xpath_regex: Option<Profile>,
 ) -> Result<srl::Inference, XPathValidationError> {
     match xpath_regex {
@@ -381,10 +375,7 @@ fn rule_inputs(
 /// refused: a syntax error, an import the table does not supply or an entry it never
 /// reaches, an ill-formed rule, a rule set that cannot be stratified.
 pub fn check_rules(
-    srl_text: &str,
-    srl_base: Option<&str>,
-    imports: &ShapesImportList<'_>,
-    level: srl::CheckLevel,
+    srl_text: &str, srl_base: Option<&str>, imports: &ShapesImportList<'_>, level: srl::CheckLevel,
 ) -> Result<srl::CheckedRuleSet, ShapesError> {
     srl::check(srl_text, srl_base, imports, level)
         .map_err(|error| ShapesError::Invalid(error.to_string()))
@@ -475,8 +466,7 @@ pub fn eval_node_expr(request: &NodeExprRequest<'_>) -> Result<NodeExprOutcome, 
 /// pattern refusal as [`XPathValidationError::Pattern`], and a query's operational
 /// diagnostic as [`XPathValidationError::Query`]. No output is returned.
 pub fn eval_node_expr_with_xpath_regex(
-    request: &NodeExprRequest<'_>,
-    xpath_regex: Option<Profile>,
+    request: &NodeExprRequest<'_>, xpath_regex: Option<Profile>,
 ) -> Result<NodeExprOutcome, XPathValidationError> {
     let Some(profile) = xpath_regex else {
         return Ok(eval_node_expr(request)?);
@@ -578,9 +568,7 @@ pub fn parse_scope_binding(binding: &str) -> Result<(&str, &str), String> {
 /// does not parse as Turtle. A shapes graph that parses but is malformed is not an
 /// error: its refusal is the report's `load` section.
 pub fn lint_shapes_ttl(
-    shapes_ttl: &str,
-    shapes_base: Option<&str>,
-    imports: &ShapesImportList<'_>,
+    shapes_ttl: &str, shapes_base: Option<&str>, imports: &ShapesImportList<'_>,
 ) -> Result<LintReport, ShapesError> {
     lint_shapes_ttl_with_shapes_graph(shapes_ttl, shapes_base, None, imports)
 }
@@ -594,9 +582,7 @@ pub fn lint_shapes_ttl(
 /// Everything [`lint_shapes_ttl`] refuses, and [`ShapesError::Invalid`] for a
 /// `shapes_graph` that names no graph.
 pub fn lint_shapes_ttl_with_shapes_graph(
-    shapes_ttl: &str,
-    shapes_base: Option<&str>,
-    shapes_graph: Option<&str>,
+    shapes_ttl: &str, shapes_base: Option<&str>, shapes_graph: Option<&str>,
     imports: &ShapesImportList<'_>,
 ) -> Result<LintReport, ShapesError> {
     let shapes_graph = shapes_graph
@@ -620,9 +606,7 @@ pub fn lint_shapes_ttl_with_shapes_graph(
 /// either names the document in hand — the same declaration
 /// [`engine::parse_shapes_with_config`] makes for validation.
 fn read_under(
-    mut imports: ShapesImports,
-    shapes_base: Option<&str>,
-    document_base: Option<&str>,
+    mut imports: ShapesImports, shapes_base: Option<&str>, document_base: Option<&str>,
 ) -> ShapesImports {
     for iri in shapes_base.into_iter().chain(document_base) {
         imports.declare_loaded(iri);

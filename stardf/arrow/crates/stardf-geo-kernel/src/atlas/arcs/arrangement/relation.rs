@@ -74,18 +74,12 @@ struct PointWitness<'a> {
 /// path needs no owned copies; boundary publication retains original cuts.
 trait GraphOutput {
     fn fragment(
-        &mut self,
-        inventory: &Inventory,
-        witness: FragmentWitness<'_>,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &mut self, inventory: &Inventory, witness: FragmentWitness<'_>,
+        context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError>;
 
     fn point(
-        &mut self,
-        inventory: &Inventory,
-        witness: PointWitness<'_>,
-        context: &mut MetricContext,
+        &mut self, inventory: &Inventory, witness: PointWitness<'_>, context: &mut MetricContext,
         progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError>;
 
@@ -96,20 +90,14 @@ struct MatrixOnly;
 
 impl GraphOutput for MatrixOnly {
     fn fragment(
-        &mut self,
-        _: &Inventory,
-        _: FragmentWitness<'_>,
-        _: &mut MetricContext,
+        &mut self, _: &Inventory, _: FragmentWitness<'_>, _: &mut MetricContext,
         _: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         Ok(())
     }
 
     fn point(
-        &mut self,
-        _: &Inventory,
-        _: PointWitness<'_>,
-        _: &mut MetricContext,
+        &mut self, _: &Inventory, _: PointWitness<'_>, _: &mut MetricContext,
         _: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         Ok(())
@@ -140,10 +128,7 @@ impl SelectedStrata {
 }
 
 fn copy_parameter(
-    inventory: &Inventory,
-    cut: &Cut,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    inventory: &Inventory, cut: &Cut, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     retained: &mut u64,
 ) -> Result<super::SourceParameter, GeoError> {
     context.charge_work(super::node_depth_bound(inventory.parents.len()) + 1)?;
@@ -160,11 +145,8 @@ fn copy_parameter(
 
 impl GraphOutput for SelectedStrata {
     fn fragment(
-        &mut self,
-        inventory: &Inventory,
-        witness: FragmentWitness<'_>,
-        context: &mut MetricContext,
-        progress: &mut WorkProgress<'_>,
+        &mut self, inventory: &Inventory, witness: FragmentWitness<'_>,
+        context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         let faces = witness.locations.faces[0];
         let stratum = if faces[0] != faces[1] {
@@ -216,10 +198,7 @@ impl GraphOutput for SelectedStrata {
     }
 
     fn point(
-        &mut self,
-        inventory: &Inventory,
-        witness: PointWitness<'_>,
-        context: &mut MetricContext,
+        &mut self, inventory: &Inventory, witness: PointWitness<'_>, context: &mut MetricContext,
         progress: &mut WorkProgress<'_>,
     ) -> Result<(), GeoError> {
         if witness.isolated[0] {
@@ -246,9 +225,7 @@ impl GraphOutput for SelectedStrata {
 
 /// Publish every selected physical stratum from the relation witness body.
 pub(super) fn selected_strata(
-    inventory: &Inventory,
-    source_retained: u64,
-    context: &mut MetricContext,
+    inventory: &Inventory, source_retained: u64, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<super::NativeBoundaryArrangement, GeoError> {
     let mut count = 0usize;
@@ -321,9 +298,7 @@ pub(super) fn selected_strata(
 }
 
 fn selected_storage(
-    output: &SelectedStrata,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    output: &SelectedStrata, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<u64, GeoError> {
     let mut owned = u64::try_from(output.fragments.admitted_bytes())
         .ok()
@@ -355,9 +330,7 @@ fn selected_storage(
 /// Whether an original edge is a structurally proved constant image. Written
 /// seam aliases alone do not prove constancy of a longitude-linear full turn.
 pub(super) fn is_constant(
-    value: &PreparedEdge,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    value: &PreparedEdge, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     if let PreparedEdge::Transformed(image) = value {
         let (first, last) = image.source_endpoints();
@@ -385,9 +358,7 @@ pub(super) fn is_constant(
 }
 
 fn transformed_constant(
-    edge: &PreparedEdge,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    edge: &PreparedEdge, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let policy = context.policy();
     let limit = policy.limits().max_precision_bits;
@@ -452,10 +423,7 @@ fn transformed_constant(
 }
 
 fn active_overlap(
-    overlap: &Overlap,
-    address: Address,
-    parameter: &Rat,
-    context: &mut MetricContext,
+    overlap: &Overlap, address: Address, parameter: &Rat, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Option<Address>, GeoError> {
     let Some(side) = overlap.pair.iter().position(|value| *value == address) else {
@@ -489,9 +457,7 @@ fn active_overlap(
 }
 
 pub(crate) fn relation_matrix(
-    a: &PreparedGeometry,
-    b: &PreparedGeometry,
-    context: &mut MetricContext,
+    a: &PreparedGeometry, b: &PreparedGeometry, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<IntersectionMatrix, GeoError> {
     let mut count = 0usize;
@@ -581,9 +547,7 @@ pub(crate) fn relation_matrix(
 }
 
 fn prepare<'a>(
-    a: &'a PreparedGeometry,
-    b: &'a PreparedGeometry,
-    context: &mut MetricContext,
+    a: &'a PreparedGeometry, b: &'a PreparedGeometry, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<(PreparedGeometry, Layout<'a>, u64), GeoError> {
     let mut retained = 0;
@@ -601,11 +565,8 @@ fn prepare<'a>(
 }
 
 fn prepare_inner<'a>(
-    a: &'a PreparedGeometry,
-    b: &'a PreparedGeometry,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    a: &'a PreparedGeometry, b: &'a PreparedGeometry, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<(PreparedGeometry, Layout<'a>), GeoError> {
     let mut polygons_out = RetainedBuilder::default();
     let mut curves_out = RetainedBuilder::default();
@@ -730,9 +691,7 @@ fn prepare_inner<'a>(
 }
 
 fn selected_curve(
-    curve: &PreparedCurve,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    curve: &PreparedCurve, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     retained: &mut u64,
 ) -> Result<PreparedCurve, GeoError> {
     // Only allocate a replacement edge container after an original-law
@@ -816,9 +775,7 @@ fn selected_curve(
 }
 
 fn selected_support(
-    polygon: &crate::PreparedPolygon,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    polygon: &crate::PreparedPolygon, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     retained: &mut u64,
 ) -> Result<crate::PreparedPolygon, GeoError> {
     let mut curves = RetainedBuilder::default();
@@ -835,9 +792,7 @@ fn selected_support(
 }
 
 pub(super) fn selected_region(
-    region: &PreparedRegion,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    region: &PreparedRegion, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     retained: &mut u64,
 ) -> Result<PreparedRegion, GeoError> {
     let mut output = RetainedBuilder::default();
@@ -861,9 +816,7 @@ pub(super) fn selected_region(
 }
 
 fn injective_pieces(
-    edge: &PreparedEdge,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    edge: &PreparedEdge, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     retained: &mut u64,
 ) -> Result<RetainedBuilder<PreparedEdge>, GeoError> {
     let PreparedEdge::Transformed(image) = edge else {
@@ -933,9 +886,7 @@ fn injective_pieces(
 }
 
 fn full_equator(
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<PreparedEdge, GeoError> {
     let reference = crate::numerical::reference_clone(context, progress)?;
     let mut point = |longitude| {
@@ -951,10 +902,7 @@ fn full_equator(
 }
 
 fn full_meridian(
-    plane: &Rat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    plane: &Rat, context: &mut MetricContext, progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<RetainedBuilder<PreparedEdge>, GeoError> {
     let plane = crate::atlas::point::longitude_admitted(plane, context, progress)?;
     let opposite = ExactAdmission::new(context, progress).add(&plane, &Rat::from_i64(180))?;
@@ -987,9 +935,7 @@ fn full_meridian(
 }
 
 pub(super) fn closed_endpoints(
-    edge: &PreparedEdge,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    edge: &PreparedEdge, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     if is_constant(edge, context, progress)? {
         return Ok(true);
@@ -1008,9 +954,7 @@ pub(super) fn closed_endpoints(
 }
 
 fn metadata_work(
-    count: usize,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    count: usize, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(), GeoError> {
     context.charge_work(
         u64::try_from(count).map_err(|_| GeoError::ArithmeticOverflow("relation metadata walk"))?,
@@ -1019,12 +963,8 @@ fn metadata_work(
 }
 
 fn incident(
-    inventory: &Inventory,
-    address: Address,
-    parameter: &Rat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    inventory: &Inventory, address: Address, parameter: &Rat, context: &mut MetricContext,
+    progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<RetainedBuilder<(Address, bool)>, GeoError> {
     let capacity = inventory
         .overlaps
@@ -1043,13 +983,8 @@ fn incident(
 }
 
 fn region_sides(
-    inventory: &Inventory,
-    layout: &Layout<'_>,
-    address: Address,
-    parameter: &Rat,
-    involved: &[(Address, bool)],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    inventory: &Inventory, layout: &Layout<'_>, address: Address, parameter: &Rat,
+    involved: &[(Address, bool)], context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<FragmentLocations, GeoError> {
     let constants = layout.inputs.map(|input| match input {
         PreparedRegion::Empty => Some(Set::Exterior),
@@ -1358,9 +1293,7 @@ fn region_sides(
 }
 
 fn support_location(
-    polygon: &crate::PreparedPolygon,
-    touching: bool,
-    outer_complement: bool,
+    polygon: &crate::PreparedPolygon, touching: bool, outer_complement: bool,
 ) -> Set {
     if polygon.interior() == crate::RegionInterior::Complement {
         Set::Interior
@@ -1372,9 +1305,7 @@ fn support_location(
 }
 
 fn region_needs_geometry(
-    region: &PreparedRegion,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    region: &PreparedRegion, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     let polygons = polygons(region)?;
     metadata_work(polygons.len(), context, progress)?;
@@ -1389,9 +1320,7 @@ fn curve_members(layout: &Layout<'_>, involved: &[(Address, bool)], owner: usize
 }
 
 fn copy_polygon(
-    polygon: &crate::PreparedPolygon,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    polygon: &crate::PreparedPolygon, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<crate::PreparedPolygon, GeoError> {
     for curve in polygon.rings() {
         metadata_work(1, context, progress)?;
@@ -1418,9 +1347,7 @@ fn copy_polygon(
 }
 
 fn single_polygon(
-    polygon: &crate::PreparedPolygon,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    polygon: &crate::PreparedPolygon, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     retained: &mut u64,
 ) -> Result<PreparedRegion, GeoError> {
     let mut polygons = RetainedBuilder::default();
@@ -1430,20 +1357,15 @@ fn single_polygon(
 }
 
 fn witnesses(
-    inventory: &Inventory,
-    layout: &Layout<'_>,
-    context: &mut MetricContext,
+    inventory: &Inventory, layout: &Layout<'_>, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<IntersectionMatrix, GeoError> {
     witnesses_with(inventory, layout, &mut MatrixOnly, context, progress)
 }
 
 fn witnesses_with(
-    inventory: &Inventory,
-    layout: &Layout<'_>,
-    output: &mut impl GraphOutput,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    inventory: &Inventory, layout: &Layout<'_>, output: &mut impl GraphOutput,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<IntersectionMatrix, GeoError> {
     context.with_metadata(progress, |context, progress, retained| {
         witness_graph(inventory, layout, output, context, progress, retained)
@@ -1451,12 +1373,8 @@ fn witnesses_with(
 }
 
 fn witness_graph(
-    inventory: &Inventory,
-    layout: &Layout<'_>,
-    output: &mut impl GraphOutput,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
-    retained: &mut u64,
+    inventory: &Inventory, layout: &Layout<'_>, output: &mut impl GraphOutput,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>, retained: &mut u64,
 ) -> Result<IntersectionMatrix, GeoError> {
     let mut matrix = IntersectionMatrix::new();
     metadata_work(
@@ -1743,12 +1661,8 @@ fn witness_graph(
 }
 
 fn closed_region_location(
-    inventory: &Inventory,
-    layout: &Layout<'_>,
-    owner: usize,
-    query: ClosedQuery<'_>,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    inventory: &Inventory, layout: &Layout<'_>, owner: usize, query: ClosedQuery<'_>,
+    context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Set, GeoError> {
     let region = layout.inputs[owner];
     match region {

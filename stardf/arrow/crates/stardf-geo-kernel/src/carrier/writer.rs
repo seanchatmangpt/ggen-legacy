@@ -49,8 +49,7 @@ impl<'a, 'observer> CarrierWriter<'a, 'observer> {
 
     /// Use the writer's existing native owner for an original failure payload.
     pub(crate) fn with_progress<T>(
-        &mut self,
-        body: impl FnOnce(&mut crate::context::WorkProgress<'_>) -> T,
+        &mut self, body: impl FnOnce(&mut crate::context::WorkProgress<'_>) -> T,
     ) -> T {
         match self.admission.as_mut() {
             Some((_, progress)) => body(progress),
@@ -110,10 +109,7 @@ impl<'a, 'observer> CarrierWriter<'a, 'observer> {
     }
 
     pub(crate) fn ordinate(
-        &mut self,
-        out: &mut String,
-        value: &Rat,
-        scale: u32,
+        &mut self, out: &mut String, value: &Rat, scale: u32,
     ) -> Result<(), GeoError> {
         let scale = if self.exact_ordinates {
             let needed = if let Some((context, progress)) = self.admission.as_mut() {
@@ -279,9 +275,7 @@ impl<'a, 'observer> CarrierWriter<'a, 'observer> {
     }
 
     pub(crate) fn tree(
-        &mut self,
-        out: &mut String,
-        geometry: &Geometry,
+        &mut self, out: &mut String, geometry: &Geometry,
         mut head: impl FnMut(
             &mut String,
             &Geometry,
@@ -330,11 +324,7 @@ impl<'a, 'observer> CarrierWriter<'a, 'observer> {
     }
 
     pub(crate) fn sequence<T>(
-        &mut self,
-        out: &mut String,
-        items: &[T],
-        open: &'static str,
-        close: &'static str,
+        &mut self, out: &mut String, items: &[T], open: &'static str, close: &'static str,
         mut each: impl FnMut(&mut String, &T, &mut Self) -> Result<(), GeoError>,
     ) -> Result<(), GeoError> {
         self.text(out, open)?;
@@ -418,9 +408,7 @@ mod tests {
     }
 
     fn write(
-        literal: &GeometryLiteral,
-        json: bool,
-        context: &mut MetricContext,
+        literal: &GeometryLiteral, json: bool, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<String, GeoError> {
         if json {

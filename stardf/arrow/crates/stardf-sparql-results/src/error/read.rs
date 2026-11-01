@@ -160,10 +160,7 @@ impl ReadRefusal {
     /// Retain an original token under its caller's existing memory admission.
     /// Refusal to store it preserves the physical storage failure.
     pub(crate) fn token<S: Admission + ?Sized>(
-        format: SparqlResultsFormat,
-        kind: ReadToken,
-        token: &str,
-        memory: &mut Memory<'_, S>,
+        format: SparqlResultsFormat, kind: ReadToken, token: &str, memory: &mut Memory<'_, S>,
     ) -> Error {
         match memory.string(token) {
             Ok(token) => Error::Format(Self {

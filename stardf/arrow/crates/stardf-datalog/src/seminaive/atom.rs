@@ -68,9 +68,7 @@ where
 {
     /// Hoist the original operator's constants once, even for an empty input.
     pub(super) fn new<D: TermDictionary<Id = I>>(
-        operator: &AtomOperator<N>,
-        rel: &RelationStore<D, N>,
-        inputs: Vec<SlotSolution<I, N>>,
+        operator: &AtomOperator<N>, rel: &RelationStore<D, N>, inputs: Vec<SlotSolution<I, N>>,
     ) -> Result<Self, D::Error> {
         let source = rel.read_source(operator.shape().read_source());
         Ok(Self {
@@ -94,13 +92,8 @@ where
 
     /// Select the existing const-specialized kernel once per drive, never per row.
     pub(super) fn advance_selected<D: TermDictionary<Id = I>>(
-        &mut self,
-        operator: &AtomOperator<N>,
-        rel: &RelationStore<D, N>,
-        delta: Delta,
-        indexes: &DeltaIndexes<I>,
-        access: Access,
-        governor: &mut StepGovernor<'_>,
+        &mut self, operator: &AtomOperator<N>, rel: &RelationStore<D, N>, delta: Delta,
+        indexes: &DeltaIndexes<I>, access: Access, governor: &mut StepGovernor<'_>,
     ) -> Result<(), D::Error> {
         let (scan, rebound) = match access {
             Access::Planned(scan) => (scan, false),
@@ -119,13 +112,8 @@ where
     }
 
     fn advance_index<const SCAN: u8, D: TermDictionary<Id = I>>(
-        &mut self,
-        operator: &AtomOperator<N>,
-        rel: &RelationStore<D, N>,
-        delta: Delta,
-        indexes: &DeltaIndexes<I>,
-        rebound: bool,
-        governor: &mut StepGovernor<'_>,
+        &mut self, operator: &AtomOperator<N>, rel: &RelationStore<D, N>, delta: Delta,
+        indexes: &DeltaIndexes<I>, rebound: bool, governor: &mut StepGovernor<'_>,
     ) -> Result<(), D::Error> {
         if rebound {
             return self.advance::<SCAN, INDEX_REBOUND, D>(operator, rel, delta, indexes, governor);
@@ -150,12 +138,8 @@ where
     /// A refused match stays pending, so a fresh credit pool continues without
     /// another row visit, lookup of constants, or replay of an old input prefix.
     pub(super) fn advance<const SCAN: u8, const INDEX: u8, D: TermDictionary<Id = I>>(
-        &mut self,
-        operator: &AtomOperator<N>,
-        rel: &RelationStore<D, N>,
-        delta: Delta,
-        indexes: &DeltaIndexes<I>,
-        governor: &mut StepGovernor<'_>,
+        &mut self, operator: &AtomOperator<N>, rel: &RelationStore<D, N>, delta: Delta,
+        indexes: &DeltaIndexes<I>, governor: &mut StepGovernor<'_>,
     ) -> Result<(), D::Error> {
         let rel = rel.read_source(operator.shape().read_source());
         rel.interner().check_read()?;
@@ -189,9 +173,7 @@ where
 
 /// Resolve one input's bounds with the original compiled index law.
 fn prepare<const INDEX: u8, D: TermDictionary, const N: usize>(
-    shape: &AtomShape<N>,
-    rel: &RelationStore<D, N>,
-    solution: &SlotSolution<D::Id, N>,
+    shape: &AtomShape<N>, rel: &RelationStore<D, N>, solution: &SlotSolution<D::Id, N>,
     constants: &ConstantPositions<D::Id, N>,
 ) -> Option<Scan<D::Id, N>>
 where
@@ -253,11 +235,8 @@ where
 {
     /// Resume the current physical run, retaining a refused match before expansion.
     fn advance<const SCAN: u8, const INDEX: u8, D: TermDictionary<Id = I>>(
-        &mut self,
-        operator: &AtomOperator<N>,
-        source: &Source<'_, D, N>,
-        input: &SlotSolution<I, N>,
-        output: &mut Vec<SlotSolution<I, N>>,
+        &mut self, operator: &AtomOperator<N>, source: &Source<'_, D, N>,
+        input: &SlotSolution<I, N>, output: &mut Vec<SlotSolution<I, N>>,
         governor: &mut StepGovernor<'_>,
     ) -> bool {
         let shape = operator.shape();
@@ -342,11 +321,8 @@ mod tests {
     use std::sync::atomic::Ordering;
 
     fn check_cuts<const SCAN: u8, const INDEX: u8, D: TermDictionary, const N: usize>(
-        operator: &AtomOperator<N>,
-        store: &RelationStore<D, N>,
-        delta: Delta,
-        indexes: &DeltaIndexes<D::Id>,
-        inputs: &[SlotSolution<D::Id, N>],
+        operator: &AtomOperator<N>, store: &RelationStore<D, N>, delta: Delta,
+        indexes: &DeltaIndexes<D::Id>, inputs: &[SlotSolution<D::Id, N>],
     ) where
         Arity<N>: StoreShape<N>,
     {
@@ -403,9 +379,7 @@ mod tests {
     }
 
     fn check_modes<const INDEX: u8, const N: usize>(
-        pattern: ClauseAtom<N>,
-        store: &RelationStore<TermInterner, N>,
-        delta: Delta,
+        pattern: ClauseAtom<N>, store: &RelationStore<TermInterner, N>, delta: Delta,
     ) where
         Arity<N>: StoreShape<N>,
     {

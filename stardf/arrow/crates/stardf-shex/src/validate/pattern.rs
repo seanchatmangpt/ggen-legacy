@@ -95,10 +95,7 @@ impl PatternCache {
     }
 
     pub(super) fn is_match(
-        &mut self,
-        pattern: &str,
-        flags: Option<&str>,
-        text: &str,
+        &mut self, pattern: &str, flags: Option<&str>, text: &str,
     ) -> Result<bool, CheckError> {
         let Some((profile, limits)) = self.selected else {
             return self
@@ -121,9 +118,7 @@ impl PatternCache {
     /// compile — an `Arc<str>` shared with the cache, so a repeat hands out
     /// the same message byte-for-byte without copying it.
     pub(crate) fn compiled(
-        &mut self,
-        pattern: &str,
-        flags: Option<&str>,
+        &mut self, pattern: &str, flags: Option<&str>,
     ) -> Result<Arc<CompiledPattern>, Arc<str>> {
         let flags = flags.unwrap_or("");
         if let Some(cached) = self
@@ -157,8 +152,7 @@ impl PatternCache {
 /// `fn:matches` grammar does not define (`\b`, `\B`), a backreference, an
 /// unrecognized Unicode block name, or a malformed pattern.
 pub(crate) fn compile_pattern(
-    pattern: &str,
-    flags: Option<&str>,
+    pattern: &str, flags: Option<&str>,
 ) -> Result<CompiledPattern, String> {
     let flags = flags.unwrap_or("");
     purrdf_core::xsd_regex::compile(pattern, flags)

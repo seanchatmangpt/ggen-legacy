@@ -73,9 +73,7 @@ pub(super) fn native_error(error: GeoError, workspace: &crate::WorkspaceCapabili
 }
 
 fn convert(
-    error: GeoError,
-    workspace: &crate::WorkspaceCapability,
-    function: crate::NativeDiagnosticKind,
+    error: GeoError, workspace: &crate::WorkspaceCapability, function: crate::NativeDiagnosticKind,
 ) -> EvalError {
     use crate::NativeDiagnosticKind;
     let original = error.original();

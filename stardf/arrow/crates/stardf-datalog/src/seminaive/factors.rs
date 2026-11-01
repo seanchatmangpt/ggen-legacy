@@ -188,9 +188,7 @@ where
 /// Evaluate one factor Full with the existing indexed and certified cyclic kernels.
 #[cfg(test)]
 fn full_matches<D: TermDictionary, const N: usize>(
-    factor: &Factor,
-    entry: RuleEntry<'_, N>,
-    snapshot: RoundSnapshot<'_, D, N>,
+    factor: &Factor, entry: RuleEntry<'_, N>, snapshot: RoundSnapshot<'_, D, N>,
     governor: &mut StepGovernor<'_>,
     evidence: &mut Option<&mut dyn super::evidence::RuleEvidence<D, N>>,
 ) -> Result<Vec<SlotSolution<D::Id, N>>, EvalError<D::Error>>
@@ -210,11 +208,8 @@ where
 /// Match one factor using the existing scan-aware binary and cyclic kernels.
 #[cfg(test)]
 fn factor_matches<D: TermDictionary, const N: usize>(
-    factor: &Factor,
-    entry: RuleEntry<'_, N>,
-    snapshot: RoundSnapshot<'_, D, N>,
-    governor: &mut StepGovernor<'_>,
-    scan: JoinScan,
+    factor: &Factor, entry: RuleEntry<'_, N>, snapshot: RoundSnapshot<'_, D, N>,
+    governor: &mut StepGovernor<'_>, scan: JoinScan,
     evidence: &mut Option<&mut dyn super::evidence::RuleEvidence<D, N>>,
 ) -> Result<Vec<SlotSolution<D::Id, N>>, EvalError<D::Error>>
 where
@@ -244,11 +239,8 @@ where
 /// Original stack orchestration, retained solely as a differential test oracle.
 #[cfg(test)]
 fn reference_matches<D: TermDictionary, const N: usize>(
-    factor: &Factor,
-    entry: RuleEntry<'_, N>,
-    snapshot: RoundSnapshot<'_, D, N>,
-    governor: &mut StepGovernor<'_>,
-    scan: JoinScan,
+    factor: &Factor, entry: RuleEntry<'_, N>, snapshot: RoundSnapshot<'_, D, N>,
+    governor: &mut StepGovernor<'_>, scan: JoinScan,
     evidence: &mut Option<&mut dyn super::evidence::RuleEvidence<D, N>>,
 ) -> Result<Vec<SlotSolution<D::Id, N>>, EvalError<D::Error>>
 where
@@ -420,9 +412,7 @@ struct Witness {
 /// Match only tuples containing a delta source, using disjoint last-new-atom anchors.
 #[cfg(test)]
 fn new_matches<D: TermDictionary, const N: usize>(
-    factor: &Factor,
-    entry: RuleEntry<'_, N>,
-    snapshot: RoundSnapshot<'_, D, N>,
+    factor: &Factor, entry: RuleEntry<'_, N>, snapshot: RoundSnapshot<'_, D, N>,
     governor: &mut StepGovernor<'_>,
     evidence: &mut Option<&mut dyn super::evidence::RuleEvidence<D, N>>,
 ) -> Result<Vec<SlotSolution<D::Id, N>>, EvalError<D::Error>>
@@ -463,9 +453,7 @@ type FactorRelations<I, const N: usize> = Vec<Vec<SlotSolution<I, N>>>;
 /// Discover productive anchors before building the old/full context they actually need.
 #[cfg(test)]
 fn partial_relations<D: TermDictionary, const N: usize>(
-    entry: RuleEntry<'_, N>,
-    snapshot: RoundSnapshot<'_, D, N>,
-    governor: &mut StepGovernor<'_>,
+    entry: RuleEntry<'_, N>, snapshot: RoundSnapshot<'_, D, N>, governor: &mut StepGovernor<'_>,
     evidence: &mut Option<&mut dyn super::evidence::RuleEvidence<D, N>>,
 ) -> Result<FactorRelations<D::Id, N>, EvalError<D::Error>>
 where
@@ -532,9 +520,7 @@ struct Frontier {
 impl Frontier {
     /// Build cumulative frontiers without assuming local height preference composes.
     fn new<D: TermDictionary, const N: usize>(
-        mut witnesses: Vec<Witness>,
-        matches: &[SlotSolution<D::Id, N>],
-        rel: &RelationStore<D, N>,
+        mut witnesses: Vec<Witness>, matches: &[SlotSolution<D::Id, N>], rel: &RelationStore<D, N>,
         retain_witnesses: bool,
     ) -> Result<Self, D::Error>
     where
@@ -651,11 +637,8 @@ fn mode_tables(projections: &[Projection], anchor: usize) -> Vec<&[Frontier]> {
 
 /// Project one head's factor relation; callers consume only its required modes.
 fn project<D: TermDictionary, const N: usize>(
-    matches: &[SlotSolution<D::Id, N>],
-    slots: &[usize],
-    snapshot: RoundSnapshot<'_, D, N>,
-    delta: Delta,
-    retain_witnesses: bool,
+    matches: &[SlotSolution<D::Id, N>], slots: &[usize], snapshot: RoundSnapshot<'_, D, N>,
+    delta: Delta, retain_witnesses: bool,
 ) -> Result<Projection, D::Error>
 where
     Arity<N>: StoreShape<N>,
@@ -741,12 +724,9 @@ where
     Arity<N>: StoreShape<N>,
 {
     fn new(
-        entry: RuleEntry<'r, N>,
-        snapshot: RoundSnapshot<'a, D, N>,
-        relations: &'a [Vec<SlotSolution<D::Id, N>>],
-        projections: &'a [Projection],
-        head_ordinal: usize,
-        anchor: usize,
+        entry: RuleEntry<'r, N>, snapshot: RoundSnapshot<'a, D, N>,
+        relations: &'a [Vec<SlotSolution<D::Id, N>>], projections: &'a [Projection],
+        head_ordinal: usize, anchor: usize,
     ) -> Self {
         Self {
             tables: mode_tables(projections, anchor),
@@ -761,9 +741,7 @@ where
     /// Stream necessary projected combinations through the owned coordinate cursor.
     #[cfg(test)]
     fn visit(
-        &self,
-        buffer: &mut RoundBuffer<'r, D::Id, N>,
-        governor: &mut StepGovernor<'_>,
+        &self, buffer: &mut RoundBuffer<'r, D::Id, N>, governor: &mut StepGovernor<'_>,
         evidence: &mut Option<&mut dyn super::evidence::RuleEvidence<D, N>>,
     ) -> Result<(), EvalError<D::Error>> {
         let mut frame = product::Frame::new(&self.tables);
@@ -775,9 +753,7 @@ where
     /// Original full-run traversal, retained only as an independent cursor oracle.
     #[cfg(test)]
     fn reference_visit(
-        &self,
-        buffer: &mut RoundBuffer<'r, D::Id, N>,
-        governor: &mut StepGovernor<'_>,
+        &self, buffer: &mut RoundBuffer<'r, D::Id, N>, governor: &mut StepGovernor<'_>,
         evidence: &mut Option<&mut dyn super::evidence::RuleEvidence<D, N>>,
     ) -> Result<(), EvalError<D::Error>> {
         let mut cursors: Vec<_> = self.tables.iter().map(|table| table.iter()).collect();
@@ -808,9 +784,7 @@ where
 
     /// Choose the exact global witness for one projected combination, then emit it.
     fn emit(
-        &self,
-        chosen: &[Witnesses<'_, D::Id, N>],
-        buffer: &mut RoundBuffer<'r, D::Id, N>,
+        &self, chosen: &[Witnesses<'_, D::Id, N>], buffer: &mut RoundBuffer<'r, D::Id, N>,
         governor: &mut StepGovernor<'_>,
         evidence: &mut Option<&mut dyn super::evidence::RuleEvidence<D, N>>,
     ) -> Result<bool, EvalError<D::Error>> {
@@ -873,9 +847,7 @@ where
 /// Evaluate independent factors and stream each conjunctive head's necessary product.
 #[cfg(test)]
 pub(super) fn evaluate<'r, D: TermDictionary, const N: usize>(
-    entry: RuleEntry<'r, N>,
-    snapshot: RoundSnapshot<'_, D, N>,
-    governor: &mut StepGovernor<'_>,
+    entry: RuleEntry<'r, N>, snapshot: RoundSnapshot<'_, D, N>, governor: &mut StepGovernor<'_>,
 ) -> Result<RoundBuffer<'r, D::Id, N>, EvalError<D::Error>>
 where
     Arity<N>: StoreShape<N>,
@@ -885,9 +857,7 @@ where
 
 #[cfg(test)]
 pub(super) fn evaluate_with_evidence<'r, D: TermDictionary, const N: usize>(
-    entry: RuleEntry<'r, N>,
-    snapshot: RoundSnapshot<'_, D, N>,
-    governor: &mut StepGovernor<'_>,
+    entry: RuleEntry<'r, N>, snapshot: RoundSnapshot<'_, D, N>, governor: &mut StepGovernor<'_>,
     mut evidence: Option<&mut dyn super::evidence::RuleEvidence<D, N>>,
 ) -> Result<RoundBuffer<'r, D::Id, N>, EvalError<D::Error>>
 where
@@ -913,9 +883,7 @@ where
 /// Original whole-factor orchestration, retained only as a full-run test oracle.
 #[cfg(test)]
 fn reference_evaluate_with_evidence<'r, D: TermDictionary, const N: usize>(
-    entry: RuleEntry<'r, N>,
-    snapshot: RoundSnapshot<'_, D, N>,
-    governor: &mut StepGovernor<'_>,
+    entry: RuleEntry<'r, N>, snapshot: RoundSnapshot<'_, D, N>, governor: &mut StepGovernor<'_>,
     mut evidence: Option<&mut dyn super::evidence::RuleEvidence<D, N>>,
 ) -> Result<RoundBuffer<'r, D::Id, N>, EvalError<D::Error>>
 where
@@ -1045,9 +1013,7 @@ where
 /// Local variables remain local even when their authored name appears in another group.
 #[cfg(test)]
 fn ground_blocked<D: TermDictionary, const N: usize>(
-    entry: RuleEntry<'_, N>,
-    snapshot: RoundSnapshot<'_, D, N>,
-    governor: &mut StepGovernor<'_>,
+    entry: RuleEntry<'_, N>, snapshot: RoundSnapshot<'_, D, N>, governor: &mut StepGovernor<'_>,
     evidence: &mut Option<&mut dyn super::evidence::RuleEvidence<D, N>>,
 ) -> Result<(bool, Option<purrdf_core::evidence::EvidenceId>), EvalError<D::Error>>
 where

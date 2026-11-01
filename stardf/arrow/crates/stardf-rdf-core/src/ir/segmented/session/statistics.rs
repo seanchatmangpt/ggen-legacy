@@ -30,8 +30,7 @@ impl crate::ir::source_directory::DirectoryRead for SourceDirectory<'_> {
     }
 
     fn record(
-        &self,
-        index: usize,
+        &self, index: usize,
     ) -> Result<crate::ir::source_directory::SourceRecord, Self::Error> {
         let bytes = self
             .session
@@ -54,9 +53,7 @@ impl crate::ir::source_directory::DirectoryRead for SourceDirectory<'_> {
     }
 
     fn prefix(
-        &self,
-        end: usize,
-        work: &mut crate::source::SourceDifferenceWork,
+        &self, end: usize, work: &mut crate::source::SourceDifferenceWork,
     ) -> Result<purrdf_hash::multiset::Multiset256, Self::Error> {
         use crate::ir::source_directory::CHECKPOINT_ROWS;
 
@@ -103,8 +100,7 @@ impl SegmentedSession {
     }
 
     pub(in crate::ir::segmented) fn source_record_row(
-        &self,
-        record: crate::ir::source_directory::SourceRecord,
+        &self, record: crate::ir::source_directory::SourceRecord,
     ) -> Result<crate::QuadIds<GlobalTermId>, SegmentedError> {
         let table = match record.stream {
             StatisticsStream::Asserted => 0,
@@ -119,10 +115,7 @@ impl SegmentedSession {
     }
 
     pub(super) fn source_summary(
-        &self,
-        predicate: GlobalTermId,
-        graph: GraphMatch<GlobalTermId>,
-        stream: StatisticsStream,
+        &self, predicate: GlobalTermId, graph: GraphMatch<GlobalTermId>, stream: StatisticsStream,
     ) -> Result<Option<crate::source::SourceSummary>, SegmentedError> {
         self.ready()?;
         self.find_statistic(relation(stream), graph, predicate)
@@ -136,9 +129,7 @@ impl SegmentedSession {
     }
 
     fn narrow_subject_statistic(
-        &self,
-        pattern: crate::ProbePattern<GlobalTermId>,
-        count: Option<StatisticCount>,
+        &self, pattern: crate::ProbePattern<GlobalTermId>, count: Option<StatisticCount>,
     ) -> Option<StatisticCount> {
         let mut count = count?;
         self.statistic(|| {
@@ -166,9 +157,7 @@ impl SegmentedSession {
     }
 
     fn statistic_record<const N: usize>(
-        &self,
-        section: StatisticsSection,
-        ordinal: u64,
+        &self, section: StatisticsSection, ordinal: u64,
     ) -> Result<[u8; N], SegmentedError> {
         let stream = self.header.statistics[section.index()];
         if N != section.width() {
@@ -178,10 +167,7 @@ impl SegmentedSession {
     }
 
     fn fixed_record<const N: usize>(
-        &self,
-        stream: super::Stream,
-        kind: u8,
-        ordinal: u64,
+        &self, stream: super::Stream, kind: u8, ordinal: u64,
     ) -> Result<[u8; N], SegmentedError> {
         self.ready()?;
         if ordinal >= stream.rows {
@@ -203,8 +189,7 @@ impl SegmentedSession {
     }
 
     fn statistic_predicate(
-        &self,
-        ordinal: u64,
+        &self, ordinal: u64,
     ) -> Result<PredicateRecord<GlobalTermId>, SegmentedError> {
         let record =
             PredicateRecord::decode(
@@ -218,10 +203,7 @@ impl SegmentedSession {
     }
 
     fn find_statistic(
-        &self,
-        relation: Relation,
-        graph: GraphMatch<GlobalTermId>,
-        predicate: GlobalTermId,
+        &self, relation: Relation, graph: GraphMatch<GlobalTermId>, predicate: GlobalTermId,
     ) -> Result<Option<PredicateRecord<GlobalTermId>>, SegmentedError> {
         let table = match relation {
             Relation::Asserted => 0,
@@ -307,9 +289,7 @@ impl SnapshotStatistics<GlobalTermId> for SegmentedSession {
     }
 
     fn structural_pattern(
-        &self,
-        pattern: crate::ProbePattern<GlobalTermId>,
-        components: [Option<GlobalTermId>; 3],
+        &self, pattern: crate::ProbePattern<GlobalTermId>, components: [Option<GlobalTermId>; 3],
     ) -> Option<StatisticCount> {
         self.narrow_subject_statistic(
             pattern,
@@ -324,9 +304,7 @@ impl SnapshotStatistics<GlobalTermId> for SegmentedSession {
             .expect("fixed snapshot identity width")
     }
     fn stream_rows(
-        &self,
-        graph: GraphMatch<GlobalTermId>,
-        stream: StatisticsStream,
+        &self, graph: GraphMatch<GlobalTermId>, stream: StatisticsStream,
     ) -> Option<StatisticCount> {
         self.statistic(|| {
             let table = match stream {
@@ -359,10 +337,7 @@ impl SnapshotStatistics<GlobalTermId> for SegmentedSession {
         })
     }
     fn predicate(
-        &self,
-        predicate: GlobalTermId,
-        graph: GraphMatch<GlobalTermId>,
-        stream: StatisticsStream,
+        &self, predicate: GlobalTermId, graph: GraphMatch<GlobalTermId>, stream: StatisticsStream,
     ) -> Option<PredicateStatistics> {
         self.statistic(|| {
             Ok(self
@@ -371,10 +346,7 @@ impl SnapshotStatistics<GlobalTermId> for SegmentedSession {
         })
     }
     fn predicate_object(
-        &self,
-        predicate: GlobalTermId,
-        object: GlobalTermId,
-        graph: GraphMatch<GlobalTermId>,
+        &self, predicate: GlobalTermId, object: GlobalTermId, graph: GraphMatch<GlobalTermId>,
         stream: StatisticsStream,
     ) -> Option<StatisticCount> {
         self.statistic(|| {
@@ -398,12 +370,8 @@ impl SnapshotStatistics<GlobalTermId> for SegmentedSession {
         .flatten()
     }
     fn predicate_object_kind(
-        &self,
-        predicate: GlobalTermId,
-        kind: RdfTermKind,
-        datatype: Option<GlobalTermId>,
-        graph: GraphMatch<GlobalTermId>,
-        stream: StatisticsStream,
+        &self, predicate: GlobalTermId, kind: RdfTermKind, datatype: Option<GlobalTermId>,
+        graph: GraphMatch<GlobalTermId>, stream: StatisticsStream,
     ) -> Option<StatisticCount> {
         self.statistic(|| {
             let Some(entry) = self.find_statistic(relation(stream), graph, predicate)? else {
@@ -425,9 +393,7 @@ impl SnapshotStatistics<GlobalTermId> for SegmentedSession {
         })
     }
     fn reifier_target_predicate(
-        &self,
-        predicate: GlobalTermId,
-        graph: GraphMatch<GlobalTermId>,
+        &self, predicate: GlobalTermId, graph: GraphMatch<GlobalTermId>,
     ) -> Option<PredicateStatistics> {
         self.statistic(|| {
             Ok(self
@@ -436,12 +402,8 @@ impl SnapshotStatistics<GlobalTermId> for SegmentedSession {
         })
     }
     fn visit_distinct(
-        &self,
-        predicate: GlobalTermId,
-        graph: GraphMatch<GlobalTermId>,
-        stream: StatisticsStream,
-        position: StatisticsPosition,
-        visit: &mut dyn FnMut(GlobalTermId) -> ControlFlow<()>,
+        &self, predicate: GlobalTermId, graph: GraphMatch<GlobalTermId>, stream: StatisticsStream,
+        position: StatisticsPosition, visit: &mut dyn FnMut(GlobalTermId) -> ControlFlow<()>,
     ) -> Result<bool, PackBitsError> {
         let result = (|| {
             self.ready()?;

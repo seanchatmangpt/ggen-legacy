@@ -503,10 +503,7 @@ pub fn to_quads(catalog: &FnoCatalog) -> Vec<RdfQuad> {
 /// An empty list links straight to `rdf:nil`. Cell labels are derived
 /// reproducibly only so re-running yields a stable document.
 fn attach_list(
-    quads: &mut Vec<RdfQuad>,
-    subject: &RdfTerm,
-    predicate: &str,
-    items: &[RdfTerm],
+    quads: &mut Vec<RdfQuad>, subject: &RdfTerm, predicate: &str, items: &[RdfTerm],
     cells: &mut ListCells<'_>,
 ) {
     // The link precedes the cells, so it is placed once the head is known.

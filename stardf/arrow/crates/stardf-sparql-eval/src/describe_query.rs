@@ -35,9 +35,7 @@ use crate::solution::{SolutionSeq, VarSchema};
 /// the true subjects, and only the caller holding the certificate can tell that from a
 /// complete description.
 pub(crate) fn eval_describe<D: DatasetView + Sync>(
-    pattern: &GraphPattern,
-    targets: &[NamedNodePattern],
-    ctx: &mut EvalCtx<'_, D>,
+    pattern: &GraphPattern, targets: &[NamedNodePattern], ctx: &mut EvalCtx<'_, D>,
 ) -> Result<ConstructedGraph<D::Id>, EvalError> {
     // A `BTreeSet` gives a deterministic, deduplicated subject order.
     enum Subject<'a> {
@@ -155,9 +153,7 @@ mod tests {
 
     /// The ungoverned `DESCRIBE`, which is complete by construction.
     fn eval_describe<D: DatasetView + Sync>(
-        pattern: &GraphPattern,
-        targets: &[NamedNodePattern],
-        ctx: &mut EvalCtx<'_, D>,
+        pattern: &GraphPattern, targets: &[NamedNodePattern], ctx: &mut EvalCtx<'_, D>,
     ) -> Result<purrdf_core::DatasetHandle, EvalError> {
         let (graph, certificate) = super::eval_describe(pattern, targets, ctx)?;
         assert!(

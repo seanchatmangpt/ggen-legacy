@@ -133,8 +133,7 @@ impl BaseIri {
     /// # Errors
     /// Returns the original lexical or nonabsolute error, or physical refusal.
     pub fn parse_with_memory<S: Admission + ?Sized>(
-        s: &str,
-        memory: &mut Memory<'_, S>,
+        s: &str, memory: &mut Memory<'_, S>,
     ) -> core::result::Result<Self, IriReadError> {
         let iri = parse_with_memory(s, memory)?;
         if iri.has_scheme() {
@@ -516,8 +515,7 @@ impl BaseInScope {
     /// # Errors
     /// Returns the original physical refusal.
     pub fn clone_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> core::result::Result<Self, purrdf_lex::allocation::StorageError> {
         Ok(match self {
             Self::Absent => Self::Absent,
@@ -679,8 +677,7 @@ impl BaseScope {
     /// # Errors
     /// Returns physical refusal or an invariant lexical failure.
     pub fn clone_with_memory<S: Admission + ?Sized>(
-        &self,
-        memory: &mut Memory<'_, S>,
+        &self, memory: &mut Memory<'_, S>,
     ) -> core::result::Result<Self, IriReadError> {
         let mut bases = Vec::new();
         memory.reserve(&mut bases, self.0.len())?;
@@ -698,10 +695,7 @@ impl BaseScope {
     /// # Errors
     /// Returns the original IRI error or typed physical storage refusal.
     pub fn rebind_with_memory<S: Admission + ?Sized>(
-        &mut self,
-        directive: &str,
-        origin: BaseOrigin,
-        memory: &mut Memory<'_, S>,
+        &mut self, directive: &str, origin: BaseOrigin, memory: &mut Memory<'_, S>,
     ) -> core::result::Result<(), IriReadError> {
         let rebound = if self.current().is_some() {
             BaseIri::try_from(self.resolve_with_memory(directive, memory)?)
@@ -724,8 +718,7 @@ impl BaseScope {
     /// # Errors
     /// Returns an accounting invariant failure or the original shrink refusal.
     pub fn release_with_memory<S: Admission + ?Sized>(
-        mut self,
-        memory: &mut Memory<'_, S>,
+        mut self, memory: &mut Memory<'_, S>,
     ) -> core::result::Result<(), IriReadError> {
         while let Some(base) = self.0.pop() {
             memory.release_string(base.iri.0.text)?;
@@ -770,9 +763,7 @@ impl BaseScope {
     /// # Errors
     /// Returns the original grammar/base error or typed physical refusal.
     pub fn resolve_with_memory<S: Admission + ?Sized>(
-        &self,
-        reference: &str,
-        memory: &mut Memory<'_, S>,
+        &self, reference: &str, memory: &mut Memory<'_, S>,
     ) -> core::result::Result<Iri, IriReadError> {
         // The EMPTY reference is the same-document reference (RFC-3986 §4.4), so it
         // is relative by definition — and `parse` would reject it as merely empty,

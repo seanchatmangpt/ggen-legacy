@@ -484,10 +484,7 @@ fn classify(loaded: &Loaded) -> Bucket {
 
 /// Describe how two lanes differ, or `None` when they agree exactly.
 fn disagreement(
-    left_name: &str,
-    left: &LaneOutcome,
-    right_name: &str,
-    right: &LaneOutcome,
+    left_name: &str, left: &LaneOutcome, right_name: &str, right: &LaneOutcome,
 ) -> Option<String> {
     if left == right {
         return None;

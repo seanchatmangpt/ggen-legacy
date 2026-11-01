@@ -24,9 +24,7 @@ pub(crate) struct AreaArrangement {
 /// Decompose only after admitting input, intersection scratch and every retained
 /// event/strip. The returned reservation stays live until the metric consumes it.
 pub(crate) fn area_arrangement(
-    region: &PreparedRegion,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    region: &PreparedRegion, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<AreaArrangement, GeoError> {
     arrangement(region, false, context, progress)
 }
@@ -35,17 +33,13 @@ pub(crate) fn area_arrangement(
 /// Their shared internal walls cancel in the exact union, while metrics keep
 /// the original individual strips and their frozen quadrature subdivision.
 pub(crate) fn area_arrangement_for_union(
-    region: &PreparedRegion,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    region: &PreparedRegion, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<AreaArrangement, GeoError> {
     arrangement(region, true, context, progress)
 }
 
 fn arrangement(
-    region: &PreparedRegion,
-    coalesce_interior: bool,
-    context: &mut MetricContext,
+    region: &PreparedRegion, coalesce_interior: bool, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<AreaArrangement, GeoError> {
     super::check_region_reference(region, context, progress)?;
@@ -64,11 +58,8 @@ fn arrangement(
 }
 
 fn decompose(
-    region: &PreparedRegion,
-    coalesce_interior: bool,
-    context: &mut MetricContext,
-    retained: &mut u64,
-    progress: &mut WorkProgress<'_>,
+    region: &PreparedRegion, coalesce_interior: bool, context: &mut MetricContext,
+    retained: &mut u64, progress: &mut WorkProgress<'_>,
 ) -> Result<RetainedBuilder<AreaStrip>, GeoError> {
     let mut temporary = 0;
     let result = decompose_inner(
@@ -86,12 +77,8 @@ fn decompose(
 }
 
 fn decompose_inner(
-    region: &PreparedRegion,
-    coalesce_interior: bool,
-    context: &mut MetricContext,
-    retained: &mut u64,
-    temporary: &mut u64,
-    progress: &mut WorkProgress<'_>,
+    region: &PreparedRegion, coalesce_interior: bool, context: &mut MetricContext,
+    retained: &mut u64, temporary: &mut u64, progress: &mut WorkProgress<'_>,
 ) -> Result<RetainedBuilder<AreaStrip>, GeoError> {
     if matches!(region, PreparedRegion::Empty) {
         return Ok(RetainedBuilder::default());
@@ -211,9 +198,7 @@ fn decompose_inner(
 }
 
 fn physical_owned(
-    point: crate::Coord,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    point: crate::Coord, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<LonLat, GeoError> {
     let mut admission = crate::numerical::ExactAdmission::new(context, progress);
     admission.expression_result(

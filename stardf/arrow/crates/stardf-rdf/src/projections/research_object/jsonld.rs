@@ -65,9 +65,7 @@ impl<V: JsonLdProfileVocabulary> JsonLdProfileConfig<V> {
     /// Rejects a non-absolute profile identity, or a compact term without a
     /// caller-owned offline expansion. No profile term is supplied by PurRDF.
     pub fn new(
-        common: ResearchObjectConfig,
-        context: OfflineJsonLdContext,
-        vocabulary: V,
+        common: ResearchObjectConfig, context: OfflineJsonLdContext, vocabulary: V,
         profile_iri: impl Into<String>,
     ) -> Result<Self, ProjectionError> {
         let profile_iri = profile_iri.into();
@@ -271,9 +269,7 @@ pub(super) trait ProfileReader {
     ///
     /// Returns the profile's refusal of the reference.
     fn parse_reference_value(
-        &mut self,
-        value: &Value,
-        pointer: &str,
+        &mut self, value: &Value, pointer: &str,
     ) -> Result<Option<ResearchValue>, ProjectionError>;
 
     /// Take the member bound to `role` out of `object` as its items: an array
@@ -302,10 +298,7 @@ pub(super) trait ProfileReader {
     ///
     /// Returns the first refusal of `parse`.
     fn take_parsed<T>(
-        &mut self,
-        object: &mut Object,
-        role: Self::Role,
-        parent: &str,
+        &mut self, object: &mut Object, role: Self::Role, parent: &str,
         mut parse: impl FnMut(&mut Self, Value, &str) -> Result<Option<T>, ProjectionError>,
     ) -> Result<Vec<T>, ProjectionError>
     where
@@ -328,10 +321,7 @@ pub(super) trait ProfileReader {
     ///
     /// Returns a refusal of an invalid literal.
     fn take_texts(
-        &mut self,
-        object: &mut Object,
-        role: Self::Role,
-        parent: &str,
+        &mut self, object: &mut Object, role: Self::Role, parent: &str,
     ) -> Result<Vec<ResearchText>, ProjectionError>
     where
         Self: Sized,
@@ -345,10 +335,7 @@ pub(super) trait ProfileReader {
     ///
     /// Returns a refusal of an invalid reference or literal.
     fn take_values(
-        &mut self,
-        object: &mut Object,
-        role: Self::Role,
-        parent: &str,
+        &mut self, object: &mut Object, role: Self::Role, parent: &str,
     ) -> Result<Vec<ResearchValue>, ProjectionError>
     where
         Self: Sized,
@@ -363,9 +350,7 @@ pub(super) trait ProfileReader {
     ///
     /// Returns a refusal of an invalid reference or literal.
     fn parse_value(
-        &mut self,
-        value: Value,
-        pointer: &str,
+        &mut self, value: Value, pointer: &str,
     ) -> Result<Option<ResearchValue>, ProjectionError> {
         if value
             .as_object()
@@ -384,9 +369,7 @@ pub(super) trait ProfileReader {
     ///
     /// Returns [`ResearchText::new`]'s refusal of the literal read.
     fn parse_text(
-        &mut self,
-        value: Value,
-        pointer: &str,
+        &mut self, value: Value, pointer: &str,
     ) -> Result<Option<ResearchText>, ProjectionError> {
         let mut object = match into_owned(value) {
             Owned::String(value) if Self::BARE_STRING_TEXT => {

@@ -365,8 +365,7 @@ fn dimension_for(token: &str) -> ResourceDimension {
 /// would be measuring precedence rather than a boundary, and precedence is tested where a
 /// scripted clock can drive it.
 fn parse_governors(
-    cell: &str,
-    line: usize,
+    cell: &str, line: usize,
 ) -> (
     Option<(ResourceDimension, u64)>,
     Option<StopSpec>,
@@ -729,9 +728,7 @@ impl PropertyFunction for ScriptedRelation {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -1092,9 +1089,7 @@ fn governors_for(case: &Case) -> Configured {
 
 /// Evaluate `case` under `configured`, with the transport wired as `spec` says.
 fn observe(
-    case: &Case,
-    configured: &Configured,
-    spec: Option<TransportSpec>,
+    case: &Case, configured: &Configured, spec: Option<TransportSpec>,
     relation_spec: Option<RelationSpec>,
 ) -> Observation {
     let dataset = load_dataset(case);
@@ -1210,9 +1205,7 @@ struct Measurement {
 }
 
 fn metered(
-    case: &Case,
-    spec: Option<TransportSpec>,
-    relation_spec: Option<RelationSpec>,
+    case: &Case, spec: Option<TransportSpec>, relation_spec: Option<RelationSpec>,
 ) -> Measurement {
     let configured = Configured {
         governors: QueryGovernors::METERED,
@@ -1718,9 +1711,7 @@ struct Regenerated {
 /// Measure one case and produce its regenerated manifest row, its sidecar rows, and its
 /// `expected/` records.
 fn regenerate_case(
-    case: &Case,
-    spec: Option<TransportSpec>,
-    relation_spec: Option<RelationSpec>,
+    case: &Case, spec: Option<TransportSpec>, relation_spec: Option<RelationSpec>,
 ) -> Regenerated {
     let mut case = case.clone();
     if let Some(relation_spec) = relation_spec {
@@ -1793,8 +1784,7 @@ fn regenerate_case(
 /// from a separate binary, so a regeneration and a verification share one code path and
 /// cannot drift into producing what the checker does not accept.
 fn regenerate(
-    cases: &[Case],
-    specs: &BTreeMap<String, TransportSpec>,
+    cases: &[Case], specs: &BTreeMap<String, TransportSpec>,
     relations: &BTreeMap<String, RelationSpec>,
 ) {
     let mut manifest_rows = BTreeMap::new();
@@ -2955,9 +2945,7 @@ fn fuel_sweep_points(total: u64) -> Vec<u64> {
 /// [`observe`] wires: every algebra node in pre-order, with the fuel it charged at each
 /// charge point, the rows it committed and the largest bag it held.
 fn node_ledger(
-    case: &Case,
-    spec: Option<TransportSpec>,
-    relation_spec: Option<RelationSpec>,
+    case: &Case, spec: Option<TransportSpec>, relation_spec: Option<RelationSpec>,
 ) -> String {
     let dataset = load_dataset(case);
     let query = load_query(case);

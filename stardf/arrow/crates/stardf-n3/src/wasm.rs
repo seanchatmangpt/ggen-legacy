@@ -47,18 +47,13 @@ extern "C" {
 
     #[wasm_bindgen(method, catch, js_name = call)]
     fn send(
-        this: &OutputCallback,
-        context: &JsValue,
-        text: &str,
+        this: &OutputCallback, context: &JsValue, text: &str,
     ) -> std::result::Result<JsValue, JsValue>;
 }
 
 #[wasm_bindgen(js_name = reasonWithOptions)]
 pub fn reason_with_options(
-    input: &str,
-    proof: bool,
-    rdf: bool,
-    rdf_format: &str,
+    input: &str, proof: bool, rdf: bool, rdf_format: &str,
 ) -> std::result::Result<String, JsValue> {
     run(input, "", proof, rdf, rdf_format).map_err(|err| JsValue::from_str(&err.to_string()))
 }
@@ -70,22 +65,14 @@ pub fn reason(input: &str) -> std::result::Result<String, JsValue> {
 
 #[wasm_bindgen(js_name = reasonWithData)]
 pub fn reason_with_data(
-    program: &str,
-    data: &str,
-    proof: bool,
-    rdf: bool,
-    rdf_format: &str,
+    program: &str, data: &str, proof: bool, rdf: bool, rdf_format: &str,
 ) -> std::result::Result<String, JsValue> {
     run(program, data, proof, rdf, rdf_format).map_err(|err| JsValue::from_str(&err.to_string()))
 }
 
 #[wasm_bindgen(js_name = reasonWithDataReport)]
 pub fn reason_with_data_report(
-    program: &str,
-    data: &str,
-    proof: bool,
-    rdf: bool,
-    rdf_format: &str,
+    program: &str, data: &str, proof: bool, rdf: bool, rdf_format: &str,
 ) -> String {
     match run_report(program, data, proof, rdf, rdf_format) {
         Ok(output) => format!("{{\"ok\":true,\"output\":{}}}", json_string(&output)),
@@ -116,10 +103,7 @@ impl N3Session {
 
     /// Reason over a single independent data batch.
     pub fn reason(
-        &self,
-        data: &str,
-        rdf: bool,
-        rdf_format: &str,
+        &self, data: &str, rdf: bool, rdf_format: &str,
     ) -> std::result::Result<String, JsValue> {
         self.run(data, rdf, rdf_format)
             .map(|run| run.output)
@@ -162,10 +146,7 @@ struct SessionRun {
 
 impl N3Session {
     fn run(
-        &self,
-        data: &str,
-        rdf: bool,
-        rdf_format: &str,
+        &self, data: &str, rdf: bool, rdf_format: &str,
     ) -> std::result::Result<SessionRun, PlaygroundError> {
         let data_doc = if data.trim().is_empty() {
             Document::new()
@@ -201,11 +182,7 @@ fn run(program: &str, data: &str, proof: bool, rdf: bool, rdf_format: &str) -> R
 }
 
 fn run_report(
-    program: &str,
-    data: &str,
-    proof: bool,
-    rdf: bool,
-    rdf_format: &str,
+    program: &str, data: &str, proof: bool, rdf: bool, rdf_format: &str,
 ) -> std::result::Result<String, PlaygroundError> {
     let mut doc = Document::new();
     if data.trim().is_empty() {
@@ -355,11 +332,7 @@ fn json_string(value: &str) -> String {
 }
 
 fn parse_source(
-    input: &str,
-    proof: bool,
-    rdf: bool,
-    rdf_format: &str,
-    label: &str,
+    input: &str, proof: bool, rdf: bool, rdf_format: &str, label: &str,
 ) -> Result<Document> {
     if is_rdf_message_log(input) {
         parse_rdf_message_log(input, None)

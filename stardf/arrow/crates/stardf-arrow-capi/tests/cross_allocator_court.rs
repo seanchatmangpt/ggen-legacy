@@ -34,7 +34,7 @@
 //!
 //! Detection hook: `stardf_arrow_capi::ownership::pending()` (stream
 //! chain) and `stardf_pending_tags()` (boxed-array chain). Test-idiom
-//! credit: SLOTS mutex (avec/crates/avec-ffi/tests/alloc_courts.rs :30),
+//! credit: SLOTS mutex (cgap/crates/cgap-ffi/tests/alloc_courts.rs :30),
 //! setup-outside-tracking (:73-97).
 
 use std::sync::Mutex;
@@ -70,7 +70,7 @@ unsafe fn stream_lifecycle(quads: usize) {
     let mut stream: *mut ArrowArrayStream = core::ptr::null_mut();
     // SAFETY: live batch handle, valid out slot.
     assert_eq!(
-        stardf_arrow_capi::stardf_avec_export_stream(batch, &mut stream),
+        stardf_arrow_capi::stardf_cgap_export_stream(batch, &mut stream),
         0
     );
     // Consume: get_next hands out the array; release it through its own

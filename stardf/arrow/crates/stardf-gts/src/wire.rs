@@ -38,9 +38,7 @@ const PARALLEL_HASH_MIN: usize = 128 * 1024;
 struct RayonJoin;
 impl purrdf_hash::blake3::Join for RayonJoin {
     fn join<A: Send, B: Send>(
-        &self,
-        left: impl FnOnce() -> A + Send,
-        right: impl FnOnce() -> B + Send,
+        &self, left: impl FnOnce() -> A + Send, right: impl FnOnce() -> B + Send,
     ) -> (A, B) {
         rayon::join(left, right)
     }

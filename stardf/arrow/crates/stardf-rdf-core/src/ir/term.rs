@@ -279,8 +279,7 @@ pub(crate) fn interned_language(tag: &str) -> std::borrow::Cow<'_, str> {
 
 /// The shared identity fold, with its actual destination admitted at birth.
 pub(crate) fn interned_language_with_memory<'a, S: purrdf_lex::allocation::Admission + ?Sized>(
-    tag: &'a str,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    tag: &'a str, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<std::borrow::Cow<'a, str>, purrdf_lex::allocation::StorageError> {
     if purrdf_iri::langtag::is_identity_folded(tag) {
         Ok(std::borrow::Cow::Borrowed(tag))
@@ -305,9 +304,7 @@ pub(crate) fn push_arena_str_with_memory<
     W: ArenaOffset,
     S: purrdf_lex::allocation::Admission + ?Sized,
 >(
-    arena: &mut Vec<u8>,
-    s: &str,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    arena: &mut Vec<u8>, s: &str, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<StrRange<W>, purrdf_lex::allocation::StorageError> {
     use purrdf_lex::allocation::StorageError;
     let range = StrRange::checked(
@@ -645,16 +642,13 @@ impl TermValue {
     ///
     /// Returns the first original layout, allocation or admission refusal.
     pub fn from_literal_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        literal: &RdfLiteral,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        literal: &RdfLiteral, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         Self::from_literal_in_scope_with_memory(literal, BlankScope::DEFAULT, memory)
     }
 
     fn from_literal_in_scope_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        literal: &RdfLiteral,
-        scope: BlankScope,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        literal: &RdfLiteral, scope: BlankScope, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<Self, purrdf_lex::allocation::StorageError> {
         memory.scope(|memory| {
             let lexical = if scope == BlankScope::DEFAULT {
@@ -838,9 +832,7 @@ fn owned_leaf(value: TermValue) -> RdfTerm {
 
 /// An owned triple term, refusing a predicate that is not an IRI.
 fn owned_triple(
-    subject: RdfTerm,
-    predicate: RdfTerm,
-    object: RdfTerm,
+    subject: RdfTerm, predicate: RdfTerm, object: RdfTerm,
 ) -> Result<RdfTerm, NonIriPredicate> {
     let RdfTerm::Iri(predicate) = predicate else {
         return Err(NonIriPredicate);
@@ -934,9 +926,7 @@ impl TermValue {
     /// # Errors
     /// Returns storage refusal before growing output or traversal buffers.
     pub fn canonical_bytes_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        out: &mut Vec<u8>,
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, out: &mut Vec<u8>, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         use purrdf_lex::allocation::StorageError;
         let mut pending = Vec::new();
@@ -1006,9 +996,7 @@ impl TermValue {
     /// Returns storage refusal before growing the traversal work list. Chunks
     /// emitted before a refusal must not be published as a complete encoding.
     pub fn visit_canonical_bytes_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-        &self,
-        mut output: impl FnMut(&[u8]),
-        memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+        &self, mut output: impl FnMut(&[u8]), memory: &mut purrdf_lex::allocation::Memory<'_, S>,
     ) -> Result<(), purrdf_lex::allocation::StorageError> {
         if !matches!(self, Self::Triple { .. }) {
             self.canonical_node().visit_bytes(&mut output);
@@ -1372,9 +1360,7 @@ mod tests {
     /// A directional language literal, spelled out field by field because the
     /// constructors deliberately do not build one.
     fn dir_literal(
-        lexical_form: &str,
-        language: Option<&str>,
-        direction: Option<RdfTextDirection>,
+        lexical_form: &str, language: Option<&str>, direction: Option<RdfTextDirection>,
     ) -> TermValue {
         TermValue::Literal {
             lexical_form: lexical_form.to_owned(),
@@ -1684,10 +1670,7 @@ mod conversion_tests {
     const EX: &str = "http://example.org/";
 
     fn literal(
-        lexical: &str,
-        datatype: &str,
-        language: Option<&str>,
-        direction: Option<RdfTextDirection>,
+        lexical: &str, datatype: &str, language: Option<&str>, direction: Option<RdfTextDirection>,
     ) -> TermValue {
         TermValue::Literal {
             lexical_form: lexical.to_owned(),

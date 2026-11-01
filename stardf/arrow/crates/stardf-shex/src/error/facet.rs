@@ -115,10 +115,7 @@ pub struct NumericFacetOperand {
 }
 impl NumericFacetOperand {
     pub(crate) fn new(
-        keyword: Spanned,
-        token: Spanned,
-        value: NumericLiteral,
-        exact: ExactBound,
+        keyword: Spanned, token: Spanned, value: NumericLiteral, exact: ExactBound,
     ) -> Self {
         Self {
             keyword,

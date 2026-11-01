@@ -30,19 +30,19 @@ use purrdf_sparql_results::{
 
 /// Header wire offsets, named once so every assertion reads the same map.
 mod off {
-    pub const MAGIC: std::ops::Range<usize> = 0..8;
-    pub const VERSION: std::ops::Range<usize> = 8..10;
-    pub const FLAGS: std::ops::Range<usize> = 10..12;
-    pub const BATCH_COUNT: std::ops::Range<usize> = 12..16;
-    pub const PAYLOAD_OFFSET: std::ops::Range<usize> = 16..20;
-    pub const PAYLOAD_LEN: std::ops::Range<usize> = 20..28;
-    pub const TOTAL_LEN: std::ops::Range<usize> = 28..36;
-    pub const TRIPLES_DIGEST: std::ops::Range<usize> = 36..68;
-    pub const COLUMNAR_DIGEST: std::ops::Range<usize> = 68..100;
-    pub const RESERVED: std::ops::Range<usize> = 100..128;
-    pub const PAYLOAD_REGION: usize = 128;
+    pub(crate) const MAGIC: std::ops::Range<usize> = 0..8;
+    pub(crate) const VERSION: std::ops::Range<usize> = 8..10;
+    pub(crate) const FLAGS: std::ops::Range<usize> = 10..12;
+    pub(crate) const BATCH_COUNT: std::ops::Range<usize> = 12..16;
+    pub(crate) const PAYLOAD_OFFSET: std::ops::Range<usize> = 16..20;
+    pub(crate) const PAYLOAD_LEN: std::ops::Range<usize> = 20..28;
+    pub(crate) const TOTAL_LEN: std::ops::Range<usize> = 28..36;
+    pub(crate) const TRIPLES_DIGEST: std::ops::Range<usize> = 36..68;
+    pub(crate) const COLUMNAR_DIGEST: std::ops::Range<usize> = 68..100;
+    pub(crate) const RESERVED: std::ops::Range<usize> = 100..128;
+    pub(crate) const PAYLOAD_REGION: usize = 128;
     /// The trailing frame padding.
-    pub const PADDING: usize = 64;
+    pub(crate) const PADDING: usize = 64;
 }
 
 /// `SparqlResult::Solutions` with the given variables and rows over an empty
@@ -273,7 +273,7 @@ fn the_streaming_lane_writes_the_eager_bytes() {
     .expect("eager serialization")
     .bytes;
     let mut streamed = Vec::new();
-    serialize_into(
+    let _ = serialize_into(
         &two_by_two(),
         SparqlResultsFormat::CanonArrow,
         &ResultProvenance::default(),

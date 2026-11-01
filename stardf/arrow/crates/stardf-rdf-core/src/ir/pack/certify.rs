@@ -170,8 +170,7 @@ fn reconstruct<D: DatasetView>(
 
 /// [`reconstruct`] into a caller-configured `builder`.
 fn reconstruct_into<D: DatasetView>(
-    view: &D,
-    mut builder: RdfDatasetBuilder,
+    view: &D, mut builder: RdfDatasetBuilder,
 ) -> Result<RdfDatasetBuilder, DatasetImportError<D::ReadError>> {
     DatasetImporter::try_new(&mut builder, view).and_then(|mut importer| importer.try_append())?;
     Ok(builder)
@@ -224,8 +223,7 @@ pub fn dataset_from_view<D: DatasetView>(
 /// configuration its sources were frozen under (a delta snapshot, a composite)
 /// materializes under it rather than under none.
 pub(crate) fn dataset_from_view_into<D: DatasetView>(
-    view: &D,
-    builder: RdfDatasetBuilder,
+    view: &D, builder: RdfDatasetBuilder,
 ) -> Result<Arc<RdfDataset>, DatasetMaterializationError<D::ReadError>> {
     reconstruct_into(view, builder)?
         .freeze()

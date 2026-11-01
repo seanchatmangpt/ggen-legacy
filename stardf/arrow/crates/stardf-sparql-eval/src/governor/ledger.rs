@@ -200,16 +200,14 @@ impl ChargeLedger {
     /// indexed by [`NodeId`] (a missing entry is no prediction).
     #[cfg(test)]
     pub(crate) fn for_plan(
-        shape: &SharedWorkspace<PlanShape>,
-        estimates: &[Option<PlanEstimate>],
+        shape: &SharedWorkspace<PlanShape>, estimates: &[Option<PlanEstimate>],
     ) -> Self {
         Self::allocate_tables(shape, estimates, &crate::WorkspaceCapability::resident())
             .expect("resident ledger tables")
     }
 
     fn allocate_tables(
-        shape: &SharedWorkspace<PlanShape>,
-        estimates: &[Option<PlanEstimate>],
+        shape: &SharedWorkspace<PlanShape>, estimates: &[Option<PlanEstimate>],
         workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, crate::EvalError> {
         let count = shape.len();
@@ -240,8 +238,7 @@ impl ChargeLedger {
     /// Tables, native shared control and terminal output are all admitted before
     /// measurement. The unique publication permit cannot allocate after refusal.
     pub(crate) fn for_plan_admitted(
-        shape: &SharedWorkspace<PlanShape>,
-        estimates: &[Option<PlanEstimate>],
+        shape: &SharedWorkspace<PlanShape>, estimates: &[Option<PlanEstimate>],
         workspace: &crate::WorkspaceCapability,
     ) -> Result<(SharedWorkspace<Self>, LedgerPublication), crate::EvalError> {
         let ledger = SharedWorkspace::new_admitted(
@@ -508,11 +505,8 @@ impl Clone for QueryExplanation {
 
 impl QueryExplanation {
     fn resident_parts(
-        join_orders: Vec<String>,
-        ledger: Vec<NodeCharges>,
-        relations: Vec<PfDescriptor>,
-        aggregates: Vec<AggDescriptor>,
-        evidence: purrdf_core::GovernorEvidence,
+        join_orders: Vec<String>, ledger: Vec<NodeCharges>, relations: Vec<PfDescriptor>,
+        aggregates: Vec<AggDescriptor>, evidence: purrdf_core::GovernorEvidence,
         (shapes, statement_indexes, statistics): (
             Vec<crate::shapes::ShapeReport>,
             purrdf_core::StatementIndexSupport,
@@ -536,10 +530,8 @@ impl QueryExplanation {
     /// Assemble already admitted, immutable metadata without any allocation.
     pub(crate) fn from_admitted(
         profile: (ProfileIdentity, crate::WorkspaceAllocation),
-        join_orders: AdmittedRecords<String>,
-        ledger: AdmittedVec<NodeCharges>,
-        relations: AdmittedRecords<PfDescriptor>,
-        aggregates: AdmittedRecords<AggDescriptor>,
+        join_orders: AdmittedRecords<String>, ledger: AdmittedVec<NodeCharges>,
+        relations: AdmittedRecords<PfDescriptor>, aggregates: AdmittedRecords<AggDescriptor>,
         evidence: purrdf_core::GovernorEvidence,
         (shapes, statement_indexes, statistics): (
             AdmittedVec<crate::shapes::ShapeReport>,

@@ -114,9 +114,7 @@ impl PropertyFunction for Related {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -164,9 +162,7 @@ fn environment<'query>(registry: &PropertyFunctionRegistry<'query>) -> Extension
 
 /// Run `execution` and count the rows its `SELECT` answered with.
 fn run(
-    engine: &NativeSparqlEngine,
-    execution: &mut PreparedExecution,
-    dataset: &RdfDataset,
+    engine: &NativeSparqlEngine, execution: &mut PreparedExecution, dataset: &RdfDataset,
     options: QueryOptions<'_, '_>,
 ) -> Result<usize, purrdf_core::RdfDiagnostic> {
     engine.execute(execution, dataset, options, |outcome| match outcome {
@@ -763,9 +759,7 @@ impl PropertyFunction for Owns {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -816,11 +810,8 @@ fn blank_id(dataset: &RdfDataset, label: &str) -> purrdf_core::TermId {
 
 /// Run `execution` and render column `column` of every answer row.
 fn answers(
-    engine: &NativeSparqlEngine,
-    execution: &mut PreparedExecution,
-    dataset: &RdfDataset,
-    options: QueryOptions<'_, '_>,
-    column: usize,
+    engine: &NativeSparqlEngine, execution: &mut PreparedExecution, dataset: &RdfDataset,
+    options: QueryOptions<'_, '_>, column: usize,
 ) -> Result<Vec<String>, purrdf_core::RdfDiagnostic> {
     engine.execute(execution, dataset, options, |outcome| match outcome {
         InternedOutcome::Solutions(solutions) => solutions

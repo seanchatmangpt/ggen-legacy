@@ -94,8 +94,7 @@ impl QueryString {
     }
 
     pub(crate) fn chars(
-        chars: impl Iterator<Item = char> + Clone,
-        workspace: &WorkspaceCapability,
+        chars: impl Iterator<Item = char> + Clone, workspace: &WorkspaceCapability,
     ) -> Result<Self, TextError> {
         let bytes = chars
             .clone()
@@ -129,8 +128,7 @@ impl core::fmt::Debug for QueryString {
 }
 
 pub(crate) fn query_error(
-    workspace: &WorkspaceCapability,
-    kind: purrdf_sparql_eval::NativeDiagnosticKind,
+    workspace: &WorkspaceCapability, kind: purrdf_sparql_eval::NativeDiagnosticKind,
     message: impl core::fmt::Display,
 ) -> Result<TextError, TextError> {
     if !workspace.is_bounded() {
@@ -150,8 +148,7 @@ pub(crate) fn query_error(
 }
 
 pub(crate) fn data_error(
-    message: impl core::fmt::Display,
-    workspace: Option<&WorkspaceCapability>,
+    message: impl core::fmt::Display, workspace: Option<&WorkspaceCapability>,
 ) -> TextError {
     match workspace {
         Some(workspace) => query_error(
@@ -165,8 +162,7 @@ pub(crate) fn data_error(
 }
 
 pub(crate) fn arithmetic_error(
-    cause: crate::arithmetic::ArithmeticRefusal,
-    workspace: Option<&WorkspaceCapability>,
+    cause: crate::arithmetic::ArithmeticRefusal, workspace: Option<&WorkspaceCapability>,
 ) -> TextError {
     let domain = cause.is_domain();
     let diagnostic = matches!(

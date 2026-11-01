@@ -613,11 +613,8 @@ impl StepMeter {
 /// A repeated variable — within the atom or shared with `solution` — is enforced per row
 /// rather than through the index, so `p(?x, ?p, ?x, ?g)` behaves as the diagonal it is.
 fn extend_solution<const N: usize>(
-    atom: &ClauseAtom<N>,
-    store: &RelationStore<TermInterner, N>,
-    solution: &Binding,
-    out: &mut Vec<Binding>,
-    meter: &mut StepMeter,
+    atom: &ClauseAtom<N>, store: &RelationStore<TermInterner, N>, solution: &Binding,
+    out: &mut Vec<Binding>, meter: &mut StepMeter,
 ) where
     Arity<N>: StoreShape<N>,
 {
@@ -702,10 +699,8 @@ fn extend_solution<const N: usize>(
 /// "does this conjunctive query have a solution", so writing it as a second, subtly
 /// different traversal would be an opportunity for the two to disagree.
 fn join_atoms<'a, const N: usize>(
-    atoms: impl IntoIterator<Item = &'a ClauseAtom<N>>,
-    store: &RelationStore<TermInterner, N>,
-    seed: &Binding,
-    meter: &mut StepMeter,
+    atoms: impl IntoIterator<Item = &'a ClauseAtom<N>>, store: &RelationStore<TermInterner, N>,
+    seed: &Binding, meter: &mut StepMeter,
 ) -> Vec<Binding>
 where
     Arity<N>: StoreShape<N>,
@@ -1089,8 +1084,7 @@ where
 ///
 /// Any [`ChaseError`].
 pub fn chase<const N: usize>(
-    program: &[DlClause<N>],
-    edb: RelationStore<TermInterner, N>,
+    program: &[DlClause<N>], edb: RelationStore<TermInterner, N>,
 ) -> Result<ChaseOutcome<N>, ChaseError>
 where
     Arity<N>: StoreShape<N>,
@@ -1109,9 +1103,7 @@ where
 ///
 /// [`ChaseError::Stopped`] if `stop` fired, and every error [`chase`] returns.
 pub fn chase_until<const N: usize>(
-    program: &[DlClause<N>],
-    edb: RelationStore<TermInterner, N>,
-    stop: Option<&dyn StopSignal>,
+    program: &[DlClause<N>], edb: RelationStore<TermInterner, N>, stop: Option<&dyn StopSignal>,
 ) -> Result<ChaseOutcome<N>, ChaseError>
 where
     Arity<N>: StoreShape<N>,
@@ -1124,11 +1116,8 @@ where
 /// Returns exact protected/undecidable head refusal before the ordinary
 /// executor's fragment checks, then the same errors as [`chase_with`].
 pub fn chase_with_declarations<const N: usize>(
-    program: &[DlClause<N>],
-    edb: RelationStore<TermInterner, N>,
-    options: &EvalOptions,
-    stop: Option<&dyn StopSignal>,
-    declarations: &crate::admission::NeverDeriveDeclarations,
+    program: &[DlClause<N>], edb: RelationStore<TermInterner, N>, options: &EvalOptions,
+    stop: Option<&dyn StopSignal>, declarations: &crate::admission::NeverDeriveDeclarations,
 ) -> Result<ChaseOutcome<N>, ChaseError>
 where
     Arity<N>: StoreShape<N>,
@@ -1151,9 +1140,7 @@ where
 ///
 /// Every error [`chase_until`] returns.
 pub fn chase_with<const N: usize>(
-    program: &[DlClause<N>],
-    edb: RelationStore<TermInterner, N>,
-    options: &EvalOptions,
+    program: &[DlClause<N>], edb: RelationStore<TermInterner, N>, options: &EvalOptions,
     stop: Option<&dyn StopSignal>,
 ) -> Result<ChaseOutcome<N>, ChaseError>
 where
@@ -1173,11 +1160,8 @@ where
 
 /// The original executor; only checked preparation can enter this private path.
 fn execute<const N: usize>(
-    program: &[DlClause<N>],
-    edb: RelationStore<TermInterner, N>,
-    options: &EvalOptions,
-    stop: Option<&dyn StopSignal>,
-    termination: ChaseTermination,
+    program: &[DlClause<N>], edb: RelationStore<TermInterner, N>, options: &EvalOptions,
+    stop: Option<&dyn StopSignal>, termination: ChaseTermination,
 ) -> Result<ChaseOutcome<N>, ChaseError>
 where
     Arity<N>: StoreShape<N>,

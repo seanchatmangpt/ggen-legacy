@@ -5,7 +5,7 @@
 // not asked of their items.
 #![allow(missing_docs)]
 
-//! Report-only CanonArrow egress frame measurements over a seeded batch of
+//! Report-only `CanonArrow` egress frame measurements over a seeded batch of
 //! 100,000 rows. Encode is the wire-side cost — the BLAKE3 digest of the
 //! payload region, the 128-byte header wire form, and the frame assembly
 //! (header + payload + 64-byte zero padding). Decode is the receipt-side
@@ -162,8 +162,10 @@ fn bench_ipc_egress_header_flags(c: &mut Bench) {
 /// magic (everything else canonical via `Default`). `from_bytes` must refuse
 /// it on the error path; asserted once before timing.
 fn bad_magic_frame() -> [u8; ArrowEgressHeader::SIZE] {
-    let mut header = ArrowEgressHeader::default();
-    header.magic = *b"BADARRW!";
+    let header = ArrowEgressHeader {
+        magic: *b"BADARRW!",
+        ..Default::default()
+    };
     let wire = header.to_bytes();
     assert!(
         ArrowEgressHeader::from_bytes(&wire).is_err(),
@@ -172,9 +174,9 @@ fn bad_magic_frame() -> [u8; ArrowEgressHeader::SIZE] {
     wire
 }
 
-/// The timed cost of the `from_bytes` rejection path on a BadMagic frame.
+/// The timed cost of the `from_bytes` rejection path on a `BadMagic` frame.
 /// The error path is the load-bearing branch on the receipt side for frames
-/// that are not CanonArrow at all.
+/// that are not `CanonArrow` at all.
 fn bench_ipc_egress_reject(c: &mut Bench) {
     let wire = bad_magic_frame();
     let mut group = c.benchmark_group("ipc_egress_reject");

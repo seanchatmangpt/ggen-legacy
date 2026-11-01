@@ -550,8 +550,7 @@ fn open_predicates(pats: &[PatTriple]) -> Vec<String> {
 /// completeness is the same theorem, so they are inside the hypothesis this crate can act on
 /// even though no rule of the table concludes one.
 fn conclusion_outside_rl(
-    pats: &[PatTriple],
-    decided_by_refutation: &BTreeSet<usize>,
+    pats: &[PatTriple], decided_by_refutation: &BTreeSet<usize>,
 ) -> Vec<String> {
     pats.iter()
         .enumerate()
@@ -577,10 +576,7 @@ fn conclusion_outside_rl(
 /// pattern with nothing to project is a conclusion graph and reaches this through the fold,
 /// which passes the lowering's own index set.
 pub(crate) fn limits(
-    regime: Regime,
-    premise: &RdfDataset,
-    report: &ReasoningReport,
-    pats: &[PatTriple],
+    regime: Regime, premise: &RdfDataset, report: &ReasoningReport, pats: &[PatTriple],
     decided_by_refutation: &BTreeSet<usize>,
 ) -> Vec<UndecidedReason> {
     let mut limits = Vec::new();

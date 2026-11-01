@@ -148,9 +148,7 @@ impl purrdf_hash::error::StructuredError for MetricInputError {
 }
 impl MetricInputError {
     pub(crate) fn branch_length(
-        minimum: &crate::Rat,
-        length: &crate::Rat,
-        progress: &mut crate::context::WorkProgress<'_>,
+        minimum: &crate::Rat, length: &crate::Rat, progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         let captured = (|| {
             let minimum = super::GeoError::diagnostic_number(minimum, progress)?;
@@ -165,8 +163,7 @@ impl MetricInputError {
     }
 
     pub(crate) fn negative_travel(
-        distance: &crate::Rat,
-        operation: TravelOperation,
+        distance: &crate::Rat, operation: TravelOperation,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         let captured =
@@ -186,11 +183,8 @@ impl MetricInputError {
     }
 
     pub(crate) fn parameter(
-        lower: &crate::Rat,
-        upper: Option<&crate::Rat>,
-        operation: UnitParameterOperation,
-        requirement: UnitParameterRequirement,
-        progress: &mut crate::context::WorkProgress<'_>,
+        lower: &crate::Rat, upper: Option<&crate::Rat>, operation: UnitParameterOperation,
+        requirement: UnitParameterRequirement, progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         let captured = (|| {
             let lower = super::GeoError::diagnostic_number(lower, progress)?;
@@ -214,8 +208,7 @@ impl MetricInputError {
     }
 
     pub(crate) fn negative_distance(
-        micrometres: crate::Int,
-        binding: crate::GeoBindingId,
+        micrometres: crate::Int, binding: crate::GeoBindingId,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         crate::context::Retained::produce(
@@ -232,11 +225,8 @@ impl MetricInputError {
     }
 
     pub(crate) fn enclosure(
-        reason: DistanceEnclosureReason,
-        lower: &crate::Rat,
-        upper: &crate::Rat,
-        binding: crate::GeoBindingId,
-        precision_bits: u32,
+        reason: DistanceEnclosureReason, lower: &crate::Rat, upper: &crate::Rat,
+        binding: crate::GeoBindingId, precision_bits: u32,
         progress: &mut crate::context::WorkProgress<'_>,
     ) -> super::GeoError {
         let captured = (|| {

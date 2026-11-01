@@ -9,8 +9,7 @@ use purrdf_lex::allocation::{Admission, Memory, OrderedTable, StorageError};
 /// The body owns only newly constructed local payloads; failed locals die
 /// before their original refund. Preserve a refused refund as exact debt.
 pub(crate) fn construct_in<T, A: Admission + ?Sized>(
-    memory: &mut Memory<'_, A>,
-    retired: &mut usize,
+    memory: &mut Memory<'_, A>, retired: &mut usize,
     body: impl FnOnce(&mut Memory<'_, A>) -> Result<T, StorageError>,
 ) -> Result<T, StorageError> {
     let before = memory.admitted_bytes();
@@ -22,9 +21,7 @@ pub(crate) fn construct_in<T, A: Admission + ?Sized>(
 }
 
 pub(crate) fn reserve_ordered_in<K, V, A: Admission + ?Sized>(
-    table: &mut OrderedTable<K, V>,
-    memory: &mut Memory<'_, A>,
-    retired: &mut usize,
+    table: &mut OrderedTable<K, V>, memory: &mut Memory<'_, A>, retired: &mut usize,
 ) -> Result<(), StorageError> {
     let before = memory.admitted_bytes();
     let old = table.storage_bytes()?;
@@ -42,10 +39,7 @@ pub(crate) fn reserve_ordered_in<K, V, A: Admission + ?Sized>(
 }
 
 pub(crate) fn reserve_index_in<K: Eq + std::hash::Hash, V, A: Admission + ?Sized>(
-    map: &mut FastMap<K, V>,
-    retained: &mut usize,
-    additional: usize,
-    memory: &mut Memory<'_, A>,
+    map: &mut FastMap<K, V>, retained: &mut usize, additional: usize, memory: &mut Memory<'_, A>,
     retired: &mut usize,
 ) -> Result<(), StorageError> {
     let required = map
@@ -69,11 +63,7 @@ pub(crate) fn reserve_index_in<K: Eq + std::hash::Hash, V, A: Admission + ?Sized
 /// old allocation dies but its shrink refuses, retain that still-held charge;
 /// this bookkeeping admits no payload after construction and clones no grant.
 pub(crate) fn record_factory_retirement(
-    retired: &mut usize,
-    before: usize,
-    old: usize,
-    new: usize,
-    after: usize,
+    retired: &mut usize, before: usize, old: usize, new: usize, after: usize,
 ) {
     let retained = before
         .checked_sub(old)
@@ -88,9 +78,7 @@ pub(crate) fn record_factory_retirement(
 }
 
 pub(crate) fn reserve_array_in<T, A: Admission + ?Sized>(
-    values: &mut Vec<T>,
-    memory: &mut Memory<'_, A>,
-    retired: &mut usize,
+    values: &mut Vec<T>, memory: &mut Memory<'_, A>, retired: &mut usize,
     reserve: impl FnOnce(&mut Vec<T>, &mut Memory<'_, A>) -> Result<(), StorageError>,
 ) -> Result<(), StorageError> {
     let before = memory.admitted_bytes();
@@ -110,10 +98,7 @@ pub(crate) fn reserve_array_in<T, A: Admission + ?Sized>(
 }
 
 pub(crate) fn reserve_array_growth<T, A: Admission + ?Sized>(
-    values: &mut Vec<T>,
-    required: usize,
-    memory: &mut Memory<'_, A>,
-    retired: &mut usize,
+    values: &mut Vec<T>, required: usize, memory: &mut Memory<'_, A>, retired: &mut usize,
 ) -> Result<(), StorageError> {
     reserve_array_in(values, memory, retired, |values, memory| {
         let capacity = purrdf_lex::allocation::growth_capacity::<T>(values.capacity(), required)?;
@@ -122,8 +107,7 @@ pub(crate) fn reserve_array_growth<T, A: Admission + ?Sized>(
 }
 
 pub(crate) fn flush_retired_bytes<A: Admission + ?Sized>(
-    bytes: &mut usize,
-    memory: &mut Memory<'_, A>,
+    bytes: &mut usize, memory: &mut Memory<'_, A>,
 ) -> Result<(), StorageError> {
     memory.release_bytes(*bytes)?;
     *bytes = 0;

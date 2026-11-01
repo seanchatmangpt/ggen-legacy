@@ -39,8 +39,7 @@ impl PydanticModuleConfig {
     /// Returns [`PydanticError`] when the path is not portable Python syntax,
     /// collides with a generated root module, or the documentation is invalid.
     pub fn new(
-        path: impl Into<String>,
-        docstring: impl Into<String>,
+        path: impl Into<String>, docstring: impl Into<String>,
     ) -> Result<Self, PydanticError> {
         let path = path.into();
         let docstring = docstring.into();
@@ -104,10 +103,8 @@ impl PydanticClassConfig {
     /// Returns [`PydanticError`] for an invalid module path, blank or oversized
     /// documentation, or metadata beyond the fixed depth, node, or byte ceilings.
     pub fn new(
-        definition_key: impl Into<String>,
-        module_path: impl Into<String>,
-        docstring: impl Into<String>,
-        json_schema_extra: BTreeMap<String, Value>,
+        definition_key: impl Into<String>, module_path: impl Into<String>,
+        docstring: impl Into<String>, json_schema_extra: BTreeMap<String, Value>,
     ) -> Result<Self, PydanticError> {
         let definition_key = definition_key.into();
         let module_path = module_path.into();
@@ -316,8 +313,7 @@ impl PydanticVersionStamp {
     /// Returns [`PydanticError`] when the version exceeds 512 ASCII bytes, does
     /// not match the complete PEP 440 grammar, or the docstring is invalid.
     pub fn new(
-        version: impl Into<String>,
-        module_docstring: impl Into<String>,
+        version: impl Into<String>, module_docstring: impl Into<String>,
     ) -> Result<Self, PydanticError> {
         let version = version.into();
         let module_docstring = module_docstring.into();
@@ -365,9 +361,7 @@ impl PydanticVersionStamp {
 }
 
 pub(super) fn validate_base_config(
-    package_name: &str,
-    package_docstring: &str,
-    models_docstring: &str,
+    package_name: &str, package_docstring: &str, models_docstring: &str,
 ) -> Result<(), PydanticError> {
     validate_dotted_path(package_name, "Pydantic package name")?;
     validate_docstring(package_docstring, "Pydantic package docstring")?;
@@ -382,11 +376,8 @@ pub(super) fn validate_base_config(
 }
 
 pub(super) fn validate_full_config(
-    package_name: &str,
-    package_docstring: &str,
-    models_docstring: &str,
-    topology: Option<&PydanticPackageTopology>,
-    version: Option<&PydanticVersionStamp>,
+    package_name: &str, package_docstring: &str, models_docstring: &str,
+    topology: Option<&PydanticPackageTopology>, version: Option<&PydanticVersionStamp>,
 ) -> Result<(), PydanticError> {
     let mut config_bytes = checked_sum(
         [
@@ -529,8 +520,7 @@ fn validate_module_prefixes(
 }
 
 fn validate_relative_artifacts(
-    modules: Option<&BTreeMap<String, PydanticModuleConfig>>,
-    include_version: bool,
+    modules: Option<&BTreeMap<String, PydanticModuleConfig>>, include_version: bool,
 ) -> Result<BTreeSet<String>, PydanticError> {
     let mut paths = BTreeSet::new();
     let mut folded = BTreeMap::<String, String>::new();
@@ -569,9 +559,7 @@ fn validate_relative_artifacts(
 }
 
 fn insert_artifact(
-    path: String,
-    paths: &mut BTreeSet<String>,
-    folded: &mut BTreeMap<String, String>,
+    path: String, paths: &mut BTreeSet<String>, folded: &mut BTreeMap<String, String>,
 ) -> Result<(), PydanticError> {
     if paths.contains(&path) {
         return Ok(());
@@ -600,8 +588,7 @@ fn insert_artifact(
 }
 
 fn measure_metadata(
-    metadata: &BTreeMap<String, Value>,
-    definition_key: &str,
+    metadata: &BTreeMap<String, Value>, definition_key: &str,
 ) -> Result<(usize, usize), PydanticError> {
     let mut bytes = 1usize;
     let mut nodes = 1usize;
@@ -662,8 +649,7 @@ fn measure_metadata(
 }
 
 fn checked_sum(
-    values: impl IntoIterator<Item = usize>,
-    role: &str,
+    values: impl IntoIterator<Item = usize>, role: &str,
 ) -> Result<usize, PydanticError> {
     values
         .into_iter()

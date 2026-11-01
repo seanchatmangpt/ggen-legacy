@@ -105,9 +105,7 @@ impl ScoreBound {
         self.validate_with(score, None)
     }
     pub(crate) fn validate_with(
-        self,
-        score: Fixed,
-        workspace: Option<&WorkspaceCapability>,
+        self, score: Fixed, workspace: Option<&WorkspaceCapability>,
     ) -> Result<Fixed, TextError> {
         if !(Fixed::ZERO..=self.maximum).contains(&score) {
             return Err(arithmetic_error(
@@ -199,8 +197,7 @@ impl RankingProfile {
     /// Refuses zero fields, repeated field names or
     /// predicates, non-IRI predicates, and references to absent fields.
     pub fn new(
-        fields: Vec<RankingField>,
-        mut mappings: Vec<(TermValue, usize)>,
+        fields: Vec<RankingField>, mut mappings: Vec<(TermValue, usize)>,
         unclassified: Option<usize>,
     ) -> Result<Self, TextError> {
         if fields.is_empty() {
@@ -385,9 +382,7 @@ impl<'p> PreparedCorpus<'p> {
     /// Refuses a mismatching field count or a field total exceeding the
     /// representable `documents * u64::MAX`, including nonzero empty-corpus totals.
     pub fn new(
-        profile: &'p RankingProfile,
-        documents: u64,
-        totals: &[u128],
+        profile: &'p RankingProfile, documents: u64, totals: &[u128],
     ) -> Result<Self, TextError> {
         if profile.uses_field_populations() {
             return Err(TextError::data(
@@ -408,10 +403,7 @@ impl<'p> PreparedCorpus<'p> {
     /// Refuses a dense profile, mismatching field counts, oversized populations,
     /// or a total exceeding the representable `field_documents * u64::MAX`.
     pub fn with_field_populations(
-        profile: &'p RankingProfile,
-        documents: u64,
-        totals: &[u128],
-        populations: &[u64],
+        profile: &'p RankingProfile, documents: u64, totals: &[u128], populations: &[u64],
     ) -> Result<Self, TextError> {
         if !profile.uses_field_populations() || populations.len() != profile.fields.len() {
             return Err(TextError::data(
@@ -423,10 +415,7 @@ impl<'p> PreparedCorpus<'p> {
 
     /// Shared corpus admission before either constructor publishes statistics.
     fn validate(
-        profile: &'p RankingProfile,
-        documents: u64,
-        totals: &[u128],
-        populations: &[u64],
+        profile: &'p RankingProfile, documents: u64, totals: &[u128], populations: &[u64],
     ) -> Result<Self, TextError> {
         Self::validate_owned(
             profile,
@@ -438,10 +427,7 @@ impl<'p> PreparedCorpus<'p> {
     }
 
     pub(crate) fn from_index_owned(
-        profile: &'p RankingProfile,
-        documents: u64,
-        totals: &[u128],
-        populations: &[u64],
+        profile: &'p RankingProfile, documents: u64, totals: &[u128], populations: &[u64],
         workspace: &WorkspaceCapability,
     ) -> Result<Self, TextError> {
         if profile.uses_field_populations() {
@@ -461,10 +447,7 @@ impl<'p> PreparedCorpus<'p> {
     }
 
     fn validate_owned(
-        profile: &'p RankingProfile,
-        documents: u64,
-        totals: &[u128],
-        populations: &[u64],
+        profile: &'p RankingProfile, documents: u64, totals: &[u128], populations: &[u64],
         workspace: &WorkspaceCapability,
     ) -> Result<Self, TextError> {
         if totals.len() != profile.fields.len() {
@@ -509,16 +492,13 @@ impl<'p> PreparedCorpus<'p> {
     /// Refuses every document frequency outside the corpus,
     /// even when no document will subsequently be scored.
     pub fn prepare_query(
-        &self,
-        frequencies: &[(&str, u64)],
+        &self, frequencies: &[(&str, u64)],
     ) -> Result<PreparedQuery<'_, 'p>, TextError> {
         self.prepare_query_owned(frequencies, &WorkspaceCapability::default())
     }
 
     pub(crate) fn prepare_query_owned(
-        &self,
-        frequencies: &[(&str, u64)],
-        workspace: &WorkspaceCapability,
+        &self, frequencies: &[(&str, u64)], workspace: &WorkspaceCapability,
     ) -> Result<PreparedQuery<'_, 'p>, TextError> {
         let mut terms = admitted(AdmittedVec::with_capacity(frequencies.len(), workspace))?;
         let native = workspace.is_bounded().then_some(workspace);
@@ -733,11 +713,7 @@ impl PreparedQuery<'_, '_> {
 
 /// Validate raw facts before considering zero contribution shortcuts.
 fn validate_field(
-    input: FieldInput,
-    total: u128,
-    documents: u64,
-    remaining: u64,
-    df: u64,
+    input: FieldInput, total: u128, documents: u64, remaining: u64, df: u64,
     workspace: Option<&WorkspaceCapability>,
 ) -> Result<(), TextError> {
     if input.term_frequency > input.length || u128::from(input.length) > total {
@@ -764,9 +740,7 @@ fn validate_field(
 /// Shifted IDF, checked before any zero-contribution shortcuts.
 /// At large corpus sizes a positive real value may round to exact zero.
 fn inverse_document_frequency(
-    documents: u64,
-    frequency: u64,
-    workspace: Option<&WorkspaceCapability>,
+    documents: u64, frequency: u64, workspace: Option<&WorkspaceCapability>,
 ) -> Result<Fixed, TextError> {
     if frequency > documents {
         return Err(data_error(

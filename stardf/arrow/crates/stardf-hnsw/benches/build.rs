@@ -160,12 +160,8 @@ fn main() {
 /// whose digest is zero or equal to another scale's would be measuring nothing. It is
 /// computed outside the build timing.
 fn report(
-    scale: usize,
-    dims: usize,
-    generate: std::time::Duration,
-    arithmetic: &str,
-    build: std::time::Duration,
-    image: &[u8],
+    scale: usize, dims: usize, generate: std::time::Duration, arithmetic: &str,
+    build: std::time::Duration, image: &[u8],
 ) {
     let digest = fnv1a64(black_box(image));
     println!(

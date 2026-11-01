@@ -93,9 +93,7 @@ impl Output for Destination<'_> {
 }
 
 pub(super) fn compile<S: Admission>(
-    source: &str,
-    mode: Mode,
-    storage: S,
+    source: &str, mode: Mode, storage: S,
 ) -> Result<CompiledGlob<S>, CompileError> {
     let mut account = Account(storage);
     let mut counts = Counts::default();
@@ -125,17 +123,13 @@ pub(super) fn compile<S: Admission>(
 }
 
 pub(super) fn compile_set<S: Admission>(
-    sources: &[impl AsRef<str>],
-    mode: Mode,
-    storage: S,
+    sources: &[impl AsRef<str>], mode: Mode, storage: S,
 ) -> Result<CompiledGlobSet<S>, SetCompileError> {
     compile_set_iter(sources.iter().map(AsRef::as_ref), mode, storage)
 }
 
 pub(super) fn compile_set_iter<'a, S: Admission>(
-    sources: impl Clone + ExactSizeIterator<Item = &'a str>,
-    mode: Mode,
-    storage: S,
+    sources: impl Clone + ExactSizeIterator<Item = &'a str>, mode: Mode, storage: S,
 ) -> Result<CompiledGlobSet<S>, SetCompileError> {
     let mut account = Account(storage);
     let mut counts = Counts::default();

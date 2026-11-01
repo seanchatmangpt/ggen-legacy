@@ -34,11 +34,7 @@ enum DirectInvocation {
 
 impl AdmittedGeodesicReference<'_> {
     pub(crate) fn direct_metered(
-        &self,
-        start: &LonLat,
-        azimuth: &Rat,
-        length: &Metres,
-        context: &mut MetricContext,
+        &self, start: &LonLat, azimuth: &Rat, length: &Metres, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<DirectResult, GeoError> {
         context.begin(1)?;
@@ -134,8 +130,7 @@ impl DirectResult {
     /// # Errors
     /// Preserves native numerical, checked layout, allocator and caller refusal.
     pub fn certificate_bytes_admitted(
-        &self,
-        admission: &mut crate::carrier::InputAdmission<'_, '_, '_>,
+        &self, admission: &mut crate::carrier::InputAdmission<'_, '_, '_>,
     ) -> Result<Vec<u8>, GeoError> {
         let mut output = crate::metric::CertificateWriter::new(admission);
         output.bytes(DIRECT_CERTIFICATE.as_bytes())?;
@@ -169,11 +164,7 @@ impl PreparedGeodesic {
     /// Refuses negative length, reference mismatch, unresolved output rounding,
     /// operational exhaustion or a grid whose physical bound exceeds one micrometre.
     pub fn direct(
-        &self,
-        start: &LonLat,
-        azimuth: &Rat,
-        length: &Metres,
-        context: &mut MetricContext,
+        &self, start: &LonLat, azimuth: &Rat, length: &Metres, context: &mut MetricContext,
     ) -> Result<DirectResult, GeoError> {
         self.direct_with_grid(start, azimuth, length, DirectOutputGrid::DEGREE15, context)
     }
@@ -184,11 +175,7 @@ impl PreparedGeodesic {
     /// Refuses a grid beyond admission or whose physical quantum exceeds the
     /// one-micrometre certificate, plus the errors of [`Self::direct`].
     pub fn direct_with_grid(
-        &self,
-        start: &LonLat,
-        azimuth: &Rat,
-        length: &Metres,
-        grid: DirectOutputGrid,
+        &self, start: &LonLat, azimuth: &Rat, length: &Metres, grid: DirectOutputGrid,
         context: &mut MetricContext,
     ) -> Result<DirectResult, GeoError> {
         context.begin(1)?;
@@ -207,11 +194,7 @@ impl PreparedGeodesic {
     /// # Errors
     /// Adds the external observer's refusals to [`Self::direct`].
     pub fn direct_metered(
-        &self,
-        start: &LonLat,
-        azimuth: &Rat,
-        length: &Metres,
-        context: &mut MetricContext,
+        &self, start: &LonLat, azimuth: &Rat, length: &Metres, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<DirectResult, GeoError> {
         self.direct_with_grid_metered(
@@ -229,13 +212,8 @@ impl PreparedGeodesic {
     /// # Errors
     /// Adds external refusal to [`Self::direct_with_grid`].
     pub fn direct_with_grid_metered(
-        &self,
-        start: &LonLat,
-        azimuth: &Rat,
-        length: &Metres,
-        grid: DirectOutputGrid,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, start: &LonLat, azimuth: &Rat, length: &Metres, grid: DirectOutputGrid,
+        context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<DirectResult, GeoError> {
         context.begin(1)?;
         let mut chunks = ChunkObserver::new(Some(observer));
@@ -256,9 +234,7 @@ impl PreparedGeodesic {
     /// # Errors
     /// Refuses shape, reference, numerical environment and resource/rounding errors.
     pub fn direct_batch(
-        &self,
-        inputs: &[(LonLat, Rat, Metres)],
-        output: &mut [Option<DirectResult>],
+        &self, inputs: &[(LonLat, Rat, Metres)], output: &mut [Option<DirectResult>],
         context: &mut MetricContext,
     ) -> Result<(), GeoError> {
         self.direct_batch_with_grid(inputs, output, DirectOutputGrid::DEGREE15, context)
@@ -269,11 +245,8 @@ impl PreparedGeodesic {
     /// # Errors
     /// Adds the observer's refusals to [`Self::direct_batch`].
     pub fn direct_batch_metered(
-        &self,
-        inputs: &[(LonLat, Rat, Metres)],
-        output: &mut [Option<DirectResult>],
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, inputs: &[(LonLat, Rat, Metres)], output: &mut [Option<DirectResult>],
+        context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<(), GeoError> {
         self.direct_batch_with_grid_metered(
             inputs,
@@ -290,11 +263,8 @@ impl PreparedGeodesic {
     /// Refuses the same grid/shape/resources as scalar explicit propagation;
     /// every output slot is cleared on refusal.
     pub fn direct_batch_with_grid(
-        &self,
-        inputs: &[(LonLat, Rat, Metres)],
-        output: &mut [Option<DirectResult>],
-        grid: DirectOutputGrid,
-        context: &mut MetricContext,
+        &self, inputs: &[(LonLat, Rat, Metres)], output: &mut [Option<DirectResult>],
+        grid: DirectOutputGrid, context: &mut MetricContext,
     ) -> Result<(), GeoError> {
         self.direct_batch_borrowed(
             inputs
@@ -311,12 +281,8 @@ impl PreparedGeodesic {
     /// # Errors
     /// Adds observer refusal to [`Self::direct_batch_with_grid`].
     pub fn direct_batch_with_grid_metered(
-        &self,
-        inputs: &[(LonLat, Rat, Metres)],
-        output: &mut [Option<DirectResult>],
-        grid: DirectOutputGrid,
-        context: &mut MetricContext,
-        observer: &mut dyn MetricWorkObserver,
+        &self, inputs: &[(LonLat, Rat, Metres)], output: &mut [Option<DirectResult>],
+        grid: DirectOutputGrid, context: &mut MetricContext, observer: &mut dyn MetricWorkObserver,
     ) -> Result<(), GeoError> {
         self.direct_batch_borrowed_metered(
             inputs
@@ -334,11 +300,8 @@ impl PreparedGeodesic {
     /// # Errors
     /// Refuses shape, grid, environment and operational failures with no partial output.
     pub fn direct_batch_borrowed<'a>(
-        &self,
-        inputs: impl ExactSizeIterator<Item = (&'a LonLat, &'a Rat, &'a Metres)>,
-        output: &mut [Option<DirectResult>],
-        grid: DirectOutputGrid,
-        context: &mut MetricContext,
+        &self, inputs: impl ExactSizeIterator<Item = (&'a LonLat, &'a Rat, &'a Metres)>,
+        output: &mut [Option<DirectResult>], grid: DirectOutputGrid, context: &mut MetricContext,
     ) -> Result<(), GeoError> {
         self.direct_batch_observed(inputs, output, grid, context, None)
     }
@@ -348,22 +311,16 @@ impl PreparedGeodesic {
     /// # Errors
     /// Adds the observer's refusal to [`Self::direct_batch_borrowed`].
     pub fn direct_batch_borrowed_metered<'a>(
-        &self,
-        inputs: impl ExactSizeIterator<Item = (&'a LonLat, &'a Rat, &'a Metres)>,
-        output: &mut [Option<DirectResult>],
-        grid: DirectOutputGrid,
-        context: &mut MetricContext,
+        &self, inputs: impl ExactSizeIterator<Item = (&'a LonLat, &'a Rat, &'a Metres)>,
+        output: &mut [Option<DirectResult>], grid: DirectOutputGrid, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<(), GeoError> {
         self.direct_batch_observed(inputs, output, grid, context, Some(observer))
     }
 
     fn direct_batch_observed<'a>(
-        &self,
-        inputs: impl ExactSizeIterator<Item = (&'a LonLat, &'a Rat, &'a Metres)>,
-        output: &mut [Option<DirectResult>],
-        grid: DirectOutputGrid,
-        context: &mut MetricContext,
+        &self, inputs: impl ExactSizeIterator<Item = (&'a LonLat, &'a Rat, &'a Metres)>,
+        output: &mut [Option<DirectResult>], grid: DirectOutputGrid, context: &mut MetricContext,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<(), GeoError> {
         let mut chunks = ChunkObserver::new(observer);
@@ -385,13 +342,8 @@ impl PreparedGeodesic {
     }
 
     fn compute_direct(
-        &self,
-        start: &LonLat,
-        azimuth: &Rat,
-        length: &Metres,
-        invocation: DirectInvocation,
-        context: &mut MetricContext,
-        chunks: &mut ChunkObserver<'_, '_>,
+        &self, start: &LonLat, azimuth: &Rat, length: &Metres, invocation: DirectInvocation,
+        context: &mut MetricContext, chunks: &mut ChunkObserver<'_, '_>,
     ) -> Result<DirectResult, GeoError> {
         context.charge_work(1)?;
         chunks
@@ -579,9 +531,7 @@ impl PreparedGeodesic {
 }
 
 fn validate_grid(
-    grid: DirectOutputGrid,
-    prepared: &PreparedGeodesic,
-    context: &mut MetricContext,
+    grid: DirectOutputGrid, prepared: &PreparedGeodesic, context: &mut MetricContext,
     chunks: &mut ChunkObserver<'_, '_>,
 ) -> Result<(), GeoError> {
     let progress = match &mut chunks.progress {
@@ -625,16 +575,10 @@ pub fn direct(start: LonLat, azimuth: Rat, length: Metres) -> Result<DirectResul
 
 #[allow(clippy::too_many_arguments)] // Original line inputs and separate restricted observer/scratch capabilities.
 fn propagate(
-    start: &LonLat,
-    azimuth: &Rat,
-    length: &Metres,
-    grid: DirectOutputGrid,
+    start: &LonLat, azimuth: &Rat, length: &Metres, grid: DirectOutputGrid,
     prepared: &PreparedGeodesic,
-    coefficients: Option<&crate::context::Retained<super::IntegralCoefficients>>,
-    order: usize,
-    iterations: u32,
-    chunks: &mut ChunkObserver<'_, '_>,
-    math: &mut CoordinateMath,
+    coefficients: Option<&crate::context::Retained<super::IntegralCoefficients>>, order: usize,
+    iterations: u32, chunks: &mut ChunkObserver<'_, '_>, math: &mut CoordinateMath,
 ) -> Result<(Rat, Rat, Rat), SolveError> {
     let azimuth_interval = fixed_from_rat(azimuth, math)?;
     let distance = fixed_from_rat(length.exact(), math)?;
@@ -655,17 +599,10 @@ fn propagate(
 
 #[allow(clippy::too_many_arguments)] // Certified line inputs and separate restricted scratch/observer capabilities.
 fn propagate_enclosed(
-    start: &LonLat,
-    azimuth: &FixedInterval,
-    exact_azimuth: Option<&Rat>,
-    distance: &FixedInterval,
-    grid: DirectOutputGrid,
-    prepared: &PreparedGeodesic,
-    coefficients: Option<&crate::context::Retained<super::IntegralCoefficients>>,
-    order: usize,
-    iterations: u32,
-    chunks: &mut ChunkObserver<'_, '_>,
-    math: &mut CoordinateMath,
+    start: &LonLat, azimuth: &FixedInterval, exact_azimuth: Option<&Rat>, distance: &FixedInterval,
+    grid: DirectOutputGrid, prepared: &PreparedGeodesic,
+    coefficients: Option<&crate::context::Retained<super::IntegralCoefficients>>, order: usize,
+    iterations: u32, chunks: &mut ChunkObserver<'_, '_>, math: &mut CoordinateMath,
 ) -> Result<(Rat, Rat, Rat), SolveError> {
     let line = super::line::LineState::new_with_coefficients(
         start,
@@ -735,11 +672,8 @@ fn propagate_enclosed(
 }
 
 fn endpoint(
-    arc: &super::arc_view::FixedArcLine,
-    sigma: &FixedInterval,
-    grid: DirectOutputGrid,
-    chunks: &mut ChunkObserver<'_, '_>,
-    math: &mut CoordinateMath,
+    arc: &super::arc_view::FixedArcLine, sigma: &FixedInterval, grid: DirectOutputGrid,
+    chunks: &mut ChunkObserver<'_, '_>, math: &mut CoordinateMath,
 ) -> Result<(Rat, Rat, Rat), SolveError> {
     let image = arc.image(sigma, false, chunks, math)?;
     let line = arc.state();
@@ -799,9 +733,7 @@ pub(crate) fn canonical_endpoint(longitude: Rat, latitude: Rat) -> Result<LonLat
 }
 
 fn quantize_decimal(
-    value: &FixedInterval,
-    grid: DirectOutputGrid,
-    math: &mut CoordinateMath,
+    value: &FixedInterval, grid: DirectOutputGrid, math: &mut CoordinateMath,
 ) -> Result<Rat, MathError> {
     let (lower, upper) = value.round_decimal(grid.decimal_places(), math)?;
     if lower != upper {
@@ -814,18 +746,13 @@ fn quantize_decimal(
 }
 
 pub(super) fn quantize_angle(
-    value: &FixedInterval,
-    origin: i64,
-    math: &mut CoordinateMath,
+    value: &FixedInterval, origin: i64, math: &mut CoordinateMath,
 ) -> Result<Rat, MathError> {
     quantize_angle_grid(value, origin, DirectOutputGrid::DEGREE15, math)
 }
 
 fn quantize_angle_grid(
-    value: &FixedInterval,
-    origin: i64,
-    grid: DirectOutputGrid,
-    math: &mut CoordinateMath,
+    value: &FixedInterval, origin: i64, grid: DirectOutputGrid, math: &mut CoordinateMath,
 ) -> Result<Rat, MathError> {
     let bits = value
         .lower()
@@ -844,10 +771,7 @@ fn quantize_angle_grid(
 }
 
 fn quantize_angle_bounds(
-    value: &FixedInterval,
-    origin: i64,
-    grid: DirectOutputGrid,
-    math: &mut CoordinateMath,
+    value: &FixedInterval, origin: i64, grid: DirectOutputGrid, math: &mut CoordinateMath,
 ) -> Result<Rat, MathError> {
     let (lower, upper) = crate::numerical::exact_bounds_in(value, math)?;
     let bits = lower
@@ -928,11 +852,7 @@ impl PreparedGeodesic {
     /// Refuses nonunique endpoint branches, parameter range, unresolved rounding
     /// and the same numerical/resource failures as direct propagation.
     pub fn shortest_arc_at(
-        &self,
-        a: &LonLat,
-        b: &LonLat,
-        t: &Rat,
-        context: &mut MetricContext,
+        &self, a: &LonLat, b: &LonLat, t: &Rat, context: &mut MetricContext,
     ) -> Result<DirectResult, GeoError> {
         self.shortest_arc_at_observed(a, b, t, context, None)
     }
@@ -942,22 +862,14 @@ impl PreparedGeodesic {
     /// # Errors
     /// Adds the observer's typed failures to [`Self::shortest_arc_at`].
     pub fn shortest_arc_at_metered(
-        &self,
-        a: &LonLat,
-        b: &LonLat,
-        t: &Rat,
-        context: &mut MetricContext,
+        &self, a: &LonLat, b: &LonLat, t: &Rat, context: &mut MetricContext,
         observer: &mut dyn MetricWorkObserver,
     ) -> Result<DirectResult, GeoError> {
         self.shortest_arc_at_observed(a, b, t, context, Some(observer))
     }
 
     fn shortest_arc_at_observed(
-        &self,
-        a: &LonLat,
-        b: &LonLat,
-        t: &Rat,
-        context: &mut MetricContext,
+        &self, a: &LonLat, b: &LonLat, t: &Rat, context: &mut MetricContext,
         observer: Option<&mut dyn MetricWorkObserver>,
     ) -> Result<DirectResult, GeoError> {
         if let Some(requirement) =

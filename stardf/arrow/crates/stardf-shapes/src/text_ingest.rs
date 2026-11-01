@@ -42,8 +42,7 @@ use purrdf_iri::terminals;
 /// statement is reported; the returned `Err` is the list of per-statement error
 /// strings.
 pub fn parse_turtle_to_dataset(
-    ttl: &str,
-    base: Option<&str>,
+    ttl: &str, base: Option<&str>,
 ) -> Result<Arc<RdfDataset>, Vec<String>> {
     if ttl.is_empty() {
         return Ok(empty_dataset());

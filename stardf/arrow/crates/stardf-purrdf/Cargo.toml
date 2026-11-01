@@ -3,17 +3,37 @@
 
 [package]
 name = "stardf-rs"
-description = "PurRDF umbrella crate: RDF 1.2 implementation, slices, and SHACL/ShEx shape validation"
+# Lane 07-publish-metadata (2026-10-31): v26.11.1 first-class closure member —
+# the umbrella joins the publish set with the unified workspace metadata
+# (description/keywords/categories inherited via `X.workspace = true`). This
+# overrides the upstream-verbatim literals ("PurRDF umbrella crate: RDF 1.2
+# implementation, slices, and SHACL/ShEx shape validation"; keywords
+# rdf/rdf-12/shacl/shex/sparql; categories parser-implementations/encoding/
+# data-structures) per the lane-07 unified-metadata contract; `documentation`
+# stays upstream-verbatim (docs.rs/purrdf, pre-existing, out of lane scope).
+# Manifest-level publishability only: the umbrella's path-only dep keys
+# (stardf-process, stardf-rdf, stardf-slice, stardf-shapes, stardf-shex,
+# stardf-gts, stardf-sparql-algebra/eval/results, stardf-entail, purrdf-arrow)
+# were a release-realm (lane 08 / coordinator) concern — RESOLVED lane H03
+# (2026-10-31): all root [workspace.dependencies] entries consumed via
+# `workspace = true` are version+path dual-keyed now (G5), at each member's
+# real version. The umbrella's remaining hard deps on NON-closure members
+# (stardf-datalog/entail/geo/glob/gts/hnsw/json/markdown/mime/process/retrieval/
+# shapes/shex/slice/sparql-eval/text/validate + optional stardf-duckdb) stay a
+# G8 blocker under the D17 operator registration — publish-flag + dual-key are
+# necessary, not sufficient, for this crate.
+# `cargo check` is unaffected by any of this block.
 version.workspace = true
 edition.workspace = true
-publish = false
+publish = true
 license.workspace = true
 repository.workspace = true
 homepage.workspace = true
 documentation = "https://docs.rs/purrdf"
 rust-version.workspace = true
-keywords = ["rdf", "rdf-12", "shacl", "shex", "sparql"]
-categories = ["parser-implementations", "encoding", "data-structures"]
+description.workspace = true
+keywords.workspace = true
+categories.workspace = true
 
 [package.metadata.docs.rs]
 all-features = true
@@ -39,7 +59,6 @@ sql = ["dep:stardf-sql", "dep:stardf-duckdb"]
 purrdf-columnar = { workspace = true }
 purrdf-arrow = { workspace = true }
 stardf-branchless = { workspace = true }
-stardf-process = { workspace = true }
 stardf-sql = { workspace = true, optional = true }
 stardf-duckdb = { workspace = true, optional = true }
 stardf-rdf = { workspace = true }

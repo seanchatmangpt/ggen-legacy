@@ -477,10 +477,7 @@ pub fn walk_manifest(manifest_path: &Path, visit: &mut dyn FnMut(&Arc<RdfDataset
 
 /// Parse one manifest entry into a [`W3cCase`] (skipping non-`sht:Validate`).
 pub fn parse_entry(
-    g: &RdfDataset,
-    entry: &Term,
-    manifest_path: &Path,
-    root: &Path,
+    g: &RdfDataset, entry: &Term, manifest_path: &Path, root: &Path,
 ) -> Option<W3cCase> {
     let is_validate = objects(g, entry, rdf::TYPE)
         .iter()
@@ -632,8 +629,7 @@ pub fn is_annotation_property(predicate: &str) -> bool {
 /// Every expected result carrying result annotations, with its `(property,
 /// value)` pairs, each value [`norm`]alized.
 fn expected_result_annotations(
-    g: &RdfDataset,
-    report_node: &Term,
+    g: &RdfDataset, report_node: &Term,
 ) -> Vec<(Tuple, BTreeSet<(String, String)>)> {
     objects(g, report_node, sh::RESULT)
         .into_iter()
@@ -665,10 +661,7 @@ fn expected_result_details(g: &RdfDataset, report_node: &Term, id: &str) -> Vec<
 /// detail chain that revisits a result is a malformed frozen corpus and panics,
 /// as a malformed RDF list does.
 fn expected_result(
-    g: &RdfDataset,
-    result: &Term,
-    id: &str,
-    path: &mut Vec<Term>,
+    g: &RdfDataset, result: &Term, id: &str, path: &mut Vec<Term>,
 ) -> ExpectedResult {
     assert!(
         !path.contains(result),
@@ -917,9 +910,7 @@ impl purrdf_sparql_eval::PropertyFunction for CorpusRelation {
     }
 
     fn open<'cursor>(
-        &self,
-        _args: &purrdf_sparql_eval::PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, _args: &purrdf_sparql_eval::PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn purrdf_sparql_eval::PfCursor + 'cursor>, purrdf_sparql_eval::EvalError>
     where
         Self: 'cursor,

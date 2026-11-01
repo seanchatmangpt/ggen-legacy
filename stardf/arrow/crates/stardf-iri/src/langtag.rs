@@ -1856,8 +1856,7 @@ pub fn identity_fold(tag: &str) -> String {
 /// # Errors
 /// Returns native layout, admission or allocator refusal.
 pub fn identity_fold_with_memory<S: purrdf_lex::allocation::Admission + ?Sized>(
-    tag: &str,
-    memory: &mut purrdf_lex::allocation::Memory<'_, S>,
+    tag: &str, memory: &mut purrdf_lex::allocation::Memory<'_, S>,
 ) -> Result<String, purrdf_lex::allocation::StorageError> {
     let mut text = memory.string(tag)?;
     text.make_ascii_lowercase();
@@ -2179,8 +2178,7 @@ pub fn parse_with(tag: &str, profile: Profile) -> Result<LanguageTag<'_>, Langua
 /// RFC 5646 reading above needs no envelope check, having already passed the
 /// same one inside [`parse_with`].
 fn parse_concrete_syntax_langtag(
-    tag: &str,
-    profile: Profile,
+    tag: &str, profile: Profile,
 ) -> Result<LanguageTag<'_>, LanguageTagError> {
     if let Ok(parsed) = parse_with(tag, Profile::Rfc5646PrivateUseRelaxed) {
         return Ok(parsed);
@@ -2535,8 +2533,7 @@ fn take_extensions(cursor: &mut Cursor<'_>) -> Result<Option<Span>, LanguageTagE
 /// its subtags is the single thing
 /// [`Profile::Rfc5646PrivateUseRelaxed`] widens.
 fn take_private_use(
-    cursor: &mut Cursor<'_>,
-    profile: Profile,
+    cursor: &mut Cursor<'_>, profile: Profile,
 ) -> Result<Option<Span>, LanguageTagError> {
     let Some(marker) = cursor.take_if(is_private_use_marker) else {
         return Ok(None);

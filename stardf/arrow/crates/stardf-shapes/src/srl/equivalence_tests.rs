@@ -334,10 +334,7 @@ fn random_rule() -> impl Strategy<Value = RandomRule> {
 
 /// The document: data over five nodes, and one shape per rule.
 fn document(
-    edges: &[(u8, u8, u8)],
-    types: &[(u8, bool)],
-    subclass: bool,
-    rules: &[RandomRule],
+    edges: &[(u8, u8, u8)], types: &[(u8, bool)], subclass: bool, rules: &[RandomRule],
 ) -> String {
     let mut ttl = String::from(
         "@prefix ex: <http://example.org/ns#> .\n\

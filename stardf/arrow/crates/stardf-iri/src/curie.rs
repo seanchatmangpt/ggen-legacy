@@ -228,9 +228,7 @@ pub fn contract(iri: &str, prefixes: &PrefixMap) -> Option<String> {
 /// );
 /// ```
 pub fn contract_where(
-    iri: &str,
-    prefixes: &PrefixMap,
-    accepts: impl Fn(&str, &str) -> bool,
+    iri: &str, prefixes: &PrefixMap, accepts: impl Fn(&str, &str) -> bool,
 ) -> Option<String> {
     let mut best: Option<(&str, &str)> = None; // (prefix, namespace)
     for (prefix, namespace) in &prefixes.map {

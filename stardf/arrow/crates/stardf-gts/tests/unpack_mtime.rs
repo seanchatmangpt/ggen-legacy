@@ -1,6 +1,10 @@
 // SPDX-FileCopyrightText: 2026 Blackcat Informatics® Inc. <paudley@blackcatinformatics.ca>
 // SPDX-License-Identifier: MIT OR Apache-2.0 OR MulanPSL-2.0
 
+// LINT-GATE (G03 offline ladder, 2026-10-31, D17): test crate sits outside the
+// stardf-gts lib gate; witnessed-lint gate only, bodies verbatim.
+#![allow(clippy::unnecessary_debug_formatting)]
+
 //! Unpacking restores each entry's recorded `files:modified` instant to the
 //! nanosecond, per entry: directories, regular files, hardlinks, and targets
 //! that are read-only on disk.

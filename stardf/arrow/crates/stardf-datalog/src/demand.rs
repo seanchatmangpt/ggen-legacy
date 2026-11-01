@@ -229,10 +229,7 @@ where
 /// Returns an unsupported fragment, namespace/dictionary failure, or the original
 /// compiler/evaluator refusal. A budget or cancellation refusal yields no answer owner.
 pub fn evaluate_demanded<D: TermDictionary, const N: usize>(
-    rules: &[DlClause<N>],
-    goal: &ClauseAtom<N>,
-    edb: RelationStore<D, N>,
-    options: &EvalOptions,
+    rules: &[DlClause<N>], goal: &ClauseAtom<N>, edb: RelationStore<D, N>, options: &EvalOptions,
     stop: Option<&dyn StopSignal>,
 ) -> Result<DemandAnswer<D, N>, DemandError<D::Error>>
 where
@@ -265,8 +262,7 @@ where
 }
 
 fn validate<E, const N: usize>(
-    rules: &[DlClause<N>],
-    goal: &ClauseAtom<N>,
+    rules: &[DlClause<N>], goal: &ClauseAtom<N>,
 ) -> Result<(), DemandError<E>> {
     for (index, rule) in rules.iter().enumerate() {
         let refuse = |reason| DemandError::Unsupported {
@@ -347,8 +343,7 @@ fn bind<const N: usize>(atom: &ClauseAtom<N>, bound: &mut BTreeSet<String>) {
     );
 }
 fn head_bindings<const N: usize>(
-    head: &ClauseAtom<N>,
-    pattern: BindingPattern,
+    head: &ClauseAtom<N>, pattern: BindingPattern,
 ) -> BTreeSet<String> {
     arguments(head)
         .enumerate()
@@ -415,10 +410,7 @@ const NAMESPACE: Domain = Domain::new(b"purrdf-datalog/demand-predicates/v1");
 /// One digest, one common collision nonce and unique sorted ordinals avoid
 /// both existing dictionary terms and collisions between internal descriptors.
 fn names<D: TermDictionary, const N: usize>(
-    descriptors: &[Descriptor],
-    rules: &[DlClause<N>],
-    goal: &ClauseAtom<N>,
-    dictionary: &D,
+    descriptors: &[Descriptor], rules: &[DlClause<N>], goal: &ClauseAtom<N>, dictionary: &D,
     additional: usize,
 ) -> Result<Vec<String>, DemandError<D::Error>> {
     let authored: BTreeSet<_> = rules
@@ -473,10 +465,7 @@ fn names<D: TermDictionary, const N: usize>(
 }
 
 fn demand_atom<const N: usize>(
-    atom: &ClauseAtom<N>,
-    descriptor: &Descriptor,
-    name: &str,
-    unit: &str,
+    atom: &ClauseAtom<N>, descriptor: &Descriptor, name: &str, unit: &str,
 ) -> ClauseAtom<N> {
     // Dense payload adornments [subject, object, graph] retain their native
     // positions [0, 2, 3]. In particular, DefaultGraph never leaves its graph slot.
@@ -491,9 +480,7 @@ fn demand_atom<const N: usize>(
 }
 
 fn select<'a>(
-    descriptors: &'a [Descriptor],
-    predicate: &str,
-    pattern: BindingPattern,
+    descriptors: &'a [Descriptor], predicate: &str, pattern: BindingPattern,
 ) -> Option<(usize, &'a Descriptor)> {
     descriptors.iter().enumerate().find(|(_, descriptor)| {
         descriptor.predicate == predicate && descriptor.pattern.subsumes(pattern)
@@ -501,10 +488,7 @@ fn select<'a>(
 }
 
 fn transform<const N: usize>(
-    rules: &[DlClause<N>],
-    goal: &ClauseAtom<N>,
-    descriptors: &[Descriptor],
-    names: &[String],
+    rules: &[DlClause<N>], goal: &ClauseAtom<N>, descriptors: &[Descriptor], names: &[String],
 ) -> Vec<DlClause<N>> {
     // names emits one ordinal per descriptor plus a unit ordinal, even for an empty set.
     let unit = names.last().expect("the unit has its own ordinal");

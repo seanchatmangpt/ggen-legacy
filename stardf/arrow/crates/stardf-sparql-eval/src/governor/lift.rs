@@ -301,9 +301,7 @@ impl<I: ViewTermId> Truncation<I> {
     /// not see them differ, and at an expression barrier the operator has already
     /// computed its output schema, so reporting it costs nothing.
     pub(crate) fn barred_at(
-        node: &GraphPattern,
-        tripped: TrippedGovernor,
-        schema: crate::solution::SharedSchema,
+        node: &GraphPattern, tripped: TrippedGovernor, schema: crate::solution::SharedSchema,
     ) -> Self {
         let mut certificate = Certificate::origin(tripped);
         certificate.ascend(ChildEdge::OPAQUE, node);
@@ -451,8 +449,7 @@ impl<I: ViewTermId> Evaluated<I> {
     /// truncation. Mapping in place keeps the retained partial bag off the error
     /// channel without allocating or losing its certificate before inspection.
     pub(crate) fn into_complete<E>(
-        self,
-        on_truncated: impl FnOnce(Truncation<I>) -> E,
+        self, on_truncated: impl FnOnce(Truncation<I>) -> E,
     ) -> Result<SolutionSeq<I>, E> {
         match self {
             Self::Complete(seq) => Ok(seq),
@@ -525,8 +522,7 @@ impl<'p> Lift<'p> {
     }
 
     pub(crate) fn at_admitted(
-        node: &'p GraphPattern,
-        workspace: &crate::WorkspaceCapability,
+        node: &'p GraphPattern, workspace: &crate::WorkspaceCapability,
     ) -> Result<Self, crate::EvalError> {
         Ok(Self {
             node,
@@ -546,9 +542,7 @@ impl<'p> Lift<'p> {
     /// is a different number, not a subset of the true one, and a positional selection
     /// over a sub-bag picks rows the true query never returns.
     pub(crate) fn absorb<I: ViewTermId>(
-        &mut self,
-        ordinal: usize,
-        evaluated: Evaluated<I>,
+        &mut self, ordinal: usize, evaluated: Evaluated<I>,
     ) -> Option<SolutionSeq<I>> {
         match evaluated {
             Evaluated::Complete(seq) => Some(seq),
@@ -717,9 +711,7 @@ mod tests {
     /// Ascend `truncation` through the `ordinal`-th child edge of `node`, as an operator
     /// would, keeping the rows.
     fn ascend(
-        node: &GraphPattern,
-        ordinal: usize,
-        truncation: Truncation<TermId>,
+        node: &GraphPattern, ordinal: usize, truncation: Truncation<TermId>,
     ) -> Truncation<TermId> {
         let mut lift = Lift::at(node);
         let rows = lift.absorb(ordinal, Evaluated::Truncated(truncation));
@@ -808,9 +800,7 @@ mod tests {
 
     /// Record every node's path and the class the plan-level walk gives it.
     fn collect_paths(
-        root: &GraphPattern,
-        path: &mut Vec<usize>,
-        out: &mut Vec<(Vec<usize>, SpineClass)>,
+        root: &GraphPattern, path: &mut Vec<usize>, out: &mut Vec<(Vec<usize>, SpineClass)>,
     ) {
         // `walk_spine` yields nodes without their paths, so the paths are enumerated here
         // and each one's class is read back from the walk by position.
@@ -822,11 +812,8 @@ mod tests {
         });
         // Re-walk in the same pre-order, recording paths.
         fn descend(
-            node: &GraphPattern,
-            path: &mut Vec<usize>,
-            index: &mut usize,
-            classes: &[(usize, SpineClass)],
-            out: &mut Vec<(Vec<usize>, SpineClass)>,
+            node: &GraphPattern, path: &mut Vec<usize>, index: &mut usize,
+            classes: &[(usize, SpineClass)], out: &mut Vec<(Vec<usize>, SpineClass)>,
         ) {
             out.push((path.clone(), classes[*index].1));
             *index += 1;

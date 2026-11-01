@@ -109,9 +109,7 @@ pub struct OboGraphsVocabulary {
 impl OboGraphsVocabulary {
     /// Combine and cross-check the three mandatory role groups.
     pub fn new(
-        rdf: OboRdfRoles,
-        owl: OboOwlRoles,
-        metadata: OboMetadataRoles,
+        rdf: OboRdfRoles, owl: OboOwlRoles, metadata: OboMetadataRoles,
     ) -> Result<Self, ProjectionError> {
         let vocabulary = Self { rdf, owl, metadata };
         vocabulary.validate()?;
@@ -151,9 +149,7 @@ pub struct OboGraphsConfig {
 impl OboGraphsConfig {
     /// Construct a fully explicit OBO Graphs projection policy.
     pub fn new(
-        graph_id: impl Into<String>,
-        vocabulary: OboGraphsVocabulary,
-        limits: ProjectionLimits,
+        graph_id: impl Into<String>, vocabulary: OboGraphsVocabulary, limits: ProjectionLimits,
         max_records: usize,
     ) -> Result<Self, ProjectionError> {
         let graph_id = graph_id.into();

@@ -218,8 +218,7 @@ impl<'query> ExtensionEnv<'query> {
     /// panic — each registry's own `describe` failure, propagated unchanged. An
     /// environment over empty registries reads no declaration and cannot fail.
     pub fn new(
-        base: ParserOptions,
-        relations: PropertyFunctionRegistry<'query>,
+        base: ParserOptions, relations: PropertyFunctionRegistry<'query>,
         aggregates: AggregateRegistry,
     ) -> Result<Self, EvalError> {
         let effective = match derive_parser_options(&base, &relations)? {
@@ -265,8 +264,7 @@ impl<'query> ExtensionEnv<'query> {
     /// [`EvalError`] if a registered relation's or aggregate's declaration methods
     /// panic.
     pub fn over(
-        relations: PropertyFunctionRegistry<'query>,
-        aggregates: AggregateRegistry,
+        relations: PropertyFunctionRegistry<'query>, aggregates: AggregateRegistry,
     ) -> Result<Self, EvalError> {
         Self::new(EMPTY_PARSER_OPTIONS, relations, aggregates)
     }
@@ -290,8 +288,7 @@ impl<'query> ExtensionEnv<'query> {
     ///
     /// [`EvalError`] if a registered relation's declaration methods panic.
     pub fn with_relations<'providers>(
-        &self,
-        relations: PropertyFunctionRegistry<'providers>,
+        &self, relations: PropertyFunctionRegistry<'providers>,
     ) -> Result<ExtensionEnv<'providers>, EvalError> {
         Ok(
             ExtensionEnv::new(self.base.clone(), relations, self.aggregates.clone())?
@@ -445,8 +442,7 @@ impl<'query> ExtensionEnv<'query> {
 
     /// Compute an uncached declaration digest through the original request account.
     pub(crate) fn content_fingerprint_with_memory(
-        &self,
-        memory: &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
+        &self, memory: &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
     ) -> Result<ContentDigest, EvalError> {
         if let Some(digest) = self.content.get() {
             return Ok(*digest);
@@ -470,8 +466,7 @@ impl<'query> ExtensionEnv<'query> {
 ///
 /// [`EvalError`] if a registered relation's declaration methods panic.
 pub(crate) fn derive_parser_options<'a>(
-    base: &'a ParserOptions,
-    registry: &PropertyFunctionRegistry<'_>,
+    base: &'a ParserOptions, registry: &PropertyFunctionRegistry<'_>,
 ) -> Result<Cow<'a, ParserOptions>, EvalError> {
     if registry.is_empty() {
         return Ok(Cow::Borrowed(base));
@@ -498,9 +493,7 @@ pub(crate) fn derive_parser_options<'a>(
 /// every IRI under it — differ in behaviour on an unregistered IRI under that
 /// namespace (a hard error versus ordinary data), so they must not share a digest.
 fn content_digest(
-    base: &ParserOptions,
-    relations: &PropertyFunctionRegistry<'_>,
-    aggregates: &AggregateRegistry,
+    base: &ParserOptions, relations: &PropertyFunctionRegistry<'_>, aggregates: &AggregateRegistry,
     memory: &mut purrdf_lex::allocation::Memory<'_, crate::workspace::LexicalFrame>,
 ) -> Result<ContentDigest, EvalError> {
     let mut bytes = sha2::Sha256::new();

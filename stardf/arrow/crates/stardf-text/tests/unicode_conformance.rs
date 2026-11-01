@@ -50,10 +50,7 @@ fn property_ranges(text: &str) -> Vec<(u32, u32, String)> {
 /// The shared official break-file decoder, preserving UTF-8 tiling and every
 /// boundary opportunity. Expected positions come only from the frozen corpus.
 fn check_break_file(
-    name: &str,
-    text: &str,
-    expected_count: usize,
-    segments: impl Fn(&str, &mut dyn FnMut(&str)),
+    name: &str, text: &str, expected_count: usize, segments: impl Fn(&str, &mut dyn FnMut(&str)),
 ) {
     let mut lines = 0usize;
     let mut failures: Vec<String> = Vec::new();

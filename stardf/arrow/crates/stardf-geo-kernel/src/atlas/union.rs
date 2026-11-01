@@ -31,9 +31,7 @@ type NativePolygon = RetainedBuilder<NativeRing>;
 
 #[cfg(test)]
 pub(crate) fn materialize(
-    region: &PreparedRegion,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    region: &PreparedRegion, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Geometry, GeoError> {
     // This oracle returns a caller-owned resident geometry. Production moves
     // its original account into the enclosing immutable output before extraction.
@@ -50,9 +48,7 @@ pub(crate) fn materialize(
 /// callback returns how many already admitted bytes it adopted; the producer
 /// removes those bytes from its local counter without releasing the allowance.
 pub(crate) fn materialize_with_output(
-    region: &PreparedRegion,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    region: &PreparedRegion, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
     mut retain_output: impl FnMut(
         Produced<Geometry>,
         u64,
@@ -572,9 +568,7 @@ fn step(context: &mut MetricContext, progress: &mut WorkProgress<'_>) -> Result<
     progress.context_poll(context)
 }
 fn xy(
-    point: &LonLat,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    point: &LonLat, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Coord, GeoError> {
     ExactAdmission::new(context, progress).expression_result(
         Linear,
@@ -584,25 +578,17 @@ fn xy(
     )
 }
 fn compare(
-    a: &Coord,
-    b: &Coord,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    a: &Coord, b: &Coord, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Ordering, GeoError> {
     crate::topology::compare_inner(a, b, Some(&mut ExactAdmission::new(context, progress)))
 }
 fn same_planar(
-    a: &Coord,
-    b: &Coord,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    a: &Coord, b: &Coord, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<bool, GeoError> {
     crate::topology::same_planar_inner(a, b, Some(&mut ExactAdmission::new(context, progress)))
 }
 fn ordered<'a>(
-    edge: &'a Edge,
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    edge: &'a Edge, context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<(&'a Coord, &'a Coord), GeoError> {
     if compare(&edge.start, &edge.end, context, progress)?.is_lt() {
         Ok((&edge.start, &edge.end))
@@ -611,10 +597,7 @@ fn ordered<'a>(
     }
 }
 fn angle(
-    origin: &Coord,
-    a: &Coord,
-    b: &Coord,
-    context: &mut MetricContext,
+    origin: &Coord, a: &Coord, b: &Coord, context: &mut MetricContext,
     progress: &mut WorkProgress<'_>,
 ) -> Result<Ordering, GeoError> {
     let mut admission = ExactAdmission::new(context, progress);
@@ -644,10 +627,7 @@ fn angle(
     }
 }
 fn compare_rings(
-    a: &[Coord],
-    b: &[Coord],
-    context: &mut MetricContext,
-    progress: &mut WorkProgress<'_>,
+    a: &[Coord], b: &[Coord], context: &mut MetricContext, progress: &mut WorkProgress<'_>,
 ) -> Result<Ordering, GeoError> {
     for (a, b) in a.iter().zip(b) {
         let order = compare(a, b, context, progress)?;

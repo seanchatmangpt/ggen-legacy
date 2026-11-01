@@ -337,8 +337,7 @@ pub fn build_scene(projection: &VizProjection, spec: &VizSpec) -> Result<VizScen
 
 /// Project a dataset and build its renderer-neutral scene.
 pub fn project_dataset_scene(
-    dataset: &RdfDataset,
-    spec: &VizSpec,
+    dataset: &RdfDataset, spec: &VizSpec,
 ) -> Result<(VizProjection, VizScene), VizError> {
     let projection = project_dataset(dataset, spec)?;
     let scene = build_scene(&projection, spec)?;
@@ -347,8 +346,7 @@ pub fn project_dataset_scene(
 
 /// Project graph-like input and build its renderer-neutral scene.
 pub fn project_graph_input_scene(
-    input: &VizGraphInput,
-    spec: &VizSpec,
+    input: &VizGraphInput, spec: &VizSpec,
 ) -> Result<(VizProjection, VizScene), VizError> {
     let projection = project_graph_input(input, spec)?;
     let scene = build_scene(&projection, spec)?;
@@ -702,9 +700,7 @@ fn relation_summary(
 }
 
 fn assertion_edge(
-    statement: &VizStatement,
-    projection: &VizProjection,
-    terms: &BTreeMap<VizTermId, &VizTerm>,
+    statement: &VizStatement, projection: &VizProjection, terms: &BTreeMap<VizTermId, &VizTerm>,
     statements: &BTreeMap<VizStatementId, &VizStatement>,
     summaries: &BTreeMap<VizStatementId, StatementRelationSummary>,
 ) -> VizSceneEdge {
@@ -758,8 +754,7 @@ fn assertion_edge(
 }
 
 fn statement_anchor(
-    statement: &VizStatement,
-    projection: &VizProjection,
+    statement: &VizStatement, projection: &VizProjection,
     summary: Option<&StatementRelationSummary>,
 ) -> VizEdgeAnchor {
     let summary = summary.cloned().unwrap_or_default();
@@ -839,11 +834,8 @@ fn statement_anchor(
 }
 
 fn statement_node(
-    statement: &VizStatement,
-    projection: &VizProjection,
-    terms: &BTreeMap<VizTermId, &VizTerm>,
-    summaries: &BTreeMap<VizStatementId, StatementRelationSummary>,
-    compact: bool,
+    statement: &VizStatement, projection: &VizProjection, terms: &BTreeMap<VizTermId, &VizTerm>,
+    summaries: &BTreeMap<VizStatementId, StatementRelationSummary>, compact: bool,
 ) -> VizSceneNode {
     let summary = summaries.get(&statement.id).cloned().unwrap_or_default();
     let mut badges = statement_badges(statement, projection, &summary);
@@ -952,10 +944,8 @@ fn term_node(term: &VizTerm) -> VizSceneNode {
 }
 
 fn add_relation_edges(
-    edges: &mut Vec<VizSceneEdge>,
-    projection: &VizProjection,
-    terms: &BTreeMap<VizTermId, &VizTerm>,
-    statements: &BTreeMap<VizStatementId, &VizStatement>,
+    edges: &mut Vec<VizSceneEdge>, projection: &VizProjection,
+    terms: &BTreeMap<VizTermId, &VizTerm>, statements: &BTreeMap<VizStatementId, &VizStatement>,
     mode: VizMode,
 ) {
     for relation in &projection.relations {
@@ -1037,9 +1027,7 @@ fn add_relation_edges(
 }
 
 fn statement_badges(
-    statement: &VizStatement,
-    projection: &VizProjection,
-    summary: &StatementRelationSummary,
+    statement: &VizStatement, projection: &VizProjection, summary: &StatementRelationSummary,
 ) -> Vec<VizBadge> {
     let mut badges = Vec::new();
     if !statement.asserted_in.is_empty() {
@@ -1175,9 +1163,7 @@ fn add_value_term(value: &VizValueRef, terms: &mut BTreeSet<VizTermId>) {
 }
 
 fn compact_value_endpoint(
-    value: &VizValueRef,
-    statements: &BTreeMap<VizStatementId, &VizStatement>,
-    source: bool,
+    value: &VizValueRef, statements: &BTreeMap<VizStatementId, &VizStatement>, source: bool,
 ) -> VizEndpoint {
     match value {
         VizValueRef::Term { id } => {
@@ -1188,8 +1174,7 @@ fn compact_value_endpoint(
 }
 
 fn compact_statement_endpoint(
-    id: &VizStatementId,
-    statements: &BTreeMap<VizStatementId, &VizStatement>,
+    id: &VizStatementId, statements: &BTreeMap<VizStatementId, &VizStatement>,
 ) -> VizEndpoint {
     if statements
         .get(id)
@@ -1212,8 +1197,7 @@ fn incidence_value_endpoint(value: &VizValueRef) -> VizEndpoint {
 }
 
 fn statement_needs_anchor(
-    statement: &VizStatement,
-    summaries: &BTreeMap<VizStatementId, StatementRelationSummary>,
+    statement: &VizStatement, summaries: &BTreeMap<VizStatementId, StatementRelationSummary>,
 ) -> bool {
     statement.incoming_references > 0
         || statement.roles.contains(&VizRole::Focus)
@@ -1224,8 +1208,7 @@ fn statement_needs_anchor(
 }
 
 fn statement_reference_bindings(
-    projection: &VizProjection,
-    statement: &VizStatementId,
+    projection: &VizProjection, statement: &VizStatementId,
 ) -> Vec<VizSemanticRef> {
     std::iter::once(VizSemanticRef::Statement(statement.clone()))
         .chain(
@@ -1239,8 +1222,7 @@ fn statement_reference_bindings(
 }
 
 fn statement_accessible_description(
-    statement: &VizStatement,
-    terms: &BTreeMap<VizTermId, &VizTerm>,
+    statement: &VizStatement, terms: &BTreeMap<VizTermId, &VizTerm>,
     summary: &StatementRelationSummary,
 ) -> String {
     let status = if statement.asserted_in.is_empty() {
@@ -1474,8 +1456,7 @@ fn validate_scene(scene: &VizScene) -> Result<(), VizError> {
 }
 
 fn validate_endpoint(
-    endpoint: &VizEndpoint,
-    nodes: &BTreeMap<&str, &VizSceneNode>,
+    endpoint: &VizEndpoint, nodes: &BTreeMap<&str, &VizSceneNode>,
     edges: &BTreeMap<&str, &VizSceneEdge>,
 ) -> Result<(), VizError> {
     match endpoint {

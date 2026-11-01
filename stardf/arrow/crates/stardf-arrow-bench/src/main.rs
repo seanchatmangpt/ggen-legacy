@@ -1,6 +1,6 @@
 //! stardf-arrow-bench: line-rate harness for the stardf-arrow-core kernels.
 //!
-//! Model: avec/crates/bench/src/main.rs (counting-allocator GlobalAlloc
+//! Model: cgap/crates/bench/src/main.rs (counting-allocator GlobalAlloc
 //! wrapper with a non-vacuity probe; min-of-N rounds, MIN is the receipt;
 //! per-round lines print variance instead of hiding it behind a mean).
 //!
@@ -33,7 +33,7 @@ mod columnar_bench;
 use columnar_bench as columnar;
 
 // ---------------------------------------------------------------------------
-// Counting allocator (pattern: avec/crates/bench/src/main.rs:24-43)
+// Counting allocator (pattern: cgap/crates/bench/src/main.rs:24-43)
 // ---------------------------------------------------------------------------
 
 pub(crate) static COUNT: AtomicUsize = AtomicUsize::new(0);
@@ -59,7 +59,7 @@ unsafe impl std::alloc::GlobalAlloc for CountingAlloc {
     }
 }
 
-/// Non-vacuity probe (avec model): a deliberate allocation must bump COUNT
+/// Non-vacuity probe (cgap model): a deliberate allocation must bump COUNT
 /// before any "0 allocs" line is trusted. Exits 1 otherwise.
 fn alloc_probe() {
     COUNT.store(0, Ordering::Relaxed);
@@ -265,7 +265,7 @@ fn bench_pattern_scan(slab: &[Quad64]) -> Vec<(String, f64, u64)> {
     // Selectivity sweep: all-wildcard (every row matches), s-bound, p-bound,
     // fully-bound. Same data-independent compare path regardless of
     // selectivity — a large GiB/s spread across these is a finding, not a
-    // feature (avec selectivity-sweep discipline).
+    // feature (cgap selectivity-sweep discipline).
     let pats: [(&str, ScanKey); 4] = [
         ("s=? p=? o=?", ScanKey::new(None, None, None)),
         ("s=0 p=? o=?", ScanKey::new(Some(0), None, None)),
@@ -283,18 +283,14 @@ fn bench_pattern_scan(slab: &[Quad64]) -> Vec<(String, f64, u64)> {
         // proven correct on the real slab, not assumed.
         let slab_ref = &slab;
         let chunk_kernel_hits = || -> u64 {
-            // WAIVED(clippy::incompatible_msrv): slice::as_chunks is stable
-            // 1.88; the workspace MSRV is 1.82 and chunks_exact restructuring
-            // would obscure the chunk-kernel shape under test.
-            #[allow(clippy::incompatible_msrv)]
+            // slice::as_chunks is stable 1.88 < workspace MSRV 1.98 (lane
+            // 06-msrv), so no incompatible_msrv waiver is needed here.
             let mut hits = 0u64;
-            let mut chunks = slab_ref.chunks_exact(SCAN_CHUNK);
-            for c in &mut chunks {
-                let arr: &[Quad64; SCAN_CHUNK] =
-                    c.try_into().expect("chunks_exact yields exact len");
+            let (chunks, remainder) = slab_ref.as_chunks::<SCAN_CHUNK>();
+            for arr in chunks {
                 hits += key.chunk_matches(arr).count_ones() as u64;
             }
-            for q in chunks.remainder() {
+            for q in remainder {
                 hits += u64::from(key.misses(q) == 0);
             }
             hits
@@ -312,7 +308,7 @@ fn bench_pattern_scan(slab: &[Quad64]) -> Vec<(String, f64, u64)> {
             bytes_per_pass / min_dt / GIB
         );
         receipts.push((name.to_string(), bytes_per_pass / min_dt / GIB, expected));
-        // Zero-alloc gate on the scan path (pattern: avec CTQ-5). Hard fail.
+        // Zero-alloc gate on the scan path (pattern: cgap CTQ-5). Hard fail.
         println!("  {name} allocs during scan: {allocs} (gate: 0)");
         if allocs != 0 {
             eprintln!("ZERO-ALLOC FAIL: {allocs} allocations inside the scan loop ({name})");

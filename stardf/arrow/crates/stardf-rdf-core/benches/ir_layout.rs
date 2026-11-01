@@ -560,8 +560,7 @@ fn bench_iterate(c: &mut Bench) {
 }
 
 fn generic_resolve_len<D: DatasetView<Id = TermId, ReadError = core::convert::Infallible>>(
-    ds: &D,
-    q: QuadIds,
+    ds: &D, q: QuadIds,
 ) -> usize {
     let inspect = |id| {
         let guard = ds.resolve(id).unwrap_or_else(|never| match never {});
@@ -828,9 +827,7 @@ fn bench_segmented_dictionary(c: &mut Bench) {
 /// and export open their sessions outside sampling. The immutable byte provider is
 /// prepared once, so these cases measure the portable storage engine, not host I/O.
 fn bench_segmented_storage(
-    c: &mut Bench,
-    resident: &RdfDataset,
-    image: &purrdf_core::SegmentedImage,
+    c: &mut Bench, resident: &RdfDataset, image: &purrdf_core::SegmentedImage,
     ids: &[purrdf_core::GlobalTermId],
 ) {
     use purrdf_core::{SegmentedError, SegmentedReadLimits, SegmentedSession};

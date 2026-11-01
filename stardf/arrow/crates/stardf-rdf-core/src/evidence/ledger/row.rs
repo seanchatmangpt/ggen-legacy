@@ -155,12 +155,8 @@ impl<'a, N: LedgerNodes> RowStatements<'a, N> {
     /// # Errors
     /// Refuses malformed RDF, missing retained nodes and invalid acceptance.
     pub fn new(
-        node: &'a TermValue,
-        solution: &'a TermValue,
-        record: &'a EvidenceRecord,
-        nodes: &'a N,
-        vocabulary: RowVocabulary<'a>,
-        accepted: &'a [ReasonId],
+        node: &'a TermValue, solution: &'a TermValue, record: &'a EvidenceRecord, nodes: &'a N,
+        vocabulary: RowVocabulary<'a>, accepted: &'a [ReasonId],
     ) -> Result<Self, LedgerError> {
         reifier(node)?;
         if !matches!(solution, TermValue::Triple { .. }) {
@@ -344,9 +340,7 @@ impl<'a> AnnotationStatements<'a> {
     /// # Errors
     /// Refuses other node kinds, malformed declarations or missing original nodes.
     pub fn new<N: LedgerNodes>(
-        key: LedgerNodeKey,
-        nodes: &'a N,
-        vocabulary: RowVocabulary<'a>,
+        key: LedgerNodeKey, nodes: &'a N, vocabulary: RowVocabulary<'a>,
     ) -> Result<Self, LedgerError> {
         let node = nodes.node(key).ok_or(LedgerError::MissingNode(key))?;
         reifier(node)?;

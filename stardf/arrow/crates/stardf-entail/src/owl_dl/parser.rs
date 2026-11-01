@@ -377,18 +377,13 @@ pub(crate) type TripleIndex = BTreeMap<u32, BTreeMap<u32, Vec<u32>>>;
 ///
 /// [`ListError`] when the collection is malformed.
 pub(crate) fn index_list(
-    index: &TripleIndex,
-    v: &Vocab,
-    head: u32,
+    index: &TripleIndex, v: &Vocab, head: u32,
 ) -> Result<Vec<u32>, ListError<u32>> {
     index_list_observing(index, v, head, |_, _, _| {})
 }
 
 fn index_list_observing(
-    index: &TripleIndex,
-    v: &Vocab,
-    head: u32,
-    observe: impl Fn(u32, u32, u32),
+    index: &TripleIndex, v: &Vocab, head: u32, observe: impl Fn(u32, u32, u32),
 ) -> Result<Vec<u32>, ListError<u32>> {
     let objects = |cell: u32, predicate: u32| {
         let selected = SoleObject::of(
@@ -459,9 +454,7 @@ impl<'a> CeExtractor<'a> {
     /// Build an extractor over `index`, resolving terms through `interner` and keying
     /// on `v`.
     pub(crate) fn new(
-        index: &'a TripleIndex,
-        interner: &'a Interner,
-        v: &'a Vocab,
+        index: &'a TripleIndex, interner: &'a Interner, v: &'a Vocab,
         ranges: &'a mut DataRangeTable,
     ) -> Self {
         let mut ce = Self::new_until(index, interner, v, ranges, None);
@@ -472,11 +465,8 @@ impl<'a> CeExtractor<'a> {
     /// Build an extractor that polls `stop` while traversing class expressions and RDF
     /// collections.
     fn new_until(
-        index: &'a TripleIndex,
-        interner: &'a Interner,
-        v: &'a Vocab,
-        ranges: &'a mut DataRangeTable,
-        stop: Option<&'a dyn StopSignal>,
+        index: &'a TripleIndex, interner: &'a Interner, v: &'a Vocab,
+        ranges: &'a mut DataRangeTable, stop: Option<&'a dyn StopSignal>,
     ) -> Self {
         Self {
             syntax: RefCell::new(Syntax::default()),
@@ -582,8 +572,7 @@ impl<'a> CeExtractor<'a> {
     }
 
     fn source_scope<T>(
-        &mut self,
-        acc: &mut Accums,
+        &mut self, acc: &mut Accums,
         body: impl FnOnce(&mut Self, &mut Accums) -> Result<T, EntailError>,
     ) -> Result<T, EntailError> {
         self.poll()?;
@@ -917,9 +906,7 @@ impl<'a> CeExtractor<'a> {
 
     /// Walk an RDF list of data ranges.
     fn data_range_list(
-        &self,
-        head: u32,
-        path: &mut Vec<u32>,
+        &self, head: u32, path: &mut Vec<u32>,
     ) -> Result<Vec<DataRange>, EntailError> {
         let members = self.node_list(head)?;
         members
@@ -1347,16 +1334,13 @@ fn poll<E>(stop: Option<&dyn StopSignal>) -> Result<(), EntailError<E>> {
 /// [`EntailError::Collection`] retains malformed RDF lists.
 #[cfg(test)]
 pub(crate) fn build_until<D: DatasetView>(
-    ds: &D,
-    stop: Option<&dyn StopSignal>,
+    ds: &D, stop: Option<&dyn StopSignal>,
 ) -> Result<Kb, EntailError<D::ReadError>> {
     build_with_preparation(ds, stop, super::bounds::SchemaPreparationBudget::default())
 }
 
 pub(crate) fn build_with_preparation<D: DatasetView>(
-    ds: &D,
-    stop: Option<&dyn StopSignal>,
-    budget: super::bounds::SchemaPreparationBudget,
+    ds: &D, stop: Option<&dyn StopSignal>, budget: super::bounds::SchemaPreparationBudget,
 ) -> Result<Kb, EntailError<D::ReadError>> {
     ds.checked_read(|ds| {
         poll(stop)?;
@@ -1732,13 +1716,9 @@ fn bottom_role_index(interner: &Interner, term: u32) -> Option<usize> {
 /// unmodelled and value-class rules, which is exactly the drift a differential exists to
 /// prevent.
 pub(crate) fn register_literals(
-    interner: &Interner,
-    table: &mut ConceptTable,
-    ranges: &mut DataRangeTable,
-    abox_roles: &[(u32, u32, u32)],
-    abox_types: &mut Vec<(u32, u32)>,
-    boundaries: &mut BTreeSet<Construct>,
-    stop: Option<&dyn StopSignal>,
+    interner: &Interner, table: &mut ConceptTable, ranges: &mut DataRangeTable,
+    abox_roles: &[(u32, u32, u32)], abox_types: &mut Vec<(u32, u32)>,
+    boundaries: &mut BTreeSet<Construct>, stop: Option<&dyn StopSignal>,
 ) -> Result<BTreeMap<u32, u32>, EntailError> {
     let mut terms = BTreeSet::new();
     for &(_, _, object) in abox_roles {
@@ -1794,10 +1774,7 @@ pub(crate) fn register_literals(
 /// `p`. The sub-role closure walks [`Accums::role_sub`], which is the same hierarchy the
 /// tableau's `achievers` walks, so the two agree on what a role's extension contains.
 fn subrole_satisfies(
-    role: Role,
-    acc: &Accums,
-    stop: Option<&dyn StopSignal>,
-    predicate: impl Fn(u32) -> bool,
+    role: Role, acc: &Accums, stop: Option<&dyn StopSignal>, predicate: impl Fn(u32) -> bool,
 ) -> Result<bool, EntailError> {
     let (Role::Named(head) | Role::Inv(head)) = role;
     let mut seen: BTreeSet<u32> = BTreeSet::new();
@@ -1867,11 +1844,7 @@ impl Accums {
 /// operand predicates (`owl:members`, `owl:sourceIndividual`, …) as constructs the table
 /// marks handled and leaves them alone.
 fn axiom_node(
-    ce: &mut CeExtractor<'_>,
-    table: &mut ConceptTable,
-    acc: &mut Accums,
-    v: &Vocab,
-    node: u32,
+    ce: &mut CeExtractor<'_>, table: &mut ConceptTable, acc: &mut Accums, v: &Vocab, node: u32,
     axiom_class: u32,
 ) -> Result<(), EntailError> {
     ce.poll()?;
@@ -1957,11 +1930,7 @@ fn axiom_node(
 /// A node missing any of the three components states no assertion, so it is left alone
 /// rather than half-read.
 fn negative_assertion(
-    ce: &CeExtractor<'_>,
-    table: &mut ConceptTable,
-    acc: &mut Accums,
-    v: &Vocab,
-    node: u32,
+    ce: &CeExtractor<'_>, table: &mut ConceptTable, acc: &mut Accums, v: &Vocab, node: u32,
 ) -> Result<(), EntailError> {
     ce.poll()?;
     let (Some(source), Some(property)) = (
@@ -1997,12 +1966,8 @@ fn negative_assertion(
 /// Every branch is a construct [`crate::owl_dl::constructs`] marks handled; the final
 /// `else` is where the table itself decides, and it has no silent arm.
 fn axiom(
-    ce: &mut CeExtractor<'_>,
-    table: &mut ConceptTable,
-    acc: &mut Accums,
-    v: &Vocab,
-    interner: &Interner,
-    (s, p, o): (u32, u32, u32),
+    ce: &mut CeExtractor<'_>, table: &mut ConceptTable, acc: &mut Accums, v: &Vocab,
+    interner: &Interner, (s, p, o): (u32, u32, u32),
 ) -> Result<(), EntailError> {
     ce.poll()?;
     if p == v.sub_class {
@@ -2116,11 +2081,7 @@ fn axiom(
 
 /// `C owl:disjointUnionOf (C₁ … Cₙ)`: `C ≡ C₁ ⊔ … ⊔ Cₙ` with the `Cᵢ` pairwise disjoint.
 fn disjoint_union(
-    ce: &mut CeExtractor<'_>,
-    table: &mut ConceptTable,
-    acc: &mut Accums,
-    class: u32,
-    list: u32,
+    ce: &mut CeExtractor<'_>, table: &mut ConceptTable, acc: &mut Accums, class: u32, list: u32,
 ) -> Result<(), EntailError> {
     let members = ce.node_list(list)?;
     let parts: Vec<Concept> = members
@@ -2161,13 +2122,7 @@ fn disjoint_union(
 /// * a term outside the reserved namespaces is the caller's own vocabulary and becomes a
 ///   role assertion.
 fn role_or_boundary(
-    ce: &CeExtractor<'_>,
-    acc: &mut Accums,
-    interner: &Interner,
-    v: &Vocab,
-    s: u32,
-    p: u32,
-    o: u32,
+    ce: &CeExtractor<'_>, acc: &mut Accums, interner: &Interner, v: &Vocab, s: u32, p: u32, o: u32,
 ) -> Result<(), EntailError> {
     if bottom_role_index(interner, p).is_some()
         || matches!(interner.value(p), TermValue::Iri(iri) if iri == purrdf_iri::vocab::owl::TOP_OBJECT_PROPERTY)
@@ -2215,13 +2170,8 @@ fn role_or_boundary(
 
 /// Handle `s rdf:type o`.
 fn type_assertion(
-    ce: &mut CeExtractor<'_>,
-    table: &mut ConceptTable,
-    acc: &mut Accums,
-    v: &Vocab,
-    interner: &Interner,
-    s: u32,
-    o: u32,
+    ce: &mut CeExtractor<'_>, table: &mut ConceptTable, acc: &mut Accums, v: &Vocab,
+    interner: &Interner, s: u32, o: u32,
 ) -> Result<(), EntailError> {
     // Source declarations are inventory evidence even when they state no axiom.
     if matches!(interner.value(o), TermValue::Iri(iri) if [OWL_OBJECTPROPERTY, OWL_DATATYPEPROPERTY, OWL_ANNOTATIONPROPERTY].contains(&iri.as_str()))
@@ -2415,9 +2365,7 @@ mod tests {
 
     /// `A rdfs:subClassOf [ a owl:Restriction ; owl:onProperty p ; <facet> "<lexical>"^^<dt> ]`.
     fn restriction_ontology(
-        facet: &str,
-        lexical: &str,
-        datatype: &str,
+        facet: &str, lexical: &str, datatype: &str,
     ) -> std::sync::Arc<RdfDataset> {
         let mut b = RdfDatasetBuilder::new();
         let ty = b.intern_iri(RDF_TYPE_IRI).unwrap();

@@ -368,9 +368,7 @@ fn request(query: &str) -> SparqlRequest<'_> {
 
 /// [`run`], with a property-function registry injected (group P only).
 fn run_with_registry(
-    ds: &Arc<RdfDataset>,
-    query_body: &str,
-    registry: &ExtensionEnv<'static>,
+    ds: &Arc<RdfDataset>, query_body: &str, registry: &ExtensionEnv<'static>,
 ) -> SparqlResult {
     let text = format!("{PFX}{query_body}");
     NativeSparqlEngine::new()

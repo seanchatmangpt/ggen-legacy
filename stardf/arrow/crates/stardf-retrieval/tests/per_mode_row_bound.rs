@@ -131,9 +131,7 @@ impl PropertyFunction for ModedProducer {
     }
 
     fn open<'cursor>(
-        &self,
-        args: &PfArgs<'_>,
-        _ceiling: Option<u64>,
+        &self, args: &PfArgs<'_>, _ceiling: Option<u64>,
     ) -> Result<Box<dyn PfCursor + 'cursor>, EvalError>
     where
         Self: 'cursor,
@@ -231,11 +229,7 @@ enum Modes {
 /// `bound_rows` where its needle is bound and `free_rows` where it is not, and holding
 /// `held` rows.
 fn registry(
-    shape: Shape,
-    modes: Modes,
-    bound_rows: u64,
-    free_rows: u64,
-    held: usize,
+    shape: Shape, modes: Modes, bound_rows: u64, free_rows: u64, held: usize,
 ) -> PropertyFunctionRegistry<'static> {
     let arity = match shape {
         Shape::EvaluatorBounded => PfArity::new(1, 1),
@@ -398,8 +392,7 @@ fn run(
 
 /// Raise `stratum/docs`'s depth to `depth` in a fresh plan and admit it.
 fn admit_at_depth(
-    registry: &PropertyFunctionRegistry<'static>,
-    depth: u32,
+    registry: &PropertyFunctionRegistry<'static>, depth: u32,
 ) -> Result<(), AdmissionError> {
     let stats = NoStatistics::new();
     let request = RetrievalRequest::complete(vec![needle()]);
@@ -867,9 +860,7 @@ fn the_emitted_request_is_the_invoked_modes_number_and_not_the_other_modes() {
 /// the order they were declared in could possibly be read. It holds no rows, because
 /// nothing here is executed — a tie is settled at the waist, before a producer is opened.
 fn registry_declaring(
-    shape: Shape,
-    modes: Vec<BindingPattern>,
-    rows: u64,
+    shape: Shape, modes: Vec<BindingPattern>, rows: u64,
 ) -> PropertyFunctionRegistry<'static> {
     let arity = match shape {
         Shape::EvaluatorBounded => PfArity::new(1, 1),

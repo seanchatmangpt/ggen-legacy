@@ -109,9 +109,7 @@ struct Compiler<'a> {
 }
 
 pub(super) fn compile(
-    supplied: &Value,
-    document_iri: Option<&str>,
-    registry: &JsonLdContextRegistry,
+    supplied: &Value, document_iri: Option<&str>, registry: &JsonLdContextRegistry,
     limits: JsonLdContextLimits,
 ) -> Result<CompiledJsonLdContext, RdfDiagnostic> {
     let document_iri = document_iri.map(str::to_owned);
@@ -156,8 +154,7 @@ pub(super) fn compile(
 }
 
 pub(super) fn compile_scoped(
-    parent: &CompiledJsonLdContext,
-    definition: &JsonLdTermDefinition,
+    parent: &CompiledJsonLdContext, definition: &JsonLdTermDefinition,
 ) -> Result<Option<CompiledJsonLdContext>, RdfDiagnostic> {
     let Some(context) = definition.scoped_context.as_ref() else {
         return Ok(None);
@@ -172,9 +169,7 @@ pub(super) fn compile_scoped(
 }
 
 pub(super) fn apply_context(
-    parent: &CompiledJsonLdContext,
-    context: &Value,
-    base_url: Option<&str>,
+    parent: &CompiledJsonLdContext, context: &Value, base_url: Option<&str>,
     override_protected: bool,
 ) -> Result<CompiledJsonLdContext, RdfDiagnostic> {
     let limits = JsonLdContextLimits::default();
@@ -295,24 +290,15 @@ impl Compiler<'_> {
     }
 
     fn process_context(
-        &mut self,
-        active: &mut ActiveContext,
-        local: &Value,
-        base_url: Option<&str>,
-        remote: bool,
+        &mut self, active: &mut ActiveContext, local: &Value, base_url: Option<&str>, remote: bool,
         depth: usize,
     ) -> Result<(), RdfDiagnostic> {
         self.process_context_inner(active, local, base_url, remote, depth, true)
     }
 
     fn process_context_inner(
-        &mut self,
-        active: &mut ActiveContext,
-        local: &Value,
-        base_url: Option<&str>,
-        remote: bool,
-        depth: usize,
-        select_propagation: bool,
+        &mut self, active: &mut ActiveContext, local: &Value, base_url: Option<&str>, remote: bool,
+        depth: usize, select_propagation: bool,
     ) -> Result<(), RdfDiagnostic> {
         if depth > self.limits.max_nesting() {
             return Err(context_limit(format!(
@@ -382,10 +368,7 @@ impl Compiler<'_> {
     }
 
     fn process_remote_context(
-        &mut self,
-        active: &mut ActiveContext,
-        iri: &str,
-        depth: usize,
+        &mut self, active: &mut ActiveContext, iri: &str, depth: usize,
     ) -> Result<(), RdfDiagnostic> {
         if self.remote_stack.iter().any(|entry| entry == iri) {
             return Err(context_error(format!(
@@ -410,11 +393,7 @@ impl Compiler<'_> {
     }
 
     fn process_context_object(
-        &mut self,
-        active: &mut ActiveContext,
-        object: &Map,
-        base_url: Option<&str>,
-        remote: bool,
+        &mut self, active: &mut ActiveContext, object: &Map, base_url: Option<&str>, remote: bool,
         depth: usize,
     ) -> Result<(), RdfDiagnostic> {
         let mut local = if let Some(import) = object.get("@import") {
@@ -470,10 +449,7 @@ impl Compiler<'_> {
     }
 
     fn load_registry_document(
-        &mut self,
-        iri: &str,
-        depth: usize,
-        purpose: &str,
+        &mut self, iri: &str, depth: usize, purpose: &str,
     ) -> Result<Arc<Value>, RdfDiagnostic> {
         if let Some(document) = self.remote_cache.get(iri) {
             return Ok(Arc::clone(document));
@@ -518,10 +494,7 @@ impl Compiler<'_> {
     }
 
     fn process_context_settings(
-        &self,
-        active: &mut ActiveContext,
-        object: &Map,
-        remote: bool,
+        &self, active: &mut ActiveContext, object: &Map, remote: bool,
     ) -> Result<(), RdfDiagnostic> {
         if let Some(value) = object.get("@propagate") {
             value
@@ -594,11 +567,7 @@ impl Compiler<'_> {
     }
 
     fn define_local_terms(
-        &mut self,
-        active: &mut ActiveContext,
-        object: &Map,
-        base_url: Option<&str>,
-        depth: usize,
+        &mut self, active: &mut ActiveContext, object: &Map, base_url: Option<&str>, depth: usize,
     ) -> Result<(), RdfDiagnostic> {
         let default_protected = match object.get("@protected") {
             None => false,
@@ -660,14 +629,8 @@ impl Compiler<'_> {
         reason = "the JSON-LD term-definition algorithm keeps its recursive state explicit"
     )]
     fn define_term(
-        &mut self,
-        active: &mut ActiveContext,
-        local: &Map,
-        term: &str,
-        default_protected: bool,
-        base_url: Option<&str>,
-        states: &mut BTreeMap<String, DefinitionState>,
-        depth: usize,
+        &mut self, active: &mut ActiveContext, local: &Map, term: &str, default_protected: bool,
+        base_url: Option<&str>, states: &mut BTreeMap<String, DefinitionState>, depth: usize,
     ) -> Result<(), RdfDiagnostic> {
         match states.get(term) {
             Some(DefinitionState::Defined) => return Ok(()),
@@ -748,15 +711,9 @@ impl Compiler<'_> {
         reason = "the JSON-LD term-definition algorithm keeps its inputs explicit"
     )]
     fn compile_term_definition(
-        &mut self,
-        active: &mut ActiveContext,
-        local: &Map,
-        term: &str,
-        value: Value,
-        default_protected: bool,
-        base_url: Option<&str>,
-        states: &mut BTreeMap<String, DefinitionState>,
-        depth: usize,
+        &mut self, active: &mut ActiveContext, local: &Map, term: &str, value: Value,
+        default_protected: bool, base_url: Option<&str>,
+        states: &mut BTreeMap<String, DefinitionState>, depth: usize,
     ) -> Result<JsonLdTermDefinition, RdfDiagnostic> {
         let mut value = value;
         let simple_term = value.as_str().is_some();
@@ -1049,14 +1006,8 @@ impl Compiler<'_> {
         reason = "derived term mapping shares the compiler's bounded recursive state"
     )]
     fn derive_term_mapping(
-        &mut self,
-        active: &mut ActiveContext,
-        local: &Map,
-        term: &str,
-        base_url: Option<&str>,
-        default_protected: bool,
-        states: &mut BTreeMap<String, DefinitionState>,
-        depth: usize,
+        &mut self, active: &mut ActiveContext, local: &Map, term: &str, base_url: Option<&str>,
+        default_protected: bool, states: &mut BTreeMap<String, DefinitionState>, depth: usize,
     ) -> Result<String, RdfDiagnostic> {
         if is_blank_node_identifier(term) {
             return Ok(term.to_owned());
@@ -1117,16 +1068,9 @@ impl Compiler<'_> {
         reason = "IRI expansion keeps every JSON-LD algorithm flag and recursion input explicit"
     )]
     fn expand_local_iri(
-        &mut self,
-        active: &mut ActiveContext,
-        local: &Map,
-        value: &str,
-        vocab: bool,
-        document_relative: bool,
-        base_url: Option<&str>,
-        default_protected: bool,
-        states: &mut BTreeMap<String, DefinitionState>,
-        depth: usize,
+        &mut self, active: &mut ActiveContext, local: &Map, value: &str, vocab: bool,
+        document_relative: bool, base_url: Option<&str>, default_protected: bool,
+        states: &mut BTreeMap<String, DefinitionState>, depth: usize,
     ) -> Result<String, RdfDiagnostic> {
         self.charge_work(&format!("expanding `{value}`"))?;
         if is_keyword(value) {
@@ -1217,15 +1161,9 @@ impl Compiler<'_> {
         reason = "type mapping compilation shares the compiler's bounded recursive state"
     )]
     fn compile_type_mapping(
-        &mut self,
-        active: &mut ActiveContext,
-        local: &Map,
-        term: &str,
-        value: &Value,
-        base_url: Option<&str>,
-        default_protected: bool,
-        states: &mut BTreeMap<String, DefinitionState>,
-        depth: usize,
+        &mut self, active: &mut ActiveContext, local: &Map, term: &str, value: &Value,
+        base_url: Option<&str>, default_protected: bool,
+        states: &mut BTreeMap<String, DefinitionState>, depth: usize,
     ) -> Result<JsonLdTypeMapping, RdfDiagnostic> {
         let value = value
             .as_str()
@@ -1277,8 +1215,7 @@ fn empty_definition(protected: bool) -> JsonLdTermDefinition {
 }
 
 fn compile_type_keyword_definition(
-    object: &Map,
-    default_protected: bool,
+    object: &Map, default_protected: bool,
 ) -> Result<JsonLdTermDefinition, RdfDiagnostic> {
     for key in object.keys() {
         if !matches!(key.as_str(), "@container" | "@protected") {
@@ -1312,8 +1249,7 @@ fn compile_type_keyword_definition(
 }
 
 fn compile_reverse_containers(
-    term: &str,
-    value: &Value,
+    term: &str, value: &Value,
 ) -> Result<BTreeSet<JsonLdContainer>, RdfDiagnostic> {
     match value {
         Value::Null => Ok(BTreeSet::new()),
@@ -1326,8 +1262,7 @@ fn compile_reverse_containers(
 }
 
 fn definitions_equal_ignoring_protected(
-    left: &JsonLdTermDefinition,
-    right: &JsonLdTermDefinition,
+    left: &JsonLdTermDefinition, right: &JsonLdTermDefinition,
 ) -> bool {
     let mut left = left.clone();
     let mut right = right.clone();
@@ -1416,8 +1351,7 @@ fn is_implicit_prefix(term: &str, mapping: Option<&str>) -> bool {
 }
 
 fn compile_language_mapping(
-    term: &str,
-    value: &Value,
+    term: &str, value: &Value,
 ) -> Result<JsonLdNullable<String>, RdfDiagnostic> {
     match value {
         Value::Null => Ok(JsonLdNullable::Null),
@@ -1436,8 +1370,7 @@ fn compile_language_mapping(
 }
 
 fn compile_direction_mapping(
-    term: &str,
-    value: &Value,
+    term: &str, value: &Value,
 ) -> Result<JsonLdNullable<JsonLdDirection>, RdfDiagnostic> {
     match value {
         Value::Null => Ok(JsonLdNullable::Null),
@@ -1455,8 +1388,7 @@ fn compile_direction_mapping(
 }
 
 fn compile_containers(
-    term: &str,
-    value: &Value,
+    term: &str, value: &Value,
 ) -> Result<BTreeSet<JsonLdContainer>, RdfDiagnostic> {
     let entries: Vec<&str> = match value {
         Value::String(entry) => vec![entry],
@@ -1498,9 +1430,7 @@ fn compile_containers(
 }
 
 fn validate_container_combination(
-    term: &str,
-    containers: &BTreeSet<JsonLdContainer>,
-    reverse: bool,
+    term: &str, containers: &BTreeSet<JsonLdContainer>, reverse: bool,
 ) -> Result<(), RdfDiagnostic> {
     use JsonLdContainer::{Graph, Id, Index, Language, List, Set, Type};
     if reverse && containers.iter().any(|entry| !matches!(entry, Set | Index)) {
@@ -1557,9 +1487,7 @@ fn is_extension_control(value: &str) -> bool {
 /// spelling of a condition every other syntax already names. Genuinely JSON-LD-specific
 /// context failures keep `jsonld-context-invalid`.
 fn resolve_reference(
-    reference: &str,
-    base: Option<&str>,
-    description: &str,
+    reference: &str, base: Option<&str>, description: &str,
 ) -> Result<String, RdfDiagnostic> {
     // The absent base is NOT decided here. `BaseScope::empty()` already owns "a relative
     // reference with no base in scope is `IriError::NoBase`", so re-deriving that
@@ -1731,8 +1659,7 @@ fn container_key(containers: &BTreeSet<JsonLdContainer>) -> String {
 }
 
 fn explicit_language_direction_key(
-    language: &JsonLdNullable<String>,
-    direction: &JsonLdNullable<JsonLdDirection>,
+    language: &JsonLdNullable<String>, direction: &JsonLdNullable<JsonLdDirection>,
 ) -> String {
     match (language, direction) {
         (JsonLdNullable::Value(language), JsonLdNullable::Value(direction)) => {
@@ -1747,10 +1674,7 @@ fn explicit_language_direction_key(
 }
 
 pub(super) fn expand_iri(
-    active: &ActiveContext,
-    value: &str,
-    vocab: bool,
-    document_relative: bool,
+    active: &ActiveContext, value: &str, vocab: bool, document_relative: bool,
 ) -> Result<Option<String>, RdfDiagnostic> {
     if is_keyword(value) || is_extension_control(value) {
         return Ok(Some(value.to_owned()));
@@ -1801,10 +1725,7 @@ pub(super) fn expand_iri(
 }
 
 pub(super) fn compact_iri(
-    active: &ActiveContext,
-    inverse: &InverseContext,
-    iri: &str,
-    vocab: bool,
+    active: &ActiveContext, inverse: &InverseContext, iri: &str, vocab: bool,
     selection: Option<&JsonLdTermSelection>,
 ) -> Result<String, RdfDiagnostic> {
     if is_extension_control(iri) {
@@ -1844,9 +1765,7 @@ pub(super) fn compact_iri(
 }
 
 fn select_inverse_term<'a>(
-    inverse: &'a InverseContext,
-    iri: &str,
-    selection: Option<&JsonLdTermSelection>,
+    inverse: &'a InverseContext, iri: &str, selection: Option<&JsonLdTermSelection>,
 ) -> Option<&'a str> {
     let containers = selection.map_or_else(
         || vec!["@none".to_owned()],
