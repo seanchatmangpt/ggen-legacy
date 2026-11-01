@@ -9,7 +9,12 @@ by the finishing lane 16 (2026-10-31, post lanes 1-15) — that lane owns only
 this paragraph, §6, the recommended-next-action, and the falsify list, not
 the other section statuses; fifth refresh by plan-update lane 7 (2026-10-31)
 — this lane owns only this file, and corrects §6/§3/recommended-next-action
-against session receipts that supersede the fourth refresh's doc-only reads.
+against session receipts that supersede the fourth refresh's doc-only reads;
+sixth refresh by DOC lane 5 (2026-10-31) — this lane owns only this file,
+corrects the stale `signing.key`/`.gitignore` "unresolved" wording (G13 is
+RESOLVED) and re-records the recommended-next-action at the campaign's
+terminal state (one-package package committed through c4r=`724d5425`; finish
+residue pre-c5r staged per `stardf/arrow/docs/C5R-C6-STAGING.md`).
 Each entry
 names its closing command and the re-read evidence behind its status; anything
 not re-run this session stays **OPEN**. Decision rows now live in
@@ -247,33 +252,61 @@ FAIL — §3) → B2 BLAKE3 arbitration (D10;
 `stardf-arrow-core/Cargo.toml:15` still binds `blake3 = "1.8.5"` — re-read)
 → B3 duckdb rehome (D13). Lane 6's SQL scope arbiter
 (`09-sql-adaptation-scope.md`, re-read) landed its analysis with
-recommendation B but no code and no gate executions; D12 remains
-PENDING-OPERATOR. CI Actions and the D14 commit remain OPEN (the D14 plan is
-staged in `COMMIT-PLAN.md`; `signing.key`/`.gitignore` flags from F13
-unresolved).
+recommendation B but no code and no gate executions; D12 was
+PENDING-OPERATOR as of the fifth refresh. CI Actions: N/A-REGISTERED this
+campaign (the yml never executed; D2) — a standing, not a gap. The D14
+commit chain partially executed after the fifth refresh: the one-package
+package is committed through c4r=`724d5425`, and the finish residue (1,448
+paths at the 21:45 snapshot) is staged per
+`stardf/arrow/docs/C5R-C6-STAGING.md` (c5r docs commit + c6 sweep) —
+coordinator executes. The `signing.key`/`.gitignore` flags from F13 are
+RESOLVED (G13): the ignore entries landed in e06c257 — `signing.key` is
+named at `stardf/arrow/.gitignore:8` AND in `.ggen/keys/.gitignore`
+(doubly ignored) — and the key is 0600 on disk (re-verified this lane).
 
 ## Single Recommended Next Action
 
-**Operator signs the D9–D14 packets (lanes 9-12 recommendations), the
-coordinator executes the D14 commit plan, the avec W3 gate unblocks on the
-R1 receipt admission, and the SQL wave dispatches on D12.** Refreshed by
-plan-update lane 7 (fifth refresh, 2026-10-31). The chain is now purely
-authorization — and the machinery is even further along than the fourth
-refresh recorded: the columnar courts and the integration gate are no
-longer "landed-but-unwitnessed" — they are witnessed green in-tree (S9 13/0,
-S10 6/0 + regenerate x2, S11 4/0, F3 in-tree 5+1 post-`#[ignore]` fix,
-S14/W1-13 columnar_integration 1/0 x2 with 3 real codec defects caught), and
-the license gate's SKIP arm is closed (single exit-1 cause: the blake3
-FAIL). The verify.py pair held sha `cb57ce4e…` stable across 50 → 93 file
-growth. Still OPEN: D9 (freeze ticket `DRAFT-PENDING-OPERATOR-RATIFICATION`,
-recommend Tier A — gates all SQL-cycle export work and the W1 census
-additions, B0); D10 (BLAKE3 flip, recommend vendored purrdf-hash native —
-unblocks columnar W4 digest courts); D12 (SQL scope, recommend B conditioned
-on R3 — gates the SQL cycle start); D13 (duckdb re-home, recommend canonical
-checkout + rev pin — gates duckdb-scan W5); D14 (6-commit split — binds
-every SHA-less receipt to a commit; plan staged in `COMMIT-PLAN.md`;
-`signing.key`/`.gitignore` flags from F13 unresolved); CI Actions. The
-sign-off blocks (D1–D8, D9–D14 addendum) are entirely unsigned.
+**Terminal state (sixth refresh, DOC lane 5, 2026-10-31): the one-package
+package is committed through c4r=`724d5425` and the finish residue pre-c5r
+is staged per `stardf/arrow/docs/C5R-C6-STAGING.md` — what remains is three
+operator decisions and one coordinator execution.**
+
+1. **Operator G8/D17 decision — non-closure hard deps (the last red publish
+   gate).** stardf-rdf → {ed25519, gts, sparql-eval}; stardf-sql →
+   stardf-shapes; stardf-rs → 12+ members incl. optional stardf-duckdb
+   (registry-404 at upload). Options per `V26-11-1-GAPS.md` REMAINING #1:
+   join the closure / drop / re-route; then the manifest lane lands the diff
+   and the publish ladder re-runs to green.
+2. **Live publish go, double-gated.** Bottom-up tier order;
+   `STARDF_PUBLISH_CONFIRM=ratified-v26.11.1` + `--publish` both required by
+   `scripts/publish_stardf.py` (dry-run default; registry untouched through
+   the campaign). Sits behind the operator ratifying ONE footprint
+   (`V26-11-1-GAPS.md` REMAINING #5 — 21 member manifests declare
+   `publish = true`, the umbrella `stardf` crate is absent, GAPS #4).
+3. **ABI-v2 PENDING-OPERATOR (D18)** — the revised 13-export surface is NOT
+   adopted; arrow stays v1 13-symbol. Operator call with the
+   cross-allocator-court migration cost attached (`V26-11-1-VERDICT.md`
+   PENDING-OPERATOR table).
+
+Everything else is landed or staged, superseding the fifth refresh's D9–D14
+chain: D13 RESOLVED (option c, registry-only exact pins; D19 ratified
+`=2.0.4` x3 at `stardf/arrow/Cargo.toml:275-284`, G6-frozen-duckdb-pin PASS
+in all seven publish receipts); D14 partially executed — the commit chain is
+c3 `6cbb5b77` (one-package port) → c4 `de5ca40a` (evidence) → c5
+`b87ea6fb` (docs) → c2r `4d354af4` (license register + campaign tooling
+residue) → c4r `724d5425` (final manufacturing receipt, HEAD), with the
+finish residue (1,448 paths at the 21:45 snapshot) classified and staged
+per C5R-C6-STAGING.md (c5r docs commit gated on
+`python3 scripts/verify_docs.py --strict`; c6 sweep gated on
+`cargo check --workspace` + four-target courts) — coordinator executes.
+D20 registers the publish closure first-class and ladder-judged BLOCKED;
+D21 registers the edition-2024 / rust-version-1.98 build-driven deviation;
+CI-in-Actions is N/A-REGISTERED (D2), a standing not a gap. Columnar courts
+and the integration gate remain witnessed green in-tree (S9 13/0, S10 6/0 +
+regenerate x2, S11 4/0, F3 5+1, S14/W1-13 1/0 x2 with 3 real codec defects
+caught); the license gate's SKIP arm stays closed (single exit-1 cause: the
+blake3 FAIL); the verify.py pair held sha `cb57ce4e…` stable across 50 → 93
+file growth.
 
 ## What Would Falsify Done-Ness
 
@@ -294,9 +327,11 @@ sign-off blocks (D1–D8, D9–D14 addendum) are entirely unsigned.
   vendored-columnar substrate between court runs — pin drift the lockfile
   would only surface if the pin-source law (`stardf/arrow/Cargo.toml`
   single-pin-source comment) is actually policed. **Status of this item:
-  OPEN/UNVERIFIED — this lane did not locate a `2.0.4` entry in
-  `Cargo.lock` this session; the float is carried forward from the wave
-  contract, not re-witnessed.**
+  CLOSED (sixth refresh) — superseded by D19: the frozen-duckdb /
+  frozen-duckdb-sys / frozen-duckdb-builder family is exact-pinned `=2.0.4`
+  x3 (`stardf/arrow/Cargo.toml:282-284`, re-read this lane) and
+  G6-frozen-duckdb-pin PASSes clean in all seven publish receipts — no
+  float remains to drift.**
 - Cache-absent compile unwitnessed: every green compile/test receipt on this
   tree was produced with a warm `target/`; no receipt witnesses a
   cold-cache (`target/` removed) `cargo check/test/clippy --workspace`,
@@ -320,15 +355,21 @@ sign-off blocks (D1–D8, D9–D14 addendum) are entirely unsigned.
 ## Nonclaims
 
 - Nothing in this file has been executed by lane 20 (second refresh), the
-  finishing lane 16 (fourth refresh), nor plan-update lane 7 (fifth
-  refresh). No gate output produced by any of them; every status cell above
+  finishing lane 16 (fourth refresh), plan-update lane 7 (fifth
+  refresh), nor DOC lane 5 (sixth refresh). No gate output produced by any
+  of them; every status cell above
   is either on-disk file content re-read or a session receipt cited as
   re-read evidence. The fifth refresh's corrections to §3/§6 come from
   session receipts (S9-S11, S14, W1-13, F3, the license-gate inventory-fix
   disclosure, the verify.py `cb57ce4e` stability witness), which supersede
   the fourth refresh's absence-of-receipt readings — the fourth refresh
   searched `docs/RECEIPTS.md` + `evidence/*.json` and found absence; the
-  runs were witnessed elsewhere in-session.
+  runs were witnessed elsewhere in-session. The sixth refresh re-verified
+  G13 on disk (both ignore entries + `signing.key` 0600) and re-cited the
+  session receipts for the commit chain (c3…c4r) and the G8/D17 +
+  double-gate wording from `V26-11-1-GAPS.md`/`V26-11-1-VERDICT.md`/
+  `OPERATOR-DECISIONS.md` — it ran no gate, committed nothing, and
+  performed no git operations.
 - The W1 census + `--mutate drop-type` landing is a file-content observation,
   not a run receipt: no F1 ladder command has been executed and witnessed by
   this lane. All rungs remain OPEN.
@@ -348,8 +389,8 @@ sign-off blocks (D1–D8, D9–D14 addendum) are entirely unsigned.
 - [`04-falsifiers.md`](04-falsifiers.md) — F1-F5 falsifiers, R1-R5 risks
 - [`../OPERATOR-DECISIONS.md`](../../arrow/docs/OPERATOR-DECISIONS.md) —
   D1–D14 decision pack (authority for §5)
-- [`../../arrow/evidence/wave-finish-lane16-2026-10-31.json`](../../arrow/evidence/wave-finish-lane16-2026-10-31.json) —
+- [`wave-finish-lane16-2026-10-31.json`](../../arrow/evidence/wave-finish-lane16-2026-10-31.json) —
   lane-16 receipt (superseded on `court_2` by later receipts)
-- [`../../arrow/evidence/columnar-wave-2026-10-31.json`](../../arrow/evidence/columnar-wave-2026-10-31.json) —
+- [`columnar-wave-2026-10-31.json`](../../arrow/evidence/columnar-wave-2026-10-31.json) —
   lane-18 receipt (S8–S16 UNKNOWN on disk)
 - [`../../arrow/evidence/README.md`](../../arrow/evidence/README.md) — receipt law

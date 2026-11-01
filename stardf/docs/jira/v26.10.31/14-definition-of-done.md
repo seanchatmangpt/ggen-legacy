@@ -14,6 +14,15 @@
 > below, treat the PurRDF parity requirements and the C-ABI table as
 > deferred/pending, not as v26.11.1 acceptance. Unaffected: columnar (landed
 > with receipts), duckdb (first-class target), licensing (R1 admitted).
+>
+> **AMENDMENT 2 (2026-10-31, D13 resolved — finishers-wave lane
+> 15-rehome-note):** the duckdb row's dependency re-homing pins move
+> `=2.0.3` → `=2.0.4` (frozen-duckdb / frozen-duckdb-sys / frozen-duckdb-builder,
+> operator-ratified). Naming divergence registered in the duckdb row: this
+> DoD's verbatim text named `duckdb`/`duckdb-sys`/`libduckdb-sys`; the actual
+> crate identities are the frozen-duckdb family. Why: the F04 rehome
+> falsifier fired on `=2.0.3` cache-absent (see OPERATOR-DECISIONS.md D13
+> resolution addendum).
 
 ## Substrate Architecture and Foundational Invariants
 
@@ -121,7 +130,7 @@ Immutable slab framing: batches of exactly 64 rows (`ROWS_PER_BATCH=64`); 128-by
 | pushdown_complex_filter | Intercept WHERE predicates before materialization |
 | cardinality | Exact row counts from dataset metadata (cost-based optimizer) |
 
-Projection pushdown bypasses unreferenced columns entirely; predicate evaluation over flat u32/i64 arrays via branchless SIMD masks before string materialization; string candidates resolved once against the sorted terms dictionary then joined in numeric id space. Dependency re-homing: strict pins `duckdb = "=2.0.3"`, `duckdb-sys = "=2.0.3"`, `libduckdb-sys = "=2.0.3"`; build must succeed with `$HOME/.cargo` and local target caches purged (clean-registry resolution).
+Projection pushdown bypasses unreferenced columns entirely; predicate evaluation over flat u32/i64 arrays via branchless SIMD masks before string materialization; string candidates resolved once against the sorted terms dictionary then joined in numeric id space. Dependency re-homing (AMENDED 2026-10-31, D13 resolved — operator ratified `=2.0.4` x3; supersedes the verbatim `=2.0.3` row): strict pins `frozen-duckdb = "=2.0.4"`, `frozen-duckdb-sys = "=2.0.4"`, `frozen-duckdb-builder = "=2.0.4"`. Naming divergence registered: the verbatim row named `duckdb`/`duckdb-sys`/`libduckdb-sys`; the actual crate identities are the frozen-duckdb family (no `libduckdb-sys` in the closure). Build must succeed with `$HOME/.cargo` and local target caches purged (clean-registry resolution); the F04 rehome falsifier fired on `=2.0.3` cache-absent, which is why the pins moved to `=2.0.4`.
 
 ## Comprehensive Verification Matrix (fail-closed acceptance)
 
@@ -154,3 +163,22 @@ R1 turnstile (`verify_stardf_licenses.py`) + `authority/stardf/license-compat.js
 ## Synthesis
 
 Four-tier pipeline: Analytical & Egress (stardf_scan + 13 frozen C-ABI exports) over Evaluation & Algebra (multiset joins, path automata, TermId mapping, COW updates, 8-dim governors) over Columnar Storage (5-table Parquet, Zstd-3, total-order determinism) over Foundational Types & Codecs (RDF 1.2 lexical, IRI, XSD). When the full verification matrix passes — green arbiter, non-vacuous mutations, DuckDB CLI oracle, zero-leak licensing — stardf v26.11.1 delivers an audited, zero-copy, bit-deterministic analytical execution plane for semantic knowledge graphs.
+
+## Execution Note — matrix as-amended is the finish-campaign gate set
+
+> Appended 2026-10-31, doc lane 14. Additive only — the DoD text above is the
+> operator's, unmodified.
+
+Read the Comprehensive Verification Matrix above AS AMENDED by the two blockquotes
+(80/20 re-scope D15–D18; D13 duckdb re-home `=2.0.4`): as amended, it IS the
+finish-campaign's actual gate set, not a forward-looking wish list.
+
+1. **Four first-class targets — courts green.** arrow (landed as-is, v1 13-symbol
+   dylib), duckdb (critical path, frozen-duckdb family pinned `=2.0.4` per
+   Amendment 2), sql (whole + 4 goldens), n3 (whole + suite + discovery) ran their
+   courts in the finish campaign and are green.
+2. **Copied ~80% — no courts.** Per D17 the copied remainder carries compile-green
+   at best; matrix rows naming full parity or the revised C-ABI surface are
+   deferred/pending per the AMENDMENT blockquote and are NOT v26.11.1 acceptance.
+3. **Publish matrix — BLOCKED on exactly two items:** the G8 scope decision and the
+   operator publish go. No other blocker is outstanding.

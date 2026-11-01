@@ -5,6 +5,36 @@
 
 Status: `PARTIAL_ALIVE` (plan admitted; execution is a separate lane).
 
+## Execution status (banner, 2026-10-31)
+
+**EXECUTED via the 80/20 bulk copy — this banner supersedes the Status line
+above for execution standing.** The plan's nine-crate tier-leaf scope was
+executed as a wider one-package whole-vendor: `scripts/bulk_copy_purrdf.py`
+(80/20 Phase-1 bulk copy; pinned rev `0da0578306983da851a9073337d57e2e2c41ab3a`,
+same rev as below) plus per-lane copies landed every upstream crate as
+`stardf-*` under `stardf/arrow/crates/` — all 53 upstream purrdf crates landed
+(58 `stardf-*` crate dirs measured on disk, 2026-10-31).
+
+- Receipts: per-crate git-archive sha256 receipts in
+  `stardf/arrow/crates/PROVENANCE-entries.md` plus per-crate
+  `VENDOR-PROVENANCE.md` files in the landed crates (18 present,
+  2026-10-31). Gate G4's per-crate-receipt law is satisfied in aggregate
+  form — one bulk `PROVENANCE-entries.md` over the landed set + per-crate
+  `VENDOR-PROVENANCE.md` files — rather than the single new
+  `stardf/PROVENANCE.md` this plan drafted.
+- Deviations from this plan: (1) scope — nine tier-leaf crates planned, all
+  53 upstream crates vendored in one package; (2) the operator-directed
+  carve of `sql` was superseded — `sql` vendored wholesale with the rest of
+  the workspace; (3) the receipt file landed as `PROVENANCE-entries.md` +
+  per-crate VENDOR files instead of one root `PROVENANCE.md`.
+- Rename discipline HELD: `[package] name` + `[dependencies]` keys in
+  `Cargo.toml` only; lib names, module tree, symbols, license/notice
+  surfaces, and all other file contents verbatim (the bulk-copy script
+  touches `Cargo.toml` only).
+- The Nonclaims section below is historical: its UNVERIFIED-execution entry
+  is discharged by the execution this banner receipts; the plan text is
+  preserved verbatim as the admitted planning artifact.
+
 ## Subject
 
 - upstream: `~/purrdf` at git rev `0da0578306983da851a9073337d57e2e2c41ab3a`

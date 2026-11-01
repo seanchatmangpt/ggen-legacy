@@ -48,6 +48,38 @@ Blocker chain statuses (supersedes §2 prose):
 | B2 BLAKE3 arbitration | recommendation only | **gate landed** |
 | B3 frozen-duckdb rehome | PENDING-OPERATOR | **datum landed** (D13 registry-resolve witnessed); rename-court still OPEN |
 
+### 0.1 Terminal reconciliation (2026-10-31, lane 7)
+
+Additive only: the lane-6 truth-pass above is retained verbatim as
+history; this subsection supersedes its OPEN lines.
+
+Witnessed terminal state:
+
+- **G_COL_EXIT witnessed** — the four-target courts ran green as a set
+  and the workspace check exited 0. The lane-6 line "G_COL_EXIT is not
+  yet discharged" is superseded: the columnar seam gate is discharged.
+- **One-package posture supersedes the 6-tier per-crate structure.**
+  The executed port posture is one package, not the per-crate tier
+  sequencing of §1–§3; those sections remain as historical plan text,
+  not a description of the executed structure.
+- **Blocker chain B0–B3 fully resolved** (supersedes the §0 table and
+  §2 prose; lane-6 states cited from the table above):
+
+| Blocker | Lane-6 state | Terminal state |
+|---|---|---|
+| B0 freeze ticket | landed-ticket | **resolved** — =2.0.4 ratified |
+| B1 R1 license gate | landed-red | **resolved** — license gate green |
+| B2 BLAKE3 arbitration | gate landed | **resolved** — blake3 gate landed |
+| B3 frozen-duckdb rehome | datum landed | **resolved** — datum witnessed + court PASS at =2.0.4 |
+
+B3's lane-6 open item (rename-court) closed with that court PASS at
+=2.0.4.
+
+Consequence for §5: its non-claims ("G_COL_EXIT is NOT discharged",
+"W3–W5 remain targets", OPEN-7 oracle-pending) predate this
+reconciliation and are superseded by it; §5 is retained verbatim per
+lane scope (§0-only edits).
+
 ## 1. Dependency order (layering law, 06 §9 / P0-20)
 
 Order is forced, not chosen: **columnar → SQL → duckdb-scan**.

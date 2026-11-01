@@ -1,6 +1,11 @@
 # frozen-duckdb Re-Homing Plan (v26.10.31 doc 10)
 
-Status: PENDING-OPERATOR (option selection). Lane 7, 2026-10-31.
+Status: RESOLVED (2026-10-31, finishers-wave lane 15-rehome-note) — D13 decided:
+operator ratified frozen-duckdb / frozen-duckdb-sys / frozen-duckdb-builder ALL
+`=2.0.4`; see §6 resolution register and `OPERATOR-DECISIONS.md` (D13 resolution
+addendum; register number **D19**, finish-campaign record). Lane 7 draft,
+2026-10-31; the PENDING-OPERATOR option selection below is the superseded
+historical analysis.
 Scope: re-home the machine-local `/Users/sac/frozen-duckdb` path patch
 (`purrdf/Cargo.toml:383-390 [patch.crates-io]`, three path patches) and the
 `~/.frozen-duckdb` cache (1.0 GB, `cache/v2.0.4-2-g87f1daa` prebuilt mega-libs)
@@ -22,7 +27,20 @@ R3) and §10.5.
   docs.rs branch emits no link directives. Library source: prebuilt cache or source compile
   per builder resolution. No absolute path lives anywhere except the three `[patch]` lines.
 - stardf has **zero** frozen-duckdb references in any Cargo.toml — nothing to migrate yet;
-  this plan governs the first port (purrdf-duckdb, 477 ln / 38 tests, per 06-phase0 §1).
+  this plan governed the first port (purrdf-duckdb, 477 ln / 38 tests, per 06-phase0 §1).
+  [2026-10-31 CORRECTION, lane 15-rehome-note: this bullet is STALE — stardf now consumes
+  frozen-duckdb via the stardf-duckdb crate (`crates/stardf-duckdb/Cargo.toml:24`
+  `frozen-duckdb = { workspace = true }`); workspace ground truth at this lane's read:
+  `Cargo.toml:267` `frozen-duckdb = { version = "2.0.3" }` (float pin, pre-ratification;
+  the =2.0.4 x3 manifest edit is the manifest lane's lease, not this doc lane's).
+  2026-10-31 REFRESH, lane 15-rehome-note re-invocation: the manifest lane HAS since
+  landed the pins — `Cargo.toml:279-281` now carry
+  `frozen-duckdb`/`frozen-duckdb-sys`/`frozen-duckdb-builder` all `"=2.0.4"`
+  (grep witnessed, exit 0); the line-267 float-pin citation is superseded on disk. The
+  F04 court (`scripts/verify_duckdb_rehome.sh`, on disk, =2.0.4 x3, two-arm
+  cache-absent) is present but NOT executed by this lane. The =2.0.4 two-arm
+  court PASS (both arms) is coordinator-reported lane-01 dispatch testimony —
+  no on-disk run receipt; standing registered at §6 item 5.]
 
 ## 1. Shared acceptance gate (P0-19 R3 falsifier)
 
@@ -178,8 +196,57 @@ registry build proves non-viable on a target (e.g. docs.rs/WASI). Grounds: small
 single provenance, cleanest receipts, no repo growth. Option (a) only if operator wants
 fork-head authority locally without publishing lag.
 
-PENDING-OPERATOR:
-1. Option: a / b / c (lane rec: c).
-2. Pin version: `=2.0.3` (golden-stable) vs `=2.0.4` (fork HEAD, golden regen recorded).
-3. Keep developer-local cache acceleration (non-authority) or go pure registry.
-4. Mechanism: in-process VTab (lane decision, grounded) — operator ratification only.
+RESOLVED (2026-10-31, finishers-wave lane 15-rehome-note — replaces the
+PENDING-OPERATOR list that stood here):
+
+1. Option: **(c) registry-only with exact-version pins** (mechanics per §4). The
+   option (a) canonical-checkout execution detail from OPERATOR-DECISIONS.md's
+   sign-off block ("option (a) … all pinned =2.0.3 per W1-9's float datum") is
+   superseded at the execution-detail level: the one-package workspace consumes
+   frozen-duckdb as a registry dependency, no `[patch.crates-io]`, no
+   machine-local path. No canonical fork checkout is required for the campaign
+   footprint.
+2. Pins: **frozen-duckdb / frozen-duckdb-sys / frozen-duckdb-builder ALL
+   `=2.0.4`** (operator-ratified 2026-10-31; register number **D19**,
+   `OPERATOR-DECISIONS.md` finish-campaign record — the D13 RESOLUTION
+   section carries the ratification, D19 gives it the register row). Why: the
+   rehome falsifier (**F04**, `scripts/verify_duckdb_rehome.sh` — registry-only
+   resolve+compile court) **fired on `=2.0.3` cache-absent**: with
+   `/Users/sac/frozen-duckdb` and `$HOME/.frozen-duckdb` absent, the `=2.0.3`
+   pin is not hostable registry-only (fail-closed court path). The =2.0.3
+   cache-absent failure is therefore moot — the pin moved to =2.0.4.
+   Firing mechanism (contract-stated; this lane did not re-execute): the
+   cache-absent refusal executed through the fork's **KD-01 export fence** —
+   `fence_exports_for` in `frozen-duckdb-builder` applies a 1,177-symbol
+   `-Wl,-exported_symbols_list` allowlist before cache persist (fork register
+   `/Users/sac/frozen-duckdb/KNOWN_DIVERGENCES.md` KD-01, CLOSED) — failing
+   against an **unpinned duckdb-master clone**; typed confounder disclosed:
+   the refusal is attributed to the unpinned source identity, not
+   independently to the `=2.0.3` pin version. (This KD-01 is the fork's
+   dylib-symbol register row — unrelated to stardf `docs/DIVERGENCES.md`
+   KD-01, a TermId offset divergence.)
+3. Cache acceleration: none — no `[patch.crates-io]` anywhere in the
+   one-package workspace (crates.io law: no machine-local path overrides in
+   published crates).
+4. Mechanism: in-process VTab (unchanged; §5 grounding stands).
+5. **=2.0.4 court witness (additive 2026-10-31, D10 doc lane).** Registry
+   resolve + compile PASS at `=2.0.4`, **both arms** of the two-arm court, is
+   coordinator-reported **lane-01 dispatch testimony**; no on-disk run
+   receipt for the two-arm run exists in `evidence/` (standing class
+   `REHOME_TWO_ARM_COURT_TESTIMONY_STANDING`,
+   `evidence/v26.11.1-manufacturing-receipt.json`). This doc lane did not
+   execute the court; the run receipt for the two-arm PASS remains OWED to
+   lane 01.
+
+Naming-divergence registration: the DoD (14-definition-of-done.md) verbatim
+row named the pins `duckdb` / `duckdb-sys` / `libduckdb-sys`; the actual crate
+identities are `frozen-duckdb` / `frozen-duckdb-sys` / `frozen-duckdb-builder`
+(no `libduckdb-sys` exists in the closure). Registered here and in the DoD row
+amendment.
+
+Nonclaims (this lane): docs-only lane — no cargo run, no court re-run, no
+manifest edit. The F04 falsifier-fired receipt is cited from the finishers-wave
+lane contract, not re-executed here; the =2.0.4 x3 cache-absent court re-run is
+NOT witnessed by this lane — the lane-01 two-arm PASS (both arms) is
+coordinator-reported testimony with no on-disk run receipt (standing per §6
+item 5).

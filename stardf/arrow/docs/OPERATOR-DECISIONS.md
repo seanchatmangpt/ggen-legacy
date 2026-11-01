@@ -642,3 +642,218 @@ wave's disk-signature law):
 - **D18 (ABI-v2):** PENDING-OPERATOR — the DoD's revised 13-export surface is
   NOT adopted this campaign; arrow stays landed as-is. Adoption is a later
   operator call with the cross-allocator-court migration cost attached.
+
+### H03 GATE-CLOSURE REGISTRATION (2026-10-31, lane H03) — 1 of 3 gates owner-blocked
+
+Landing list receipt 20261101T040521Z `[G3, G5, G8]` → receipt 20261101T051252Z
+`[G8]` (G3 + G5 closed fix-forward by lane H03; receipts
+`evidence/h03-gate-closure-receipt-2026-10-31.json`). **G8 is registered here
+as PENDING-OPERATOR — it is not manifest-reachable**: the gate counts optional
+rows (crates.io 404s at upload), and every G8 dep is source-woven (ed25519
+signing in `stardf-rdf`'s gts writer; sparql-eval in rdf's projections +
+capture bin; shapes in `stardf-sql`'s SHACL compiler path; 18 umbrella
+re-exports). The fix classes are the gate's own: the target members join the
+closure (D17 re-ratification), or the deps are dropped/re-routed (source
+surgery on the four crates).
+
+**Precise rows (24):** `stardf-rdf` normal: stardf-ed25519, stardf-gts,
+stardf-sparql-eval; dev: stardf-gts. `stardf-sql` normal: stardf-shapes.
+`stardf-toml` dev: stardf-sparql-eval. `stardf-rs` normal: datalog,
+duckdb (optional), entail, geo, glob, gts, hnsw, json, markdown, mime,
+process, retrieval, shapes, shex, slice, sparql-eval, text, validate.
+
+**Witnessed publish blast radius (bootstrap simulation,
+`evidence/h03-bootstrap-sim-2026-10-31.txt`):** 20/25 closure crates package
+fully in tier order (real tarballs, <10 MB, LICENSE in-tarball); 5 cannot
+publish-shaped-resolve — rdf + rs directly (cargo: "no matching package named
+stardf-ed25519 / stardf-datalog"), sql/toml/n3 transitively via rdf. Every
+unresolvable first-party req is a version the registry will never carry
+(=26.9.29 datalog/ed25519/shapes/slice; =26.11.1 gts/sparql-eval et al.).
+
+**Decision owed:** re-ratify the D17 closure to admit the 19 non-closure
+members (duckdb, shapes, gts, sparql-eval, ed25519, datalog, entail, geo,
+glob, hnsw, json, markdown, mime, process, retrieval, shex, slice, text,
+validate — with their own metadata/carriage costs, incl. 4 at 26.9.29 needing
+a version bump), or scope the publish footprint down (drop/reroute the deps,
+or take rdf/sql/toml/n3/rs out of the tier list). Until then the publish
+ladder stays BLOCKED at G8 by design.
+
+---
+
+## D13 RESOLUTION — frozen-duckdb pins =2.0.4 x3 (2026-10-31, finishers wave, lane 15-rehome-note)
+
+Append-only: this section does not rewrite D13's original row, the phase-2
+recommendation, or the sign-off block above; it supersedes at the
+execution-detail level only.
+
+**D13: RESOLVED — operator ratified frozen-duckdb / frozen-duckdb-sys /
+frozen-duckdb-builder ALL `=2.0.4`** (operator authorization carried by the
+finishers-wave lane contract, 2026-10-31).
+
+**Why (F04 falsifier fired).** The registry-only rehome court
+(`scripts/verify_duckdb_rehome.sh`, pinned `=2.0.3`) **fired cache-absent**:
+with `/Users/sac/frozen-duckdb` and `$HOME/.frozen-duckdb` absent, the
+`=2.0.3` pin is not hostable registry-only (fail-closed court path). With the
+falsifier fired on `=2.0.3`, the operator ratified `=2.0.4` x3; the
+`=2.0.3` cache-absent failure is moot under the ratified pins.
+
+**Consequences.**
+
+- The sign-off block's execution detail ("frozen-duckdb/-sys/-builder all
+  pinned =2.0.3 per W1-9's float datum") is **superseded** by `=2.0.4` x3.
+- Option (c) mechanics stand: registry-only resolve, no `[patch.crates-io]`,
+  no machine-local path in the one-package workspace. Option (a)'s
+  canonical-checkout execution detail is superseded by exact registry pins
+  (no canonical fork checkout required for the campaign footprint).
+- Register effect: D13 PENDING-OPERATOR → **RESOLVED**; falsifier F04's
+  close condition is satisfied by the =2.0.4 pins, not by a =2.0.3 fix.
+
+**Nonclaims.** Docs-only lane: no cargo run, no court re-run, no manifest
+edit — workspace `Cargo.toml:267` still read
+`frozen-duckdb = { version = "2.0.3" }` (float pin) at this lane's read; the
+`=2.0.4` x3 manifest edit belongs to the manifest-owning lane and is NOT
+claimed landed. The F04 falsifier-fired receipt is cited from the
+finishers-wave lane contract, not re-executed by this lane; the `=2.0.4` x3
+cache-absent court re-run is NOT witnessed by this lane. No git operations.
+
+**Refresh witness (2026-10-31, lane 15-rehome-note re-invocation; re-read
+per concurrent-lane discipline).** The manifest lane HAS since landed the
+pins: workspace `Cargo.toml:279-281` read
+`frozen-duckdb = "=2.0.4"` / `frozen-duckdb-sys = "=2.0.4"` /
+`frozen-duckdb-builder = "=2.0.4"` (grep witnessed, exit 0) at this refresh
+read; the line-267 float-pin citation above is superseded on disk. The
+`=2.0.3` cache-absent failure is moot under the landed pins. The court script
+`scripts/verify_duckdb_rehome.sh` is on disk pinned `=2.0.4` x3 (two-arm
+cache-absent design, 10528 bytes, read this refresh). Still NOT witnessed by
+this lane: any cargo resolve/compile run or court execution against the
+landed pins.
+
+---
+
+# Finish-Campaign Decision Record — D19–D21 (2026-11-01, completion lane 19 / G19)
+
+Append-only continuation of the register after D15–D18 (80/20 re-scope) and
+the D13 RESOLUTION section above. No earlier row is rewritten or flipped;
+D13's `=2.0.4` resolution is CITED, not amended. All evidence is on-disk at
+HEAD `724d542540b497f2928a63b5aece9b37aef4019b` (c4r) + working tree, read
+2026-11-01 by this lane. No git mutations, no live publish, no registry
+touch, no court execution by this lane.
+
+## Register
+
+| # | Decision | Status | Blocks |
+|---|---|---|---|
+| D19 | frozen-duckdb family exact-pinned `=2.0.4` x3 | DECIDED (operator) | live publish go |
+| D20 | publish-prep first-class, ladder-judged, BLOCKED | DECIDED (campaign) | live publish go |
+| D21 | edition 2024 / rust 1.98 build-driven deviation | DECIDED (registered) | avec re-run |
+
+## D19 — frozen-duckdb `=2.0.4` x3 ratified
+
+**Status: DECIDED.** Operator authorization carried by the finishers-wave
+lane contract (2026-10-31); the D13 RESOLUTION section above records the
+ratification and its refresh witness. This row gives the decision its
+register number and the publish-context evidence ladder.
+
+**Evidence.**
+
+- `stardf/arrow/Cargo.toml:275-284` (lane 01-duckdb-pins, 2026-10-31):
+  exact `=` pins for frozen-duckdb / frozen-duckdb-sys / frozen-duckdb-builder;
+  comment names "registry-only the only possible resolution", no machine-local
+  path override — "crates.io publish law".
+- G6-frozen-duckdb-pin **PASS, detail "clean"** in all seven publish receipts
+  (`evidence/publish_stardf-receipt-20261101T032659Z` … `T040521Z`, read this
+  lane) — the pin gate holds in publish context, not just the rehome court.
+- `scripts/verify_duckdb_rehome.sh` re-pinned `=2.0.4` x3 (two-arm
+  cache-absent design) per the D13 refresh witness.
+- Falsifier discipline: F04 FIRED on `=2.0.3` (cache-absent, fail-closed
+  court path) BEFORE the operator ratified `=2.0.4` — the decision followed a
+  fired falsifier, not a preference; the `=2.0.3` failure class is moot under
+  the ratified pins.
+
+## D20 — first-class publish closure: materialized, ladder-judged, BLOCKED
+
+**Status: DECIDED (campaign outcome). Standing of the closure itself:
+BLOCKED.** The v26.11.1 campaign treats publish-preparedness as a first-class
+deliverable: a ratifiable closure carrying unified crates.io metadata,
+dual-keyed dependencies at the exact publish version `=26.11.1`, and a
+runnable fail-closed ladder that emits machine-readable receipts. It does NOT
+mean live-published: every ladder run this campaign was dry-run; the latest
+verdict is BLOCKED with a 3-row landing list; live publish sits behind the
+operator gate (`STARDF_PUBLISH_CONFIRM=ratified-v26.11.1` + `--publish`,
+`scripts/publish_stardf.py`) and is PENDING-OPERATOR
+(`docs/V26-11-1-VERDICT.md`, PENDING-OPERATOR table).
+
+**Evidence.**
+
+- `stardf/arrow/Cargo.toml` — closure materialization, all read this lane:
+  `version = "26.11.1"` + unified description/keywords/categories for
+  workspace inheritance (`[workspace.package]`, lines 200-227, lane
+  07-publish-metadata); 46 stardf-* `version+path` dual-key rows at
+  `=26.11.1` in `[workspace.dependencies]` (lines 305-369, lane 08-dual-key),
+  so `cargo publish` rewrites path deps to the exact publish version;
+  `stardf-scan-duckdb` a first-class closure member (publish=true, lines
+  170-174, 360-363).
+- Fail-closed ladder: `scripts/publish_stardf.py` gates G1-G9 + R1, dry-run
+  by default. Seven receipts landed:
+  `evidence/publish_stardf-receipt-20261101T032659Z` … `T040521Z` — all
+  verdict **BLOCKED**, landing list shrinking 4→3 (R1 flipped FAIL→PASS in
+  the 21:05 window; the final receipt records the flip pair exit 0 at c2 →
+  exit 1 at 20:26-20:50 → exit 0 x2 at 21:05).
+- Latest receipt (T040521Z) gate standings, read this lane: PASS
+  G1-closure-present, G2-tiers-strict-topo, G4-metadata-fields,
+  G6-frozen-duckdb-pin, G7-patch-tables, G9-cargo-check-workspace (exit 0),
+  R1-license-gate (exit 0); FAIL G3-publish-flag (4 tier-expected crates
+  publish=false), G5-dep-hygiene (avec-arrow git dep in stardf-arrow-core +
+  stardf-arrow-capi; residual path-only dual-key rows), G8-nonclosure-hard-deps
+  (stardf-rdf→{ed25519,gts,sparql-eval}, stardf-sql→stardf-shapes,
+  stardf-rs→… incl. new stardf-rs→stardf-duckdb registry-404 row);
+  avec-ffi-court FAIL exit 101 (see D21).
+- `evidence/v26.11.1-manufacturing-receipt.json` — final receipt (lane
+  17-receipt-final pass 2): standing overall PARTIAL_ALIVE; footprint
+  reality check (the contract's umbrella cell named "stardf"; the crate on
+  disk joined the publish set as `stardf-rs` at 21:00); four-first-class
+  targets table (arrow PARTIAL_ALIVE local; duckdb implementation landed,
+  courts UNKNOWN-as-receipt; sql + n3 UNKNOWN-as-receipt).
+- `docs/V26-11-1-VERDICT.md` — campaign verdict PARTIAL_ALIVE with publish
+  BLOCKED; 21 member manifests declare `publish = true` (lane's grep); the
+  operator must ratify one footprint before any live publish.
+
+## D21 — edition 2024 / rust-version 1.98: build-driven deviation, registered
+
+**Status: DECIDED (deviation registered).** The operator template for the
+campaign carried edition 2021 / MSRV 1.88. Build evidence forced 2024 / 1.98;
+this row registers the deviation so it is on the books, not silent drift.
+
+**Evidence.**
+
+- The template value: `stardf/docs/jira/v26.10.31/12-full-parity-campaign.md:32`
+  — "fix 1.88/1.82/absent skew — P19-B5" (the dispatched MSRV unification
+  target was 1.88).
+- The build-driven correction, verbatim in
+  `stardf/arrow/Cargo.toml:204-217`: upstream purrdf root
+  `[workspace.package]` edition is 2024 and ALL upstream crates inherit it —
+  vendored sources use let-chains (witnessed: stardf-gts E0658-class "let
+  chains are only allowed in Rust 2024"), so the inherited edition must be
+  2024 for the vendored closure to compile; `edition = "2024"` (line 210).
+  MSRV: "Max of member-declared rust-version values (19 crates declare 1.98;
+  the dispatch's '1.88' understated it — re-read from manifests at fix
+  time)"; `rust-version = "1.98"` (line 217). Root package inherits via
+  `rust-version.workspace = true` (line 190).
+- The 1.98 MSRV is load-bearing, witnessed both directions in the latest
+  publish receipt (T040521Z): G9 `cargo check --workspace` exit 0 (the
+  workspace compiles under the resolving toolchain) while avec-ffi-court
+  exits 101 — "stardf-arrow-core@26.11.1 requires rustc 1.98" — because
+  `/Users/sac/avec` carries NO rust-toolchain pin and its rustup default
+  predates 1.98 (mechanism witnessed in the final receipt update_note).
+  Closure owed: a ≥1.98 toolchain pin in the avec checkout before the
+  consumer court re-run.
+- Toolchain posture unchanged from the operator template's dev/CI intent:
+  `stardf/arrow/rust-toolchain.toml` floats nightly with clippy/rustfmt
+  components + wasm32/aarch64 targets; MSRV is carried by member
+  `rust-version`, not the channel pin.
+
+**Nonclaims.** This lane re-read evidence files only; no cargo run, no court
+re-run, no publish, no registry touch, no git mutation. Counts and gate
+standings are citations from the named receipts/docs as of their read time,
+not re-measurements. D19–D21 record decisions already executed by other
+lanes; nothing here executes them.

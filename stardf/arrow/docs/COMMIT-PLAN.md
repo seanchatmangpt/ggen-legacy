@@ -271,3 +271,110 @@ tracked. Remaining residue:
   c4 receipt re-bind OPEN; docs/jira c0 split RECOMMENDED. Overall plan
   standing: PARTIAL_ALIVE — the c3 hop cannot execute until the owning
   lane repairs the crate.
+
+---
+
+# Post-Mortem — v26.11.1 commit series (G19 finish lane, 2026-11-01)
+
+Append-only post-mortem written after the series executed. This lane ran
+read-only git only (`git log`/`git status`/`git show`); NO git mutations,
+staging, or commits. HEAD at read time: `724d542540b497f2928a63b5aece9b37aef4019b`
+(c4r), branch `fix/v26.9.29-ci-gates`.
+
+## Landed chain (verified by this lane's `git log --oneline -14`, exit 0)
+
+| plan ref | landed SHA | subject (abbrev.; full text in git log) |
+|---|---|---|
+| c1 | `26d0140` | docs(stardf): planning pack v26.10.31 + GL-STARDF-001 (c1) |
+| c2 | `98afd71` | feat(stardf): authority contract + verifiers, census parity 22/22 (c2) |
+| — | `e06c257` | chore: update .gitignore — **VIOLATION, see below** |
+| c3 | `6cbb5b7` | feat(stardf): one-package port — purrdf -> stardf, 53 crates (c3) |
+| c4 | `de5ca40` | chore(stardf): evidence receipts through the v26.11.1 campaign (c4) |
+| c5 | `b87ea6f` | docs(stardf): as-built doc pack + decision briefs (c5) |
+| c2r | `4d354af` | chore(stardf): license register closure + tooling (c2r) |
+| c4r | `724d5425` | chore(stardf): final manufacturing receipt (c4r) |
+
+## Plan-vs-landed deltas
+
+- **c0 never landed.** The 9 historical `docs/jira/` files
+  (`v26.9.17/cleanup-merge-plan.md`, `v26.9.19/000-survey.md` …
+  `007-dirty-tree.md`) are still untracked today (read this lane).
+- **c1r absorbed into c5.** The three planning-pack additions (12-full-parity,
+  13-v26111-target-ledger, 14-definition-of-done) show in `b87ea6f`'s stat;
+  c1r never landed as a distinct commit.
+- **c5 landed wider than drafted.** The draft scoped c5 to 17 files; the
+  landed c5 (`b87ea6f`) carried the as-built doc pack + decision briefs +
+  planning-pack updates (incl. COMMIT-PLAN.md and OPERATOR-DECISIONS.md
+  themselves).
+- **c6's enumerated content is MOOT.** `stardf/crates/` is ABSENT on disk
+  (verified this lane) — the one-package port (D15/D16) archived the stubs,
+  so the 1,479-file commit cannot be staged. Its blocking question
+  (orphan `version.workspace = true` manifests) died with the stubs.
+
+## Resolved flags
+
+- **Flag 1 (c3 BLOCKED on stardf-rdf-core-slice): RESOLVED.** c3 landed
+  (`6cbb5b7`) and the latest publish receipt (T040521Z) witnesses
+  G9 `cargo check --workspace` exit 0 at 21:05 — the compile gate c3's
+  landing was conditioned on.
+- **Flag 3 (stardf/crates orphan-workspace manifests): RESOLVED by
+  obsolescence** (stubs archived, dir absent — verified this lane).
+- **Flag 4 (receipt re-bind): RESOLVED.**
+  `evidence/v26.11.1-manufacturing-receipt.json` binds `subject.head` to
+  `724d5425...` (c4r itself), with full c-chain identity — the SHA-binding
+  debt from the SHA-less pre-commit receipts is closed.
+- **Flag 5 (ad hoc c4 JSON court): stands** — the ad-hoc parse court was
+  used as flagged; a standing evidence verifier still does not exist.
+- **Flag 6 (docs/jira c0 split): still OPEN** (9 files untracked).
+- **Flag 7 (live-tree drift): absorbed** — c4r's receipt carries the
+  receipt-time tree digest; drift continues into the residue below.
+- **Flag 2 (bench member lock): still OPEN** —
+  `crates/stardf-arrow-bench/Cargo.lock` still exists on disk (verified
+  this lane); workspace Cargo.toml still says "One workspace, one lock".
+
+## Remaining — c5r/c6 finish-campaign residue (uncommitted, as of this read)
+
+The finishers-wave work is on disk, NOT in history. Snapshot this lane
+(`git status --porcelain=v1 --untracked-files=all`, 1,447 dirty paths):
+**139 untracked / 1,285 modified / 23 deleted.**
+
+- **c5r (docs residue)**: 9 historical docs/jira files (c0, above); 4 new
+  docs (`docs/SUPERSEDED-CLAIMS.md`, `docs/V26-11-1-VERDICT.md`,
+  `docs/design/purrdf-change-path-allocations.md`,
+  untracked `docs/design/purrdf-retrieval-ladder.md`); plus the modified
+  `docs/OPERATOR-DECISIONS.md` / `COMMIT-PLAN.md` appends THIS lane is
+  writing.
+- **c6 (sweep)**: 1,285 modified files — the campaign source sweep across
+  crates (src/tests/benches: edition-2024/MSRV/metadata unification, dual-key
+  manifest work, scan-crate growth, court repairs); 130 untracked under
+  `stardf/`: 11 new evidence receipts (incl. the 7 publish receipts), ~60
+  license-carriage files (licenses/ x5 per crate, NOTICE.txt), 7 PROVENANCE.md,
+  corpora/community (2), vectors/ shacl12+shacl test vectors (~40), 1
+  workflows file, 2 disabled-tests READMEs; 23 deletions — 6 lane
+  build-root leases (`target-w2l{01,07,10,13,14,19}/` + `target-l3sql/`
+  cache files, per the same-checkout-fanout cleanup law), the
+  `v26.11.1-manufacturing-receipt-DRAFT.json`, `golden_bytes.rs`, and 7
+  removed tests/examples (stardf-rdf gts_composite_compaction, stardf-shapes
+  4 oracle fixtures, stardf-shex 2 tests).
+- The split above is descriptive, not prescriptive: the coordinator owns the
+  final partition at staging time (re-run `git status --porcelain` then).
+
+## The registered e06c257 process violation
+
+`e06c257` (gitignore-only commit landing c3's planned .gitignore delta
+without a ticket) **stays in history**; the header registration above stands.
+Consequence recorded at registration time still holds: c3 carried no
+gitignore-delta step (the rules ship inside `stardf/arrow/.gitignore` with
+the c3 tree). Closure is unavailable — history is immutable; the standing
+guard is the ticket-gated admission law (nothing executable admitted without
+a deterministic ticket). Status: **REGISTERED, not remediated.**
+
+## Post-mortem standing
+
+**PARTIAL_ALIVE.** The chain landed through c4r (8 commits verified in
+history this session); G9 `cargo check --workspace` exit 0 witnessed
+(21:05, T040521Z receipt); the finish-campaign residue (c5r/c6) is
+uncommitted on the live tree; flag 2 + flag 6 open; the e06c257 violation is
+REGISTERED, not remediated. The series is not "complete" until the residue
+lands and a sweep commit reads a clean tree
+(`test -z "$(git status --porcelain)"` — the original c6 gate).

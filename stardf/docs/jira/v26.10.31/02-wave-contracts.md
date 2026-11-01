@@ -3,6 +3,22 @@
 Companion to `01-master-plan.md`. Each wave: file-ownership, dispatch contract, exact edit
 plan source (10-lane explore run `wf_91d14711-714`, 2026-10-31), verification ladder.
 
+> **FINAL STATUS (2026-10-31, doc lane 2) — SUPERSEDED; historical receipt.** The W1-W5
+> wave-contract structure in this document was superseded by the 80/20 re-scope
+> (`arrow/docs/OPERATOR-DECISIONS.md`, third operator block, D15-D18: one-package rule,
+> scripted bulk copy, honest court scope, ABI-v2 pending) and by the one-package execution
+> that re-scope authorized (D15/D16: all ~53 purrdf crates straight-copied into the single
+> `stardf/arrow` workspace). W1-W5 as designed were replaced by the finish-campaign shape —
+> the landed c-chain from c3, the one-package port (`6cbb5b7`, `arrow/docs/COMMIT-PLAN.md`),
+> through the final manufacturing receipt (`arrow/evidence/v26.11.1-manufacturing-receipt.json`,
+> FINISH-CAMPAIGN re-bind; see also `arrow/evidence/finish-wave-2026-10-31.json` and
+> `arrow/evidence/wave-consolidated-2026-10-31.json`, construction W1-W20 / finishing F1-F17).
+> The per-wave standing block and wave sections below are preserved as the plan-of-record as
+> it stood 2026-10-31, not the executed shape. **"Corrections learned" remains a valid method
+> record**: its lessons (pack selection is an EXPLORE-lane output; census before scoping;
+> reconstitute-vs-specify-first) were inherited by the campaign, not invalidated by it.
+> Acceptance now reconciles to `14-definition-of-done.md` as amended by D15-D18.
+
 **Status update (2026-10-31, plan-update lane 2)** — standing per wave, grounded in on-disk
 receipts under `arrow/evidence/` (paths relative to `stardf/`):
 

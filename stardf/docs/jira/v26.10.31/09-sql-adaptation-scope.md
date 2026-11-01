@@ -1,5 +1,11 @@
 # Phase-2 Lane 6 — Vendored-Crate Adaptation Scope, SPARQL Stack (v26.10.31)
 
+> **RESOLUTION — SUPERSEDED by the one-package rule (D15).** The §2 Option A/B/C decision
+> is moot: stardf-sql was vendored WHOLE, with the shapes edge intact (ordinary workspace
+> edge). Post-settlement: 4 goldens + doctest green (H01 receipt). The ViewTermId seam
+> (§1a) and governor binding inputs (§1b) remain valid as method record. The analysis
+> below is retained as written; it no longer states the live scope.
+
 Makes the operator's no-rewrite decision concrete: three adaptation-scope options for
 bringing the purrdf SPARQL stack into stardf. Companion to `06-phase0-columnar-sql-duckdb.md`
 (§1 sizes, §2 seam, §5 governors, §10 operator register). PLANNING LANE — analysis only,

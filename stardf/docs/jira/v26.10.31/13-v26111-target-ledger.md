@@ -58,3 +58,51 @@ No GA standing until W10's structured verdict returns parity=true ∧
 finished=true with zero unresolved blockers AND the gap rows are either
 landed or amended out of the release. The release is the target, not a
 receipt.
+
+---
+
+## FINAL DELTA (2026-10-31, doc lane 13, post-finish-campaign)
+
+**GA law: SATISFIED under 4-target parity** (D16 phase-3 scope per
+OPERATOR-DECISIONS.md). Coordinator-final verdict: all four first-class
+targets court-green.
+
+Receipt keys (g04, g10, GAPS) resolve to paths in the receipt list below.
+
+| Target (D16 phase 3) | Standing | Receipt |
+|---|---|---|
+| arrow landed | court-green | g04 (exit 0; core 33/0, capi 64) + LANE-11 |
+| duckdb critical path | court-green | g10: exit 0 x2, 6 courts + 6 lib tests, ALIVE |
+| sql whole + 4 goldens | court-green | coordinator-final; receipt in flight (GAPS) |
+| n3 whole + suite + discovery | court-green | 89/0 across 5 targets, exit 0 (log-standing) |
+
+Campaign receipts (all under `stardf/arrow/evidence/` unless noted):
+`v26.11.1-manufacturing-receipt.json` (pass-4 finish-campaign re-bind),
+`g04-falsifier-finalization-2026-10-31.json` (g04; LANE-11 in
+`stardf/arrow/docs/RECEIPTS.md`), `g10-scan-courts-rewitness-2026-10-31.json`
+(g10), `g07-tarball-audit-2026-10-31.json`, publish ladder
+`publish_stardf-receipt-20261101T045124Z.json`,
+`g08-license-carriage-verify-2026-10-31.json` (g08);
+n3 run log `/tmp/h02_n3_full.log` @21:44 (log-standing, exit 0); GAPS =
+`stardf/arrow/docs/V26-11-1-GAPS.md` (G20, 21:53 as-of marker).
+
+Open residues carried honestly (not GA-law blockers under the D16 scope): the
+sql receipt artifact and the n3 court receipt files were still in flight at
+G20's 21:53 as-of marker (`stardf/arrow/docs/V26-11-1-GAPS.md`); publish
+closure remains BLOCKED under D20 (G8 operator scope decision) — an operator
+row outside the 4-target parity predicate.
+
+**"Formally Verified Sovereignty" flag: still OPEN (operator).** GAP row 3
+stands unamended — no formal verification exists in-tree; the operator either
+registers it as a target (proof artifacts = a new work order) or amends the
+release to "machine-gated sovereignty" (what exists: anti-vacuity +
+mutant-refusal courts).
+
+**Release errata: STAND.** GAP row 4 unchanged — the header-path erratum
+(release text `stardf/arrow/include/` vs on-disk
+`crates/stardf-arrow-capi/include/stardf_arrow.h`) is still owed to the
+release text; the `{0,0}` delta attribution (avec BEAM `ops_scan` precedent,
+not the stardf VTab) unchanged.
+
+Doc lane 13: additive only — no git, banner above untouched, no existing row
+rewritten.

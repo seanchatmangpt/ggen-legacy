@@ -1,14 +1,14 @@
-# avec-rehearsal — Lane 14 Receipt (2026-10-31)
+# cgap-rehearsal — Lane 14 Receipt (2026-10-31)
 
 Ticket [GL-STARDF-001](../../../tickets/GL-STARDF-001.md), W3 gate rehearsal.
 Consumes the FINAL `stardf-arrow-capi` as a foreign consumer exactly as the
-W3 `avec-ffi` court will — without writing to `/Users/sac/avec` (no avec
+W3 `cgap-ffi` court will — without writing to `/Users/sac/cgap` (no cgap
 writes; the ready-made diff below is deposited here, not applied).
 
 ## Standing
 
 - W3 consumer court, final capi — **ALIVE (rehearsed)**.
-  `cd /tmp/stardf-avec-rehearsal && cargo test --test avec_consumer_court`
+  `cd /tmp/stardf-cgap-rehearsal && cargo test --test avec_consumer_court`
   → exit 0: **3 passed / 0 failed**.
 - Final cdylib foreign-load — ALIVE. Court 3 `dlopen`s
   `target/debug/libstardf_arrow_capi.dylib`, `dlsym`s + calls
@@ -17,8 +17,8 @@ writes; the ready-made diff below is deposited here, not applied).
 - Header/exports three-way check — ALIVE (pre-existing gate).
   `python3 stardf/arrow/scripts/verify.py` → exit 0: 13 ontology
   targetSymbols == 13 header decls == 13 impl exports.
-- avec integration edge (real avec-ffi test) — OPEN. The rehearsal consumes
-  the capi from a /tmp crate; the avec-ffi dev-dep edge itself remains
+- cgap integration edge (real cgap-ffi test) — OPEN. The rehearsal consumes
+  the capi from a /tmp crate; the cgap-ffi dev-dep edge itself remains
   unwired, gated by R1.
 - R1 license gate — BLOCKED (by design).
   `python3 stardf/arrow/scripts/verify_stardf_licenses.py` → **exit 1**:
@@ -28,24 +28,24 @@ writes; the ready-made diff below is deposited here, not applied).
   moves the drafted receipt in `authority/stardf/license-compat.json`
   (`draft_receipts_pending_operator`) into `compatibility_receipts`.
 
-Environment receipt: avec local checkout HEAD =
+Environment receipt: cgap local checkout HEAD =
 `67c0ec1bad0bf4a81b2512e60f554b137ae596d9` (the exact pinned rev; the scratch
-crate consumed `avec-arrow` by the same git rev so a single avec-arrow
-identity links into the court binary, and `avec-audit` by local path
-`/Users/sac/avec/crates/audit` — its `CountingAlloc` was the court binary's
+crate consumed `cgap-arrow` by the same git rev so a single cgap-arrow
+identity links into the court binary, and `cgap-audit` by local path
+`/Users/sac/cgap/crates/audit` — its `CountingAlloc` was the court binary's
 `#[global_allocator]`, with `with_alloc_tracking` witnessing real allocations
-on the avec substrate's counting allocator).
+on the cgap substrate's counting allocator).
 
 ## Consumer court (3/3)
 
-Scratch crate `/tmp/stardf-avec-rehearsal` (deleted after this receipt;
+Scratch crate `/tmp/stardf-cgap-rehearsal` (deleted after this receipt;
 scratch-only per lane contract), one integration target
 `tests/avec_consumer_court.rs`:
 
 1. `court_1_export_stream_consume_get_schema_get_next_release` — full
    lifecycle through the C struct function pointers only (no Rust shims):
    `stardf_arena_new` → `stardf_arena_intern` ×4 → `stardf_batch_append_quad`
-   ×130 → `stardf_avec_export_stream` (STATUS_OK) → `get_schema` (flag 0,
+   ×130 → `stardf_cgap_export_stream` (STATUS_OK) → `get_schema` (flag 0,
    armed release, non-empty format) → `get_next` yields exactly
    ceil(130/64) = 3 non-empty batches then a zeroed release-less EOS array →
    array release callbacks → stream release → `stardf_stream_free` →
@@ -55,7 +55,7 @@ scratch-only per lane contract), one integration target
    `stardf_batch_rows() == 64`, pending tags +1; `stardf_release` returns
    `Released`, live slot cleared, tag claimed; fresh mint inside
    `avec_audit::with_alloc_tracking` shows non-zero allocation count on the
-   avec counting allocator; release returns tags to baseline.
+   cgap counting allocator; release returns tags to baseline.
 3. `court_3_dylib_loads_and_final_api_serves` — the final dylib loads via
    `dlopen(RTLD_NOW|RTLD_LOCAL)`, serves version `26.9.29`, and the
    release-tagged surface (`stardf_pending_tags`, `stardf_i32_batch`,
@@ -69,7 +69,7 @@ scratch-only per lane contract), one integration target
   W3 plan: `stardf_i32_batch`, `stardf_array_addr`, `stardf_batch_rows`,
   `stardf_pending_tags`, `stardf_release` (returning `stardf_ReleaseOutcome`)
   — 13 declarations total (three-way check green).
-- The avec pin moved: the README's integration plan still names rev
+- The cgap pin moved: the README's integration plan still names rev
   `20248e4`, but the workspace pin is `67c0ec1` (`20248e4` is broken upstream
   — missing `chase_lev.rs`; see `Cargo.toml` pin comment). The rehearsal ran
   on `67c0ec1`.
@@ -79,27 +79,27 @@ scratch-only per lane contract), one integration target
 - `Cargo.toml` grew a `stardf-columnar` **dev-dependency** only (lane-14
   unblock note) — invisible to foreign consumers of the rlib.
 
-## Ready-made avec-ffi diff (NOT applied — R1 gate)
+## Ready-made cgap-ffi diff (NOT applied — R1 gate)
 
-Once R1 admits the blake3 compatibility receipt, `avec/crates/avec-ffi`:
+Once R1 admits the blake3 compatibility receipt, `cgap/crates/cgap-ffi`:
 
 ```toml
-# crates/avec-ffi/Cargo.toml [dev-dependencies]
+# crates/cgap-ffi/Cargo.toml [dev-dependencies]
 stardf-arrow-capi = { path = "../../../ggen-legacy/stardf/arrow/crates/stardf-arrow-capi" }
-avec-audit = { path = "../audit" }
+cgap-audit = { path = "../audit" }
 ```
 
 plus the court file dropped in as
-`crates/avec-ffi/tests/stardf_consumer_court.rs` — courts 1 and 2 verbatim
-from the rehearsal (they use only the capi's public surface and avec-audit);
+`crates/cgap-ffi/tests/stardf_consumer_court.rs` — courts 1 and 2 verbatim
+from the rehearsal (they use only the capi's public surface and cgap-audit);
 court 3's `dlopen` path resolves to the stardf workspace's
 `target/debug/libstardf_arrow_capi.dylib` and must be re-pointed at wherever
-the built dylib lives from avec's tree. Modeled on
-`avec/crates/avec-ffi/tests/alloc_courts.rs` per the W3 plan.
+the built dylib lives from cgap's tree. Modeled on
+`cgap/crates/cgap-ffi/tests/alloc_courts.rs` per the W3 plan.
 
 ## Verdict
 
-The W3 gate ("ONE real avec integration test passing") is rehearsed 3/3
+The W3 gate ("ONE real cgap integration test passing") is rehearsed 3/3
 ALIVE on the final capi + final dylib; the gate itself remains OPEN until the
-court lives inside avec-ffi, which is blocked on R1 (operator admission of
+court lives inside cgap-ffi, which is blocked on R1 (operator admission of
 the blake3 compatibility receipt).

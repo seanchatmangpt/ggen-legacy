@@ -23,6 +23,56 @@ Phase-0 inputs consumed and landed:
 
 Everything below §0 is the historical Phase-0 receipt, unchanged.
 
+## 0a. Final-outcome addendum (2026-10-31, doc lane 6)
+
+§0 is the lane-5 mid-state. The final state supersedes it on four points, all
+re-read on disk this lane (no git operations; run receipts cited from the
+landed evidence files, not re-executed):
+
+1. **duckdb — `=2.0.4` ratified, rehome registry-resolves.** §0's W1-9 datum
+   ("`frozen-duckdb` 2.0.3 registry-resolves; sys/builder floats") is
+   superseded by D13 RESOLVED / D19 DECIDED (`docs/OPERATOR-DECISIONS.md:648`,
+   `:715`): operator ratified `frozen-duckdb`/`-sys`/`-builder` all `=2.0.4`,
+   landed at workspace `Cargo.toml:282-284`. The F04 rehome falsifier FIRED
+   cache-absent on `=2.0.3` (fail-closed court path, two-arm
+   `scripts/verify_duckdb_rehome.sh`), so the `=2.0.3` failure class is moot
+   under the ratified pins; the resolve is registry-only (lock source
+   `registry+…`, no `[patch.crates-io]`, no machine-local path). Nonclaim:
+   the `=2.0.4` cache-absent court re-run is NOT witnessed (D13/D19 blocks).
+2. **scan VTab landed with 6 courts, oracle through `stardf_scan`.** §0 named
+   `stardf_scan()` greenfield; final: `crates/stardf-scan-duckdb` is a
+   first-class member (publish=true, avec-decoupled, `vtab` feature under the
+   `=2.0.4` pin) with the in-process VTab (`register_stardf_scan`,
+   `crates/stardf-scan-duckdb/src/lib.rs:357`) and exactly six courts c1–c6
+   (`tests/scan_courts.rs`). G10 re-witness
+   (`evidence/g10-scan-courts-rewitness-2026-10-31.json`, standing ALIVE,
+   postdating the V26-11-1-VERDICT "courts UNKNOWN-as-receipt" row):
+   `cargo test -p stardf-scan-duckdb --locked` exit 0, 12/12 across two
+   witnessing runs — c1 count parity (scan == read_parquet == slab
+   arithmetic, five tables), c2 value parity (ORDER BY pinned), c3 LOUD SKIP
+   by landed design (`supports_pushdown()=false`, the W2e divergence;
+   filtered-row-set + mutant-catch legs arm only when pushdown flips), c4
+   empty-input clean, c5 three typed-refusal legs, c6 mutant flip witnessed
+   in-run. The external oracle gate ran in tier-3 in-process registration
+   mode **through `stardf_scan`** (`just columnar-oracle` exit 0;
+   standing-fixture counts 1030/400/108/108/9, engine == generator
+   projection, types BIGINT/VARCHAR).
+3. **D12 — resolved whole-vendor per one-package; slice coexistence.** §0's
+   probe verdict ("results crate deeply-coupled; any SQL port must name its
+   subset") is superseded at tree-shape level by D15's one-package rule
+   (OPERATOR-DECISIONS.md, 80/20 re-scope): whole-vendor straight-copied the
+   entire purrdf crate set including `stardf-sparql-eval` (member,
+   `Cargo.toml:168`) and `stardf-sql` (member). The slice artifacts COEXIST
+   rather than deleted: `stardf-slice` is a member (`Cargo.toml:165`) and
+   `crates/stardf-rdf-core-slice` is retained on disk but loudly excluded
+   from members (registered PARTIAL standing, escalated to the W1 vendoring
+   queue, `Cargo.toml:148-155`). The slice remains the admitted PARITY scope
+   only (12-full-parity-campaign GAP 1; D17: copied crates carry no courts).
+4. **columnar vendored** (§0 held) — `stardf-columnar` is a member with
+   `src/vendor/` leaves and is the physical substrate the scan surface reads
+   (G10 c1/c2 and the tier-3 oracle run real `stardf_columnar::write` bytes
+   through `stardf_scan`).
+
 ---
 
 Input: 20-lane read-only explore wave (2026-10-31, P0-1..P0-20). Companion to

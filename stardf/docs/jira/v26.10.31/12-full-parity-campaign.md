@@ -11,6 +11,18 @@
 > without operator re-admission. ABI-v2 (the DoD 13-export surface) is
 > PENDING-OPERATOR (D18) — arrow stays landed as-is. Deep reconciliation of
 > per-claim flags is owned by the W7-class doc lane.
+>
+> **ADDENDUM (2026-10-31, one-package re-scope):** D15's one-package rule
+> superseded this campaign's premises outright: every purrdf crate is now
+> straight-COPIED into the single stardf/arrow workspace — compile-green at
+> best, NO courts per D17 — so a future parity campaign does not resume the
+> W1–W10 vendoring waves; it starts from copy-fidelity courts (per-crate
+> sha256 of the copied tree vs git-archive of its purrdf origin HEAD), and
+> only the surviving deltas earn per-receipt parity work. What survived: the
+> 6-tier publish order (Tier0 leaves → Tier5 umbrella + capi), carried by
+> scripts/publish_stardf.py (TIERS + strict topological gate) and by the
+> crates.io Phase 2-5 plan (D16 phase ladder + D19–D21 publish-closure
+> register in OPERATOR-DECISIONS.md; verdict docs/V26-11-1-VERDICT.md).
 
 Designed from the 20-lane full-purrdf review (P1–P20, 2026-10-31). Companion to
 01-master-plan + 07-port-master-plan. Each wave = 20 concurrent agents. LAUNCH

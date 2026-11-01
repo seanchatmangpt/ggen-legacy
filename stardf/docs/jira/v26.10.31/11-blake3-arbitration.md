@@ -1,5 +1,34 @@
 # 11-blake3-arbitration
 
+## OUTCOME — D10 DECIDED (supersession banner, 2026-10-31)
+
+This banner records the D10 outcome. The pack below it is retained verbatim;
+where it reads PENDING-OPERATOR-SIGN-OFF or recommends Option B (§6), that
+status is superseded by this banner.
+
+**D10 DECIDED — Option A retained**: the blake3 crate stays bound;
+purrdf-hash is NOT vendored.
+
+- Gate landed + witnessed ×3: `stardf/arrow/scripts/verify_blake3_identity.sh`
+  → exit 0, "exactly 1 blake3 identity: blake3 v1.8.7" — witnessed in
+  `stardf/arrow/docs/RECEIPTS.md` (LANE-8 row),
+  `stardf/arrow/docs/DECISION-BRIEFS/D10-blake3-flip.md` (lane re-run), and
+  `stardf/arrow/README.md` (standing table).
+- WARN live, registered: declared 1.8.5 vs locked 1.8.7 skew surfaces as the
+  gate's advisory WARN and is registered in all three rows above. Clearing
+  step (pin `=1.8.7`, §5 If-A-wins step 1) not yet executed — WARN still live
+  as of this banner.
+- Option B DEFERRED, not rejected: §5 "If B wins" migration steps stand as
+  the standing recommendation for any future revisit. Nothing vendored, no
+  call sites swapped, §4 digest-parity court not landed.
+- Open residual at decision time: the gate is local-run only — NOT wired into
+  `ci/stardf-arrow-reconstitution.yml` or the `justfile` (§3's
+  wire-at-landing instruction did not land); `DIVERGENCES.md` KD-08/KD-12
+  rows still read OPEN / PARTIALLY CLOSED as of this banner (owned outside
+  this lane).
+
+---
+
 Evidence + recommendation pack for KD-08: which single BLAKE3 implementation
 `stardf/arrow` binds to. Status: **PENDING-OPERATOR-SIGN-OFF** — this file
 does NOT flip the KD-08 decision; KD-08 remains OPEN in
