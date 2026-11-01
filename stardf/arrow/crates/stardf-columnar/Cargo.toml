@@ -1,0 +1,42 @@
+# SPDX-FileCopyrightText: 2026 Blackcat Informatics(R) Inc. <paudley@blackcatinformatics.ca>
+# SPDX-License-Identifier: MIT OR Apache-2.0 OR MulanPSL-2.0
+
+[package]
+# Lane 9 vendor of purrdf rev 0da05783 `crates/columnar` (see PROVENANCE.md).
+name = "stardf-columnar"
+description = "Byte-deterministic, bidirectional five-table Parquet codec for RDF 1.2 datasets (vendored from PurRDF columnar, u32 term-id seam)"
+version = "26.9.29"
+edition = "2021"
+publish = false
+license = "MIT OR Apache-2.0 OR MulanPSL-2.0"
+repository = "https://github.com/seanchatmangpt/ggen-legacy"
+rust-version = "1.88"
+
+[lib]
+crate-type = ["rlib"]
+path = "src/lib.rs"
+name = "stardf_columnar"
+
+[features]
+default = []
+# Preserved upstream test modules (writer/reader/column/parquet tests). They
+# require the purrdf substrate crates (purrdf-core/purrdf-testkit/
+# purrdf-alloc-probe/purrdf-stack), which are NOT available in this workspace,
+# so this feature is inert here; it exists so the gated code is a declared,
+# reviewable boundary rather than silent dead text.
+upstream-tests = []
+
+[dev-dependencies]
+# LANE-11 UNBLOCK (disclosed in tests/seam_courts.rs header): the seam courts
+# are an integration test of this crate over stardf-arrow-core's arena.
+stardf-arrow-core = { path = "../stardf-arrow-core" }
+
+[dependencies]
+structured-zstd.workspace = true
+blake3 = { version = "1.8.5", default-features = false }
+
+[lints.rust]
+# Source parity diverged (lane 1, 2026-10-31): `deny` rather than `forbid` so
+# vendor/alloc_probe's real counting GlobalAlloc can exist; see src/lib.rs and
+# PROVENANCE.md.
+unsafe_code = "deny"

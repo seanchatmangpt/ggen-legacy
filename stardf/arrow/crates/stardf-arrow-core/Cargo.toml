@@ -1,0 +1,19 @@
+[package]
+name = "stardf-arrow-core"
+version = "0.1.0"
+edition = "2021"
+description = "StarDF Arrow core: Quad64 batch -> C Data Interface export."
+publish = false
+
+[dependencies]
+# Physical-layer substrate: Quad64 (repr(C, align(64)), 64-byte invariant).
+# Consumes the single workspace pin (root Cargo.toml); member manifests never
+# restate a rev or path for a shared dependency (single-pin law).
+avec-arrow = { workspace = true }
+# BLAKE3 term fingerprints (TermIdArenaDefinition). no_std, no mmap/NEON
+# defaults: arena.rs hashes only in-memory byte slices.
+blake3 = { version = "1.8.5", default-features = false }
+
+[features]
+default = []
+std = ["avec-arrow/std"]

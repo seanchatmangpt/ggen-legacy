@@ -1,0 +1,43 @@
+# SPDX-FileCopyrightText: 2026 Blackcat Informatics Inc. <paudley@blackcatinformatics.ca>
+# SPDX-License-Identifier: MIT OR Apache-2.0 OR MulanPSL-2.0
+
+[package]
+# Vendored from PurRDF `crates/branchless` at rev 0da05783 (see PROVENANCE.md).
+# Rename scope: package-level only. Lib name kept verbatim (`purrdf_branchless`)
+# so every vendored source file, doctest path and `tests/integration.rs`
+# (`use purrdf_branchless as b;`) stays byte-preserved.
+name = "stardf-branchless"
+description = "Branchless, allocation-free integer primitives ported from BranchlessCInRust (bcinr)."
+# Workspace-inherited upstream fields materialized (stardf/arrow workspace has
+# no [workspace.package] entry for these); values follow the Lane-9 vendor
+# precedent (crates/stardf-columnar/Cargo.toml).
+version = "26.9.29"
+edition = "2021"
+rust-version = "1.88"
+publish = false
+license = "MIT OR Apache-2.0 OR MulanPSL-2.0"
+repository = "https://github.com/seanchatmangpt/ggen-legacy"
+
+[lib]
+# Lib name VERBATIM from upstream (default lib target of `purrdf-branchless`).
+# Renaming it would force source edits across every `use purrdf_branchless::`
+# site — outside the declared rename scope.
+name = "purrdf_branchless"
+path = "src/lib.rs"
+
+[dependencies]
+# Renamed dep key (vendoring law: first-party purrdf dep keys -> stardf-*).
+# Import paths resolve through the dependency's lib name, which stays verbatim
+# upstream (`purrdf_hash`) — see PROVENANCE.md divergence register for the
+# lib-name contract this crate depends on.
+stardf-hash = { path = "../stardf-hash" }
+
+# Upstream `[dev-dependencies] purrdf-testkit.workspace = true` is DEFERRED,
+# not dropped: `benches/kernel_table.rs` is its only consumer and is parked at
+# benches/disabled/ until stardf-testkit lands in this workspace (same
+# disclosed-park pattern as crates/stardf-columnar/tests/disabled/).
+
+# Upstream `[[bench]] name = "kernel_table"` + `[lints] workspace = true` are
+# withheld while the bench is parked and because the stardf/arrow workspace
+# defines no [workspace.lints] table; the in-source `#![warn(missing_docs)]`
+# (byte-preserved in src/lib.rs) carries the crate-level doc lint.

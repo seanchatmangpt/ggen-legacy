@@ -1,0 +1,29 @@
+[package]
+name = "stardf-arrow-capi"
+version.workspace = true
+# (repair lane 2026-10-31) pinned 2021: this first-party C ABI uses plain
+# `#[no_mangle]` (2021-authored); under the workspace-default 2024 edition
+# rustc requires `#[unsafe(no_mangle)]` — a source edit outside this lane's
+# manifest-level lease. 2021 keeps the authored syntax compiling.
+edition = "2021"
+authors.workspace = true
+repository.workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+avec-arrow = { workspace = true }
+stardf-arrow-core = { path = "../stardf-arrow-core" }
+
+[features]
+# Positive-control mutant: routes stardf-owned memory through the foreign
+# (untagged) release path in the release chain. Used only by
+# tests/cross_allocator_court.rs — a court that cannot flip is FAIL.
+mutant-cross-alloc = []
+
+# LANE-14 UNBLOCK (disclosed): the columnar wave gate
+# (tests/columnar_integration.rs) implements stardf-columnar's vendored
+# DatasetView over the arena and runs its write/read codec.
+[dev-dependencies]
+stardf-columnar = { path = "../stardf-columnar" }

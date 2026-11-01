@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: 2026 Blackcat Informatics Inc. <paudley@blackcatinformatics.ca>
+# SPDX-License-Identifier: MIT OR Apache-2.0 OR MulanPSL-2.0
+
+[package]
+name = "stardf-process"
+version.workspace = true
+edition.workspace = true
+publish = false
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+homepage.workspace = true
+description = "Process mining and planning over branchless columnar primitives: POWL 2.0 models, OCEL 2.0 event logs, HTN/FOND synthesis, and the conformance turnstile."
+
+[lib]
+# Vendoring law: lib name upstream-verbatim (package renamed, lib unchanged).
+name = "purrdf_process"
+
+[dependencies]
+avec-arrow.workspace = true
+stardf-branchless.workspace = true
+stardf-hash.workspace = true
+stardf-lex.workspace = true
+stardf-xsd.workspace = true
+
+[lints]
+workspace = true

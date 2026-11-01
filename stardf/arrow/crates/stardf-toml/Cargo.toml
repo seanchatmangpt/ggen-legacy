@@ -1,0 +1,41 @@
+# SPDX-FileCopyrightText: 2026 Blackcat Informatics Inc. <paudley@blackcatinformatics.ca>
+# SPDX-License-Identifier: MIT OR Apache-2.0 OR MulanPSL-2.0
+
+[package]
+name = "stardf-toml"
+description = "Lossless TOML 1.1 model and verified RDF 1.2 byte-cover codec"
+version.workspace = true
+edition.workspace = true
+publish = false
+rust-version.workspace = true
+repository.workspace = true
+homepage.workspace = true
+license.workspace = true
+documentation = "https://docs.rs/stardf-toml"
+
+[lib]
+# Vendoring law: lib name upstream-verbatim (package renamed, lib unchanged).
+name = "purrdf_toml"
+
+[dependencies]
+stardf-core.workspace = true
+stardf-lex.workspace = true
+stardf-xsd.workspace = true
+stardf-hash.workspace = true
+
+[dev-dependencies]
+stardf-rdf.workspace = true
+stardf-testkit.workspace = true
+stardf-sparql-eval.workspace = true
+
+[[test]]
+name = "roundtrip"
+harness = false
+
+# toml bench lanes: report-only, make bench lane only (wave v26.10.26).
+[[bench]]
+name = "parse"
+harness = false
+
+[lints]
+workspace = true

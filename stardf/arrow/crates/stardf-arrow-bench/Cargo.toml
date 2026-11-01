@@ -1,0 +1,17 @@
+[package]
+name = "stardf-arrow-bench"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.82.0"
+license = "MIT"
+description = "Line-rate benches for stardf-arrow-core: intern, branchless pattern-scan, stream get_next throughput; counting-allocator non-vacuity gate."
+publish = false
+
+# Lane 7 (2026-10-31): DECISION — member, not standalone. Compiles in-workspace
+# (verified: `cargo check --workspace` exit 0), so it joined the members list
+# and the empty `[workspace]` root block was removed. The workspace ladder
+# (check/test/clippy) now exercises the bench sources, and the root Cargo.lock
+# is authoritative. The `just bench` recipe drives the actual criterion runs.
+[dependencies]
+stardf-arrow-core = { path = "../stardf-arrow-core" }
+
