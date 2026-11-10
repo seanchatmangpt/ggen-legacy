@@ -1,0 +1,6 @@
+{
+  "admitted": false,
+  "reason": "no replacement backend exists; deterministic replay and independent verification not run",
+  "schema": "ggen.legacy.release.admission.v1",
+  "state": "NOT_ADMITTED"
+}

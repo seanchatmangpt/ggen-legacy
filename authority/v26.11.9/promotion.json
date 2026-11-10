@@ -1,0 +1,24 @@
+{
+  "dry_run": {
+    "command": "ggen-create cutover dryrun --selftest",
+    "exit_zero_requires": "READY verdict",
+    "t1_t2_clauses": "UNVERIFIED until a scratch or shadow run is authorized"
+  },
+  "nonclaims": [
+    "no backend is admitted to replace ~/xaas",
+    "release and sunset admission are false; no predecessor retirement is claimed",
+    "T1 (scratch run) and T2 (live backend) tickets are UNVERIFIED",
+    "dry-run PASS_PREDICTED is a file-level prediction, not execution"
+  ],
+  "release": "v26.11.9",
+  "schema": "urn:chatman:ggen-legacy:promotion:v26.11.9",
+  "source_claim_ceiling": "DOCUMENTED",
+  "source_state": "PARTIAL",
+  "subject": "srve switch-over from ~/xaas to a ggen-reconstituted backend (tickets T-001..T-036)",
+  "success": {
+    "release_admitted": false,
+    "standing": "PARTIAL",
+    "sunset_admitted": false
+  },
+  "tooling_claim_ceiling": "TESTED"
+}

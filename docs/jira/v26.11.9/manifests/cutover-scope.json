@@ -1,0 +1,980 @@
+{
+  "derivation": {
+    "commands": [
+      "python3 -c \"import json;print(len(json.load(open('src/lib/xaas/__register__/call-register.json'))['rows']))\"  (file is {summary,rows}; top-level len is 2)",
+      "python3 scripts/dryrun/gen_cutover_scope.py (domain = key prefix; prefix = first path segment of http rows; legacy per summary.legacyPrefixes)"
+    ],
+    "counts": {
+      "class_totals": {
+        "PASS": 53,
+        "PORTING-GAP": 329,
+        "REGISTERED-DIVERGENCE": 262
+      },
+      "distinct_http_prefixes": 59,
+      "distinct_rpc_actions": 26,
+      "generatedActionCount_summary": 302,
+      "legacy_prefixes_found_in_src_api_not_in_register": [],
+      "legacy_prefixes_in_register": 11,
+      "rows": 644,
+      "rows_by_kind": {
+        "http": 593,
+        "rpc": 28,
+        "transport": 5,
+        "wrapper": 18
+      }
+    }
+  },
+  "rest_prefixes": [
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 11
+      },
+      "domains": [
+        "access",
+        "email-ai",
+        "roles-permissions"
+      ],
+      "legacy": false,
+      "prefix": "/access",
+      "rows": 11
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 48
+      },
+      "domains": [
+        "accounts-payable"
+      ],
+      "legacy": false,
+      "prefix": "/accounts-payable",
+      "rows": 48
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 11
+      },
+      "domains": [
+        "accounts-receivable"
+      ],
+      "legacy": false,
+      "prefix": "/accounts-receivable",
+      "rows": 11
+    },
+    {
+      "classes": {
+        "PORTING-GAP": 22
+      },
+      "domains": [
+        "alignment",
+        "service-provider"
+      ],
+      "legacy": true,
+      "prefix": "/alignment",
+      "rows": 22
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 1
+      },
+      "domains": [
+        "work-orders"
+      ],
+      "legacy": false,
+      "prefix": "/assessment",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 2
+      },
+      "domains": [
+        "audit"
+      ],
+      "legacy": false,
+      "prefix": "/audit",
+      "rows": 2
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 2
+      },
+      "domains": [
+        "auth"
+      ],
+      "legacy": false,
+      "prefix": "/auth",
+      "rows": 2
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 3
+      },
+      "domains": [
+        "dispatch-queue",
+        "work-orders"
+      ],
+      "legacy": false,
+      "prefix": "/auto-dispatch",
+      "rows": 3
+    },
+    {
+      "classes": {
+        "PORTING-GAP": 31
+      },
+      "domains": [
+        "client-assets",
+        "clients",
+        "contacts",
+        "locations"
+      ],
+      "legacy": true,
+      "prefix": "/client",
+      "rows": 31
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 1
+      },
+      "domains": [
+        "clients"
+      ],
+      "legacy": false,
+      "prefix": "/client${clientsEndpoints.updateCoverage}",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 8
+      },
+      "domains": [
+        "team-assignments"
+      ],
+      "legacy": false,
+      "prefix": "/client-alignment",
+      "rows": 8
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 8
+      },
+      "domains": [
+        "close-out"
+      ],
+      "legacy": false,
+      "prefix": "/close-out",
+      "rows": 8
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 9
+      },
+      "domains": [
+        "chat"
+      ],
+      "legacy": false,
+      "prefix": "/conversations",
+      "rows": 9
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 1
+      },
+      "domains": [
+        "clients"
+      ],
+      "legacy": false,
+      "prefix": "/coverage",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 4
+      },
+      "domains": [
+        "deeplink"
+      ],
+      "legacy": false,
+      "prefix": "/deeplink",
+      "rows": 4
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 1
+      },
+      "domains": [
+        "chat"
+      ],
+      "legacy": false,
+      "prefix": "/direct",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "PORTING-GAP": 42
+      },
+      "domains": [
+        "clients",
+        "contacts",
+        "dropdown",
+        "entities",
+        "form-builder",
+        "form-manager",
+        "locations",
+        "schedule-management",
+        "service-provider",
+        "user-management",
+        "work-orders"
+      ],
+      "legacy": true,
+      "prefix": "/dropdown",
+      "rows": 42
+    },
+    {
+      "classes": {
+        "PORTING-GAP": 1
+      },
+      "domains": [
+        "service-provider"
+      ],
+      "legacy": false,
+      "prefix": "/dropdown?${fullQueryString}",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "PORTING-GAP": 1
+      },
+      "domains": [
+        "service-provider"
+      ],
+      "legacy": false,
+      "prefix": "/dropdown?${providerTypeDropdownParams}",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "PORTING-GAP": 1
+      },
+      "domains": [
+        "locations"
+      ],
+      "legacy": false,
+      "prefix": "/dropdown?${queryString}",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "PORTING-GAP": 1
+      },
+      "domains": [
+        "clients"
+      ],
+      "legacy": false,
+      "prefix": "/dropdown?type=ClientLocations&field=id&filterBy=clientId&filterValue",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "PORTING-GAP": 1
+      },
+      "domains": [
+        "clients"
+      ],
+      "legacy": false,
+      "prefix": "/dropdown?type=Equipment&field=name&field=pricePerDay&field=disposalFee&field=dropOffPickUpFee&limit=50",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "PORTING-GAP": 1
+      },
+      "domains": [
+        "clients"
+      ],
+      "legacy": false,
+      "prefix": "/dropdown?type=LookupTypes&field=label&field=value&filterBy=type&filterValue=",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "PORTING-GAP": 1
+      },
+      "domains": [
+        "clients"
+      ],
+      "legacy": false,
+      "prefix": "/dropdown?type=LookupTypes&field=label&field=value&filterBy=type&filterValue=client_checkinout_mobile_app",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "PORTING-GAP": 1
+      },
+      "domains": [
+        "clients"
+      ],
+      "legacy": false,
+      "prefix": "/dropdown?type=LookupTypes&field=label&field=value&filterBy=type&filterValue=client_checkinout_spoofer_app",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 17
+      },
+      "domains": [
+        "email-ai"
+      ],
+      "legacy": false,
+      "prefix": "/email",
+      "rows": 17
+    },
+    {
+      "classes": {
+        "PORTING-GAP": 8
+      },
+      "domains": [
+        "auth",
+        "entities"
+      ],
+      "legacy": true,
+      "prefix": "/entity",
+      "rows": 8
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 1
+      },
+      "domains": [
+        "file-registry"
+      ],
+      "legacy": false,
+      "prefix": "/file-registry",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 15
+      },
+      "domains": [
+        "files-hub"
+      ],
+      "legacy": false,
+      "prefix": "/files",
+      "rows": 15
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 1
+      },
+      "domains": [
+        "fm-integrations"
+      ],
+      "legacy": false,
+      "prefix": "/fm-admin",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 13
+      },
+      "domains": [
+        "form-builder",
+        "form-builder-assignments",
+        "form-builder-templates"
+      ],
+      "legacy": false,
+      "prefix": "/form-builder",
+      "rows": 13
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 2
+      },
+      "domains": [
+        "work-orders"
+      ],
+      "legacy": false,
+      "prefix": "/geography",
+      "rows": 2
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 7
+      },
+      "domains": [
+        "chat"
+      ],
+      "legacy": false,
+      "prefix": "/groups",
+      "rows": 7
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 1
+      },
+      "domains": [
+        "core"
+      ],
+      "legacy": false,
+      "prefix": "/internal-api",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 1
+      },
+      "domains": [
+        "files-hub"
+      ],
+      "legacy": false,
+      "prefix": "/link",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 9
+      },
+      "domains": [
+        "locations"
+      ],
+      "legacy": false,
+      "prefix": "/location",
+      "rows": 9
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 2
+      },
+      "domains": [
+        "chat"
+      ],
+      "legacy": false,
+      "prefix": "/messages",
+      "rows": 2
+    },
+    {
+      "classes": {
+        "PASS": 1
+      },
+      "domains": [
+        "notes"
+      ],
+      "legacy": false,
+      "prefix": "/notes",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "PORTING-GAP": 2
+      },
+      "domains": [
+        "notifications"
+      ],
+      "legacy": true,
+      "prefix": "/notification",
+      "rows": 2
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 1
+      },
+      "domains": [
+        "roles-permissions"
+      ],
+      "legacy": false,
+      "prefix": "/permissions",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 1
+      },
+      "domains": [
+        "chat"
+      ],
+      "legacy": false,
+      "prefix": "/polls",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "PORTING-GAP": 126
+      },
+      "domains": [
+        "procurement"
+      ],
+      "legacy": true,
+      "prefix": "/procurement",
+      "rows": 126
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 11
+      },
+      "domains": [
+        "proposals",
+        "work-orders"
+      ],
+      "legacy": false,
+      "prefix": "/proposal",
+      "rows": 11
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 4
+      },
+      "domains": [
+        "reactiveHire"
+      ],
+      "legacy": false,
+      "prefix": "/reactive-hire",
+      "rows": 4
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 1
+      },
+      "domains": [
+        "roles-permissions"
+      ],
+      "legacy": false,
+      "prefix": "/role-permissions",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "PASS": 1,
+        "REGISTERED-DIVERGENCE": 3
+      },
+      "domains": [
+        "roles-permissions"
+      ],
+      "legacy": false,
+      "prefix": "/roles",
+      "rows": 4
+    },
+    {
+      "classes": {
+        "PORTING-GAP": 2
+      },
+      "domains": [
+        "s3"
+      ],
+      "legacy": true,
+      "prefix": "/s3",
+      "rows": 2
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 9
+      },
+      "domains": [
+        "schedule-management"
+      ],
+      "legacy": false,
+      "prefix": "/schedule-management",
+      "rows": 9
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 35
+      },
+      "domains": [
+        "alignment",
+        "service-provider",
+        "work-orders"
+      ],
+      "legacy": false,
+      "prefix": "/service-providers",
+      "rows": 35
+    },
+    {
+      "classes": {
+        "PORTING-GAP": 5
+      },
+      "domains": [
+        "auth",
+        "entities",
+        "user-management"
+      ],
+      "legacy": true,
+      "prefix": "/session-management",
+      "rows": 5
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 1
+      },
+      "domains": [
+        "chat"
+      ],
+      "legacy": false,
+      "prefix": "/upload",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 1
+      },
+      "domains": [
+        "user-list-views"
+      ],
+      "legacy": false,
+      "prefix": "/user-list-views",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "PORTING-GAP": 31
+      },
+      "domains": [
+        "auth",
+        "clients",
+        "email-ai",
+        "roles-permissions",
+        "user-management",
+        "view-preferences",
+        "work-orders"
+      ],
+      "legacy": true,
+      "prefix": "/user-management",
+      "rows": 31
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 1
+      },
+      "domains": [
+        "roles-permissions"
+      ],
+      "legacy": false,
+      "prefix": "/user-roles",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 1
+      },
+      "domains": [
+        "entities"
+      ],
+      "legacy": false,
+      "prefix": "/verification",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "PORTING-GAP": 30
+      },
+      "domains": [
+        "assignServiceProvider",
+        "clients",
+        "locations",
+        "visit-form-link",
+        "work-orders"
+      ],
+      "legacy": true,
+      "prefix": "/visit",
+      "rows": 30
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 1
+      },
+      "domains": [
+        "visitNegotiatedTerms"
+      ],
+      "legacy": false,
+      "prefix": "/visit-negotiated-terms",
+      "rows": 1
+    },
+    {
+      "classes": {
+        "PORTING-GAP": 22
+      },
+      "domains": [
+        "w9-requests"
+      ],
+      "legacy": true,
+      "prefix": "/w9-requests",
+      "rows": 22
+    },
+    {
+      "classes": {
+        "REGISTERED-DIVERGENCE": 13
+      },
+      "domains": [
+        "clients",
+        "work-orders"
+      ],
+      "legacy": false,
+      "prefix": "/work-order",
+      "rows": 13
+    }
+  ],
+  "rpc_actions": [
+    {
+      "action": "create_accounts_org",
+      "domains": [
+        "tenancy"
+      ],
+      "generatedClient": true,
+      "kind": "rpc",
+      "rows": 1
+    },
+    {
+      "action": "create_invoice",
+      "domains": [
+        "invoices"
+      ],
+      "generatedClient": true,
+      "kind": "rpc",
+      "rows": 1
+    },
+    {
+      "action": "create_note",
+      "domains": [
+        "work-orders"
+      ],
+      "generatedClient": true,
+      "kind": "rpc",
+      "rows": 1
+    },
+    {
+      "action": "get_site",
+      "domains": [
+        "locations"
+      ],
+      "generatedClient": true,
+      "kind": "rpc",
+      "rows": 1
+    },
+    {
+      "action": "get_tenant",
+      "domains": [
+        "tenancy"
+      ],
+      "generatedClient": true,
+      "kind": "rpc",
+      "rows": 1
+    },
+    {
+      "action": "list_brands",
+      "domains": [
+        "tenancy"
+      ],
+      "generatedClient": true,
+      "kind": "rpc",
+      "rows": 1
+    },
+    {
+      "action": "list_clients",
+      "domains": [
+        "tenancy"
+      ],
+      "generatedClient": true,
+      "kind": "rpc",
+      "rows": 1
+    },
+    {
+      "action": "list_invoices",
+      "domains": [
+        "invoices"
+      ],
+      "generatedClient": true,
+      "kind": "rpc",
+      "rows": 1
+    },
+    {
+      "action": "list_lookup_values",
+      "domains": [
+        "alignment",
+        "assignServiceProvider",
+        "clients",
+        "documents",
+        "dropdown",
+        "entities",
+        "fmCompany",
+        "form-builder",
+        "locations",
+        "lookupRpc.queries",
+        "lookups.queries",
+        "roles-permissions",
+        "visits",
+        "work-orders"
+      ],
+      "generatedClient": true,
+      "kind": "wrapper",
+      "rows": 15
+    },
+    {
+      "action": "list_lookup_values_by_types",
+      "domains": [
+        "assignServiceProvider",
+        "lookupRpc.queries",
+        "service-provider"
+      ],
+      "generatedClient": true,
+      "kind": "wrapper",
+      "rows": 4
+    },
+    {
+      "action": "list_notes",
+      "domains": [
+        "work-orders"
+      ],
+      "generatedClient": true,
+      "kind": "rpc",
+      "rows": 1
+    },
+    {
+      "action": "list_root_trades",
+      "domains": [
+        "form-builder",
+        "form-manager",
+        "lookupRpc.queries",
+        "service-provider"
+      ],
+      "generatedClient": true,
+      "kind": "wrapper",
+      "rows": 4
+    },
+    {
+      "action": "list_service_providers",
+      "domains": [
+        "dispatch-queue",
+        "service-provider",
+        "work-orders"
+      ],
+      "generatedClient": true,
+      "kind": "rpc",
+      "rows": 3
+    },
+    {
+      "action": "list_sites",
+      "domains": [
+        "locations"
+      ],
+      "generatedClient": true,
+      "kind": "rpc",
+      "rows": 1
+    },
+    {
+      "action": "list_subtrades",
+      "domains": [
+        "lookupRpc.queries"
+      ],
+      "generatedClient": true,
+      "kind": "rpc",
+      "rows": 1
+    },
+    {
+      "action": "list_tenants",
+      "domains": [
+        "entities",
+        "w9-requests"
+      ],
+      "generatedClient": true,
+      "kind": "rpc",
+      "rows": 2
+    },
+    {
+      "action": "list_visits",
+      "domains": [
+        "visits"
+      ],
+      "generatedClient": true,
+      "kind": "rpc",
+      "rows": 1
+    },
+    {
+      "action": "list_work_order_trades",
+      "domains": [
+        "visits"
+      ],
+      "generatedClient": true,
+      "kind": "rpc",
+      "rows": 1
+    },
+    {
+      "action": "list_work_orders",
+      "domains": [
+        "dispatch-queue",
+        "operations",
+        "work-orders"
+      ],
+      "generatedClient": true,
+      "kind": "rpc",
+      "rows": 3
+    },
+    {
+      "action": "src/lib/axiosInstance.ts",
+      "domains": [
+        "axiosInstance"
+      ],
+      "generatedClient": false,
+      "kind": "transport",
+      "rows": 1
+    },
+    {
+      "action": "src/lib/chatAxiosInstance.ts",
+      "domains": [
+        "chatAxiosInstance"
+      ],
+      "generatedClient": false,
+      "kind": "transport",
+      "rows": 1
+    },
+    {
+      "action": "src/lib/xaas/ashRpcClient.ts",
+      "domains": [
+        "ashRpcClient"
+      ],
+      "generatedClient": false,
+      "kind": "transport",
+      "rows": 1
+    },
+    {
+      "action": "src/lib/xaas/jsonApiClient.ts",
+      "domains": [
+        "jsonApiClient"
+      ],
+      "generatedClient": false,
+      "kind": "transport",
+      "rows": 1
+    },
+    {
+      "action": "src/lib/xaas/retry429.ts",
+      "domains": [
+        "retry429"
+      ],
+      "generatedClient": false,
+      "kind": "transport",
+      "rows": 1
+    },
+    {
+      "action": "update_note",
+      "domains": [
+        "work-orders"
+      ],
+      "generatedClient": true,
+      "kind": "rpc",
+      "rows": 1
+    },
+    {
+      "action": "update_visit_status",
+      "domains": [
+        "work-orders"
+      ],
+      "generatedClient": true,
+      "kind": "rpc",
+      "rows": 1
+    }
+  ],
+  "source_shas": {
+    "srve": "29267a4453c2ea7536127047aadd8328ef63ca59",
+    "srve/onengine-backend": "e78330aa20f0e87c931603a2df4fcdb11cb22e4a",
+    "srve/servengine-frontend": "c2f59c194f05e58d805a30e2c04bfd1af76e91cd",
+    "xaas": "d7e38a376450f7ae680fb580082577b24d9c31c6"
+  }
+}

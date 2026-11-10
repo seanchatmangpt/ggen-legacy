@@ -57,6 +57,18 @@ verify-prd-ard:
       --expected-repository seanchatmangpt/ggen-legacy \
       --expected-role EXECUTABLE_ARCHITECTURE_CORPUS
 
+# v26.11.9: structure and anti-overclaim check of the srve switch-over ticket set, with a
+# non-vacuity selftest. Add --check-fresh to flag manifests older than their source repos.
+# Not part of ci/ci-all/v26-ci.
+verify-v26-11-9:
+    python3 scripts/verify_v26_11_9.py --selftest
+    python3 -m unittest scripts/tests/test_v26_11_9.py
+
+# v26.11.9: refresh the SHA-pinned manifests and run the read-only cutover dry-run (needs the
+# ggen-create entry point). Exit 0 only for a READY verdict.
+v26-11-9-dryrun:
+    scripts/dryrun/refresh_and_run.sh
+
 # GL-EXP-044: optional, suggestion-only wiring for the real, already-passing
 # Verifier Appliance reference regression harness. Not part of ci/ci-all/v26-ci
 # and not invoked from any workflow -- a pure pass-through, no reimplementation

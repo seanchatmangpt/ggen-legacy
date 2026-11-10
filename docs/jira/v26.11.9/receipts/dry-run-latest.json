@@ -1,0 +1,828 @@
+{
+  "counts": {
+    "BLOCKED": 1,
+    "FAIL": 18,
+    "PASS_PREDICTED": 13,
+    "UNVERIFIED": 4
+  },
+  "generated_at": "2026-11-10T05:19:20.797518+00:00",
+  "identity": {
+    "ggen-create": "09a197ba32369bcec632dcc9b7919e633a6e08fb",
+    "ggen-ecosystem": "ab2a850488c0f49dc1f7754c6236a4f5d8d6d18f",
+    "ggen-legacy": "46416e7464c7d51411ebd10cafc3ae15760e2a93",
+    "srve": "29267a4453c2ea7536127047aadd8328ef63ca59",
+    "xaas": "d7e38a376450f7ae680fb580082577b24d9c31c6"
+  },
+  "readonly_proof": {
+    "changed_during_run": [],
+    "files": 3289,
+    "method": "read-set-digest"
+  },
+  "schema": "ggen-create.cutover.dryrun.v1",
+  "schema_validation": "VALID",
+  "selftest": {
+    "vacuous": []
+  },
+  "tickets": [
+    {
+      "clauses": [
+        {
+          "desc": "four cutover skills registered with stated authority/confirm",
+          "detail": "registered",
+          "kind": "skills",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        },
+        {
+          "desc": "cutover.py present",
+          "detail": "present",
+          "kind": "exists",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        }
+      ],
+      "standing": "PASS_PREDICTED",
+      "ticket": "T-001",
+      "tier": "T0",
+      "title": "cutover CLI skeleton"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "sunset schema requires the four new fields",
+          "detail": "all required",
+          "kind": "json_required",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        },
+        {
+          "desc": "dfcm receipt schema present",
+          "detail": "present",
+          "kind": "exists",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        }
+      ],
+      "standing": "PASS_PREDICTED",
+      "ticket": "T-002",
+      "tier": "T0",
+      "title": "receipt chain and sunset schema"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "cutover.py defines preflight refusals",
+          "detail": "got 6, need ge 1",
+          "kind": "count",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        }
+      ],
+      "standing": "PASS_PREDICTED",
+      "ticket": "T-003",
+      "tier": "T0",
+      "title": "preflight gate"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "no localhost:4000 in non-test FE source",
+          "detail": "8 matches",
+          "kind": "absent",
+          "status": "FAIL",
+          "tier": "T0"
+        },
+        {
+          "desc": "resolver variable referenced",
+          "detail": "got 0, need ge 1",
+          "kind": "count",
+          "status": "FAIL",
+          "tier": "T0"
+        }
+      ],
+      "standing": "FAIL",
+      "ticket": "T-004",
+      "tier": "T0",
+      "title": "frontend single backend origin"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "sv:Action count == 459 (derivation)",
+          "detail": "got 459, need eq 459",
+          "kind": "count",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        },
+        {
+          "desc": "every action carries a guard predicate",
+          "detail": "got 1, need ge 459",
+          "kind": "count",
+          "status": "FAIL",
+          "tier": "T0"
+        }
+      ],
+      "standing": "FAIL",
+      "ticket": "T-005",
+      "tier": "T0",
+      "title": "ontology executable action semantics"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "alignment artifact",
+          "detail": "missing: ['/Users/sac/srve/ontology/one-sv-alignment.ttl']",
+          "kind": "exists",
+          "status": "FAIL",
+          "tier": "T0"
+        },
+        {
+          "desc": "counts vs Ash introspection of pinned xaas SHA",
+          "detail": "T2: needs mix introspection of xaas",
+          "kind": "unverified",
+          "status": "UNVERIFIED",
+          "tier": "T2"
+        }
+      ],
+      "standing": "FAIL",
+      "ticket": "T-006",
+      "tier": "T2",
+      "title": "align one: and sv:; verify against introspection"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "ontology transitions == 48",
+          "detail": "got 48, need eq 48",
+          "kind": "count",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        },
+        {
+          "desc": "Ash transition() entries == 48",
+          "detail": "got 11, need eq 48",
+          "kind": "count",
+          "status": "FAIL",
+          "tier": "T0"
+        }
+      ],
+      "standing": "FAIL",
+      "ticket": "T-007",
+      "tier": "T0",
+      "title": "work-order transitions guarded"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "classification manifest",
+          "detail": "present",
+          "kind": "exists",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        },
+        {
+          "desc": "manifest matches xaas HEAD",
+          "detail": "manifest matches HEAD",
+          "kind": "fresh",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        }
+      ],
+      "standing": "PASS_PREDICTED",
+      "ticket": "T-008",
+      "tier": "T0",
+      "title": "resource classification manifest"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "route inventory",
+          "detail": "present",
+          "kind": "exists",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        },
+        {
+          "desc": "manifest matches onengine-backend HEAD",
+          "detail": "manifest matches HEAD",
+          "kind": "fresh",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        }
+      ],
+      "standing": "PASS_PREDICTED",
+      "ticket": "T-009",
+      "tier": "T0",
+      "title": "onengine route inventory"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "cutover scope file",
+          "detail": "present",
+          "kind": "exists",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        },
+        {
+          "desc": "manifest matches frontend HEAD",
+          "detail": "manifest matches HEAD",
+          "kind": "fresh",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        }
+      ],
+      "standing": "PASS_PREDICTED",
+      "ticket": "T-010",
+      "tier": "T0",
+      "title": "frontend-called action scope"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "distinct srve_* tables in migrations",
+          "detail": "got 73, need eq 73",
+          "kind": "distinct",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        },
+        {
+          "desc": "ddl census",
+          "detail": "present",
+          "kind": "exists",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        },
+        {
+          "desc": "pg_dump replay diff",
+          "detail": "T1: needs scratch Postgres replay of 166 migrations",
+          "kind": "unverified",
+          "status": "UNVERIFIED",
+          "tier": "T1"
+        }
+      ],
+      "standing": "UNVERIFIED",
+      "ticket": "T-011",
+      "tier": "T1",
+      "title": "srve DDL census and replay diff"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "tripwire names every census table (distinct)",
+          "detail": "got 13, need ge 73",
+          "kind": "distinct",
+          "status": "FAIL",
+          "tier": "T0"
+        }
+      ],
+      "standing": "FAIL",
+      "ticket": "T-012",
+      "tier": "T0",
+      "title": "shared-table tripwire extension"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "coverage manifest",
+          "detail": "present",
+          "kind": "exists",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        },
+        {
+          "desc": "manifest matches srve and onengine-backend HEAD",
+          "detail": "manifest matches HEAD",
+          "kind": "fresh",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        }
+      ],
+      "standing": "PASS_PREDICTED",
+      "ticket": "T-013",
+      "tier": "T0",
+      "title": "prisma coverage and tenant policy"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "scope decision record",
+          "detail": "present",
+          "kind": "exists",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        }
+      ],
+      "standing": "PASS_PREDICTED",
+      "ticket": "T-014",
+      "tier": "T0",
+      "title": "procurement/dispatch scope decision"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "pack manifest and resource template",
+          "detail": "missing: ['/Users/sac/srve/packs/srve-backend-pack/pack.toml', '/Users/sac/srve/packs/srve-backend-pack/templates/resource.ex.tera']",
+          "kind": "exists",
+          "status": "FAIL",
+          "tier": "T0"
+        },
+        {
+          "desc": "ggen sync run --dry-run twice, byte-stable",
+          "detail": "T1: needs ggen over the pack in scratch",
+          "kind": "unverified",
+          "status": "UNVERIFIED",
+          "tier": "T1"
+        }
+      ],
+      "standing": "FAIL",
+      "ticket": "T-015",
+      "tier": "T1",
+      "title": "pack: resources from ontology"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "migration template",
+          "detail": "missing: ['/Users/sac/srve/packs/srve-backend-pack/templates/migration.exs.tera']",
+          "kind": "exists",
+          "status": "FAIL",
+          "tier": "T0"
+        },
+        {
+          "desc": "generated DDL equals xaas-migrated DB",
+          "detail": "T1: needs scratch Postgres",
+          "kind": "unverified",
+          "status": "UNVERIFIED",
+          "tier": "T1"
+        }
+      ],
+      "standing": "FAIL",
+      "ticket": "T-016",
+      "tier": "T1",
+      "title": "pack: migrations"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "router template",
+          "detail": "missing: ['/Users/sac/srve/packs/srve-backend-pack/templates/router.ex.tera']",
+          "kind": "exists",
+          "status": "FAIL",
+          "tier": "T0"
+        },
+        {
+          "desc": "290 actions return envelope; fields spec typed 400",
+          "detail": "T2: needs candidate running",
+          "kind": "unverified",
+          "status": "UNVERIFIED",
+          "tier": "T2"
+        }
+      ],
+      "standing": "FAIL",
+      "ticket": "T-017",
+      "tier": "T2",
+      "title": "pack: router and RPC envelope"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "policy template",
+          "detail": "missing: ['/Users/sac/srve/packs/srve-backend-pack/templates/policy.ex.tera']",
+          "kind": "exists",
+          "status": "FAIL",
+          "tier": "T0"
+        },
+        {
+          "desc": "actor x tenant x action matrix vs recorded xaas",
+          "detail": "T2: needs matrix capture from xaas",
+          "kind": "unverified",
+          "status": "UNVERIFIED",
+          "tier": "T2"
+        }
+      ],
+      "standing": "FAIL",
+      "ticket": "T-018",
+      "tier": "T2",
+      "title": "pack: policies and parity matrix"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "handler registry",
+          "detail": "missing: ['/Users/sac/srve/packs/srve-backend-pack/handlers/registry.toml']",
+          "kind": "exists",
+          "status": "FAIL",
+          "tier": "T0"
+        },
+        {
+          "desc": "registry lists the 22 residue handlers",
+          "detail": "input missing: /Users/sac/srve/packs/srve-backend-pack/handlers/registry.toml",
+          "kind": "count",
+          "status": "BLOCKED",
+          "tier": "T0"
+        }
+      ],
+      "standing": "FAIL",
+      "ticket": "T-019",
+      "tier": "T0",
+      "title": "residue custom handlers"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "auth decision record",
+          "detail": "present",
+          "kind": "exists",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        },
+        {
+          "desc": "21 parity cases replayed",
+          "detail": "T2: needs candidate running and legacy cases",
+          "kind": "unverified",
+          "status": "UNVERIFIED",
+          "tier": "T2"
+        }
+      ],
+      "standing": "UNVERIFIED",
+      "ticket": "T-020",
+      "tier": "T2",
+      "title": "auth and session bridge"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "identity globalSetup present",
+          "detail": "present",
+          "kind": "exists",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        },
+        {
+          "desc": "bash -n scripts/dryrun/two_probe.sh",
+          "detail": "input missing: /Users/sac/srve/scripts/dryrun/two_probe.sh",
+          "kind": "cmd",
+          "status": "BLOCKED",
+          "tier": "T0"
+        },
+        {
+          "desc": "live probe vs candidate; stub serving /api/health 200 refused",
+          "detail": "T2: needs candidate",
+          "kind": "unverified",
+          "status": "UNVERIFIED",
+          "tier": "T2"
+        }
+      ],
+      "standing": "BLOCKED",
+      "ticket": "T-021",
+      "tier": "T2",
+      "title": "two-probe identity and CORS"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "hand-written contracts removed",
+          "detail": "should not exist: ['/Users/sac/srve/servengine-frontend/packages/contracts/src/schemas.ts']",
+          "kind": "not_exists",
+          "status": "FAIL",
+          "tier": "T0"
+        },
+        {
+          "desc": "regenerate contracts in scratch and diff",
+          "detail": "T1: needs ggen sync in scratch",
+          "kind": "unverified",
+          "status": "UNVERIFIED",
+          "tier": "T1"
+        }
+      ],
+      "standing": "FAIL",
+      "ticket": "T-022",
+      "tier": "T1",
+      "title": "generated contracts and OpenAPI"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "etl.ts present",
+          "detail": "present",
+          "kind": "exists",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        },
+        {
+          "desc": "PRESERVATION_MAP implemented",
+          "detail": "got 0, need ge 1",
+          "kind": "count",
+          "status": "FAIL",
+          "tier": "T0"
+        },
+        {
+          "desc": "real write into scratch DB; counts and checksums",
+          "detail": "T1: needs scratch Postgres",
+          "kind": "unverified",
+          "status": "UNVERIFIED",
+          "tier": "T1"
+        }
+      ],
+      "standing": "FAIL",
+      "ticket": "T-023",
+      "tier": "T1",
+      "title": "ETL write path and vocabulary"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "checksumOver flag implemented",
+          "detail": "got 0, need ge 1",
+          "kind": "count",
+          "status": "FAIL",
+          "tier": "T0"
+        },
+        {
+          "desc": "--all flag implemented",
+          "detail": "got 0, need ge 1",
+          "kind": "count",
+          "status": "FAIL",
+          "tier": "T0"
+        },
+        {
+          "desc": "~35 aggregates and 15 vocabulary maps of docs/plan/21 implemented",
+          "detail": "T1: only the flag/engine is checkable from files; aggregate coverage needs a run",
+          "kind": "unverified",
+          "status": "UNVERIFIED",
+          "tier": "T1"
+        }
+      ],
+      "standing": "FAIL",
+      "ticket": "T-024",
+      "tier": "T1",
+      "title": "ETL extended aggregates"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "http golden spec",
+          "detail": "missing: ['/Users/sac/srve/servengine-frontend/playwright/e2e/golden-http-court.spec.ts']",
+          "kind": "exists",
+          "status": "FAIL",
+          "tier": "T0"
+        },
+        {
+          "desc": "passes on xaas, fails on stub",
+          "detail": "T2: needs xaas and stub running",
+          "kind": "unverified",
+          "status": "UNVERIFIED",
+          "tier": "T2"
+        }
+      ],
+      "standing": "FAIL",
+      "ticket": "T-025",
+      "tier": "T2",
+      "title": "HTTP golden court"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "seed loader",
+          "detail": "missing: ['/Users/sac/srve/scripts/seed_fixture.sh']",
+          "kind": "exists",
+          "status": "FAIL",
+          "tier": "T0"
+        },
+        {
+          "desc": "bash -n scripts/seed_fixture.sh",
+          "detail": "input missing: /Users/sac/srve/scripts/seed_fixture.sh",
+          "kind": "cmd",
+          "status": "BLOCKED",
+          "tier": "T0"
+        }
+      ],
+      "standing": "FAIL",
+      "ticket": "T-026",
+      "tier": "T2",
+      "title": "backend-neutral seed"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "flag implemented",
+          "detail": "got 0, need ge 1",
+          "kind": "count",
+          "status": "FAIL",
+          "tier": "T0"
+        },
+        {
+          "desc": "bash -n bin/golden-court",
+          "detail": "rc 0, need 0",
+          "kind": "cmd",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        }
+      ],
+      "standing": "FAIL",
+      "ticket": "T-027",
+      "tier": "T0",
+      "title": "golden-court --backend"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "two scratch generate runs; digest sets and chain head equal",
+          "detail": "T1: needs ggen sync twice in scratch",
+          "kind": "unverified",
+          "status": "UNVERIFIED",
+          "tier": "T1"
+        }
+      ],
+      "standing": "UNVERIFIED",
+      "ticket": "T-028",
+      "tier": "T1",
+      "title": "deterministic replay"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "verifier present",
+          "detail": "present",
+          "kind": "exists",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        },
+        {
+          "desc": "python parses verifiers/verify_srve_cutover.py",
+          "detail": "rc 0, need 0",
+          "kind": "cmd",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        }
+      ],
+      "standing": "PASS_PREDICTED",
+      "ticket": "T-029",
+      "tier": "T0",
+      "title": "independent verifier"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "no xaas:local / deployment/xaas in kind scripts",
+          "detail": "8 matches",
+          "kind": "absent",
+          "status": "FAIL",
+          "tier": "T0"
+        },
+        {
+          "desc": "no hashed asset names in smoke test",
+          "detail": "4 matches",
+          "kind": "absent",
+          "status": "FAIL",
+          "tier": "T0"
+        },
+        {
+          "desc": "bash -n scripts/kind-bootstrap.sh",
+          "detail": "rc 0, need 0",
+          "kind": "cmd",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        },
+        {
+          "desc": "bash -n scripts/kind-smoke-test.sh",
+          "detail": "rc 0, need 0",
+          "kind": "cmd",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        },
+        {
+          "desc": "bash -n scripts/kind_doctor.sh",
+          "detail": "rc 0, need 0",
+          "kind": "cmd",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        }
+      ],
+      "standing": "FAIL",
+      "ticket": "T-030",
+      "tier": "T0",
+      "title": "kind scripts parametrized"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "cutover.py defines rollback",
+          "detail": "got 5, need ge 1",
+          "kind": "count",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        },
+        {
+          "desc": "round-trip, drift and all-or-nothing tests exist (not executed by the dry-run)",
+          "detail": "got 3, need ge 3",
+          "kind": "count",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        },
+        {
+          "desc": "receipt-chain test exists",
+          "detail": "got 1, need ge 1",
+          "kind": "count",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        }
+      ],
+      "standing": "PASS_PREDICTED",
+      "ticket": "T-031",
+      "tier": "T0",
+      "title": "freeze, delta, switch, rollback"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "side-effect table",
+          "detail": "present",
+          "kind": "exists",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        }
+      ],
+      "standing": "PASS_PREDICTED",
+      "ticket": "T-032",
+      "tier": "T0",
+      "title": "side-effect inventory"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "gymact castle feed test present",
+          "detail": "present",
+          "kind": "exists",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        },
+        {
+          "desc": "candidate-shaped fixtures through igniter and gymact parsers",
+          "detail": "T1: needs fixtures",
+          "kind": "unverified",
+          "status": "UNVERIFIED",
+          "tier": "T1"
+        }
+      ],
+      "standing": "UNVERIFIED",
+      "ticket": "T-033",
+      "tier": "T1",
+      "title": "downstream parity"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "retirement manifest",
+          "detail": "present",
+          "kind": "exists",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        }
+      ],
+      "standing": "PASS_PREDICTED",
+      "ticket": "T-034",
+      "tier": "T0",
+      "title": "non-core retirement manifest"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "cutover code has no delete/archive path",
+          "detail": "0 matches",
+          "kind": "absent",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        },
+        {
+          "desc": "only deletion is the single temp-file cleanup in _atomic_write",
+          "detail": "got 1, need le 1",
+          "kind": "count",
+          "status": "PASS_PREDICTED",
+          "tier": "T0"
+        }
+      ],
+      "standing": "PASS_PREDICTED",
+      "ticket": "T-035",
+      "tier": "T0",
+      "title": "sunset is separate actuation"
+    },
+    {
+      "clauses": [
+        {
+          "desc": "backend-law rule no longer mandates xaas",
+          "detail": "1 matches",
+          "kind": "absent",
+          "status": "FAIL",
+          "tier": "T0"
+        }
+      ],
+      "standing": "FAIL",
+      "ticket": "T-036",
+      "tier": "T0",
+      "title": "doctrine and memory updates"
+    }
+  ],
+  "verdict": "NOT_READY"
+}

@@ -1,0 +1,9 @@
+{
+  "admitted": false,
+  "authorization_receipt_ref": "NONE:sunset-not-authorized",
+  "predecessor_sha": "d7e38a376450f7ae680fb580082577b24d9c31c6",
+  "release_admission_ref": "authority/v26.11.9/release-admission.json",
+  "replay_digest": "UNVERIFIED:no-replay-run",
+  "schema": "ggen.legacy.sunset.admission.v1",
+  "state": "NOT_ADMITTED"
+}

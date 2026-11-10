@@ -1,0 +1,2547 @@
+{
+  "derivation": {
+    "commands": [
+      "cd ~/srve/onengine-backend && grep -c '^model ' prisma/schema.prisma",
+      "python3 scripts/dryrun/gen_prisma_coverage.py (model->class: named in canonical.ttl 'Subsumes' comment, else inside its schema.prisma:A-B range; else legacy-name / tenantId / unmapped)"
+    ],
+    "counts": {
+      "by_classification": {
+        "canonical": 92,
+        "legacy": 6,
+        "tenant-only": 69,
+        "unmapped": 70
+      },
+      "canonical_classes": 45,
+      "classes_without_backing_model": [
+        "ApExpense",
+        "ApMethodDefinition",
+        "ApPayment",
+        "CheckInOutSettings",
+        "Contact",
+        "ContactEmail",
+        "ContactPhone",
+        "ContactSite",
+        "CoverageArea",
+        "CoverageZone",
+        "Document",
+        "InvoiceEvent",
+        "InvoiceLineItem",
+        "Note",
+        "RateCardLineItem",
+        "ServiceProviderAddress",
+        "ServiceProviderContact",
+        "ServiceProviderCoverage",
+        "ServiceProviderDocument",
+        "ServiceProviderPaymentMethod",
+        "ServiceProviderProfile",
+        "ServiceProviderTrade",
+        "Visit",
+        "VisitProvider",
+        "W2CoverageSettings",
+        "W9Campaign",
+        "W9Request",
+        "WorkOrderContact",
+        "WorkOrderTrade"
+      ],
+      "global_supplier_migration_present": true,
+      "models": 237
+    }
+  },
+  "models": [
+    {
+      "basis": {
+        "by": "named",
+        "class": "User"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 61,
+      "model": "Users",
+      "table": "users"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "User"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 664,
+      "model": "UserLoginSecurity",
+      "table": "user_login_security"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "User"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 686,
+      "model": "PasswordResetTokens",
+      "table": "password_reset_tokens"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Tenant"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 702,
+      "model": "UserTenants",
+      "table": "user_tenants"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 729,
+      "model": "LookupTypes",
+      "table": "lookup_types"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 851,
+      "model": "Addresses",
+      "table": "addresses"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 887,
+      "model": "ServiceProviderInformation",
+      "table": "service_provider_information"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1039,
+      "model": "ServiceProviderContactInformation",
+      "table": "service_provider_contacts_information"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1069,
+      "model": "ServiceProviderEmails",
+      "table": "service_provider_emails"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1096,
+      "model": "ServiceProviderPhones",
+      "table": "service_provider_phones"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1129,
+      "model": "ServiceProviderCompanions",
+      "table": "service_provider_companions"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1168,
+      "model": "ServiceProviderDismissedWorkOrders",
+      "table": "service_provider_dismissed_work_orders"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1195,
+      "model": "ServiceProviderHoursDetails",
+      "table": "service_provider_hours_details"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1226,
+      "model": "ServiceProviderBusinessInformation",
+      "table": "service_provider_business_information"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1272,
+      "model": "ServiceProviderCoverageInformation",
+      "table": "service_provider_coverage_information"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1301,
+      "model": "Associations_Subcontracting_Representation",
+      "table": "associations_subcontracting_representation"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1349,
+      "model": "ServiceProviderPayments",
+      "table": "service_provider_payments"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1399,
+      "model": "ServiceProviderRatesDetails",
+      "table": "service_provider_rates_details"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1459,
+      "model": "Trades",
+      "table": "trades"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1503,
+      "model": "Capabilities",
+      "table": "capabilities"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Equipment"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1526,
+      "model": "Equipment",
+      "table": "equipment"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Equipment"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1553,
+      "model": "EquipmentProperties",
+      "table": "equipment_properties"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1578,
+      "model": "FM_thirdParty_Brokers",
+      "table": "fm_third_party_brokers"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1597,
+      "model": "ServiceProviderTrades",
+      "table": "service_provider_trades"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1664,
+      "model": "ServiceProviderAlignmentNotes",
+      "table": "service_provider_alignment_notes"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 1687,
+      "model": "ServiceProviderTradeRanking",
+      "table": "service_provider_trade_rankings"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1715,
+      "model": "ServiceProviderEquipment",
+      "table": "service_provider_equipment"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1741,
+      "model": "ServiceProviderDocuments",
+      "table": "service_provider_documents"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1771,
+      "model": "ServiceProviderCompliance",
+      "table": "service_provider_compliance"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1803,
+      "model": "ServiceProviderComplianceRejectionHistory",
+      "table": "service_provider_compliance_rejection_history"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 1821,
+      "model": "ServiceProviderDoNotUseHistory",
+      "table": "service_provider_do_not_use_history"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1840,
+      "model": "ServiceProviderMedia",
+      "table": "service_provider_media"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Provider"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1875,
+      "model": "ServiceProviderUniform",
+      "table": "service_provider_uniform"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Role"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 1900,
+      "model": "Roles",
+      "table": "roles"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Role"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 1946,
+      "model": "UserRoles",
+      "table": "user_roles"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 1980,
+      "model": "RoleFlipReports",
+      "table": "role_flip_reports"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Permission"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 2015,
+      "model": "UserExclusions",
+      "table": "user_exclusions"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Permission"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 2034,
+      "model": "UserTenantExclusions",
+      "table": "user_tenant_exclusions"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Permission"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 2066,
+      "model": "UserAccessAdjustments",
+      "table": "user_access_adjustments"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 2101,
+      "model": "UserClientAssignments",
+      "table": "user_client_assignments"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 2125,
+      "model": "AuditLog",
+      "table": "audit_logs"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 2162,
+      "model": "AuditSnapshot",
+      "table": "audit_snapshots"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Permission"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 2181,
+      "model": "Permissions",
+      "table": "permissions"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Permission"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 2207,
+      "model": "Exclusion",
+      "table": "exclusion"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "ClientBrand"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 2235,
+      "model": "Brands",
+      "table": "brands"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "ClientBrand"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 2267,
+      "model": "GeographyCities",
+      "table": "geography_cities"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Client"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 2298,
+      "model": "Clients",
+      "table": "clients"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "ClientBrand"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 2389,
+      "model": "ClientBrands",
+      "table": "client_brands"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Site"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 2422,
+      "model": "ClientLocations",
+      "table": "client_locations"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Client"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 2490,
+      "model": "ClientLocationPhones",
+      "table": "client_location_phones"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Client"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 2514,
+      "model": "ClientLocationBusinessHours",
+      "table": "client_location_business_hours"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Client"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 2557,
+      "model": "ClientLocationBusinessHoursExceptions",
+      "table": "client_location_business_hours_exceptions"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Client"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 2592,
+      "model": "ClientLocationDocuments",
+      "table": "client_location_documents"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "AssetAudit"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 2619,
+      "model": "ClientAssets",
+      "table": "client_assets"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Client"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 2656,
+      "model": "ClientContacts",
+      "table": "client_contacts"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Client"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 2695,
+      "model": "ClientContactPhones",
+      "table": "client_contact_phones"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Client"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 2719,
+      "model": "ClientContactEmails",
+      "table": "client_contact_emails"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Client"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 2743,
+      "model": "ClientContactLocations",
+      "table": "client_contact_locations"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Client"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 2765,
+      "model": "ClientContactBrands",
+      "table": "client_contact_brands"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Client"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 2797,
+      "model": "ClientContactTrades",
+      "table": "client_contact_trades"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Client"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 2825,
+      "model": "ClientContactManagers",
+      "table": "client_contact_managers"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Space"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 2847,
+      "model": "ClientCoverageAreas",
+      "table": "client_coverage_areas"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Client"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 2876,
+      "model": "ClientCoverageSettings",
+      "table": "client_coverage_settings"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Client"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 2895,
+      "model": "W2CoverageAreas",
+      "table": "w2_coverage_areas"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Client"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 2924,
+      "model": "W2CoverageSettings",
+      "table": "w2_coverage_settings"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "RateCard"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 2948,
+      "model": "ClientRateSettings",
+      "table": "client_rate_settings"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "RateCard"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 2990,
+      "model": "ClientRateAudit",
+      "table": "client_rate_audits"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "RateCard"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 3015,
+      "model": "ClientTrades",
+      "table": "client_trades"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "RateCard"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 3043,
+      "model": "ClientLaborRates",
+      "table": "client_labor_rates"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "RateCard"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 3085,
+      "model": "ClientEquipmentRates",
+      "table": "client_equipment_rates"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "RateCard"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 3112,
+      "model": "ClientMarkupRanges",
+      "table": "client_markup_ranges"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "FeeRule"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 3140,
+      "model": "ClientInvoicingSettings",
+      "table": "client_invoicing_settings"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "FeeRule"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 3186,
+      "model": "ClientFeeDeductions",
+      "table": "client_fee_deductions"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 3215,
+      "model": "ClientCheckInOutSettings",
+      "table": "client_checkinout_settings"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Tenant"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 3282,
+      "model": "Entity",
+      "table": "entity"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Tenant"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 3454,
+      "model": "TenantRequestCounters",
+      "table": "tenant_request_counters"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Tenant"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 3468,
+      "model": "EntitySsoProvider",
+      "table": "entity_sso_provider"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Tenant"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 3489,
+      "model": "EntityConfigure",
+      "table": "entity_configure"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 3510,
+      "model": "Verifications",
+      "table": "verifications"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 3534,
+      "model": "WorkOrderSequence",
+      "table": "work_order_sequence"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "WorkOrder"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 3545,
+      "model": "WorkOrders",
+      "table": "work_orders"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "WorkOrder"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 3685,
+      "model": "WorkOrderIntakeDrafts",
+      "table": "work_order_intake_drafts"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "WorkOrder"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 3766,
+      "model": "WorkOrderDispatchers",
+      "table": "work_order_dispatchers"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "WorkOrder"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 3791,
+      "model": "WorkOrderStatusHistory",
+      "table": "work_order_status_history"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "WorkOrder"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 3808,
+      "model": "WorkOrderTrades",
+      "table": "work_order_trades"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "WorkOrder"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 3837,
+      "model": "WorkOrderCheckInOutSettings",
+      "table": "work_order_checkinout_settings"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "WorkOrder"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 3908,
+      "model": "WorkOrderCheckIns",
+      "table": "work_order_check_ins"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "WorkOrder"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 3968,
+      "model": "SpLocationAnomalies",
+      "table": "sp_location_anomalies"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "WorkOrder"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 4023,
+      "model": "WorkOrderContacts",
+      "table": "work_order_contacts"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "WorkOrder"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 4046,
+      "model": "WorkOrderTimeline",
+      "table": "work_order_timeline"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "WorkOrder"
+      },
+      "classification": "canonical",
+      "has_tenantId": false,
+      "line": 4061,
+      "model": "WorkOrderNotes",
+      "table": "work_order_notes"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 4086,
+      "model": "Visits",
+      "table": "visits"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 4213,
+      "model": "VisitProviders",
+      "table": "visit_providers"
+    },
+    {
+      "basis": null,
+      "classification": "legacy",
+      "has_tenantId": true,
+      "line": 4251,
+      "model": "VisitProviderCallAttempts",
+      "table": "visit_provider_call_attempts"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 4278,
+      "model": "VisitNotes",
+      "table": "visit_notes"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 4296,
+      "model": "Notifications",
+      "table": "notifications"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 4330,
+      "model": "AutoMatchedVisitProviders",
+      "table": "auto_matched_visit_providers"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 4363,
+      "model": "WorkOrderAutoDispatchStatus",
+      "table": "work_order_auto_dispatch_status"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 4395,
+      "model": "CaptiveServiceProviders",
+      "table": "captive_service_providers"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 4431,
+      "model": "ServiceProviderRankingMetrics",
+      "table": "service_provider_ranking_metrics"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 4467,
+      "model": "VisitTrades",
+      "table": "visit_trades"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 4492,
+      "model": "VisitTimeline",
+      "table": "visit_timeline"
+    },
+    {
+      "basis": null,
+      "classification": "legacy",
+      "has_tenantId": false,
+      "line": 4511,
+      "model": "NotificationTemplates",
+      "table": "notification_templates"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 4540,
+      "model": "AssessmentQuestions",
+      "table": "assessment_questions"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 4567,
+      "model": "VisitAssessmentAnswers",
+      "table": "visit_assessment_answers"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 4591,
+      "model": "VisitMaterialRequests",
+      "table": "visit_material_requests"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 4623,
+      "model": "ServiceProviderParsedDocuments",
+      "table": "service_provider_parsed_documents"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 4691,
+      "model": "ServiceProviderDocumentRejectionHistory",
+      "table": "service_provider_document_rejection_history"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 4708,
+      "model": "DocumentProcessingStatus",
+      "table": "document_processing_status"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 4722,
+      "model": "ServiceProviderCompensation",
+      "table": "service_provider_compensation"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 4760,
+      "model": "ServiceProviderCommissionLineItem",
+      "table": "service_provider_commission_line_items"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 4788,
+      "model": "ServiceProviderExpense",
+      "table": "service_provider_expense"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 4816,
+      "model": "W2TimeOffRequest",
+      "table": "w2_time_off_requests"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 4852,
+      "model": "VisitExtraBuffer",
+      "table": "visit_extra_buffers"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 4886,
+      "model": "VisitDurationExtensionRequest",
+      "table": "visit_duration_extension_requests"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 4924,
+      "model": "SchedulePermissionRequest",
+      "table": "schedule_permission_requests"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 4966,
+      "model": "VisitBufferTimes",
+      "table": "visit_buffer_times"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5017,
+      "model": "ClientNotes",
+      "table": "client_notes"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 5043,
+      "model": "Files",
+      "table": "files"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 5104,
+      "model": "FileShares",
+      "table": "file_shares"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 5145,
+      "model": "FileShareLinks",
+      "table": "file_share_links"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 5173,
+      "model": "FileTag",
+      "table": "file_tags"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5195,
+      "model": "ProposalConversationFields",
+      "table": "proposal_conversation_fields"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5212,
+      "model": "ProposalConversations",
+      "table": "proposal_conversations"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5235,
+      "model": "ProposalGenerated",
+      "table": "proposal_generated"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5261,
+      "model": "ProposalOpenrouterModels",
+      "table": "proposal_openrouter_models"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 5283,
+      "model": "ProposalSessions",
+      "table": "proposal_sessions"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 5310,
+      "model": "VisitCascadeEvent",
+      "table": "visit_cascade_events"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5330,
+      "model": "ProposalStatuses",
+      "table": "proposal_statuses"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5359,
+      "model": "PriorityBucket",
+      "table": "priority_buckets"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 5381,
+      "model": "WorkOrderPriorityBucketMapping",
+      "table": "work_order_priority_bucket_mappings"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5401,
+      "model": "W2OptOutEvent",
+      "table": "w2_opt_out_events"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5423,
+      "model": "ServiceProviderCapabilityFlag",
+      "table": "service_provider_capability_flags"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5443,
+      "model": "W2HandlerMapping",
+      "table": "w2_handler_mappings"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 5465,
+      "model": "WorkOrderSweep",
+      "table": "work_order_sweeps"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5499,
+      "model": "WorkOrderSweepMember",
+      "table": "work_order_sweep_members"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5518,
+      "model": "ReoccurringSweepCadence",
+      "table": "reoccurring_sweep_cadences"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5534,
+      "model": "ProjectTradeBucket",
+      "table": "project_trade_buckets"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5559,
+      "model": "ProjectBid",
+      "table": "project_bids"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5586,
+      "model": "DispatcherCapacity",
+      "table": "dispatcher_capacities"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5600,
+      "model": "DispatcherAssignmentCriteria",
+      "table": "dispatcher_assignment_criteria"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5620,
+      "model": "DispatcherReassignmentRequest",
+      "table": "dispatcher_reassignment_requests"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 5644,
+      "model": "EscalationTicket",
+      "table": "escalation_tickets"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5679,
+      "model": "EscalationTicketComment",
+      "table": "escalation_ticket_comments"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5693,
+      "model": "EligibilitySnapshot",
+      "table": "eligibility_snapshots"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5709,
+      "model": "GeographyCluster",
+      "table": "geography_clusters"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5731,
+      "model": "GeographyClusterCity",
+      "table": "geography_cluster_cities"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5749,
+      "model": "ServiceProviderClusterCityCoverage",
+      "table": "service_provider_cluster_city_coverage"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5773,
+      "model": "IntegratedProviderRevenueShare",
+      "table": "integrated_provider_revenue_shares"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 5790,
+      "model": "RankingScoreWeights",
+      "table": "ranking_score_weights"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5810,
+      "model": "RankAdjustmentEvent",
+      "table": "rank_adjustment_events"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5828,
+      "model": "ReactiveHireSession",
+      "table": "reactive_hire_sessions"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5854,
+      "model": "ReactiveHireProvider",
+      "table": "reactive_hire_providers"
+    },
+    {
+      "basis": null,
+      "classification": "legacy",
+      "has_tenantId": false,
+      "line": 5882,
+      "model": "ReactiveHireCallAttempt",
+      "table": "reactive_hire_call_attempts"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5905,
+      "model": "ReactiveHireCapture",
+      "table": "reactive_hire_captures"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5929,
+      "model": "ReactiveHireAdditionalContact",
+      "table": "reactive_hire_additional_contacts"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 5946,
+      "model": "ReactiveHireRequest",
+      "table": "reactive_hire_requests"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 5985,
+      "model": "PlacesGeoTileCache",
+      "table": "places_geo_tile_cache"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 6000,
+      "model": "PlacesDetailCache",
+      "table": "places_detail_cache"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 6010,
+      "model": "PlacesTradeQueryMapping",
+      "table": "places_trade_query_mappings"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 6029,
+      "model": "PlacesFranchiseBlocklist",
+      "table": "places_franchise_blocklist"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 6045,
+      "model": "PlacesApiUsageDaily",
+      "table": "places_api_usage_daily"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 6057,
+      "model": "RecruiterFollowUp",
+      "table": "recruiter_follow_ups"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 6075,
+      "model": "ProviderFunnelState",
+      "table": "provider_funnel_states"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 6095,
+      "model": "ProviderFunnelTransition",
+      "table": "provider_funnel_transitions"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 6122,
+      "model": "FormBuilderForm",
+      "table": "form_builder_forms"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 6170,
+      "model": "FormBuilderFormVersion",
+      "table": "form_builder_form_versions"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 6192,
+      "model": "FormBuilderFormAnswer",
+      "table": "form_builder_form_answers"
+    },
+    {
+      "basis": null,
+      "classification": "legacy",
+      "has_tenantId": true,
+      "line": 6220,
+      "model": "FormTemplates",
+      "table": "form_templates"
+    },
+    {
+      "basis": null,
+      "classification": "legacy",
+      "has_tenantId": false,
+      "line": 6261,
+      "model": "FormTemplateVersions",
+      "table": "form_template_versions"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 6286,
+      "model": "FormAssignments",
+      "table": "form_assignments"
+    },
+    {
+      "basis": null,
+      "classification": "legacy",
+      "has_tenantId": true,
+      "line": 6325,
+      "model": "FormTemplateAnswers",
+      "table": "form_template_answers"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Payment"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 6359,
+      "model": "PaymentRequests",
+      "table": "payment_requests"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Payment"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 6471,
+      "model": "ApPaymentRequestStatusHistory",
+      "table": "ap_payment_request_status_history"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Payment"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 6531,
+      "model": "PaymentRequestExpenseItems",
+      "table": "payment_request_expense_items"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Payment"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 6565,
+      "model": "PaymentRequestPayments",
+      "table": "payment_request_payments"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 6639,
+      "model": "ApAchExports",
+      "table": "ap_ach_exports"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 6681,
+      "model": "ApAchExportItems",
+      "table": "ap_ach_export_items"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 6722,
+      "model": "ApPaymentAccounts",
+      "table": "ap_payment_accounts"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 6783,
+      "model": "ApPaymentAccountShares",
+      "table": "ap_payment_account_shares"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 6827,
+      "model": "ApPaymentAccountUsers",
+      "table": "ap_payment_account_users"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 6862,
+      "model": "SpPaymentLinkRequests",
+      "table": "sp_payment_link_requests"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 6924,
+      "model": "VisitFormLinks",
+      "table": "visit_form_links"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 6961,
+      "model": "SpW9LinkRequests",
+      "table": "sp_w9_link_requests"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 6990,
+      "model": "ApExpenseTypes",
+      "table": "ap_expense_types"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 7019,
+      "model": "EmailAiInboxGrants",
+      "table": "email_ai_inbox_grants"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 7047,
+      "model": "ApApprovalReasons",
+      "table": "ap_approval_reasons"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 7073,
+      "model": "ApPaymentTerms",
+      "table": "ap_payment_terms"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 7099,
+      "model": "ApPaymentMethodDefs",
+      "table": "ap_payment_method_defs"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 7140,
+      "model": "ApPaymentFields",
+      "table": "ap_payment_fields"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 7199,
+      "model": "ApPaymentMethodFields",
+      "table": "ap_payment_method_fields"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 7242,
+      "model": "ProcurementApprovals",
+      "table": "procurement_approvals"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 7331,
+      "model": "ProcurementRequestActivities",
+      "table": "procurement_request_activities"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 7411,
+      "model": "ProcurementRequestPayments",
+      "table": "procurement_request_payments"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 7490,
+      "model": "ProcurementRentalQuotes",
+      "table": "procurement_rental_quotes"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 7601,
+      "model": "ProcurementSuppliers",
+      "table": "procurement_suppliers"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 7672,
+      "model": "ProcurementSupplierLocations",
+      "table": "procurement_supplier_locations"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 7723,
+      "model": "ProcurementRequests",
+      "table": "procurement_requests"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 7880,
+      "model": "ProcurementReturnCredits",
+      "table": "procurement_return_credits"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 7913,
+      "model": "ProcurementRequestItems",
+      "table": "procurement_request_items"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 8265,
+      "model": "ProcurementRentalAgreements",
+      "table": "procurement_rental_agreements"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 8435,
+      "model": "ProcurementRentalExtensions",
+      "table": "procurement_rental_extensions"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 8478,
+      "model": "ProcurementPricingRequests",
+      "table": "procurement_pricing_requests"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 8661,
+      "model": "ProcurementPricingOptions",
+      "table": "procurement_pricing_options"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 8746,
+      "model": "ProcurementPaymentCards",
+      "table": "procurement_payment_cards"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 8785,
+      "model": "ProcurementVendorAccounts",
+      "table": "procurement_vendor_accounts"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 8842,
+      "model": "ProcurementVendorAccountCards",
+      "table": "procurement_vendor_account_cards"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Space"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 8877,
+      "model": "StorageUnits",
+      "table": "storage_units"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Space"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 9019,
+      "model": "StorageUnitAccess",
+      "table": "storage_unit_access"
+    },
+    {
+      "basis": {
+        "by": "line-range",
+        "class": "Space"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 9065,
+      "model": "StorageUnitAccessRequests",
+      "table": "storage_unit_access_requests"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 9123,
+      "model": "W9RequestCampaigns",
+      "table": "w9_request_campaigns"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 9147,
+      "model": "W9UploadRequests",
+      "table": "w9_upload_requests"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 9215,
+      "model": "W9Files",
+      "table": "w9_files"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 9247,
+      "model": "W9SmsOptouts",
+      "table": "w9_sms_optouts"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 9264,
+      "model": "W9UploadRequestsSmsMessages",
+      "table": "w9_upload_requests_sms_messages"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 9312,
+      "model": "Proposals",
+      "table": "proposals"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 9349,
+      "model": "ProposalVersions",
+      "table": "proposal_versions"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 9405,
+      "model": "ProposalChatMessages",
+      "table": "proposal_chat_messages"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 9434,
+      "model": "ProposalStatusHistory",
+      "table": "proposal_status_history"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 9500,
+      "model": "ProposalPromptVersions",
+      "table": "proposal_prompt_versions"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 9529,
+      "model": "DispatcherAssessments",
+      "table": "dispatcher_assessments"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 9552,
+      "model": "UserListViews",
+      "table": "user_list_views"
+    },
+    {
+      "basis": null,
+      "classification": "unmapped",
+      "has_tenantId": false,
+      "line": 9576,
+      "model": "UserListViewShares",
+      "table": "user_list_view_shares"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 9598,
+      "model": "UserEntityVisit",
+      "table": "user_entity_visit"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 9623,
+      "model": "WoCloseOutReviews",
+      "table": "wo_close_out_reviews"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Invoice"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 9656,
+      "model": "ArInvoices",
+      "table": "ar_invoices"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Payment"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 9693,
+      "model": "ArPayments",
+      "table": "ar_payments"
+    },
+    {
+      "basis": {
+        "by": "named",
+        "class": "Invoice"
+      },
+      "classification": "canonical",
+      "has_tenantId": true,
+      "line": 9726,
+      "model": "ArInvoiceEvents",
+      "table": "ar_invoice_events"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 9748,
+      "model": "EmailAiSignatures",
+      "table": "email_ai_signatures"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 9782,
+      "model": "VisitNegotiatedTerms",
+      "table": "visit_negotiated_terms"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 9832,
+      "model": "Links",
+      "table": "links"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 9929,
+      "model": "LinkClicks",
+      "table": "link_clicks"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 9990,
+      "model": "LinkInstalls",
+      "table": "link_installs"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 10048,
+      "model": "SignupCredentialClaims",
+      "table": "signup_credential_claims"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 10099,
+      "model": "DeviceAttestations",
+      "table": "device_attestations"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 10156,
+      "model": "ClientTeams",
+      "table": "client_teams"
+    },
+    {
+      "basis": null,
+      "classification": "tenant-only",
+      "has_tenantId": true,
+      "line": 10187,
+      "model": "ClientTeamAssignments",
+      "table": "client_team_assignments"
+    }
+  ],
+  "source_shas": {
+    "srve": "29267a4453c2ea7536127047aadd8328ef63ca59",
+    "srve/onengine-backend": "e78330aa20f0e87c931603a2df4fcdb11cb22e4a",
+    "srve/servengine-frontend": "c2f59c194f05e58d805a30e2c04bfd1af76e91cd",
+    "xaas": "d7e38a376450f7ae680fb580082577b24d9c31c6"
+  },
+  "tenant_policy": {
+    "ApExpense": {
+      "aggregate": "Aggregate4",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "ApMethodDefinition": {
+      "aggregate": "Aggregate4",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "ApPayment": {
+      "aggregate": "Aggregate4",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "AssetAudit": {
+      "aggregate": "Aggregate3",
+      "backing_models": 1,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "global"
+    },
+    "CheckInOutSettings": {
+      "aggregate": "Aggregate3",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "Client": {
+      "aggregate": "Aggregate1",
+      "backing_models": 15,
+      "models_with_tenantId": 4,
+      "note": null,
+      "policy": "global"
+    },
+    "ClientBrand": {
+      "aggregate": "Aggregate2",
+      "backing_models": 3,
+      "models_with_tenantId": 1,
+      "note": null,
+      "policy": "global"
+    },
+    "Contact": {
+      "aggregate": "Aggregate1",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "ContactEmail": {
+      "aggregate": "Aggregate1",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "ContactPhone": {
+      "aggregate": "Aggregate1",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "ContactSite": {
+      "aggregate": "Aggregate2",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "CoverageArea": {
+      "aggregate": "Aggregate1",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "CoverageZone": {
+      "aggregate": "Aggregate2",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "Document": {
+      "aggregate": "Aggregate3",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "Equipment": {
+      "aggregate": "Aggregate2",
+      "backing_models": 2,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "global"
+    },
+    "FeeRule": {
+      "aggregate": "Aggregate4",
+      "backing_models": 2,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "global"
+    },
+    "Invoice": {
+      "aggregate": "Aggregate4",
+      "backing_models": 2,
+      "models_with_tenantId": 2,
+      "note": null,
+      "policy": "tenant-keyed"
+    },
+    "InvoiceEvent": {
+      "aggregate": "Aggregate4",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "InvoiceLineItem": {
+      "aggregate": "Aggregate4",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "Note": {
+      "aggregate": "Aggregate3",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "Payment": {
+      "aggregate": "Aggregate4",
+      "backing_models": 5,
+      "models_with_tenantId": 5,
+      "note": null,
+      "policy": "tenant-keyed"
+    },
+    "Permission": {
+      "aggregate": "Aggregate1",
+      "backing_models": 5,
+      "models_with_tenantId": 3,
+      "note": null,
+      "policy": "tenant-keyed"
+    },
+    "Provider": {
+      "aggregate": "Aggregate1",
+      "backing_models": 25,
+      "models_with_tenantId": 2,
+      "note": "suppliers global after migration 20260715173000_procurement_suppliers_global",
+      "policy": "global"
+    },
+    "RateCard": {
+      "aggregate": "Aggregate4",
+      "backing_models": 6,
+      "models_with_tenantId": 1,
+      "note": null,
+      "policy": "global"
+    },
+    "RateCardLineItem": {
+      "aggregate": "Aggregate4",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "Role": {
+      "aggregate": "Aggregate1",
+      "backing_models": 2,
+      "models_with_tenantId": 1,
+      "note": null,
+      "policy": "tenant-keyed"
+    },
+    "ServiceProviderAddress": {
+      "aggregate": "Aggregate1",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "ServiceProviderContact": {
+      "aggregate": "Aggregate1",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "ServiceProviderCoverage": {
+      "aggregate": "Aggregate1",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "ServiceProviderDocument": {
+      "aggregate": "Aggregate1",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "ServiceProviderPaymentMethod": {
+      "aggregate": "Aggregate4",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "ServiceProviderProfile": {
+      "aggregate": "Aggregate1",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "ServiceProviderTrade": {
+      "aggregate": "Aggregate1",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "Site": {
+      "aggregate": "Aggregate2",
+      "backing_models": 1,
+      "models_with_tenantId": 1,
+      "note": null,
+      "policy": "tenant-keyed"
+    },
+    "Space": {
+      "aggregate": "Aggregate2",
+      "backing_models": 4,
+      "models_with_tenantId": 3,
+      "note": null,
+      "policy": "tenant-keyed"
+    },
+    "Tenant": {
+      "aggregate": "Aggregate1",
+      "backing_models": 5,
+      "models_with_tenantId": 2,
+      "note": null,
+      "policy": "global"
+    },
+    "User": {
+      "aggregate": "Aggregate1",
+      "backing_models": 3,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "global"
+    },
+    "Visit": {
+      "aggregate": "Aggregate3",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "VisitProvider": {
+      "aggregate": "Aggregate3",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "W2CoverageSettings": {
+      "aggregate": "Aggregate1",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "W9Campaign": {
+      "aggregate": "Aggregate1",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "W9Request": {
+      "aggregate": "Aggregate1",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "WorkOrder": {
+      "aggregate": "Aggregate3",
+      "backing_models": 11,
+      "models_with_tenantId": 5,
+      "note": null,
+      "policy": "global"
+    },
+    "WorkOrderContact": {
+      "aggregate": "Aggregate3",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    },
+    "WorkOrderTrade": {
+      "aggregate": "Aggregate3",
+      "backing_models": 0,
+      "models_with_tenantId": 0,
+      "note": null,
+      "policy": "tenant-keyed(unbacked)"
+    }
+  }
+}

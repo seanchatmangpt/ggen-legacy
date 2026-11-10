@@ -1,0 +1,2682 @@
+{
+  "derivation": {
+    "commands": [
+      "cd ~/xaas && grep -rl 'data_layer: AshPostgres' lib/xaas/serv_engine | wc -l",
+      "python3 scripts/dryrun/gen_resource_classification.py  (parses 'actions do' blocks; action tagged custom-handler iff body has change/validate/manual/run/prepare naming a module, fn or capture)",
+      "cross-check: grep -rhE '^\\s+(create|update|read|destroy|action)[ (]' lib/xaas/serv_engine"
+    ],
+    "counts": {
+      "actions_by_kind": {
+        "action": 12,
+        "create": 74,
+        "destroy": 19,
+        "read": 87,
+        "update": 97
+      },
+      "actions_total": 289,
+      "by_tag": {
+        "custom-handler": 76,
+        "generated": 213
+      },
+      "resources": 67,
+      "resources_tag_generated": 37
+    }
+  },
+  "resources": [
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 54,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 66,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 71,
+          "name": "update",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "destroy",
+          "line": 77,
+          "name": "destroy",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/briefing_threshold.ex",
+      "resource_tag": "generated",
+      "table": "srve_briefing_thresholds"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 52,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 56,
+          "name": "active_by_token",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 62,
+          "name": "start",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 67,
+          "name": "end",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/impersonation_session.ex",
+      "resource_tag": "generated",
+      "table": "srve_impersonation_sessions"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [
+            "prepare {Xaas.ServEngine.ReadHelpers, fields: [:name, :serial_number, :manufacturer]}"
+          ],
+          "kind": "read",
+          "line": 98,
+          "name": "read",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 106,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 125,
+          "name": "quick_add_create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 137,
+          "name": "update",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/assets/asset.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_assets"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [
+            "prepare({Xaas.ServEngine.ReadHelpers, fields: [:name, :site_number, :city]})"
+          ],
+          "kind": "read",
+          "line": 90,
+          "name": "read",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 109,
+          "name": "get_by_id",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 115,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 133,
+          "name": "quick_add_create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 148,
+          "name": "update",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/assets/site.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_sites"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 108,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 120,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Assets.Changes.FetchEnrichment)"
+          ],
+          "kind": "update",
+          "line": 125,
+          "name": "refresh",
+          "tag": "custom-handler"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/assets/site_enrichment.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_site_enrichments"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [
+            "prepare({Xaas.ServEngine.ReadHelpers, fields: [:fixture_type, :notes]})"
+          ],
+          "kind": "read",
+          "line": 79,
+          "name": "read",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 94,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 109,
+          "name": "update",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/assets/survey_item.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_survey_items"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 84,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 96,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 101,
+          "name": "update",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/commercial/ap_method_definition.ex",
+      "resource_tag": "generated",
+      "table": "srve_ap_method_definitions"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 83,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 95,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 100,
+          "name": "update",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/commercial/coverage_area.ex",
+      "resource_tag": "generated",
+      "table": "srve_coverage_areas"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 134,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 152,
+          "name": "by_service_provider",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 158,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 164,
+          "name": "update",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "change Xaas.ServEngine.Commercial.EscalationEvent.Changes.ResolveOutcome"
+          ],
+          "kind": "update",
+          "line": 172,
+          "name": "resolve",
+          "tag": "custom-handler"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/commercial/escalation_event.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_escalation_events"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [
+            "prepare({Xaas.ServEngine.ReadHelpers, fields: [:invoice_number]})"
+          ],
+          "kind": "read",
+          "line": 232,
+          "name": "read",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 247,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "validate(fn changeset, _ ->"
+          ],
+          "kind": "update",
+          "line": 257,
+          "name": "update",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 291,
+          "name": "send",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Commercial.Changes.RecordPayment)"
+          ],
+          "kind": "update",
+          "line": 305,
+          "name": "record_payment",
+          "tag": "custom-handler"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/commercial/invoice.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_invoices"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [
+            "prepare {Xaas.ServEngine.ReadHelpers, fields: [:event_type]}"
+          ],
+          "kind": "read",
+          "line": 85,
+          "name": "read",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 99,
+          "name": "append",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/commercial/invoice_event.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_invoice_events"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [
+            "prepare {Xaas.ServEngine.ReadHelpers, fields: [:description]}"
+          ],
+          "kind": "read",
+          "line": 75,
+          "name": "read",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 90,
+          "name": "create",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/commercial/invoice_line_item.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_invoice_line_items"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [
+            "prepare {Xaas.ServEngine.ReadHelpers, fields: [:trade]}"
+          ],
+          "kind": "read",
+          "line": 98,
+          "name": "read",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 106,
+          "name": "view_for_dispatch",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 110,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 123,
+          "name": "update",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/commercial/rate_card.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_rate_cards"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [
+            "prepare {Xaas.ServEngine.ReadHelpers, fields: [:description]}"
+          ],
+          "kind": "read",
+          "line": 91,
+          "name": "read",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 106,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 119,
+          "name": "update",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/commercial/rate_card_line_item.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_rate_card_line_items"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [
+            "prepare({Xaas.ServEngine.ReadHelpers, fields: [:name]})"
+          ],
+          "kind": "read",
+          "line": 104,
+          "name": "read",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 119,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 135,
+          "name": "update",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/commercial/service_provider.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_service_providers"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 88,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 100,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 115,
+          "name": "update",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "destroy",
+          "line": 120,
+          "name": "destroy",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/commercial/service_provider_address.ex",
+      "resource_tag": "generated",
+      "table": "srve_service_provider_addresses"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 71,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 83,
+          "name": "create",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/commercial/service_provider_contact.ex",
+      "resource_tag": "generated",
+      "table": "srve_service_provider_contacts"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 82,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 94,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 102,
+          "name": "for_provider",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 116,
+          "name": "update",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/commercial/service_provider_coverage.ex",
+      "resource_tag": "generated",
+      "table": "srve_service_provider_coverage"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 88,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 100,
+          "name": "create",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/commercial/service_provider_document.ex",
+      "resource_tag": "generated",
+      "table": "srve_service_provider_documents"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 112,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Commercial.Changes.DeriveLast4)"
+          ],
+          "kind": "create",
+          "line": 124,
+          "name": "create",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Commercial.Changes.DeriveLast4)"
+          ],
+          "kind": "update",
+          "line": 131,
+          "name": "update",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "destroy",
+          "line": 138,
+          "name": "destroy",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/commercial/service_provider_payment_method.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_service_provider_payment_methods"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 98,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 110,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 115,
+          "name": "update",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/commercial/service_provider_profile.ex",
+      "resource_tag": "generated",
+      "table": "srve_service_provider_profiles"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 82,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 94,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 99,
+          "name": "update",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/commercial/service_provider_trade.ex",
+      "resource_tag": "generated",
+      "table": "srve_service_provider_trades"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 97,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 109,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 124,
+          "name": "update",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/commercial/service_provider_w2_terms.ex",
+      "resource_tag": "generated",
+      "table": "srve_sp_w2_terms"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 92,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 104,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 109,
+          "name": "update",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 114,
+          "name": "start",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "change {Xaas.ServEngine.Commercial.W9Campaign.CompleteCampaign, []}"
+          ],
+          "kind": "update",
+          "line": 120,
+          "name": "complete_campaign",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change {Xaas.ServEngine.Commercial.W9Campaign.BulkCreate, []}"
+          ],
+          "kind": "create",
+          "line": 131,
+          "name": "bulk_create_from_campaign",
+          "tag": "custom-handler"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/commercial/w9_campaign.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_w9_campaigns"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 120,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 138,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 143,
+          "name": "update",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 148,
+          "name": "send",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 158,
+          "name": "mark_viewed",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 164,
+          "name": "complete",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 171,
+          "name": "mark_overdue",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 177,
+          "name": "waive",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 186,
+          "name": "send_reminder",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 194,
+          "name": "resend",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 204,
+          "name": "approve",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 220,
+          "name": "reject",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "change {Xaas.ServEngine.Commercial.W9Request.Changes.IssuePublicLink, []}"
+          ],
+          "kind": "update",
+          "line": 229,
+          "name": "issue_public_link",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 238,
+          "name": "update_ocr",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "change {Xaas.ServEngine.Commercial.W9Request.Changes.ConfineTenantKey, []}"
+          ],
+          "kind": "update",
+          "line": 243,
+          "name": "attach_file",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "run fn input, _context ->"
+          ],
+          "kind": "action",
+          "line": 258,
+          "name": "w9_public_link_info",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "run fn input, _context ->"
+          ],
+          "kind": "action",
+          "line": 275,
+          "name": "complete_w9_public_upload",
+          "tag": "custom-handler"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/commercial/w9_request.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_w9_requests"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 92,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 104,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 132,
+          "name": "update",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "change(fn changeset, _context ->"
+          ],
+          "kind": "update",
+          "line": 138,
+          "name": "soft_delete",
+          "tag": "custom-handler"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/files/file.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_files"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 84,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 88,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 104,
+          "name": "update",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/files/file_share.ex",
+      "resource_tag": "generated",
+      "table": "srve_file_shares"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 121,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 125,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 143,
+          "name": "update",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/files/file_share_link.ex",
+      "resource_tag": "generated",
+      "table": "srve_file_share_links"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 40,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 44,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 49,
+          "name": "update",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/files/file_tag.ex",
+      "resource_tag": "generated",
+      "table": "srve_file_tags"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 106,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 118,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 123,
+          "name": "update",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "destroy",
+          "line": 128,
+          "name": "destroy",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/lookups/equipment_catalog.ex",
+      "resource_tag": "generated",
+      "table": "srve_equipment_catalog"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 77,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 89,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 94,
+          "name": "update",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "destroy",
+          "line": 99,
+          "name": "destroy",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/lookups/fm_broker.ex",
+      "resource_tag": "generated",
+      "table": "srve_fm_brokers"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 73,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 85,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 90,
+          "name": "update",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "destroy",
+          "line": 95,
+          "name": "destroy",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/lookups/global_brand.ex",
+      "resource_tag": "generated",
+      "table": "srve_global_brands"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 111,
+          "name": "by_type",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 127,
+          "name": "by_types",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/lookups/lookup_value.ex",
+      "resource_tag": "generated",
+      "table": "lookup_values"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 105,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 117,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 122,
+          "name": "update",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "destroy",
+          "line": 127,
+          "name": "destroy",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/lookups/permission_catalog.ex",
+      "resource_tag": "generated",
+      "table": "srve_permission_catalog"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 126,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 138,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 153,
+          "name": "update",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "destroy",
+          "line": 167,
+          "name": "destroy",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/lookups/role_template.ex",
+      "resource_tag": "generated",
+      "table": "srve_role_templates"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 110,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 122,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 127,
+          "name": "update",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "destroy",
+          "line": 132,
+          "name": "destroy",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 138,
+          "name": "root_trades",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 152,
+          "name": "subtrades",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/lookups/trade.ex",
+      "resource_tag": "generated",
+      "table": "srve_trades"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 95,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 111,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 116,
+          "name": "update",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "destroy",
+          "line": 122,
+          "name": "destroy",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/alignment_default_setup.ex",
+      "resource_tag": "generated",
+      "table": "srve_alignment_default_setups"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 95,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 107,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 112,
+          "name": "update",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "destroy",
+          "line": 118,
+          "name": "destroy",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/alignment_ranking.ex",
+      "resource_tag": "generated",
+      "table": "srve_alignment_rankings"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 137,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 161,
+          "name": "active_for",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "validate {Xaas.ServEngine.Operations.AlignmentRuleValidation, []}"
+          ],
+          "kind": "create",
+          "line": 173,
+          "name": "create",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "validate {Xaas.ServEngine.Operations.AlignmentRuleValidation, []}"
+          ],
+          "kind": "update",
+          "line": 179,
+          "name": "update",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "destroy",
+          "line": 186,
+          "name": "destroy",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "run fn _input, _context ->"
+          ],
+          "kind": "action",
+          "line": 196,
+          "name": "exclusion_categories",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "run fn input, context ->"
+          ],
+          "kind": "action",
+          "line": 212,
+          "name": "summary",
+          "tag": "custom-handler"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/alignment_rule.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_alignment_rules"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 90,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 102,
+          "name": "create",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/auto_dispatch_rule.ex",
+      "resource_tag": "generated",
+      "table": "srve_auto_dispatch_rules"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 100,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 112,
+          "name": "create",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/check_in_out_settings.ex",
+      "resource_tag": "generated",
+      "table": "srve_check_in_out_settings"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 71,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 83,
+          "name": "create",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/client_transmission_receipt.ex",
+      "resource_tag": "generated",
+      "table": "srve_client_transmission_receipts"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 111,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 123,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "change({Xaas.ServEngine.Operations.Changes.ClientUpdateStatusGuard, from: :draft})"
+          ],
+          "kind": "update",
+          "line": 128,
+          "name": "queue",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.TransmitClientUpdate)"
+          ],
+          "kind": "update",
+          "line": 135,
+          "name": "transmit",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "destroy",
+          "line": 141,
+          "name": "destroy",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/client_update_request.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_client_update_requests"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 70,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 82,
+          "name": "create",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/contact_site.ex",
+      "resource_tag": "generated",
+      "table": "srve_contact_sites"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 70,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "change({Xaas.ServEngine.Operations.Changes.ExactlyOneSet, fields: [:site_id, :client_id]})"
+          ],
+          "kind": "create",
+          "line": 82,
+          "name": "create",
+          "tag": "custom-handler"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/coverage_zone.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_coverage_zones"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 117,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 129,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.PlaceDialCall)"
+          ],
+          "kind": "update",
+          "line": 134,
+          "name": "dial",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "destroy",
+          "line": 140,
+          "name": "destroy",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/dial_attempt.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_dial_attempts"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 145,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "change({Xaas.ServEngine.Operations.Changes.ExactlyOneSet, fields: [:work_order_id, :site_id, :contact_id, :asset_id, :check_in_out_settings_id, :tenant_id]})"
+          ],
+          "kind": "create",
+          "line": 157,
+          "name": "create",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 163,
+          "name": "qa_approve",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 170,
+          "name": "qa_reject",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/document.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_documents"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 88,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "change({Xaas.ServEngine.Operations.Changes.ExactlyOneSet, fields: [:work_order_id, :provider_id]})"
+          ],
+          "kind": "create",
+          "line": 115,
+          "name": "create",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 126,
+          "name": "update",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/note.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_notes"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 103,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 109,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 116,
+          "name": "mark_read",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/notification.ex",
+      "resource_tag": "generated",
+      "table": "srve_notifications"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 90,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 102,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 107,
+          "name": "update",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "destroy",
+          "line": 112,
+          "name": "destroy",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/permission.ex",
+      "resource_tag": "generated",
+      "table": "srve_permissions"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 112,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 124,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "change({Xaas.ServEngine.Operations.Changes.ProposalStatusGuard, from: @submittable, refusal: \"PROPOSAL_NOT_DRAFT\"})"
+          ],
+          "kind": "update",
+          "line": 129,
+          "name": "submit_for_review",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change({Xaas.ServEngine.Operations.Changes.ProposalStatusGuard, from: @sme_reviewable, refusal: \"PROPOSAL_NOT_IN_REVIEW\"})"
+          ],
+          "kind": "update",
+          "line": 136,
+          "name": "escalate_to_sme",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change({Xaas.ServEngine.Operations.Changes.ProposalStatusGuard, from: @sme_resolvable, refusal: \"PROPOSAL_NOT_SME_ESCALATED\"})"
+          ],
+          "kind": "update",
+          "line": 144,
+          "name": "resolve_sme",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change({Xaas.ServEngine.Operations.Changes.ProposalStatusGuard, from: @approvable, refusal: \"PROPOSAL_NOT_IN_REVIEW\"})"
+          ],
+          "kind": "update",
+          "line": 151,
+          "name": "approve",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.GenerateProposal)"
+          ],
+          "kind": "update",
+          "line": 158,
+          "name": "send_proposal",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "destroy",
+          "line": 164,
+          "name": "destroy",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/proposal.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_proposals"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [
+            "prepare fn query, _ctx ->"
+          ],
+          "kind": "read",
+          "line": 182,
+          "name": "read",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 202,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 223,
+          "name": "update",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 243,
+          "name": "activate",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.RoleActiveGuard)"
+          ],
+          "kind": "update",
+          "line": 249,
+          "name": "deactivate",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "prepare fn query, _ctx -> Ash.Query.load(query, [:holder_count]) end"
+          ],
+          "kind": "read",
+          "line": 261,
+          "name": "holder_count",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "prepare fn query, _ctx -> Ash.Query.load(query, [:permission_count]) end"
+          ],
+          "kind": "read",
+          "line": 266,
+          "name": "permission_count",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "run fn input, ctx ->"
+          ],
+          "kind": "action",
+          "line": 277,
+          "name": "deactivate_impact",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "run fn input, ctx ->"
+          ],
+          "kind": "action",
+          "line": 285,
+          "name": "scope_impact",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.RoleDestroyGuard)"
+          ],
+          "kind": "destroy",
+          "line": 308,
+          "name": "destroy",
+          "tag": "custom-handler"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/role.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_roles"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 91,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 103,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "destroy",
+          "line": 108,
+          "name": "destroy",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/role_permission.ex",
+      "resource_tag": "generated",
+      "table": "srve_role_permissions"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 85,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 90,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 101,
+          "name": "update",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/survey_objective.ex",
+      "resource_tag": "generated",
+      "table": "srve_survey_objectives"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 97,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 109,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 116,
+          "name": "for_role",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "destroy",
+          "line": 129,
+          "name": "destroy",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/user_role.ex",
+      "resource_tag": "generated",
+      "table": "srve_user_roles"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 121,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 142,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 162,
+          "name": "update",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.VisitStatusTransitionGuard)"
+          ],
+          "kind": "update",
+          "line": 177,
+          "name": "update_status",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.CheckInOutGuard)"
+          ],
+          "kind": "update",
+          "line": 191,
+          "name": "check_in",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.CheckInOutGuard)"
+          ],
+          "kind": "update",
+          "line": 201,
+          "name": "check_out",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 213,
+          "name": "update_assessment_notes",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 221,
+          "name": "list_upcoming_visits",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.AssignProviderGuard)"
+          ],
+          "kind": "update",
+          "line": 243,
+          "name": "assign_provider",
+          "tag": "custom-handler"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/visit.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_visits"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [
+            "prepare({Xaas.ServEngine.ReadHelpers, fields: [:external_wo_number, :description]})"
+          ],
+          "kind": "read",
+          "line": 218,
+          "name": "read",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.BindTenant)"
+          ],
+          "kind": "create",
+          "line": 233,
+          "name": "create",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 259,
+          "name": "update",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.Intake)",
+            "change(Xaas.ServEngine.Operations.Changes.BindTenant)"
+          ],
+          "kind": "create",
+          "line": 281,
+          "name": "intake",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.BindTenant)"
+          ],
+          "kind": "create",
+          "line": 305,
+          "name": "create_draft",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.OcelTransitionLog)"
+          ],
+          "kind": "update",
+          "line": 327,
+          "name": "ingest",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.OcelTransitionLog)"
+          ],
+          "kind": "update",
+          "line": 332,
+          "name": "begin_matching",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.OcelTransitionLog)"
+          ],
+          "kind": "update",
+          "line": 337,
+          "name": "dispatch",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.AutoDispatch)",
+            "change(Xaas.ServEngine.Operations.Changes.OcelTransitionLog)"
+          ],
+          "kind": "update",
+          "line": 347,
+          "name": "dispatch_auto",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.AcceptanceTokenGuard)",
+            "change(Xaas.ServEngine.Operations.Changes.OcelTransitionLog)"
+          ],
+          "kind": "update",
+          "line": 360,
+          "name": "dispatch_with_acceptance",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.OcelTransitionLog)"
+          ],
+          "kind": "update",
+          "line": 368,
+          "name": "start_work",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.OcelTransitionLog)"
+          ],
+          "kind": "update",
+          "line": 373,
+          "name": "submit_for_audit",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.NteGuard)",
+            "change(Xaas.ServEngine.Operations.Changes.OcelTransitionLog)"
+          ],
+          "kind": "update",
+          "line": 378,
+          "name": "complete",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.QuoteMarginGuard)"
+          ],
+          "kind": "update",
+          "line": 390,
+          "name": "quote",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.OcelTransitionLog)"
+          ],
+          "kind": "update",
+          "line": 401,
+          "name": "invoice",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.CloseOutInvoicePaidGuard)",
+            "change(Xaas.ServEngine.Operations.Changes.OcelTransitionLog)"
+          ],
+          "kind": "update",
+          "line": 409,
+          "name": "close_out",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.ConvertToProject)"
+          ],
+          "kind": "create",
+          "line": 425,
+          "name": "convert_to_project",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "change(Xaas.ServEngine.Operations.Changes.OcelTransitionLog)"
+          ],
+          "kind": "update",
+          "line": 431,
+          "name": "cancel",
+          "tag": "custom-handler"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/work_order.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_work_orders"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 71,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 83,
+          "name": "create",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/work_order_contact.ex",
+      "resource_tag": "generated",
+      "table": "srve_work_order_contacts"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 73,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 85,
+          "name": "create",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/operations/work_order_trade.ex",
+      "resource_tag": "generated",
+      "table": "srve_work_order_trades"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [
+            "prepare({Xaas.ServEngine.ReadHelpers, fields: [:name, :code]})"
+          ],
+          "kind": "read",
+          "line": 84,
+          "name": "read",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 99,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 105,
+          "name": "quick_add_create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 109,
+          "name": "update",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/tenancy/brand.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_brands"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [
+            "prepare {Xaas.ServEngine.ReadHelpers, fields: [:name]}"
+          ],
+          "kind": "read",
+          "line": 84,
+          "name": "read",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 92,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "change {Xaas.ServEngine.Operations.Changes.BindTenant, []}"
+          ],
+          "kind": "create",
+          "line": 101,
+          "name": "quick_add_create",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 106,
+          "name": "update",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 129,
+          "name": "get",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 135,
+          "name": "summary",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 142,
+          "name": "header",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 148,
+          "name": "overview",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/tenancy/client.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_clients"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [
+            "prepare({Xaas.ServEngine.ReadHelpers, fields: [:name, :email]})"
+          ],
+          "kind": "read",
+          "line": 78,
+          "name": "read",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 93,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 98,
+          "name": "update",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/tenancy/contact.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_contacts"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 71,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 83,
+          "name": "create",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/tenancy/contact_email.ex",
+      "resource_tag": "generated",
+      "table": "srve_contact_emails"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 67,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 79,
+          "name": "create",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/tenancy/contact_phone.ex",
+      "resource_tag": "generated",
+      "table": "srve_contact_phones"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 70,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 82,
+          "name": "create",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/tenancy/contact_space.ex",
+      "resource_tag": "generated",
+      "table": "srve_contact_spaces"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 214,
+          "name": "get_by_id",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "run fn input, _context ->"
+          ],
+          "kind": "action",
+          "line": 225,
+          "name": "validate_name",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "run fn input, _context ->"
+          ],
+          "kind": "action",
+          "line": 243,
+          "name": "validate_sub_domain",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "run fn input, ctx ->"
+          ],
+          "kind": "action",
+          "line": 265,
+          "name": "enter_tenant",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "run fn input, ctx ->"
+          ],
+          "kind": "action",
+          "line": 278,
+          "name": "switch_to_platform_scope",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 290,
+          "name": "deactivate",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 295,
+          "name": "activate",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "prepare({Xaas.ServEngine.ReadHelpers, fields: [:name]})"
+          ],
+          "kind": "read",
+          "line": 300,
+          "name": "read",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 315,
+          "name": "create",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 320,
+          "name": "update",
+          "tag": "generated"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/tenancy/tenant.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_tenants"
+    },
+    {
+      "actions": [
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 116,
+          "name": "read",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 130,
+          "name": "directory",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "read",
+          "line": 142,
+          "name": "get_by_id",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "create",
+          "line": 150,
+          "name": "invite",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 156,
+          "name": "update",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 166,
+          "name": "set_password",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [],
+          "kind": "update",
+          "line": 175,
+          "name": "cancel_invite",
+          "tag": "generated"
+        },
+        {
+          "custom_refs": [
+            "run fn input, ctx ->"
+          ],
+          "kind": "action",
+          "line": 186,
+          "name": "effective_access",
+          "tag": "custom-handler"
+        },
+        {
+          "custom_refs": [
+            "run fn _input, ctx ->"
+          ],
+          "kind": "action",
+          "line": 194,
+          "name": "scope_options",
+          "tag": "custom-handler"
+        }
+      ],
+      "file": "xaas/lib/xaas/serv_engine/user_directory/user.ex",
+      "resource_tag": "custom-handler",
+      "table": "srve_user_directory_users"
+    }
+  ],
+  "source_shas": {
+    "srve": "29267a4453c2ea7536127047aadd8328ef63ca59",
+    "srve/onengine-backend": "e78330aa20f0e87c931603a2df4fcdb11cb22e4a",
+    "srve/servengine-frontend": "c2f59c194f05e58d805a30e2c04bfd1af76e91cd",
+    "xaas": "d7e38a376450f7ae680fb580082577b24d9c31c6"
+  }
+}
