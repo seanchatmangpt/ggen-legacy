@@ -1,5 +1,0 @@
-## Surrogates. Low-high (not a pair). Not legal.
-
-SELECT * {
-    ?s ?p "\uDCA1\uD83C" .
-}

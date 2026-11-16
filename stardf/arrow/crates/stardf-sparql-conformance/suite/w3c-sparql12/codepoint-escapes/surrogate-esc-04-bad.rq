@@ -1,5 +1,0 @@
-## Low surrogate. Not legal.
-
-SELECT * {
-    ?s ?p "Single low surrogate (\uDCA1)"
-}

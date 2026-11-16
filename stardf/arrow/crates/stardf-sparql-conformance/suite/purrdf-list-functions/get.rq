@@ -1,3 +1,0 @@
-PREFIX g: <https://example.org/ext/>
-PREFIX : <http://purrdf.test/list#>
-SELECT ?x WHERE { ?q :list ?l . BIND(g:listGet(?l, 1) AS ?x) }

@@ -1,3 +1,0 @@
-@prefix ex: <http://example.org/> .
-
-ex:p a ex:Pair ; ex:has 2 ; ex:total 4 .

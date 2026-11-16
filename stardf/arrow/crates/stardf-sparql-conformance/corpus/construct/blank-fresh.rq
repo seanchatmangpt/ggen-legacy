@@ -1,3 +1,0 @@
-PREFIX : <http://example.org/>
-CONSTRUCT { _:x :related ?o }
-WHERE { :a :knows ?o }

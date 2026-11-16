@@ -1,5 +1,0 @@
-## Surrogate pair in IRI. Not legal.
-
-SELECT * {
-    ?s ?p <http://example/\uD83C\uDCA1>
-}

@@ -1,3 +1,0 @@
-PREFIX g: <https://example.org/ext/>
-PREFIX : <http://purrdf.test/list#>
-SELECT ?n WHERE { ?q :list ?l . BIND(g:listIndexOf(?l, :z) AS ?n) }

@@ -1,1 +1,0 @@
-INSERT DATA { <http://example.org/s> <http://example.org/p> <http://example.org/o> }

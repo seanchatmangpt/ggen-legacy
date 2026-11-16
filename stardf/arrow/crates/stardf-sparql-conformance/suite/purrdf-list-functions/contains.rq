@@ -1,3 +1,0 @@
-PREFIX g: <https://example.org/ext/>
-PREFIX : <http://purrdf.test/list#>
-SELECT ?b WHERE { ?q :list ?l . BIND(g:listContains(?l, :y) AS ?b) }

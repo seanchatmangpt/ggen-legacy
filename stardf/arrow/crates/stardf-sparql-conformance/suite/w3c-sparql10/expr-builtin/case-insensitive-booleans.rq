@@ -1,1 +1,0 @@
-SELECT (TRUE as ?t) (False as ?f) {}

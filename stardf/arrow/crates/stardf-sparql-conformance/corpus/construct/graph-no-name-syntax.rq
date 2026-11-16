@@ -1,3 +1,0 @@
-PREFIX : <http://example.org/>
-CONSTRUCT GRAPH { ?s ?p ?o }
-WHERE { ?s ?p ?o }

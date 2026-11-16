@@ -1,5 +1,0 @@
-@prefix : <https://example.org/gc#> .
-
-:s1 :item "a" .
-:s2 :item "b" .
-:s3 :item "c" .

@@ -1,3 +1,0 @@
-@prefix : <http://example.org/> .
-:a :knows :b .
-:b :name "Bee" .

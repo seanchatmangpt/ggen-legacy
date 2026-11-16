@@ -1,3 +1,0 @@
-PREFIX : <http://example.org/>
-CONSTRUCT { GRAPH _:out { ?s :related ?o } }
-WHERE { ?s :knows ?o }

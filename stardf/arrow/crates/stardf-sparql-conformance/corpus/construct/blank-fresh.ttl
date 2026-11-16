@@ -1,3 +1,0 @@
-@prefix : <http://example.org/> .
-_:r1 :related :b .
-_:r2 :related :c .

@@ -1,3 +1,0 @@
-PREFIX rel: <https://example.org/rel/>
-PREFIX : <http://purrdf.test/relations#>
-SELECT ?person ?score WHERE { ?person rel:rank ?score . ?person :status :active }

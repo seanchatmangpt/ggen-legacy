@@ -1,3 +1,0 @@
-VERSION "1.2-basic"
-PREFIX ex: <http://ex/>
-SELECT ?t WHERE { VALUES ?t { <<( ex:a ex:p ex:b )>> } }

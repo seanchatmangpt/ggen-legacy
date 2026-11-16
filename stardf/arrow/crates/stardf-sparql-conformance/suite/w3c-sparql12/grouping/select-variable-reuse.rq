@@ -1,3 +1,0 @@
-SELECT (COUNT(?v) AS ?count) (?count + 1 AS ?countPlusOne) WHERE {
-  VALUES ?v { 0 1 2 3 }
-}

@@ -1,3 +1,0 @@
-PREFIX rel: <https://example.org/rel/>
-PREFIX : <http://purrdf.test/relations#>
-ASK { :ada rel:rank 3 . FILTER NOT EXISTS { :ada rel:rank 1 } }

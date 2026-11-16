@@ -1,5 +1,0 @@
-# Codepoint escape in prefixed name : PNAME_NS
-
-SELECT * {
-    ?x n\0073:abc ?o
-}

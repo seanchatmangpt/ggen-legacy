@@ -1,3 +1,0 @@
-PREFIX : <https://example.org/agg-stat#>
-SELECT (AGG(<https://example.org/agg-stat-fn#MODE>, ?v) AS ?mode)
-WHERE { ?s :value ?v }

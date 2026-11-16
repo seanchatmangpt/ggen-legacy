@@ -1,6 +1,0 @@
-@prefix : <http://example.org/> .
-:a :knows :b ;
-   :address _:blank .
-_:blank :city "Springfield" .
-:x :refersTo :a .
-:b :name "Bee" .

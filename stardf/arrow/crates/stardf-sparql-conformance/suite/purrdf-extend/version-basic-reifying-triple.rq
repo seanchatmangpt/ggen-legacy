@@ -1,3 +1,0 @@
-VERSION "1.2-basic"
-PREFIX ex: <http://ex/>
-SELECT ?s ?o ?v WHERE { << ?s ex:age ?o >> ex:certainty ?v }

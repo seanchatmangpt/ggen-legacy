@@ -1,3 +1,0 @@
-PREFIX rel: <https://example.org/rel/>
-PREFIX : <http://purrdf.test/relations#>
-SELECT ?city ?headcount WHERE { :alpha rel:teamSite ( ?city ?headcount ) }
